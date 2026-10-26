@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/constants/image_constants.dart';
-import 'package:accounting_software/app/features/home/domain/Entity/banner_Entity.dart';
-import 'package:accounting_software/app/features/home/domain/Entity/category_Entity.dart';
+import 'package:accounting_software/app/features/home/domain/entity/banner_entity.dart';
+import 'package:accounting_software/app/features/home/domain/entity/category_entity.dart';
 
 // ─────────────────────────────────────────────
 //  Color constants (shared across data & widgets)

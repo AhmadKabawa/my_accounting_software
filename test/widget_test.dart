@@ -1,30 +1,31 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Replaces the default counter smoke test, which referenced a counter app
+// that no longer exists. Pure route-table checks need no DI or Hive setup.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:accounting_software/main.dart';
+import 'package:accounting_software/app/core/routing/routes.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test('auth routes use the expected paths', () {
+    expect(AppRoutes.login.path, '/login');
+    expect(AppRoutes.register.path, '/register');
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  test('route paths are unique', () {
+    final paths = [
+      AppRoutes.splash,
+      AppRoutes.onboarding,
+      AppRoutes.login,
+      AppRoutes.register,
+      AppRoutes.mainPages,
+      AppRoutes.home,
+      AppRoutes.profile,
+      AppRoutes.chat,
+      AppRoutes.favorites,
+      AppRoutes.products,
+      AppRoutes.settings,
+    ].map((r) => r.path).toList();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(paths.toSet().length, paths.length);
   });
 }
