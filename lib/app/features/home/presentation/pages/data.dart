@@ -39,7 +39,7 @@ final List<HeroBannerEntity> homeBanners = <HeroBannerEntity>[
     statLabel2: 'COUNTRIES',
     statNumber3: '1974',
     statLabel3: 'FOUNDED',
-    accentColor: kAccentCyan,
+    accentColorValue: kAccentCyan.toARGB32(),
   ),
   HeroBannerEntity(
     bgImage: AppPathImages.bannerB.path,
@@ -54,7 +54,7 @@ final List<HeroBannerEntity> homeBanners = <HeroBannerEntity>[
     statLabel2: 'RATED',
     statNumber3: 'ECO',
     statLabel3: 'CERTIFIED',
-    accentColor: kAccentTeal,
+    accentColorValue: kAccentTeal.toARGB32(),
   ),
   HeroBannerEntity(
     bgImage: AppPathImages.bannerB.path,
@@ -69,7 +69,7 @@ final List<HeroBannerEntity> homeBanners = <HeroBannerEntity>[
     statLabel2: 'LAYERS',
     statNumber3: '100%',
     statLabel3: 'WINDPROOF',
-    accentColor: kAccentBlue,
+    accentColorValue: kAccentBlue.toARGB32(),
   ),
 ];
 

@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/features/home/domain/entity/category_entity.dart';
+import 'package:accounting_software/app/features/home/presentation/widgets/shared/home_entity_ui.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
 import 'package:accounting_software/app/features/home/presentation/widgets/shared/home_section_header.dart';

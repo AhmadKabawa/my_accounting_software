@@ -1,8 +1,8 @@
 // ════════════════════════════════════════════════════════════
 //  domain/entities/hero_banner_entity.dart
+//  Pure domain entity — no Flutter. The accent colour is an ARGB int;
+//  the presentation layer converts it (see home_entity_ui.dart).
 // ════════════════════════════════════════════════════════════
-
-import 'package:flutter/material.dart';
 
 class HeroBannerEntity {
   const HeroBannerEntity({
@@ -18,7 +18,7 @@ class HeroBannerEntity {
     required this.statLabel2,
     required this.statNumber3,
     required this.statLabel3,
-    this.accentColor = const Color(0xFF00E5FF),
+    this.accentColorValue = 0xFF00E5FF,
   });
 
   final String bgImage;
@@ -33,5 +33,5 @@ class HeroBannerEntity {
   final String statLabel2;
   final String statNumber3;
   final String statLabel3;
-  final Color accentColor;
+  final int accentColorValue;
 }

@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/home/domain/entity/banner_entity.dart';
+import 'package:accounting_software/app/features/home/presentation/widgets/shared/home_entity_ui.dart';
 
 class HomeHeroTextContent extends StatelessWidget {
   const HomeHeroTextContent({

@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/foundation/constants/image_constant
 import 'package:accounting_software/app/core/presentation/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_image/app_image.dart';
 import 'package:accounting_software/app/features/home/domain/entity/banner_entity.dart';
+import 'package:accounting_software/app/features/home/presentation/widgets/shared/home_entity_ui.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
@@ -180,7 +181,7 @@ class _HomeHeroBannerState extends State<HomeHeroBanner>
                 statLabel2: 'COUNTRIES',
                 statNumber3: '1974',
                 statLabel3: 'FOUNDED',
-                accentColor: kAccentCyan,
+                accentColorValue: kAccentCyan.toARGB32(),
               ),
               HeroBannerEntity(
                 bgImage: AppPathImages.bannerB.path,
@@ -195,7 +196,7 @@ class _HomeHeroBannerState extends State<HomeHeroBanner>
                 statLabel2: 'RATED',
                 statNumber3: 'ECO',
                 statLabel3: 'CERTIFIED',
-                accentColor: kAccentTeal,
+                accentColorValue: kAccentTeal.toARGB32(),
               ),
               HeroBannerEntity(
                 bgImage: AppPathImages.bannerB.path,
@@ -210,7 +211,7 @@ class _HomeHeroBannerState extends State<HomeHeroBanner>
                 statLabel2: 'LAYERS',
                 statNumber3: '100%',
                 statLabel3: 'WINDPROOF',
-                accentColor: kAccentBlue,
+                accentColorValue: kAccentBlue.toARGB32(),
               ),
             ];
         if (banners.isEmpty) return const SizedBox.shrink();
