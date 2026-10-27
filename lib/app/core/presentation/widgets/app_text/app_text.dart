@@ -11,7 +11,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text_extension.dart';
-// import 'package:accounting_software/app/core/foundation/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/foundation/localization/translations/app_key.dart';
 import 'app_text_enum.dart';
 // import 'app_text_extension.dart';
 
@@ -19,7 +19,7 @@ export 'app_text_enum.dart';
 
 class AppText extends StatelessWidget {
   /// key للترجمة
-  final dynamic textKey; // AppKey?
+  final AppKey? textKey;
 
   /// نص raw بدون ترجمة
   final String? rawText;
@@ -156,10 +156,8 @@ class AppText extends StatelessWidget {
   // ───────────────────────────────────────────────────────────────
 
   String _resolveText(BuildContext context) {
-    if (textKey != null) {
-      // return textKey!.tr(context: context);
-      return textKey.toString(); // placeholder حتى تربطه بـ localization
-    }
+    final key = textKey;
+    if (key != null) return key.tr(context: context);
     return rawText ?? '';
   }
 
