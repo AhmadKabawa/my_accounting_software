@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -41,7 +42,11 @@ class MyApp extends StatelessWidget {
               builder: (context, child) => Scaffold(
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.startFloat,
-                floatingActionButton: Column(
+                // Debug-only controls: they clear the session and must never
+                // reach release builds.
+                floatingActionButton: !kDebugMode
+                    ? null
+                    : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     FloatingActionButton.small(
@@ -68,7 +73,6 @@ class MyApp extends StatelessWidget {
                 body: child,
               ),
             );
-            ;
           },
         ),
       ),
