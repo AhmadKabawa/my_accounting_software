@@ -17,6 +17,7 @@ migrate_working_dir/
 
 # إعدادات البيئة المحلية (انسخ من config/dart_defines.example.json)
 config/dart_defines.json
+assets/images
 # IntelliJ related
 *.iml
 *.ipr
