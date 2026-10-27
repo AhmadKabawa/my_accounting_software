@@ -34,17 +34,17 @@ enum ResponsiveMode {
 /// Screen type based on device width
 ///
 /// Breakpoints:
-/// - [mobile]: width < 768px (phones)
-/// - [tablet]: width >= 768px and < 1280px (tablets, foldables)
-/// - [desktop]: width >= 1280px (desktops, laptops, large tablets)
+/// - [mobile]: width < 600px (phones)
+/// - [tablet]: width >= 600px and < 1200px (tablets, foldables)
+/// - [desktop]: width >= 1200px (desktops, laptops, large tablets)
 enum ScreenType {
-  /// Mobile devices (phones) - width < 768px
+  /// Mobile devices (phones) - width < 600px
   mobile,
 
-  /// Tablet devices - width >= 768px and < 1280px
+  /// Tablet devices - width >= 600px and < 1200px
   tablet,
 
-  /// Desktop devices - width >= 1280px
+  /// Desktop devices - width >= 1200px
   desktop,
 }
 
@@ -129,13 +129,13 @@ enum AppBaseWidth {
 /// }
 /// ```
 abstract class ResponsiveToken {
-  /// Value for mobile screens (< 768px)
+  /// Value for mobile screens (< 600px)
   final double mobile;
 
-  /// Value for tablet screens (>= 768px and < 1280px)
+  /// Value for tablet screens (>= 600px and < 1200px)
   final double tablet;
 
-  /// Value for desktop screens (>= 1280px)
+  /// Value for desktop screens (>= 1200px)
   final double desktop;
 
   const ResponsiveToken(this.mobile, this.tablet, this.desktop);

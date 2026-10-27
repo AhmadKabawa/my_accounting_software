@@ -115,15 +115,4 @@ abstract final class SizeTokens {
   static const double s384 = 384;
   static const double s448 = 448;
   static const double s512 = 512;
-
-  // Breakpoints
-  static const double breakpointMobile = 600;
-  static const double breakpointTablet = 1024;
-  static const double breakpointDesktop = 1440;
-
-  // Max widths
-  static const double maxWidthMobile = 540;
-  static const double maxWidthTablet = 960;
-  static const double maxWidthDesktop = 1280;
-  static const double maxWidthWide = 1600;
 }

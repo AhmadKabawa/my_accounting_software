@@ -9,7 +9,10 @@ import 'package:accounting_software/app/core/presentation/responsive/engine/app_
 
 abstract final class ScreenEngine {
   // ══════════════════════════════════════════════════════════════
-  // BREAKPOINTS
+  // BREAKPOINTS — المصدر الوحيد لحدود الشاشات في المشروع
+  //   mobile  : width < 600
+  //   tablet  : 600 <= width < 1200
+  //   desktop : width >= 1200
   // ══════════════════════════════════════════════════════════════
 
   static const double _mobileBreakpoint = 600;
