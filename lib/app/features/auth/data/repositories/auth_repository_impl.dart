@@ -46,18 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) => _execute(() async {
     final result = await _remote.login(email: email, password: password);
-    return result.when(
-      success: (data) async {
-        await _saveSession(data);
-        return Right(
-          AuthResultEntity(
-            user: data.user.toEntity(),
-            tokens: data.tokens.toEntity(),
-          ),
-        );
-      },
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
+    return result.toEitherAsync(_startSession);
   });
 
   // ─── Register ───────────────────────────────────────
@@ -74,19 +63,7 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
       phone: phone,
     );
-    return result.when(
-      success: (data) async {
-        await _saveSession(data);
-
-        return Right(
-          AuthResultEntity(
-            user: data.user.toEntity(),
-            tokens: data.tokens.toEntity(),
-          ),
-        );
-      },
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
+    return result.toEitherAsync(_startSession);
   });
 
   // ─── Google Sign-In ─────────────────────────────────
@@ -94,18 +71,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, AuthResultEntity>> signInWithGoogle() =>
       _execute(() async {
         final result = await _remote.signInWithGoogle();
-        return result.when(
-          success: (data) async {
-            await _saveSession(data);
-            return Right(
-              AuthResultEntity(
-                user: data.user.toEntity(),
-                tokens: data.tokens.toEntity(),
-              ),
-            );
-          },
-          failure: (e) => Left(ExceptionMapper.map(e)),
-        );
+        return result.toEitherAsync(_startSession);
       });
 
   // ─── Logout ─────────────────────────────────────────
@@ -127,26 +93,17 @@ class AuthRepositoryImpl implements AuthRepository {
   // ─── Send Reset Code ────────────────────────────────
   @override
   Future<Either<Failure, Unit>> sendResetCode({required String email}) =>
-      _execute(() async {
-        final result = await _remote.sendResetCode(email: email);
-        return result.when(
-          success: (ok) => Right(ok),
-          failure: (exception) => Left(ExceptionMapper.map(exception)),
-        );
-      });
+      _execute(() async => (await _remote.sendResetCode(email: email)).toEither());
 
   // ─── Verify Reset Code ──────────────────────────────
   @override
   Future<Either<Failure, Unit>> verifyResetCode({
     required String email,
     required String code,
-  }) => _execute(() async {
-    final result = await _remote.verifyResetCode(email: email, code: code);
-    return result.when(
-      success: (ok) => Right(ok),
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
-  });
+  }) => _execute(
+    () async =>
+        (await _remote.verifyResetCode(email: email, code: code)).toEither(),
+  );
 
   // ─── Confirm New Password ───────────────────────────
   @override
@@ -154,49 +111,37 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String code,
     required String newPassword,
-  }) => _execute(() async {
-    final result = await _remote.confirmNewPassword(
+  }) => _execute(
+    () async => (await _remote.confirmNewPassword(
       email: email,
       code: code,
       newPassword: newPassword,
-    );
-    return result.when(
-      success: (ok) => Right(ok),
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
-  });
+    )).toEither(),
+  );
 
   // ─── Reset Password ─────────────────────────────────
   @override
   Future<Either<Failure, Unit>> resetPassword({
     required String token,
     required String newPassword,
-  }) => _execute(() async {
-    final result = await _remote.resetPassword(
+  }) => _execute(
+    () async => (await _remote.resetPassword(
       token: token,
       newPassword: newPassword,
-    );
-    return result.when(
-      success: (ok) => Right(ok),
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
-  });
+    )).toEither(),
+  );
 
   // ─── Change Password ────────────────────────────────
   @override
   Future<Either<Failure, Unit>> changePassword({
     required String currentPassword,
     required String newPassword,
-  }) => _execute(() async {
-    final result = await _remote.changePassword(
+  }) => _execute(
+    () async => (await _remote.changePassword(
       currentPassword: currentPassword,
       newPassword: newPassword,
-    );
-    return result.when(
-      success: (ok) => Right(ok),
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
-  });
+    )).toEither(),
+  );
 
   // ─── Update Profile ─────────────────────────────────
   @override
@@ -210,13 +155,10 @@ class AuthRepositoryImpl implements AuthRepository {
       avatarUrl: avatarUrl,
       phone: phone,
     );
-    return result.when(
-      success: (userModel) async {
-        await _local.cacheUser(userModel);
-        return Right(userModel.toEntity());
-      },
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
+    return result.toEitherAsync((userModel) async {
+      await _local.cacheUser(userModel);
+      return userModel.toEntity();
+    });
   });
 
   // ─── Get Current User ───────────────────────────────
@@ -248,9 +190,13 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  // ─── Private: Save Session ──────────────────────────
-  Future<void> _saveSession(AuthResultModel authResult) async {
+  // ─── Private: Start Session ─────────────────────────
+  Future<AuthResultEntity> _startSession(AuthResultModel authResult) async {
     await _local.cacheUser(authResult.user);
     await _local.saveToken(authResult.tokens);
+    return AuthResultEntity(
+      user: authResult.user.toEntity(),
+      tokens: authResult.tokens.toEntity(),
+    );
   }
 }
