@@ -57,8 +57,8 @@ class AppRouter {
         pageBuilder: (context, state) => RouteTransitions.fade(
           context,
           state,
-          BlocProvider(
-            create: (_) => sl<SplashCubit>()..init(),
+          BlocProvider.value(
+            value: splashCubit..init(),
             child: const SplashScreen(),
           ),
         ),

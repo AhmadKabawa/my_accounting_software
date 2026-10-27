@@ -6,5 +6,6 @@ final sl = GetIt.instance;
 void initSplashDI() {
   // splash Feature
   // cubit
-  sl.registerFactory(() => SplashCubit());
+  // Singleton: the router guards and the splash screen must share one instance.
+  sl.registerLazySingleton(() => SplashCubit());
 }

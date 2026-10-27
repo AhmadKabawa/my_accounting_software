@@ -29,8 +29,9 @@ final sl = GetIt.instance;
 
 void initAuthDI() {
   // Auth Feature
-  // Bloc
-  sl.registerFactory(
+  // Bloc — singleton: the router guards and the screens must observe the same
+  // session state. Provide it with BlocProvider.value so it is never closed.
+  sl.registerLazySingleton(
     () => AuthCubit(
       login: sl(),
       register: sl(),
