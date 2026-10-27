@@ -25,11 +25,11 @@ abstract final class AppKeys {
 final class _OnBordingKeys {
   const _OnBordingKeys();
   final title1 = const AppKey('onboarding.title1');
-  final title2 = const AppKey('onboarding.title1');
-  final title3 = const AppKey('onboarding.title1');
-  final subTitle1 = const AppKey('onboarding.title1');
-  final subTitle2 = const AppKey('onboarding.title1');
-  final subTitle3 = const AppKey('onboarding.title1');
+  final title2 = const AppKey('onboarding.title2');
+  final title3 = const AppKey('onboarding.title3');
+  final subTitle1 = const AppKey('onboarding.sub_title1');
+  final subTitle2 = const AppKey('onboarding.sub_title2');
+  final subTitle3 = const AppKey('onboarding.sub_title3');
 }
 
 /// ── Auth ────────────────────────────────────────

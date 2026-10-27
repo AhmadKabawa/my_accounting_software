@@ -16,17 +16,17 @@ class OnBoardingModel {
 
 final List<OnBoardingModel> onboardingData = [
   OnBoardingModel(
-    title: AppKeys.onBoarding.subTitle1,
+    title: AppKeys.onBoarding.title1,
     description: AppKeys.onBoarding.subTitle1,
     image: AppPathImages.onBoardingImage1,
   ),
   OnBoardingModel(
-    title: AppKeys.onBoarding.subTitle2,
+    title: AppKeys.onBoarding.title2,
     description: AppKeys.onBoarding.subTitle2,
     image: AppPathImages.onBoardingImage2,
   ),
   OnBoardingModel(
-    title: AppKeys.onBoarding.subTitle3,
+    title: AppKeys.onBoarding.title3,
     description: AppKeys.onBoarding.subTitle3,
     image: AppPathImages.onBoardingImage3,
   ),

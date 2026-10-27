@@ -14,6 +14,7 @@ final TranslationMap enUS = {
   ..._enCommon,
   ..._enProfile,
   ..._enSuccess,
+  ..._enOnBoarding,
   AppKeys.home: "home",
   AppKeys.chat: "chat",
   AppKeys.favorite: "favorite",
@@ -167,6 +168,18 @@ final TranslationMap _enProfile = {
   AppKeys.profile.changePassword: "Change password",
   AppKeys.profile.updateButton: "Update",
   AppKeys.profile.userNumber: "User #@number",
+};
+
+final TranslationMap _enOnBoarding = {
+  AppKeys.onBoarding.title1: "Choose your product",
+  AppKeys.onBoarding.title2: "Select Payment Method",
+  AppKeys.onBoarding.title3: "Deliver at your door step",
+  AppKeys.onBoarding.subTitle1:
+      "Welcome to a World of Limitless Choices - Your Perfect Product Awaits!",
+  AppKeys.onBoarding.subTitle2:
+      "For Seamless Transactions, Choose Your Payment Path - Your Convenience, Our Priority!",
+  AppKeys.onBoarding.subTitle3:
+      "From Our Doorstep to Yours - Swift, Secure, and Contactless Delivery!",
 };
 
 final TranslationMap _enSuccess = {

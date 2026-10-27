@@ -14,6 +14,7 @@ final TranslationMap arSA = {
   ..._arCommon,
   ..._arProfile,
   ..._arSuccess,
+  ..._arOnBoarding,
   AppKeys.home: "الرئيسية",
   AppKeys.chat: "محادثة",
   AppKeys.favorite: "مفضل",
@@ -118,6 +119,18 @@ final TranslationMap _arProfile = {
   AppKeys.profile.changePassword: "تغيير كلمة المرور",
   AppKeys.profile.updateButton: "تحديث",
   AppKeys.profile.userNumber: "مستخدم رقم @number",
+};
+
+final TranslationMap _arOnBoarding = {
+  AppKeys.onBoarding.title1: "اختر منتجك",
+  AppKeys.onBoarding.title2: "اختر طريقة الدفع",
+  AppKeys.onBoarding.title3: "نوصّل إلى باب منزلك",
+  AppKeys.onBoarding.subTitle1:
+      "مرحبًا بك في عالم من الخيارات اللامحدودة - منتجك المثالي بانتظارك!",
+  AppKeys.onBoarding.subTitle2:
+      "لمعاملات سلسة، اختر طريقة الدفع المناسبة - راحتك أولويتنا!",
+  AppKeys.onBoarding.subTitle3:
+      "من بابنا إلى بابك - توصيل سريع وآمن وبدون تلامس!",
 };
 
 final TranslationMap _arSuccess = {
