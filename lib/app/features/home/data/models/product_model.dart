@@ -4,7 +4,6 @@
 // ════════════════════════════════════════════════════════════
 
 import 'package:accounting_software/app/features/home/domain/entity/product_entity.dart';
-import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
 
 class ProductModel extends ProductEntity {
   const ProductModel({
