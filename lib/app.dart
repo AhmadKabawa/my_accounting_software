@@ -18,9 +18,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<ThemeCubit>()..loadSavedTheme()),
-        BlocProvider(
-          create: (context) => sl<LocaleCubit>()..loadSavedLanguage(),
-        ),
+        // اللغة محمّلة مسبقاً في main()
+        BlocProvider(create: (context) => sl<LocaleCubit>()),
       ],
       child: BlocListener<LocaleCubit, LocaleState>(
         listenWhen: (prev, curr) => prev != curr,

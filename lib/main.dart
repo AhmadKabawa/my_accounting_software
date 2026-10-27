@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/app_di.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app.dart';
 import 'package:accounting_software/app/core/foundation/config/env_config.dart';
 import 'package:accounting_software/app/core/utils/observer/app_bloc_observer.dart';
@@ -20,14 +21,19 @@ void main() async {
   // di
   await initServiceLocator();
 
+  // اللغة: AppSettingsManager هو المصدر الوحيد. نحمّلها قبل runApp حتى تبدأ
+  // الواجهة باللغة المحفوظة مباشرة (بدون وميض).
+  final localeCubit = sl<LocaleCubit>();
+  await localeCubit.loadSavedLanguage();
+
   runApp(
     EasyLocalization(
-      saveLocale: true, // 🔥 هذا هو المهم
+      saveLocale: false, // الحفظ يتم عبر AppSettingsManager فقط
+      startLocale: localeCubit.state.locale,
       path: 'assets/translations', // مكان ملفات الترجمة
       supportedLocales: LocaleCubit.supportedLocales,
       fallbackLocale: LocaleCubit.fallbackLocale,
       assetLoader: const MyDartLoader(),
-      // startLocale: localeState.locale,
       child: const MyApp(),
     ),
   );
