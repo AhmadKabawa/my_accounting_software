@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/routing/app_go_router.dart';
+import 'package:accounting_software/app/routing/app_go_router.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_state.dart';
