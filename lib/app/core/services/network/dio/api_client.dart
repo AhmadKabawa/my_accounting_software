@@ -350,6 +350,7 @@ class ApiClient implements IApiClient {
         }
       }
       return data['message']?.toString() ??
+          data['error_description']?.toString() ??
           data['error']?.toString() ??
           data['msg']?.toString();
     }

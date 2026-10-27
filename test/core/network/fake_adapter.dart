@@ -33,3 +33,33 @@ class FakeAdapter implements HttpClientAdapter {
   @override
   void close({bool force = false}) {}
 }
+
+/// Answers each request with [handler]; a handler may also throw a
+/// [DioException] to simulate transport failures.
+class RoutedAdapter implements HttpClientAdapter {
+  RoutedAdapter(this.handler);
+
+  final Future<ResponseBody> Function(RequestOptions options) handler;
+  final List<RequestOptions> requests = [];
+
+  static ResponseBody json(int status, String body) => ResponseBody.fromString(
+    body,
+    status,
+    headers: {
+      Headers.contentTypeHeader: [Headers.jsonContentType],
+    },
+  );
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) {
+    requests.add(options);
+    return handler(options);
+  }
+
+  @override
+  void close({bool force = false}) {}
+}

@@ -2,88 +2,91 @@ import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
 import 'package:accounting_software/app/core/services/network/api_end_points.dart';
 
+/// Renews the Supabase session when a request fails with 401 and replays it.
+///
+/// - The refresh call uses its own bare [Dio] (same options, no interceptors),
+///   so it can never be intercepted by this class or wait on itself.
+/// - Concurrent 401s share one refresh (single-flight): Supabase rotates the
+///   refresh token, so a second parallel refresh would invalidate the first.
+/// - A replayed request is marked `authRetried` and is never refreshed twice.
+/// - The session is cleared only when the server rejects the refresh token;
+///   a network failure keeps it so the user is not logged out while offline.
 class RefreshTokenInterceptor extends Interceptor {
+  RefreshTokenInterceptor(this._dio, this._tokens)
+    : _refreshDio = Dio(_dio.options.copyWith())
+        ..httpClientAdapter = _dio.httpClientAdapter;
+
   final Dio _dio;
-  final TokenManager _tokenStorage;
+  final Dio _refreshDio;
+  final TokenManager _tokens;
 
-  bool _isRefreshing = false;
-  final List<_PendingRequest> _queue = [];
-
-  RefreshTokenInterceptor(this._dio, this._tokenStorage);
+  Future<String?>? _refreshing;
 
   @override
   Future<void> onError(
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    if (err.response?.statusCode != 401) return handler.next(err);
-    if (err.requestOptions.path.contains('/auth/v1/refresh')) {
-      await _tokenStorage.clearTokens();
+    final options = err.requestOptions;
+    if (err.response?.statusCode != 401 ||
+        options.extra['requiresAuth'] == false ||
+        options.extra['authRetried'] == true) {
       return handler.next(err);
     }
 
-    if (_isRefreshing) {
-      _queue.add(_PendingRequest(err, handler));
-      return;
-    }
+    final accessToken = await (_refreshing ??= _refresh().whenComplete(
+      () => _refreshing = null,
+    ));
+    if (accessToken == null) return handler.next(err);
 
-    _isRefreshing = true;
     try {
-      final refreshToken = await _tokenStorage.getRefreshToken();
-      if (refreshToken == null) {
-        await _tokenStorage.clearTokens();
-        return handler.next(err);
-      }
-
-      final res = await _dio.post(
-        AppEndpoints.auth.refresh.toStringPath(),
-        data: {'refresh_token': refreshToken},
-        options: Options(extra: {'requiresAuth': false}),
+      handler.resolve(
+        await _dio.fetch<dynamic>(
+          options.copyWith(
+            headers: {
+              ...options.headers,
+              'Authorization': 'Bearer $accessToken',
+            },
+            extra: {...options.extra, 'authRetried': true},
+          ),
+        ),
       );
-
-      final newAccess = res.data['access_token'] as String;
-      final newRefresh = res.data['refresh_token'] as String?;
-
-      await _tokenStorage.saveAccessToken(newAccess);
-      if (newRefresh != null) {
-        await _tokenStorage.saveAccessToken(newRefresh);
-      }
-
-      // Retry original
-      handler.resolve(await _retry(err.requestOptions, newAccess));
-
-      // Retry queued
-      for (final p in _queue) {
-        try {
-          p.handler.resolve(await _retry(p.error.requestOptions, newAccess));
-        } catch (_) {
-          p.handler.next(p.error);
-        }
-      }
-    } catch (_) {
-      await _tokenStorage.clearTokens();
-      for (final p in _queue) p.handler.next(p.error);
-      handler.next(err);
-    } finally {
-      _queue.clear();
-      _isRefreshing = false;
+    } on DioException catch (e) {
+      handler.next(e);
     }
   }
 
-  Future<Response<dynamic>> _retry(RequestOptions o, String token) =>
-      _dio.request(
-        o.path,
-        data: o.data,
-        queryParameters: o.queryParameters,
-        options: Options(
-          method: o.method,
-          headers: {...o.headers, 'Authorization': 'Bearer $token'},
-        ),
-      );
-}
+  Future<String?> _refresh() async {
+    final refreshToken = await _tokens.getRefreshToken();
+    if (refreshToken == null || refreshToken.isEmpty) {
+      await _tokens.clearTokens();
+      return null;
+    }
 
-class _PendingRequest {
-  final DioException error;
-  final ErrorInterceptorHandler handler;
-  _PendingRequest(this.error, this.handler);
+    try {
+      final res = await _refreshDio.post<Map<String, dynamic>>(
+        AppEndpoints.auth.token.toStringPath(),
+        queryParameters: {'grant_type': 'refresh_token'},
+        data: {'refresh_token': refreshToken},
+      );
+      final accessToken = res.data?['access_token'] as String?;
+      final newRefreshToken = res.data?['refresh_token'] as String?;
+      if (accessToken == null) {
+        await _tokens.clearTokens();
+        return null;
+      }
+
+      await _tokens.saveAccessToken(accessToken);
+      if (newRefreshToken != null) {
+        await _tokens.saveRefreshToken(newRefreshToken);
+      }
+      return accessToken;
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      if (status == 400 || status == 401 || status == 403) {
+        await _tokens.clearTokens();
+      }
+      return null;
+    }
+  }
 }
