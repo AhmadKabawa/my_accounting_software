@@ -1,21 +1,14 @@
 // 📁 lib/core/services/local_storage/hive_storage/managers/cache_manager.dart
 
 import 'dart:convert';
-import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_object_box.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_storage_service.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
-import 'package:accounting_software/app/features/auth/data/models/user/user_model.dart';
 
 class CacheManager {
   final HiveStorageService _stringCache;
-  final HiveObjectBox<UserModel> _userBox;
 
-  const CacheManager({
-    required HiveStorageService stringCache,
-    required HiveObjectBox<UserModel> userBox,
-  }) : _stringCache = stringCache,
-       _userBox = userBox;
+  const CacheManager({required HiveStorageService stringCache})
+    : _stringCache = stringCache;
 
   // ─── JSON Cache مع TTL ─────────────────────────────────────────────────────
 
@@ -49,19 +42,9 @@ class CacheManager {
 
   bool isCacheValid(StorageKey key) => getCachedResponse(key) != null;
 
-  // ─── User Cache ────────────────────────────────────────────────────────────
-
-  static const _currentUserKey = StorageKeys.userData;
-
-  Future<void> saveUser(UserModel user) => _userBox.put(_currentUserKey, user);
-  UserModel? getUser() => _userBox.get(_currentUserKey);
-  Future<void> clearUser() => _userBox.delete(_currentUserKey);
-  bool hasUser() => _userBox.containsKey(_currentUserKey);
-
   // ─── Cleanup ───────────────────────────────────────────────────────────────
 
-  Future<void> clearAll() =>
-      Future.wait([_stringCache.clearAll(), _userBox.clear()]);
+  Future<void> clearAll() => _stringCache.clearAll();
 
   Future<void> cleanExpired() async {
     final expired = _stringCache.allKeys.map((k) => k.toString()).where((key) {

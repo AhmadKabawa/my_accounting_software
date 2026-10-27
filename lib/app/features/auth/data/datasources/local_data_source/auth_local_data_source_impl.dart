@@ -1,5 +1,6 @@
 import 'package:accounting_software/app/core/error/error_handling/exceptions/exceptions.dart';
-import 'package:accounting_software/app/core/services/local_storage/hive_storage/cache_manager.dart';
+import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_object_box.dart';
+import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/local_data_source/auth_local_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/models/auth_tokens/auth_tokens_model.dart';
@@ -7,13 +8,13 @@ import 'package:accounting_software/app/features/auth/data/models/user/user_mode
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final TokenManager _tokenManager;
-  final CacheManager _cacheManager;
+  final HiveObjectBox<UserModel> _userBox;
 
   const AuthLocalDataSourceImpl({
     required TokenManager tokenManager,
-    required CacheManager cacheManager,
+    required HiveObjectBox<UserModel> userBox,
   }) : _tokenManager = tokenManager,
-       _cacheManager = cacheManager;
+       _userBox = userBox;
 
   // ============================================================
   // Private Safe Executor ⭐ (Important)
@@ -33,14 +34,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> cacheUser(UserModel user) =>
-      _safeExecute(() => _cacheManager.saveUser(user));
+      _safeExecute(() => _userBox.put(StorageKeys.userData, user));
 
   @override
   Future<UserModel?> getCachedUser() =>
-      _safeExecute(() async => _cacheManager.getUser());
+      _safeExecute(() async => _userBox.get(StorageKeys.userData));
 
   @override
-  Future<void> clearUser() => _safeExecute(() => _cacheManager.clearUser());
+  Future<void> clearUser() => _safeExecute(() => _userBox.delete(StorageKeys.userData));
 
   // ============================================================
   // Tokens
@@ -74,7 +75,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> clearAll() => _safeExecute(
-    () => Future.wait([_tokenManager.clearTokens(), _cacheManager.clearUser()]),
+    () => Future.wait([
+      _tokenManager.clearTokens(),
+      _userBox.delete(StorageKeys.userData),
+    ]),
   );
 
   // ============================================================

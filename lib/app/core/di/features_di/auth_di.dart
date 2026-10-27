@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/cache_manager.dart';
+import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_box_names.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_manager.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_object_box.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_storage_service.dart';
@@ -27,7 +28,13 @@ import '../../../features/auth/presentation/cubit/auth_cubit.dart';
 
 final sl = GetIt.instance;
 
-void initAuthDI() {
+Future<void> initAuthDI() async {
+  // The users box and its adapter belong to this feature, not to core.
+  final usersBox = await HiveManager.openBox<UserModel>(
+    HiveBoxNames.users,
+    adapter: UserModelAdapter(),
+  );
+
   // Auth Feature
   // Bloc — singleton: the router guards and the screens must observe the same
   // session state. Provide it with BlocProvider.value so it is never closed.
@@ -83,18 +90,15 @@ void initAuthDI() {
 
   // 2. HiveObjectBox — للـ UserModel مباشرة
   sl.registerLazySingleton<HiveObjectBox<UserModel>>(
-    () => HiveObjectBox(HiveManager.usersBox),
+    () => HiveObjectBox(usersBox),
   );
 
-  // 3. CacheManager — يجمع الاثنين
+  // 3. CacheManager — JSON cache العام
   sl.registerLazySingleton(
-    () => CacheManager(
-      stringCache: sl<HiveStorageService>(),
-      userBox: sl<HiveObjectBox<UserModel>>(),
-    ),
+    () => CacheManager(stringCache: sl<HiveStorageService>()),
   );
 
   sl.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSourceImpl(cacheManager: sl(), tokenManager: sl()),
+    () => AuthLocalDataSourceImpl(userBox: sl(), tokenManager: sl()),
   );
 }

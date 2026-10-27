@@ -87,7 +87,7 @@ Future<void> initServiceLocator() async {
   );
 
   // Feature DI
-  initAuthDI();
+  await initAuthDI();
   initOnBoardingDI();
   initSplashDI();
   initNavigationBarDI();
