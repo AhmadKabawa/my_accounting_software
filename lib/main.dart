@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app.dart';
+import 'package:accounting_software/app/core/foundation/config/env_config.dart';
 import 'package:accounting_software/app/core/utils/observer/app_bloc_observer.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/foundation/localization/translations/asset_loader.dart';
@@ -12,12 +12,7 @@ import 'package:accounting_software/app/core/services/local_storage/hive_storage
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  // .env is optional: values fall back to EnvConfig defaults when it is absent.
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (e) {
-    debugPrint('No .env file loaded: $e');
-  }
+  EnvConfig.ensureConfigured();
   await HiveManager.init();
   Bloc.observer = AppBlocObserver();
   // await SupabaseService.initialize();

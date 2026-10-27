@@ -1,10 +1,23 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+/// Client-side configuration, injected at build time:
+/// `flutter run --dart-define-from-file=config/dart_defines.json`.
+///
+/// Only the Supabase URL and the public anon key belong here. The anon key is
+/// not a secret (access is enforced by RLS); the service_role key must never
+/// be placed in the client or in this repository.
 class EnvConfig {
-  static  String get supabaseUrl =>
-      dotenv.env['SUPABASE_URL'] ?? 'https://lskwrhujwhbxdefasppr.supabase.co';
+  static const String supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  static const String supabaseAnonKey = String.fromEnvironment(
+    'SUPABASE_ANON_KEY',
+  );
 
-  static String get supabaseAnonKey =>
-      dotenv.env['SUPABASE_ANON_KEY'] ??
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxza3dyaHVqd2hieGRlZmFzcHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1ODA3MzIsImV4cCI6MjA4MTE1NjczMn0.1O_7OARrC4lSaFzyigEPes5Pn1j9s1aZE2l4ZwnSJCE';
+  /// Fails fast with a clear message instead of sending requests to an empty URL.
+  static void ensureConfigured() {
+    if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+      throw StateError(
+        'Missing SUPABASE_URL / SUPABASE_ANON_KEY. Run with '
+        '--dart-define-from-file=config/dart_defines.json '
+        '(see config/dart_defines.example.json).',
+      );
+    }
+  }
 }

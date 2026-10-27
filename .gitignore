@@ -15,8 +15,8 @@ migrate_working_dir/
 # تجاهل ملف البيئة للخصوصية
 .env
 
-# تجاهل مجلد الصور بالكامل
-assets/images/
+# إعدادات البيئة المحلية (انسخ من config/dart_defines.example.json)
+config/dart_defines.json
 # IntelliJ related
 *.iml
 *.ipr
