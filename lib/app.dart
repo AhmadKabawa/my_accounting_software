@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:accounting_software/app/core/di/features_di/on_boarding_di.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_state.dart';
 import 'package:accounting_software/app/core/presentation/theme/app_theme.dart';

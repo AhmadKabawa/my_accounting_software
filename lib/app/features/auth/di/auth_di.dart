@@ -1,4 +1,4 @@
-import 'package:get_it/get_it.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/cache_manager.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_box_names.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_manager.dart';
@@ -22,11 +22,10 @@ import 'package:accounting_software/app/features/auth/domain/usecase/send_reset_
 import 'package:accounting_software/app/features/auth/domain/usecase/signin_with_google_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/update_profile_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/verify_reset_code_usecase.dart';
-import '../../../features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:accounting_software/app/features/auth/data/repositories/auth_repository_impl.dart';
 
-import '../../../features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
 
-final sl = GetIt.instance;
 
 Future<void> initAuthDI() async {
   // The users box and its adapter belong to this feature, not to core.

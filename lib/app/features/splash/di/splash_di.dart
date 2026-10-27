@@ -1,7 +1,6 @@
-import 'package:get_it/get_it.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_cubit.dart';
 
-final sl = GetIt.instance;
 
 void initSplashDI() {
   // splash Feature

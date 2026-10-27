@@ -2,11 +2,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:accounting_software/app/core/di/features_di/auth_di.dart';
-import 'package:accounting_software/app/core/di/features_di/home_di.dart';
-import 'package:accounting_software/app/core/di/features_di/navigation_bar.dart';
-import 'package:accounting_software/app/core/di/features_di/on_boarding_di.dart';
-import 'package:accounting_software/app/core/di/features_di/splash_di.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
 import 'package:accounting_software/app/core/services/local_storage/shared_storage/app_settings_manager_sorage.dart';
@@ -22,7 +17,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
 
-Future<void> initServiceLocator() async {
+/// Registers core infrastructure only. Features register themselves from
+/// the composition root (lib/app/app_di.dart).
+Future<void> initCoreDI() async {
   //! ==================== External ====================
   sl.registerLazySingleton<GoogleSignIn>(
     () => GoogleSignIn(
@@ -74,7 +71,7 @@ Future<void> initServiceLocator() async {
   //   () => PrefsStorageService(prefs: sl()),
   // );
 
-  //! ==================== Features ====================
+  //! ==================== Theme & Localization ====================
 
   // Theme
   sl.registerLazySingleton<ThemeCubit>(
@@ -85,12 +82,4 @@ Future<void> initServiceLocator() async {
   sl.registerLazySingleton<LocaleCubit>(
     () => LocaleCubit(appSettingsManager: sl()),
   );
-
-  // Feature DI
-  await initAuthDI();
-  initOnBoardingDI();
-  initSplashDI();
-  initNavigationBarDI();
-  // await initProductsDI();
-  initHomeDI();
 }
