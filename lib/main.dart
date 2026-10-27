@@ -12,7 +12,12 @@ import 'package:accounting_software/app/core/services/local_storage/hive_storage
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  // .env is optional: values fall back to EnvConfig defaults when it is absent.
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint('No .env file loaded: $e');
+  }
   await HiveManager.init();
   Bloc.observer = AppBlocObserver();
   // await SupabaseService.initialize();
