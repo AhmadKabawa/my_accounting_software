@@ -1,7 +1,7 @@
 // lib/core/network/interceptors/language_interceptor.dart
 
 import 'package:dio/dio.dart';
-import 'package:accounting_software/app/core/services/local_storage/shared_storage/app_settings_manager_sorage.dart';
+import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
 
 /// يضيف Accept-Language header لكل request
 /// يقرأ اللغة الحالية من AppLocale أو SharedPreferences
@@ -23,18 +23,14 @@ abstract interface class LanguageProvider {
   String get currentLocale; // 'ar', 'en', 'ar-SA'
 }
 
+/// Reads the live language from [LocaleCubit], so a language change is
+/// reflected in the very next request.
 class AppLanguageProvider implements LanguageProvider {
-  AppLanguageProvider({required this.storageService});
+  const AppLanguageProvider({required LocaleCubit localeCubit})
+    : _localeCubit = localeCubit;
 
-  final AppSettingsManager storageService;
-
-  String _locale_code = 'en';
-
-  Future<void> init() async {
-    final _locale = await storageService.getLanguage(); // 'en', 'ar';
-    _locale_code = _locale.code; // 'en', 'ar';
-  }
+  final LocaleCubit _localeCubit;
 
   @override
-  String get currentLocale => _locale_code;
+  String get currentLocale => _localeCubit.languageCode;
 }

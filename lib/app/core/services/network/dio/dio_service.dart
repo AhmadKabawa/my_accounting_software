@@ -17,6 +17,7 @@ class DioService {
   DioService({
     required TokenManager tokenManager,
     required NetworkInfo networkInfoImpl,
+    required LanguageProvider languageProvider,
   }) {
     _dio = Dio(
       BaseOptions(
@@ -38,7 +39,7 @@ class DioService {
     _dio.interceptors.addAll([
       // 1. تحقق من الاتصال أولاً قبل أي شيء
       ConnectivityInterceptor(networkInfo: networkInfoImpl),
-      //  LanguageInterceptor(languageProvider: cubitlan),
+      LanguageInterceptor(languageProvider: languageProvider),
       // 2. أضف Auth token للـ request
       AuthInterceptor(tokenManager),
 

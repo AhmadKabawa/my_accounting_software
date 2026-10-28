@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/services/local_storage/shared_stora
 import 'package:accounting_software/app/core/services/network/api_client_interface.dart';
 import 'package:accounting_software/app/core/services/network/dio/api_client.dart';
 import 'package:accounting_software/app/core/services/network/dio/dio_service.dart';
+import 'package:accounting_software/app/core/services/network/dio/interceptors/language_interceptor.dart';
 import 'package:accounting_software/app/core/services/network/network_info/network_info.dart';
 import 'package:accounting_software/app/core/services/network/network_info/network_info_impl.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/secure_storage_service.dart';
@@ -51,7 +52,11 @@ Future<void> initCoreDI() async {
   // Dio
 
   sl.registerLazySingleton<DioService>(
-    () => DioService(tokenManager: sl(), networkInfoImpl: sl()),
+    () => DioService(
+      tokenManager: sl(),
+      networkInfoImpl: sl(),
+      languageProvider: sl(),
+    ),
   );
   sl.registerLazySingleton<IApiClient>(() => ApiClient(dioService: sl()));
 
@@ -82,5 +87,8 @@ Future<void> initCoreDI() async {
   // Localization
   sl.registerLazySingleton<LocaleCubit>(
     () => LocaleCubit(appSettingsManager: sl()),
+  );
+  sl.registerLazySingleton<LanguageProvider>(
+    () => AppLanguageProvider(localeCubit: sl()),
   );
 }
