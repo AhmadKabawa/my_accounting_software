@@ -18,6 +18,7 @@ import 'package:accounting_software/app/features/on_boarding/presentation/cubit/
 import 'package:accounting_software/app/features/on_boarding/presentation/pages/on_boarding_screen.dart';
 import 'package:accounting_software/app/features/profile/presentation/pages/profile_screen.dart';
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_cubit.dart';
+import 'package:accounting_software/app/features/splash/presentation/cubit/splash_state.dart';
 import 'package:accounting_software/app/features/splash/presentation/pages/splash_screen.dart';
 import 'package:accounting_software/app/main_navigation_bar/presentation/pages/main_pages_screen.dart';
 
@@ -27,10 +28,10 @@ class AppRouter {
   static final SplashCubit splashCubit = sl<SplashCubit>();
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.home.path,
+    initialLocation: AppRoutes.splash.path,
 
     routes: _buildRoutes(),
-    // redirect: _redirectLogic,
+    redirect: _redirect,
     observers: [MyNavObserver()],
 
     refreshListenable: GoRouterRefreshStream([
@@ -196,45 +197,15 @@ class AppRouter {
     ];
   }
 
-  /// ✅ الـ Redirect الجديد - منظّم وبدون Loops
-  static Future<String?> _redirectLogic(
+  static Future<String?> _redirect(
     BuildContext context,
     GoRouterState state,
-  ) async {
-    final location = state.matchedLocation;
-
-    // 🔄 Step 1: تحقق من الـ Splash (يعمل مرة واحدة فقط)
-    final splashRedirect = SplashRoutingLogic.checkSplashCompletion(
-      context,
-      location,
-    );
-    if (splashRedirect != null) return splashRedirect;
-
-    // 🔄 Step 2: تحقق من الـ Onboarding (بعد انتهاء الـ Splash)
-    final onboardingRedirect =
-        await OnboardingRoutingLogic.checkOnboardingCompletion(
-          context,
-          location,
-        );
-    if (onboardingRedirect != null) return onboardingRedirect;
-
-    // 🔄 Step 3: تحقق من المصادقة (منفصلة تماماً)
-    final authRedirect = AuthRoutingLogic.requireAuthentication(
-      context,
-      location,
-    );
-    if (authRedirect != null) return authRedirect;
-
-    // 🔄 Step 4: منع المسجلين من الوصول لصفحات التسجيل
-    final preventAuthRedirect = AuthRoutingLogic.preventAuthenticatedAccess(
-      context,
-      location,
-    );
-    if (preventAuthRedirect != null) return preventAuthRedirect;
-
-    // ✅ لا توجيه مطلوب
-    return null;
-  }
+  ) async => resolveRedirect(
+    location: state.matchedLocation,
+    splashDone: splashCubit.state is SplashDone,
+    onboarded: await settings.isOnboarded(),
+    authState: authCubit.state,
+  );
 }
 
 class NotFoundScreen extends StatelessWidget {

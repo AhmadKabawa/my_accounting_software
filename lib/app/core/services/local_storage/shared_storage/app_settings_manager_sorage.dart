@@ -36,6 +36,7 @@ class AppSettingsManager {
   // ─── Onboarding ────────────────────────────────────────────────────────────
   Future<void> setOnboarded() async {
     await storage.write<bool>(StorageKeys.onboardingKey, true);
+    _isOnboardedCache = true;
   }
 
   Future<bool> isOnboarded() async {
