@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
  
 
-CheckboxThemeData buildCheckboxTheme(BuildContext contex,  {required ColorScheme colorScheme}) {
+CheckboxThemeData buildCheckboxTheme({required ColorScheme colorScheme}) {
   return CheckboxThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     checkColor: WidgetStateProperty.all(colorScheme.onPrimary),

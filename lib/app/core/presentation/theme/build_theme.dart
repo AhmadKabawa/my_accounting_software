@@ -10,35 +10,42 @@ import 'package:accounting_software/app/core/presentation/theme/components/navig
 import 'package:accounting_software/app/core/presentation/theme/components/outlined_button_theme.dart';
 import 'package:accounting_software/app/core/presentation/theme/components/text_theme.dart';
 
+/// [context] is only needed for the responsive parts (font sizes and the
+/// navigation bar height). Every other component theme is built from the
+/// [ColorScheme] and the already-built [TextTheme]; reading `Theme.of(context)`
+/// here would return the fallback theme, because this runs above MaterialApp.
 ThemeData buildTheme({
   required BuildContext context,
   required ColorScheme colorScheme,
-}) => ThemeData(
-  useMaterial3: true,
-  brightness: colorScheme.brightness,
-  fontFamily: 'Cairo',
-  colorScheme: colorScheme,
+}) {
+  final textTheme = buildTextTheme(context: context, colorScheme: colorScheme);
 
-  textTheme: buildTextTheme(context: context, colorScheme: colorScheme),
-  appBarTheme: buildAppBarTheme(context, colorScheme: colorScheme),
-  bottomSheetTheme: buildBottomSheetTheme(context, colorScheme: colorScheme),
-  checkboxTheme: buildCheckboxTheme(context, colorScheme: colorScheme),
-  chipTheme: buildChipTheme(context, colorScheme: colorScheme),
-  elevatedButtonTheme: buildElevatedButtonTheme(
-    context,
+  return ThemeData(
+    useMaterial3: true,
+    brightness: colorScheme.brightness,
+    fontFamily: 'Cairo',
     colorScheme: colorScheme,
-  ),
-  outlinedButtonTheme: buildOutlinedButtonTheme(
-    context,
-    colorScheme: colorScheme,
-  ),
-  inputDecorationTheme: buildInputDecorationTheme(
-    context,
-    colorScheme: colorScheme,
-  ),
-  navigationBarTheme: buildNavigationBarTheme(
-    context,
-    colorScheme: colorScheme,
-  ),
-  scaffoldBackgroundColor: colorScheme.surface,
-);
+    textTheme: textTheme,
+    appBarTheme: buildAppBarTheme(colorScheme: colorScheme, textTheme: textTheme),
+    bottomSheetTheme: buildBottomSheetTheme(colorScheme: colorScheme),
+    checkboxTheme: buildCheckboxTheme(colorScheme: colorScheme),
+    chipTheme: buildChipTheme(colorScheme: colorScheme, textTheme: textTheme),
+    elevatedButtonTheme: buildElevatedButtonTheme(
+      colorScheme: colorScheme,
+      textTheme: textTheme,
+    ),
+    outlinedButtonTheme: buildOutlinedButtonTheme(
+      colorScheme: colorScheme,
+      textTheme: textTheme,
+    ),
+    inputDecorationTheme: buildInputDecorationTheme(
+      colorScheme: colorScheme,
+      textTheme: textTheme,
+    ),
+    navigationBarTheme: buildNavigationBarTheme(
+      context,
+      colorScheme: colorScheme,
+    ),
+    scaffoldBackgroundColor: colorScheme.surface,
+  );
+}
