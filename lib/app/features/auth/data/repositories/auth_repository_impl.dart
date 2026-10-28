@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/local_data_source/auth_local_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/remote_data_source/auth_remote_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/models/auth_result/auth_result_model.dart';
+import 'package:accounting_software/app/features/auth/data/models/user/user_model.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/auth_result/auth_result.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/features/auth/domain/repositories/auth_repository.dart';
@@ -171,23 +172,32 @@ class AuthRepositoryImpl implements AuthRepository {
       final cachedUser = await _local.getCachedUser();
       if (cachedUser != null) return Right(cachedUser.toEntity());
 
-      final apiResult = await _remote.getCurrentUser();
-      return apiResult.when(
-        success: (remoteUser) async {
-          await _local.cacheUser(remoteUser);
-          return Right(remoteUser.toEntity());
-        },
-        failure: (exception) async {
-          // await _local.clearTokens();
-          await _local.clearAll();
-          return const Right(null);
-        },
-      );
+      return switch (await _remote.getCurrentUser()) {
+        ApiSuccess(:final data) => await _cacheRemoteUser(data),
+        ApiFailure(:final exception) => await _onUserFetchFailed(exception),
+      };
     } on CacheException catch (e) {
       return Left(ExceptionMapper.map(e));
     } catch (_) {
       return Left(ExceptionMapper.map(ApiException.unknown())); // ✅
     }
+  }
+
+  Future<Either<Failure, UserEntity?>> _cacheRemoteUser(UserModel user) async {
+    await _local.cacheUser(user);
+    return Right(user.toEntity());
+  }
+
+  /// The session is dropped only when the server rejects it (401/403);
+  /// a network or server failure must not log the user out.
+  Future<Either<Failure, UserEntity?>> _onUserFetchFailed(
+    AppException exception,
+  ) async {
+    if (exception.statusCode == 401 || exception.statusCode == 403) {
+      await _local.clearAll();
+      return const Right(null);
+    }
+    return Left(ExceptionMapper.map(exception));
   }
 
   // ─── Private: Start Session ─────────────────────────

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:accounting_software/app/core/foundation/base_mixin/base/base_cubit/base_side_effects/base_cubit.dart';
+import 'package:dartz/dartz.dart' show Either, Unit;
 import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
 import 'package:accounting_software/app/core/error/translators/failure_translator.dart';
 import 'package:accounting_software/app/core/foundation/base_mixin/base/base_usecases/use_case.dart';
@@ -32,6 +35,8 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
   final UpdateProfileUseCase _updateProfile;
   final SignInWithGoogleUseCase _googleSignIn;
   final GetCurrentUserUseCase _getCurrentUserUseCase;
+  late final StreamSubscription<void> _sessionSub;
+  bool _signingOut = false;
 
   AuthCubit({
     required LoginUseCase login,
@@ -45,6 +50,7 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
     required UpdateProfileUseCase updateProfile,
     required SignInWithGoogleUseCase googleSignIn,
     required GetCurrentUserUseCase getCurrentUserUseCase,
+    required Stream<void> sessionCleared,
   }) : _login = login,
        _register = register,
        _logout = logout,
@@ -56,10 +62,13 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
        _updateProfile = updateProfile,
        _googleSignIn = googleSignIn,
        _getCurrentUserUseCase = getCurrentUserUseCase,
-       super(const AuthState.initial());
+       super(const AuthState.initial()) {
+    _sessionSub = sessionCleared.listen(_onSessionCleared);
+  }
 
   @override
   Future<void> close() {
+    _sessionSub.cancel();
     cancelRequests(); //م كلشي فو اتصال بالانترنت
 
     return super.close();
@@ -78,6 +87,19 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
   void _emitSuccess(AppKey key) => emitEffect(
     AuthEffect.showMessage(messageKey: key.tran, type: MessageType.success),
   );
+
+  /// The stored session was removed behind our back (e.g. the refresh token
+  /// was rejected). A deliberate [signOut] clears it too, so it is ignored.
+  void _onSessionCleared(void _) {
+    if (_signingOut || state is Unauthenticated || state is AuthInitial) return;
+    emit(const AuthState.unauthenticated());
+    _emitError(UnauthorizedFailure());
+  }
+
+  /// Returns to [previous] unless the session ended while the call was running.
+  void _restore(AuthState previous) {
+    if (state is AuthLoading) emit(previous);
+  }
 
   // ══════════════════════════════════════════════════
   //  Check Session
@@ -160,7 +182,13 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
   Future<void> signOut() async {
     emit(const AuthState.loading());
 
-    final result = await _logout(NoParams());
+    _signingOut = true;
+    final Either<Failure, Unit> result;
+    try {
+      result = await _logout(NoParams());
+    } finally {
+      _signingOut = false;
+    }
 
     result.fold(
       (failure) {
@@ -323,7 +351,7 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
 
     result.fold(
       (failure) {
-        emit(currentState);
+        _restore(currentState);
         _emitError(failure);
       },
       (updatedUser) {
@@ -357,11 +385,11 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
 
     result.fold(
       (failure) {
-        emit(currentState);
+        _restore(currentState);
         _emitError(failure);
       },
       (_) {
-        emit(currentState); // ← ابق authenticated
+        _restore(currentState); // ← ابق authenticated
         _emitSuccess(AppKeys.success.passwordChanged); // ← مفتاح مناسب
       },
     );

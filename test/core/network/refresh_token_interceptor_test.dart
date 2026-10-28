@@ -2,37 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
 import 'package:accounting_software/app/core/services/network/dio/interceptors/auth_interceptor.dart';
 import 'package:accounting_software/app/core/services/network/dio/interceptors/refresh_token_interceptor.dart';
 
+import '../../helpers/memory_storage.dart';
 import 'fake_adapter.dart';
-
-class _MemoryStorage implements StorageService {
-  final Map<StorageKey, Object?> values = {};
-
-  @override
-  Future<void> write<T>(StorageKey key, T value) async => values[key] = value;
-
-  @override
-  Future<T?> read<T>(StorageKey key) async => values[key] as T?;
-
-  @override
-  Future<void> delete(StorageKey key) async => values.remove(key);
-
-  @override
-  Future<void> clearAll() async => values.clear();
-
-  @override
-  Future<bool> containsKey(StorageKey key) async => values.containsKey(key);
-}
 
 void main() {
   late TokenManager tokens;
 
   setUp(() async {
-    tokens = TokenManager(storage: _MemoryStorage());
+    tokens = TokenManager(storage: MemoryStorage());
     await tokens.saveAuthTokens(
       accessToken: 'old-access',
       refreshToken: 'old-refresh',

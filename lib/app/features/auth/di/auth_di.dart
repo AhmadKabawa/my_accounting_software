@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/services/local_storage/hive_storage
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_manager.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_object_box.dart';
 import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_storage_service.dart';
+import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/local_data_source/auth_local_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/local_data_source/auth_local_data_source_impl.dart';
@@ -50,6 +51,7 @@ Future<void> initAuthDI() async {
       updateProfile: sl(),
       googleSignIn: sl(),
       getCurrentUserUseCase: sl(),
+      sessionCleared: sl<TokenManager>().sessionCleared,
     ),
   );
   // ============ Use Cases ============

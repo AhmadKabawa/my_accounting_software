@@ -2,12 +2,21 @@
 //
 // مسؤوليته: التوكينات فقط — لا يعرف شيئاً عن UserModel
 
+import 'dart:async';
+
 import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
 
 class TokenManager {
   final StorageService _storage;
-  const TokenManager({required StorageService storage}) : _storage = storage;
+  TokenManager({required StorageService storage}) : _storage = storage;
+
+  // Synchronous so a listener sees the event before the caller's await
+  // resumes (lets AuthCubit tell a deliberate sign-out from an expiry).
+  final _sessionCleared = StreamController<void>.broadcast(sync: true);
+
+  /// Fires whenever the stored session is removed ([clearTokens]).
+  Stream<void> get sessionCleared => _sessionCleared.stream;
 
   // ─── Access Token ──────────────────────────────────────
   Future<void> saveAccessToken(String token) =>
@@ -42,11 +51,14 @@ class TokenManager {
     saveUserId(userId),
   ]);
 
-  Future<void> clearTokens() => Future.wait([
-    _storage.delete(StorageKeys.accessToken),
-    _storage.delete(StorageKeys.refreshToken),
-    _storage.delete(StorageKeys.userId),
-  ]);
+  Future<void> clearTokens() async {
+    await Future.wait([
+      _storage.delete(StorageKeys.accessToken),
+      _storage.delete(StorageKeys.refreshToken),
+      _storage.delete(StorageKeys.userId),
+    ]);
+    _sessionCleared.add(null);
+  }
 
   // ─── Status ────────────────────────────────────────────
   Future<bool> isLoggedIn() async {
