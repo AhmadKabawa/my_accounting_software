@@ -59,7 +59,7 @@ class AppRouter {
           context,
           state,
           BlocProvider.value(
-            value: splashCubit..init(),
+            value: splashCubit,
             child: const SplashScreen(),
           ),
         ),
