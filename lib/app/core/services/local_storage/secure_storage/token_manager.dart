@@ -41,14 +41,38 @@ class TokenManager {
   Future<String?> getUserId() => _storage.read<String>(StorageKeys.userId);
 
   // ─── Batch Operations ──────────────────────────────────
+  // Secure storage has no transactions. Writes run in order and any failure
+  // clears the session, so a half-written one (e.g. an access token without
+  // its refresh token) is never left behind.
+  Future<void> _writeAll(List<Future<void> Function()> writes) async {
+    try {
+      for (final write in writes) {
+        await write();
+      }
+    } catch (_) {
+      await clearTokens();
+      rethrow;
+    }
+  }
+
   Future<void> saveAuthTokens({
     required String accessToken,
     required String refreshToken,
     required String userId,
-  }) => Future.wait([
-    saveAccessToken(accessToken),
-    saveRefreshToken(refreshToken),
-    saveUserId(userId),
+  }) => _writeAll([
+    () => saveAccessToken(accessToken),
+    () => saveRefreshToken(refreshToken),
+    () => saveUserId(userId),
+  ]);
+
+  /// Stores a renewed session. Supabase rotates the refresh token, so it is
+  /// replaced whenever the server returns a new one.
+  Future<void> saveTokens({
+    required String accessToken,
+    String? refreshToken,
+  }) => _writeAll([
+    () => saveAccessToken(accessToken),
+    if (refreshToken != null) () => saveRefreshToken(refreshToken),
   ]);
 
   Future<void> clearTokens() async {

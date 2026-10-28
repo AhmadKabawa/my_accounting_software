@@ -14,35 +14,16 @@ class SecureStorageService implements StorageService {
   @override
   Future<void> write<T>(StorageKey key, T value) async {
     try {
-      String stringValue;
-
-      if (value is String) {
-        stringValue = value;
-      } else if (value is bool) {
-        stringValue = value.toString();
-      } else if (value is int) {
-        stringValue = value.toString();
-      } else if (value is double) {
-        stringValue = value.toString();
-      } else if (value is List<String>) {
-        // تحويل القائمة إلى JSON string
-        stringValue = jsonEncode(value);
-      } else if (value is Map<String, dynamic>) {
-        // تحويل الخريطة إلى JSON string
-        stringValue = jsonEncode(value);
-      } else if (value is List<dynamic>) {
-        // تحويل أي قائمة ديناميكية إلى JSON
-        stringValue = jsonEncode(value);
-      } else if (value is Map<dynamic, dynamic>) {
-        // تحويل أي خريطة ديناميكية إلى JSON
-        stringValue = jsonEncode(value);
-      } else {
-        throw CacheException(
+      final stringValue = switch (value) {
+        String() => value,
+        bool() || int() || double() => value.toString(),
+        List<dynamic>() || Map<dynamic, dynamic>() => jsonEncode(value),
+        _ => throw CacheException(
           message:
               'SecureStorage only supports: String, bool, int, double, '
               'List, Map. Got: ${value.runtimeType}',
-        );
-      }
+        ),
+      };
 
       await _secureStorage.write(key: key.toStringKey(), value: stringValue);
     } catch (e) {

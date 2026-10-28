@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:accounting_software/app/core/error/error_handling/exceptions/exceptions.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
 import 'package:accounting_software/app/core/services/network/api_end_points.dart';
 
@@ -76,11 +77,14 @@ class RefreshTokenInterceptor extends Interceptor {
         return null;
       }
 
-      await _tokens.saveAccessToken(accessToken);
-      if (newRefreshToken != null) {
-        await _tokens.saveRefreshToken(newRefreshToken);
-      }
+      await _tokens.saveTokens(
+        accessToken: accessToken,
+        refreshToken: newRefreshToken,
+      );
       return accessToken;
+    } on CacheException {
+      // The storage rolled the half-written session back and signalled it.
+      return null;
     } on DioException catch (e) {
       final status = e.response?.statusCode;
       if (status == 400 || status == 401 || status == 403) {
