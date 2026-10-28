@@ -48,13 +48,6 @@ class AppConfig {
   static const int maxRetries = 3;
   static const int retryDelay = 1000;
 
-  // ════════════════════════════════════════════════════
-  //  🌐 Google Sign-In
-  //  ← ضع هنا Client ID من Firebase/Google Console
-  // ════════════════════════════════════════════════════
-  static const String googleClientId =
-      'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-
   // Pagination
   static const int itemsPerPage = 20;
 

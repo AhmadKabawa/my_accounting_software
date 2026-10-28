@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:accounting_software/app/core/foundation/config/env_config.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
 import 'package:accounting_software/app/core/services/local_storage/shared_storage/app_settings_manager_sorage.dart';
@@ -23,7 +24,7 @@ Future<void> initCoreDI() async {
   //! ==================== External ====================
   sl.registerLazySingleton<GoogleSignIn>(
     () => GoogleSignIn(
-      clientId: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+      clientId: EnvConfig.googleClientId,
       scopes: ['email', 'profile'],
     ),
   );
