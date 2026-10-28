@@ -47,11 +47,14 @@ final class _ProductEndpoints {
   AppEndpoint get categories => const AppEndpoint('$base/categories');
 
   // دوال ديناميكية (باستثناء التحويل إلى AppEndpoint في الدالة نفسها)
-  AppEndpoint byId(String id) => AppEndpoint('$base/$id');
-  AppEndpoint reviews(String id) => AppEndpoint('$base/$id/reviews');
-  AppEndpoint related(String id) => AppEndpoint('$base/$id/related');
+  // المعاملات تُرمَّز دائمًا حتى لا يغيّر `/` أو `?` أو `#` في القيمة بنية المسار.
+  AppEndpoint byId(String id) => AppEndpoint('$base/${_seg(id)}');
+  AppEndpoint reviews(String id) => AppEndpoint('$base/${_seg(id)}/reviews');
+  AppEndpoint related(String id) => AppEndpoint('$base/${_seg(id)}/related');
   AppEndpoint byCategory(String category) =>
-      AppEndpoint('$base/category/$category');
+      AppEndpoint('$base/category/${_seg(category)}');
+
+  static String _seg(String value) => Uri.encodeComponent(value);
 }
 // ─────────────────────────────────────────────────────────────
  
