@@ -9,12 +9,16 @@ import 'package:accounting_software/app/core/services/network/api_end_points.dar
 
 typedef JsonFactory<T> = T Function(Map<String, dynamic>);
 
+/// Builds [T] from a JSON array response (e.g. `T = List<ProductModel>`).
+typedef JsonListFactory<T> = T Function(List<dynamic>);
+
 abstract interface class IApiClient {
   Future<ApiResult<T>> get<T>(
     AppEndpoint path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
     JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
     CancelToken? cancelToken, // ← جديد
     bool requiresAuth,
   });
@@ -25,6 +29,7 @@ abstract interface class IApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
     CancelToken? cancelToken, // ← جديد
     bool requiresAuth,
   });
@@ -35,6 +40,7 @@ abstract interface class IApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
     CancelToken? cancelToken, // ← جديد
     bool requiresAuth,
   });
@@ -45,6 +51,7 @@ abstract interface class IApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
     CancelToken? cancelToken, // ← جديد
     bool requiresAuth,
   });

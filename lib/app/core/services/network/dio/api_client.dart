@@ -25,6 +25,7 @@ class ApiClient implements IApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
     CancelToken? cancelToken,
     bool requiresAuth = true,
   }) => _execute(
@@ -35,6 +36,7 @@ class ApiClient implements IApiClient {
       cancelToken: cancelToken,
     ),
     fromJson,
+    fromJsonList,
   );
 
   // ── POST ──────────────────────────────────────────────────────────────────
@@ -45,6 +47,7 @@ class ApiClient implements IApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
     CancelToken? cancelToken,
     bool requiresAuth = true,
   }) => _execute(
@@ -56,6 +59,7 @@ class ApiClient implements IApiClient {
       cancelToken: cancelToken,
     ),
     fromJson,
+    fromJsonList,
   );
 
   // ── PUT ───────────────────────────────────────────────────────────────────
@@ -66,6 +70,7 @@ class ApiClient implements IApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
     CancelToken? cancelToken,
     bool requiresAuth = true,
   }) => _execute(
@@ -77,6 +82,7 @@ class ApiClient implements IApiClient {
       cancelToken: cancelToken,
     ),
     fromJson,
+    fromJsonList,
   );
 
   // ── PATCH ─────────────────────────────────────────────────────────────────
@@ -87,6 +93,7 @@ class ApiClient implements IApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
     CancelToken? cancelToken,
     bool requiresAuth = true,
   }) => _execute(
@@ -98,6 +105,7 @@ class ApiClient implements IApiClient {
       cancelToken: cancelToken,
     ),
     fromJson,
+    fromJsonList,
   );
 
   // ── DELETE ────────────────────────────────────────────────────────────────
@@ -138,6 +146,7 @@ class ApiClient implements IApiClient {
       cancelToken: cancelToken,
     ),
     fromJson,
+    null,
   );
 
   // ── PAGINATED GET ─────────────────────────────────────────────────────────
@@ -152,45 +161,37 @@ class ApiClient implements IApiClient {
     PaginatedParser parser = PaginatedParserPresets.supabase,
     int page = 1,
     int limit = 20,
-  }) async {
-    try {
-      final res = await _dio.get(
-        path.toStringPath(),
-        queryParameters: queryParameters,
-        options: _buildOptions(options, requiresAuth, page: page, limit: limit),
-        cancelToken: cancelToken,
-      );
+  }) => _guard(() async {
+    final res = await _dio.get(
+      path.toStringPath(),
+      queryParameters: queryParameters,
+      options: _buildOptions(options, requiresAuth, page: page, limit: limit),
+      cancelToken: cancelToken,
+    );
 
-      if (!_isSuccess(res.statusCode)) {
-        return ApiFailure(
-          ApiException.server(
-            statusCode: res.statusCode,
-            serverMessage: _extractMessage(res.data),
-          ),
-        );
-      }
-
-      final total = _parseTotalFromContentRange(
-        res.headers.value('content-range'),
-      );
-
-      return ApiSuccess(
-        parser.parse<T>(
-          res.data,
-          (json) => fromJson(json as Map<String, dynamic>),
-          page: page,
-          limit: limit,
-          totalFromHeader: total,
+    if (!_isSuccess(res.statusCode)) {
+      return ApiFailure<PaginatedResult<T>>(
+        ApiException.server(
+          statusCode: res.statusCode,
+          serverMessage: _extractMessage(res.data),
         ),
       );
-    } on DioException catch (e) {
-      // لا نعامل الـ cancel كخطأ — نُعيد cancelled
-      if (CancelToken.isCancel(e)) {
-        return ApiFailure(ApiException.cancelled());
-      }
-      return ApiFailure(_mapException(e));
     }
-  }
+
+    final total = _parseTotalFromContentRange(
+      res.headers.value('content-range'),
+    );
+
+    return ApiSuccess(
+      parser.parse<T>(
+        res.data,
+        (json) => fromJson(json as Map<String, dynamic>),
+        page: page,
+        limit: limit,
+        totalFromHeader: total,
+      ),
+    );
+  });
 
   // ── PAGINATED POST ────────────────────────────────────────────────────────
   @override
@@ -219,21 +220,31 @@ class ApiClient implements IApiClient {
 
   Future<ApiResult<T>> _execute<T>(
     Future<Response> Function() request,
-    JsonFactory<T>? fromJson,
-  ) async {
+    JsonFactory<T>? fromJson, [
+    JsonListFactory<T>? fromJsonList,
+  ]) => _guard(
+    () async => _handleResponse(await request(), fromJson, fromJsonList),
+  );
+
+  /// Every request goes through here so nothing escapes as an exception:
+  /// Dio errors are mapped, and any other failure becomes an [ApiException].
+  Future<ApiResult<T>> _guard<T>(Future<ApiResult<T>> Function() body) async {
     try {
-      final res = await request();
-      return _handleResponse(res, fromJson);
+      return await body();
     } on DioException catch (e) {
       // Cancel ليس خطأ — هو قرار واعٍ من الـ ViewModel
-      if (CancelToken.isCancel(e)) {
-        return ApiFailure(ApiException.cancelled());
-      }
+      if (CancelToken.isCancel(e)) return ApiFailure(ApiException.cancelled());
       return ApiFailure(_mapException(e));
+    } catch (e) {
+      return ApiFailure(ApiException.unknown(serverMessage: e.toString()));
     }
   }
 
-  ApiResult<T> _handleResponse<T>(Response r, JsonFactory<T>? fromJson) {
+  ApiResult<T> _handleResponse<T>(
+    Response r,
+    JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
+  ) {
     if (!_isSuccess(r.statusCode)) {
       return ApiFailure(
         ApiException.server(
@@ -243,28 +254,41 @@ class ApiClient implements IApiClient {
       );
     }
 
+    final data = r.data;
+
     // 204 No Content أو response فارغ
-    if (r.statusCode == 204 || r.data == null) {
+    if (r.statusCode == 204 || data == null) {
       if (T == Unit) return ApiSuccess(unit as T);
       return ApiFailure(
         ApiException.unknown(serverMessage: 'Unexpected empty response'),
       );
     }
 
-    // بدون parser — نُعيد الـ data مباشرة
-    if (fromJson == null) return ApiSuccess(r.data as T);
-
-    // تحقق من نوع الـ data قبل التحويل
-    if (r.data is! Map<String, dynamic>) {
-      return ApiFailure(
-        ApiException.unknown(
-          serverMessage: 'Expected JSON object, got ${r.data.runtimeType}',
-        ),
-      );
+    // بدون parser — نُعيد الـ data إذا كان من النوع المطلوب فعلاً
+    if (fromJson == null && fromJsonList == null) {
+      return data is T
+          ? ApiSuccess(data)
+          : ApiFailure(
+              ApiException.unknown(
+                serverMessage: 'Expected $T, got ${data.runtimeType}',
+              ),
+            );
     }
 
     try {
-      return ApiSuccess(fromJson(r.data as Map<String, dynamic>));
+      return switch (data) {
+        Map<String, dynamic>() when fromJson != null => ApiSuccess(
+          fromJson(data),
+        ),
+        List<dynamic>() when fromJsonList != null => ApiSuccess(
+          fromJsonList(data),
+        ),
+        _ => ApiFailure(
+          ApiException.unknown(
+            serverMessage: 'Unexpected JSON shape: ${data.runtimeType}',
+          ),
+        ),
+      };
     } catch (e) {
       return ApiFailure(ApiException.unknown(serverMessage: 'Parse error: $e'));
     }
