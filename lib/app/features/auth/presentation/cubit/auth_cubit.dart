@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:accounting_software/app/core/foundation/base_mixin/base/base_cubit/base_side_effects/base_cubit.dart';
 import 'package:dartz/dartz.dart' show Either, Unit;
+import 'package:accounting_software/app/core/utils/logger.dart';
+import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
 import 'package:accounting_software/app/core/error/translators/failure_translator.dart';
 import 'package:accounting_software/app/core/foundation/base_mixin/base/base_usecases/use_case.dart';
@@ -112,7 +114,21 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
 
     emit(const AuthState.checking());
 
-    final result = await _getCurrentUserUseCase(NoParams());
+    final Either<Failure, UserEntity?> result;
+    try {
+      result = await _getCurrentUserUseCase(NoParams());
+    } catch (e, st) {
+      // Never leave the app in `checking`: an unexpected error means we
+      // cannot prove there is a session, so fall back to signed out.
+      Logger.error(
+        'AuthCubit: session check threw',
+        error: e,
+        stackTrace: st,
+        name: 'AuthCubit',
+      );
+      emit(const AuthState.unauthenticated());
+      return;
+    }
 
     result.fold(
       (_) => emit(const AuthState.unauthenticated()),

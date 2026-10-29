@@ -34,4 +34,19 @@ void main() {
     await running;
     expect(cubit.state, isA<SplashDone>());
   });
+
+  test('a failing session check still ends the splash after minDuration',
+      () async {
+    final cubit = SplashCubit(
+      checkSession: () async => throw StateError('boom'),
+      minDuration: const Duration(milliseconds: 50),
+    );
+
+    final watch = Stopwatch()..start();
+    await cubit.init();
+    watch.stop();
+
+    expect(cubit.state, isA<SplashDone>());
+    expect(watch.elapsedMilliseconds, greaterThanOrEqualTo(45));
+  });
 }

@@ -33,6 +33,14 @@ class _FakeRepo implements AuthRepository {
     return const Right(unit);
   }
 
+  Object? currentUserError;
+
+  @override
+  Future<Either<Failure, UserEntity?>> getCurrentUser() async {
+    if (currentUserError != null) throw currentUserError!;
+    return const Right(null);
+  }
+
   @override
   Future<Either<Failure, UserEntity>> updateProfile({
     String? fullName,
@@ -105,6 +113,17 @@ void main() {
     session.add(null);
     repo.profile!.complete(Left(UnauthorizedFailure()));
     await pending;
+
+    expect(cubit.state, isA<Unauthenticated>());
+  });
+
+  test('a throwing session check ends signed out, never stuck in checking',
+      () async {
+    // ignore: invalid_use_of_protected_member
+    cubit.emit(const AuthState.initial());
+    repo.currentUserError = StateError('boom');
+
+    await cubit.checkAuthentication();
 
     expect(cubit.state, isA<Unauthenticated>());
   });
