@@ -100,13 +100,11 @@ abstract final class ResponsiveHelper {
 
       case ResponsiveMode.adaptiveScale:
         final designValue = resolveAdaptive(screenType);
-        final min = minValue != null ? minValue : resolveAdaptive(screenType);
-        final max = maxValue != null ? maxValue : resolveAdaptive(screenType);
         return ScaleEngine.scale(
           context,
           designValue: designValue,
-          minValue: min,
-          maxValue: max,
+          minValue: minValue ?? designValue,
+          maxValue: maxValue ?? designValue,
         );
     }
   }
@@ -310,6 +308,53 @@ abstract final class ResponsiveHelper {
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) => size_(context, size, min: min, max: max, mode: mode);
 
+  /// Shared by [padding] and [paddingDirectional]: resolves the four sides
+  /// (individual side > horizontal/vertical group > [all]) and returns their
+  /// responsive values as `[leading, trailing, top, bottom]`. Min/max default
+  /// to the smallest/largest resolved side.
+  static List<double> _paddingSides(
+    BuildContext context, {
+    required AppSpacing all,
+    required AppSpacing horizontal,
+    required AppSpacing vertical,
+    required AppSpacing leading,
+    required AppSpacing trailing,
+    required AppSpacing top,
+    required AppSpacing bottom,
+    required AppSpacing? min,
+    required AppSpacing? max,
+    required ResponsiveMode mode,
+  }) {
+    AppSpacing pick(AppSpacing side, AppSpacing group) =>
+        side != AppSpacing.none
+        ? side
+        : group != AppSpacing.none
+        ? group
+        : all;
+
+    final sides = [
+      pick(leading, horizontal),
+      pick(trailing, horizontal),
+      pick(top, vertical),
+      pick(bottom, vertical),
+    ];
+    final effectiveMin =
+        min ?? sides.reduce((a, b) => a.mobile < b.mobile ? a : b);
+    final effectiveMax =
+        max ?? sides.reduce((a, b) => a.mobile > b.mobile ? a : b);
+
+    return [
+      for (final side in sides)
+        spacing(
+          context,
+          side,
+          min: effectiveMin,
+          max: effectiveMax,
+          mode: mode,
+        ),
+    ];
+  }
+
   // ══════════════════════════════════════════════════════════════
   // PADDING METHODS (Absolute — left/right for LTR)
   // ══════════════════════════════════════════════════════════════
@@ -351,75 +396,20 @@ abstract final class ResponsiveHelper {
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) {
     /// Resolve left value with priority: explicit > horizontal > all
-    final resolvedLeft = left != AppSpacing.none
-        ? left
-        : horizontal != AppSpacing.none
-        ? horizontal
-        : all;
-
-    /// Resolve right value with priority: explicit > horizontal > all
-    final resolvedRight = right != AppSpacing.none
-        ? right
-        : horizontal != AppSpacing.none
-        ? horizontal
-        : all;
-
-    /// Resolve top value with priority: explicit > vertical > all
-    final resolvedTop = top != AppSpacing.none
-        ? top
-        : vertical != AppSpacing.none
-        ? vertical
-        : all;
-
-    /// Resolve bottom value with priority: explicit > vertical > all
-    final resolvedBottom = bottom != AppSpacing.none
-        ? bottom
-        : vertical != AppSpacing.none
-        ? vertical
-        : all;
-
-    /// Auto-detect min/max from all resolved values
-    final allValues = [
-      resolvedLeft,
-      resolvedRight,
-      resolvedTop,
-      resolvedBottom,
-    ];
-    final effectiveMin =
-        min ?? allValues.reduce((a, b) => a.mobile < b.mobile ? a : b);
-    final effectiveMax =
-        max ?? allValues.reduce((a, b) => a.mobile > b.mobile ? a : b);
-
-    return EdgeInsets.only(
-      left: spacing(
-        context,
-        resolvedLeft,
-        min: effectiveMin,
-        max: effectiveMax,
-        mode: mode,
-      ),
-      right: spacing(
-        context,
-        resolvedRight,
-        min: effectiveMin,
-        max: effectiveMax,
-        mode: mode,
-      ),
-      top: spacing(
-        context,
-        resolvedTop,
-        min: effectiveMin,
-        max: effectiveMax,
-        mode: mode,
-      ),
-      bottom: spacing(
-        context,
-        resolvedBottom,
-        min: effectiveMin,
-        max: effectiveMax,
-        mode: mode,
-      ),
+    final [l, r, t, b] = _paddingSides(
+      context,
+      all: all,
+      horizontal: horizontal,
+      vertical: vertical,
+      leading: left,
+      trailing: right,
+      top: top,
+      bottom: bottom,
+      min: min,
+      max: max,
+      mode: mode,
     );
+    return EdgeInsets.only(left: l, right: r, top: t, bottom: b);
   }
 
   /// Shortcut for padding all sides equally
@@ -534,70 +524,53 @@ abstract final class ResponsiveHelper {
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) {
     /// Resolve start value with priority: explicit > horizontal > all
-    final resolvedStart = start != AppSpacing.none
-        ? start
-        : horizontal != AppSpacing.none
-        ? horizontal
-        : all;
-
-    /// Resolve end value with priority: explicit > horizontal > all
-    final resolvedEnd = end != AppSpacing.none
-        ? end
-        : horizontal != AppSpacing.none
-        ? horizontal
-        : all;
-
-    /// Resolve top value with priority: explicit > vertical > all
-    final resolvedTop = top != AppSpacing.none
-        ? top
-        : vertical != AppSpacing.none
-        ? vertical
-        : all;
-
-    /// Resolve bottom value with priority: explicit > vertical > all
-    final resolvedBottom = bottom != AppSpacing.none
-        ? bottom
-        : vertical != AppSpacing.none
-        ? vertical
-        : all;
-
-    /// Auto-detect min/max from all resolved values
-    final allValues = [resolvedStart, resolvedEnd, resolvedTop, resolvedBottom];
-    final effectiveMin =
-        min ?? allValues.reduce((a, b) => a.mobile < b.mobile ? a : b);
-    final effectiveMax =
-        max ?? allValues.reduce((a, b) => a.mobile > b.mobile ? a : b);
-
-    return EdgeInsetsDirectional.only(
-      start: spacing(
-        context,
-        resolvedStart,
-        min: effectiveMin,
-        max: effectiveMax,
-        mode: mode,
-      ),
-      end: spacing(
-        context,
-        resolvedEnd,
-        min: effectiveMin,
-        max: effectiveMax,
-        mode: mode,
-      ),
-      top: spacing(
-        context,
-        resolvedTop,
-        min: effectiveMin,
-        max: effectiveMax,
-        mode: mode,
-      ),
-      bottom: spacing(
-        context,
-        resolvedBottom,
-        min: effectiveMin,
-        max: effectiveMax,
-        mode: mode,
-      ),
+    final [st, en, t, b] = _paddingSides(
+      context,
+      all: all,
+      horizontal: horizontal,
+      vertical: vertical,
+      leading: start,
+      trailing: end,
+      top: top,
+      bottom: bottom,
+      min: min,
+      max: max,
+      mode: mode,
     );
+    return EdgeInsetsDirectional.only(start: st, end: en, top: t, bottom: b);
+  }
+
+  /// Shared by [radius] and [radiusDirectional]: the responsive corner size
+  /// for [size] in the given [mode].
+  static double _radiusValue(
+    BuildContext context,
+    AppRadius size, {
+    required AppRadius? min,
+    required AppRadius? max,
+    required ResponsiveMode mode,
+  }) {
+    final screenType = ScreenEngine.screenType(context);
+
+    switch (mode) {
+      case ResponsiveMode.fixed:
+        return size.mobile;
+      case ResponsiveMode.scaleOnly:
+        return ScaleEngine.scale(
+          context,
+          designValue: size.mobile,
+          minValue: (min ?? AppRadius.none).mobile,
+          maxValue: (max ?? AppRadius.full).mobile,
+        );
+      case ResponsiveMode.adaptiveOnly:
+        return size.forType(screenType);
+      case ResponsiveMode.adaptiveScale:
+        return ScaleEngine.scale(
+          context,
+          designValue: size.forType(screenType),
+          minValue: (min ?? AppRadius.none).forType(screenType),
+          maxValue: (max ?? AppRadius.full).forType(screenType),
+        );
+    }
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -633,41 +606,11 @@ abstract final class ResponsiveHelper {
     bool bottomRight = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
   }) {
-    final screenType = ScreenEngine.screenType(context);
-
-    /// Handle full circular radius as special case
     if (size == AppRadius.full) {
       return BorderRadius.circular(double.infinity);
     }
 
-    /// Helper function to resolve radius value based on mode
-    double getValue() {
-      switch (mode) {
-        case ResponsiveMode.fixed:
-          return size.mobile;
-        case ResponsiveMode.scaleOnly:
-          return ScaleEngine.scale(
-            context,
-            designValue: size.mobile,
-            minValue: (min ?? AppRadius.none).mobile,
-            maxValue: (max ?? AppRadius.full).mobile,
-          );
-        case ResponsiveMode.adaptiveOnly:
-          return size.forType(screenType);
-        case ResponsiveMode.adaptiveScale:
-          final designValue = size.forType(screenType);
-          final minValue = (min ?? AppRadius.none).forType(screenType);
-          final maxValue = (max ?? AppRadius.full).forType(screenType);
-          return ScaleEngine.scale(
-            context,
-            designValue: designValue,
-            minValue: minValue,
-            maxValue: maxValue,
-          );
-      }
-    }
-
-    final r = getValue();
+    final r = _radiusValue(context, size, min: min, max: max, mode: mode);
     final corner = Radius.circular(r);
     const sharp = Radius.zero;
 
@@ -778,41 +721,11 @@ abstract final class ResponsiveHelper {
     bool bottomEnd = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
   }) {
-    final screenType = ScreenEngine.screenType(context);
-
-    /// Handle full circular radius as special case
     if (size == AppRadius.full) {
       return BorderRadiusDirectional.circular(double.infinity);
     }
 
-    /// Helper function to resolve radius value based on mode
-    double getValue() {
-      switch (mode) {
-        case ResponsiveMode.fixed:
-          return size.mobile;
-        case ResponsiveMode.scaleOnly:
-          return ScaleEngine.scale(
-            context,
-            designValue: size.mobile,
-            minValue: (min ?? AppRadius.none).mobile,
-            maxValue: (max ?? AppRadius.full).mobile,
-          );
-        case ResponsiveMode.adaptiveOnly:
-          return size.forType(screenType);
-        case ResponsiveMode.adaptiveScale:
-          final designValue = size.forType(screenType);
-          final minValue = (min ?? AppRadius.none).forType(screenType);
-          final maxValue = (max ?? AppRadius.full).forType(screenType);
-          return ScaleEngine.scale(
-            context,
-            designValue: designValue,
-            minValue: minValue,
-            maxValue: maxValue,
-          );
-      }
-    }
-
-    final r = getValue();
+    final r = _radiusValue(context, size, min: min, max: max, mode: mode);
     final corner = Radius.circular(r);
     const sharp = Radius.zero;
 
