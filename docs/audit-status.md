@@ -29,3 +29,35 @@ never executed. Run them before merging.
 | S1, S2 | fixed | Hardcoded URL/key removed, config via `--dart-define-from-file`. The removed key was an `anon` key (not a secret) so no rotation is required, but it remains in git history. |
 | S4 / A1 | open | `hive_manager.dart` and `cache_manager.dart` in `core` import `UserModel` from `features/auth`. |
 | A7 | open | All six onboarding keys point to `onboarding.title1`; the copy is still the sports-store text. |
+
+
+## Branch `claude/audit-fixes` (second audit list, items 1-20)
+
+Verification level: **static review only** (Flutter SDK unavailable). Nothing was
+formatted, analysed, built or run, and every test below was written but never
+executed. Run `dart format`, `flutter analyze` and `flutter test` before merging.
+
+| # | Status | Notes |
+| --- | --- | --- |
+| 1 | fixed | `resolveRedirect` pure function, deny-by-default; `route_guards` no longer imports the router. Redirect enabled, app starts at `/`. |
+| 2 | fixed | `NetworkInfoImpl` uses `connectivity_plus` only. |
+| 3 | fixed | `GOOGLE_CLIENT_ID` read once in `EnvConfig` (dart-define), null when unset. |
+| 4 | fixed | `LanguageInterceptor` enabled; `AppLanguageProvider` reads `LocaleCubit`. |
+| 5 | not done | `Money` type: not in the requested set. |
+| 6 | fixed | `TokenManager.sessionCleared` -> `AuthCubit`; `getCurrentUser` clears the session only on 401/403. |
+| 7 | fixed | Recursive redaction in `LoggerInterceptor`. |
+| 8 | fixed | Type-checked responses, `fromJsonList`, every exception mapped. |
+| 10 | fixed | Splash `init()` idempotent, waits for `AuthCubit.checkAuthentication()`. |
+| 11 | fixed | Sequential token writes with rollback; `saveTokens` for refresh. Not atomic. |
+| 12 | fixed | Tests for `LanguageInterceptor`, `BaseCubit`, plus the new code. Hand-written fakes. |
+| 13 | fixed | `EffectMixin` holds effects until the first listener. |
+| 16 | fixed | Unused data models with `Color`/`IconData` removed. |
+| 17 | fixed | Component themes take the built `TextTheme` instead of `Theme.of(context)`. |
+| 18 | fixed | Duplicated padding/radius logic in `responsive_helper.dart` shared. |
+| 19 | partly fixed | Path parameters encoded. `/products/...` paths still do not match Supabase; needs the real API contract. |
+| 20 | reviewed | No `core` -> `features`, `data` -> `presentation` or `domain` -> Flutter/Dio imports found. Removed two empty files (`constants/test`, commented-out `check_auth_usecase.dart`). 34 files are still unreachable from `main.dart` (see Q2) and were left for the owner. |
+
+Behaviour changes to be aware of: the redirect is now active (splash -> onboarding
+-> login), `TokenManager` is no longer `const`, `AuthCubit` and `DioService`
+constructors take one new required argument each, and the app bar, chips, buttons
+and inputs now use the app text styles instead of Material defaults.
