@@ -18,18 +18,26 @@ abstract final class ScreenEngine {
   static const double _mobileBreakpoint = 600;
   static const double _tabletBreakpoint = 1200;
 
+  /// Used when no [MediaQuery] is above [context] (for example while the
+  /// theme is built above MaterialApp). A common phone size, so the first
+  /// frame never throws.
+  static const Size fallbackSize = Size(390, 844);
+
   // ══════════════════════════════════════════════════════════════
   // DIMENSIONS
   // ══════════════════════════════════════════════════════════════
 
+  static Size _size(BuildContext context) =>
+      MediaQuery.maybeSizeOf(context) ?? fallbackSize;
+
   static double screenWidth(BuildContext context, {double rate = 1}) =>
-      MediaQuery.sizeOf(context).width * rate;
+      _size(context).width * rate;
 
   static double screenHeight(BuildContext context, {double rate = 1}) =>
-      MediaQuery.sizeOf(context).height * rate;
+      _size(context).height * rate;
 
   static EdgeInsets safeAreaPadding(BuildContext context) =>
-      MediaQuery.paddingOf(context);
+      MediaQuery.maybePaddingOf(context) ?? EdgeInsets.zero;
 
   // ══════════════════════════════════════════════════════════════
   // SCREEN TYPE
@@ -56,11 +64,12 @@ abstract final class ScreenEngine {
   // ORIENTATION
   // ══════════════════════════════════════════════════════════════
 
-  static bool isPortrait(BuildContext context) =>
-      MediaQuery.orientationOf(context) == Orientation.portrait;
+  static bool isPortrait(BuildContext context) {
+    final size = _size(context);
+    return size.height >= size.width;
+  }
 
-  static bool isLandscape(BuildContext context) =>
-      MediaQuery.orientationOf(context) == Orientation.landscape;
+  static bool isLandscape(BuildContext context) => !isPortrait(context);
 
   static AppOrientation orientation(BuildContext context) =>
       isPortrait(context) ? AppOrientation.portrait : AppOrientation.landscape;

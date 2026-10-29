@@ -79,7 +79,8 @@ abstract final class ScaleEngine {
     if (!respectTextScaler) return scaled;
 
     // يحترم المستخدم لكن يمنع التضخم الزائد (max 1.3×)
-    final capped = MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
-    return capped.scale(scaled);
+    final textScaler = MediaQuery.maybeTextScalerOf(context);
+    if (textScaler == null) return scaled;
+    return textScaler.clamp(maxScaleFactor: 1.3).scale(scaled);
   }
 }

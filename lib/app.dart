@@ -28,7 +28,15 @@ class MyApp extends StatelessWidget {
         },
         child: BlocBuilder<ThemeCubit, ThemeState>(
           builder: (context, themeState) {
-            return MaterialApp.router(
+            // MaterialApp is what normally provides MediaQuery, but the theme
+            // is built *before* it exists. The responsive theme (font sizes,
+            // navigation bar height) reads the screen size, so provide a
+            // MediaQuery above MaterialApp that follows the real view and
+            // rebuild the theme with a context that sits under it.
+            return MediaQuery.fromView(
+              view: View.of(context),
+              child: Builder(
+                builder: (context) => MaterialApp.router(
               debugShowCheckedModeBanner: false,
               locale: context.locale,
               supportedLocales: context.supportedLocales,
@@ -70,6 +78,8 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
                 body: child,
+              ),
+                ),
               ),
             );
           },
