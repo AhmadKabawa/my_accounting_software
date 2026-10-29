@@ -67,8 +67,8 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
   }
 
   @override
-  Future<void> close() {
-    _sessionSub.cancel();
+  Future<void> close() async {
+    await _sessionSub.cancel();
     cancelRequests(); //م كلشي فو اتصال بالانترنت
 
     return super.close();

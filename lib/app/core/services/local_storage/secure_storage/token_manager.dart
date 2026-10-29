@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
+import 'package:accounting_software/app/core/utils/logger.dart';
 
 class TokenManager {
   final StorageService _storage;
@@ -41,16 +42,38 @@ class TokenManager {
   Future<String?> getUserId() => _storage.read<String>(StorageKeys.userId);
 
   // ─── Batch Operations ──────────────────────────────────
-  // Secure storage has no transactions. Writes run in order and any failure
-  // clears the session, so a half-written one (e.g. an access token without
-  // its refresh token) is never left behind.
+  // Secure storage has no transactions. Writes run in order.
+  //
+  // Two kinds of "removing the session" exist and must not be confused:
+  //  * [_wipeStorage] only deletes the keys. It is used to roll back a failed
+  //    write and never signals anything, so a failed *login* is reported as a
+  //    failed login, not as an expired session.
+  //  * [clearTokens] deletes the keys AND signals [sessionCleared]. It means
+  //    "the session that was in use is gone" (expiry, rejected refresh token).
+  Future<void> _wipeStorage() => Future.wait([
+    _storage.delete(StorageKeys.accessToken),
+    _storage.delete(StorageKeys.refreshToken),
+    _storage.delete(StorageKeys.userId),
+  ]);
+
+  /// Login path: all-or-nothing. A failure rolls everything back silently
+  /// (no [sessionCleared] event) and rethrows to the caller.
   Future<void> _writeAll(List<Future<void> Function()> writes) async {
     try {
       for (final write in writes) {
         await write();
       }
     } catch (_) {
-      await clearTokens();
+      try {
+        await _wipeStorage();
+      } catch (e, st) {
+        Logger.error(
+          'TokenManager: rollback failed',
+          error: e,
+          stackTrace: st,
+          name: 'TokenManager',
+        );
+      }
       rethrow;
     }
   }
@@ -65,22 +88,41 @@ class TokenManager {
     () => saveUserId(userId),
   ]);
 
-  /// Stores a renewed session. Supabase rotates the refresh token, so it is
-  /// replaced whenever the server returns a new one.
+  /// Stores a renewed session (refresh path).
+  ///
+  /// The new access token is what keeps the user signed in, so it is written
+  /// first. If it cannot be stored the session really is lost and
+  /// [clearTokens] signals it. If only the rotated refresh token cannot be
+  /// stored, the valid access token is kept and the error is logged instead
+  /// of signing the user out.
   Future<void> saveTokens({
     required String accessToken,
     String? refreshToken,
-  }) => _writeAll([
-    () => saveAccessToken(accessToken),
-    if (refreshToken != null) () => saveRefreshToken(refreshToken),
-  ]);
+  }) async {
+    try {
+      await saveAccessToken(accessToken);
+    } catch (_) {
+      await clearTokens();
+      rethrow;
+    }
 
+    if (refreshToken == null) return;
+    try {
+      await saveRefreshToken(refreshToken);
+    } catch (e, st) {
+      Logger.error(
+        'TokenManager: could not store the renewed refresh token; '
+        'keeping the new access token',
+        error: e,
+        stackTrace: st,
+        name: 'TokenManager',
+      );
+    }
+  }
+
+  /// Removes the stored session and signals [sessionCleared].
   Future<void> clearTokens() async {
-    await Future.wait([
-      _storage.delete(StorageKeys.accessToken),
-      _storage.delete(StorageKeys.refreshToken),
-      _storage.delete(StorageKeys.userId),
-    ]);
+    await _wipeStorage();
     _sessionCleared.add(null);
   }
 
