@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_parser.d
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/services/network/api_client_interface.dart';
 import 'package:accounting_software/app/core/services/network/api_end_points.dart';
+import 'package:accounting_software/app/core/utils/logger.dart';
 import 'dio_service.dart';
 
 typedef JsonFactory<T> = T Function(Map<String, dynamic>);
@@ -235,7 +236,16 @@ class ApiClient implements IApiClient {
       // Cancel ليس خطأ — هو قرار واعٍ من الـ ViewModel
       if (CancelToken.isCancel(e)) return ApiFailure(ApiException.cancelled());
       return ApiFailure(_mapException(e));
-    } catch (e) {
+    } catch (e, st) {
+      // Programming errors (null checks, bad casts) are turned into a failure
+      // so the app does not crash, but they must stay visible while
+      // developing: log the full exception and stack trace (debug only).
+      Logger.error(
+        'ApiClient: unexpected error',
+        error: e,
+        stackTrace: st,
+        name: 'ApiClient',
+      );
       return ApiFailure(ApiException.unknown(serverMessage: e.toString()));
     }
   }
@@ -289,7 +299,13 @@ class ApiClient implements IApiClient {
           ),
         ),
       };
-    } catch (e) {
+    } catch (e, st) {
+      Logger.error(
+        'ApiClient: parse error',
+        error: e,
+        stackTrace: st,
+        name: 'ApiClient',
+      );
       return ApiFailure(ApiException.unknown(serverMessage: 'Parse error: $e'));
     }
   }
