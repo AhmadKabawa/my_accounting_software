@@ -131,7 +131,14 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
     }
 
     result.fold(
-      (_) => emit(const AuthState.unauthenticated()),
+      (failure) {
+        // No cached user and the server could not be reached (or failed): we
+        // cannot confirm the session, so show the login screen but say WHY
+        // instead of failing silently. The message waits briefly for the
+        // login screen to start listening.
+        emit(const AuthState.unauthenticated());
+        _emitError(failure, replayable: true);
+      },
       (user) => emit(
         user != null
             ? AuthState.authenticated(user: user)
@@ -202,11 +209,25 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
     emit(const AuthState.loading());
 
     _signingOut = true;
-    final Either<Failure, Unit> result;
+    Either<Failure, Unit>? result;
     try {
       result = await _logout(NoParams());
+    } catch (e, st) {
+      Logger.error(
+        'AuthCubit: sign-out threw',
+        error: e,
+        stackTrace: st,
+        name: 'AuthCubit',
+      );
     } finally {
       _signingOut = false;
+    }
+
+    // An exception must never leave the app stuck in AuthLoading.
+    if (result == null) {
+      emit(const AuthState.unauthenticated());
+      _emitError(UnexpectedFailure());
+      return;
     }
 
     result.fold(
