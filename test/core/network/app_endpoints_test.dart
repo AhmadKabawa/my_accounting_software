@@ -22,4 +22,18 @@ void main() {
   test('non-ASCII values are percent-encoded as UTF-8', () {
     expect(products.byCategory('أحذية').path, startsWith('/products/category/%D8'));
   });
+
+  test('"." and ".." are rejected instead of being passed through', () {
+    for (final bad in ['.', '..']) {
+      expect(() => products.byId(bad), throwsArgumentError, reason: bad);
+      expect(() => products.reviews(bad), throwsArgumentError, reason: bad);
+      expect(() => products.related(bad), throwsArgumentError, reason: bad);
+      expect(() => products.byCategory(bad), throwsArgumentError, reason: bad);
+    }
+  });
+
+  test('dots inside a longer value are fine', () {
+    expect(products.byId('a.b').path, '/products/a.b');
+    expect(products.byId('...').path, '/products/...');
+  });
 }

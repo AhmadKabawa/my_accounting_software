@@ -54,7 +54,19 @@ final class _ProductEndpoints {
   AppEndpoint byCategory(String category) =>
       AppEndpoint('$base/category/${_seg(category)}');
 
-  static String _seg(String value) => Uri.encodeComponent(value);
+  /// Encodes one dynamic path segment. `.` and `..` are rejected: they are not
+  /// touched by percent-encoding, so `/products/..` could be normalised by a
+  /// proxy or resolver into a different resource.
+  static String _seg(String value) {
+    if (value == '.' || value == '..') {
+      throw ArgumentError.value(
+        value,
+        'value',
+        'A path segment cannot be "." or ".."',
+      );
+    }
+    return Uri.encodeComponent(value);
+  }
 }
 // ─────────────────────────────────────────────────────────────
  
