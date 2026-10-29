@@ -323,10 +323,14 @@ class ApiClient implements IApiClient {
 
   ApiException _mapException(DioException e) {
     return switch (e.type) {
+      // The link can be up without reaching the internet (captive portal,
+      // router with no uplink), so connectivity_plus alone says "online".
+      // Failing to even establish the connection is reported as "no
+      // internet"; only a slow *established* request is a plain timeout.
       DioExceptionType.connectionTimeout ||
+      DioExceptionType.connectionError => ApiException.noInternet(),
       DioExceptionType.sendTimeout ||
       DioExceptionType.receiveTimeout => ApiException.timeout(),
-      DioExceptionType.connectionError => ApiException.noInternet(),
       DioExceptionType.cancel => ApiException.cancelled(),
       DioExceptionType.badResponse => _mapStatusCode(e),
       _ => ApiException.unknown(serverMessage: e.message),

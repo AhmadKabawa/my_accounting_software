@@ -1,3 +1,4 @@
+import 'package:accounting_software/app/core/error/error_handling/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/services/network/api_end_points.dart';
 import 'package:accounting_software/app/core/services/network/dio/api_client.dart';
@@ -5,6 +6,7 @@ import 'package:accounting_software/app/core/services/network/dio/dio_service.da
 import 'package:accounting_software/app/core/services/network/dio/interceptors/language_interceptor.dart';
 import 'package:accounting_software/app/core/services/network/network_info/network_info.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/memory_storage.dart';
@@ -98,6 +100,48 @@ void main() {
       );
 
       expect(result, isA<ApiFailure<Map<String, dynamic>>>());
+    });
+  });
+
+  group('connection problems', () {
+    ApiClient failingWith(DioExceptionType type) {
+      final service = DioService(
+        tokenManager: TokenManager(storage: MemoryStorage()),
+        networkInfoImpl: _Online(),
+        languageProvider: _Lang(),
+      );
+      service.dio.httpClientAdapter = RoutedAdapter(
+        (o) async => throw DioException(requestOptions: o, type: type),
+      );
+      return ApiClient(dioService: service);
+    }
+
+    // POST on purpose: GETs are retried with real delays by RetryInterceptor.
+    ApiExceptionType typeOf(ApiResult<dynamic> r) =>
+        ((r as ApiFailure<dynamic>).exception as ApiException).type;
+
+    test('a connection timeout is reported as no internet', () async {
+      final result = await failingWith(
+        DioExceptionType.connectionTimeout,
+      ).post<_Item>(_endpoint, fromJson: _parse);
+
+      expect(typeOf(result), ApiExceptionType.noInternet);
+    });
+
+    test('a connection error is reported as no internet', () async {
+      final result = await failingWith(
+        DioExceptionType.connectionError,
+      ).post<_Item>(_endpoint, fromJson: _parse);
+
+      expect(typeOf(result), ApiExceptionType.noInternet);
+    });
+
+    test('a slow response on an open connection stays a timeout', () async {
+      final result = await failingWith(
+        DioExceptionType.receiveTimeout,
+      ).post<_Item>(_endpoint, fromJson: _parse);
+
+      expect(typeOf(result), ApiExceptionType.timeout);
     });
   });
 

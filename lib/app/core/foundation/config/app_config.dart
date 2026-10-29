@@ -32,7 +32,9 @@ class AppConfig {
   static String supabaseAnonKey = EnvConfig.supabaseAnonKey;
 
   // ── Timeouts ──────────────────────────────────────
-  static const int connectTimeout = 30000;
+  // Short on purpose: a network that is "connected" but has no internet
+  // should report "no connection" within seconds, not after 30s.
+  static const int connectTimeout = 10000;
   static const int receiveTimeout = 30000;
   static const int sendTimeout = 30000;
 
