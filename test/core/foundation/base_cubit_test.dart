@@ -31,14 +31,25 @@ void main() {
     expect(effects, ['incremented to 1']);
   });
 
-  test('an effect emitted before the UI subscribes is not lost', () async {
+  test('a replayable effect emitted before the UI subscribes is not lost',
+      () async {
+    cubit.emitEffect('session expired', replayable: true);
+
+    final effects = <String>[];
+    cubit.effectStream.listen(effects.add);
+    await pump();
+
+    expect(effects, ['session expired']);
+  });
+
+  test('an ordinary effect emitted with no listener is dropped', () async {
     cubit.increment();
 
     final effects = <String>[];
     cubit.effectStream.listen(effects.add);
     await pump();
 
-    expect(effects, ['incremented to 1']);
+    expect(effects, isEmpty);
   });
 
   test('close completes the effect stream', () async {

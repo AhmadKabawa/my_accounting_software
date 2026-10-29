@@ -77,11 +77,12 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
   // ══════════════════════════════════════════════════
   //  Helpers
   // ══════════════════════════════════════════════════
-  void _emitError(Failure failure) => emitEffect(
+  void _emitError(Failure failure, {bool replayable = false}) => emitEffect(
     AuthEffect.showMessage(
       messageKey: FailureTranslator.translate(failure),
       type: MessageType.error,
     ),
+    replayable: replayable,
   );
 
   void _emitSuccess(AppKey key) => emitEffect(
@@ -93,7 +94,9 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
   void _onSessionCleared(void _) {
     if (_signingOut || state is Unauthenticated || state is AuthInitial) return;
     emit(const AuthState.unauthenticated());
-    _emitError(UnauthorizedFailure());
+    // Still true on whichever screen shows it (e.g. the login screen the
+    // router redirects to), so it may wait briefly for a listener.
+    _emitError(UnauthorizedFailure(), replayable: true);
   }
 
   /// Returns to [previous] unless the session ended while the call was running.

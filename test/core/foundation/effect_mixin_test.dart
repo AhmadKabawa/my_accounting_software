@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:accounting_software/app/core/foundation/base_mixin/mixin/effect_mixin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _Probe with EffectMixin<int> {}
+class _Probe with EffectMixin<int> {
+  @override
+  Duration get replayWindow => const Duration(milliseconds: 50);
+}
 
 Future<void> pump() => Future<void>.delayed(Duration.zero);
 
@@ -13,10 +16,11 @@ void main() {
   setUp(() => probe = _Probe());
   tearDown(() => probe.disposeEffects());
 
-  test('effects emitted before any listener are delivered in order', () async {
+  test('replayable effects emitted before any listener arrive in order',
+      () async {
     probe
-      ..emitEffect(1)
-      ..emitEffect(2);
+      ..emitEffect(1, replayable: true)
+      ..emitEffect(2, replayable: true);
 
     final received = <int>[];
     probe.effectStream.listen(received.add);
@@ -26,7 +30,7 @@ void main() {
   });
 
   test('a delivered effect is never replayed to a later listener', () async {
-    probe.emitEffect(1);
+    probe.emitEffect(1, replayable: true);
     final first = <int>[];
     final sub = probe.effectStream.listen(first.add);
     await pump();
@@ -44,13 +48,35 @@ void main() {
     final sub = probe.effectStream.listen((_) {});
     await sub.cancel();
 
-    probe.emitEffect(7);
+    probe.emitEffect(7, replayable: true);
 
     final received = <int>[];
     probe.effectStream.listen(received.add);
     await pump();
 
     expect(received, [7]);
+  });
+
+  test('a non-replayable effect is dropped when nobody listens', () async {
+    probe.emitEffect(9);
+
+    final received = <int>[];
+    probe.effectStream.listen(received.add);
+    await pump();
+
+    expect(received, isEmpty);
+  });
+
+  test('a replayable effect older than the replay window is dropped',
+      () async {
+    probe.emitEffect(4, replayable: true);
+    await Future<void>.delayed(const Duration(milliseconds: 120));
+
+    final received = <int>[];
+    probe.effectStream.listen(received.add);
+    await pump();
+
+    expect(received, isEmpty);
   });
 
   test('with a listener attached effects go straight through', () async {
