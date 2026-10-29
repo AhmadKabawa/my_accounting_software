@@ -7,6 +7,26 @@ final Set<String> publicRoutes = {
   AppRoutes.onboarding.path,
   AppRoutes.login.path,
   AppRoutes.register.path,
+  AppRoutes.forgotPassword.path,
+  AppRoutes.verifyResetCode.path,
+  AppRoutes.resetPassword.path,
+};
+
+/// المسارات المحمية، مذكورة صراحةً. أي مسار جديد في [AppRoutes] يجب أن يظهر
+/// هنا أو في [publicRoutes] وإلا يفشل `route_guards_test.dart`.
+final Set<String> protectedRoutes = {
+  AppRoutes.mainPages.path,
+  AppRoutes.home.path,
+  AppRoutes.profile.path,
+  AppRoutes.chat.path,
+  AppRoutes.favorites.path,
+  AppRoutes.products.path,
+  AppRoutes.productDetails.path,
+  AppRoutes.addProduct.path,
+  AppRoutes.editProduct.path,
+  AppRoutes.settings.path,
+  AppRoutes.profileOrders.path,
+  AppRoutes.profileReviews.path,
 };
 
 final Set<String> _authOnlyEntryRoutes = {

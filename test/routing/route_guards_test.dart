@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
@@ -54,6 +57,41 @@ void main() {
 
     test('allows the onboarding page itself', () {
       expect(run('/onboarding', onboarded: false), isNull);
+    });
+  });
+
+  group('route classification', () {
+    test('every AppRoutes entry is explicitly public or protected', () {
+      for (final route in AppRoutes.all) {
+        final isPublic = publicRoutes.contains(route.path);
+        final isProtected = protectedRoutes.contains(route.path);
+        expect(
+          isPublic != isProtected,
+          isTrue,
+          reason:
+              '${route.path} must be in exactly one of publicRoutes / '
+              'protectedRoutes (public=$isPublic, protected=$isProtected)',
+        );
+      }
+    });
+
+    test('AppRoutes.all lists every route declared in routes.dart', () {
+      final source = File('lib/app/core/routing/routes.dart').readAsStringSync();
+      final declared = RegExp(
+        r'^\s*static const \w+ = RouteItem\(',
+        multiLine: true,
+      ).allMatches(source).length;
+      expect(AppRoutes.all.length, declared);
+    });
+
+    test('password recovery pages are reachable while signed out', () {
+      for (final route in [
+        AppRoutes.forgotPassword,
+        AppRoutes.verifyResetCode,
+        AppRoutes.resetPassword,
+      ]) {
+        expect(run(route.path), isNull, reason: route.path);
+      }
     });
   });
 

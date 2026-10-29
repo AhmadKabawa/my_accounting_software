@@ -6,6 +6,16 @@ class AppRoutes {
   // ─────────────────── المصادقة ───────────────────
   static const login = RouteItem('/login', 'login');
   static const register = RouteItem('/register', 'register');
+  // Password recovery: reached by people who cannot sign in, so public.
+  static const forgotPassword = RouteItem('/forgot-password', 'forgotPassword');
+  static const verifyResetCode = RouteItem(
+    '/forgot-password/verify',
+    'verifyResetCode',
+  );
+  static const resetPassword = RouteItem(
+    '/forgot-password/reset',
+    'resetPassword',
+  );
 
   // ─────────────────── الصفحات الرئيسية ───────────────────
   static const mainPages = RouteItem('/mainPages', 'mainPages');
@@ -24,7 +34,31 @@ class AppRoutes {
   static const settings = RouteItem('/settings', 'settings');
   static const profileOrders = RouteItem('/profile/orders', 'profileOrders');
   static const profileReviews = RouteItem('/profile/reviews', 'profileReviews');
-  // static const productDetails = RouteItem('/products/:id', 'productDetails');
+
+  /// Every route above. Add new routes here too: `route_guards_test.dart`
+  /// fails if a route is missing from this list, or is not classified as
+  /// public or protected in `route_guards.dart`.
+  static const List<RouteItem> all = [
+    splash,
+    onboarding,
+    login,
+    register,
+    forgotPassword,
+    verifyResetCode,
+    resetPassword,
+    mainPages,
+    home,
+    profile,
+    chat,
+    favorites,
+    products,
+    productDetails,
+    addProduct,
+    editProduct,
+    settings,
+    profileOrders,
+    profileReviews,
+  ];
 }
 
 class RouteItem {
