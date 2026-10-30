@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/routing/app_go_router.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
@@ -96,4 +98,16 @@ abstract class AuthRoutingLogic {
 
     return null; // دعه يكمل في صفحة التسجيل
   }
+}
+
+/// مسؤول عن توجيه الصلاحيات فقط (UX؛ الخادم هو الحماية الفعلية).
+abstract class AccessRoutingLogic {
+  /// يُستخدم على أي مسار: `GoRoute(redirect: AccessRoutingLogic.require(Permissions.reports.view))`.
+  /// يعيد المستخدم إلى [fallback] إن لم يملك [permission].
+  /// يجب ألا يكون [fallback] نفسه محميًا بنفس الصلاحية لتجنب حلقة توجيه.
+  static GoRouterRedirect require(
+    Permission permission, {
+    RouteItem fallback = AppRoutes.home,
+  }) => (context, state) =>
+      AppRouter.accessCubit.can(permission) ? null : fallback.path;
 }
