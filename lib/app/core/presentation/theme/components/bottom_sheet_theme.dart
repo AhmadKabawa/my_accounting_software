@@ -1,7 +1,7 @@
 // components/bottom_sheet_theme.dart
 import 'package:flutter/material.dart';
 
-BottomSheetThemeData buildBottomSheetTheme(BuildContext contex,  {required ColorScheme colorScheme}) {
+BottomSheetThemeData buildBottomSheetTheme({required ColorScheme colorScheme}) {
   return BottomSheetThemeData(
     showDragHandle: true,
     backgroundColor: colorScheme.surface,

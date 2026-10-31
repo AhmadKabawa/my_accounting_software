@@ -1,22 +1,21 @@
 // components/input_decoration_theme.dart
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/theme/logic/theme_extension.dart';
 
-InputDecorationTheme buildInputDecorationTheme(
-  BuildContext contex, {
+InputDecorationTheme buildInputDecorationTheme({
   required ColorScheme colorScheme,
+  required TextTheme textTheme,
 }) {
   return InputDecorationTheme(
     errorMaxLines: 3,
     prefixIconColor: colorScheme.onSurfaceVariant,
     suffixIconColor: colorScheme.onSurfaceVariant,
-    labelStyle: contex.textTheme.labelMedium!.copyWith(
+    labelStyle: textTheme.labelMedium!.copyWith(
       color: colorScheme.onSurfaceVariant,
     ),
-    hintStyle: contex.textTheme.titleSmall!.copyWith(
+    hintStyle: textTheme.titleSmall!.copyWith(
       color: colorScheme.onSurfaceVariant,
     ),
-    floatingLabelStyle: contex.textTheme.labelLarge!.copyWith(
+    floatingLabelStyle: textTheme.labelLarge!.copyWith(
       color: colorScheme.onSurfaceVariant,
     ),
     border: _border(colorScheme.outline),

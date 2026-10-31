@@ -1,10 +1,9 @@
 // components/elevated_button_theme.dart
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/theme/logic/theme_extension.dart';
 
-ElevatedButtonThemeData buildElevatedButtonTheme(
-  BuildContext contex, {
+ElevatedButtonThemeData buildElevatedButtonTheme({
   required ColorScheme colorScheme,
+  required TextTheme textTheme,
 }) {
   return ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -14,7 +13,7 @@ ElevatedButtonThemeData buildElevatedButtonTheme(
       disabledForegroundColor: colorScheme.onSurface.withOpacity(0.4),
       disabledBackgroundColor: colorScheme.onSurface.withOpacity(0.12),
       padding: const EdgeInsets.symmetric(vertical: 18),
-      textStyle: contex.textTheme.titleMedium,
+      textStyle: textTheme.titleMedium,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
   );

@@ -10,35 +10,48 @@ import 'package:accounting_software/app/core/presentation/theme/components/navig
 import 'package:accounting_software/app/core/presentation/theme/components/outlined_button_theme.dart';
 import 'package:accounting_software/app/core/presentation/theme/components/text_theme.dart';
 
-ThemeData buildTheme({
-  required BuildContext context,
-  required ColorScheme colorScheme,
-}) => ThemeData(
+/// Context-free base theme: colors, shapes and the font family.
+/// Safe to build once and use directly as MaterialApp.theme/darkTheme.
+ThemeData buildTheme({required ColorScheme colorScheme}) => ThemeData(
   useMaterial3: true,
   brightness: colorScheme.brightness,
   fontFamily: 'Cairo',
   colorScheme: colorScheme,
-
-  textTheme: buildTextTheme(context: context, colorScheme: colorScheme),
-  appBarTheme: buildAppBarTheme(context, colorScheme: colorScheme),
-  bottomSheetTheme: buildBottomSheetTheme(context, colorScheme: colorScheme),
-  checkboxTheme: buildCheckboxTheme(context, colorScheme: colorScheme),
-  chipTheme: buildChipTheme(context, colorScheme: colorScheme),
-  elevatedButtonTheme: buildElevatedButtonTheme(
-    context,
-    colorScheme: colorScheme,
-  ),
-  outlinedButtonTheme: buildOutlinedButtonTheme(
-    context,
-    colorScheme: colorScheme,
-  ),
-  inputDecorationTheme: buildInputDecorationTheme(
-    context,
-    colorScheme: colorScheme,
-  ),
-  navigationBarTheme: buildNavigationBarTheme(
-    context,
-    colorScheme: colorScheme,
-  ),
+  bottomSheetTheme: buildBottomSheetTheme(colorScheme: colorScheme),
+  checkboxTheme: buildCheckboxTheme(colorScheme: colorScheme),
   scaffoldBackgroundColor: colorScheme.surface,
 );
+
+/// Responsive layer: text sizes and component styles that depend on the screen.
+/// Must be called with a context BELOW MaterialApp (e.g. MaterialApp.builder),
+/// so [Theme] and [MediaQuery] resolve correctly.
+ThemeData buildResponsiveTheme(BuildContext context, ThemeData base) {
+  final colorScheme = base.colorScheme;
+  final textTheme = base.textTheme.merge(
+    buildTextTheme(context: context, colorScheme: colorScheme),
+  );
+  return base.copyWith(
+    textTheme: textTheme,
+    appBarTheme: buildAppBarTheme(
+      colorScheme: colorScheme,
+      textTheme: textTheme,
+    ),
+    chipTheme: buildChipTheme(colorScheme: colorScheme, textTheme: textTheme),
+    elevatedButtonTheme: buildElevatedButtonTheme(
+      colorScheme: colorScheme,
+      textTheme: textTheme,
+    ),
+    outlinedButtonTheme: buildOutlinedButtonTheme(
+      colorScheme: colorScheme,
+      textTheme: textTheme,
+    ),
+    inputDecorationTheme: buildInputDecorationTheme(
+      colorScheme: colorScheme,
+      textTheme: textTheme,
+    ),
+    navigationBarTheme: buildNavigationBarTheme(
+      context,
+      colorScheme: colorScheme,
+    ),
+  );
+}

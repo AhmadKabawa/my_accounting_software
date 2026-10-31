@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
               supportedLocales: context.supportedLocales,
               localizationsDelegates: context.localizationDelegates,
               routerConfig: AppRouter.router,
-              theme: AppTheme.light(context),
-              darkTheme: AppTheme.dark(context),
+              theme: AppTheme.light(),
+              darkTheme: AppTheme.dark(),
               themeMode: themeState.themeMode,
 
               builder: (context, child) {
@@ -49,7 +49,9 @@ class MyApp extends StatelessWidget {
                       maxScaleFactor: 1.3,
                     ),
                   ),
-                  child: Scaffold(
+                  child: Theme(
+                    data: AppTheme.responsive(context),
+                    child: Scaffold(
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.startFloat,
                 // Debug-only controls: they clear the session and must never
@@ -81,6 +83,7 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
                 body: child,
+                    ),
                   ),
                 );
               },

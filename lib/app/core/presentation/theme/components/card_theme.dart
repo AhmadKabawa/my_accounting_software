@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-CardThemeData buildCardTheme(BuildContext contex,  {required ColorScheme colorScheme}) {
+CardThemeData buildCardTheme({required ColorScheme colorScheme}) {
   return CardThemeData(
     color: colorScheme.surface, // لون الكارد من ColorScheme
     elevation: 2,
