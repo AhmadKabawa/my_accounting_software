@@ -783,9 +783,12 @@ abstract final class ResponsiveHelper {
   /// ```dart
   /// elevation: Rh.elevation(context, AppElevation.md)
   /// ```
-  static double elevation(BuildContext context, AppElevation size) {
+  static double elevation(
+    BuildContext context,
+    AppElevation size, {
+    ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
+  }) {
     final screenType = ScreenEngine.screenType(context);
-    ResponsiveMode mode = ResponsiveMode.adaptiveOnly;
     switch (mode) {
       case ResponsiveMode.fixed:
         return size.mobile;
@@ -1144,10 +1147,10 @@ abstract final class ResponsiveHelper {
 
 /// Extends [BuildContext] with responsive helper shortcuts
 ///
-/// Allows using `context.sp()` instead of `Rh.spacing(context, ...)`
+/// Allows using `context.spacing()` instead of `Rh.spacing(context, ...)`
 extension ResponsiveContextExtension on BuildContext {
   /// Shortcut for [ResponsiveHelper.spacing]
-  /// Usage: `context.sp(AppSpacing.md)`
+  /// Usage: `context.spacing(AppSpacing.md)`
   double spacing(
     AppSpacing size, {
     AppSpacing? min,
@@ -1156,7 +1159,7 @@ extension ResponsiveContextExtension on BuildContext {
   }) => ResponsiveHelper.spacing(this, size, min: min, max: max, mode: mode);
 
   /// Shortcut for [ResponsiveHelper.font]
-  /// Usage: `context.fs(AppFontSize.lg)`
+  /// Usage: `context.fontSize(AppFontSize.lg)`
   double fontSize(
     AppFontSize size, {
     AppFontSize? min,
@@ -1182,8 +1185,10 @@ extension ResponsiveContextExtension on BuildContext {
   }) => ResponsiveHelper.iconSize(this, size, min: min, max: max, mode: mode);
 
   /// Shortcut for [ResponsiveHelper.size_]
-  /// Usage: `context.sz(AppComponentSize.medium)`
-  double size(
+  /// Usage: `context.componentSize(AppComponentSize.medium)`
+  // Not named `size`: BuildContext already has a `size` getter, which wins over
+  // an extension member and makes `context.size(...)` uncallable.
+  double componentSize(
     AppComponentSize size, {
     AppComponentSize? min,
     AppComponentSize? max,
@@ -1191,11 +1196,11 @@ extension ResponsiveContextExtension on BuildContext {
   }) => ResponsiveHelper.size_(this, size, min: min, max: max, mode: mode);
 
   /// Shortcut for [ResponsiveHelper.elevation]
-  /// Usage: `context.el(AppElevation.md)`
+  /// Usage: `context.elevation(AppElevation.md)`
   double elevation(
     AppElevation size, {
     ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
-  }) => ResponsiveHelper.elevation(this, size);
+  }) => ResponsiveHelper.elevation(this, size, mode: mode);
 
   /// Shortcut for [ResponsiveHelper.padding]
   /// Usage: `context.pad(all: AppSpacing.md)`
