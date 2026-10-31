@@ -132,17 +132,19 @@ abstract final class AppTextStyles {
 
   static TextStyle bodyLarge(BuildContext context) => _createStyle(
     context,
-    size: AppFontSize.sm,
-    min: AppFontSize.xs,
-    max: AppFontSize.md,
+    size: AppFontSize.md, // 16/17/18
+    min: AppFontSize.base,
+    max: AppFontSize.lg,
     weight: FontWeight.normal,
   );
 
   static TextStyle bodyMedium(BuildContext context) => _createStyle(
     context,
-    size: AppFontSize.base, // Using base (14/15/16) instead of xs (10/12/14)
-    min: AppFontSize.xs,
-    max: AppFontSize.sm,
+    // Default style of every Text: 14/15/16. The clamp must not go below
+    // the size (it used to cap at sm = 12 on mobile).
+    size: AppFontSize.base,
+    min: AppFontSize.sm,
+    max: AppFontSize.md,
     weight: FontWeight.normal,
   );
 
