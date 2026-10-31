@@ -6,18 +6,16 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  /* ==================== 🎨 PRIMARY COLORS (الأزرق الأساسي) ==================== */
-  /// اللون الأساسي للتطبيق - من النسخة الأولى (#4b68ff)
-  static const Color primary = Color(0xFF4b68ff);
+  /* ==================== 🎨 BRAND (الهوية اللونية الوحيدة) ==================== */
+  /// لون الهوية — المصدر الوحيد للـ primary. غيّر هذه القيمة فقط لتغيير ألوان التطبيق
+  /// (الـ ColorScheme يُبنى منها عبر ColorScheme.fromSeed).
+  static const Color brand = Color(0xFF277359);
 
-  /// نسخة فاتحة من الأساسي (مشتق من accent في النسخة الأولى)
-  static const Color primaryLight = Color(0xFF277359);
+  /// درجة أفتح من brand — للوضع الداكن وتدرجات اللون
+  static const Color brandLight = Color(0xFF5BCFA0);
 
-  /// نسخة غامقة من الأساسي
-  static const Color primaryDark = Color(0xFF5BCFA0);
-
-  /// اللون الذي يظهر فوق الأساسي (نص، أيقونات)
-  static const Color onPrimary = white;
+  /// اللون الذي يظهر فوق brand (نص، أيقونات)
+  static const Color onBrand = white;
 
   /* ==================== 🟡 SECONDARY COLORS (الأصفر الثانوي) ==================== */
   /// اللون الثانوي - من النسخة الأولى (#FFE24B)
@@ -132,7 +130,6 @@ class AppColors {
   static const Color cardDark = Color(0xFF334155);
 
   /* ==================== 🎛️ BUTTON COLORS (من النسخة الأولى) ==================== */
-  static const Color buttonPrimary = Color(0xFF4b68ff);
   static const Color buttonSecondary = Color(0xFF6C757D);
   static const Color buttonDisabled = Color(0xFFC4C4C4);
 
@@ -156,12 +153,12 @@ class AppColors {
 
   /* ==================== 🏷️ CATEGORY COLORS (من النسخة الثانية) ==================== */
   static const Color categoryShoes = secondary;
-  static const Color categoryClothes = primary;
+  static const Color categoryClothes = brand;
   static const Color categoryEquipment = accent;
 
   /* ==================== ✨ GRADIENTS (من النسخة الثانية) ==================== */
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primary, primaryLight],
+    colors: [brand, brandLight],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -179,7 +176,7 @@ class AppColors {
   );
 
   static const LinearGradient accentGradient = LinearGradient(
-    colors: [secondary, primary],
+    colors: [secondary, brand],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

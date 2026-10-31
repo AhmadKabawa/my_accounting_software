@@ -4,22 +4,20 @@ import 'package:accounting_software/app/core/presentation/theme/app_colors.dart'
 /// ===============================
 /// 🌙 DARK COLOR SCHEME
 /// ===============================
-final ColorScheme darkColorScheme = ColorScheme(
-  brightness: Brightness.dark, // يحدد أن النظام داكن
+final ColorScheme darkColorScheme = ColorScheme.fromSeed(
+  seedColor: AppColors.brand,
+  brightness: Brightness.dark,
+).copyWith(
   // ======================================================
   // 🎯 PRIMARY
   // ======================================================
-  primary: AppColors.primaryDark,
+  primary: AppColors.brandLight,
 
   // اللون الأساسي في الداكن (أفتح ليظهر فوق الخلفية الداكنة)
   onPrimary: AppColors.black,
 
-  // نص فوق primary
-  primaryContainer: AppColors.primaryDark,
-
-  // خلفية زر مختار
-  onPrimaryContainer: AppColors.primaryLight,
-  // نص داخله
+  // primaryContainer / onPrimaryContainer / surfaceTint / inversePrimary
+  // تُولَّد تلقائياً من AppColors.brand عبر ColorScheme.fromSeed (تباين متناسق).
 
   // ======================================================
   // 🎯 SECONDARY
@@ -107,7 +105,6 @@ final ColorScheme darkColorScheme = ColorScheme(
   // ======================================================
   shadow: AppColors.shadow,
   scrim: AppColors.overlay,
-  surfaceTint: AppColors.primaryLight,
 
   // ======================================================
   // 🔄 INVERSE
@@ -116,5 +113,4 @@ final ColorScheme darkColorScheme = ColorScheme(
 
   // خلفية SnackBar في الداكن
   onInverseSurface: AppColors.textPrimary,
-  inversePrimary: AppColors.primary,
 );

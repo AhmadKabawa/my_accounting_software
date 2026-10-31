@@ -4,22 +4,20 @@ import 'package:accounting_software/app/core/presentation/theme/app_colors.dart'
 /// ===============================
 /// 🌞 LIGHT COLOR SCHEME
 /// ===============================
-final ColorScheme lightColorScheme = ColorScheme(
-  brightness: Brightness.light, // يحدد أن النظام فاتح
+final ColorScheme lightColorScheme = ColorScheme.fromSeed(
+  seedColor: AppColors.brand,
+  brightness: Brightness.light,
+).copyWith(
   // ======================================================
   // 🎯 PRIMARY (اللون الأساسي الرئيسي للتطبيق)
   // ======================================================
-  primary: AppColors.primaryLight,
+  primary: AppColors.brand,
 
   // يستخدم في: AppBar - ElevatedButton - FAB - العناصر التفاعلية المهمة
   onPrimary: AppColors.white,
 
-  // لون النص أو الأيقونات فوق primary
-  primaryContainer: AppColors.primaryLight.withOpacity(0.8),
-
-  // خلفية عناصر مختارة مثل Selected Chip أو Toggle مفعّل
-  onPrimaryContainer: AppColors.white,
-  // لون النص داخل primaryContainer
+  // primaryContainer / onPrimaryContainer / surfaceTint / inversePrimary
+  // تُولَّد تلقائياً من AppColors.brand عبر ColorScheme.fromSeed (تباين متناسق).
 
   // ======================================================
   // 🎯 SECONDARY (لون مساعد أقل أهمية من الأساسي)
@@ -117,8 +115,6 @@ final ColorScheme lightColorScheme = ColorScheme(
   scrim: AppColors.overlay,
 
   // خلفية معتمة خلف Dialog
-  surfaceTint: AppColors.primary,
-  // تأثير tint عند استخدام elevation في Material 3
 
   // ======================================================
   // 🔄 INVERSE (يستخدم في SnackBar غالبًا)
@@ -129,6 +125,4 @@ final ColorScheme lightColorScheme = ColorScheme(
   onInverseSurface: AppColors.textPrimaryDark,
 
   // نص SnackBar
-  inversePrimary: AppColors.primaryDark,
-  // لون زر داخل SnackBar
 );
