@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────
 // scale_engine.dart
-// Layer 0 — معادلة الـ scale + TextScaler للـ accessibility
+// Layer 0 — معادلة الـ scale (الأبعاد وأحجام الخط)
 // لا يُستخدم مباشرة من الـ UI
 // ─────────────────────────────────────────────────────────────────
 
@@ -53,11 +53,12 @@ abstract final class ScaleEngine {
   }
 
   // ══════════════════════════════════════════════════════════════
-  // FONT SCALE — يحترم إعداد حجم الخط في الجهاز (Accessibility)
+  // FONT SCALE — حجم الخط حسب الشاشة فقط
   //
-  // respectTextScaler: true  → يحترم إعداد الجهاز (الافتراضي)
-  //                   false  → للعناصر التي يجب ألا تكبر
-  //                            مثل: badge أرقام، أيقونات نصية
+  // لا يضرب TextScaler هنا: ويدجت Text يطبّقه بنفسه، وحدّه الأقصى
+  // يُضبط مرة واحدة في MaterialApp.builder (انظر app.dart).
+  // لتعطيل تكبير الـ accessibility لنص معيّن استخدم
+  // textScaler: TextScaler.noScaling على الـ Text نفسه.
   // ══════════════════════════════════════════════════════════════
 
   static double scaleFont(
@@ -66,20 +67,11 @@ abstract final class ScaleEngine {
     AppBaseWidth? configBaseWidth,
     required double minValue,
     required double maxValue,
-    bool respectTextScaler = true,
-  }) {
-    final scaled = scale(
-      context,
-      designValue: designValue,
-      configBaseWidth: configBaseWidth,
-      minValue: minValue,
-      maxValue: maxValue,
-    );
-
-    if (!respectTextScaler) return scaled;
-
-    // يحترم المستخدم لكن يمنع التضخم الزائد (max 1.3×)
-    final capped = MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
-    return capped.scale(scaled);
-  }
+  }) => scale(
+    context,
+    designValue: designValue,
+    configBaseWidth: configBaseWidth,
+    minValue: minValue,
+    maxValue: maxValue,
+  );
 }

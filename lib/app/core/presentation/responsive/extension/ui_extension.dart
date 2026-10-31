@@ -306,14 +306,12 @@ class TypographyHelper {
     AppFontSize fontSize, {
     AppFontSize? min,
     AppFontSize? max,
-    bool respectTextScaler = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) => Rh.font(
     context,
     fontSize,
     min: min,
     max: max,
-    respectTextScaler: respectTextScaler,
     mode: mode,
   );
 
@@ -326,7 +324,6 @@ class TypographyHelper {
     double? letterSpacing,
     AppFontSize? min,
     AppFontSize? max,
-    bool respectTextScaler = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) => Rh.textStyle(
     context,
@@ -337,7 +334,6 @@ class TypographyHelper {
     letterSpacing: letterSpacing,
     min: min,
     max: max,
-    respectTextScaler: respectTextScaler,
     mode: mode,
   );
 

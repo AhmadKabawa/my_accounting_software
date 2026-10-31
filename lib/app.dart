@@ -39,7 +39,17 @@ class MyApp extends StatelessWidget {
               darkTheme: AppTheme.dark(context),
               themeMode: themeState.themeMode,
 
-              builder: (context, child) => Scaffold(
+              builder: (context, child) {
+                final mq = MediaQuery.of(context);
+                return MediaQuery(
+                  // The only place the system text scale is capped.
+                  data: mq.copyWith(
+                    textScaler: mq.textScaler.clamp(
+                      minScaleFactor: 0.9,
+                      maxScaleFactor: 1.3,
+                    ),
+                  ),
+                  child: Scaffold(
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.startFloat,
                 // Debug-only controls: they clear the session and must never
@@ -71,7 +81,9 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
                 body: child,
-              ),
+                  ),
+                );
+              },
             );
           },
         ),

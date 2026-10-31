@@ -17,7 +17,6 @@ abstract final class AppTextStyles {
   /// - [color]: Text color (optional)
   /// - [height]: Line height multiplier (optional, defaults to 1.4)
   /// - [letterSpacing]: Letter spacing (optional)
-  /// - [respectTextScaler]: Whether to respect system text scale (default: true)
   /// - [mode]: Responsive calculation mode (default: adaptiveScale)
   static TextStyle _createStyle(
     BuildContext context, {
@@ -28,7 +27,6 @@ abstract final class AppTextStyles {
     Color? color,
     double? height,
     double? letterSpacing,
-    bool respectTextScaler = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) {
     return Rh.textStyle(
@@ -40,7 +38,6 @@ abstract final class AppTextStyles {
       color: color,
       height: height,
       letterSpacing: letterSpacing,
-      respectTextScaler: respectTextScaler,
       mode: mode,
     );
   }

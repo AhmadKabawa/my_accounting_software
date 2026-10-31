@@ -123,7 +123,6 @@ abstract final class ResponsiveHelper {
   /// - [size]: Font size token to use
   /// - [min]: Minimum font size limit (optional)
   /// - [max]: Maximum font size limit (optional)
-  /// - [respectTextScaler]: Whether to respect device text scale factor
   /// - [mode]: Responsive calculation mode
   ///
   /// Example:
@@ -135,7 +134,6 @@ abstract final class ResponsiveHelper {
     AppFontSize size, {
     AppFontSize? min,
     AppFontSize? max,
-    bool respectTextScaler = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) {
     final screenType = ScreenEngine.screenType(context);
@@ -150,7 +148,6 @@ abstract final class ResponsiveHelper {
           designValue: size.mobile,
           minValue: (min ?? AppFontSize.xs).mobile,
           maxValue: (max ?? AppFontSize.display).mobile,
-          respectTextScaler: respectTextScaler,
         );
 
       case ResponsiveMode.adaptiveOnly:
@@ -165,7 +162,6 @@ abstract final class ResponsiveHelper {
           designValue: designValue,
           minValue: minValue,
           maxValue: maxValue,
-          respectTextScaler: respectTextScaler,
         );
     }
   }
@@ -182,7 +178,6 @@ abstract final class ResponsiveHelper {
   /// - [letterSpacing]: Letter spacing (optional)
   /// - [min]: Minimum font size (optional)
   /// - [max]: Maximum font size (optional)
-  /// - [respectTextScaler]: Whether to respect text scale (default: true)
   /// - [mode]: Responsive calculation mode
   ///
   /// Example:
@@ -200,7 +195,6 @@ abstract final class ResponsiveHelper {
     double? letterSpacing,
     AppFontSize? min,
     AppFontSize? max,
-    bool respectTextScaler = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) {
     return TextStyle(
@@ -209,7 +203,6 @@ abstract final class ResponsiveHelper {
         size,
         min: min,
         max: max,
-        respectTextScaler: respectTextScaler,
         mode: mode,
       ),
       fontWeight: weight,
@@ -1246,14 +1239,12 @@ extension ResponsiveContextExtension on BuildContext {
     AppFontSize size, {
     AppFontSize? min,
     AppFontSize? max,
-    bool respectTextScaler = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) => ResponsiveHelper.font(
     this,
     size,
     min: min,
     max: max,
-    respectTextScaler: respectTextScaler,
     mode: mode,
   );
 
@@ -1361,7 +1352,6 @@ extension ResponsiveContextExtension on BuildContext {
     double? letterSpacing,
     AppFontSize? min,
     AppFontSize? max,
-    bool respectTextScaler = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) => ResponsiveHelper.textStyle(
     this,
@@ -1372,7 +1362,6 @@ extension ResponsiveContextExtension on BuildContext {
     letterSpacing: letterSpacing,
     min: min,
     max: max,
-    respectTextScaler: respectTextScaler,
     mode: mode,
   );
   EdgeInsets padH(AppSpacing value) =>
