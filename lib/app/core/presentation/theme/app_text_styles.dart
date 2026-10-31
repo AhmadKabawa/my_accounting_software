@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/responsive/helper/responsive_helper.dart';
 
 abstract final class AppTextStyles {
-  static const String _fontFamily = 'Cairo';
-
   // ══════════════════════════════════════════════════════════════
   // PRIVATE HELPER
   // ══════════════════════════════════════════════════════════════
