@@ -442,7 +442,7 @@ class TypographyHelper {
     AppFontSize.md,
     weight: weight,
     color: color,
-    letterSpacing: letterSpacing ?? 0.5,
+    letterSpacing: letterSpacing ?? 0,
     height: 1.2,
   );
 }

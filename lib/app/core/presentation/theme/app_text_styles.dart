@@ -266,7 +266,6 @@ abstract final class AppTextStyles {
     min: AppFontSize.tiny,
     max: AppFontSize.xs,
     weight: FontWeight.w500,
-    letterSpacing: 0.5,
   );
 
   // ══════════════════════════════════════════════════════════════

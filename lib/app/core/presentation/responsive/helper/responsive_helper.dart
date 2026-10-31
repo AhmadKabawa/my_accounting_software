@@ -208,7 +208,9 @@ abstract final class ResponsiveHelper {
       fontWeight: weight,
       color: color,
       height: height ?? 1.4,
-      letterSpacing: letterSpacing,
+      // Any non-zero letter spacing breaks Arabic letter joining, and ThemeData
+      // merges M3's default spacing into null values, so default to 0 explicitly.
+      letterSpacing: letterSpacing ?? 0,
     );
   }
 
