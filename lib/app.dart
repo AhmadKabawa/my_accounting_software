@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:accounting_software/app/core/access/access_cubit.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_state.dart';
@@ -20,6 +21,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => sl<ThemeCubit>()..loadSavedTheme()),
         // اللغة محمّلة مسبقاً في main()
         BlocProvider(create: (context) => sl<LocaleCubit>()),
+        // singleton مشترك مع الـ router: لا يُغلق عند إزالة الـ provider
+        BlocProvider.value(value: sl<AccessCubit>()),
       ],
       child: BlocListener<LocaleCubit, LocaleState>(
         listenWhen: (prev, curr) => prev != curr,
