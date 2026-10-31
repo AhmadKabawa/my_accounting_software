@@ -317,7 +317,7 @@ abstract final class ResponsiveHelper {
   /// - [horizontal]: Applied to left and right
   /// - [vertical]: Applied to top and bottom
   /// - [left], [right], [top], [bottom]: Individual sides
-  /// - [min], [max]: Spacing limits (auto-detected if not provided)
+  /// - [min], [max]: Optional spacing limits (spacing() defaults apply)
   /// - [mode]: Responsive calculation mode
   ///
   /// Example:
@@ -332,84 +332,51 @@ abstract final class ResponsiveHelper {
   /// ```
   static EdgeInsets padding(
     BuildContext context, {
-    AppSpacing all = AppSpacing.none,
-    AppSpacing horizontal = AppSpacing.none,
-    AppSpacing vertical = AppSpacing.none,
-    AppSpacing left = AppSpacing.none,
-    AppSpacing right = AppSpacing.none,
-    AppSpacing top = AppSpacing.none,
-    AppSpacing bottom = AppSpacing.none,
+    AppSpacing? all,
+    AppSpacing? horizontal,
+    AppSpacing? vertical,
+    AppSpacing? left,
+    AppSpacing? right,
+    AppSpacing? top,
+    AppSpacing? bottom,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) {
-    /// Resolve left value with priority: explicit > horizontal > all
-    final resolvedLeft = left != AppSpacing.none
-        ? left
-        : horizontal != AppSpacing.none
-        ? horizontal
-        : all;
-
-    /// Resolve right value with priority: explicit > horizontal > all
-    final resolvedRight = right != AppSpacing.none
-        ? right
-        : horizontal != AppSpacing.none
-        ? horizontal
-        : all;
-
-    /// Resolve top value with priority: explicit > vertical > all
-    final resolvedTop = top != AppSpacing.none
-        ? top
-        : vertical != AppSpacing.none
-        ? vertical
-        : all;
-
-    /// Resolve bottom value with priority: explicit > vertical > all
-    final resolvedBottom = bottom != AppSpacing.none
-        ? bottom
-        : vertical != AppSpacing.none
-        ? vertical
-        : all;
-
-    /// Auto-detect min/max from all resolved values
-    final allValues = [
-      resolvedLeft,
-      resolvedRight,
-      resolvedTop,
-      resolvedBottom,
-    ];
-    final effectiveMin =
-        min ?? allValues.reduce((a, b) => a.mobile < b.mobile ? a : b);
-    final effectiveMax =
-        max ?? allValues.reduce((a, b) => a.mobile > b.mobile ? a : b);
+    // null = "not specified" (so AppSpacing.none can zero a single side).
+    // Priority: explicit side > horizontal/vertical > all.
+    final resolvedLeft = left ?? horizontal ?? all ?? AppSpacing.none;
+    final resolvedRight = right ?? horizontal ?? all ?? AppSpacing.none;
+    final resolvedTop = top ?? vertical ?? all ?? AppSpacing.none;
+    final resolvedBottom = bottom ?? vertical ?? all ?? AppSpacing.none;
 
     return EdgeInsets.only(
       left: spacing(
         context,
         resolvedLeft,
-        min: effectiveMin,
-        max: effectiveMax,
+        min: min,
+        max: max,
         mode: mode,
       ),
       right: spacing(
         context,
         resolvedRight,
-        min: effectiveMin,
-        max: effectiveMax,
+        min: min,
+        max: max,
         mode: mode,
       ),
       top: spacing(
         context,
         resolvedTop,
-        min: effectiveMin,
-        max: effectiveMax,
+        min: min,
+        max: max,
         mode: mode,
       ),
       bottom: spacing(
         context,
         resolvedBottom,
-        min: effectiveMin,
-        max: effectiveMax,
+        min: min,
+        max: max,
         mode: mode,
       ),
     );
@@ -441,8 +408,8 @@ abstract final class ResponsiveHelper {
   /// ```
   static EdgeInsets symmetricPadding(
     BuildContext context, {
-    AppSpacing horizontal = AppSpacing.none,
-    AppSpacing vertical = AppSpacing.none,
+    AppSpacing? horizontal,
+    AppSpacing? vertical,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
@@ -467,10 +434,10 @@ abstract final class ResponsiveHelper {
   /// ```
   static EdgeInsets onlyPadding(
     BuildContext context, {
-    AppSpacing left = AppSpacing.none,
-    AppSpacing right = AppSpacing.none,
-    AppSpacing top = AppSpacing.none,
-    AppSpacing bottom = AppSpacing.none,
+    AppSpacing? left,
+    AppSpacing? right,
+    AppSpacing? top,
+    AppSpacing? bottom,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
@@ -515,79 +482,49 @@ abstract final class ResponsiveHelper {
   /// ```
   static EdgeInsetsDirectional paddingDirectional({
     required BuildContext context,
-    AppSpacing all = AppSpacing.none,
-    AppSpacing horizontal = AppSpacing.none,
-    AppSpacing vertical = AppSpacing.none,
-    AppSpacing start = AppSpacing.none,
-    AppSpacing end = AppSpacing.none,
-    AppSpacing top = AppSpacing.none,
-    AppSpacing bottom = AppSpacing.none,
+    AppSpacing? all,
+    AppSpacing? horizontal,
+    AppSpacing? vertical,
+    AppSpacing? start,
+    AppSpacing? end,
+    AppSpacing? top,
+    AppSpacing? bottom,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) {
-    /// Resolve start value with priority: explicit > horizontal > all
-    final resolvedStart = start != AppSpacing.none
-        ? start
-        : horizontal != AppSpacing.none
-        ? horizontal
-        : all;
-
-    /// Resolve end value with priority: explicit > horizontal > all
-    final resolvedEnd = end != AppSpacing.none
-        ? end
-        : horizontal != AppSpacing.none
-        ? horizontal
-        : all;
-
-    /// Resolve top value with priority: explicit > vertical > all
-    final resolvedTop = top != AppSpacing.none
-        ? top
-        : vertical != AppSpacing.none
-        ? vertical
-        : all;
-
-    /// Resolve bottom value with priority: explicit > vertical > all
-    final resolvedBottom = bottom != AppSpacing.none
-        ? bottom
-        : vertical != AppSpacing.none
-        ? vertical
-        : all;
-
-    /// Auto-detect min/max from all resolved values
-    final allValues = [resolvedStart, resolvedEnd, resolvedTop, resolvedBottom];
-    final effectiveMin =
-        min ?? allValues.reduce((a, b) => a.mobile < b.mobile ? a : b);
-    final effectiveMax =
-        max ?? allValues.reduce((a, b) => a.mobile > b.mobile ? a : b);
+    final resolvedStart = start ?? horizontal ?? all ?? AppSpacing.none;
+    final resolvedEnd = end ?? horizontal ?? all ?? AppSpacing.none;
+    final resolvedTop = top ?? vertical ?? all ?? AppSpacing.none;
+    final resolvedBottom = bottom ?? vertical ?? all ?? AppSpacing.none;
 
     return EdgeInsetsDirectional.only(
       start: spacing(
         context,
         resolvedStart,
-        min: effectiveMin,
-        max: effectiveMax,
+        min: min,
+        max: max,
         mode: mode,
       ),
       end: spacing(
         context,
         resolvedEnd,
-        min: effectiveMin,
-        max: effectiveMax,
+        min: min,
+        max: max,
         mode: mode,
       ),
       top: spacing(
         context,
         resolvedTop,
-        min: effectiveMin,
-        max: effectiveMax,
+        min: min,
+        max: max,
         mode: mode,
       ),
       bottom: spacing(
         context,
         resolvedBottom,
-        min: effectiveMin,
-        max: effectiveMax,
+        min: min,
+        max: max,
         mode: mode,
       ),
     );
@@ -1276,13 +1213,13 @@ extension ResponsiveContextExtension on BuildContext {
   /// Shortcut for [ResponsiveHelper.padding]
   /// Usage: `context.pad(all: AppSpacing.md)`
   EdgeInsets pad({
-    AppSpacing all = AppSpacing.none,
-    AppSpacing h = AppSpacing.none,
-    AppSpacing v = AppSpacing.none,
-    AppSpacing l = AppSpacing.none,
-    AppSpacing r = AppSpacing.none,
-    AppSpacing t = AppSpacing.none,
-    AppSpacing b = AppSpacing.none,
+    AppSpacing? all,
+    AppSpacing? h,
+    AppSpacing? v,
+    AppSpacing? l,
+    AppSpacing? r,
+    AppSpacing? t,
+    AppSpacing? b,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,

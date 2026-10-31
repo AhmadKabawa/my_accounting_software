@@ -132,8 +132,8 @@ class PaddingHelper {
 
   /// Symmetric (horizontal + vertical)
   EdgeInsets symmetric({
-    AppSpacing horizontal = AppSpacing.none,
-    AppSpacing vertical = AppSpacing.none,
+    AppSpacing? horizontal,
+    AppSpacing? vertical,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
@@ -148,10 +148,10 @@ class PaddingHelper {
 
   /// Only specific sides
   EdgeInsets only({
-    AppSpacing left = AppSpacing.none,
-    AppSpacing right = AppSpacing.none,
-    AppSpacing top = AppSpacing.none,
-    AppSpacing bottom = AppSpacing.none,
+    AppSpacing? left,
+    AppSpacing? right,
+    AppSpacing? top,
+    AppSpacing? bottom,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
@@ -187,10 +187,10 @@ class PaddingHelper {
     // AppSpacing all = AppSpacing.none,
     // AppSpacing horizontal = AppSpacing.none,
     // AppSpacing vertical = AppSpacing.none,
-    AppSpacing start = AppSpacing.none,
-    AppSpacing end = AppSpacing.none,
-    AppSpacing top = AppSpacing.none,
-    AppSpacing bottom = AppSpacing.none,
+    AppSpacing? start,
+    AppSpacing? end,
+    AppSpacing? top,
+    AppSpacing? bottom,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
