@@ -129,17 +129,28 @@ abstract final class ScaleEngine {
     );
   }
 
-  /// يطبّق إعداد حجم الخط في الجهاز على [value] (انظر scaleFont).
+  static const double _maxTextScale = 1.3;
+
+  /// الحجم الذي يجب تمريره لـ `Text` ليكون الأثر الصافي هو المطلوب.
+  ///
+  /// ودجت `Text` يطبّق TextScaler الجهاز بنفسه على fontSize، فتطبيقه هنا
+  /// أيضاً يضاعف الأثر (1.3 × 1.3 = 1.69). لذلك نُرجع [value] معدّلاً بنسبة
+  /// تعوّض ما سيضيفه `Text`:
+  ///   respectTextScaler: true  → الأثر الصافي = min(scale الجهاز, 1.3)
+  ///   respectTextScaler: false → الأثر الصافي = 1 (لا يكبر مع إعداد الجهاز)
   static double applyTextScaler(
     BuildContext context,
     double value, {
     bool respectTextScaler = true,
   }) {
-    if (!respectTextScaler) return value;
-
-    // يحترم المستخدم لكن يمنع التضخم الزائد (max 1.3×)
     final textScaler = MediaQuery.maybeTextScalerOf(context);
     if (textScaler == null) return value;
-    return textScaler.clamp(maxScaleFactor: 1.3).scale(value);
+
+    final factor = textScaler.scale(1);
+    if (factor <= 0) return value;
+    if (respectTextScaler && factor <= _maxTextScale) return value;
+
+    final target = respectTextScaler ? _maxTextScale : 1.0;
+    return value * target / factor;
   }
 }
