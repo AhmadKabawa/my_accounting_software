@@ -10,15 +10,14 @@ import 'screen_engine.dart';
 
 abstract final class ScaleEngine {
   // ══════════════════════════════════════════════════════════════
-  // DEFAULT BASE WIDTH — يختار تلقائياً حسب نوع الشاشة
+  // DEFAULT BASE WIDTH — قاعدة واحدة ثابتة لكل الشاشات
+  //
+  // الـ scale يضرب قيمة الـ mobile، لذلك قاعدته عرض تصميم الـ mobile دائماً.
+  // اختيار قاعدة مختلفة لكل نوع شاشة (375/768/1280) كان يسبب قفزة في القيمة
+  // عند الانتقال بين الأنواع (مثلاً عند عرض 600).
   // ══════════════════════════════════════════════════════════════
 
-  static AppBaseWidth defaultBaseWidth(BuildContext context) =>
-      switch (ScreenEngine.screenType(context)) {
-        ScreenType.mobile => AppBaseWidth.phone,
-        ScreenType.tablet => AppBaseWidth.tablet,
-        ScreenType.desktop => AppBaseWidth.desktop,
-      };
+  static const AppBaseWidth defaultBaseWidth = AppBaseWidth.phone;
 
   // ══════════════════════════════════════════════════════════════
   // CORE SCALE — للأبعاد (spacing, radius, icon, size)
@@ -35,8 +34,8 @@ abstract final class ScaleEngine {
     // إذا كانت القيمة infinity (مثل AppComponentSize.full) نُرجعها مباشرة
     if (designValue == double.infinity) return double.infinity;
 
-    final base = (configBaseWidth ?? defaultBaseWidth(context)).value;
-    final ratio = ScreenEngine.screenWidth(context) / base;
+    final base = (configBaseWidth ?? defaultBaseWidth).value;
+    final ratio = ScreenEngine.scaleWidth(context) / base;
     if (minValue > maxValue) {
       final temp = minValue;
       minValue = maxValue;
