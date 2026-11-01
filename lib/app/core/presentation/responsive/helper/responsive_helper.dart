@@ -318,23 +318,21 @@ abstract final class ResponsiveHelper {
   /// to the smallest/largest resolved side.
   static List<double> _paddingSides(
     BuildContext context, {
-    required AppSpacing all,
-    required AppSpacing horizontal,
-    required AppSpacing vertical,
-    required AppSpacing leading,
-    required AppSpacing trailing,
-    required AppSpacing top,
-    required AppSpacing bottom,
+    required AppSpacing? all,
+    required AppSpacing? horizontal,
+    required AppSpacing? vertical,
+    required AppSpacing? leading,
+    required AppSpacing? trailing,
+    required AppSpacing? top,
+    required AppSpacing? bottom,
     required AppSpacing? min,
     required AppSpacing? max,
     required ResponsiveMode mode,
   }) {
-    AppSpacing pick(AppSpacing side, AppSpacing group) =>
-        side != AppSpacing.none
-        ? side
-        : group != AppSpacing.none
-        ? group
-        : all;
+    // null means "not set" — AppSpacing.none is a real value, so
+    // padding(all: md, left: none) really gives left = 0.
+    AppSpacing pick(AppSpacing? side, AppSpacing? group) =>
+        side ?? group ?? all ?? AppSpacing.none;
 
     final sides = [
       pick(leading, horizontal),
@@ -388,13 +386,13 @@ abstract final class ResponsiveHelper {
   /// ```
   static EdgeInsets padding(
     BuildContext context, {
-    AppSpacing all = AppSpacing.none,
-    AppSpacing horizontal = AppSpacing.none,
-    AppSpacing vertical = AppSpacing.none,
-    AppSpacing left = AppSpacing.none,
-    AppSpacing right = AppSpacing.none,
-    AppSpacing top = AppSpacing.none,
-    AppSpacing bottom = AppSpacing.none,
+    AppSpacing? all,
+    AppSpacing? horizontal,
+    AppSpacing? vertical,
+    AppSpacing? left,
+    AppSpacing? right,
+    AppSpacing? top,
+    AppSpacing? bottom,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
@@ -516,13 +514,13 @@ abstract final class ResponsiveHelper {
   /// ```
   static EdgeInsetsDirectional paddingDirectional({
     required BuildContext context,
-    AppSpacing all = AppSpacing.none,
-    AppSpacing horizontal = AppSpacing.none,
-    AppSpacing vertical = AppSpacing.none,
-    AppSpacing start = AppSpacing.none,
-    AppSpacing end = AppSpacing.none,
-    AppSpacing top = AppSpacing.none,
-    AppSpacing bottom = AppSpacing.none,
+    AppSpacing? all,
+    AppSpacing? horizontal,
+    AppSpacing? vertical,
+    AppSpacing? start,
+    AppSpacing? end,
+    AppSpacing? top,
+    AppSpacing? bottom,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
@@ -1137,13 +1135,13 @@ extension ResponsiveContextExtension on BuildContext {
   /// Shortcut for [ResponsiveHelper.padding]
   /// Usage: `context.pad(all: AppSpacing.md)`
   EdgeInsets pad({
-    AppSpacing all = AppSpacing.none,
-    AppSpacing h = AppSpacing.none,
-    AppSpacing v = AppSpacing.none,
-    AppSpacing l = AppSpacing.none,
-    AppSpacing r = AppSpacing.none,
-    AppSpacing t = AppSpacing.none,
-    AppSpacing b = AppSpacing.none,
+    AppSpacing? all,
+    AppSpacing? h,
+    AppSpacing? v,
+    AppSpacing? l,
+    AppSpacing? r,
+    AppSpacing? t,
+    AppSpacing? b,
     AppSpacing? min,
     AppSpacing? max,
     ResponsiveMode mode = ResponsiveMode.adaptiveScale,
