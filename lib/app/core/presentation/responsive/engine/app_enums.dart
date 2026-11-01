@@ -846,17 +846,17 @@ class AppAspectRatio extends ResponsiveToken {
 
   // ─── Predefined tokens ───────────────────────────────────────────
 
-  /// Tiny component — small badges, indicators
-  /// Mobile: 16:9 | Tablet: 1  | Desktop: 4 / 3
-  static const bannerImage = AppComponentSize(1, 16 / 10, 16 / 9);
+  /// Banner image — width / height ratio
+  /// Mobile: 1:1 | Tablet: 16:10 | Desktop: 16:9
+  static const bannerImage = AppAspectRatio(1, 16 / 10, 16 / 9);
 
   @override
-  AppComponentSize overrideWith({
+  AppAspectRatio overrideWith({
     double? mobile,
     double? tablet,
     double? desktop,
   }) {
-    return AppComponentSize(
+    return AppAspectRatio(
       mobile ?? this.mobile,
       tablet ?? this.tablet,
       desktop ?? this.desktop,
