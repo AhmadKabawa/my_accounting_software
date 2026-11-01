@@ -734,20 +734,22 @@ class ScreenHelper {
   bool get isLandscape => orientation == AppOrientation.landscape;
 
   /// Screen width
-  double width({double rate = 1}) => MediaQuery.of(context).size.width * rate;
+  double width({double rate = 1}) =>
+      ScreenEngine.screenWidth(context, rate: rate);
 
   /// Screen height
-  double height({double rate = 1}) => MediaQuery.of(context).size.height * rate;
+  double height({double rate = 1}) =>
+      ScreenEngine.screenHeight(context, rate: rate);
 
   /// Screen size
-  Size get size => MediaQuery.of(context).size;
+  Size get size => MediaQuery.sizeOf(context);
 
   /// Device pixel ratio
-  double get pixelRatio => MediaQuery.of(context).devicePixelRatio;
+  double get pixelRatio => MediaQuery.devicePixelRatioOf(context);
 
   /// SafeArea padding
-  EdgeInsets get safeAreaPadding => MediaQuery.of(context).padding;
+  EdgeInsets get safeAreaPadding => ScreenEngine.safeAreaPadding(context);
 
-  /// ViewInsets (keyboard height, etc)
-  EdgeInsets get viewInsets => MediaQuery.of(context).viewInsets;
+  /// ViewInsets (keyboard height, etc) — rebuilds only when insets change
+  EdgeInsets get viewInsets => MediaQuery.viewInsetsOf(context);
 }
