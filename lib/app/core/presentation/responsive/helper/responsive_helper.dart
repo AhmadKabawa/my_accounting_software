@@ -818,7 +818,7 @@ abstract final class ResponsiveHelper {
     Axis? axis,
     AppSpacing? min,
     AppSpacing? max,
-    ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
+    ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) => Gap(
     spacing(context, size, min: min, max: max, mode: mode),
     axis: axis,
@@ -1165,7 +1165,7 @@ extension ResponsiveContextExtension on BuildContext {
     AppRadius size, {
     AppRadius? min,
     AppRadius? max,
-    ResponsiveMode mode = ResponsiveMode.adaptiveScale,
+    ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
   }) => ResponsiveHelper.circularRadius(
     this,
     size,

@@ -471,10 +471,10 @@ class SpacingHelper {
   /// Gap widget
   Gap gap(
     AppSpacing spacing, {
-    Axis axis = Axis.vertical,
+    Axis? axis,
     AppSpacing? min,
     AppSpacing? max,
-    ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
+    ResponsiveMode mode = ResponsiveMode.adaptiveScale,
   }) =>
       Rh.gapSpace(context, spacing, axis: axis, min: min, max: max, mode: mode);
 
