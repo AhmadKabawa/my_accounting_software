@@ -10,9 +10,9 @@ import 'package:accounting_software/app/core/presentation/responsive/engine/app_
 abstract final class ScreenEngine {
   // ══════════════════════════════════════════════════════════════
   // BREAKPOINTS — المصدر الوحيد لحدود الشاشات في المشروع
-  //   mobile  : width < 600
-  //   tablet  : 600 <= width < 1200
   //   desktop : width >= 1200
+  //   tablet  : width < 1200 and shortest side >= 600
+  //   mobile  : otherwise (phones, in portrait or landscape)
   // ══════════════════════════════════════════════════════════════
 
   static const double _mobileBreakpoint = 600;
@@ -43,22 +43,24 @@ abstract final class ScreenEngine {
   // SCREEN TYPE
   // ══════════════════════════════════════════════════════════════
 
-  static bool isMobile(BuildContext context) =>
-      screenWidth(context) < _mobileBreakpoint;
-
-  static bool isTablet(BuildContext context) {
-    final w = screenWidth(context);
-    return w >= _mobileBreakpoint && w < _tabletBreakpoint;
-  }
-
-  static bool isDesktop(BuildContext context) =>
-      screenWidth(context) >= _tabletBreakpoint;
-
+  /// Desktop is decided by width. Mobile vs tablet is decided by the shortest
+  /// side, so a phone in landscape (e.g. 844×390) stays a mobile instead of
+  /// being classified as a tablet just because its width passed 600.
   static ScreenType screenType(BuildContext context) {
-    if (isDesktop(context)) return ScreenType.desktop;
-    if (isTablet(context)) return ScreenType.tablet;
+    final size = _size(context);
+    if (size.width >= _tabletBreakpoint) return ScreenType.desktop;
+    if (size.shortestSide >= _mobileBreakpoint) return ScreenType.tablet;
     return ScreenType.mobile;
   }
+
+  static bool isMobile(BuildContext context) =>
+      screenType(context) == ScreenType.mobile;
+
+  static bool isTablet(BuildContext context) =>
+      screenType(context) == ScreenType.tablet;
+
+  static bool isDesktop(BuildContext context) =>
+      screenType(context) == ScreenType.desktop;
 
   // ══════════════════════════════════════════════════════════════
   // ORIENTATION
