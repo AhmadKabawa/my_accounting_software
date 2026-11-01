@@ -146,7 +146,7 @@ abstract final class ResponsiveHelper {
         return ScaleEngine.scaleFont(
           context,
           designValue: size.mobile,
-          minValue: (min ?? AppFontSize.xs).mobile,
+          minValue: (min ?? AppFontSize.tiny).mobile,
           maxValue: (max ?? AppFontSize.display).mobile,
           respectTextScaler: respectTextScaler,
         );
@@ -156,7 +156,7 @@ abstract final class ResponsiveHelper {
 
       case ResponsiveMode.adaptiveScale:
         final designValue = size.forType(screenType);
-        final minValue = (min ?? AppFontSize.xs).forType(screenType);
+        final minValue = (min ?? AppFontSize.tiny).forType(screenType);
         final maxValue = (max ?? AppFontSize.display).forType(screenType);
         return ScaleEngine.scaleFont(
           context,
