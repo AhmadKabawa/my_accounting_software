@@ -53,9 +53,18 @@ class Gap extends StatelessWidget {
   Axis _resolveAxis(BuildContext context) {
     if (axis != null) return axis!;
 
-    // Walk up the tree to find the nearest Flex ancestor (Row, Column, etc.)
-    final flex = context.findAncestorWidgetOfExactType<Flex>();
-    return flex?.direction ?? Axis.vertical;
+    // Walk up the tree to the nearest Flex ancestor. `is Flex` (not an
+    // exact-type lookup) is required because Row and Column are subclasses.
+    Axis? direction;
+    context.visitAncestorElements((element) {
+      final widget = element.widget;
+      if (widget is Flex) {
+        direction = widget.direction;
+        return false;
+      }
+      return true;
+    });
+    return direction ?? Axis.vertical;
   }
 
   @override
