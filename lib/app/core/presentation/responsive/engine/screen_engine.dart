@@ -62,6 +62,16 @@ abstract final class ScreenEngine {
   static bool isDesktop(BuildContext context) =>
       screenType(context) == ScreenType.desktop;
 
+  /// The width the scale math runs on: the real width on desktop, the shortest
+  /// side everywhere else, so a phone in landscape (844×390) scales like a
+  /// 390 phone and not like an 844 tablet.
+  static double scaleWidth(BuildContext context) {
+    final size = _size(context);
+    return screenType(context) == ScreenType.desktop
+        ? size.width
+        : size.shortestSide;
+  }
+
   // ══════════════════════════════════════════════════════════════
   // ORIENTATION
   // ══════════════════════════════════════════════════════════════

@@ -103,11 +103,11 @@ abstract final class ResponsiveHelper {
         return size.forType(screenType);
 
       case ResponsiveMode.adaptiveScale:
-        return ScaleEngine.scale(
+        return ScaleEngine.adaptiveScale(
           context,
-          designValue: size.forType(screenType),
-          minValue: min.forType(screenType),
-          maxValue: max.forType(screenType),
+          size: size,
+          min: min,
+          max: max,
         );
     }
   }
@@ -158,14 +158,15 @@ abstract final class ResponsiveHelper {
         return size.forType(screenType);
 
       case ResponsiveMode.adaptiveScale:
-        final designValue = size.forType(screenType);
-        final minValue = (min ?? AppFontSize.tiny).forType(screenType);
-        final maxValue = (max ?? AppFontSize.display).forType(screenType);
-        return ScaleEngine.scaleFont(
+        final scaled = ScaleEngine.adaptiveScale(
           context,
-          designValue: designValue,
-          minValue: minValue,
-          maxValue: maxValue,
+          size: size,
+          min: min ?? AppFontSize.tiny,
+          max: max ?? AppFontSize.display,
+        );
+        return ScaleEngine.applyTextScaler(
+          context,
+          scaled,
           respectTextScaler: respectTextScaler,
         );
     }
@@ -567,11 +568,11 @@ abstract final class ResponsiveHelper {
       case ResponsiveMode.adaptiveOnly:
         return size.forType(screenType);
       case ResponsiveMode.adaptiveScale:
-        return ScaleEngine.scale(
+        return ScaleEngine.adaptiveScale(
           context,
-          designValue: size.forType(screenType),
-          minValue: (min ?? AppRadius.none).forType(screenType),
-          maxValue: (max ?? AppRadius.full).forType(screenType),
+          size: size,
+          min: min ?? AppRadius.none,
+          max: max ?? AppRadius.full,
         );
     }
   }
@@ -1056,77 +1057,16 @@ abstract final class ResponsiveHelper {
         );
 
       case ResponsiveMode.adaptiveScale:
-        return _adaptiveValue(
-          context,
-          mobile: EdgeInsets.symmetric(
-            horizontal: ScaleEngine.scale(
-              context,
-              designValue: mobileH.forType(screenType),
-              minValue: mobileH.mobile,
-              maxValue: desktopH.forType(screenType),
-            ),
-            vertical: ScaleEngine.scale(
-              context,
-              designValue: mobileV.forType(screenType),
-              minValue: mobileV.mobile,
-              maxValue: desktopV.forType(screenType),
-            ),
+        // Blend the per-screen page tokens continuously instead of
+        // scaling a per-type value a second time.
+        return EdgeInsets.symmetric(
+          horizontal: ScaleEngine.interpolate(
+            context,
+            AppSpacing(mobileH.mobile, tabletH.tablet, desktopH.desktop),
           ),
-          mobileLandscape: EdgeInsets.symmetric(
-            horizontal: ScaleEngine.scale(
-              context,
-              designValue: mobileH.forType(screenType),
-              minValue: mobileH.mobile,
-              maxValue: desktopH.forType(screenType),
-            ),
-            vertical: ScaleEngine.scale(
-              context,
-              designValue: mobileV.forType(screenType),
-              minValue: mobileV.mobile,
-              maxValue: desktopV.forType(screenType),
-            ),
-          ),
-          tablet: EdgeInsets.symmetric(
-            horizontal: ScaleEngine.scale(
-              context,
-              designValue: tabletH.forType(screenType),
-              minValue: mobileH.forType(screenType),
-              maxValue: desktopH.forType(screenType),
-            ),
-            vertical: ScaleEngine.scale(
-              context,
-              designValue: tabletV.forType(screenType),
-              minValue: mobileV.forType(screenType),
-              maxValue: desktopV.forType(screenType),
-            ),
-          ),
-          tabletLandscape: EdgeInsets.symmetric(
-            horizontal: ScaleEngine.scale(
-              context,
-              designValue: tabletH.forType(screenType),
-              minValue: mobileH.forType(screenType),
-              maxValue: desktopH.forType(screenType),
-            ),
-            vertical: ScaleEngine.scale(
-              context,
-              designValue: tabletV.forType(screenType),
-              minValue: mobileV.forType(screenType),
-              maxValue: desktopV.forType(screenType),
-            ),
-          ),
-          desktop: EdgeInsets.symmetric(
-            horizontal: ScaleEngine.scale(
-              context,
-              designValue: desktopH.forType(screenType),
-              minValue: mobileH.forType(screenType),
-              maxValue: desktopH.forType(screenType),
-            ),
-            vertical: ScaleEngine.scale(
-              context,
-              designValue: desktopV.forType(screenType),
-              minValue: mobileV.forType(screenType),
-              maxValue: desktopV.forType(screenType),
-            ),
+          vertical: ScaleEngine.interpolate(
+            context,
+            AppSpacing(mobileV.mobile, tabletV.tablet, desktopV.desktop),
           ),
         );
     }

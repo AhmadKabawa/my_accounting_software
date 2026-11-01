@@ -53,6 +53,53 @@ abstract final class ScaleEngine {
   }
 
   // ══════════════════════════════════════════════════════════════
+  // ADAPTIVE SCALE — تدرّج متصل بين قيم mobile / tablet / desktop
+  //
+  // القيمة تُحسب مرة واحدة فقط: نقاط الارتكاز phone(375) → tablet(768) →
+  // desktop(1280)، والقيمة تُستكمل خطياً بينها (بدون قفزات عند الحدود).
+  // أصغر من 375 تتناسب القيمة مع العرض، وأكبر من 1280 تثبت قيمة desktop.
+  // ══════════════════════════════════════════════════════════════
+
+  static double interpolate(BuildContext context, ResponsiveToken token) {
+    // AppComponentSize.full وأشباهه
+    if (token.mobile.isInfinite) return token.mobile;
+
+    final w = ScreenEngine.scaleWidth(context);
+    final phone = AppBaseWidth.phone.value;
+    final tablet = AppBaseWidth.tablet.value;
+    final desktop = AppBaseWidth.desktop.value;
+
+    if (w <= phone) return token.mobile * (w / phone);
+    if (w >= desktop) return token.desktop;
+    if (w <= tablet) {
+      return _lerp(token.mobile, token.tablet, (w - phone) / (tablet - phone));
+    }
+    return _lerp(
+      token.tablet,
+      token.desktop,
+      (w - tablet) / (desktop - tablet),
+    );
+  }
+
+  static double _lerp(double a, double b, double t) => a + (b - a) * t;
+
+  /// [interpolate] for [size], clamped between [min] and [max] — which are
+  /// interpolated the same way, so all three live on the same curve.
+  static double adaptiveScale(
+    BuildContext context, {
+    required ResponsiveToken size,
+    required ResponsiveToken min,
+    required ResponsiveToken max,
+  }) {
+    final value = interpolate(context, size);
+    if (value.isInfinite) return value;
+
+    final a = interpolate(context, min);
+    final b = interpolate(context, max);
+    return value.clamp(a < b ? a : b, a < b ? b : a);
+  }
+
+  // ══════════════════════════════════════════════════════════════
   // FONT SCALE — يحترم إعداد حجم الخط في الجهاز (Accessibility)
   //
   // respectTextScaler: true  → يحترم إعداد الجهاز (الافتراضي)
@@ -76,11 +123,24 @@ abstract final class ScaleEngine {
       maxValue: maxValue,
     );
 
-    if (!respectTextScaler) return scaled;
+    return applyTextScaler(
+      context,
+      scaled,
+      respectTextScaler: respectTextScaler,
+    );
+  }
+
+  /// يطبّق إعداد حجم الخط في الجهاز على [value] (انظر scaleFont).
+  static double applyTextScaler(
+    BuildContext context,
+    double value, {
+    bool respectTextScaler = true,
+  }) {
+    if (!respectTextScaler) return value;
 
     // يحترم المستخدم لكن يمنع التضخم الزائد (max 1.3×)
     final textScaler = MediaQuery.maybeTextScalerOf(context);
-    if (textScaler == null) return scaled;
-    return textScaler.clamp(maxScaleFactor: 1.3).scale(scaled);
+    if (textScaler == null) return value;
+    return textScaler.clamp(maxScaleFactor: 1.3).scale(value);
   }
 }
