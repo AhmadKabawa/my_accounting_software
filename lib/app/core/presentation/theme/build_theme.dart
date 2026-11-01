@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:accounting_software/app/core/presentation/theme/app_text_styles.dart';
 import 'package:accounting_software/app/core/presentation/theme/components/app_bar_theme.dart';
 import 'package:accounting_software/app/core/presentation/theme/components/bottom_sheet_theme.dart';
 import 'package:accounting_software/app/core/presentation/theme/components/checkbox_theme.dart';
@@ -10,15 +11,18 @@ import 'package:accounting_software/app/core/presentation/theme/components/navig
 import 'package:accounting_software/app/core/presentation/theme/components/outlined_button_theme.dart';
 import 'package:accounting_software/app/core/presentation/theme/components/text_theme.dart';
 
-/// [context] is only needed for the responsive parts (font sizes and the
-/// navigation bar height). Every other component theme is built from the
-/// [ColorScheme] and the already-built [TextTheme]; reading `Theme.of(context)`
-/// here would return the fallback theme, because this runs above MaterialApp.
+/// Builds the app theme without a [BuildContext], so it can be created before
+/// MaterialApp exists (there is no MediaQuery yet at that point).
+///
+/// Called as-is it holds the mobile baseline sizes. [ResponsiveTheme] calls it
+/// again under MaterialApp with [resolve] (responsive font sizes) and
+/// [navigationBarHeight] to get the values for the current screen.
 ThemeData buildTheme({
-  required BuildContext context,
   required ColorScheme colorScheme,
+  TextStyle Function(AppTextStyle style)? resolve,
+  double? navigationBarHeight,
 }) {
-  final textTheme = buildTextTheme(context: context, colorScheme: colorScheme);
+  final textTheme = buildTextTheme(colorScheme: colorScheme, resolve: resolve);
 
   return ThemeData(
     useMaterial3: true,
@@ -43,8 +47,8 @@ ThemeData buildTheme({
       textTheme: textTheme,
     ),
     navigationBarTheme: buildNavigationBarTheme(
-      context,
       colorScheme: colorScheme,
+      height: navigationBarHeight,
     ),
     scaffoldBackgroundColor: colorScheme.surface,
   );

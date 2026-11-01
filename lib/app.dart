@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/foundation/localization/cubit/locale_state.dart';
 import 'package:accounting_software/app/core/presentation/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/theme/responsive_theme.dart';
 import 'package:accounting_software/app/core/presentation/theme/logic/cubit/theme_cubit.dart';
 import 'package:accounting_software/app/routing/app_go_router.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
@@ -31,57 +32,51 @@ class MyApp extends StatelessWidget {
         },
         child: BlocBuilder<ThemeCubit, ThemeState>(
           builder: (context, themeState) {
-            // MaterialApp is what normally provides MediaQuery, but the theme
-            // is built *before* it exists. The responsive theme (font sizes,
-            // navigation bar height) reads the screen size, so provide a
-            // MediaQuery above MaterialApp that follows the real view and
-            // rebuild the theme with a context that sits under it.
-            return MediaQuery.fromView(
-              view: View.of(context),
-              child: Builder(
-                builder: (context) => MaterialApp.router(
+            return MaterialApp.router(
               debugShowCheckedModeBanner: false,
               locale: context.locale,
               supportedLocales: context.supportedLocales,
               localizationsDelegates: context.localizationDelegates,
               routerConfig: AppRouter.router,
-              theme: AppTheme.light(context),
-              darkTheme: AppTheme.dark(context),
+              // Built without a context (baseline sizes); ResponsiveTheme
+              // below swaps in the sizes for the current screen.
+              theme: AppTheme.light(),
+              darkTheme: AppTheme.dark(),
               themeMode: themeState.themeMode,
 
-              builder: (context, child) => Scaffold(
-                floatingActionButtonLocation:
-                    FloatingActionButtonLocation.startFloat,
-                // Debug-only controls: they clear the session and must never
-                // reach release builds.
-                floatingActionButton: !kDebugMode
-                    ? null
-                    : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    FloatingActionButton.small(
-                      backgroundColor: Colors.red,
-                      onPressed: () {
-                        sl<TokenManager>().clearTokens();
-                      },
-                      child: const Text("storage"),
-                    ),
-                    FloatingActionButton.small(
-                      onPressed: () {
-                        context.read<LocaleCubit>().toggleLanguage();
-                      },
-                      child: const Text("Language"),
-                    ),
-                    FloatingActionButton.small(
-                      onPressed: () {
-                        context.read<ThemeCubit>().toggleTheme();
-                      },
-                      child: const Text("theme"),
-                    ),
-                  ],
-                ),
-                body: child,
-              ),
+              builder: (context, child) => ResponsiveTheme(
+                child: Scaffold(
+                  floatingActionButtonLocation:
+                      FloatingActionButtonLocation.startFloat,
+                  // Debug-only controls: they clear the session and must
+                  // never reach release builds.
+                  floatingActionButton: !kDebugMode
+                      ? null
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FloatingActionButton.small(
+                              backgroundColor: Colors.red,
+                              onPressed: () {
+                                sl<TokenManager>().clearTokens();
+                              },
+                              child: const Text("storage"),
+                            ),
+                            FloatingActionButton.small(
+                              onPressed: () {
+                                context.read<LocaleCubit>().toggleLanguage();
+                              },
+                              child: const Text("Language"),
+                            ),
+                            FloatingActionButton.small(
+                              onPressed: () {
+                                context.read<ThemeCubit>().toggleTheme();
+                              },
+                              child: const Text("theme"),
+                            ),
+                          ],
+                        ),
+                  body: child,
                 ),
               ),
             );

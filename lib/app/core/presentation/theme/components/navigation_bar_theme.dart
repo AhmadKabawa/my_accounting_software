@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
+import 'package:accounting_software/app/core/presentation/responsive/helper/responsive_helper.dart';
 
-NavigationBarThemeData buildNavigationBarTheme(
-  BuildContext context, {
+/// [height] defaults to the mobile baseline; ResponsiveTheme passes the
+/// responsive value once a MediaQuery is available.
+NavigationBarThemeData buildNavigationBarTheme({
   required ColorScheme colorScheme,
+  double? height,
 }) {
   return NavigationBarThemeData(
     elevation: 0,
-    height: context.uiStyles.navbar.height, // 🔥 هنا الربط
+    height: height ?? AppSpacing.xl.mobile,
     backgroundColor: colorScheme.surface,
     indicatorColor: colorScheme.surfaceContainerHighest,
 
