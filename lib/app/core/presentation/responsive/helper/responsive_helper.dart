@@ -608,10 +608,6 @@ abstract final class ResponsiveHelper {
     bool bottomRight = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
   }) {
-    if (size == AppRadius.full) {
-      return BorderRadius.circular(double.infinity);
-    }
-
     final r = _radiusValue(context, size, min: min, max: max, mode: mode);
     final corner = Radius.circular(r);
     const sharp = Radius.zero;
@@ -723,10 +719,6 @@ abstract final class ResponsiveHelper {
     bool bottomEnd = true,
     ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
   }) {
-    if (size == AppRadius.full) {
-      return BorderRadiusDirectional.circular(double.infinity);
-    }
-
     final r = _radiusValue(context, size, min: min, max: max, mode: mode);
     final corner = Radius.circular(r);
     const sharp = Radius.zero;
