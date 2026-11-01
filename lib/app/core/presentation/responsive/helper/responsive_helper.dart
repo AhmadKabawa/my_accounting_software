@@ -73,38 +73,41 @@ abstract final class ResponsiveHelper {
   /// - [scaleOnly]: Scales mobileValue by screen width ratio
   /// - [adaptiveOnly]: Returns value specific to screen type
   /// - [adaptiveScale]: Gets screen-type value then applies scaling
+  ///
+  /// [min] and [max] are tokens, not numbers: each mode reads them the same
+  /// way it reads [size] (mobile value for [scaleOnly], the current screen
+  /// type's value for [adaptiveScale]), so the limits never clip the token
+  /// they belong to (e.g. giant = 112 on desktop must not be capped at 80).
   static double _resolveValue({
     required BuildContext context,
-    required double mobileValue,
-    required double Function(ScreenType) resolveAdaptive,
-    double? minValue,
-    double? maxValue,
+    required ResponsiveToken size,
+    required ResponsiveToken min,
+    required ResponsiveToken max,
     required ResponsiveMode mode,
   }) {
     final screenType = ScreenEngine.screenType(context);
 
     switch (mode) {
       case ResponsiveMode.fixed:
-        return mobileValue;
+        return size.mobile;
 
       case ResponsiveMode.scaleOnly:
         return ScaleEngine.scale(
           context,
-          designValue: mobileValue,
-          minValue: minValue ?? mobileValue,
-          maxValue: maxValue ?? mobileValue,
+          designValue: size.mobile,
+          minValue: min.mobile,
+          maxValue: max.mobile,
         );
 
       case ResponsiveMode.adaptiveOnly:
-        return resolveAdaptive(screenType);
+        return size.forType(screenType);
 
       case ResponsiveMode.adaptiveScale:
-        final designValue = resolveAdaptive(screenType);
         return ScaleEngine.scale(
           context,
-          designValue: designValue,
-          minValue: minValue ?? designValue,
-          maxValue: maxValue ?? designValue,
+          designValue: size.forType(screenType),
+          minValue: min.forType(screenType),
+          maxValue: max.forType(screenType),
         );
     }
   }
@@ -246,10 +249,9 @@ abstract final class ResponsiveHelper {
   }) {
     return _resolveValue(
       context: context,
-      mobileValue: size.mobile,
-      resolveAdaptive: size.forType,
-      minValue: (min ?? AppSpacing.none).mobile,
-      maxValue: (max ?? AppSpacing.giant).mobile,
+      size: size,
+      min: min ?? AppSpacing.none,
+      max: max ?? AppSpacing.giant,
       mode: mode,
     );
   }
@@ -270,10 +272,9 @@ abstract final class ResponsiveHelper {
   }) {
     return _resolveValue(
       context: context,
-      mobileValue: size.mobile,
-      resolveAdaptive: size.forType,
-      minValue: (min ?? AppComponentSize.none).mobile,
-      maxValue: (max ?? AppComponentSize.full).mobile,
+      size: size,
+      min: min ?? AppComponentSize.none,
+      max: max ?? AppComponentSize.full,
       mode: mode,
     );
   }
@@ -755,10 +756,9 @@ abstract final class ResponsiveHelper {
   }) {
     return _resolveValue(
       context: context,
-      mobileValue: size.mobile,
-      resolveAdaptive: size.forType,
-      minValue: (min ?? AppIconSize.sm).mobile,
-      maxValue: (max ?? AppIconSize.huge).mobile,
+      size: size,
+      min: min ?? AppIconSize.sm,
+      max: max ?? AppIconSize.huge,
       mode: mode,
     );
   }
