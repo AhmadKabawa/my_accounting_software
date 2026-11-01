@@ -243,8 +243,8 @@ class AppSpacing extends ResponsiveToken {
   static const none = AppSpacing(0, 0, 0);
 
   /// Extra small spacing — tight elements or small gaps
-  /// Mobile: 4px | Tablet: 10px | Desktop: 8px
-  static const xs = AppSpacing(4, 10, 8);
+  /// Mobile: 4px | Tablet: 6px | Desktop: 8px
+  static const xs = AppSpacing(4, 6, 8);
 
   /// Small spacing — between related items or icon spacing
   /// Mobile: 8px | Tablet: 12px | Desktop: 16px
