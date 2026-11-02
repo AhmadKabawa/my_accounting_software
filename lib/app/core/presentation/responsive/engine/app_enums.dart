@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/responsive/engine/app_tokens.dart';
 import 'package:accounting_software/app/core/presentation/responsive/engine/screen_engine.dart';
 
 part 'app_enums/responsive_mode.dart';
