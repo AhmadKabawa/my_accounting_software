@@ -1,101 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/theme/app_text_styles.dart';
 
-/// ======================================================
-/// 📝 BUILD TEXT THEME
-/// ======================================================
-/// هذا الملف يربط بين TextStyles الخاصة بك وبين
-/// ColorScheme حتى يصبح النظام ديناميكي (Light / Dark)
-TextTheme buildTextTheme({
-  required BuildContext context,
-  required ColorScheme colorScheme,
-}) {
+/// Builds the [TextTheme] from the [AppTextStyles] baseline (mobile) sizes and
+/// the [ColorScheme], so the theme works in Light / Dark without a
+/// BuildContext. Responsive sizes are resolved per widget (see `AppText`).
+TextTheme buildTextTheme({required ColorScheme colorScheme}) {
+  TextStyle style(AppTextStyle textStyle, Color color) =>
+      textStyle.baseline.copyWith(color: color);
+
   return TextTheme(
-    // ======================================================
-    // 🔥 DISPLAY (أكبر مستوى نص في التطبيق)
-    // يستخدم في:
-    // - Hero Section
-    // - عناوين رئيسية جدًا
-    // - Landing Screen
-    // ======================================================
-    displayLarge: AppTextStyles.displayLarge(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
+    // DISPLAY — hero sections, landing screens
+    displayLarge: style(AppTextStyles.displayLarge, colorScheme.onSurface),
+    displayMedium: style(AppTextStyles.displayMedium, colorScheme.onSurface),
+    displaySmall: style(AppTextStyles.displaySmall, colorScheme.onSurface),
 
-    displayMedium: AppTextStyles.displayMedium(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
+    // HEADLINE — screen and section titles
+    headlineLarge: style(AppTextStyles.headlineLarge, colorScheme.onSurface),
+    headlineMedium: style(AppTextStyles.headlineMedium, colorScheme.onSurface),
+    headlineSmall: style(AppTextStyles.headlineSmall, colorScheme.onSurface),
 
-    displaySmall: AppTextStyles.displaySmall(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
+    // TITLE — card / section titles (less important ones use a secondary color)
+    titleLarge: style(AppTextStyles.titleLarge, colorScheme.onSurface),
+    titleMedium: style(
+      AppTextStyles.titleMedium,
+      colorScheme.onSurfaceVariant,
+    ),
+    titleSmall: style(AppTextStyles.titleSmall, colorScheme.onSurfaceVariant),
 
-    // ======================================================
-    // 📰 HEADLINE (عناوين الصفحات)
-    // يستخدم في:
-    // - عنوان Screen
-    // - عنوان قسم داخل الصفحة
-    // ======================================================
-    headlineLarge: AppTextStyles.headlineLarge(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
+    // BODY — regular text
+    bodyLarge: style(AppTextStyles.bodyLarge, colorScheme.onSurface),
+    bodyMedium: style(AppTextStyles.bodyMedium, colorScheme.onSurfaceVariant),
+    bodySmall: style(AppTextStyles.bodySmall, colorScheme.onSurfaceVariant),
 
-    headlineMedium: AppTextStyles.headlineMedium(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
-
-    headlineSmall: AppTextStyles.headlineSmall(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
-
-    // ======================================================
-    // 🏷 TITLE (عناوين داخل Cards أو Sections)
-    // ======================================================
-    titleLarge: AppTextStyles.titleLarge(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
-
-    // أقل أهمية من Large لذلك نعطيه لون ثانوي
-    titleMedium: AppTextStyles.titleMedium(
-      context,
-    ).copyWith(color: colorScheme.onSurfaceVariant),
-
-    titleSmall: AppTextStyles.titleSmall(
-      context,
-    ).copyWith(color: colorScheme.onSurfaceVariant),
-
-    // ======================================================
-    // 📄 BODY (النصوص العادية)
-    // ======================================================
-
-    // النص الأساسي
-    bodyLarge: AppTextStyles.bodyLarge(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
-
-    // نص وصف
-    bodyMedium: AppTextStyles.bodyMedium(
-      context,
-    ).copyWith(color: colorScheme.onSurfaceVariant),
-
-    // نص صغير جدًا
-    bodySmall: AppTextStyles.bodySmall(
-      context,
-    ).copyWith(color: colorScheme.onSurfaceVariant),
-
-    // ======================================================
-    // 🔖 LABEL (نصوص الأزرار والـ Chips)
-    // ======================================================
-    labelLarge: AppTextStyles.labelLarge(
-      context,
-    ).copyWith(color: colorScheme.onSurface),
-
-    labelMedium: AppTextStyles.labelMedium(
-      context,
-    ).copyWith(color: colorScheme.onSurfaceVariant),
-
-    labelSmall: AppTextStyles.labelSmall(
-      context,
-    ).copyWith(color: colorScheme.onSurfaceVariant),
+    // LABEL — buttons and chips
+    labelLarge: style(AppTextStyles.labelLarge, colorScheme.onSurface),
+    labelMedium: style(
+      AppTextStyles.labelMedium,
+      colorScheme.onSurfaceVariant,
+    ),
+    labelSmall: style(AppTextStyles.labelSmall, colorScheme.onSurfaceVariant),
   );
 }

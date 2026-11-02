@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
+import 'package:accounting_software/app/core/presentation/responsive/engine/app_enums.dart';
 
-NavigationBarThemeData buildNavigationBarTheme(
-  BuildContext context, {
+NavigationBarThemeData buildNavigationBarTheme({
   required ColorScheme colorScheme,
 }) {
   return NavigationBarThemeData(
     elevation: 0,
-    height: context.uiStyles.navbar.height, // 🔥 هنا الربط
+    height: AppSpacing.xl.mobile,
     backgroundColor: colorScheme.surface,
     indicatorColor: colorScheme.surfaceContainerHighest,
 

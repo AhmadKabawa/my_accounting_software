@@ -10,6 +10,7 @@
 // ─────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text_extension.dart';
 import 'package:accounting_software/app/core/foundation/localization/translations/app_key.dart';
 import 'app_text_enum.dart';
@@ -24,8 +25,11 @@ class AppText extends StatelessWidget {
   /// نص raw بدون ترجمة
   final String? rawText;
 
-  /// نوع النص — يحدد الـ TextStyle من الـ theme
+  /// نوع النص — يحدد الـ TextStyle (الحجم، الوزن، حدود الـ clamp)
   final AppTextType type;
+
+  /// يستبدل الـ ResponsiveMode الخاص بنوع النص (null = الافتراضي للنوع)
+  final ResponsiveMode? mode;
 
   /// تخصيصات — تـ override الـ style الخارجي إذا حُددت
   final Color? color;
@@ -51,6 +55,7 @@ class AppText extends StatelessWidget {
     this.textKey, {
     super.key,
     this.type = AppTextType.bodyMedium,
+    this.mode,
     this.color,
     this.weight,
     this.textAlign, // null = start
@@ -69,6 +74,7 @@ class AppText extends StatelessWidget {
     this.rawText, {
     super.key,
     this.type = AppTextType.bodyMedium,
+    this.mode,
     this.color,
     this.weight,
     this.textAlign,
@@ -162,10 +168,10 @@ class AppText extends StatelessWidget {
   }
 
   TextStyle _buildStyle(BuildContext context) {
-    final baseStyle = type.resolve(context);
+    final baseStyle = type.resolve(context, mode: mode);
 
     // FIX: الترتيب الصحيح للـ merge:
-    // 1. baseStyle من الـ theme
+    // 1. baseStyle من الـ AppTextStyles (+ لون النوع من الـ theme)
     // 2. style خارجي (لو موجود)
     // 3. explicit params تـ override كل شيء
     final withExternalStyle = style != null

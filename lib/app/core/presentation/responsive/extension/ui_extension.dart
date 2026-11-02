@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/responsive/engine/app_gap.dart';
 import 'package:accounting_software/app/core/presentation/responsive/helper/responsive_helper.dart';
 import 'package:accounting_software/app/core/presentation/responsive/engine/screen_engine.dart';
+import 'package:accounting_software/app/core/presentation/theme/app_text_styles.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // MAIN EXTENSION على BuildContext
@@ -752,4 +753,31 @@ class ScreenHelper {
 
   /// ViewInsets (keyboard height, etc) — rebuilds only when insets change
   EdgeInsets get viewInsets => MediaQuery.viewInsetsOf(context);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AppTextStyle → responsive TextStyle
+// ═══════════════════════════════════════════════════════════════════
+
+/// Resolves an [AppTextStyle] for the screen under [context].
+///
+/// Lives here rather than in `theme/` because the theme must not depend on the
+/// responsive engine; the theme only ever uses [AppTextStyle.baseline].
+extension AppTextStyleResolver on AppTextStyle {
+  /// [mode] and [respectTextScaler] override the descriptor's own values.
+  TextStyle resolve(
+    BuildContext context, {
+    ResponsiveMode? mode,
+    bool? respectTextScaler,
+  }) => Rh.textStyle(
+    context,
+    size,
+    min: min,
+    max: max,
+    weight: weight,
+    height: height,
+    letterSpacing: 0,
+    respectTextScaler: respectTextScaler ?? this.respectTextScaler,
+    mode: mode ?? this.mode,
+  ).copyWith(decoration: decoration);
 }

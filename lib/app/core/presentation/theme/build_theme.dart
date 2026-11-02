@@ -10,15 +10,11 @@ import 'package:accounting_software/app/core/presentation/theme/components/navig
 import 'package:accounting_software/app/core/presentation/theme/components/outlined_button_theme.dart';
 import 'package:accounting_software/app/core/presentation/theme/components/text_theme.dart';
 
-/// [context] is only needed for the responsive parts (font sizes and the
-/// navigation bar height). Every other component theme is built from the
-/// [ColorScheme] and the already-built [TextTheme]; reading `Theme.of(context)`
-/// here would return the fallback theme, because this runs above MaterialApp.
-ThemeData buildTheme({
-  required BuildContext context,
-  required ColorScheme colorScheme,
-}) {
-  final textTheme = buildTextTheme(context: context, colorScheme: colorScheme);
+/// Builds the [ThemeData] from the [ColorScheme] alone. It runs above
+/// MaterialApp, where there is no BuildContext/MediaQuery, so every size here
+/// is the mobile baseline; responsive sizes are resolved by the widgets.
+ThemeData buildTheme({required ColorScheme colorScheme}) {
+  final textTheme = buildTextTheme(colorScheme: colorScheme);
 
   return ThemeData(
     useMaterial3: true,
@@ -42,10 +38,7 @@ ThemeData buildTheme({
       colorScheme: colorScheme,
       textTheme: textTheme,
     ),
-    navigationBarTheme: buildNavigationBarTheme(
-      context,
-      colorScheme: colorScheme,
-    ),
+    navigationBarTheme: buildNavigationBarTheme(colorScheme: colorScheme),
     scaffoldBackgroundColor: colorScheme.surface,
   );
 }

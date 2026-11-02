@@ -1,55 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/theme/app_text_styles.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text_enum.dart';
 
 extension AppTextTypeX on AppTextType {
-  TextStyle resolve(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+  /// The token description of this type (size, clamp range, weight).
+  AppTextStyle get descriptor => switch (this) {
+    AppTextType.displayLarge => AppTextStyles.displayLarge,
+    AppTextType.displayMedium => AppTextStyles.displayMedium,
+    AppTextType.displaySmall => AppTextStyles.displaySmall,
+    AppTextType.headlineLarge => AppTextStyles.headlineLarge,
+    AppTextType.headlineMedium => AppTextStyles.headlineMedium,
+    AppTextType.headlineSmall => AppTextStyles.headlineSmall,
+    AppTextType.titleLarge => AppTextStyles.titleLarge,
+    AppTextType.titleMedium => AppTextStyles.titleMedium,
+    AppTextType.titleSmall => AppTextStyles.titleSmall,
+    AppTextType.bodyLarge => AppTextStyles.bodyLarge,
+    AppTextType.bodyMedium => AppTextStyles.bodyMedium,
+    AppTextType.bodySmall => AppTextStyles.bodySmall,
+    AppTextType.labelLarge => AppTextStyles.labelLarge,
+    AppTextType.labelMedium => AppTextStyles.labelMedium,
+    AppTextType.labelSmall => AppTextStyles.labelSmall,
+  };
 
-    switch (this) {
-      case AppTextType.displayLarge:
-        return textTheme.displayLarge!;
-
-      case AppTextType.displayMedium:
-        return textTheme.displayMedium!;
-
-      case AppTextType.displaySmall:
-        return textTheme.displaySmall!;
-
-      case AppTextType.headlineLarge:
-        return textTheme.headlineLarge!;
-
-      case AppTextType.headlineMedium:
-        return textTheme.headlineMedium!;
-
-      case AppTextType.headlineSmall:
-        return textTheme.headlineSmall!;
-
-      case AppTextType.titleLarge:
-        return textTheme.titleLarge!;
-
-      case AppTextType.titleMedium:
-        return textTheme.titleMedium!;
-
-      case AppTextType.titleSmall:
-        return textTheme.titleSmall!;
-
-      case AppTextType.bodyLarge:
-        return textTheme.bodyLarge!;
-
-      case AppTextType.bodyMedium:
-        return textTheme.bodyMedium!;
-
-      case AppTextType.bodySmall:
-        return textTheme.bodySmall!;
-
-      case AppTextType.labelLarge:
-        return textTheme.labelLarge!;
-
-      case AppTextType.labelMedium:
-        return textTheme.labelMedium!;
-
-      case AppTextType.labelSmall:
-        return textTheme.labelSmall!;
-    }
+  /// The color the theme gives this type (it differs per type and between
+  /// Light / Dark), so it is read from the theme instead of being repeated.
+  Color? _themeColor(TextTheme textTheme) {
+    final TextStyle? themeStyle = switch (this) {
+      AppTextType.displayLarge => textTheme.displayLarge,
+      AppTextType.displayMedium => textTheme.displayMedium,
+      AppTextType.displaySmall => textTheme.displaySmall,
+      AppTextType.headlineLarge => textTheme.headlineLarge,
+      AppTextType.headlineMedium => textTheme.headlineMedium,
+      AppTextType.headlineSmall => textTheme.headlineSmall,
+      AppTextType.titleLarge => textTheme.titleLarge,
+      AppTextType.titleMedium => textTheme.titleMedium,
+      AppTextType.titleSmall => textTheme.titleSmall,
+      AppTextType.bodyLarge => textTheme.bodyLarge,
+      AppTextType.bodyMedium => textTheme.bodyMedium,
+      AppTextType.bodySmall => textTheme.bodySmall,
+      AppTextType.labelLarge => textTheme.labelLarge,
+      AppTextType.labelMedium => textTheme.labelMedium,
+      AppTextType.labelSmall => textTheme.labelSmall,
+    };
+    return themeStyle?.color;
   }
+
+  /// The responsive style for the screen under [context]. [mode] overrides the
+  /// descriptor's own [ResponsiveMode].
+  TextStyle resolve(BuildContext context, {ResponsiveMode? mode}) =>
+      descriptor
+          .resolve(context, mode: mode)
+          .copyWith(color: _themeColor(Theme.of(context).textTheme));
 }
