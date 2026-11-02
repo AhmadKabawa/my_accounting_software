@@ -15,7 +15,7 @@ import 'package:accounting_software/app/core/network/dio/interceptors/language_i
 import 'package:accounting_software/app/core/network/network_info/network_info.dart';
 import 'package:accounting_software/app/core/network/network_info/network_info_impl.dart';
 import 'package:accounting_software/app/core/storage/secure/secure_storage_service.dart';
-import 'package:accounting_software/app/core/presentation/theme/logic/cubit/theme_cubit.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/cubit/theme_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;

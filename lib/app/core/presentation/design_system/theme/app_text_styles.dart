@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/responsive/engine/app_enums.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 
 /// A text style described with design tokens instead of pixels, so it can be
 /// declared (and a [ThemeData] built from it) without a [BuildContext].

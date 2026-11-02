@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:accounting_software/app/core/presentation/theme/logic/theme_extension.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/theme_extension.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FlashSaleProductsShimmer extends StatelessWidget {

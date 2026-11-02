@@ -6,8 +6,8 @@ import 'package:accounting_software/app/core/access/access_cubit.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_state.dart';
-import 'package:accounting_software/app/core/presentation/theme/app_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/logic/cubit/theme_cubit.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/cubit/theme_cubit.dart';
 import 'package:accounting_software/app/routing/app_go_router.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 

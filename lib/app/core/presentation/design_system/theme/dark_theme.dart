@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/theme/app_colors.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_colors.dart';
 
 /// ===============================
 /// 🌙 DARK COLOR SCHEME

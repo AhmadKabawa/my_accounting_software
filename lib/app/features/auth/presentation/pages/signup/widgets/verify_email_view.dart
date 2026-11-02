@@ -5,7 +5,7 @@
 // import 'package:accounting_software/app/core/localization/translations/app_strings.dart';
 // import 'package:accounting_software/app/core/routing/navigator_extensions.dart';
 // import 'package:accounting_software/app/core/routing/routes.dart';
-// import 'package:accounting_software/app/core/presentation/responsive/responsive_helper.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/responsive/responsive_helper.dart';
 
 // class VerifyEmailView extends StatelessWidget {
 //   const VerifyEmailView({super.key});

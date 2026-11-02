@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:accounting_software/app/core/presentation/theme/components/app_bar_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/components/bottom_sheet_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/components/checkbox_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/components/chip_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/components/elevated_button_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/components/input_decoration_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/components/navigation_bar_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/components/outlined_button_theme.dart';
-import 'package:accounting_software/app/core/presentation/theme/components/text_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/app_bar_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/bottom_sheet_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/checkbox_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/chip_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/elevated_button_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/input_decoration_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/navigation_bar_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/outlined_button_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/components/text_theme.dart';
 
 /// Builds the [ThemeData] from the [ColorScheme] alone. It runs above
 /// MaterialApp, where there is no BuildContext/MediaQuery, so every size here

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/responsive/engine/app_enums.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 
 NavigationBarThemeData buildNavigationBarTheme({
   required ColorScheme colorScheme,

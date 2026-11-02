@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:accounting_software/app/core/constants/image_constants.dart';
-// import 'package:accounting_software/app/core/theme/logic/theme_extension.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/theme_extension.dart';
 
 // class SignInMethodsSection extends StatelessWidget {
 //   const SignInMethodsSection({super.key});

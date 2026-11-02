@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/styles/components/button_styles.dart';
 import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
-import 'package:accounting_software/app/core/presentation/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 
 Future<ButtonStyles> _buttonStylesAt(WidgetTester tester, Size size) async {

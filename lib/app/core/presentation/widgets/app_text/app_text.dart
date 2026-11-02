@@ -10,7 +10,7 @@
 // ─────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text_extension.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'app_text_enum.dart';

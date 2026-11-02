@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:accounting_software/app/core/presentation/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
 /// Pumps an [AppText] on a screen of [size] and returns the style it renders.

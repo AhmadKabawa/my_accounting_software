@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/styles/components/navbar_styles.dart';
 import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
-import 'package:accounting_software/app/core/presentation/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 
 Future<NavbarStyles> _navbarAt(WidgetTester tester, Size size) async {
   tester.view.physicalSize = size;

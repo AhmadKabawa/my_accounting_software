@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/theme/logic/theme_extension.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/theme_extension.dart';
 
 class DividerWidget extends StatelessWidget {
   const DividerWidget({super.key, required this.text});

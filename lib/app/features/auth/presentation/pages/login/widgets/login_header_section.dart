@@ -3,8 +3,8 @@
 
 // import 'package:accounting_software/app/core/foundation/constants/image_constants.dart';
 // import 'package:accounting_software/app/core/localization/translations/app_strings.dart';
-// import 'package:accounting_software/app/core/presentation/responsive/engine/app_enums.dart';
-// import 'package:accounting_software/app/core/presentation/theme/logic/theme_extension.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/theme_extension.dart';
 
 // class LoginHeaderSection extends StatelessWidget {
 //   const LoginHeaderSection({super.key});

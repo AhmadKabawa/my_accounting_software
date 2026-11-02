@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:accounting_software/app/core/presentation/responsive/engine/app_enums.dart';
-import 'package:accounting_software/app/core/presentation/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 
 void main() {
   group('theme without a BuildContext', () {

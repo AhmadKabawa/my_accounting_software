@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
-// import 'package:accounting_software/app/core/presentation/responsive/helper/adaptive_helper.dart';
-// import 'package:accounting_software/app/core/presentation/responsive/helper/responsive_helper.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/adaptive_helper.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 // import 'package:shimmer/shimmer.dart';
 
 // class FeaturedProductsShimmer extends StatelessWidget {

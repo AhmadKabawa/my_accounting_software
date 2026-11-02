@@ -1,9 +1,9 @@
 // import 'package:flutter/widgets.dart';
 // import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
-// import 'package:accounting_software/app/core/presentation/responsive/engine/app_enums.dart';
-// import 'package:accounting_software/app/core/presentation/responsive/helper/adaptive_helper.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/adaptive_helper.dart';
 
-// import 'package:accounting_software/app/core/presentation/responsive/responsive_helper.dart';
+// import 'package:accounting_software/app/core/presentation/design_system/responsive/responsive_helper.dart';
 // import 'package:accounting_software/app/features/home/presentation/widgets/vertical_product_card.dart';
 // import 'package:accounting_software/app/features/products/domain/entity/product_entity.dart';
 
