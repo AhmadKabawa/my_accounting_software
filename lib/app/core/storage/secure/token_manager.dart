@@ -1,11 +1,11 @@
-// 📁 lib/core/services/local_storage/secure_storage/token_manager.dart
+// 📁 lib/app/core/storage/secure/token_manager.dart
 //
 // مسؤوليته: التوكينات فقط — لا يعرف شيئاً عن UserModel
 
 import 'dart:async';
 
-import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
+import 'package:accounting_software/app/core/storage/storage_keys.dart';
+import 'package:accounting_software/app/core/storage/storage_service.dart';
 import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 
 class TokenManager {

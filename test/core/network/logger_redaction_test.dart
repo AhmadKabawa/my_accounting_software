@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/services/network/dio/interceptors/logger_interceptor.dart';
+import 'package:accounting_software/app/core/network/dio/interceptors/logger_interceptor.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_box_names.dart';
+import 'package:accounting_software/app/core/storage/hive/hive_box_names.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 
 part 'user_model.freezed.dart';

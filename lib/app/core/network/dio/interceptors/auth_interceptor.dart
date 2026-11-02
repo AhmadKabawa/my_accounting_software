@@ -1,7 +1,7 @@
 // lib/core/network/interceptors/auth_interceptor.dart
 
 import 'package:dio/dio.dart';
-import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
+import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 
 class AuthInterceptor extends Interceptor {
   final TokenManager _tokenStorage;

@@ -1,5 +1,5 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 📁 lib/core/services/local_storage/hive_storage/hive_manager.dart
+// 📁 lib/app/core/storage/hive/hive_manager.dart
 //
 // 🗄️ HiveManager = نقطة التهيئة المركزية لـ Hive
 //
@@ -10,7 +10,7 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_box_names.dart';
+import 'package:accounting_software/app/core/storage/hive/hive_box_names.dart';
 
 // ─── أسماء الـ Boxes ثوابت (لتجنب typos) ─────────────────────────────────────
 

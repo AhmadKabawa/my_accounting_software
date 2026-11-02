@@ -9,7 +9,7 @@ import 'package:accounting_software/app/core/localization/cubit/locale_state.dar
 import 'package:accounting_software/app/core/presentation/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/theme/logic/cubit/theme_cubit.dart';
 import 'package:accounting_software/app/routing/app_go_router.dart';
-import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
+import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

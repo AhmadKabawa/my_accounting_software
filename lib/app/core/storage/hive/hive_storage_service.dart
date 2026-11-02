@@ -1,36 +1,53 @@
 import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
+import 'package:accounting_software/app/core/storage/storage_key.dart';
+import 'package:accounting_software/app/core/storage/storage_service.dart';
 
-class SecureStorageService implements StorageService {
-  final FlutterSecureStorage _secureStorage;
+//للشي البسيط زي ال theme وال language ممكن SharedPreferences
+class HiveStorageService implements StorageService {
+  final Box<String> box;
 
-  SecureStorageService({required FlutterSecureStorage secureStorage})
-    : _secureStorage = secureStorage;
+  const HiveStorageService({required Box<String> box}) : box = box;
 
   // ─── الكتابة (تحويل كل شيء إلى String) ─────────────────────────────────────
   @override
   Future<void> write<T>(StorageKey key, T value) async {
     try {
-      final stringValue = switch (value) {
-        String() => value,
-        bool() || int() || double() => value.toString(),
-        List<dynamic>() || Map<dynamic, dynamic>() => jsonEncode(value),
-        _ => throw CacheException(
-          message:
-              'SecureStorage only supports: String, bool, int, double, '
-              'List, Map. Got: ${value.runtimeType}',
-        ),
-      };
+      String stringValue;
 
-      await _secureStorage.write(key: key.toStringKey(), value: stringValue);
+      if (value is String) {
+        stringValue = value;
+      } else if (value is bool) {
+        stringValue = value.toString();
+      } else if (value is int) {
+        stringValue = value.toString();
+      } else if (value is double) {
+        stringValue = value.toString();
+      } else if (value is List<String>) {
+        stringValue = jsonEncode(value);
+      } else if (value is Map<String, dynamic>) {
+        stringValue = jsonEncode(value);
+      } else if (value is List<dynamic>) {
+        stringValue = jsonEncode(value);
+      } else if (value is Map<dynamic, dynamic>) {
+        stringValue = jsonEncode(value);
+      } else {
+        throw CacheException(
+          message:
+              'HiveStorage only supports: String, bool, int, double, '
+              'List, Map. Got: ${value.runtimeType}',
+        );
+      }
+
+      await box.put(key.toStringKey(), stringValue);
     } catch (e) {
       if (e is CacheException) rethrow;
+
       throw CacheException(
         message:
-            'Failed to write to secure storage. Key: ${key.toStringKey()}, Error: ${e.toString()}',
+            'Failed to write to Hive storage. '
+            'Key: ${key.toStringKey()}, Error: ${e.toString()}',
       );
     }
   }
@@ -39,11 +56,10 @@ class SecureStorageService implements StorageService {
   @override
   Future<T?> read<T>(StorageKey key) async {
     try {
-      final stringValue = await _secureStorage.read(key: key.toStringKey());
+      final stringValue = box.get(key.toStringKey());
 
       if (stringValue == null) return null;
 
-      // محاولة تحويل إلى النوع المطلوب
       if (T == String) {
         return stringValue as T;
       } else if (T == bool) {
@@ -54,6 +70,7 @@ class SecureStorageService implements StorageService {
         return double.parse(stringValue) as T;
       } else if (T == List<String>) {
         final List<dynamic> list = jsonDecode(stringValue);
+
         return list.map((e) => e.toString()).toList() as T;
       } else if (T == List<dynamic>) {
         return jsonDecode(stringValue) as T;
@@ -63,19 +80,20 @@ class SecureStorageService implements StorageService {
         return jsonDecode(stringValue) as T;
       }
 
-      throw CacheException(
-        message: 'Type $T is not supported by SecureStorage',
-      );
+      throw CacheException(message: 'Type $T is not supported by HiveStorage');
     } on FormatException catch (e) {
       throw CacheException(
         message:
-            'Failed to parse ${key.toStringKey()} value to type $T. Error: ${e.toString()}',
+            'Failed to parse ${key.toStringKey()} '
+            'value to type $T. Error: ${e.toString()}',
       );
     } catch (e) {
       if (e is CacheException) rethrow;
+
       throw CacheException(
         message:
-            'Failed to read from secure storage. Key: ${key.toStringKey()}, Error: ${e.toString()}',
+            'Failed to read from Hive storage. '
+            'Key: ${key.toStringKey()}, Error: ${e.toString()}',
       );
     }
   }
@@ -84,11 +102,12 @@ class SecureStorageService implements StorageService {
   @override
   Future<void> delete(StorageKey key) async {
     try {
-      await _secureStorage.delete(key: key.toStringKey());
+      await box.delete(key.toStringKey());
     } catch (e) {
       throw CacheException(
         message:
-            'Failed to delete from secure storage. Key: ${key.toStringKey()}, Error: ${e.toString()}',
+            'Failed to delete from Hive storage. '
+            'Key: ${key.toStringKey()}, Error: ${e.toString()}',
       );
     }
   }
@@ -97,10 +116,12 @@ class SecureStorageService implements StorageService {
   @override
   Future<void> clearAll() async {
     try {
-      await _secureStorage.deleteAll();
+      await box.clear();
     } catch (e) {
       throw CacheException(
-        message: 'Failed to clear secure storage. Error: ${e.toString()}',
+        message:
+            'Failed to clear Hive storage. '
+            'Error: ${e.toString()}',
       );
     }
   }
@@ -109,12 +130,29 @@ class SecureStorageService implements StorageService {
   @override
   Future<bool> containsKey(StorageKey key) async {
     try {
-      return await _secureStorage.containsKey(key: key.toStringKey());
+      return box.containsKey(key.toStringKey());
     } catch (e) {
       throw CacheException(
         message:
-            'Failed to check key in secure storage. Key: ${key.toStringKey()}, Error: ${e.toString()}',
+            'Failed to check key in Hive storage. '
+            'Key: ${key.toStringKey()}, Error: ${e.toString()}',
       );
     }
+  }
+
+  // ─── Hive extras (اختياري) ────────────────────────────────────────────────
+
+  List<String> get allValues => box.values.toList();
+
+  Iterable<dynamic> get allKeys => box.keys;
+
+  int get length => box.length;
+
+  Stream<BoxEvent> watch(StorageKey key) {
+    return box.watch(key: key.toStringKey());
+  }
+
+  Stream<BoxEvent> watchAll() {
+    return box.watch();
   }
 }

@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
-import 'package:accounting_software/app/core/services/network/api_end_points.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
 
 typedef JsonFactory<T> = T Function(Map<String, dynamic>);
 

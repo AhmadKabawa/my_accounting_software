@@ -7,7 +7,7 @@ import 'package:accounting_software/app/core/routing/go_router_refresh_stream.da
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/core/routing/route_transitions.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
-import 'package:accounting_software/app/core/services/local_storage/shared_storage/app_settings_manager_sorage.dart';
+import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/utils/observer/app_router_observer.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/login/login_screen.dart';

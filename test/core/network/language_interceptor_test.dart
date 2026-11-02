@@ -1,7 +1,7 @@
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/localization/translations/app_language.dart';
-import 'package:accounting_software/app/core/services/local_storage/shared_storage/app_settings_manager_sorage.dart';
-import 'package:accounting_software/app/core/services/network/dio/interceptors/language_interceptor.dart';
+import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
+import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 

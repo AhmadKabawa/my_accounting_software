@@ -23,7 +23,7 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 // ─── Interface عامة للتخزين ───────────────────────────────────────────────────
-import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
+import 'package:accounting_software/app/core/storage/storage_key.dart';
 
 abstract interface class StorageService {
   Future<void> write<T>(StorageKey key, T value);

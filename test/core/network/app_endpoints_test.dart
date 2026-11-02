@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/services/network/api_end_points.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

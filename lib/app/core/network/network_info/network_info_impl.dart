@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/services/network/network_info/network_info.dart';
+import 'package:accounting_software/app/core/network/network_info/network_info.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 /// Reports whether the device has any network interface up.

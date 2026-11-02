@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/services/network/network_info/network_info_impl.dart';
+import 'package:accounting_software/app/core/network/network_info/network_info_impl.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
+import 'package:accounting_software/app/core/storage/storage_key.dart';
 
 class StorageKeys {
   // منع إنشاء instance

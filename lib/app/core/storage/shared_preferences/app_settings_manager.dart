@@ -1,8 +1,8 @@
 // ─── AppSettingsManager: طبقة فوق SharedPreferences ─────────────────────────
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_language.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
+import 'package:accounting_software/app/core/storage/storage_keys.dart';
+import 'package:accounting_software/app/core/storage/storage_service.dart';
 
 class AppSettingsManager {
   final StorageService storage;

@@ -1,8 +1,8 @@
-// 📁 lib/core/services/local_storage/hive_storage/managers/cache_manager.dart
+// 📁 lib/app/core/storage/hive/cache_manager.dart
 
 import 'dart:convert';
-import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_storage_service.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
+import 'package:accounting_software/app/core/storage/hive/hive_storage_service.dart';
+import 'package:accounting_software/app/core/storage/storage_key.dart';
 
 class CacheManager {
   final HiveStorageService _stringCache;

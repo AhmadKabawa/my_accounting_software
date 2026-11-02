@@ -6,8 +6,8 @@ import 'package:accounting_software/app/core/error/exceptions/api_exception.dart
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
-import 'package:accounting_software/app/core/services/network/api_client_interface.dart';
-import 'package:accounting_software/app/core/services/network/api_end_points.dart';
+import 'package:accounting_software/app/core/network/api_client_interface.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 import 'dio_service.dart';
 

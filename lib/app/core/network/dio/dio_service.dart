@@ -2,10 +2,10 @@
 
 import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
-import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
-import 'package:accounting_software/app/core/services/network/dio/interceptors/connectivity_interceptor.dart';
-import 'package:accounting_software/app/core/services/network/dio/interceptors/language_interceptor.dart';
-import 'package:accounting_software/app/core/services/network/network_info/network_info.dart';
+import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
+import 'package:accounting_software/app/core/network/dio/interceptors/connectivity_interceptor.dart';
+import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
+import 'package:accounting_software/app/core/network/network_info/network_info.dart';
 import 'interceptors/auth_interceptor.dart';
 import 'interceptors/logger_interceptor.dart';
 import 'interceptors/refresh_token_interceptor.dart';

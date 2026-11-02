@@ -2,7 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
+import 'package:accounting_software/app/core/storage/storage_key.dart';
 
 class HiveObjectBox<T> {
   final Box<T> _box;

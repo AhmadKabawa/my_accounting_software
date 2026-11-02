@@ -1,11 +1,11 @@
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
-import 'package:accounting_software/app/core/services/network/api_end_points.dart';
-import 'package:accounting_software/app/core/services/network/dio/api_client.dart';
-import 'package:accounting_software/app/core/services/network/dio/dio_service.dart';
-import 'package:accounting_software/app/core/services/network/dio/interceptors/language_interceptor.dart';
-import 'package:accounting_software/app/core/services/network/network_info/network_info.dart';
-import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
+import 'package:accounting_software/app/core/network/dio/api_client.dart';
+import 'package:accounting_software/app/core/network/dio/dio_service.dart';
+import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
+import 'package:accounting_software/app/core/network/network_info/network_info.dart';
+import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,5 +1,5 @@
 import 'package:accounting_software/app/core/di/service_locator.dart';
-import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
+import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

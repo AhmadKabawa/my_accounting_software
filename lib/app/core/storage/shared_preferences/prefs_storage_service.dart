@@ -1,9 +1,9 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 📁 lib/core/services/local_storage/shared_storage/prefs_storage_service.dart
+// 📁 lib/app/core/storage/shared_preferences/prefs_storage_service.dart
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
+import 'package:accounting_software/app/core/storage/storage_key.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../storage_service.dart';
 

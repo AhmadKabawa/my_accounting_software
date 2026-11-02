@@ -8,7 +8,7 @@ import 'package:accounting_software/app/core/foundation/config/env_config.dart';
 import 'package:accounting_software/app/core/utils/observer/app_bloc_observer.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
-import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_manager.dart';
+import 'package:accounting_software/app/core/storage/hive/hive_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

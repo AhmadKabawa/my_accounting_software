@@ -1,5 +1,5 @@
-import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
+import 'package:accounting_software/app/core/storage/storage_key.dart';
+import 'package:accounting_software/app/core/storage/storage_service.dart';
 
 /// In-memory [StorageService] for unit tests.
 class MemoryStorage implements StorageService {

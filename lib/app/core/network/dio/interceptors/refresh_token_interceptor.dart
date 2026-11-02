@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
-import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
-import 'package:accounting_software/app/core/services/network/api_end_points.dart';
+import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
 
 /// Renews the Supabase session when a request fails with 401 and replays it.
 ///

@@ -1,7 +1,7 @@
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
-import 'package:accounting_software/app/core/services/local_storage/hive_storage/hive_object_box.dart';
-import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
-import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
+import 'package:accounting_software/app/core/storage/hive/hive_object_box.dart';
+import 'package:accounting_software/app/core/storage/storage_keys.dart';
+import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/local_data_source/auth_local_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/models/auth_tokens/auth_tokens_model.dart';
 import 'package:accounting_software/app/features/auth/data/models/user/user_model.dart';
