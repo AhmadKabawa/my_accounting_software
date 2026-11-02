@@ -29,10 +29,10 @@ class NavbarVariant {
   });
 }
 
-class NavbarStyles {
+class AppNavigationBarStyle {
   final BuildContext context;
 
-  const NavbarStyles(this.context);
+  const AppNavigationBarStyle(this.context);
 
   // ═══════════════════════════════════════════
   // 🔹 TOKENS

@@ -2,17 +2,16 @@
 // app_button.dart
 //
 // زر التطبيق الموحّد. كل القيم البصرية (ألوان، أحجام، padding، radius، أيقونة)
-// في ButtonStyles (context.uiStyles.button)؛ هنا فقط الحالة (pressed) والتفاعل.
+// في AppButtonStyle؛ هنا فقط الحالة (pressed) والتفاعل.
 // النص عبر AppText بنوع buttonText / buttonTextSmall.
 // ─────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/presentation/styles/components/button_styles.dart';
-import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
-export 'package:accounting_software/app/core/presentation/styles/components/button_styles.dart'
+export 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart'
     show AppButtonVariant, AppButtonSize;
 
 class AppButton extends StatefulWidget {
@@ -77,7 +76,7 @@ class _AppButtonState extends State<AppButton> {
 
   @override
   Widget build(BuildContext context) {
-    final styles = context.uiStyles.button;
+    final styles = AppButtonStyle(context);
     final visual = styles.resolve(widget.variant, widget.size, state: _state);
     final borderColor = visual.borderColor;
     final leading = _buildLeading(styles, visual);
@@ -124,7 +123,7 @@ class _AppButtonState extends State<AppButton> {
   }
 
   /// The spinner while loading, otherwise the icon (if any).
-  Widget? _buildLeading(ButtonStyles styles, ButtonVisual visual) {
+  Widget? _buildLeading(AppButtonStyle styles, ButtonVisual visual) {
     if (widget.isLoading) {
       return SizedBox.square(
         dimension: visual.iconSize,

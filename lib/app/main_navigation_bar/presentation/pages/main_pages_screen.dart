@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/custom_navigation_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 
 class MainPagesScreen extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -23,7 +23,7 @@ class MainPagesScreen extends StatelessWidget {
       child: Scaffold(
         body: navigationShell,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: CustomNavigationBar(
+        floatingActionButton: AppNavigationBar(
           // style: NavBarStyle.elegant,
           items: navItems,
           activeIndex: navigationShell.currentIndex,

@@ -38,10 +38,10 @@ class ButtonVisual {
   });
 }
 
-class ButtonStyles {
+class AppButtonStyle {
   final BuildContext context;
 
-  const ButtonStyles(this.context);
+  const AppButtonStyle(this.context);
 
   // ═══════════════════════════════════════════
   // 🔹 CONSTANTS

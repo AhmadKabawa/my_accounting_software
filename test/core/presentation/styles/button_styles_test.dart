@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:accounting_software/app/core/presentation/styles/components/button_styles.dart';
-import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 
-Future<ButtonStyles> _buttonStylesAt(WidgetTester tester, Size size) async {
+Future<AppButtonStyle> _buttonStylesAt(WidgetTester tester, Size size) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  late ButtonStyles styles;
+  late AppButtonStyle styles;
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.light(),
       home: Builder(
         builder: (context) {
-          styles = context.uiStyles.button;
+          styles = AppButtonStyle(context);
           return const SizedBox();
         },
       ),
@@ -46,7 +45,7 @@ void main() {
   const phone = Size(390, 844);
   const desktop = Size(1440, 900);
 
-  group('ButtonStyles.resolve', () {
+  group('AppButtonStyle.resolve', () {
     testWidgets('variants give different colors', (tester) async {
       final styles = await _buttonStylesAt(tester, phone);
       final scheme = AppTheme.light().colorScheme;

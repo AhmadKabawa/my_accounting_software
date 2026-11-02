@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/presentation/widgets/message_view_widgets.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/auth_result/auth_result.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/features/auth/domain/repositories/auth_repository.dart';

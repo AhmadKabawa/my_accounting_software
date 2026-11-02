@@ -9,7 +9,7 @@ import 'package:accounting_software/app/core/error/translators/failure_translato
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
-import 'package:accounting_software/app/core/presentation/widgets/message_view_widgets.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/core/network/cancel/cancellable_mixin.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/change_password_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/confirm_new_password_usecase.dart';

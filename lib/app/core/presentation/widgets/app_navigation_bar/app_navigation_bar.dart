@@ -1,24 +1,23 @@
 // ─────────────────────────────────────────────────────────────────
-// custom_navigation_bar.dart
+// app_navigation_bar.dart
 // Navigation Bar احترافي مع:
 //   - Multiple styles (Elegant, Glassmorphism, Pill, Minimal, Neon)
 //   - Smooth animations
 //   - Custom configurations
 //   - ✅ دقيق جداً لتقدير عرض العنصر النشط
 //
-// كل القيم البصرية (أحجام، ألوان، ظلال، blur) في NavbarStyles
-// (context.uiStyles.navbar)؛ هنا فقط الأنيميشن والـ scale والحالة.
+// كل القيم البصرية (أحجام، ألوان، ظلال، blur) في AppNavigationBarStyle
+// (AppNavigationBarStyle)؛ هنا فقط الأنيميشن والـ scale والحالة.
 // ─────────────────────────────────────────────────────────────────
 
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/presentation/styles/components/navbar_styles.dart';
-import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
-export 'package:accounting_software/app/core/presentation/styles/components/navbar_styles.dart'
+export 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar_style.dart'
     show NavBarStyle;
 
 /// نموذج بيانات للـ navigation item
@@ -40,7 +39,7 @@ class NavBarItem {
 // MAIN CUSTOM NAVIGATION BAR
 // ═══════════════════════════════════════════════════════════════
 
-class CustomNavigationBar extends StatefulWidget {
+class AppNavigationBar extends StatefulWidget {
   final List<NavBarItem> items;
   final int activeIndex;
   final ValueChanged<int> onIndexChanged;
@@ -57,7 +56,7 @@ class CustomNavigationBar extends StatefulWidget {
   /// null = the default elevation of the style.
   final double? elevation;
 
-  const CustomNavigationBar({
+  const AppNavigationBar({
     Key? key,
     required this.items,
     required this.activeIndex,
@@ -76,13 +75,13 @@ class CustomNavigationBar extends StatefulWidget {
        super(key: key);
 
   @override
-  State<CustomNavigationBar> createState() => _CustomNavigationBarState();
+  State<AppNavigationBar> createState() => _AppNavigationBarState();
 }
 
-class _CustomNavigationBarState extends State<CustomNavigationBar> {
+class _AppNavigationBarState extends State<AppNavigationBar> {
   @override
   Widget build(BuildContext context) {
-    final variant = context.uiStyles.navbar.variant(
+    final variant = AppNavigationBarStyle(context).variant(
       widget.style,
       backgroundColor: widget.backgroundColor,
       activeColor: widget.activeColor,
@@ -121,11 +120,11 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   Widget _buildItemsRow() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final styles = context.uiStyles.navbar;
+        final styles = AppNavigationBarStyle(context);
         final count = widget.items.length;
         final availableWidth = constraints.maxWidth;
 
-        // الأبعاد (مع القيم الافتراضية من NavbarStyles)
+        // الأبعاد (مع القيم الافتراضية من AppNavigationBarStyle)
         final circleSize = widget.maxItemSize ?? styles.defaultMaxItemSize;
         final activeItemWidth =
             widget.maxWidthActiveItemSize ?? styles.defaultActiveItemWidth;
@@ -228,7 +227,7 @@ class _NavBarItemWidgetState extends State<NavBarItemWidget>
     );
 
     _scaleAnim = Tween<double>(
-      begin: NavbarStyles.iconScaleBegin,
+      begin: AppNavigationBarStyle.iconScaleBegin,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
@@ -269,7 +268,7 @@ class _NavBarItemWidgetState extends State<NavBarItemWidget>
 
   @override
   Widget build(BuildContext context) {
-    final styles = context.uiStyles.navbar;
+    final styles = AppNavigationBarStyle(context);
     final activeColor = widget.activeColor ?? styles.activeColor;
     final onActiveColor = styles.onActiveColor;
     final inactiveColor = widget.inactiveColor ?? styles.inactiveColor;

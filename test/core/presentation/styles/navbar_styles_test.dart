@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:accounting_software/app/core/presentation/styles/components/navbar_styles.dart';
-import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar_style.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 
-Future<NavbarStyles> _navbarAt(WidgetTester tester, Size size) async {
+Future<AppNavigationBarStyle> _navbarAt(WidgetTester tester, Size size) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  late NavbarStyles styles;
+  late AppNavigationBarStyle styles;
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.light(),
       home: Builder(
         builder: (context) {
-          styles = context.uiStyles.navbar;
+          styles = AppNavigationBarStyle(context);
           return const SizedBox();
         },
       ),
@@ -30,9 +29,9 @@ void main() {
   const phone = Size(390, 844);
   const desktop = Size(1440, 900);
 
-  // The values below are the literals custom_navigation_bar.dart used before
-  // they moved into NavbarStyles.
-  group('NavbarStyles.variant on mobile', () {
+  // The values below are the literals app_navigation_bar.dart used before
+  // they moved into AppNavigationBarStyle.
+  group('AppNavigationBarStyle.variant on mobile', () {
     testWidgets('elegant', (tester) async {
       final v = (await _navbarAt(tester, phone)).variant(NavBarStyle.elegant);
 
