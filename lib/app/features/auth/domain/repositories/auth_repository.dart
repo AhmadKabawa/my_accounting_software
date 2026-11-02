@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/auth_result/auth_result.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/auth_tokens/auth_tokens.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';

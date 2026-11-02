@@ -78,7 +78,7 @@ class HomeState with _$HomeState {
 
 // import 'package:dartz/dartz.dart';
 // import 'package:freezed_annotation/freezed_annotation.dart';
-// import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
+// import 'package:accounting_software/app/core/error/failures/failure.dart';
 // import 'package:accounting_software/app/core/foundation/base/use_case_no_params.dart';
 // import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 // part 'home_states.freezed.dart';

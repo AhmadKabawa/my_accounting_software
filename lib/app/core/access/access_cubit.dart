@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/access/role.dart';
-import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 
 part 'access_state.dart';
 

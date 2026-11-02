@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/foundation/base_mixin/base/base_cub
 import 'package:dartz/dartz.dart' show Either, Unit;
 import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
-import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/translators/failure_translator.dart';
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';

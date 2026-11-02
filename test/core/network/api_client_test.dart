@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/error/error_handling/exceptions/api_exception.dart';
+import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/services/network/api_end_points.dart';
 import 'package:accounting_software/app/core/services/network/dio/api_client.dart';

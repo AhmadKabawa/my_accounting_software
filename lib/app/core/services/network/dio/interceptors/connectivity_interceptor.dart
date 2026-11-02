@@ -1,6 +1,6 @@
 // ✅ connectivity_interceptor.dart
 import 'package:dio/dio.dart';
-import 'package:accounting_software/app/core/error/error_handling/exceptions/api_exception.dart';
+import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/services/network/network_info/network_info.dart';
 
 class ConnectivityInterceptor extends Interceptor {

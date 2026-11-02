@@ -1,8 +1,8 @@
 // api_result.dart
 import 'package:dartz/dartz.dart';
-import 'package:accounting_software/app/core/error/error_handling/exceptions/exceptions.dart';
-import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
-import 'package:accounting_software/app/core/error/error_handling/mapper/exception_mapper.dart';
+import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
 
 sealed class ApiResult<T> {
   const ApiResult();

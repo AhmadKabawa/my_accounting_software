@@ -2,10 +2,10 @@
 // lib/features/auth/data/repositories/auth_repository_impl.dart
 
 import 'package:dartz/dartz.dart';
-import 'package:accounting_software/app/core/error/error_handling/exceptions/api_exception.dart';
-import 'package:accounting_software/app/core/error/error_handling/exceptions/exceptions.dart';
-import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
-import 'package:accounting_software/app/core/error/error_handling/mapper/exception_mapper.dart';
+import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
+import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/local_data_source/auth_local_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/remote_data_source/auth_remote_data_source.dart';

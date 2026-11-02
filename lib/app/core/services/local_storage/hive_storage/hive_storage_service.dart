@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:accounting_software/app/core/error/error_handling/exceptions/exceptions.dart';
+import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_key.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
 

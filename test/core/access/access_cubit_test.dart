@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/access/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/access/role.dart';
-import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 
 void main() {
   late AccessCubit cubit;

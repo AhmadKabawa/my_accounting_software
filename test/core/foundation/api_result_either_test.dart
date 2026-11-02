@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:accounting_software/app/core/error/error_handling/exceptions/api_exception.dart';
-import 'package:accounting_software/app/core/error/error_handling/failure/failure.dart';
+import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 
 void main() {

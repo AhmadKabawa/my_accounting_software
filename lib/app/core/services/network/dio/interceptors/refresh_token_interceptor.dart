@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:accounting_software/app/core/error/error_handling/exceptions/exceptions.dart';
+import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/services/local_storage/secure_storage/token_manager.dart';
 import 'package:accounting_software/app/core/services/network/api_end_points.dart';
 
