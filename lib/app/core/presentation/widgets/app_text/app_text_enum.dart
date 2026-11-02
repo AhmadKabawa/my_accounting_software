@@ -18,4 +18,8 @@ enum AppTextType {
   labelLarge,
   labelMedium,
   labelSmall,
+
+  /// Button labels (the theme has no text role for them, so no theme color).
+  buttonText,
+  buttonTextSmall,
 }

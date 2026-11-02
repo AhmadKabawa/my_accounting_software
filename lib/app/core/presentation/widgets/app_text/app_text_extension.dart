@@ -21,6 +21,8 @@ extension AppTextTypeX on AppTextType {
     AppTextType.labelLarge => AppTextStyles.labelLarge,
     AppTextType.labelMedium => AppTextStyles.labelMedium,
     AppTextType.labelSmall => AppTextStyles.labelSmall,
+    AppTextType.buttonText => AppTextStyles.buttonText,
+    AppTextType.buttonTextSmall => AppTextStyles.buttonTextSmall,
   };
 
   /// The color the theme gives this type (it differs per type and between
@@ -42,6 +44,8 @@ extension AppTextTypeX on AppTextType {
       AppTextType.labelLarge => textTheme.labelLarge,
       AppTextType.labelMedium => textTheme.labelMedium,
       AppTextType.labelSmall => textTheme.labelSmall,
+      // No theme role: the caller (e.g. AppButton) supplies the color.
+      AppTextType.buttonText || AppTextType.buttonTextSmall => null,
     };
     return themeStyle?.color;
   }
