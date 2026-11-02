@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/enum_app_language.dart';
+import 'package:accounting_software/app/core/localization/translations/app_language.dart';
 import 'package:accounting_software/app/core/services/local_storage/shared_storage/app_settings_manager_sorage.dart';
-import 'package:accounting_software/app/core/utils/logger.dart';
+import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 
 import 'locale_state.dart';
 

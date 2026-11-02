@@ -2,11 +2,11 @@
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:iconsax/iconsax.dart';
 // import 'package:easy_localization/easy_localization.dart';
-// import 'package:accounting_software/app/core/foundation/localization/translations/app_strings.dart';
+// import 'package:accounting_software/app/core/localization/translations/app_strings.dart';
 // import 'package:accounting_software/app/core/routing/navigator_extensions.dart';
 // import 'package:accounting_software/app/core/routing/routes.dart';
 // import 'package:accounting_software/app/core/utils/helper/app_message_helpers.dart';
-// import 'package:accounting_software/app/core/foundation/validator/form_validator.dart';
+// import 'package:accounting_software/app/core/foundation/validation/form_validator.dart';
 // import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
 // import 'package:accounting_software/app/features/auth/presentation/pages/login/widgets/customCheck_box.dart';
 

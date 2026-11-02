@@ -1,5 +1,5 @@
-import 'package:accounting_software/app/core/foundation/localization/translations/app_keys.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 class ServerErrorMapper {
   ServerErrorMapper._();

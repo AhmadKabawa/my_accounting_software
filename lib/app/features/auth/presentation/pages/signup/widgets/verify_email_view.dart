@@ -2,7 +2,7 @@
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
 // import 'package:accounting_software/app/core/foundation/constants/image_constants.dart';
-// import 'package:accounting_software/app/core/foundation/localization/translations/app_strings.dart';
+// import 'package:accounting_software/app/core/localization/translations/app_strings.dart';
 // import 'package:accounting_software/app/core/routing/navigator_extensions.dart';
 // import 'package:accounting_software/app/core/routing/routes.dart';
 // import 'package:accounting_software/app/core/presentation/responsive/responsive_helper.dart';

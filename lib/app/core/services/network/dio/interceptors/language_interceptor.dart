@@ -1,7 +1,7 @@
 // lib/core/network/interceptors/language_interceptor.dart
 
 import 'package:dio/dio.dart';
-import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
+import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 
 /// يضيف Accept-Language header لكل request
 /// يقرأ اللغة الحالية من AppLocale أو SharedPreferences

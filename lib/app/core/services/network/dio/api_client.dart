@@ -8,7 +8,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_parser.d
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/services/network/api_client_interface.dart';
 import 'package:accounting_software/app/core/services/network/api_end_points.dart';
-import 'package:accounting_software/app/core/utils/logger.dart';
+import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 import 'dio_service.dart';
 
 typedef JsonFactory<T> = T Function(Map<String, dynamic>);

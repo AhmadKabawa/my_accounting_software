@@ -1,5 +1,5 @@
 import 'package:accounting_software/app/core/error/error_handling/exceptions/exceptions.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
 
 class ApiException extends AppException {
   final ApiExceptionType type;

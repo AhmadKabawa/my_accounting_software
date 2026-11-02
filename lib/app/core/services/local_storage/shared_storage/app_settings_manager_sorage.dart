@@ -1,6 +1,6 @@
 // ─── AppSettingsManager: طبقة فوق SharedPreferences ─────────────────────────
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/enum_app_language.dart';
+import 'package:accounting_software/app/core/localization/translations/app_language.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
 

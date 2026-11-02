@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:iconsax/iconsax.dart';
-// import 'package:accounting_software/app/core/foundation/localization/translations/localization_extension.dart';
+// import 'package:accounting_software/app/core/localization/translations/localization_extension.dart';
 
 // import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 

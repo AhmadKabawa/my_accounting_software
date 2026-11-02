@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/services/local_storage/shared_storage/app_settings_manager_sorage.dart';
-import 'package:accounting_software/app/core/utils/logger.dart';
+import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 
 part 'theme_state.dart';
 

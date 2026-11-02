@@ -6,7 +6,7 @@ import 'dart:async';
 
 import 'package:accounting_software/app/core/services/local_storage/storage_keys.dart';
 import 'package:accounting_software/app/core/services/local_storage/storage_service.dart';
-import 'package:accounting_software/app/core/utils/logger.dart';
+import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 
 class TokenManager {
   final StorageService _storage;

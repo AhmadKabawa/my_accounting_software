@@ -13,7 +13,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/styles/components/navbar_styles.dart';
 import 'package:accounting_software/app/core/presentation/styles/styles_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';

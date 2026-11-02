@@ -1,8 +1,8 @@
 /// lib/core/localization/translations/en_US.dart
 
-import 'package:accounting_software/app/core/foundation/localization/translations/app_keys.dart'
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart'
     show AppKeys;
-import 'package:accounting_software/app/core/foundation/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 /// يجمع كل الترجمات الإنجليزية
 final TranslationMap enUS = {

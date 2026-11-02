@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/app_ar.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/app_en.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/enum_app_language.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/translations/app_ar.dart';
+import 'package:accounting_software/app/core/localization/translations/app_en.dart';
+import 'package:accounting_software/app/core/localization/translations/app_language.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 class MyDartLoader extends AssetLoader {
   const MyDartLoader();

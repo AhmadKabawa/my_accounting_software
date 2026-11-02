@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/foundation/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
 
 /// Base class for all exceptions
 abstract class AppException implements Exception {

@@ -1,5 +1,5 @@
-import 'package:accounting_software/app/core/foundation/localization/cubit/locale_cubit.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/enum_app_language.dart';
+import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
+import 'package:accounting_software/app/core/localization/translations/app_language.dart';
 import 'package:accounting_software/app/core/services/local_storage/shared_storage/app_settings_manager_sorage.dart';
 import 'package:accounting_software/app/core/services/network/dio/interceptors/language_interceptor.dart';
 import 'package:dio/dio.dart';

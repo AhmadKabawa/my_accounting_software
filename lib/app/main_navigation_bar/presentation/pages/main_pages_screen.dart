@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:accounting_software/app/core/foundation/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/custom_navigation_bar.dart';
 
 class MainPagesScreen extends StatelessWidget {
