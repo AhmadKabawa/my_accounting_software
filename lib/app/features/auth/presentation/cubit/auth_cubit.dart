@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:accounting_software/app/core/foundation/base_mixin/base/base_cubit/base_side_effects/base_cubit.dart';
+import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:dartz/dartz.dart' show Either, Unit;
 import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';

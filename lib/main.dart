@@ -5,7 +5,7 @@ import 'package:accounting_software/app/app_di.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app.dart';
 import 'package:accounting_software/app/core/foundation/config/env_config.dart';
-import 'package:accounting_software/app/core/utils/observer/app_bloc_observer.dart';
+import 'package:accounting_software/app/core/presentation/state_management/app_bloc_observer.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
 import 'package:accounting_software/app/core/storage/hive/hive_manager.dart';

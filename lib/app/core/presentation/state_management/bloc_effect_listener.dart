@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/foundation/base_mixin/mixin/effect_mixin.dart';
+import 'package:accounting_software/app/core/presentation/state_management/effect_mixin.dart';
 
 // core/widgets/bloc_effect_listener.dart
 // ignore: avoid_types_as_parameter_names
@@ -82,7 +82,7 @@ class _BlocEffectListenerState<Effects, CubitB extends HasEffects<Effects>>
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/foundation/base_mixin/base/base_cubit/base_side_effects/base_cubit.dart';
+import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 
 class BlocEffectListener<CubitB extends BaseCubit<S, Effects>, S, Effects>
     extends StatefulWidget {

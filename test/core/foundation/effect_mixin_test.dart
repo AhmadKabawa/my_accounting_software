@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:accounting_software/app/core/foundation/base_mixin/mixin/effect_mixin.dart';
+import 'package:accounting_software/app/core/presentation/state_management/effect_mixin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _Probe with EffectMixin<int> {

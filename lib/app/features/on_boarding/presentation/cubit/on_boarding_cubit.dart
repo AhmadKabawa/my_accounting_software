@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/foundation/base_mixin/base/base_cubit/base_side_effects/base_cubit.dart';
+import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_effect.dart';
 import 'package:accounting_software/app/features/on_boarding/data/model/on_boarding_model.dart';

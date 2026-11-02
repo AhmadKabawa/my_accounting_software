@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/foundation/base_mixin/base/base_cubit/base_side_effects/base_cubit.dart';
+import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _CounterCubit extends BaseCubit<int, String> {

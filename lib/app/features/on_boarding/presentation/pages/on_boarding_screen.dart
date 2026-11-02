@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/foundation/base_mixin/base/base_cubit/base_side_effects/base_widget_listener.dart';
+import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_effect.dart';
