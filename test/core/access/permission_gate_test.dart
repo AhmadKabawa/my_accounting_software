@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:accounting_software/app/core/access/access_cubit.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/access/role.dart';
-import 'package:accounting_software/app/core/presentation/widgets/permission_gate/permission_gate.dart';
+import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 
 void main() {
   Future<AccessCubit> pump(WidgetTester tester) async {

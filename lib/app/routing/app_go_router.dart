@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:accounting_software/app/core/access/access_cubit.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/routing/go_router_refresh_stream.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/core/routing/route_transitions.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
-import 'package:accounting_software/app/core/utils/observer/app_router_observer.dart';
+import 'package:accounting_software/app/core/routing/app_router_observer.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/login/login_screen.dart';
 // import 'package:accounting_software/app/features/chat/presentation/pages/chat_screen.dart';

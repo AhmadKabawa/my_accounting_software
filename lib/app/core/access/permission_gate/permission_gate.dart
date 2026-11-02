@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/access/access_cubit.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 
 /// يعرض [child] فقط إذا كان للدور الحالي [permission]، وإلا يعرض [fallback].

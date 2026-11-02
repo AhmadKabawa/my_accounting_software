@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:accounting_software/app/core/foundation/config/env_config.dart';
-import 'package:accounting_software/app/core/access/access_cubit.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';

@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/access/access_cubit.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/features/auth/di/auth_di.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
