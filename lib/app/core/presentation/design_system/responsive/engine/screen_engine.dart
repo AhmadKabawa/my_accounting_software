@@ -43,14 +43,21 @@ abstract final class ScreenEngine {
   // SCREEN TYPE
   // ══════════════════════════════════════════════════════════════
 
+  /// The [ScreenType] for a [width]: the one place the breakpoints are applied.
+  static ScreenType screenTypeForWidth(double width) {
+    if (width >= _tabletBreakpoint) return ScreenType.desktop;
+    if (width >= _mobileBreakpoint) return ScreenType.tablet;
+    return ScreenType.mobile;
+  }
+
   /// Desktop is decided by width. Mobile vs tablet is decided by the shortest
   /// side, so a phone in landscape (e.g. 844×390) stays a mobile instead of
   /// being classified as a tablet just because its width passed 600.
   static ScreenType screenType(BuildContext context) {
     final size = _size(context);
-    if (size.width >= _tabletBreakpoint) return ScreenType.desktop;
-    if (size.shortestSide >= _mobileBreakpoint) return ScreenType.tablet;
-    return ScreenType.mobile;
+    return screenTypeForWidth(
+      size.width >= _tabletBreakpoint ? size.width : size.shortestSide,
+    );
   }
 
   static bool isMobile(BuildContext context) =>
