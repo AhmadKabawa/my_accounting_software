@@ -113,7 +113,9 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
       );
     }
 
-    return result;
+    // The bar sits at the bottom edge: it keeps itself clear of the system
+    // gesture area, so its parent does not have to wrap it in a SafeArea.
+    return SafeArea(top: false, child: result);
   }
 
   /// بناء صف الـ items

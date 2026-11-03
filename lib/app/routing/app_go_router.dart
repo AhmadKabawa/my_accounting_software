@@ -21,7 +21,7 @@ import 'package:accounting_software/app/features/profile/presentation/pages/prof
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_cubit.dart';
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_state.dart';
 import 'package:accounting_software/app/features/splash/presentation/pages/splash_screen.dart';
-import 'package:accounting_software/app/main_navigation_bar/presentation/pages/main_pages_screen.dart';
+import 'package:accounting_software/app/shell/app_shell.dart';
 
 class AppRouter {
   static final AuthCubit authCubit = sl<AuthCubit>();
@@ -99,11 +99,11 @@ class AppRouter {
       ),
 
       /// ─────────────────────────────────────────
-      /// MAIN APP (Bottom Navigation)
+      /// MAIN APP (adaptive shell: bottom bar / rail / sidebar)
       /// ─────────────────────────────────────────
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
-          return MainPagesScreen(navigationShell: navigationShell);
+          return AppShell(navigationShell: navigationShell);
         },
 
         branches: [

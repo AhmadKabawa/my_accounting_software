@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/main_navigation_bar/presentation/cubit/main_navigation_bar_state.dart';
+import 'package:accounting_software/app/shell/presentation/cubit/main_navigation_bar_state.dart';
 
 class MainNavigationBarCubit extends Cubit<MainNavigationBarState> {
   MainNavigationBarCubit() : super(MainNavigationBarState.initial());
