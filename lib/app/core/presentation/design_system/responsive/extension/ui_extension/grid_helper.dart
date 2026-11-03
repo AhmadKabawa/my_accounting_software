@@ -27,22 +27,20 @@ class GridHelper {
     mode: mode,
   );
 
-  /// Widget selection responsive
+  /// Device-level builder selection (only the chosen builder runs)
   Widget widget({
-    required Widget mobile,
-    Widget? mobileLandscape,
-    Widget? tablet,
-    Widget? tabletLandscape,
-    Widget? desktop,
-    ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
-  }) => Rh.widget(
+    required WidgetBuilder mobile,
+    WidgetBuilder? mobileLandscape,
+    WidgetBuilder? tablet,
+    WidgetBuilder? tabletLandscape,
+    WidgetBuilder? desktop,
+  }) => Rh.builder(
     context: context,
     mobile: mobile,
     mobileLandscape: mobileLandscape,
     tablet: tablet,
     tabletLandscape: tabletLandscape,
     desktop: desktop,
-    mode: mode,
   );
 
   /// value selection responsive

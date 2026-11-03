@@ -167,20 +167,18 @@ extension ResponsiveContextExtension on BuildContext {
   BorderRadius radBottom(AppRadius size) =>
       ResponsiveHelper.bottomRadius(this, size);
   Widget responsive({
-    required Widget mobile,
-    Widget? tablet,
-    Widget? desktop,
-    Widget? mobileLandscape,
-    Widget? tabletLandscape,
-    ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
-  }) => ResponsiveHelper.widget(
+    required WidgetBuilder mobile,
+    WidgetBuilder? tablet,
+    WidgetBuilder? desktop,
+    WidgetBuilder? mobileLandscape,
+    WidgetBuilder? tabletLandscape,
+  }) => ResponsiveHelper.builder(
     context: this,
     mobile: mobile,
     tablet: tablet,
     desktop: desktop,
     mobileLandscape: mobileLandscape,
     tabletLandscape: tabletLandscape,
-    mode: mode,
   );
   int grid({int mobile = 2, int tablet = 3, int desktop = 4}) =>
       ResponsiveHelper.crossAxisCount(

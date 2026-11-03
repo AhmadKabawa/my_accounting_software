@@ -830,71 +830,57 @@ abstract final class ResponsiveHelper {
   // WIDGET SELECTION (Responsive widget alternatives)
   // ══════════════════════════════════════════════════════════════
 
-  /// Returns different widgets based on screen type and orientation
+  /// Builds the layout that matches the **device** (screen type and
+  /// orientation); only the chosen builder runs, the others are never called.
   ///
-  /// Useful for returning completely different layouts per screen size
+  /// Decided by the whole screen ([ScreenEngine.screenType]), so use it for
+  /// device-level choices such as the app shell. To decide by the width a
+  /// widget really gets (inside a screen or a pane), use `AdaptiveLayout`.
   ///
   /// Parameters:
-  /// - [mobile]: Widget for mobile (required, used as fallback)
-  /// - [mobileLandscape]: Optional widget for mobile landscape
-  /// - [tablet]: Optional widget for tablet
-  /// - [tabletLandscape]: Optional widget for tablet landscape
-  /// - [desktop]: Optional widget for desktop
+  /// - [mobile]: Builder for mobile (required, used as fallback)
+  /// - [mobileLandscape]: Optional builder for mobile landscape
+  /// - [tablet]: Optional builder for tablet (falls back to [mobile])
+  /// - [tabletLandscape]: Optional builder for tablet landscape
+  /// - [desktop]: Optional builder for desktop (falls back to [tablet])
   ///
   /// Example:
   /// ```dart
-  /// Rh.widget(
+  /// Rh.builder(
   ///   context: context,
-  ///   mobile: MobileLayout(),
-  ///   tablet: TabletLayout(),
-  ///   desktop: DesktopLayout(),
+  ///   mobile: (_) => const MobileLayout(),
+  ///   tablet: (_) => const TabletLayout(),
+  ///   desktop: (_) => const DesktopLayout(),
   /// )
   /// ```
-  static Widget widget({
+  static Widget builder({
     required BuildContext context,
-    required Widget mobile,
-    Widget? mobileLandscape,
-    Widget? tablet,
-    Widget? tabletLandscape,
-    Widget? desktop,
-    ResponsiveMode mode = ResponsiveMode.adaptiveOnly,
-  }) {
-    switch (mode) {
-      case ResponsiveMode.fixed:
-        return mobile;
-      case ResponsiveMode.scaleOnly:
-      case ResponsiveMode.adaptiveOnly:
-      case ResponsiveMode.adaptiveScale:
-        return _adaptiveValue(
-          context,
-          mobile: mobile,
-          mobileLandscape: mobileLandscape,
-          tablet: tablet ?? mobile,
-          tabletLandscape: tabletLandscape ?? tablet ?? mobile,
-          desktop: desktop ?? tablet ?? mobile,
-        );
-    }
-  }
+    required WidgetBuilder mobile,
+    WidgetBuilder? mobileLandscape,
+    WidgetBuilder? tablet,
+    WidgetBuilder? tabletLandscape,
+    WidgetBuilder? desktop,
+  }) => _adaptiveValue<WidgetBuilder>(
+    context,
+    mobile: mobile,
+    mobileLandscape: mobileLandscape,
+    tablet: tablet ?? mobile,
+    tabletLandscape: tabletLandscape ?? tablet ?? mobile,
+    desktop: desktop ?? tablet ?? mobile,
+  )(context);
 
   /// Returns different values based on screen type and orientation
   ///
-  /// Useful for returning completely different layouts per screen size
-  ///
   /// Parameters:
-  /// - [mobile]: Widget for mobile (required, used as fallback)
-  /// - [mobileLandscape]: Optional widget for mobile landscape
-  /// - [tablet]: Optional widget for tablet
-  /// - [tabletLandscape]: Optional widget for tablet landscape
-  /// - [desktop]: Optional widget for desktop
+  /// - [mobile]: Value for mobile (required, used as fallback)
+  /// - [mobileLandscape]: Optional value for mobile landscape
+  /// - [tablet]: Optional value for tablet
+  /// - [tabletLandscape]: Optional value for tablet landscape
+  /// - [desktop]: Optional value for desktop
   ///
   /// Example:
   /// ```dart
-  /// Rh.widget(
-  ///   context: context,
-  ///   mobile: MobileLayout(),
-  ///   tablet: TabletLayout(),
-  ///   desktop: DesktopLayout(),
-  /// )
+  /// final columns = Rh.value(context: context, mobile: 1, desktop: 3);
   /// ```
   static T value<T>({
     required BuildContext context,
