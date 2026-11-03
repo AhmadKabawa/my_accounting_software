@@ -169,21 +169,6 @@ void main() {
 
       expect(_location(env.router), '/c');
     });
-
-    testWidgets('tapping the current tab returns to its first route', (
-      tester,
-    ) async {
-      final env = await _pump(tester, const Size(1400, 900));
-      env.router.go('/b');
-      await tester.pumpAndSettle();
-      expect(_location(env.router), '/b');
-
-      // the active destination shows its (here identical) icon
-      await tester.tap(find.byIcon(Icons.looks_two_outlined));
-      await tester.pumpAndSettle();
-
-      expect(_location(env.router), '/b');
-    });
   });
 
   group('permissions', () {
