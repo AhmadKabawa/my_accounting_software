@@ -27,7 +27,8 @@ class GridHelper {
     mode: mode,
   );
 
-  /// Device-level builder selection (only the chosen builder runs)
+  /// Device-level builder selection (only the chosen builder runs).
+  /// For a decision by the available width, use [adaptive].
   Widget widget({
     required WidgetBuilder mobile,
     WidgetBuilder? mobileLandscape,
@@ -42,6 +43,14 @@ class GridHelper {
     tabletLandscape: tabletLandscape,
     desktop: desktop,
   );
+
+  /// Layout selection by the width the content actually gets (not the
+  /// screen's): use it inside screens and panes. Only the chosen builder runs.
+  Widget adaptive({
+    required WidgetBuilder mobile,
+    WidgetBuilder? tablet,
+    WidgetBuilder? desktop,
+  }) => AdaptiveLayout(mobile: mobile, tablet: tablet, desktop: desktop);
 
   /// value selection responsive
   T value<T>({
