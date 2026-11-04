@@ -14,12 +14,14 @@ enum ValidationRule {
   phone,
   match,
   password, // composite
-  async, // async custom rule
+  async, // NOT IMPLEMENTED: reserved; validate() ignores it (no async path yet)
 }
 
+/// Reserved for a future async rule; nothing consumes it yet.
 typedef AsyncValidator = Future<bool> Function(String value);
 
-/// Class رئيسي للتحقق الديناميكي
+/// Class رئيسي للتحقق الديناميكي (نظام التحقق الوحيد في المشروع).
+/// الرسائل عبر AppKey. أمثلة الاستخدام في docs/architecture/CORE_USAGE.md.
 class AppValidator {
   /// دالة التحقق
   /// [value] : القيمة المراد التحقق منها
