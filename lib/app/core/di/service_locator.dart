@@ -1,8 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:accounting_software/app/core/foundation/config/env_config.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
@@ -24,12 +22,6 @@ final sl = GetIt.instance;
 /// the composition root (lib/app/app_di.dart).
 Future<void> initCoreDI() async {
   //! ==================== External ====================
-  sl.registerLazySingleton<GoogleSignIn>(
-    () => GoogleSignIn(
-      clientId: EnvConfig.googleClientId,
-      scopes: ['email', 'profile'],
-    ),
-  );
   // Connectivity
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
 
@@ -71,12 +63,6 @@ Future<void> initCoreDI() async {
   sl.registerLazySingleton<AppSettingsManager>(
     () => AppSettingsManager(storage: sl<PrefsStorageService>()),
   );
-
-  //! ==================== Core ====================
-  // StorageService (IMPORTANT)
-  // sl.registerLazySingleton<StorageService>(
-  //   () => PrefsStorageService(prefs: sl()),
-  // );
 
   //! ==================== Theme & Localization ====================
 

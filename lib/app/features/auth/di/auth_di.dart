@@ -1,4 +1,6 @@
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
+import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/storage/hive/cache_manager.dart';
 import 'package:accounting_software/app/core/storage/hive/hive_box_names.dart';
 import 'package:accounting_software/app/core/storage/hive/hive_manager.dart';
@@ -77,6 +79,14 @@ Future<void> initAuthDI() async {
   // Repository
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remote: sl(), local: sl()),
+  );
+
+  // Google Sign-In belongs to this feature; the client ID comes from AppConfig.
+  sl.registerLazySingleton<GoogleSignIn>(
+    () => GoogleSignIn(
+      clientId: AppConfig.googleClientId,
+      scopes: ['email', 'profile'],
+    ),
   );
 
   // Data sources
