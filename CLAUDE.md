@@ -1,19 +1,10 @@
-# تعليمات وكيل البرمجة للمشروع
+# تعليمات Claude للمشروع
 
-قبل تنفيذ أي مهمة، اقرأ `AGENTS.md` والتزم بقواعده.
+التعليمات العامة في `AGENTS.md`؛ اقرأه والتزم بقواعده قبل أي مهمة.
 
-إذا كانت المهمة تمس `lib/app/core` أو تحتاج أداة مشتركة:
-1. اقرأ `docs/architecture/CORE_MAP.md`.
-2. اقرأ `docs/architecture/CORE_USAGE.md` و`ARCHITECTURE_RULES.md` حسب الحاجة.
-3. افحص الكود الفعلي والاختبارات؛ لا تعتمد على الخريطة وحدها.
-4. ابحث عن أداة موجودة قبل إنشاء أي بديل.
-5. إذا كانت القدرة عامة ومناسبة لـ Core وغير موجودة، أضفها في موضعها الصحيح ثم استخدمها.
-6. إذا كانت خاصة بميزة واحدة، أبقها داخل Feature.
-7. حدّث توثيق Core والاختبارات عند تغيير القدرة المشتركة.
+عند العمل على `lib/app/core` أو عند حاجة Feature إلى قدرة مشتركة:
+- `docs/architecture/CORE_MAP.md`: اقرأه أولاً لاكتشاف الأدوات الموجودة، ثم افحص الكود الفعلي.
+- `docs/architecture/ARCHITECTURE_RULES.md`: عند اتخاذ قرار يخص Core (إضافة أو تعديل أو مكان الكود).
+- `docs/architecture/CORE_USAGE.md`: عند الحاجة إلى مثال استخدام فقط.
 
-لا تنفذ إعادة هيكلة أو حذفاً خارج نطاق طلب المستخدم. لا تدّعِ نجاح analyze/test إلا إذا شُغّلا فعلياً.
-
-مراجع Core:
-- `docs/architecture/CORE_MAP.md`
-- `docs/architecture/CORE_USAGE.md`
-- `docs/architecture/ARCHITECTURE_RULES.md`
+خطوات العمل التفصيلية في Skill `.claude/skills/core-usage/SKILL.md` (تنطبق وفق وصفها فقط).

@@ -8,19 +8,6 @@ class LocaleState extends Equatable {
     required this.locale,
   }); 
 
-  // /// الحالة الابتدائية
-  // factory LocaleState.initial() =>
-  //     const LocaleState(locale: Locale('ar'));
-
-  // /// نسخ الحالة مع تعديل قيمة معينة
-  // LocaleState copyWith({
-  //   Locale? locale,
-  // }) {
-  //   return LocaleState(
-  //     locale: locale ?? this.locale,
-  //   );
-  // }
-
   @override
   List<Object> get props => [locale];
 

@@ -1,7 +1,3 @@
-// lib/core/network/endpoints/app_endpoints.dart
-
-// lib/core/network/endpoints/app_endpoint.dart
-
 /// Wrapper خفيف — يُستخدم كـ String تماماً
 /// لكن يجبر المطور يمر بـ AppEndpoints
 extension type const AppEndpoint(String path) {
@@ -14,12 +10,6 @@ abstract final class AppEndpoints {
 
   // ── Products ──────────────────────────────────
   static const products = _ProductEndpoints();
-
-  // ── Orders ────────────────────────────────────
-  // static const orders = _OrderEndpoints();
-
-  // // ── User ──────────────────────────────────────
-  // static const user = _UserEndpoints();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -68,6 +58,3 @@ final class _ProductEndpoints {
     return Uri.encodeComponent(value);
   }
 }
-// ─────────────────────────────────────────────────────────────
- 
-// ─────────────────────────────────────────────────────────────

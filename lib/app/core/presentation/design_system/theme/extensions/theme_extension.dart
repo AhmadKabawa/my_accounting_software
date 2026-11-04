@@ -4,33 +4,6 @@ import 'package:flutter/material.dart';
 /// إضافة وظائف مساعدة على ThemeMode
 
 extension ThemeModeExtension on ThemeMode {
-  // /// تحويل ThemeMode إلى String للحفظ
-  // String get toStorageString  {
-  //   switch (this) {
-  //     case ThemeMode.light:
-  //       return 'light';
-  //     case ThemeMode.dark:
-  //       return 'dark';
-  //     case ThemeMode.system:
-  //       return 'system';
-  //   }
-  // }
-
-  // /// تحويل String إلى ThemeMode
-  // //  هذا التابع static اي يجب استدعائه ب ThemeModeExtension
-  // //او اضافته على ال string
-  // static ThemeMode fromStorageString(String value) {
-  //   switch (value.toLowerCase()) {
-  //     case 'light':
-  //       return ThemeMode.light;
-  //     case 'dark':
-  //       return ThemeMode.dark;
-  //     case 'system':
-  //     default:
-  //       return ThemeMode.system;
-  //   }
-  // }
-
   /// الحصول على Icon للثيم
   IconData get icon {
     switch (this) {

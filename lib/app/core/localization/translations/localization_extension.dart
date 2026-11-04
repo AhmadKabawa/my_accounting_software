@@ -1,10 +1,3 @@
-// // import 'package:flutter/material.dart';
-// // import 'package:accounting_software/l10n/app_localizations.dart';
-
-// // extension LocalizationExt on BuildContext {
-// //   AppLocalizations get tr =>
-// //       AppLocalizations.of(this)!;
-// // }//context.tr.serverError
 import 'package:flutter/material.dart';
 
 extension DirectionExtension on BuildContext {
