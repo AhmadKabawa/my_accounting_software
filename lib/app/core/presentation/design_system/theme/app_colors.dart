@@ -51,6 +51,12 @@ class AppColors {
   static const Color errorDark = Color(0xFFEF4444);
   static const Color infoDark = Color(0xFF2196F3);
 
+  /// PLACEHOLDER: مدين/دائن. قيم مؤقتة بانتظار الهوية البصرية للنظام المحاسبي.
+  static const Color debit = Color(0xFFC62828);
+  static const Color credit = Color(0xFF2E7D32);
+  static const Color debitDark = Color(0xFFEF5350);
+  static const Color creditDark = Color(0xFF66BB6A);
+
   /* ==================== ⚫ NEUTRAL COLORS (من النسخة الأولى) ==================== */
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF232323); // أسود رمادي

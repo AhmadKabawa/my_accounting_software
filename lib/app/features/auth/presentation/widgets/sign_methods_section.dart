@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/constants/image_constants.dart';
-import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/theme_extension.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SignMethodsSection extends StatelessWidget {
@@ -37,7 +37,7 @@ class IconSignWith extends StatelessWidget {
       width: 70,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: context.colors.onSurface.withAlpha(50),
+        color: context.ui.theme.colors.onSurface.withAlpha(50),
       ),
       child: IconButton(
         onPressed: onPressed,

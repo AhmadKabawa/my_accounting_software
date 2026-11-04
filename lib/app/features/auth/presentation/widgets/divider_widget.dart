@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/theme_extension.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 
 class DividerWidget extends StatelessWidget {
   const DividerWidget({super.key, required this.text});
@@ -10,16 +10,16 @@ class DividerWidget extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Divider(
-          color: context.colors.onBackground,
+          color: context.ui.theme.colors.onBackground,
           thickness: .5,
           indent: 10,
           endIndent: 10,
         ),
         Container(
-          color: context.colors.surface,
+          color: context.ui.theme.colors.surface,
           padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
 
-          child: Text(text, style: context.textTheme.labelLarge),
+          child: Text(text, style: context.ui.theme.textTheme.labelLarge),
         ),
       ],
     );

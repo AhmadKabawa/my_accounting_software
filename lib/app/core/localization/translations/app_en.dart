@@ -14,6 +14,7 @@ final TranslationMap enUS = {
   ..._enCommon,
   ..._enProfile,
   ..._enSuccess,
+  ..._enTheme,
   ..._enOnBoarding,
   AppKeys.home: "home",
   AppKeys.chat: "chat",
@@ -87,6 +88,7 @@ final TranslationMap _enAuth = {
 };
 
 final TranslationMap _enCommon = {
+  AppKeys.common.ok: "OK",
   AppKeys.common.retry: "Retry",
   AppKeys.common.cancel: "Cancel",
   AppKeys.common.confirm: "Confirm",
@@ -180,6 +182,12 @@ final TranslationMap _enOnBoarding = {
       "For Seamless Transactions, Choose Your Payment Path - Your Convenience, Our Priority!",
   AppKeys.onBoarding.subTitle3:
       "From Our Doorstep to Yours - Swift, Secure, and Contactless Delivery!",
+};
+
+final TranslationMap _enTheme = {
+  AppKeys.theme.light: "Light",
+  AppKeys.theme.dark: "Dark",
+  AppKeys.theme.system: "System",
 };
 
 final TranslationMap _enSuccess = {

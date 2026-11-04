@@ -15,11 +15,20 @@ abstract final class AppKeys {
   static const profile = _ProfileKeys();
   static const success = _SuccessKeys();
   static const onBoarding = _OnBordingKeys();
+  static const theme = _ThemeKeys();
 
   static const home = AppKey("mainpage.home");
   static const chat = AppKey("mainpage.chat");
   static const favorite = AppKey("mainpage.favorite");
   static const person = AppKey("mainpage.person");
+}
+
+/// ── Theme ───────────────────────────────────────
+final class _ThemeKeys {
+  const _ThemeKeys();
+  final light = const AppKey('theme.light');
+  final dark = const AppKey('theme.dark');
+  final system = const AppKey('theme.system');
 }
 
 final class _OnBordingKeys {
@@ -130,6 +139,7 @@ final class _CommonKeys {
   final cancel = const AppKey('common.cancel');
   final confirm = const AppKey('common.confirm');
   final save = const AppKey('common.save');
+  final ok = const AppKey('common.ok');
   final loading = const AppKey('common.loading');
   final success = const AppKey('common.success');
   final unknownError = const AppKey('common.unknown_error');

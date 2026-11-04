@@ -14,6 +14,7 @@ final TranslationMap arSA = {
   ..._arCommon,
   ..._arProfile,
   ..._arSuccess,
+  ..._arTheme,
   ..._arOnBoarding,
   AppKeys.home: "الرئيسية",
   AppKeys.chat: "محادثة",
@@ -37,6 +38,7 @@ final TranslationMap _arAuth = {
 };
 
 final TranslationMap _arCommon = {
+  AppKeys.common.ok: "موافق",
   AppKeys.common.retry: "إعادة المحاولة",
   AppKeys.common.cancel: "إلغاء",
   AppKeys.common.confirm: "تأكيد",
@@ -131,6 +133,12 @@ final TranslationMap _arOnBoarding = {
       "لمعاملات سلسة، اختر طريقة الدفع المناسبة - راحتك أولويتنا!",
   AppKeys.onBoarding.subTitle3:
       "من بابنا إلى بابك - توصيل سريع وآمن وبدون تلامس!",
+};
+
+final TranslationMap _arTheme = {
+  AppKeys.theme.light: "فاتح",
+  AppKeys.theme.dark: "داكن",
+  AppKeys.theme.system: "تلقائي (حسب النظام)",
 };
 
 final TranslationMap _arSuccess = {

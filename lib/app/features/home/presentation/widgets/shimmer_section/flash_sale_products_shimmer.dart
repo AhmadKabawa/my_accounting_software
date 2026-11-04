@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/theme_extension.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FlashSaleProductsShimmer extends StatelessWidget {
@@ -9,8 +9,8 @@ class FlashSaleProductsShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: context.isDark ? Colors.grey[850]! : Colors.grey[300]!,
-      highlightColor: context.isDark ? Colors.grey[700]! : Colors.grey[100]!,
+      baseColor: context.ui.theme.isDark ? Colors.grey[850]! : Colors.grey[300]!,
+      highlightColor: context.ui.theme.isDark ? Colors.grey[700]! : Colors.grey[100]!,
 
       child: GridView.builder(
         shrinkWrap: true,
