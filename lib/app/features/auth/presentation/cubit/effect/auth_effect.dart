@@ -10,9 +10,8 @@ sealed class AuthEffect with _$AuthEffect {
   const factory AuthEffect.navigateToHome(UserEntity user) = _NavigateToHome;
   const factory AuthEffect.navigateToForgotPassword() =
       _NavigateToForgotPassword;
-  // const factory AuthEffect.showSuccessMessage(String message) = _ShowSuccessMessage;
   const factory AuthEffect.showMessage({
-    required String messageKey,
+    required AppKey messageKey,
     required MessageType type,
   }) = _ShowMessage;
 }

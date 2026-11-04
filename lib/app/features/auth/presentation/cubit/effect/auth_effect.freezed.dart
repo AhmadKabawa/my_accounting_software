@@ -20,21 +20,21 @@ mixin _$AuthEffect {
   TResult when<TResult extends Object?>({
     required TResult Function(UserEntity user) navigateToHome,
     required TResult Function() navigateToForgotPassword,
-    required TResult Function(String messageKey, MessageType type) showMessage,
+    required TResult Function(AppKey messageKey, MessageType type) showMessage,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(UserEntity user)? navigateToHome,
     TResult? Function()? navigateToForgotPassword,
-    TResult? Function(String messageKey, MessageType type)? showMessage,
+    TResult? Function(AppKey messageKey, MessageType type)? showMessage,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(UserEntity user)? navigateToHome,
     TResult Function()? navigateToForgotPassword,
-    TResult Function(String messageKey, MessageType type)? showMessage,
+    TResult Function(AppKey messageKey, MessageType type)? showMessage,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -159,7 +159,7 @@ class _$NavigateToHomeImpl implements _NavigateToHome {
   TResult when<TResult extends Object?>({
     required TResult Function(UserEntity user) navigateToHome,
     required TResult Function() navigateToForgotPassword,
-    required TResult Function(String messageKey, MessageType type) showMessage,
+    required TResult Function(AppKey messageKey, MessageType type) showMessage,
   }) {
     return navigateToHome(user);
   }
@@ -169,7 +169,7 @@ class _$NavigateToHomeImpl implements _NavigateToHome {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(UserEntity user)? navigateToHome,
     TResult? Function()? navigateToForgotPassword,
-    TResult? Function(String messageKey, MessageType type)? showMessage,
+    TResult? Function(AppKey messageKey, MessageType type)? showMessage,
   }) {
     return navigateToHome?.call(user);
   }
@@ -179,7 +179,7 @@ class _$NavigateToHomeImpl implements _NavigateToHome {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(UserEntity user)? navigateToHome,
     TResult Function()? navigateToForgotPassword,
-    TResult Function(String messageKey, MessageType type)? showMessage,
+    TResult Function(AppKey messageKey, MessageType type)? showMessage,
     required TResult orElse(),
   }) {
     if (navigateToHome != null) {
@@ -277,7 +277,7 @@ class _$NavigateToForgotPasswordImpl implements _NavigateToForgotPassword {
   TResult when<TResult extends Object?>({
     required TResult Function(UserEntity user) navigateToHome,
     required TResult Function() navigateToForgotPassword,
-    required TResult Function(String messageKey, MessageType type) showMessage,
+    required TResult Function(AppKey messageKey, MessageType type) showMessage,
   }) {
     return navigateToForgotPassword();
   }
@@ -287,7 +287,7 @@ class _$NavigateToForgotPasswordImpl implements _NavigateToForgotPassword {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(UserEntity user)? navigateToHome,
     TResult? Function()? navigateToForgotPassword,
-    TResult? Function(String messageKey, MessageType type)? showMessage,
+    TResult? Function(AppKey messageKey, MessageType type)? showMessage,
   }) {
     return navigateToForgotPassword?.call();
   }
@@ -297,7 +297,7 @@ class _$NavigateToForgotPasswordImpl implements _NavigateToForgotPassword {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(UserEntity user)? navigateToHome,
     TResult Function()? navigateToForgotPassword,
-    TResult Function(String messageKey, MessageType type)? showMessage,
+    TResult Function(AppKey messageKey, MessageType type)? showMessage,
     required TResult orElse(),
   }) {
     if (navigateToForgotPassword != null) {
@@ -353,7 +353,7 @@ abstract class _$$ShowMessageImplCopyWith<$Res> {
           _$ShowMessageImpl value, $Res Function(_$ShowMessageImpl) then) =
       __$$ShowMessageImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String messageKey, MessageType type});
+  $Res call({AppKey messageKey, MessageType type});
 }
 
 /// @nodoc
@@ -374,7 +374,7 @@ class __$$ShowMessageImplCopyWithImpl<$Res>
       messageKey: null == messageKey
           ? _value.messageKey
           : messageKey // ignore: cast_nullable_to_non_nullable
-              as String,
+              as AppKey,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -389,7 +389,7 @@ class _$ShowMessageImpl implements _ShowMessage {
   const _$ShowMessageImpl({required this.messageKey, required this.type});
 
   @override
-  final String messageKey;
+  final AppKey messageKey;
   @override
   final MessageType type;
 
@@ -422,7 +422,7 @@ class _$ShowMessageImpl implements _ShowMessage {
   TResult when<TResult extends Object?>({
     required TResult Function(UserEntity user) navigateToHome,
     required TResult Function() navigateToForgotPassword,
-    required TResult Function(String messageKey, MessageType type) showMessage,
+    required TResult Function(AppKey messageKey, MessageType type) showMessage,
   }) {
     return showMessage(messageKey, type);
   }
@@ -432,7 +432,7 @@ class _$ShowMessageImpl implements _ShowMessage {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(UserEntity user)? navigateToHome,
     TResult? Function()? navigateToForgotPassword,
-    TResult? Function(String messageKey, MessageType type)? showMessage,
+    TResult? Function(AppKey messageKey, MessageType type)? showMessage,
   }) {
     return showMessage?.call(messageKey, type);
   }
@@ -442,7 +442,7 @@ class _$ShowMessageImpl implements _ShowMessage {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(UserEntity user)? navigateToHome,
     TResult Function()? navigateToForgotPassword,
-    TResult Function(String messageKey, MessageType type)? showMessage,
+    TResult Function(AppKey messageKey, MessageType type)? showMessage,
     required TResult orElse(),
   }) {
     if (showMessage != null) {
@@ -490,10 +490,10 @@ class _$ShowMessageImpl implements _ShowMessage {
 
 abstract class _ShowMessage implements AuthEffect {
   const factory _ShowMessage(
-      {required final String messageKey,
+      {required final AppKey messageKey,
       required final MessageType type}) = _$ShowMessageImpl;
 
-  String get messageKey;
+  AppKey get messageKey;
   MessageType get type;
   @JsonKey(ignore: true)
   _$$ShowMessageImplCopyWith<_$ShowMessageImpl> get copyWith =>

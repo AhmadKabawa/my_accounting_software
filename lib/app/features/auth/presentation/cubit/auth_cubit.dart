@@ -5,7 +5,6 @@ import 'package:dartz/dartz.dart' show Either, Unit;
 import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/error/translators/failure_translator.dart';
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
@@ -81,14 +80,14 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
   // ══════════════════════════════════════════════════
   void _emitError(Failure failure, {bool replayable = false}) => emitEffect(
     AuthEffect.showMessage(
-      messageKey: FailureTranslator.translate(failure),
+      messageKey: failure.messageKey,
       type: MessageType.error,
     ),
     replayable: replayable,
   );
 
   void _emitSuccess(AppKey key) => emitEffect(
-    AuthEffect.showMessage(messageKey: key.tran, type: MessageType.success),
+    AuthEffect.showMessage(messageKey: key, type: MessageType.success),
   );
 
   /// The stored session was removed behind our back (e.g. the refresh token

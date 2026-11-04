@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/auth_result/auth_result.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
@@ -107,6 +108,10 @@ class _FakeRepo implements AuthRepository {
 MessageType? messageTypeOf(AuthEffect effect) =>
     effect.whenOrNull(showMessage: (_, type) => type);
 
+/// The effect carries the untranslated key; translation happens at display.
+AppKey? messageKeyOf(AuthEffect effect) =>
+    effect.whenOrNull(showMessage: (key, _) => key);
+
 void main() {
   late StreamController<void> session;
   late _FakeRepo repo;
@@ -206,5 +211,7 @@ void main() {
     expect(cubit.state, isA<Unauthenticated>());
     expect(effects, hasLength(1));
     expect(messageTypeOf(effects.single), MessageType.error);
+    // The Failure's own AppKey travels in the effect, untranslated.
+    expect(messageKeyOf(effects.single), NetworkFailure().messageKey);
   });
 }
