@@ -7,7 +7,6 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/scale_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 
-part 'responsive_helper/responsive_context_extension.dart';
 
 /// Shortcut typedef for quick usage of ResponsiveHelper
 typedef Rh = ResponsiveHelper;
