@@ -46,20 +46,28 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 
 ## 5. Responsive وTheme وWidgets
 
-- استخدم `context.ui` و`Rh` وTokens الموجودة قبل حسابات MediaQuery أو ثوابت responsive خاصة.
-- `context.ui.grid.widget` لقرار التخطيط حسب نوع الجهاز، و`context.ui.grid.adaptive` حسب المساحة الفعلية للعنصر.
-- لا تخلط بين scaling وadaptive selection؛ اختر `ResponsiveMode` المناسب.
-- حدود الشاشات مصدرها `ScreenEngine`؛ لا تنسخ أرقامها في الكود أو التوثيق.
-- استخدم `AppText` و`AppButton` و`AppIcon` و`AppImage` و`AppAppBar` وعناصر التنقل الحالية قبل بناء بديل.
-- استخدم `AppTheme` و`AppColors` و`AppTextStyles` و`ThemeCubit` قبل تعريف ثيم أو ألوان متوازية. الثيم لا يعتمد على محرك Responsive.
+**المدخل الموحد للواجهات هو `context.ui`.** لا تصل Features إلى المحركات (`ScreenEngine` و`ScaleEngine`) ولا إلى التفاصيل الداخلية متى وُجدت واجهة عبر `context.ui`.
+
+- **الألوان:** `context.ui.theme.colors` لألوان `ColorScheme` القياسية فقط (primary, surface, error ...)، و`context.ui.theme.semanticColors` للألوان الدلالية الخاصة (success, warning, info, debit, credit). `AppColors` للقيم الخام داخل ملفات الثيم فقط؛ الواجهات لا تستخدمه مباشرة. لا `Colors.x` ولا `Color(0x..)` جديدة في الواجهات، ولا نظام ألوان موازٍ. لا تُدرج الألوان الدلالية داخل `ColorScheme`.
+- **النصوص:** `AppText` مع `AppTextType` (المصدر الموحد لأدوار النص)، و`context.ui.text.of(AppTextType)` عند الحاجة إلى `TextStyle`. لا `Theme.of(context).textTheme` للأحجام في الكود الجديد، ولا `Text` خام لنص يخص الواجهة، ولا تطبيق التحجيم المتجاوب مرتين. `letterSpacing` يبقى `0` دائماً (أي قيمة أخرى تكسر وصل الحروف العربية).
+- **المسافات والأبعاد:** `context.ui.spacing` و`padding` و`radius` و`size` و`icon` و`shadow` مع Tokens (`AppSpacing` وغيرها)، بدل أرقام حرفية و`SizedBox` برقم.
+- **التخطيط المتجاوب:** `context.ui.grid.widget` لقرار التخطيط حسب نوع الجهاز، و`context.ui.grid.adaptive` حسب المساحة الفعلية للعنصر، و`context.ui.screen` لنوع الشاشة. اختر `ResponsiveMode` المناسب ولا تخلط scaling مع adaptive selection. حدود الشاشات مصدرها `ScreenEngine`؛ لا تنسخ أرقامها.
+- **الودجتات:** استخدم Core Widget (`AppText` و`AppButton` و`AppIcon` و`AppImage` و`AppAppBar` وعناصر التنقل) عندما يغطي الحاجة. يجوز استخدام Flutter Widget مباشرة للتخطيط الهيكلي (`Row` و`Column` و`Stack` و`Expanded` و`Padding` و`Scaffold` و`ListView`...) ولما لا يوجد له مقابل في Core، بشرط أن تأتي قيمه من `context.ui` والثيم. لا تبنِ زراً أو نصاً أو شريط تنقل مشتركاً بديلاً.
+- **الرسائل:** `MessageViewWidgets` هو نظام الرسائل الوحيد (مع `AppKey`)؛ لا `SnackBar` أو `AlertDialog` خام للرسائل.
+- **الثيم:** `AppTheme` و`ThemeCubit` وملفات `theme/`. الثيم لا يعتمد على محرك Responsive.
 - حافظ على RTL والترجمة عبر الأدوات الموجودة.
 - لا تغيّر API عامة أو defaults للـ design system دون فحص كل الاستخدامات والاختبارات.
+
+**ممنوع لأنه قديم أو مكرر:** `ResponsiveContextExtension` واختصاراتها (`context.spacing()` و`pad()` و`gap()`...)، والامتداد القديم على `BuildContext` المسمى `ThemeExtension` (و`themeColor`/`themeValue`)، و`TypographyHelper.h1..caption`، و`ThemeModeExtension.nameAr/nameEn`. هذه حُذفت ولا يعاد إنشاؤها.
 
 ## 6. Network وStorage وErrors
 
 - استخدم `IApiClient` و`DioService` والـ Interceptors الموجودة؛ لا Dio لكل Feature.
 - أضف المسارات إلى `AppEndpoints` ولا تكرر المسارات النصية.
-- مسار الأخطاء الموحد: Data يرمي `AppException` ← `ExceptionMapper` يحولها إلى `Failure` ← `FailureTranslator` أو `AppKey` يترجمها للعرض. لا تترجم داخل Repository.
+- مسار الأخطاء الموحد: Data يرمي `AppException` ← `ExceptionMapper` يحولها إلى `Failure` ← تُمرَّر `failure.messageKey` (AppKey) وتُترجم وقت العرض (`AppText` أو `MessageViewWidgets`)، و`FailureTranslator` فقط حيث يلزم `String` جاهز (ويترجم مرة واحدة). Effects ورسائل الواجهة تحمل `AppKey` لا نصاً مترجماً. لا تترجم داخل Repository ولا وقت الإصدار.
+- **الترجمة:** `AppKey` للودجتات، و`.tran` فقط حيث يلزم `String`، و`.tr(args:/namedArgs:)` عند وجود متغيرات. ممنوع `'text'.tr()` ونصوص واجهة ثابتة جديدة؛ أضف المفتاح في `AppKeys` وملفات ar/en.
+- **الإعدادات:** `AppConfig` هو المدخل الوحيد لإعدادات التطبيق وقيم البيئة؛ Features لا تستورد `EnvConfig`. قراءة `fromEnvironment` تبقى `const` وقت البناء.
+- **التحقق من المدخلات:** `AppValidator`/`ValidationRule` هو النظام الوحيد؛ لا validator موازياً.
 - **إعادة المحاولة:** `RetryInterceptor` يعيد GET/HEAD/OPTIONS فقط. لا تعيد عمليات الكتابة المالية تلقائياً؛ لا تضع `Options(extra: {'idempotent': true})` على عملية مالية إلا إذا كان الخادم يضمن idempotency حقيقياً. التفاصيل في `CORE_MAP.md`.
 - اختر Storage حسب الطبيعة: secure للحساس، preferences للإعدادات، Hive/cache لما يناسبه. لا Tokens في SharedPreferences.
 - لا تحفظ أسرار الخادم أو `service_role` داخل التطبيق أو المستودع.
@@ -67,7 +75,7 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 
 ## 7. DI ودورة الحياة
 
-- Core DI (`initCoreDI()`) مسؤول عن تسجيل خدمات Core فقط.
+- Core DI (`initCoreDI()`) مسؤول عن تسجيل خدمات Core فقط. خدمة تخص ميزة (مثل `GoogleSignIn` للـ Auth) تُسجَّل في DI تلك الميزة.
 - Feature DI مسؤول عن اعتماديات Feature، داخل `features/<feature>/di/`.
 - `lib/app/app_di.dart` هو منسق التهيئة: يستدعي Core ثم Features بالترتيب المطلوب. لا نقطة تسجيل ثانية.
 - افحص التسجيل الحالي قبل الإضافة وتجنب التسجيل المكرر.
@@ -90,9 +98,18 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 
 توجد مجموعات مترابطة في Responsive:
 - `engine/app_enums.dart` وملفات `engine/app_enums/*.dart`.
-- `extension/ui_extension.dart` وملفات `extension/ui_extension/*.dart`.
-- `helper/responsive_helper.dart` وملفاته التابعة.
+- `extension/ui_extension.dart` وملفات `extension/ui_extension/*.dart` (وتشمل `app_text_type.dart` الذي يعرّف `AppTextType`).
 
 وفي Access: `access_cubit.dart` مع `access_state.dart`.
 
+`helper/responsive_helper.dart` ملف مستقل (لا أجزاء تابعة بعد حذف `ResponsiveContextExtension`).
+
 لا تفصل أو تنقل ملفاً مفرداً من هذه المجموعات، وافحص جميع أعضاء المجموعة قبل تعديلها.
+
+## 10. القاعدة الإلزامية عند إضافة نظام أو ميزة جديدة في Core
+
+1. افحص أولاً علاقتها بـ `context.ui`. إن وُجدت علاقة، أضف واجهة الوصول المناسبة داخله.
+2. اجعل `context.ui` المدخل العام الموحد للـ Features؛ لا تجعلها تصل مباشرة إلى المحركات أو التفاصيل الداخلية متى أمكن توفير واجهة.
+3. لا تضف وظائف لمجرد إضافتها (راجع شروط §2).
+4. إن احتاج نظام موجود إلى تطوير، فطوّره بدل إنشاء بديل.
+5. لا تغيّر بنية الأنظمة المستقرة دون مبرر واختبارات.

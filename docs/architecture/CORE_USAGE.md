@@ -1,142 +1,246 @@
-# استخدام Core — أمثلة عملية
+# استخدام Core — دليل عملي
 
-> أمثلة استخدام مختصرة. اقرأ `CORE_MAP.md` لاكتشاف الأداة، وافتح الملف المصدر وتحقق من التوقيع قبل نسخ أي مثال. السياسة المعمارية في `ARCHITECTURE_RULES.md` ولا تتكرر هنا.
+> السؤال الذي يجيب عنه هذا الملف: **أريد تنفيذ وظيفة داخل Feature، فأي نظام أستخدم، ومن أي مسار، وكيف؟**
+> اقرأ `CORE_MAP.md` لاكتشاف الأداة وموقعها، وافتح الملف المصدر وتحقق من التوقيع قبل نسخ أي مثال. السياسة المعمارية (متى نضيف إلى Core، حدود الطبقات، DI) في `ARCHITECTURE_RULES.md` ولا تتكرر هنا.
 
-## 1. Responsive UI
+## جدول سريع: الوظيفة ← المدخل
 
-استورد واجهة Responsive الموحدة:
+| أريد | المدخل المعتمد | الاستيراد |
+|---|---|---|
+| لوناً من ColorScheme | `context.ui.theme.colors` | `responsive/extension/ui_extension.dart` |
+| لوناً دلالياً (نجاح/تحذير/معلومة/مدين/دائن) | `context.ui.theme.semanticColors` | نفسه |
+| لوناً حسب الوضع فاتح/داكن | `context.ui.theme.value(dark:, light:)` | نفسه |
+| نصاً في الواجهة | `AppText` + `AppTextType` | `widgets/app_text/app_text.dart` |
+| `TextStyle` متجاوباً | `context.ui.text.of(AppTextType)` | `ui_extension.dart` |
+| مسافة/حشوة/زاوية/أيقونة/حجم | `context.ui.spacing/padding/radius/icon/size` | `ui_extension.dart` |
+| تخطيطاً حسب الجهاز أو المساحة | `context.ui.grid.widget/adaptive` | `ui_extension.dart` |
+| زراً | `AppButton` | `widgets/app_button/app_button.dart` |
+| رسالة للمستخدم | `MessageViewWidgets.showMessage` | `widgets/app_message/message_view_widgets.dart` |
+| نصاً مترجماً | `AppKeys` + `AppKey` | `localization/translations/` |
+| طلب شبكة | `IApiClient` + `AppEndpoints` | `network/` |
+| تحويل خطأ | `ExceptionMapper` ثم `Failure.messageKey` | `error/` |
+| إعداداً أو قيمة بيئة | `AppConfig` | `foundation/config/app_config.dart` |
+| تحققاً من حقل نموذج | `AppValidator` | `foundation/validation/app_validator.dart` |
+| تخزيناً | `PrefsStorageService` / `SecureStorageService` / Hive | `storage/` |
+| تنقلاً | `AppRoutes` + GoRouter | `routing/routes.dart` |
+| صلاحية | `PermissionGate` / `context.can` | `access/` |
+
+افتراضياً الاستيراد الأساسي للواجهات:
 
 ```dart
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 ```
 
-استخدم Design Tokens بدلاً من قيم عشوائية متكررة:
+## 1. الألوان
+
+```dart
+final colors = context.ui.theme.colors;             // ColorScheme فقط
+final semantic = context.ui.theme.semanticColors;   // success / warning / info / debit / credit
+
+Container(color: colors.surface, child: ...);
+Icon(Icons.check, color: semantic.success);
+final shimmerBase = context.ui.theme.value(dark: darkColor, light: lightColor);
+```
+
+- لون الخطأ: `colors.error` (لا خطأ دلالي منفصل). `onSuccess` و`onWarning` و`onInfo` للنص فوق اللون الدلالي.
+- `debit` و`credit` قيم مؤقتة (placeholder) بانتظار الهوية البصرية.
+- القيم تتغير بين الفاتح والداكن تلقائياً؛ لا تتفرع بنفسك على `isDark` لتختار لوناً دلالياً.
+
+**ممنوع / قديم ← البديل**
+- `Colors.green` و`Color(0xFF...)` في الواجهة ← `semanticColors` أو `colors`.
+- `AppColors.x` في الواجهة (للثيم فقط) ← `context.ui.theme`.
+- `Theme.of(context).colorScheme` ← `context.ui.theme.colors`.
+- `context.isDark` / `context.colors` / `context.themeColor` (الامتداد القديم المحذوف) ← `context.ui.theme.isDark` / `colors` / `value(dark:, light:)`.
+
+## 2. النصوص
+
+```dart
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+
+AppText(AppKeys.common.save, type: AppTextType.titleMedium)   // نص مترجم
+AppText.raw(user.name)                                        // نص بيانات (غير مترجم)
+
+// عند الحاجة إلى TextStyle فقط:
+final style = context.ui.text.of(AppTextType.bodyLarge);
+```
+
+- `AppText` يدعم أيضاً `AppText.rich` و`AppText.selectable`.
+- أحجام خارج الأدوار: `context.ui.text.size(AppFontSize.lg)` أو `context.ui.text.style(AppFontSize.lg, weight: ...)`.
+- لا تغيّر `letterSpacing` عن `0` (يكسر وصل الحروف العربية).
+
+**ممنوع / قديم ← البديل**
+- `Text('...')` لنص واجهة ← `AppText` / `AppText.raw`.
+- `'key'.tr()` ونصوص ثابتة ← `AppKeys` (أضف المفتاح، راجع §7).
+- `context.ui.text.h1()/body()/caption()/button()` (حُذفت) ← `context.ui.text.of(AppTextType.x)`.
+- `TextStyle(fontSize: 14)` و`Theme.of(context).textTheme.x.fontSize` ← `AppTextType`.
+
+## 3. المسافات والأبعاد
 
 ```dart
 Padding(
   padding: context.ui.padding.all(AppSpacing.md),
-  child: content,
+  child: Column(
+    children: [
+      const AppText.raw('Title'),
+      context.ui.spacing.gap(AppSpacing.sm),   // محور المسافة يُستنتج من Row/Column
+      Icon(Icons.add, size: context.ui.icon.md),
+    ],
+  ),
+)
+
+Container(
+  width: context.ui.size.width(AppComponentSize.medium),
+  decoration: BoxDecoration(borderRadius: context.ui.radius.md),
 )
 ```
 
-اختيار تخطيط حسب الجهاز (مثل AppShell):
+- أيضاً: `ui.padding.symmetric/only/horizontal/vertical` و`ui.radius.top/bottom/corners` و`ui.spacing.value(...)` (رقم) و`ui.shadow.value/shadows`.
+
+**ممنوع / قديم ← البديل**
+- `SizedBox(height: 16)` و`EdgeInsets.all(16)` و`BorderRadius.circular(12)` برقم حرفي ← Tokens عبر `context.ui`.
+- `context.spacing()` و`context.pad()` و`context.gap()` و`context.rad()` و`context.txt()` (امتداد `ResponsiveContextExtension` المحذوف) ← `context.ui.spacing.value` / `padding.*` / `spacing.gap` / `radius.*` / `text.style`.
+- حسابات `MediaQuery` يدوية للأحجام ← `context.ui.screen` وTokens.
+
+## 4. التخطيط المتجاوب
 
 ```dart
+// حسب نوع الجهاز:
 context.ui.grid.widget(
   mobile: (_) => const MobileView(),
   tablet: (_) => const TabletView(),
   desktop: (_) => const DesktopView(),
 )
-```
 
-اختيار تخطيط حسب المساحة الفعلية المتاحة للعنصر داخل الشاشة:
-
-```dart
+// حسب المساحة الفعلية للعنصر (داخل pane أو عمود):
 context.ui.grid.adaptive(
   mobile: (_) => const CompactContent(),
   tablet: (_) => const MediumContent(),
   desktop: (_) => const WideContent(),
 )
+
+final columns = context.ui.grid.crossAxisCount();
+if (context.ui.screen.isDesktop) { /* ... */ }
 ```
 
-الفرق مهم:
-- `grid.widget` / `Rh.builder`: قرار على مستوى نوع الجهاز/الشاشة.
-- `grid.adaptive` / `AdaptiveLayout`: قرار على قيود العرض الفعلية التي يمررها الأب عبر LayoutBuilder؛ استخدمه داخل الأعمدة واللوحات الجانبية.
-مسافة متجاوبة بين عناصر Row/Column (محورها يُستنتج من الأب):
+- `grid.widget` / `Rh.builder`: قرار على مستوى نوع الجهاز.
+- `grid.adaptive` / `AdaptiveLayout`: قرار على قيود العرض التي يمررها الأب؛ للأعمدة واللوحات الجانبية.
+- `ResponsiveMode`: `fixed` قيمة ثابتة، `scaleOnly` قياس مستمر، `adaptiveOnly` اختيار Token حسب الشاشة، `adaptiveScale` استيفاء/قياس. افحص الافتراضي لكل helper.
+- حدود الشاشات في `ScreenEngine` (لا تنسخ أرقامها).
+
+## 5. الودجتات المشتركة
 
 ```dart
-Column(
-  children: [
-    const AppText.raw('Title'),
-    context.ui.spacing.gap(AppSpacing.md),
-    content,
-  ],
-)
-```
-
-- استخدم `ResponsiveMode.fixed` عندما تريد القيمة ثابتة، و`scaleOnly` للقياس المستمر لقيمة تصميم أساسية، و`adaptiveOnly` لاختيار Token حسب نوع الشاشة، و`adaptiveScale` للاستيفاء/القياس وفق Tokens. افحص defaults الخاصة بكل helper.
-
-## 2. النصوص والأزرار المشتركة
-
-```dart
-import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 
-// ترجمة عبر AppKey:
-AppText(AppKeys.common.save)
-
-// نص خام:
-AppText.raw('Save')
-
-// زر مترجم:
-AppButton(
-  AppKeys.common.save,
-  onPressed: onSave,
-)
-
-// زر بنص خام:
-AppButton.raw('Save', onPressed: onSave)
+AppButton(AppKeys.common.save, onPressed: onSave)             // مترجم
+AppButton.raw('Save', onPressed: onSave)                      // نص خام
+AppButton(AppKeys.common.cancel, variant: AppButtonVariant.outlined, onPressed: onCancel)
+AppButton(AppKeys.common.save, isLoading: state.isBusy, onPressed: onSave)
 ```
 
-قبل إنشاء Text أو Button مخصص مشترك، افحص AppTextType وAppButtonVariant/Size وملفات Style. لا تستخدم AppText لكل نص غني دون حاجة؛ افحص `AppText.rich` و`AppText.selectable` أيضاً.
+**متى Core Widget ومتى Flutter Widget؟**
+- Core Widget عندما يغطي الحاجة: `AppText` للنص، `AppButton` للأزرار، `AppIcon` و`AppImage` للأيقونات والصور، `AppAppBar` و`AppNavigationBar`/`AppNavigationRail`/`AppSidebar` للتنقل.
+- Flutter Widget مباشرة للتخطيط الهيكلي (`Row` و`Column` و`Stack` و`Expanded` و`Padding` و`Scaffold` و`ListView`...) ولما ليس له مقابل في Core، مع قيم من `context.ui` والثيم.
+- لا تبنِ زراً/نصاً/شريط تنقل مشتركاً بديلاً.
 
-## 3. Theme
+## 6. الرسائل
 
 ```dart
-final light = AppTheme.light();
-final dark = AppTheme.dark();
+import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
+
+// SnackBar بمفتاح ترجمة (المفضل: تُترجم وقت العرض):
+MessageViewWidgets.showMessage(context, messageKey: AppKeys.success.signin, type: MessageType.success);
+
+// Dialog:
+MessageViewWidgets.showMessage(
+  context,
+  messageKey: failure.messageKey,
+  titleKey: AppKeys.errors.unexpected,
+  type: MessageType.error,
+  isDialog: true,
+);
+
+// تحميل ثم إغلاق:
+MessageViewWidgets.showMessage(context, messageKey: AppKeys.common.loading, type: MessageType.loading);
+MessageViewWidgets.hideMessage(context);
 ```
 
-في الواجهة استخدم ThemeData/ColorScheme الحاليين أو AppColors/AppTextStyles حسب الاستخدام القائم. تغيير الثيم للمستخدم يتم عبر ThemeCubit (مثل `changeTheme`, `setLightTheme`, `setDarkTheme`, `setSystemTheme`) وليس بإنشاء Theme manager جديد.
+- الأنواع: `error` (من `colors.error`) و`success` و`warning` و`info` (من `semanticColors`) و`loading`.
+- `message: 'نص جاهز'` (String) مقبول للتوافق فقط؛ فضّل `messageKey`.
 
-## 4. ApiClient ونتائج الشبكة
+استهلاك Effect يحمل `AppKey` (النمط المعتمد؛ الترجمة وقت العرض، فتحترم اللغة الحالية):
 
-استخدم IApiClient المحقون من GetIt في Repository/مصدر البيانات، ولا تنشئ Dio جديداً:
+```dart
+BlocEffectListener<AuthEffect, AuthCubit>(
+  onEffect: (context, effect) => effect.whenOrNull(
+    showMessage: (key, type) =>
+        MessageViewWidgets.showMessage(context, messageKey: key, type: type),
+    navigateToHome: (_) => context.go(AppRoutes.home.path),
+  ),
+  child: const LoginBody(),
+)
+```
+
+- الـ Effect أحادي الاستخدام (راجع §10)، والتنقل بعده عبر GoRouter و`AppRoutes`، لا `Navigator.pushNamed` ولا مسار نصي حرفي.
+
+## 7. الترجمة
+
+```dart
+AppText(AppKeys.auth.signIn)                 // في الودجت
+final s = AppKeys.auth.signIn.tran;          // String عند الحاجة فقط
+final t = AppKeys.valid.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع متغيرات
+```
+
+- مفتاح جديد: عرّفه في `AppKeys` (`app_keys.dart`) ثم أضف نصه في `app_ar.dart` و`app_en.dart`.
+- اللغة: `LocaleCubit`/`AppLanguage`/`AppSettingsManager`؛ لا locale provider مستقل.
+- اتجاه النص: `context.isRTL` و`context.directionalIcon(rtl:, ltr:)` و`context.directionalValue(rtl:, ltr:)` من `DirectionExtension` (أو `context.ui.dir`).
+- **ممنوع:** `'string'.tr()` ونصوص واجهة ثابتة وقاموس ترجمة خاص بميزة.
+
+## 8. الشبكة والأخطاء
 
 ```dart
 final result = await apiClient.get<UserModel>(
   AppEndpoints.auth.user,
   fromJson: UserModel.fromJson,
 );
+final either = result.toEither();   // Either<Failure, UserModel>
 ```
 
-تعامل مع ApiResult في Data layer، ثم حوّله إلى عقد Domain الموجود:
+- `IApiClient` يُحقن من GetIt؛ لا Dio جديد داخل Feature. أضف المسارات إلى `AppEndpoints` (المقاطع الديناميكية تُرمَّز تلقائياً).
+- مسار الأخطاء: Data يرمي `AppException` ← `ExceptionMapper.map(e)` يعيد `Failure` ← اعرض `failure.messageKey` عبر `AppText`/`MessageViewWidgets`. لا تترجم داخل Repository.
+- `FailureTranslator.translate(failure)` فقط حيث يلزم `String` جاهز (يترجم مرة واحدة).
+- لا يوجد Realtime فعّال: `RealtimeClient` عقد مجرد فقط.
+- إعادة المحاولة التلقائية للقراءة فقط. كتابة idempotent فعلاً فقط:
 
 ```dart
-final either = result.toEither();
+const options = Options(extra: {'idempotent': true}); // ثم مرّره إلى post/put/patch/delete
 ```
 
-إعادة المحاولة: `RetryInterceptor` يعيد GET/HEAD/OPTIONS فقط. عملية كتابة لا تُعاد إلا بتفعيل صريح، ولا يُفعَّل على عملية مالية إلا مع idempotency مضمون من الخادم:
+لا تضع `idempotent` على عملية مالية دون ضمان idempotency حقيقي من الخادم.
+
+## 9. الإعدادات والتحقق من المدخلات
 
 ```dart
-// لطلب كتابة idempotent فعلاً فقط، ثم مرّره إلى apiClient.post/put/patch/delete:
-const options = Options(extra: {'idempotent': true});
+import 'package:accounting_software/app/core/foundation/config/app_config.dart';
+
+final size = AppConfig.defaultPageSize;
+final clientId = AppConfig.googleClientId;   // مدخل واحد؛ لا تستورد EnvConfig في Feature
 ```
 
-للنتائج التي تتطلب إجراءً غير متزامن عند النجاح، افحص `toEitherAsync`. أضف Endpoint إلى AppEndpoints عند الحاجة، مع الحفاظ على AppEndpoint encoding للمقاطع الديناميكية. لا تضع URL literals متكررة في كل Repository.
-
-## 5. Failure وException
-
-- ارمِ/أعد `AppException` المناسبة داخل Data layer.
-- حوّلها مركزياً: `ExceptionMapper.map(exception)` يعيد `Failure`.
-- اعرض الرسالة بترجمة `Failure` عبر `FailureTranslator.translate(failure)` (كما يفعل `AuthCubit`) أو عبر `failure.messageKey` مع AppText:
+التحقق من حقول النماذج (`AppValidator`، رسائله `AppKey`):
 
 ```dart
-import 'package:accounting_software/app/core/error/translators/failure_translator.dart';
-
-final text = FailureTranslator.translate(failure);
-```
-
-- لا تحوّل الاستثناء إلى نص UI داخل Repository.
-- عند إضافة نوع `Failure` جديد افحص `ExceptionMapper` و`ServerErrorMapper` و`FailureTranslator` والمفاتيح الموجودة أولاً. لا توجد اختبارات مباشرة لهذه الثلاثة حالياً (راجع `CORE_MAP.md`).
-
-للتحقق من النماذج (`AppValidator` لا يملك مستهلكاً نشطاً حالياً):
-
-```dart
-import 'package:accounting_software/app/core/foundation/validation/form_validator.dart';
+import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
 
 TextFormField(
+  validator: (value) => AppValidator.validate(
+    value,
+    [ValidationRule.required, ValidationRule.email],
+  ),
+)
+
+TextFormField(
+  obscureText: true,
   validator: (value) => AppValidator.validate(
     value,
     [ValidationRule.required, ValidationRule.password],
@@ -144,17 +248,20 @@ TextFormField(
   ),
 )
 
-// تطابق حقلين: مرّر قيمة الحقل الآخر عبر params
-validator: (value) => AppValidator.validate(
-  value,
-  [ValidationRule.required, ValidationRule.match],
-  params: {ValidationRule.match: passwordController.text},
+// تطابق حقلين: مرّر قيمة الحقل الآخر
+TextFormField(
+  validator: (value) => AppValidator.validate(
+    value,
+    [ValidationRule.required, ValidationRule.match],
+    params: {ValidationRule.match: passwordController.text},
+  ),
 )
 ```
 
-## 6. State management وEffects
+- استخدمه لقواعد الحقول العامة (مطلوب، بريد، طول، هاتف، كلمة مرور، تطابق). رسالة مخصصة: `customKeys: {ValidationRule.required: AppKey('...')}`.
+- لا تستخدمه لقواعد أعمال أو محاسبية (مكانها Domain/Use Case). لا تنشئ validator موازياً. `ValidationRule.async` غير منفذة بعد.
 
-إذا احتاج Cubit أحداث UI أحادية الاستخدام، افحص BaseCubit/EffectMixin أولاً:
+## 10. State management وEffects
 
 ```dart
 class ExampleCubit extends BaseCubit<ExampleState, ExampleEffect> {
@@ -167,32 +274,37 @@ class ExampleCubit extends BaseCubit<ExampleState, ExampleEffect> {
 }
 ```
 
-لا تستخدم Effect لإيصال بيانات الحالة الدائمة؛ هذه مسؤولية State. استخدم replayable فقط للأحداث التي يظل عرضها صحيحاً لمستمع لاحق، وافحص مدة replayWindow وسلوك المستمع.
+- الـ Effect للأحداث أحادية الاستخدام؛ البيانات الدائمة في State. `replayable: true` فقط لما يبقى عرضه صحيحاً لمستمع لاحق (راجع `replayWindow`).
+- في الـ Effects مرّر `AppKey` لا نصاً مترجماً.
 
-## 7. DI
+## 11. DI
 
-- أضف تسجيل الخدمات العامة إلى `initCoreDI()` فقط إذا كانت جزءاً من البنية التحتية المشتركة.
-- تسجيل كل Feature يبقى في ملف DI الخاص بها، ويُستدعى من `lib/app/app_di.dart`.
-- افحص الاختبارات وعمليات التسجيل الحالية قبل إضافة تسجيل جديد.
-- اختر `registerLazySingleton` أو `registerFactory` وفق دورة الحياة الفعلية، لا كقاعدة موحدة لكل Cubit.
+- خدمات Core العامة في `initCoreDI()` فقط. تسجيل كل Feature (وخدماتها الخاصة مثل `GoogleSignIn` للـ Auth) في DI الخاص بها، ويُستدعى من `lib/app/app_di.dart`.
+- افحص عمر الكائن (`registerLazySingleton` أو `registerFactory`) ولا تعمّم قاعدة واحدة على كل Cubit.
 
-## 8. Localization وStorage
+## 12. التخزين
 
-- اللغة: استخدم AppLanguage/LocaleCubit/AppSettingsManager؛ لا تنشئ locale provider مستقلاً.
-- الترجمة: أضف المفاتيح في بنية AppKey/AppKeys وملفات اللغات الحالية، لا في Map خاصة بميزة إذا كان النص جزءاً من نظام الترجمة.
-- الإعدادات البسيطة: AppSettingsManager/PrefsStorageService.
-- البيانات الحساسة: SecureStorageService/TokenManager.
-- الكاش/الكائنات: افحص HiveStorageService/CacheManager. الصناديق عبر `HiveManager.openBox` وأسماؤها في `HiveBoxNames`، ومعرّفات الـ adapters في `HiveBoxTypeId`.
-- لا تضف Storage implementation قبل فحص StorageService والـ implementations الحالية.
+- إعدادات بسيطة: `AppSettingsManager` / `PrefsStorageService`.
+- بيانات حساسة وTokens: `SecureStorageService` / `TokenManager`.
+- كاش وكائنات: `HiveStorageService` / `CacheManager`؛ الصناديق عبر `HiveManager.openBox` وأسماؤها `HiveBoxNames` ومعرّفات الـ adapters `HiveBoxTypeId`.
+- ممنوع Tokens في SharedPreferences.
 
-## 9. Access وRouting
+## 13. التنقل والصلاحيات
 
-- إظهار عنصر بناءً على Permission: افحص PermissionGate أو AccessCubit.
+- مسار جديد: عرّفه في `AppRoutes` وأضفه إلى `AppRoutes.all`، ثم صنّفه public/protected في `lib/app/routing/route_guards.dart` (اختبار `route_guards_test` يفشل إن نقص)، وابنِ وجهته في `AppRouter` (`lib/app/routing/app_go_router.dart`).
+- التنقل: `context.go(AppRoutes.x.path)` أو `context.goNamed(AppRoutes.x.name)`. لا مسارات نصية حرفية ولا `Navigator` للصفحات.
+- استخدم `RouteTransitions` و`GoRouterRefreshStream` الموجودين.
+- الصلاحيات:
+
 ```dart
-if (context.can(Permissions.sales.create)) { /* ... */ } // داخل build فقط
 PermissionGate(permission: Permissions.sales.view, child: const SalesList())
+if (context.can(Permissions.sales.create)) { /* داخل build فقط */ }
+// في Use Case:
+final check = accessCubit.require(Permissions.sales.post); // Right(unit) أو Left(PermissionFailure)
 ```
 
-- تحقق الصلاحية في التطبيق لا يغني عن RLS أو التحقق على الخادم.
-- تعريف مسار جديد: AppRoutes، ثم راجع `lib/app/routing/route_guards.dart` لتصنيفه public/protected، وراجع AppGoRouter لبناء الوجهة.
-- استخدم RouteTransitions وGoRouterRefreshStream الموجودين بدلاً من بناء بديل.
+- إخفاء عنصر ليس حماية؛ التفويض الحقيقي في الخادم وRLS.
+
+## 14. قاعدة ما قبل الإنشاء
+
+قبل كتابة أي helper/widget/service جديد: ابحث في `CORE_MAP.md` ثم في `lib/app/core`، وإن لم تجد فطبّق معايير `ARCHITECTURE_RULES.md` §2 و§10، وأضف اختباراً وحدّث `CORE_MAP.md` (وهذا الملف عند تغيّر نمط الاستخدام).

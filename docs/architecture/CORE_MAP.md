@@ -38,7 +38,7 @@
 
 ### Dependency Injection
 - `sl` هو `GetIt.instance` (`di/service_locator.dart`).
-- `initCoreDI()` يسجل خدمات Core فقط.
+- `initCoreDI()` يسجل خدمات Core فقط (Storage وNetwork وTheme وLocale وAccess). `GoogleSignIn` ليس فيها: يُسجَّل في `initAuthDI()` (`features/auth/di/auth_di.dart`) بقيمة `AppConfig.googleClientId`.
 - `lib/app/app_di.dart` هو منسق التهيئة (Composition Root): يستدعي Core ثم DI كل Feature بالترتيب الموثق فيه. لا تضف نقطة Service Locator ثانية.
 - DI الخاص بكل Feature داخل `features/<feature>/di/`. افحص عمر كل Cubit/Service وطريقة تسجيله قبل اختيار Singleton أو Factory.
 
@@ -47,22 +47,22 @@
 - `Failure` (`error/failures/failure.dart`): عقد الخطأ الذي يصل إلى Domain/Presentation، ويحمل `messageKey` من نوع `AppKey` و`statusCode` اختيارياً.
 - `ExceptionMapper.map` (`error/mappers/exception_mapper.dart`): يحوّل `AppException` إلى `Failure`. مستخدم في Repositories (مثل `AuthRepositoryImpl`).
 - `ServerErrorMapper.map`: يحوّل رسائل الخادم أو Status Code إلى `AppKey`.
-- `FailureTranslator.translate(Failure)` (`error/translators/failure_translator.dart`): أداة مستقلة عن `ExceptionMapper`؛ تحوّل `Failure` إلى نص مترجم للعرض عبر `failure.messageKey.tran`. مستخدمة فعلياً في `AuthCubit` عند بناء رسالة الخطأ لـ Effect. الترتيب: `ExceptionMapper` (Exception → Failure) ثم `FailureTranslator` (Failure → نص). لا تترجم داخل Repository.
+- `FailureTranslator.translate(Failure)` (`error/translators/failure_translator.dart`): أداة مستقلة عن `ExceptionMapper`؛ تحوّل `Failure` إلى نص مترجم **مرة واحدة** (`failure.messageKey.tran`). لا يستهلكها كود فعّال حالياً: `AuthCubit` يمرر `failure.messageKey` (AppKey) مباشرة في `AuthEffect.showMessage` وتتم الترجمة وقت العرض. استخدمها فقط حيث يلزم `String` جاهز. الترتيب: `ExceptionMapper` (Exception → Failure) ثم الترجمة عند العرض. لا تترجم داخل Repository.
 
 ### Foundation
 - `ApiResult<T>`: نتيجة طبقة البيانات (`ApiSuccess` و`ApiFailure`) مع `toEither()` و`toEitherAsync()`.
 - `PaginatedResult` و`PaginatedParser`: نتائج وتحليل الصفحات.
-- `EnvConfig`: يقرأ القيم عبر `String.fromEnvironment` ويتوقع `--dart-define-from-file`؛ المثال في `config/dart_defines.example.json`. لا تضع أسرار الخادم أو service_role في التطبيق.
-- `AppConfig`: إعدادات عامة (مهلات، إعادة المحاولة، لغات، صيغ تواريخ…). افحصه قبل إضافة ثوابت جديدة ولا تنسخ قيمه إلى التوثيق.
+- `EnvConfig` (`foundation/config/env_config.dart`): يقرأ متغيرات البيئة عبر `String.fromEnvironment` (ثوابت وقت البناء) ويتحقق منها (`validate` للاختبارات). يتوقع `--dart-define-from-file`؛ المثال في `config/dart_defines.example.json`. يُستهلك من `AppConfig` فقط. لا تضع أسرار الخادم أو service_role في التطبيق.
+- `AppConfig` (`foundation/config/app_config.dart`): **المدخل الوحيد لإعدادات التطبيق**، وكل قيمه ثابتة بعد التهيئة. يمرر قيم البيئة (`baseUrl` و`supabaseAnonKey` و`googleClientId` و`ensureConfigured()`) ويحمل الثوابت العامة (مهلات، إعادة المحاولة، لغات، `defaultPageSize`، صيغ تواريخ…). الميزات لا تستورد `EnvConfig`. `appName` قيمة مؤقتة بانتظار الاسم الرسمي. افحصه قبل إضافة ثوابت ولا تنسخ قيمه إلى التوثيق.
 - `Logger`: سجل موحد؛ لا تسجل Tokens أو كلمات مرور أو بيانات مالية حساسة.
 - `UseCase` و`UseCaseNoParams`: عقود Use Cases.
-- `AppValidator` و`ValidationRule` (`foundation/validation/form_validator.dart`): تحقق ديناميكي للنماذج. `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. لا يوجد له مستهلك فعلي نشط حالياً (الاستخدامات الموجودة في الميزات معلّقة).
+- `AppValidator` و`ValidationRule` (`foundation/validation/app_validator.dart`): نظام التحقق الوحيد من مدخلات النماذج، عام وبلا اعتماد على Feature، ورسائله `AppKey`. `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. القاعدة `ValidationRule.async` و`AsyncValidator` محجوزتان وغير منفذتين. لا يوجد له مستهلك فعّال حالياً (نماذج الميزات معلّقة).
 - `AppPathImage` و`AppPathImages` (`foundation/constants/image_constants.dart`): ثوابت مسارات الصور والأصول (`AppPathImage` يحمل المسار وعلامة `isRtl`).
 
 ### Localization
 - `LocaleCubit` و`LocaleState`: حالة اللغة (الحالة تحمل `Locale` فقط).
 - `AppLanguage`: اللغات المدعومة وتحويل الكود إلى Locale.
-- `AppKey` و`AppKeys`: مفاتيح الترجمة المنظمة (`AppKey.tran` للترجمة المباشرة). ملفا `app_ar.dart` و`app_en.dart` يحويان النصوص.
+- `AppKey` و`AppKeys`: مفاتيح الترجمة المنظمة (`AppKey.tran` للترجمة المباشرة، و`.tr(args:/namedArgs:)` عند وجود متغيرات). ملفا `app_ar.dart` و`app_en.dart` يحويان النصوص. مفاتيح الثيم في `AppKeys.theme` و«موافق» في `AppKeys.common.ok`.
 - `MyDartLoader` (`translations/asset_loader.dart`): `AssetLoader` لـ easy_localization يحمّل الترجمات من ملفات Dart لا من JSON. مستخدم في `main.dart`.
 - `DirectionExtension` (`translations/localization_extension.dart`): امتداد على `BuildContext` لاتجاه النص: `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`.
 - لا تنشئ قاموس ترجمة موازياً.
@@ -97,8 +97,10 @@
 - `ResponsiveMode`: أنماط القياس (`fixed` و`scaleOnly` و`adaptiveOnly` و`adaptiveScale`).
 - Tokens/enums: `AppSpacing` و`AppRadius` و`AppFontSize` و`AppIconSize` و`AppElevation` و`AppComponentSize` و`AppAspectRatio` و`AppBaseWidth` و`ResponsiveToken` و`ScreenType` و`AppOrientation`.
 - `Rh` (اسم مستعار لـ `ResponsiveHelper` في `responsive_helper.dart`): API ساكنة للقياس واختيار الـ builders.
-- `ResponsiveContextExtension` (`helper/responsive_helper/responsive_context_extension.dart`): اختصارات على `BuildContext` تغلّف `Rh`: `context.spacing()` و`fontSize()` و`icon()` و`componentSize()` و`elevation()` و`pad()` وغيرها. (`componentSize` لا `size` لأن `BuildContext.size` يحجب الامتداد.) جزء `part of 'responsive_helper.dart'`.
-- `context.ui` من `UIContextExtension`: مدخل موحد إلى `padding` و`size` و`text` و`spacing` و`radius` و`icon` و`shadow` و`grid` و`screen` و`theme` و`dir`.
+- `context.ui` من `UIContextExtension`: **المدخل العام الموحد** إلى `padding` و`size` و`text` و`spacing` و`radius` و`icon` و`shadow` و`grid` و`screen` و`theme` و`dir`. تم حذف `ResponsiveContextExtension` (اختصارات `context.spacing()`/`pad()`/...)؛ لا تستخدمها ولا تعد إنشاءها.
+- `context.ui.text`: `of(AppTextType)` لنمط نص متجاوب بلون الثيم، و`size` و`style` لأحجام وأنماط خارج الأدوار.
+- `AppTextType` و`AppTextTypeX` (`extension/ui_extension/app_text_type.dart`، جزء من `ui_extension.dart`): أدوار النص الموحدة. أُعيد تصديرهما من `widgets/app_text/app_text_enum.dart` و`app_text_extension.dart` للتوافق. تعريفات الأحجام في `AppTextStyles`؛ بعض أنماطها (`inputText` و`link` و`overline` و`appBarTitle`...) ليس لها دور في `AppTextType` لعدم وجود Core Widget يستهلكها.
+- `context.ui.theme`: `colors` (ColorScheme فقط) و`semanticColors` (الألوان الدلالية) و`textTheme` و`isDark`/`isLight` و`value`/`valueOrNull`.
 - `AppTextStyleResolver` (`extension/ui_extension/app_text_style_resolver.dart`): امتداد على `AppTextStyle` بدالة `resolve(context, {mode, respectTextScaler})` تعيد `TextStyle` متجاوباً عبر `Rh.textStyle`. يستخدمه `AppText`. موضعه هنا لأن الثيم لا يجوز أن يعتمد على محرك Responsive (الثيم يستخدم `AppTextStyle.baseline` فقط). `part of 'ui_extension.dart'`.
 - `Gap` (`engine/app_gap.dart`): Widget مسافة يحدد محوره تلقائياً من أقرب `Flex` أب (عمودي افتراضياً)، ويدعم `axis` و`Gap.expand()`. يُنتج بحجم متجاوب عبر `context.ui.spacing.gap(AppSpacing.md)` أو `Rh.gapSpace`.
 - `context.ui.grid.widget` يختار بناءً على نوع الجهاز. `context.ui.grid.adaptive` يختار بناءً على المساحة الفعلية للعنصر (`AdaptiveLayout`) لا عرض الشاشة.
@@ -109,9 +111,11 @@
 - `AppTheme.light()` و`AppTheme.dark()`: إنشاء ThemeData دون BuildContext.
 - `buildTheme`: تجميع ColorScheme وTextTheme وثيمات مكونات Material (`theme/components/`).
 - `light_theme.dart` و`dark_theme.dart`: ثيمات الوضعين.
-- `AppColors` و`AppTextStyles`: ألوان وأنماط نصية مركزية.
+- `AppColors` و`AppTextStyles`: القيم الخام للألوان وتعريفات الأنماط النصية. `AppColors` للاستخدام داخل ملفات الثيم فقط، والواجهات تصل للألوان عبر `context.ui.theme`.
+- `AppSemanticColors` (`theme/extensions/app_semantic_colors.dart`): `ThemeExtension` حقيقي (`copyWith` و`lerp`) بألوان `success` و`warning` و`info` وما يقابلها `onX` و`debit` و`credit`، ومسجل في الثيمين عبر `buildTheme`. القراءة: `context.ui.theme.semanticColors`. قيم `debit`/`credit` مؤقتة (placeholder) بانتظار الهوية البصرية. لا لون خطأ دلالي منفصل: استخدم `colors.error`. لا يستورد محرك Responsive.
 - `ThemeCubit` و`ThemeState`: اختيار light/dark/system وحفظه عبر `AppSettingsManager`.
-- `theme_extension.dart`: يحوي `ThemeModeExtension` على `ThemeMode` (`icon` و`nameAr` و`nameEn`) و`ThemeExtension` على `BuildContext` (`isDark` و`isLight` و`themeColor` و`themeValue` و`themeValueOrNull` و`colors` و`textTheme`). ليس `ThemeExtension<T>` الخاص بـ Flutter.
+- `theme/extensions/theme_mode_extension.dart`: `ThemeModeExtension` على `ThemeMode` (`icon` و`nameKey` وهو `AppKey` من `AppKeys.theme`). لا يوجد مستهلك فعّال حالياً. الامتداد القديم على `BuildContext` المسمى `ThemeExtension` (الذي يتعارض مع كلاس Flutter) حُذف؛ استخدم `context.ui.theme`.
+- ألوان `ColorScheme` الحالية (وتعارض مسميات مثل `primary`/`primaryLight`/`primaryDark`) لم تُراجع بعد.
 
 ### State management
 - `BaseCubit<State, Effect>`: Cubit مع `EffectMixin` ويغلق موارد Effects عند `close`.
@@ -125,10 +129,10 @@
 - `AppIcon` و`AppImage`: عرض الأيقونات والصور؛ اقرأ الـ API قبل إعادة التنفيذ.
 - `AppAppBar` (`widgets/app_appbar/app_appbar.dart`): AppBar مشترك يأخذ `progress`. مستخدم في `home_screen.dart`.
 - `AppNavigationBar` و`AppNavigationRail` و`AppSidebar` وأنماطها: عناصر التنقل حسب حجم الشاشة.
-- `MessageViewWidgets`: مكونات رسائل/حالات العرض المشتركة.
+- `MessageViewWidgets` و`MessageType` (`widgets/app_message/message_view_widgets.dart`): نظام الرسائل الموحد (SnackBar/Dialog/Loading). يقبل `messageKey` (AppKey، المفضل) أو `message` (String للتوافق)، ويبني على `AppText`/`AppButton`، وألوانه من `colors.error` و`semanticColors`. أنواع الرسالة: error وsuccess وwarning وinfo وloading. لا يوجد استهلاك فعّال حالياً (شاشات auth التي ستستخدمه معلّقة).
 
 ### Routing
-- Core يوفر `AppRoutes` و`RouteItem` و`RouteTransitions` و`GoRouterRefreshStream` و`MyNavObserver` (`routing/app_router_observer.dart`، يسجل أحداث التنقل عبر `debugPrint`، ومستخدم في `AppGoRouter`).
+- Core يوفر `AppRoutes` و`RouteItem` و`RouteTransitions` و`GoRouterRefreshStream` و`MyNavObserver` (`routing/app_router_observer.dart`، يسجل أحداث التنقل عبر `debugPrint`، ومستخدم في `AppRouter`).
 - تكوين GoRouter والحراس موجودان خارج Core في `lib/app/routing/app_go_router.dart` و`route_guards.dart`.
 
 ### Storage
@@ -149,23 +153,26 @@
 |---|---|---|
 | Access | `access_cubit_test` و`permission_gate_test` و`permission_test` | حالة الدور، `can/canAny/canAll/require`، `PermissionGate`، `Permission.covers` و`Role` |
 | DI | `di_singletons_test` | أن `TokenManager` Singleton فقط |
-| Foundation | `env_config_test` و`api_result_either_test` | التحقق من `EnvConfig`، و`ApiResult.toEither/toEitherAsync` |
+| Error | `failure_translator_test` | ترجمة `Failure` مرة واحدة فقط |
+| Foundation | `env_config_test` و`app_config_test` و`api_result_either_test` و`app_validator_test` | التحقق من `EnvConfig`، وتمرير `AppConfig` لقيم البيئة، و`ApiResult.toEither/toEitherAsync`، وقواعد `AppValidator` |
 | Network | `api_client_test` و`app_endpoints_test` و`language_interceptor_test` و`logger_redaction_test` و`network_info_test` و`refresh_token_interceptor_test` و`retry_interceptor_test` | تحليل الاستجابات، ترميز المسارات، Accept-Language، إخفاء الحقول الحساسة، `NetworkInfo`، تجديد الجلسة، سلوك Retry |
-| Responsive | `adaptive_layout_test` و`rh_builder_test` و`responsive_helper_equivalence_test` | اختيار التخطيط، `Rh.builder`، تكافؤ padding/radius |
-| Theme | `app_theme_test` | بناء الثيم دون `BuildContext` والـ baseline |
+| Responsive | `adaptive_layout_test` و`rh_builder_test` و`responsive_helper_equivalence_test` و`ui_text_of_test` | اختيار التخطيط، `Rh.builder`، تكافؤ padding/radius، و`context.ui.text.of` |
+| Theme | `app_theme_test` و`app_semantic_colors_test` | بناء الثيم دون `BuildContext`، و`AppSemanticColors` (`copyWith`/`lerp`/التسجيل/الوصول عبر `ui.theme`) و`ThemeModeExtension.nameKey` |
 | State management | `base_cubit_test` و`effect_mixin_test` | Effects والـ replay |
-| Widgets | `app_button_style_test` و`app_navigation_bar_style_test` و`app_navigation_rail_style_test` و`app_sidebar_style_test` و`app_text_test` | أنماط وسلوك الأزرار والتنقل والنص |
+| Widgets | `app_button_style_test` و`app_navigation_bar_style_test` و`app_navigation_rail_style_test` و`app_sidebar_style_test` و`app_text_test` و`message_view_widgets_test` | أنماط وسلوك الأزرار والتنقل والنص، وألوان وسلوك رسائل SnackBar/Dialog/Loading |
 | Storage | `token_manager_test` | `TokenManager` فقط (الكتابة، التراجع، `sessionCleared`) |
 
 ### الفجوات المسجلة
-- **Error:** لا يوجد اختبار مباشر لـ `ExceptionMapper` أو `FailureTranslator`. (اختبارات Auth تستخدم أنواع `Failure` لكنها لا تختبر المحولين نفسيهما.)
+- **Error:** لا يوجد اختبار مباشر لـ `ExceptionMapper`. (اختبارات Auth تستخدم أنواع `Failure` لكنها لا تختبره.) `FailureTranslator` له اختبار مباشر.
 - **Localization:** لا يوجد اختبار مباشر لـ `LocaleCubit`. يُستخدم داخل `language_interceptor_test` لتأكيد أن تغيير اللغة يصل إلى الطلب التالي، وهي تغطية غير مباشرة محدودة.
-- **Foundation:** لا يوجد اختبار مباشر لـ `AppValidator`.
 - **Routing:** لا يوجد مجلد `test/core/routing`. حراس المسارات الفعلية (خارج Core) مغطاة في `test/routing/route_guards_test.dart`، ولا يغطي ذلك `AppRoutes` أو `RouteTransitions` أو `MyNavObserver`.
 - **Storage:** لا يوجد اختبار شامل؛ لا اختبار مباشر لـ Hive (`HiveManager` و`HiveStorageService` و`HiveObjectBox` و`CacheManager`) أو `PrefsStorageService` أو `SecureStorageService` أو `AppSettingsManager`.
-- **أخرى بلا ملف اختبار مباشر:** `AuthInterceptor` و`ConnectivityInterceptor` و`CancelTokenRegistry` و`AppIcon` و`AppImage` و`AppAppBar` و`MessageViewWidgets` و`BlocEffectListener` و`AppBlocObserver` و`ThemeCubit`.
+- **أخرى بلا ملف اختبار مباشر:** `AuthInterceptor` و`ConnectivityInterceptor` و`CancelTokenRegistry` و`AppIcon` و`AppImage` و`AppAppBar` و`BlocEffectListener` و`AppBlocObserver` و`ThemeCubit`.
 
 ## 4. ملاحظات وحدود هذه الخريطة
+
+- اختبارات `app_semantic_colors_test` و`message_view_widgets_test` و`ui_text_of_test` و`failure_translator_test` و`app_config_test` و`app_validator_test` أُضيفت بلا تشغيل (لا Flutter SDK في بيئة كتابتها)؛ شغّلها قبل الاعتماد عليها.
+- `auth_effect.freezed.dart` عُدّل يدوياً (String → AppKey) ولم يُعَد توليده بـ `build_runner`.
 
 - افحص الكود الحالي دائماً؛ قد تتغير الملفات أو APIs.
 - لا تعني الإشارة إلى أداة أنها مناسبة لكل استعمال؛ تحقق من حدودها وتوقيعها وطبقتها.
