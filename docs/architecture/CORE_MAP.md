@@ -56,15 +56,15 @@
 - `AppConfig` (`foundation/config/app_config.dart`): **المدخل الوحيد لإعدادات التطبيق**، وكل قيمه ثابتة بعد التهيئة. يمرر قيم البيئة (`baseUrl` و`supabaseAnonKey` و`googleClientId` و`ensureConfigured()`) ويحمل الثوابت العامة (مهلات، إعادة المحاولة، لغات، `defaultPageSize`، صيغ تواريخ…). الميزات لا تستورد `EnvConfig`. `appName` قيمة مؤقتة بانتظار الاسم الرسمي. افحصه قبل إضافة ثوابت ولا تنسخ قيمه إلى التوثيق.
 - `Logger`: سجل موحد؛ لا تسجل Tokens أو كلمات مرور أو بيانات مالية حساسة.
 - `UseCase` و`UseCaseNoParams`: عقود Use Cases.
-- `AppValidator` و`ValidationRule` (`foundation/validation/app_validator.dart`): نظام التحقق الوحيد من مدخلات النماذج، عام وبلا اعتماد على Feature، ورسائله `AppKey`. `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. القاعدة `ValidationRule.async` و`AsyncValidator` محجوزتان وغير منفذتين. لا يوجد له مستهلك فعّال حالياً (نماذج الميزات معلّقة).
-- `AppPathImage` و`AppPathImages` (`foundation/constants/image_constants.dart`): ثوابت مسارات الصور والأصول (`AppPathImage` يحمل المسار وعلامة `isRtl`).
+- `AppValidator` و`ValidationRule` (`lib/app/core/foundation/validation/app_validator.dart`): الاسمان الفعليان؛ لا يوجد `FormValidator`. هذا نظام التحقق الوحيد من مدخلات النماذج، ورسائله `AppKey`. التوقيع الحالي `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. `params` من نوع `dynamic` داخل الخريطة، لذا يجب عدم افتراض تحقق نوعي أقوى مما يثبته الكود. `ValidationRule.async` و`AsyncValidator` محجوزان ولا يوجد مسار async في `validate()`؛ حالة الاستخدام الفعلية غير ظاهرة حالياً في الميزات.
+- `AppPathImage` و`AppPathImages` (`lib/app/core/foundation/constants/image_constants.dart`): الاسمان الفعليان؛ لا يوجد تعريف باسم `ImageConstants`. `AppPathImage.path` يجمع مسار الأصول مع الاسم، و`isRtl` وصف اتجاهي. افحص الثوابت قبل إضافة مسار جديد.
 
 ### Localization
 - `LocaleCubit` و`LocaleState`: حالة اللغة (الحالة تحمل `Locale` فقط).
 - `AppLanguage`: اللغات المدعومة وتحويل الكود إلى Locale.
 - `AppKey` و`AppKeys`: مفاتيح الترجمة المنظمة (`AppKey.tran` للترجمة المباشرة، و`.tr(args:/namedArgs:)` عند وجود متغيرات). ملفا `app_ar.dart` و`app_en.dart` يحويان النصوص. مفاتيح الثيم في `AppKeys.theme` و«موافق» في `AppKeys.common.ok`.
-- `MyDartLoader` (`translations/asset_loader.dart`): `AssetLoader` لـ easy_localization يحمّل الترجمات من ملفات Dart لا من JSON. مستخدم في `main.dart`.
-- `DirectionExtension` (`translations/localization_extension.dart`): امتداد على `BuildContext` لاتجاه النص: `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`.
+- `MyDartLoader` (`lib/app/core/localization/translations/asset_loader.dart`): التنفيذ الفعلي لـ `easy_localization.AssetLoader`؛ لا يوجد كلاس باسم `AssetLoader` خاص بالمشروع. يختار `app_en.dart` أو `app_ar.dart` ويُستخدم في `main.dart`.
+- `DirectionExtension` (`lib/app/core/localization/translations/localization_extension.dart`): الاسم الفعلي؛ لا يوجد امتداد مشروع باسم `LocalizationExtension`. يوفر `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`. كما توجد واجهة الاتجاه `context.ui.dir`؛ افحص الاستعمال قبل اختيار إحداهما.
 - لا تنشئ قاموس ترجمة موازياً.
 
 ### Network
@@ -86,9 +86,9 @@
 - **الحد الأقصى والتأخير:** من `AppConfig.maxRetries` و`AppConfig.retryDelay`. التأخير خطي: `baseDelay × (رقم المحاولة)`. عدّاد المحاولات في `options.extra['retryCount']`.
 
 #### Realtime — لا يوجد تنفيذ فعّال
-- `RealtimeClient` (`network/realtime/realtime_client.dart`) **عقد مجرد فقط** (`connect/disconnect/on/off/emit/statusStream/onTableChange/offTable` وenum `RealtimeStatus`). ليس خدمة جاهزة.
-- لا يوجد تنفيذ Realtime فعّال موصول أو مستخدم: لا تنفيذ للعقد، ولا تسجيل في DI، ولا مستهلك في `lib` أو `test`.
-- تم حذف `supabase_realtime_client.dart` لأنه كان معطلاً بالكامل بالتعليقات.
+- `RealtimeClient` (`lib/app/core/network/realtime/realtime_client.dart`) **عقد مجرد فقط** (`connect/disconnect/on/off/emit/statusStream/onTableChange/offTable` وenum `RealtimeStatus`)؛ ليس خدمة جاهزة.
+- لا يوجد تنفيذ Supabase Realtime فعّال موصول أو مستخدم: لا implementation ملموس للعقد، ولا تسجيل في DI، ولا مستهلك في `lib` أو `test`.
+- لا تتعامل مع `SupabaseRealtimeClient` كقدرة موجودة أو API قابلة للاستدعاء. أي ملف قديم بهذا الاسم كان تعليقاً/تنفيذاً غير فعال وتمت إزالته.
 - عند الحاجة إلى Realtime يلزم تنفيذ جديد وتسجيله في DI وإضافة اختباراته؛ لا تفترض أنه متوفر.
 
 ### Responsive وDesign System
@@ -120,19 +120,19 @@
 ### State management
 - `BaseCubit<State, Effect>`: Cubit مع `EffectMixin` ويغلق موارد Effects عند `close`.
 - `EffectMixin` و`HasEffects`: Stream لأحداث أحادية الاستخدام، مع replay اختياري ومحدود زمنياً (`emitEffect(effect, {replayable})`).
-- `BlocEffectListener`: الاستماع إلى Effects في الواجهة.
+- `BlocEffectListener` (`lib/app/core/presentation/state_management/bloc_effect_listener.dart`): Widget للاستماع إلى `HasEffects.effectStream`، يقبل Cubit اختياري أو يقرأه من `context`. لا يوجد اختبار مباشر مسجل له. **حالة التحقق: `NOT_VERIFIED`** لأي ملاحظة تحليل/سلامة lifecycle؛ لم يُشغّل `flutter analyze` في هذا التدقيق، ويلزم التحقق في بيئة Flutter قبل اعتماد حكم نهائي.
 - `AppBlocObserver`: مراقبة Bloc/Cubit.
 
 ### Shared widgets
 - `AppText`: نص مترجم عبر `AppKey` أو `AppText.raw`، ويدعم `rich` و`selectable`.
 - `AppButton`: زر موحد، بـ `AppKey` أو `AppButton.raw`، مع variants/sizes/loading. التصميم في `AppButtonStyle`.
 - `AppIcon` و`AppImage`: عرض الأيقونات والصور؛ اقرأ الـ API قبل إعادة التنفيذ.
-- `AppAppBar` (`widgets/app_appbar/app_appbar.dart`): AppBar مشترك يأخذ `progress`. مستخدم في `home_screen.dart`.
+- `AppAppBar` (`lib/app/core/presentation/widgets/app_appbar/app_appbar.dart`): الاسم الفعلي بحروف `B` كبيرة؛ لا يوجد `AppAppbar`. يأخذ `progress` ويُستخدم في `features/home/presentation/pages/home_screen.dart`. ملاحظة حدود: التنفيذ الحالي يحمل علامة VAUDE التجارية داخله وأزرار القائمة/البحث/الحقيبة بلا callbacks افتراضياً (no-op)، لذلك لا تفترض أنه AppBar عام مكتمل لكل الميزات.
 - `AppNavigationBar` و`AppNavigationRail` و`AppSidebar` وأنماطها: عناصر التنقل حسب حجم الشاشة.
 - `MessageViewWidgets` و`MessageType` (`widgets/app_message/message_view_widgets.dart`): نظام الرسائل الموحد (SnackBar/Dialog/Loading). يقبل `messageKey` (AppKey، المفضل) أو `message` (String للتوافق)، ويبني على `AppText`/`AppButton`، وألوانه من `colors.error` و`semanticColors`. أنواع الرسالة: error وsuccess وwarning وinfo وloading. لا يوجد استهلاك فعّال حالياً (شاشات auth التي ستستخدمه معلّقة).
 
 ### Routing
-- Core يوفر `AppRoutes` و`RouteItem` و`RouteTransitions` و`GoRouterRefreshStream` و`MyNavObserver` (`routing/app_router_observer.dart`، يسجل أحداث التنقل عبر `debugPrint`، ومستخدم في `AppRouter`).
+- Core يوفر `AppRoutes` و`RouteItem` و`RouteTransitions` و`GoRouterRefreshStream` و`MyNavObserver` (`lib/app/core/routing/app_router_observer.dart`): الاسم الفعلي للمراقب؛ لا يوجد `AppRouterObserver`. يسجل أحداث التنقل عبر `debugPrint`، ويُستخدم في `AppRouter`.
 - تكوين GoRouter والحراس موجودان خارج Core في `lib/app/routing/app_go_router.dart` و`route_guards.dart`.
 
 ### Storage
@@ -167,7 +167,7 @@
 - **Localization:** لا يوجد اختبار مباشر لـ `LocaleCubit`. يُستخدم داخل `language_interceptor_test` لتأكيد أن تغيير اللغة يصل إلى الطلب التالي، وهي تغطية غير مباشرة محدودة.
 - **Routing:** لا يوجد مجلد `test/core/routing`. حراس المسارات الفعلية (خارج Core) مغطاة في `test/routing/route_guards_test.dart`، ولا يغطي ذلك `AppRoutes` أو `RouteTransitions` أو `MyNavObserver`.
 - **Storage:** لا يوجد اختبار شامل؛ لا اختبار مباشر لـ Hive (`HiveManager` و`HiveStorageService` و`HiveObjectBox` و`CacheManager`) أو `PrefsStorageService` أو `SecureStorageService` أو `AppSettingsManager`.
-- **أخرى بلا ملف اختبار مباشر:** `AuthInterceptor` و`ConnectivityInterceptor` و`CancelTokenRegistry` و`AppIcon` و`AppImage` و`AppAppBar` و`BlocEffectListener` و`AppBlocObserver` و`ThemeCubit`.
+- **أخرى بلا ملف اختبار مباشر:** `AuthInterceptor` و`ConnectivityInterceptor` و`CancelTokenRegistry` و`AppIcon` و`AppImage` و`AppAppBar` و`BlocEffectListener` و`AppBlocObserver` و`ThemeCubit`. وبالنسبة إلى `BlocEffectListener` تحديداً، تبقى سلامة التحليل وlifecycle `NOT_VERIFIED` حتى تشغيل `flutter analyze` واختبار Widget مخصص.
 
 ## 4. ملاحظات وحدود هذه الخريطة
 
