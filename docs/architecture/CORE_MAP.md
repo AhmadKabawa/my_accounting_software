@@ -117,7 +117,7 @@
 ### State management
 - `BaseCubit<State, Effect>`: Cubit مع `EffectMixin` ويغلق موارد Effects عند `close`.
 - `EffectMixin` و`HasEffects`: Stream لأحداث أحادية الاستخدام، مع replay اختياري ومحدود زمنياً (`emitEffect(effect, {replayable})`).
-- `BlocEffectListener` (`lib/app/core/presentation/state_management/bloc_effect_listener.dart`): Widget للاستماع إلى `HasEffects.effectStream`، يقبل Cubit اختياري أو يقرأه من `context`. لا يوجد اختبار مباشر مسجل له. **حالة التحقق: `NOT_VERIFIED`** لأي ملاحظة تحليل/سلامة lifecycle؛ لم يُشغّل `flutter analyze` في هذا التدقيق، ويلزم التحقق في بيئة Flutter قبل اعتماد حكم نهائي.
+- `BlocEffectListener` (`lib/app/core/presentation/state_management/bloc_effect_listener.dart`): Widget للاستماع إلى `HasEffects.effectStream`، يقبل Cubit اختياري أو يقرأه من `context`. لا يوجد اختبار مباشر مسجل له. **حالة التحقق: `NOT_VERIFIED`** لأي ملاحظة تحليل/سلامة lifecycle؛ يلزم تشغيل `flutter analyze` واختبار Widget مخصص في بيئة Flutter قبل اعتماد حكم نهائي.
 - `AppBlocObserver`: مراقبة Bloc/Cubit.
 
 ### Shared widgets

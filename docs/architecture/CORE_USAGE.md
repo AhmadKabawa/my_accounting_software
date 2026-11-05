@@ -171,6 +171,13 @@ MessageViewWidgets.hideMessage(context);
 استهلاك Effect يحمل `AppKey` (النمط المعتمد؛ الترجمة وقت العرض، فتحترم اللغة الحالية):
 
 ```dart
+import 'package:go_router/go_router.dart';
+import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
+import 'package:accounting_software/app/core/routing/routes.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/effect/auth_effect.dart';
+
 BlocEffectListener<AuthEffect, AuthCubit>(
   onEffect: (context, effect) => effect.whenOrNull(
     showMessage: (key, type) =>
@@ -203,7 +210,7 @@ final result = await apiClient.get<UserModel>(
   AppEndpoints.auth.user,
   fromJson: UserModel.fromJson,
   requiresAuth: true,
-)
+);
 final either = result.toEither();   // Either<Failure, UserModel>
 ```
 
