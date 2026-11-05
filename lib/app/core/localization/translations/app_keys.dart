@@ -164,6 +164,6 @@ final class _SuccessKeys {
   final signup = const AppKey('success.sign_up');
   final signout = const AppKey('success.sign_out');
   final sendMessageToEmail = const AppKey('success.send_message_to_email');
-  final profileUpdated = const AppKey('success.send_message_to_email');
-  final passwordChanged = const AppKey('success.send_message_to_email');
+  final profileUpdated = const AppKey('success.profile_updated');
+  final passwordChanged = const AppKey('success.password_changed');
 }

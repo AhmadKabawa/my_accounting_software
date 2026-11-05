@@ -146,4 +146,6 @@ final TranslationMap _arSuccess = {
   AppKeys.success.signup: "تم إنشاء الحساب بنجاح",
   AppKeys.success.signout: "تم تسجيل الخروج بنجاح",
   AppKeys.success.sendMessageToEmail: "تم إرسال رسالة إلى بريدك الإلكتروني",
+  AppKeys.success.profileUpdated: "تم تحديث الملف الشخصي بنجاح",
+  AppKeys.success.passwordChanged: "تم تغيير كلمة المرور بنجاح",
 };

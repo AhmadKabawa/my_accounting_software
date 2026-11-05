@@ -195,4 +195,6 @@ final TranslationMap _enSuccess = {
   AppKeys.success.signup: "Account created successfully",
   AppKeys.success.signout: "Successfully signed out",
   AppKeys.success.sendMessageToEmail: "We've sent you a message to your email",
+  AppKeys.success.profileUpdated: "Profile updated successfully",
+  AppKeys.success.passwordChanged: "Password changed successfully",
 };
