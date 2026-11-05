@@ -1,17 +1,17 @@
-# Architecture Decision Records
+# سجل القرارات المعمارية
 
-ADRs record decisions that affect the structure, boundaries, or long-term constraints of the application.
+تسجل ADRs القرارات التي تؤثر في بنية التطبيق أو حدوده أو قيوده طويلة الأمد.
 
-## Accepted decisions
+## القرارات المعتمدة
 
-- [ADR-0001: Core Boundaries and Architecture Documentation Authority](0001-core-boundaries-and-documentation-authority.md)
+- [ADR-0001: حدود Core والمرجع المعتمد لوثائق المعمارية](0001-core-boundaries-and-documentation-authority.md)
 
-## Adding an ADR
+## إضافة ADR
 
-1. Use the next four-digit number.
-2. Record status, date, context, decision, consequences, and validation.
-3. Keep the decision focused; link to implementation guidance rather than copying it.
-4. Do not describe an unverified proposal as implemented or enforced.
-5. Update this index when adding a record.
+1. استخدم الرقم التالي المكوّن من أربعة أرقام.
+2. سجّل الحالة والتاريخ والسياق والقرار والنتائج والتحقق.
+3. اجعل القرار محدداً، واربطه بإرشادات التنفيذ بدلاً من نسخها.
+4. لا تصف مقترحاً غير متحقق منه بأنه منفذ أو مفروض.
+5. حدّث هذا الفهرس عند إضافة سجل جديد.
 
-Statuses: **Proposed**, **Accepted**, **Superseded**, or **Deprecated**.
+الحالات: **مقترح**، **معتمد**، **مستبدل**، أو **ملغى**.

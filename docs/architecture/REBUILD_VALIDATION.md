@@ -1,38 +1,38 @@
-# Architecture Documentation Rebuild — Validation Record
+# سجل التحقق من إعادة بناء وثائق المعمارية
 
-- **Date:** 2026-11-04
-- **Base branch:** `vscode`
-- **Working branch:** `docs/architecture-rebuild`
-- **Scope:** Documentation and Markdown only
+- **التاريخ:** 2026-11-04
+- **الفرع الأساس:** `vscode`
+- **فرع العمل:** `docs/architecture-rebuild`
+- **النطاق:** Documentation and Markdown only
 
-## Scope integrity
+## سلامة النطاق
 
-- No Dart source files were changed.
-- No `pubspec.yaml`, platform, build-configuration, backend, or database files were changed.
-- The branch was created from `vscode`; its merge base remains the `vscode` head used at branch creation.
-- The branch contains documentation commits only and has not been merged into `vscode` or `main`.
+- لم تُعدّل أي ملفات Dart.
+- لم تُعدّل `pubspec.yaml` أو ملفات المنصات أو إعدادات البناء أو الخلفية أو قاعدة البيانات.
+- أُنشئ الفرع من `vscode`، وظلّ merge base مطابقاً لرأس `vscode` المستخدم وقت إنشاء الفرع.
+- حتى تاريخ 2026-11-04، كان الفرع يحتوي على Commits توثيقية فقط ولم يكن قد دُمج في `vscode` أو `main`.
 
-## Static checks performed
+## الفحوصات النصية المنفذة
 
-- Checked relative Markdown links across the architecture documentation, root README, and agent entry-point documents: **26 links checked across 16 Markdown files; no broken targets found** at the time of the check.
-- Checked the test names listed in `CORE_MAP.md` against the repository tree: every listed test file exists.
-- Inspected the six reported naming mismatches against source files and updated the map to use the actual names:
+- فُحصت الروابط النسبية في وثائق المعمارية وREADME الجذري وتعليمات الوكلاء: **26 رابطاً عبر 16 ملف Markdown؛ ولم يُعثر على روابط مكسورة** وقت الفحص.
+- قورنت أسماء الاختبارات المدرجة في `CORE_MAP.md` بشجرة المستودع، وكانت جميع ملفات الاختبار المذكورة موجودة.
+- فُحصت ستة اختلافات في الأسماء مقابل ملفات المصدر، وحُدّثت الخريطة لتستخدم الأسماء الفعلية:
   - `AppAppBar`
   - `MyNavObserver`
   - `AppValidator` / `ValidationRule`
   - `AppPathImage` / `AppPathImages`
   - `DirectionExtension`
   - `MyDartLoader`
-- Confirmed the old `CORE_CONTRACT.md` and `FEATURE_GUIDE.md` are retained in `archive/` with the same Git blob SHAs as the originals; the superseded paths were removed after archival.
-- Confirmed the current repository tree has no `.github/workflows/` files. `analysis_options.yaml` includes `flutter_lints` and no architecture-import lint configuration was found.
+- تأكد الاحتفاظ بالنسختين القديمتين `CORE_CONTRACT.md` و`FEATURE_GUIDE.md` في `archive/` بنفس Git blob SHAs للملفين الأصليين، ثم أزيل المساران السابقان بعد الأرشفة.
+- لا تحتوي شجرة المستودع الحالية على ملفات ضمن `.github/workflows/`. يتضمن `analysis_options.yaml` حزمة `flutter_lints`، ولم يُعثر على إعداد lint لفرض قواعد الاستيراد المعمارية.
 
-## Not run / not verified
+## ما لم يُشغّل أو لم يُتحقق منه
 
-- `dart format`, `flutter analyze`, `flutter test`, and platform builds were **not run** as part of this GitHub documentation-only operation.
-- Architecture boundaries are therefore documented policy, not automatically enforced CI checks.
-- `BlocEffectListener` remains **`NOT_VERIFIED`** for analyzer/lifecycle concerns until `flutter analyze` and a focused widget test are run in a Flutter SDK environment.
-- The presence of test files is not evidence that those tests pass.
+- لم تُشغّل أوامر `dart format` أو `flutter analyze` أو `flutter test` أو عمليات بناء المنصات ضمن عملية تعديل الوثائق هذه.
+- لذلك فإن حدود المعمارية سياسة موثقة وليست فحوصات CI مفروضة آلياً.
+- تبقى ملاحظات التحليل ودورة الحياة الخاصة بـ `BlocEffectListener` بحالة **`NOT_VERIFIED`** حتى تشغيل `flutter analyze` واختبار Widget مخصص ضمن بيئة Flutter.
+- وجود ملفات الاختبار لا يثبت نجاحها.
 
-## Outcome
+## النتيجة
 
-The active documentation now has distinct responsibilities: architecture policy, Core discovery, usage examples, coding standards, feature completion checklist, and ADR history. Superseded architecture guides remain available in the archive and are no longer presented as current policy.
+أصبحت الوثائق الحالية تفصل بين سياسة المعمارية واكتشاف Core وأمثلة الاستخدام ومعايير التكويد وقائمة مراجعة الميزات وسجل ADR. وتبقى الأدلة المعمارية المستبدلة متاحة في الأرشيف دون تقديمها على أنها سياسة حالية.

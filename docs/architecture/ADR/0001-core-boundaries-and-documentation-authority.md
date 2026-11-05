@@ -1,44 +1,44 @@
-# ADR-0001: Core Boundaries and Architecture Documentation Authority
+# ADR-0001: حدود Core والمرجع المعتمد لوثائق المعمارية
 
-- **Status:** Accepted
-- **Date:** 2026-11-04
-- **Decision owners:** Project maintainers
-- **Scope:** Flutter client architecture and shared Core capabilities
+- **الحالة:** معتمد
+- **التاريخ:** 2026-11-04
+- **الجهة صاحبة القرار:** مشرفو المشروع
+- **النطاق:** معمارية عميل Flutter والقدرات المشتركة في Core
 
-## Context
+## السياق
 
-The repository has accumulated several documents describing Core reuse, feature structure, and coding expectations. Some older guidance treated every existing Core utility as mandatory for every matching use case, while the current architecture requires evidence of shared responsibility and real consumers before promoting feature code into Core. Repeated rules also drift when copied into agent instructions and feature guides.
+تراكمت في المستودع عدة وثائق تصف إعادة استخدام Core وبنية الميزات وتوقعات كتابة الكود. تعاملت بعض الإرشادات القديمة مع كل أداة موجودة في Core على أنها إلزامية لكل حالة استخدام مشابهة، بينما تتطلب المعمارية الحالية إثبات وجود مسؤولية مشتركة ومستهلكين فعليين قبل نقل كود الميزة إلى Core. كما أن تكرار القواعد في تعليمات الوكلاء وأدلة الميزات يؤدي إلى اختلافها بمرور الوقت.
 
-The application uses a feature-first structure, a shared Core, GetIt for dependency injection, Cubit/Bloc for state management, Dio for HTTP, and a shared responsive/theme/localization design system. Documentation must describe the code that exists rather than promise unimplemented services or behavior.
+يعتمد التطبيق بنية Feature-first وCore مشتركاً، ويستخدم GetIt لحقن الاعتماديات وCubit/Bloc لإدارة الحالة وDio لطلبات HTTP، إضافة إلى نظام تصميم مشترك للاستجابة والثيم والترجمة. يجب أن تصف الوثائق الكود الموجود فعلياً، لا أن تعد بخدمات أو سلوك لم يُنفذ.
 
-## Decision
+## القرار
 
-1. **Core is for stable cross-cutting capabilities**, not feature business logic or a general dumping ground.
-2. A capability belongs in Core only when it is independent of Features, genuinely cross-cutting, has a real second consumer or a strong technical justification, and exposes a focused testable contract.
-3. Before adding a shared helper, widget, service, extension, or abstraction, inspect the map and then verify the implementation, callers, imports, and tests. Reuse or extend a suitable API rather than creating a parallel system.
-4. **`ARCHITECTURE_RULES.md` is the sole policy authority** for Core boundaries, layer dependencies, and architectural decisions.
-5. **`CORE_MAP.md` is a discovery map**, not proof that an API is production-ready. It must distinguish implementations from contracts/stubs and disclose known limitations and test gaps.
-6. **`CORE_USAGE.md` contains usage examples** and must match actual signatures.
-7. **`CODING_STANDARDS.md` contains practical Dart/Flutter conventions**. `FEATURE_CHECKLIST.md` is the implementation/review checklist.
-8. `AGENTS.md`, `CLAUDE.md`, and the Core usage Skill should point to the authoritative documents instead of duplicating their policy.
-9. Historical plans and superseded guidance are archived without being treated as current instructions.
-10. Documentation-only changes must not silently alter Dart behavior, package configuration, platform files, or backend/database behavior.
+1. **يُخصص Core للقدرات المستقرة والعرضية المشتركة**، وليس لمنطق الأعمال الخاص بميزة أو كمستودع عام للكود غير المصنف.
+2. لا تُضاف قدرة إلى Core إلا إذا كانت مستقلة عن Features، وعرضية مشتركة فعلاً، ولها مستهلك ثانٍ حقيقي أو مبرر تقني قوي، وتقدم عقداً محدداً قابلاً للاختبار.
+3. قبل إضافة Helper أو Widget أو Service أو Extension أو Abstraction مشتركة، يجب فحص الخريطة ثم التحقق من التنفيذ والمستدعين والاستيرادات والاختبارات. أعد استخدام API مناسبة أو وسّعها بدلاً من إنشاء نظام موازٍ.
+4. **تكون `ARCHITECTURE_RULES.md` المرجع الوحيد لسياسة حدود Core واعتماد الطبقات والقرارات المعمارية.**
+5. **تكون `CORE_MAP.md` خريطة اكتشاف**، ولا تُعد دليلاً على أن API جاهزة للإنتاج. يجب أن تميز بين التنفيذ والعقد المجرد والـ stub، وأن توضح القيود المعروفة وفجوات الاختبارات.
+6. تحتوي `CORE_USAGE.md` على أمثلة الاستخدام، ويجب أن تطابق التوقيعات الفعلية.
+7. تحتوي `CODING_STANDARDS.md` على اصطلاحات Dart وFlutter العملية، وتكون `FEATURE_CHECKLIST.md` قائمة تنفيذ ومراجعة.
+8. تشير `AGENTS.md` و`CLAUDE.md` وCore usage Skill إلى الوثائق المعتمدة بدلاً من تكرار سياستها.
+9. تُؤرشف الخطط القديمة والإرشادات المستبدلة دون اعتبارها تعليمات حالية.
+10. لا يجوز لتغييرات التوثيق وحدها أن تعدّل سلوك Dart أو إعدادات الحزم أو ملفات المنصات أو سلوك الخلفية/قاعدة البيانات.
 
-## Consequences
+## النتائج
 
-### Positive
+### الإيجابيات
 
-- There is one clear place to change architecture policy.
-- Discovery, policy, examples, coding style, and delivery checks have separate responsibilities.
-- Existing APIs can be documented honestly, including incomplete contracts and missing tests.
-- Agent instructions are shorter and less likely to drift.
+- يوجد مكان واحد واضح لتعديل السياسة المعمارية.
+- أصبحت مسؤوليات السياسة والاكتشاف والأمثلة وأسلوب كتابة الكود وقوائم التسليم منفصلة.
+- يمكن توثيق APIs الموجودة بصدق، بما في ذلك العقود غير المكتملة والاختبارات الناقصة.
+- أصبحت تعليمات الوكلاء أقصر وأقل عرضة للاختلاف.
 
-### Trade-offs
+### المفاضلات
 
-- Contributors must open the relevant reference instead of relying on a duplicated summary.
-- The Core map requires maintenance when shared APIs or their contracts change.
-- Some existing Core widgets may have limitations or feature-specific details that prevent treating them as universally reusable.
+- يحتاج المساهم إلى فتح المرجع المختص بدلاً من الاعتماد على ملخص مكرر.
+- تتطلب خريطة Core تحديثاً عند تغيير APIs المشتركة أو عقودها.
+- قد تكون لبعض Widgets الموجودة في Core قيود أو تفاصيل خاصة بميزة تمنع اعتبارها قابلة لإعادة الاستخدام في كل الحالات.
 
-## Validation
+## التحقق
 
-This ADR records a documentation and architecture-policy decision. It does not claim that architecture rules are enforced by CI or that Flutter analysis/tests have run. Those claims must be based on actual configured checks and executed commands.
+يسجل هذا ADR قراراً توثيقياً وسياسة معمارية. ولا يدّعي أن قواعد المعمارية مفروضة عبر CI أو أن Flutter analysis أو الاختبارات قد شُغّلت. يجب أن تستند هذه الادعاءات إلى الفحوصات المهيأة فعلياً والأوامر التي نُفذت.

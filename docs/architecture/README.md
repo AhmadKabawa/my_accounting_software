@@ -1,34 +1,33 @@
-# Architecture Documentation
+# وثائق المعمارية
 
-This directory contains the current architecture guidance for the Flutter client. The documents have deliberately separate responsibilities so that policy, discovery, examples, coding style, and delivery checks do not drift through repeated copies.
+يحتوي هذا المجلد على الإرشادات المعمارية الحالية لعميل Flutter. لكل وثيقة مسؤولية محددة حتى لا تتكرر السياسة والاكتشاف والأمثلة ومعايير التكويد وقوائم التسليم بصيغ متضاربة.
 
-## Start here
+## ابدأ من هنا
 
-| Need | Document | Authority |
+| حاجتك | الوثيقة | طبيعتها |
 |---|---|---|
-| Understand the architecture and decide where code belongs | [Architecture Rules](ARCHITECTURE_RULES.md) | **Normative policy** for Core boundaries and layer dependencies |
-| Find an existing shared API and understand its actual status | [Core Map](CORE_MAP.md) | Discovery map; verify source code before use |
-| See how to call shared APIs | [Core Usage](CORE_USAGE.md) | Usage examples; source signatures remain authoritative |
-| Follow Dart/Flutter implementation conventions | [Coding Standards](CODING_STANDARDS.md) | Coding guidance, subordinate to architecture policy |
-| Review a feature before completion | [Feature Checklist](FEATURE_CHECKLIST.md) | Delivery checklist |
-| Understand recorded architecture decisions | [ADR index](ADR/README.md) | Decision history |
-| Review the documentation rebuild's validation and limits | [Rebuild Validation](REBUILD_VALIDATION.md) | Static evidence and unrun checks |
+| فهم المعمارية وتحديد مكان الكود | [قواعد المعمارية](ARCHITECTURE_RULES.md) | **السياسة الملزمة** لحدود Core واعتماد الطبقات |
+| اكتشاف API مشتركة ومعرفة حالتها الفعلية | [خريطة Core](CORE_MAP.md) | خريطة اكتشاف؛ تحقق من الكود قبل الاستخدام |
+| معرفة طريقة استدعاء APIs المشتركة | [استخدام Core](CORE_USAGE.md) | أمثلة استخدام؛ توقيع المصدر هو المرجع |
+| اتباع اصطلاحات Dart وFlutter | [معايير التكويد](CODING_STANDARDS.md) | إرشادات كتابة الكود، تابعة لسياسة المعمارية |
+| مراجعة الميزة قبل إكمالها | [قائمة مراجعة الميزة](FEATURE_CHECKLIST.md) | قائمة تنفيذ ومراجعة |
+| مراجعة القرارات المعمارية | [فهرس ADR](ADR/README.md) | سجل القرارات المعتمدة |
 
-## Agent entry points
+## مداخل الوكلاء
 
-- [AGENTS.md](../../AGENTS.md) contains repository-wide instructions and links to these references.
-- [CLAUDE.md](../../CLAUDE.md) points Claude to the same authoritative guidance.
-- [Core usage Skill](../../.claude/skills/core-usage/SKILL.md) applies only when editing Core, adding a shared capability, or consuming a relevant Core API.
+- [AGENTS.md](../../AGENTS.md) يحتوي تعليمات المستودع العامة ويربط بهذه المراجع.
+- [CLAUDE.md](../../CLAUDE.md) يوجّه Claude إلى المراجع المعتمدة نفسها.
+- [Core usage Skill](../../.claude/skills/core-usage/SKILL.md) يُستخدم فقط عند تعديل Core أو إضافة قدرة مشتركة أو استهلاك API ذات صلة.
 
-Agent entry points should link to these documents rather than copy their detailed rules.
+يجب أن تشير تعليمات الوكلاء إلى هذه الوثائق بدلاً من نسخ تفاصيل قواعدها.
 
-## Validation and evidence
+## التحقق والأدلة
 
-- The implementation and tests are authoritative for what currently exists.
-- A map entry does not mean the capability is complete, used, secure, or production-ready.
-- Missing direct tests, incomplete contracts, and unverified analyzer concerns must be stated explicitly.
-- Do not claim that a check passed unless it was actually run. Static inspection is not a substitute for `flutter analyze`, tests, or platform builds.
+- التنفيذ والاختبارات هما المرجع لما هو موجود فعلياً.
+- وجود أداة في الخريطة لا يعني أنها مكتملة أو مستخدمة أو آمنة أو جاهزة للإنتاج.
+- يجب توضيح غياب الاختبارات المباشرة والعقود غير المكتملة وملاحظات التحليل غير المتحقق منها.
+- سياسة توثيق نتائج الفحوصات موجودة في [قواعد المعمارية](ARCHITECTURE_RULES.md).
 
-## Archived guidance
+## الوثائق المؤرشفة
 
-[archive/README.md](archive/README.md) explains superseded architecture documents retained for historical reference. Archived material is not current policy and must not override the documents listed above.
+يوضح [README الأرشيف](archive/README.md) الوثائق القديمة المحفوظة للرجوع التاريخي. كما نُقلت تقارير إعادة البناء وسجلات التدقيق القديمة إلى الأرشيف؛ لا تمثل هذه المواد سياسة حالية ولا تتقدم على الوثائق المذكورة أعلاه.

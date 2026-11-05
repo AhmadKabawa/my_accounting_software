@@ -1,89 +1,88 @@
-# Feature Delivery Checklist
+# قائمة مراجعة تسليم الميزة
 
-> Operational checklist for implementing a feature in this repository.  
-> Global engineering expectations live in `AGENTS.md`; architecture decisions and Core boundaries live in `ARCHITECTURE_RULES.md`. This file turns those rules into a repeatable feature review.
+> قائمة تشغيلية لتنفيذ ميزة ومراجعتها في هذا المستودع. توجد التوقعات الهندسية العامة في `AGENTS.md`، وتوجد قرارات المعمارية وحدود Core في `ARCHITECTURE_RULES.md`.
 
-## 1. Scope and acceptance criteria
+## 1. النطاق ومعايير القبول
 
-- [ ] Describe the user problem and the expected outcome.
-- [ ] Define the feature's in-scope and out-of-scope behavior.
-- [ ] List normal, empty, loading, validation, permission-denied, and failure states where applicable.
-- [ ] Identify affected routes, roles, data entities, external services, and platform constraints.
-- [ ] Resolve ambiguities that could affect financial balances, stock, permissions, or data ownership before implementation.
+- [ ] صف مشكلة المستخدم والنتيجة المتوقعة.
+- [ ] حدّد السلوك داخل النطاق وخارجه.
+- [ ] حدّد حالات النجاح والفراغ والتحميل والتحقق ورفض الصلاحية والفشل عند الحاجة.
+- [ ] حدّد المسارات والأدوار والكيانات والخدمات الخارجية وقيود المنصات المتأثرة.
+- [ ] احسم أي غموض يؤثر في الأرصدة المالية أو المخزون أو الصلاحيات أو ملكية البيانات قبل التنفيذ.
 
-## 2. Architecture and data flow
+## 2. المعمارية وتدفق البيانات
 
-- [ ] Keep feature-specific code inside `lib/app/features/<feature>/`.
-- [ ] Use `data`, `domain`, and `presentation` only where each layer has a real responsibility; do not add empty layers or placeholder files.
-- [ ] Keep business rules and calculations out of Widgets and Core UI.
-- [ ] Keep Domain independent of Flutter, Dio, storage implementations, and Presentation.
-- [ ] Keep Data independent of Presentation.
-- [ ] Reuse existing Core APIs after checking their actual signatures and tests; do not create parallel helpers or services.
-- [ ] Document any deliberate deviation from the established architecture and its reason.
+- [ ] ضع كود الميزة داخل `lib/app/features/<feature>/`.
+- [ ] استخدم `data` و`domain` و`presentation` عندما تكون لكل طبقة مسؤولية فعلية؛ لا تضف طبقات أو ملفات فارغة.
+- [ ] أبقِ قواعد الأعمال والحسابات خارج Widgets وCore UI.
+- [ ] أبقِ Domain مستقلاً عن Flutter وDio وتطبيقات التخزين وPresentation.
+- [ ] أبقِ Data مستقلاً عن Presentation.
+- [ ] أعد استخدام APIs الموجودة في Core بعد التحقق من توقيعاتها واختباراتها؛ لا تنشئ Helpers أو Services موازية.
+- [ ] وثّق أي خروج مقصود عن المعمارية المعتمدة وسببه.
 
-## 3. Domain and data
+## 3. Domain وData
 
-- [ ] Model business concepts and invariants explicitly.
-- [ ] Define repository contracts in Domain and implementations in Data when a repository boundary is needed.
-- [ ] Keep DTO/JSON mapping and remote/local data-source details in Data.
-- [ ] Convert infrastructure exceptions to the project's `Failure` contract at the repository boundary.
-- [ ] Avoid leaking raw Dio, Supabase, Hive, or Flutter types into Domain.
-- [ ] Handle pagination, sorting, filtering, and empty responses explicitly where relevant.
+- [ ] مثّل مفاهيم الأعمال وثوابتها بوضوح.
+- [ ] عرّف عقود Repository في Domain وتنفيذها في Data عند الحاجة إلى هذا الحد الفاصل.
+- [ ] أبقِ DTO/JSON mapping وتفاصيل مصادر البيانات البعيدة والمحلية في Data.
+- [ ] حوّل استثناءات البنية التحتية إلى عقد `Failure` عند حد Repository.
+- [ ] تجنب تسريب أنواع Dio أو Supabase أو Hive أو Flutter الخام إلى Domain.
+- [ ] عالج Pagination وSorting وFiltering والاستجابات الفارغة بوضوح عند الحاجة.
 
-## 4. State, dependency injection, and lifecycle
+## 4. الحالة وحقن الاعتماديات ودورة الحياة
 
-- [ ] Keep each Cubit/Bloc focused on one feature responsibility.
-- [ ] Put persistent screen data in State and one-time UI actions in Effects.
-- [ ] Use `BaseCubit`/Effects consistently where appropriate; do not emit navigation or transient messages as persistent state.
-- [ ] Choose `registerFactory`, `registerLazySingleton`, or `registerSingleton` according to actual lifetime and state-sharing requirements.
-- [ ] Ensure each created Cubit/Bloc is closed by its owner and subscriptions/controllers are disposed.
-- [ ] Register feature dependencies in that feature's DI module and let `lib/app/app_di.dart` coordinate initialization.
-- [ ] Avoid duplicate registrations and hidden global mutable state.
+- [ ] اجعل كل Cubit/Bloc مسؤولاً عن نطاق واحد واضح داخل الميزة.
+- [ ] ضع بيانات الشاشة المستمرة في State وأفعال الواجهة لمرة واحدة في Effects.
+- [ ] استخدم `BaseCubit`/Effects باتساق عند ملاءمتها؛ لا تجعل التنقل أو الرسائل المؤقتة جزءاً من State المستمرة.
+- [ ] اختر `registerFactory` أو `registerLazySingleton` أو `registerSingleton` حسب عمر الكائن ومشاركة الحالة.
+- [ ] تأكد من إغلاق كل Cubit/Bloc بواسطة مالكه والتخلص من الاشتراكات والـ controllers.
+- [ ] سجّل اعتماديات الميزة في DI الخاص بها، واترك `lib/app/app_di.dart` ينسق التهيئة.
+- [ ] تجنب التسجيلات المكررة والحالة العامة القابلة للتغيير دون داعٍ.
 
-## 5. UI, routing, localization, and permissions
+## 5. UI والتوجيه والترجمة والصلاحيات
 
-- [ ] Use existing design-system widgets and `context.ui` APIs where they cover the requirement.
-- [ ] Support the required screen sizes, RTL/LTR direction, and light/dark themes.
-- [ ] Put user-facing text in the shared translation keys and both supported language maps.
-- [ ] Define routes in `AppRoutes`, add them to `AppRoutes.all`, classify them in route guards, and connect them in the router.
-- [ ] Treat UI permission checks as presentation guidance only; enforce authorization on the server and through RLS.
-- [ ] Do not expose a control that appears functional when its action is not implemented.
+- [ ] استخدم Widgets نظام التصميم وواجهات `context.ui` الموجودة عندما تغطي الحاجة.
+- [ ] ادعم أحجام الشاشات المطلوبة واتجاهي RTL/LTR والثيمين الفاتح والداكن.
+- [ ] ضع النصوص الظاهرة للمستخدم في مفاتيح الترجمة المشتركة وملفي اللغتين.
+- [ ] عرّف المسارات في `AppRoutes` وأضفها إلى `AppRoutes.all` وصنّفها في route guards واربطها بالـ router.
+- [ ] اعتبر فحص الصلاحيات في UI لتحسين العرض فقط؛ يجب فرض التفويض على الخادم وعبر RLS.
+- [ ] لا تعرض عنصراً يبدو فعالاً بينما الإجراء الذي يمثله غير منفذ.
 
-## 6. Network, storage, and security
+## 6. الشبكة والتخزين والأمان
 
-- [ ] Use the shared `IApiClient`/Dio setup and `AppEndpoints`; do not create a Dio client inside a feature.
-- [ ] Handle authentication expiry, cancellation, connectivity, and malformed responses deliberately.
-- [ ] Do not retry financial writes automatically. An explicit idempotency opt-in is safe only when the server guarantees duplicate suppression.
-- [ ] Store tokens only through the secure-storage/token-management path.
-- [ ] Never include service-role credentials or server secrets in the Flutter client or repository.
-- [ ] Do not assume local-to-cloud fallback is synchronization; define durable queuing, duplicate prevention, and conflict policy before implementing cross-database sync.
+- [ ] استخدم إعداد `IApiClient`/Dio المشترك و`AppEndpoints`؛ لا تنشئ Dio داخل Feature.
+- [ ] عالج انتهاء المصادقة والإلغاء وانقطاع الاتصال والاستجابات غير الصالحة بوضوح.
+- [ ] اتبع سياسة Retry وidempotency المعتمدة في [قواعد المعمارية §6](ARCHITECTURE_RULES.md).
+- [ ] اتبع سياسة تخزين Tokens المعتمدة في [قواعد المعمارية §6](ARCHITECTURE_RULES.md).
+- [ ] لا تضع بيانات `service_role` أو أسرار الخادم في Flutter client أو المستودع.
+- [ ] لا تعتبر التحويل من المحلي إلى السحابي مزامنة؛ عرّف outbox دائم ومنع التكرار وسياسة التعارض قبل تنفيذ المزامنة بين قواعد بيانات مستقلة.
 
-## 7. Accounting and inventory integrity
+## 7. سلامة المحاسبة والمخزون
 
-Apply these checks whenever the feature touches money, invoices, payments, balances, stock, returns, or exchange rates.
+طبّق هذه المراجعات عندما تمس الميزة الأموال أو الفواتير أو المدفوعات أو الأرصدة أو المخزون أو المرتجعات أو أسعار الصرف.
 
-- [ ] Avoid binary floating-point for financial amounts; use the project's approved exact representation.
-- [ ] Preserve the original currency and amount; never aggregate currencies without a recorded exchange rate.
-- [ ] Derive balances from posted documents, movements, payments, allocations, and adjustments rather than editable totals.
-- [ ] Keep posted financial documents auditable; use reversal/correction flows instead of silent mutation.
-- [ ] Make posting and stock mutations atomic on the trusted server side where applicable.
-- [ ] Protect against duplicate submissions and repeated financial effects.
-- [ ] Cover partial payments, overpayments/advances, refunds, returns, and rounding boundaries where relevant.
+- [ ] تجنب floating-point الثنائي في المبالغ المالية؛ استخدم تمثيلاً دقيقاً معتمداً.
+- [ ] احتفظ بالعملة والمبلغ الأصليين؛ لا تجمع عملات مختلفة دون سعر صرف مسجل.
+- [ ] اشتق الأرصدة من المستندات المرحلة والحركات والمدفوعات والتخصيصات والتسويات، لا من إجماليات قابلة للتعديل.
+- [ ] أبقِ المستندات المالية المرحلة قابلة للتدقيق؛ استخدم العكس/التصحيح بدلاً من التعديل الصامت.
+- [ ] اجعل ترحيل المستندات وحركات المخزون ذرّياً على الخادم الموثوق عند انطباق ذلك.
+- [ ] امنع تكرار الإرسال والآثار المالية.
+- [ ] غطِّ الدفع الجزئي والدفعات الزائدة/السلف والاستردادات والمرتجعات وحدود التقريب عند الحاجة.
 
-## 8. Tests and verification
+## 8. الاختبارات والتحقق
 
-- [ ] Add focused unit tests for domain rules and calculations.
-- [ ] Add repository/data tests for mapping, exception conversion, and API edge cases.
-- [ ] Add Cubit/Bloc tests for loading, success, failure, cancellation, and emitted Effects.
-- [ ] Add widget tests for important user interactions and visible states.
-- [ ] Add route/permission tests when navigation or access changes.
-- [ ] Run `dart format`, `flutter analyze`, and relevant tests when the Flutter SDK is available.
-- [ ] Record commands actually run and their results. Mark unavailable checks as `NOT_RUN`; never imply success without execution.
+- [ ] أضف Unit tests مركزة لقواعد Domain والحسابات.
+- [ ] أضف اختبارات Data/Repository للـ mapping وتحويل الاستثناءات وحالات API الحدية.
+- [ ] أضف اختبارات Cubit/Bloc للتحميل والنجاح والفشل والإلغاء وEffects.
+- [ ] أضف Widget tests لتفاعلات المستخدم والحالات الظاهرة المهمة.
+- [ ] أضف اختبارات المسارات والصلاحيات عند تغيير التنقل أو الوصول.
+- [ ] نفّذ `dart format` و`flutter analyze` والاختبارات ذات الصلة عندما تتوفر Flutter SDK.
+- [ ] اتبع [قاعدة توثيق نتائج الفحوصات في قواعد المعمارية §8](ARCHITECTURE_RULES.md).
 
-## 9. Completion review
+## 9. مراجعة الاكتمال
 
-- [ ] No dead/commented-out implementation, placeholder action, unexplained `TODO`, or unused dependency was added.
-- [ ] Documentation and examples match the implemented API.
-- [ ] Changed files and behavioral impact are summarized.
-- [ ] Known limitations, untested platforms, and follow-up work are recorded.
-- [ ] The change is committed on the intended feature branch and is not merged into the base branch without authorization.
+- [ ] لم يُضف تنفيذ ميت أو معلّق أو إجراء شكلي أو `TODO` غير مفسر أو dependency غير مستخدمة.
+- [ ] تطابق الوثائق والأمثلة API المنفذة.
+- [ ] لُخّصت الملفات المتغيرة والأثر السلوكي.
+- [ ] سُجلت القيود المعروفة والمنصات غير المختبرة وأعمال المتابعة.
+- [ ] حُفظ التغيير على فرع الميزة المقصود، ولم يُدمج في الفرع الأساس دون موافقة.

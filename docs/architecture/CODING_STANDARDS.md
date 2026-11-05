@@ -1,88 +1,87 @@
-# Coding Standards
+# معايير كتابة الكود
 
-> This guide defines practical Dart/Flutter conventions for this repository.  
-> Read `AGENTS.md` for the repository-wide engineering rules and `ARCHITECTURE_RULES.md` for layer boundaries and Core decisions. If guidance overlaps, those two documents are authoritative.
+> يحدد هذا الدليل اصطلاحات Dart وFlutter العملية في هذا المستودع. اقرأ `AGENTS.md` لتعليمات المستودع العامة و`ARCHITECTURE_RULES.md` لحدود الطبقات وقرارات Core. عند التعارض، تكون الوثيقتان الأخيرتان هما المرجع.
 
-## 1. Naming and file organization
+## 1. التسمية وتنظيم الملفات
 
-- Use `UpperCamelCase` for types, `lowerCamelCase` for members, and `snake_case.dart` for Dart files.
-- Name files after their primary public type or responsibility; avoid vague names such as `helper.dart`, `utils.dart`, or `common.dart` when a precise name is possible.
-- Keep feature code under `lib/app/features/<feature>/` and shared infrastructure under `lib/app/core/`.
-- Keep one primary public responsibility per file. Small tightly coupled declarations may remain together when that improves discoverability.
-- Keep generated files generated; edit their source annotations/models instead of hand-editing generated output.
+- استخدم `UpperCamelCase` للأنواع، و`lowerCamelCase` للأعضاء، و`snake_case.dart` لملفات Dart.
+- سمِّ الملفات باسم النوع العام الأساسي أو المسؤولية؛ تجنب الأسماء العامة مثل `helper.dart` و`utils.dart` و`common.dart` عندما يكون الاسم الدقيق ممكناً.
+- ضع كود الميزات في `lib/app/features/<feature>/` والبنية التحتية المشتركة في `lib/app/core/`.
+- اجعل لكل ملف مسؤولية عامة أساسية. يمكن جمع التعريفات الصغيرة شديدة الترابط عندما يحسن ذلك سهولة العثور عليها.
+- اترك الملفات المولّدة للأدوات التي تولّدها؛ عدّل التعليقات التوضيحية والنماذج المصدرية بدلاً من تحرير المخرجات المولّدة يدوياً.
 
-## 2. Dart style and API design
+## 2. أسلوب Dart وتصميم APIs
 
-- Follow `dart format` and the enabled analyzer rules.
-- Prefer immutable fields and `const` constructors where appropriate.
-- Use explicit types at public API boundaries; allow inference for obvious local values.
-- Prefer named parameters when a call has multiple optional or same-typed arguments.
-- Keep functions focused and avoid hidden side effects in getters.
-- Use sealed classes/enums or other explicit types for finite states instead of loosely related strings.
-- Avoid `dynamic`, force unwraps, and broad casts unless the boundary requires them and the reason is clear.
-- Do not add an abstraction solely to wrap one trivial call; introduce interfaces when they provide a real boundary, test seam, or replaceable implementation.
+- اتبع تنسيق `dart format` وقواعد Analyzer المفعّلة.
+- فضّل الحقول غير القابلة للتغيير ومنشئات `const` عندما يكون ذلك مناسباً.
+- استخدم أنواعاً صريحة عند حدود APIs العامة، واترك الاستدلال للمتغيرات المحلية الواضحة.
+- فضّل named parameters عندما يحتوي الاستدعاء على عدة معاملات اختيارية أو متشابهة النوع.
+- اجعل الدوال مركزة، وتجنب الآثار الجانبية المخفية داخل getters.
+- استخدم sealed classes أو enums أو أنواعاً صريحة أخرى للحالات المحدودة بدلاً من strings غير مترابطة.
+- تجنب `dynamic` وforce unwraps والتحويلات الواسعة إلا عند الحاجة مع توضيح السبب.
+- لا تضف abstraction لمجرد تغليف استدعاء بسيط؛ أضف interfaces عندما توفر حدوداً حقيقية أو نقطة اختبار أو تنفيذاً قابلاً للاستبدال.
 
-## 3. Imports and dependencies
+## 3. Imports والاعتماديات
 
-- Use package imports for project code and keep imports grouped consistently.
-- Import the narrowest owning file; do not rely on accidental transitive exports.
-- Avoid circular imports and cross-feature imports that bypass a public contract.
-- Reuse existing Core services and utilities before introducing a package or a parallel implementation.
-- Keep dependency registration in the owning DI module; do not instantiate service-locator registrations inside Widgets or repositories.
+- استخدم package imports لكود المشروع، وحافظ على تجميع الاستيرادات باتساق.
+- استورد الملف المالك الأضيق؛ لا تعتمد على exports غير مباشرة بالمصادفة.
+- تجنب الاستيرادات الدائرية والاعتماد بين Features الذي يتجاوز عقداً عاماً موثقاً.
+- أعد استخدام خدمات وأدوات Core الموجودة قبل إضافة package أو تنفيذ موازٍ.
+- سجّل الاعتماديات في DI الخاص بالجهة المالكة؛ لا تنشئ تسجيلات Service Locator داخل Widgets أو Repositories.
 
-## 4. Layer responsibilities
+## 4. مسؤوليات الطبقات
 
-- **Presentation:** Widgets, user interaction, view state, and translation/display of messages.
-- **Domain:** business rules, entities, repository contracts, and use cases; no Flutter or infrastructure implementation dependencies.
-- **Data:** DTOs, data sources, repository implementations, serialization, and mapping infrastructure failures into domain failures.
-- **Core:** stable cross-cutting infrastructure and shared design-system capabilities, not feature business rules.
-- Do not move code between layers merely to make the folder tree look uniform. Use only layers that serve a real purpose.
+- **Presentation:** Widgets وتفاعل المستخدم وحالة العرض وتحويل الرسائل إلى صيغة العرض.
+- **Domain:** قواعد الأعمال والكيانات وعقود Repositories وUse Cases؛ دون اعتماد على Flutter أو تفاصيل تنفيذ البنية التحتية.
+- **Data:** DTOs ومصادر البيانات وتنفيذ Repositories وSerialization وتحويل أخطاء البنية التحتية إلى Failures.
+- **Core:** بنية تحتية مستقرة وقدرات مشتركة في نظام التصميم، وليس منطق أعمال خاصاً بميزة.
+- لا تنقل الكود بين الطبقات لمجرد جعل شجرة المجلدات موحدة؛ استخدم الطبقات التي تؤدي مسؤولية حقيقية فقط.
 
-## 5. State and asynchronous work
+## 5. إدارة الحالة والعمليات غير المتزامنة
 
-- Keep durable screen data in State; use Effects for one-time navigation, dialogs, and transient messages.
-- Prefer the project's `BaseCubit`, `EffectMixin`, and `BlocEffectListener` contracts rather than introducing another event channel.
-- Handle errors explicitly; do not swallow exceptions or expose infrastructure exceptions to Widgets.
-- Check lifecycle/mounted state before using a BuildContext after an asynchronous gap.
-- Cancel requests and subscriptions when their owning Cubit/Widget is closed or disposed.
-- Do not start asynchronous work from constructors. Expose an explicit initialization method or use the established lifecycle owner.
+- ضع بيانات الشاشة المستمرة في State، واستخدم Effects للتنقل والحوارات والرسائل المؤقتة.
+- فضّل عقود المشروع `BaseCubit` و`EffectMixin` و`BlocEffectListener` بدلاً من إدخال قناة أحداث أخرى.
+- عالج الأخطاء صراحة؛ لا تبتلع الاستثناءات ولا تعرض استثناءات البنية التحتية على Widgets.
+- تحقق من صلاحية BuildContext قبل استخدامه بعد فجوة غير متزامنة.
+- ألغِ الطلبات والاشتراكات عند إغلاق Cubit أو Widget المالكة لها.
+- لا تبدأ عملاً غير متزامن من constructors؛ استخدم دالة تهيئة صريحة أو دورة الحياة المعتمدة.
 
-## 6. Errors and user messages
+## 6. الأخطاء ورسائل المستخدم
 
-- Convert infrastructure exceptions at the Data/repository boundary using the existing error-mapping path.
-- Carry `Failure`/`AppKey` through application state and Effects; translate at the presentation boundary.
-- Do not translate a message in a repository or store already translated UI strings in domain state.
-- Do not catch an error only to rethrow it unchanged; add context, map it, or let it propagate.
+- حوّل استثناءات البنية التحتية عند حد Data/Repository باستخدام مسار تحويل الأخطاء الموجود.
+- مرّر `Failure`/`AppKey` عبر State وEffects، ونفّذ الترجمة عند حد Presentation.
+- لا تترجم الرسالة في Repository ولا تخزّن نصوص واجهة مترجمة مسبقاً داخل Domain state.
+- لا تلتقط الخطأ لإعادة رميه كما هو؛ أضف سياقاً أو حوّله أو اتركه ينتشر.
 
-## 7. Network and persistence
+## 7. الشبكة والتخزين
 
-- Use the shared API client and endpoint definitions.
-- Keep request/response serialization in Data models.
-- Do not log access tokens, passwords, secrets, or sensitive financial data.
-- Use secure storage for credentials/tokens and preferences for non-sensitive settings.
-- Retry only operations that are safe to repeat. Financial writes require server-enforced idempotency before any retry opt-in.
+- استخدم API client المشترك وتعريفات endpoints.
+- أبقِ Serialization للطلبات والاستجابات في Data models.
+- لا تسجل access tokens أو كلمات المرور أو الأسرار أو البيانات المالية الحساسة.
+- اتبع سياسة Retry وidempotency وسياسة تخزين Tokens المحددة في [قواعد المعمارية §6](ARCHITECTURE_RULES.md).
+- أعد المحاولة فقط للعمليات الآمنة للتكرار؛ راجع السياسة المعتمدة قبل إضافة أي retry.
 
-## 8. Financial values
+## 8. القيم المالية
 
-- Never use `double` as the persisted or authoritative representation of money.
-- Preserve currency identity and the exchange rate used for conversions.
-- Do not derive balances from manually editable aggregate fields.
-- Treat posted documents and ledger movements as auditable records; correct them through explicit reversal/adjustment flows.
-- Keep business calculations out of UI code and execute authoritative posting/validation on the trusted server.
+- لا تستخدم `double` كتمثيل معتمد أو دائم للمبالغ المالية.
+- احتفظ بهوية العملة وسعر الصرف المستخدم في التحويلات.
+- لا تشتق الأرصدة من حقول إجمالية قابلة للتعديل يدوياً.
+- تعامل مع المستندات المرحلة وحركات الأستاذ كسجلات قابلة للتدقيق؛ صححها عبر عمليات عكس أو تسوية صريحة.
+- أبقِ الحسابات التجارية خارج UI ونفّذ الترحيل والتحقق المعتمدين على الخادم الموثوق.
 
-## 9. Tests and comments
+## 9. الاختبارات والتعليقات
 
-- Test observable behavior, edge cases, and failure paths—not private implementation details.
-- Keep tests deterministic; isolate network, clock, storage, and other external dependencies.
-- Name tests by behavior and expected outcome.
-- Comments should explain intent, constraints, or non-obvious trade-offs; do not narrate obvious code.
-- Remove obsolete commented-out implementations rather than keeping them as an informal archive.
-- Preserve comments that explain security, financial idempotency, lifecycle, or compatibility constraints.
-- A test is not evidence of success until it has actually been run; report unavailable checks honestly.
+- اختبر السلوك الظاهر والحالات الحدية ومسارات الفشل، لا تفاصيل التنفيذ الخاصة.
+- اجعل الاختبارات حتمية؛ اعزل الشبكة والساعة والتخزين والاعتماديات الخارجية.
+- سمِّ الاختبارات وفق السلوك والنتيجة المتوقعة.
+- يجب أن تشرح التعليقات النية أو القيود أو المفاضلات غير الواضحة؛ لا تصف ما يوضحه الكود بجلاء.
+- أزل التطبيقات القديمة المعلّق عليها بدلاً من الاحتفاظ بها كأرشيف غير رسمي.
+- احتفظ بالتعليقات التي تشرح قيود الأمان أو idempotency المالية أو دورة الحياة أو التوافق.
+- اتبع [قاعدة توثيق نتائج الفحوصات في قواعد المعمارية §8](ARCHITECTURE_RULES.md).
 
-## 10. Before submitting
+## 10. قبل التسليم
 
-- Run formatting, analysis, and relevant tests where the SDK/toolchain is available.
-- Review the diff for unrelated changes, generated-file edits, secrets, dead code, and stale documentation.
-- Update the architecture map or usage examples when a shared API or its contract changes.
-- Summarize changed files, behavior, checks run, and remaining limitations.
+- نفّذ التنسيق والتحليل والاختبارات ذات الصلة عندما تتوفر SDK والأدوات.
+- راجع diff بحثاً عن تغييرات غير مرتبطة أو تعديلات يدوية على ملفات مولّدة أو أسرار أو كود ميت أو وثائق قديمة.
+- حدّث خريطة المعمارية أو أمثلة الاستخدام عند تغيير API مشتركة أو عقدها.
+- لخّص الملفات والسلوك والفحوصات المنفذة والقيود المتبقية.
