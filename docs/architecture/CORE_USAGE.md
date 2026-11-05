@@ -56,9 +56,10 @@ final shimmerBase = context.ui.theme.value(dark: darkColor, light: lightColor);
 
 ```dart
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
 
-AppText(AppKeys.common.save, type: AppTextType.titleMedium)   // نص مترجم
-AppText.raw(user.name)                                        // نص بيانات (غير مترجم)
+AppText(AppKeys.common.save, type: AppTextType.titleMedium); // نص مترجم
+AppText.raw(user.name); // نص بيانات (غير مترجم)
 
 // عند الحاجة إلى TextStyle فقط:
 final style = context.ui.text.of(AppTextType.bodyLarge);
@@ -109,14 +110,14 @@ context.ui.grid.widget(
   mobile: (_) => const MobileView(),
   tablet: (_) => const TabletView(),
   desktop: (_) => const DesktopView(),
-)
+);
 
 // حسب المساحة الفعلية للعنصر (داخل pane أو عمود):
 context.ui.grid.adaptive(
   mobile: (_) => const CompactContent(),
   tablet: (_) => const MediumContent(),
   desktop: (_) => const WideContent(),
-)
+);
 
 final columns = context.ui.grid.crossAxisCount();
 if (context.ui.screen.isDesktop) { /* ... */ }
@@ -131,11 +132,12 @@ if (context.ui.screen.isDesktop) { /* ... */ }
 
 ```dart
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
 
-AppButton(AppKeys.common.save, onPressed: onSave)             // مترجم
-AppButton.raw('Save', onPressed: onSave)                      // نص خام
-AppButton(AppKeys.common.cancel, variant: AppButtonVariant.outlined, onPressed: onCancel)
-AppButton(AppKeys.common.save, isLoading: state.isBusy, onPressed: onSave)
+AppButton(AppKeys.common.save, onPressed: onSave); // مترجم
+AppButton.raw('Save', onPressed: onSave); // نص خام
+AppButton(AppKeys.common.cancel, variant: AppButtonVariant.outlined, onPressed: onCancel);
+AppButton(AppKeys.common.save, isLoading: state.isBusy, onPressed: onSave);
 ```
 
 **متى Core Widget ومتى Flutter Widget؟**
@@ -147,6 +149,7 @@ AppButton(AppKeys.common.save, isLoading: state.isBusy, onPressed: onSave)
 
 ```dart
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
 
 // SnackBar بمفتاح ترجمة (المفضل: تُترجم وقت العرض):
 MessageViewWidgets.showMessage(context, messageKey: AppKeys.success.signin, type: MessageType.success);
@@ -193,7 +196,11 @@ BlocEffectListener<AuthEffect, AuthCubit>(
 ## 7. الترجمة
 
 ```dart
-AppText(AppKeys.auth.signIn)                 // في الودجت
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+
+AppText(AppKeys.auth.signIn); // في الودجت
 final s = AppKeys.auth.signIn.tran;          // String عند الحاجة فقط
 final t = AppKeys.valid.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع متغيرات
 ```
@@ -206,6 +213,10 @@ final t = AppKeys.valid.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع �
 ## 8. الشبكة والأخطاء
 
 ```dart
+import 'package:accounting_software/app/core/network/api_client_interface.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
+import 'package:accounting_software/app/features/auth/data/models/user/user_model.dart';
+
 final result = await apiClient.get<UserModel>(
   AppEndpoints.auth.user,
   fromJson: UserModel.fromJson,
@@ -299,7 +310,12 @@ class ExampleCubit extends BaseCubit<ExampleState, ExampleEffect> {
 - الصلاحيات:
 
 ```dart
-PermissionGate(permission: Permissions.sales.view, child: const SalesList())
+import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
+import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/access/extensions/access_extension.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+
+PermissionGate(permission: Permissions.sales.view, child: const SalesList());
 if (context.can(Permissions.sales.create)) { /* داخل build فقط */ }
 // في Use Case:
 final check = accessCubit.require(Permissions.sales.post); // Right(unit) أو Left(PermissionFailure)

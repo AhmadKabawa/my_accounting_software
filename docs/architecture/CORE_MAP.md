@@ -66,7 +66,7 @@
 - `AppLanguage`: اللغات المدعومة وتحويل الكود إلى Locale.
 - `AppKey` و`AppKeys`: مفاتيح الترجمة المنظمة (`AppKey.tran` للترجمة المباشرة، و`.tr(args:/namedArgs:)` عند وجود متغيرات). ملفا `app_ar.dart` و`app_en.dart` يحويان النصوص. مفاتيح الثيم في `AppKeys.theme` و«موافق» في `AppKeys.common.ok`.
 - `MyDartLoader` (`lib/app/core/localization/translations/asset_loader.dart`): تنفيذ `easy_localization.AssetLoader` يختار `app_en.dart` أو `app_ar.dart`، ويُستخدم في `main.dart`.
-- `DirectionExtension` (`lib/app/core/localization/translations/localization_extension.dart`): امتداد مستقل على `BuildContext` يوفر `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`. المدخل الموحد الموصى به في هذا الدليل هو `context.ui.dir`؛ أما هذا الامتداد فيبقى تعريفاً منفصلاً غير مستخدم في ملفات الميزات المفحوصة.
+- `DirectionExtension` (`lib/app/core/localization/translations/localization_extension.dart`): امتداد مستقل على `BuildContext` يوفر `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`. المدخل الموحد الموصى به في هذا الدليل هو `context.ui.dir`؛ أما هذا الامتداد فيبقى تعريفاً منفصلاً غير مستخدم في ملفات الميزات المفحوصة، ولا يُعد بديلاً متوافقاً بالكامل لأن سلوك `transformFlip` يختلف عندما تكون `isRtlChild: false`.
 - لا تنشئ قاموس ترجمة موازياً.
 
 ### Network
