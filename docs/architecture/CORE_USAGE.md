@@ -207,7 +207,7 @@ final t = AppKeys.valid.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع �
 
 - مفتاح جديد: عرّفه في `AppKeys` (`app_keys.dart`) ثم أضف نصه في `app_ar.dart` و`app_en.dart`.
 - اللغة: `LocaleCubit`/`AppLanguage`/`AppSettingsManager`؛ لا locale provider مستقل.
-- **مدخل الاتجاه الموصى به لهذا الدليل:** `context.ui.dir.isRTL` و`context.ui.dir.icon(rtl:, ltr:)` و`context.ui.dir.value(rtl:, ltr:)` و`context.ui.dir.transformFlip(...)`؛ وهو جزء من مدخل `context.ui` الموحد. يوجد أيضاً `DirectionExtension` في `localization_extension.dart`، لكنه يكرر بعض الوظائف بأسماء مختلفة ولا يُستخدم في ملفات الميزات المفحوصة (باستثناء مثال معلّق). لا تعتمد عليه في كود جديد. اختيار المدخل الموحد هنا مقترح توثيقي ينتظر موافقتك.
+- **مدخل الاتجاه الموصى به لهذا الدليل:** `context.ui.dir.isRTL` و`context.ui.dir.icon(rtl:, ltr:)` و`context.ui.dir.value(rtl:, ltr:)` و`context.ui.dir.transformFlip(...)`؛ وهو جزء من مدخل `context.ui` الموحد. يوجد أيضاً `DirectionExtension` في `localization_extension.dart`، لكنه يكرر بعض الوظائف بأسماء مختلفة ولا يُستخدم في ملفات الميزات المفحوصة (باستثناء مثال معلّق)، كما أن `transformFlip` فيه لا يطابق سلوك `context.ui.dir` عندما تكون `isRtlChild: false`؛ لذلك لا يُعد بديلاً متوافقاً بالكامل ولا يُنصح به في كود جديد. اختيار المدخل الموحد هنا مقترح توثيقي ينتظر موافقتك.
 - **ممنوع:** `'string'.tr()` ونصوص واجهة ثابتة وقاموس ترجمة خاص بميزة.
 
 ## 8. الشبكة والأخطاء
