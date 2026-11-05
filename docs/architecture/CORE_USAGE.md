@@ -325,4 +325,4 @@ final check = accessCubit.require(Permissions.sales.post); // Right(unit) أو L
 
 ## 14. قاعدة ما قبل الإنشاء
 
-قبل كتابة أي helper/widget/service جديد: ابحث في `CORE_MAP.md` ثم في `lib/app/core`، وإن لم تجد فطبّق معايير `ARCHITECTURE_RULES.md` §2 و§10، وأضف اختباراً وحدّث `CORE_MAP.md` (وهذا الملف عند تغيّر نمط الاستخدام).
+قبل كتابة أي helper/widget/service جديد: ابحث في `CORE_MAP.md` ثم في `lib/app/core`، وإن لم تجد فطبّق معايير `ARCHITECTURE_RULES.md` §2 و§11، وأضف اختباراً وحدّث `CORE_MAP.md` (وهذا الملف عند تغيّر نمط الاستخدام).
