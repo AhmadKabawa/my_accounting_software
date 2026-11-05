@@ -10,6 +10,8 @@
 
 ## 1. خريطة المجلدات
 
+جميع مسارات «نقطة البداية» في الجدول أدناه نسبية إلى `lib/app/core/` ما لم يُذكر خلاف ذلك.
+
 | المجلد | المسؤولية | نقطة البداية |
 |---|---|---|
 | `access/` | الدور الحالي والصلاحيات وفحص إظهار عناصر الواجهة | `access/cubit/access_cubit.dart` |
@@ -18,10 +20,10 @@
 | `foundation/` | أنواع ونتائج مشتركة، إعدادات، Logger، UseCases، التحقق، ثوابت الصور | `foundation/types/api_result.dart` |
 | `localization/` | اللغة الحالية، مفاتيح الترجمة، تحميل الترجمات واتجاه النص | `localization/cubit/locale_cubit.dart` |
 | `network/` | Dio وواجهته، Interceptors، الاتصال، الإلغاء، عقد Realtime | `network/api_client_interface.dart` |
-| `presentation/design_system/responsive/` | القياس والـ Tokens وواجهات Responsive | `responsive/extension/ui_extension.dart` |
-| `presentation/design_system/theme/` | Light/Dark Theme والألوان والطباعة وThemeCubit | `theme/app_theme.dart` |
-| `presentation/state_management/` | BaseCubit وEffects وBlocObserver | `state_management/base_cubit.dart` |
-| `presentation/widgets/` | Widgets موحدة مشتركة | ملفات `app_*` |
+| `presentation/design_system/responsive/` | القياس والـ Tokens وواجهات Responsive | `presentation/design_system/responsive/extension/ui_extension.dart` |
+| `presentation/design_system/theme/` | Light/Dark Theme والألوان والطباعة وThemeCubit | `presentation/design_system/theme/app_theme.dart` |
+| `presentation/state_management/` | BaseCubit وEffects وBlocObserver | `presentation/state_management/base_cubit.dart` |
+| `presentation/widgets/` | Widgets موحدة مشتركة | `presentation/widgets/app_*` |
 | `routing/` | تعريفات المسارات، transitions، observer ومساعدات GoRouter | `routing/routes.dart` |
 | `storage/` | عقد التخزين وتطبيقات SharedPreferences وSecure وHive | `storage/storage_service.dart` |
 
