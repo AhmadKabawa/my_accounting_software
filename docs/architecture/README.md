@@ -12,6 +12,7 @@ This directory contains the current architecture guidance for the Flutter client
 | Follow Dart/Flutter implementation conventions | [Coding Standards](CODING_STANDARDS.md) | Coding guidance, subordinate to architecture policy |
 | Review a feature before completion | [Feature Checklist](FEATURE_CHECKLIST.md) | Delivery checklist |
 | Understand recorded architecture decisions | [ADR index](ADR/README.md) | Decision history |
+| Review the documentation rebuild's validation and limits | [Rebuild Validation](REBUILD_VALIDATION.md) | Static evidence and unrun checks |
 
 ## Agent entry points
 
