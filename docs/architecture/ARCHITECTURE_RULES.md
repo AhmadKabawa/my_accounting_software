@@ -45,9 +45,11 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 
 المقترح: لا تستورد Feature من Feature أخرى مباشرة. يكون التواصل عبر Core أو عقد Domain عام موثّق ومستقل عن تفاصيل Presentation وData. يحتاج أي استثناء إلى توثيق مبرره في ADR قبل اعتماده. **هذه قاعدة جديدة مقترحة وليست سياسة معتمدة بعد؛ لا تُنشأ لها ADR-0002 قبل موافقة مالك المشروع.**
 
-### المخالفات المعروفة — فحص نصي بتاريخ 2026-11-04
+### المخالفات المعروفة — فحص استيرادات نصي بتاريخ 2026-11-04
 
-- **مخالفة للمقترح الجديد:** يستورد `lib/app/features/splash/di/splash_di.dart` مباشرةً `package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart`، ثم ينشئ `SplashCubit` باستخدام `sl<AuthCubit>().checkAuthentication`. هذا ربط مباشر بين Featureين، كما أنه يعتمد على Cubit من طبقة Presentation في Feature أخرى.
+شمل الفحص ملفات Dart في `lib/app/core/` وعددها 137 ملفاً، وملفات الميزات في `lib/app/features/` وعددها 102 ملف.
+
+- **مخالفة وحيدة ظهرت للمقترح الجديد:** يستورد `lib/app/features/splash/di/splash_di.dart` مباشرةً `package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart`، ثم ينشئ `SplashCubit` باستخدام `sl<AuthCubit>().checkAuthentication`. هذا ربط مباشر بين Featureين، كما أنه يعتمد على Cubit من طبقة Presentation في Feature أخرى. لم يظهر استيراد مباشر آخر بين Features ضمن الملفات المفحوصة.
 - **Core → Features:** لم يُعثر على استيرادات من `lib/app/core/` إلى `features/` عند فحص استيرادات ملفات Core الحالية.
 - **Data → Presentation:** لم يُعثر على استيرادات من مجلدات `data/` إلى `presentation/` في ملفات الميزات المفحوصة.
 - **Domain → Flutter/Dio:** لم يُعثر على استيرادات Flutter أو Dio داخل مجلدات `domain/` المفحوصة.
