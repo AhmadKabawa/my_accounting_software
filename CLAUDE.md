@@ -1,10 +1,12 @@
 # تعليمات Claude للمشروع
 
-التعليمات العامة في `AGENTS.md`؛ اقرأه والتزم بقواعده قبل أي مهمة.
+اقرأ `AGENTS.md` أولاً؛ فهو يحتوي تعليمات المستودع العامة.
 
-عند العمل على `lib/app/core` أو عند حاجة Feature إلى قدرة مشتركة:
-- `docs/architecture/CORE_MAP.md`: اقرأه أولاً لاكتشاف الأدوات الموجودة، ثم افحص الكود الفعلي.
-- `docs/architecture/ARCHITECTURE_RULES.md`: عند اتخاذ قرار يخص Core (إضافة أو تعديل أو مكان الكود).
-- `docs/architecture/CORE_USAGE.md`: عند الحاجة إلى مثال استخدام فقط.
+مرجع العمل المعماري والـ Core هو [فهرس الوثائق](docs/architecture/README.md):
+- `ARCHITECTURE_RULES.md`: السياسة المعمارية وحدود الطبقات (المرجع الوحيد لهذه السياسة).
+- `CORE_MAP.md`: اكتشاف الأدوات الموجودة، ثم التحقق من تنفيذها الفعلي.
+- `CORE_USAGE.md`: أمثلة الاستخدام.
+- `CODING_STANDARDS.md`: أسلوب كتابة Dart/Flutter.
+- `FEATURE_CHECKLIST.md`: مراجعة تنفيذ الميزة.
 
-خطوات العمل التفصيلية في Skill `.claude/skills/core-usage/SKILL.md` (تنطبق وفق وصفها فقط).
+استخدم Skill `.claude/skills/core-usage/SKILL.md` فقط في الحالات المحددة في وصفه. لا تنسخ قواعد الوثائق إلى هذه التعليمات؛ حدّث المرجع المختص عند تغييرها.
