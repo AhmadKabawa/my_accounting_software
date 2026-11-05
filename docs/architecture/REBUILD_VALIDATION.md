@@ -14,7 +14,7 @@
 
 ## Static checks performed
 
-- Checked relative Markdown links across the architecture documentation, root README, and agent entry-point documents: **24 links checked; no broken targets found** at the time of the check.
+- Checked relative Markdown links across the architecture documentation, root README, and agent entry-point documents: **26 links checked across 16 Markdown files; no broken targets found** at the time of the check.
 - Checked the test names listed in `CORE_MAP.md` against the repository tree: every listed test file exists.
 - Inspected the six reported naming mismatches against source files and updated the map to use the actual names:
   - `AppAppBar`
