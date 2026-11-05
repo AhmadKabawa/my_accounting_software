@@ -5,7 +5,7 @@
 - **التاريخ:** 2026-11-04
 - **الفرع الأساس:** `vscode`
 - **فرع العمل:** `docs/architecture-rebuild`
-- **النطاق:** Documentation and Markdown only
+- **النطاق:** التوثيق وملفات Markdown فقط
 
 ## سلامة النطاق
 
