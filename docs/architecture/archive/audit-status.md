@@ -1,3 +1,7 @@
+> وثيقة تاريخية بتاريخ 2026-11-04، ليست سياسة حالية.
+>
+> **ملاحظة عند الأرشفة:** التناقض بين الادعاء `A1 / S4` بأن `hive_manager.dart` و`cache_manager.dart` يستوردان `UserModel` من `features/auth` وبين البند `20` الذي يقول إنه لم يُعثر على استيرادات `core → features` لم يُحسم داخل سجل التدقيق وقت الأرشفة. لا يُعاد تفسير هذا السجل التاريخي هنا؛ الفحص الحالي للكود موثق في `ARCHITECTURE_RULES.md`.
+
 # Audit status (branch `claude/foundation-fixes`)
 
 Verification level: **static review only**. The Flutter SDK could not be downloaded
