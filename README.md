@@ -19,6 +19,7 @@
 
 - [قواعد المعمارية](docs/architecture/ARCHITECTURE_RULES.md) — المرجع المعتمد لحدود Core واعتماد الطبقات.
 - [خريطة Core](docs/architecture/CORE_MAP.md) — اكتشاف الأدوات المشتركة وحدودها.
+- [تغطية اختبارات Core](docs/architecture/CORE_TEST_COVERAGE.md) — ملفات الاختبار الموجودة والفجوات المعروفة.
 - [استخدام Core](docs/architecture/CORE_USAGE.md) — أمثلة استخدام APIs الموجودة.
 - [معايير التكويد](docs/architecture/CODING_STANDARDS.md) — اصطلاحات Dart وFlutter.
 - [قائمة مراجعة الميزة](docs/architecture/FEATURE_CHECKLIST.md) — خطوات التنفيذ ومراجعة الاكتمال.

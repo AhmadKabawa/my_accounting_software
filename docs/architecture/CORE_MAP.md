@@ -58,15 +58,15 @@
 - `AppConfig` (`foundation/config/app_config.dart`): **المدخل الوحيد لإعدادات التطبيق**، وكل قيمه ثابتة بعد التهيئة. يمرر قيم البيئة (`baseUrl` و`supabaseAnonKey` و`googleClientId` و`ensureConfigured()`) ويحمل الثوابت العامة (مهلات، إعادة المحاولة، لغات، `defaultPageSize`، صيغ تواريخ…). الميزات لا تستورد `EnvConfig`. `appName` قيمة مؤقتة بانتظار الاسم الرسمي. افحصه قبل إضافة ثوابت ولا تنسخ قيمه إلى التوثيق.
 - `Logger`: سجل موحد؛ لا تسجل Tokens أو كلمات مرور أو بيانات مالية حساسة.
 - `UseCase` و`UseCaseNoParams`: عقود Use Cases.
-- `AppValidator` و`ValidationRule` (`lib/app/core/foundation/validation/app_validator.dart`): الاسمان الفعليان؛ لا يوجد `FormValidator`. هذا نظام التحقق الوحيد من مدخلات النماذج، ورسائله `AppKey`. التوقيع الحالي `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. `params` من نوع `dynamic` داخل الخريطة، لذا يجب عدم افتراض تحقق نوعي أقوى مما يثبته الكود. `ValidationRule.async` و`AsyncValidator` محجوزان ولا يوجد مسار async في `validate()`؛ حالة الاستخدام الفعلية غير ظاهرة حالياً في الميزات.
-- `AppPathImage` و`AppPathImages` (`lib/app/core/foundation/constants/image_constants.dart`): الاسمان الفعليان؛ لا يوجد تعريف باسم `ImageConstants`. `AppPathImage.path` يجمع مسار الأصول مع الاسم، و`isRtl` وصف اتجاهي. افحص الثوابت قبل إضافة مسار جديد.
+- `AppValidator` و`ValidationRule` (`lib/app/core/foundation/validation/app_validator.dart`): نظام التحقق من مدخلات النماذج، ورسائله `AppKey`. التوقيع `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. نوع قيم `params` هو `dynamic`؛ و`ValidationRule.async` و`AsyncValidator` محجوزان ولا يوجد مسار async في `validate()`.
+- `AppPathImage` و`AppPathImages` (`lib/app/core/foundation/constants/image_constants.dart`): ثوابت مسارات الصور والأصول. يجمع `AppPathImage.path` مسار الأصل مع الاسم، ويحدد `isRtl` ما إذا كان الأصل مرتبطاً باتجاه النص.
 
 ### Localization
 - `LocaleCubit` و`LocaleState`: حالة اللغة (الحالة تحمل `Locale` فقط).
 - `AppLanguage`: اللغات المدعومة وتحويل الكود إلى Locale.
 - `AppKey` و`AppKeys`: مفاتيح الترجمة المنظمة (`AppKey.tran` للترجمة المباشرة، و`.tr(args:/namedArgs:)` عند وجود متغيرات). ملفا `app_ar.dart` و`app_en.dart` يحويان النصوص. مفاتيح الثيم في `AppKeys.theme` و«موافق» في `AppKeys.common.ok`.
-- `MyDartLoader` (`lib/app/core/localization/translations/asset_loader.dart`): التنفيذ الفعلي لـ `easy_localization.AssetLoader`؛ لا يوجد كلاس باسم `AssetLoader` خاص بالمشروع. يختار `app_en.dart` أو `app_ar.dart` ويُستخدم في `main.dart`.
-- `DirectionExtension` (`lib/app/core/localization/translations/localization_extension.dart`): الاسم الفعلي؛ لا يوجد امتداد مشروع باسم `LocalizationExtension`. يوفر `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`. كما توجد واجهة الاتجاه `context.ui.dir`؛ افحص الاستعمال قبل اختيار إحداهما.
+- `MyDartLoader` (`lib/app/core/localization/translations/asset_loader.dart`): تنفيذ `easy_localization.AssetLoader` يختار `app_en.dart` أو `app_ar.dart`، ويُستخدم في `main.dart`.
+- `DirectionExtension` (`lib/app/core/localization/translations/localization_extension.dart`): امتداد مستقل على `BuildContext` يوفر `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`. المدخل الموحد الموصى به في هذا الدليل هو `context.ui.dir`؛ أما هذا الامتداد فيبقى تعريفاً منفصلاً غير مستخدم في ملفات الميزات المفحوصة.
 - لا تنشئ قاموس ترجمة موازياً.
 
 ### Network
@@ -79,18 +79,13 @@
 - `CancellableMixin` و`CancelTokenRegistry`: إلغاء الطلبات المرتبطة بعمر Cubit/Controller.
 - لا تنشئ Dio داخل Feature ولا تكرر Interceptors.
 
-#### RetryInterceptor (`network/dio/interceptors/retry_interceptor.dart`)
-- **إعادة تلقائية** لطلبات `GET` و`HEAD` و`OPTIONS` فقط.
-- **عمليات الكتابة** (POST/PUT/PATCH/DELETE) لا تُعاد تلقائياً، لأن انتهاء المهلة لا يثبت أن الخادم لم ينفذها.
-- يمكن السماح لعملية كتابة بالإعادة عبر `Options(extra: {'idempotent': true})`.
-- **تحذير مالي:** لا تفعّل `idempotent` لعملية مالية إلا إذا كان الخادم يضمن idempotency حقيقياً (مثل مفتاح idempotency يمنع التنفيذ مرتين). غير ذلك قد تتكرر العملية.
-- **الأخطاء التي تؤدي إلى Retry:** `connectionTimeout` و`receiveTimeout` و`connectionError`، واستجابات بحالة 5xx أو أعلى. أخطاء 4xx وغيرها لا تُعاد.
-- **الحد الأقصى والتأخير:** من `AppConfig.maxRetries` و`AppConfig.retryDelay`. التأخير خطي: `baseDelay × (رقم المحاولة)`. عدّاد المحاولات في `options.extra['retryCount']`.
+#### RetryInterceptor
+
+سياسة Retry وidempotency وتفاصيل المحاولات موضحة في [قواعد المعمارية §6](ARCHITECTURE_RULES.md).
 
 #### Realtime — لا يوجد تنفيذ فعّال
 - `RealtimeClient` (`lib/app/core/network/realtime/realtime_client.dart`) **عقد مجرد فقط** (`connect/disconnect/on/off/emit/statusStream/onTableChange/offTable` وenum `RealtimeStatus`)؛ ليس خدمة جاهزة.
 - لا يوجد تنفيذ Supabase Realtime فعّال موصول أو مستخدم: لا implementation ملموس للعقد، ولا تسجيل في DI، ولا مستهلك في `lib` أو `test`.
-- لا تتعامل مع `SupabaseRealtimeClient` كقدرة موجودة أو API قابلة للاستدعاء. أي ملف قديم بهذا الاسم كان تعليقاً/تنفيذاً غير فعال وتمت إزالته.
 - عند الحاجة إلى Realtime يلزم تنفيذ جديد وتسجيله في DI وإضافة اختباراته؛ لا تفترض أنه متوفر.
 
 ### Responsive وDesign System
@@ -129,7 +124,7 @@
 - `AppText`: نص مترجم عبر `AppKey` أو `AppText.raw`، ويدعم `rich` و`selectable`.
 - `AppButton`: زر موحد، بـ `AppKey` أو `AppButton.raw`، مع variants/sizes/loading. التصميم في `AppButtonStyle`.
 - `AppIcon` و`AppImage`: عرض الأيقونات والصور؛ اقرأ الـ API قبل إعادة التنفيذ.
-- `AppAppBar` (`lib/app/core/presentation/widgets/app_appbar/app_appbar.dart`): الاسم الفعلي بحروف `B` كبيرة؛ لا يوجد `AppAppbar`. يأخذ `progress` ويُستخدم في `features/home/presentation/pages/home_screen.dart`. ملاحظة حدود: التنفيذ الحالي يحمل علامة VAUDE التجارية داخله وأزرار القائمة/البحث/الحقيبة بلا callbacks افتراضياً (no-op)، لذلك لا تفترض أنه AppBar عام مكتمل لكل الميزات.
+- `AppAppBar` (`lib/app/core/presentation/widgets/app_appbar/app_appbar.dart`): يأخذ `progress` ويُستخدم في `features/home/presentation/pages/home_screen.dart`. يحمل التنفيذ الحالي علامة VAUDE التجارية، وأزرار القائمة والبحث والحقيبة بلا callbacks افتراضياً؛ لذلك لا يُعد AppBar عاماً مكتملاً لكل الميزات.
 - `AppNavigationBar` و`AppNavigationRail` و`AppSidebar` وأنماطها: عناصر التنقل حسب حجم الشاشة.
 - `MessageViewWidgets` و`MessageType` (`widgets/app_message/message_view_widgets.dart`): نظام الرسائل الموحد (SnackBar/Dialog/Loading). يقبل `messageKey` (AppKey، المفضل) أو `message` (String للتوافق)، ويبني على `AppText`/`AppButton`، وألوانه من `colors.error` و`semanticColors`. أنواع الرسالة: error وsuccess وwarning وinfo وloading. لا يوجد استهلاك فعّال حالياً (شاشات auth التي ستستخدمه معلّقة).
 
@@ -145,31 +140,11 @@
 - `HiveManager` و`HiveStorageService` و`HiveObjectBox` و`CacheManager`: Hive/cache. `HiveManager.init()` تُستدعى من `main.dart`؛ الميزات تفتح صناديقها عبر `HiveManager.openBox` (مثل `auth_di.dart`). لا يُسجَّل Hive في `initCoreDI()` بل في DI الميزة.
 - `HiveBoxNames` (`storage/hive/hive_box_names.dart`): أسماء الصناديق (`cache` و`users` و`products`). `HiveBoxTypeId`: معرّفات `typeId` للـ adapters، وحالياً `user` فقط. يُستخدم في `@HiveType(typeId: HiveBoxTypeId.user)` لـ `UserModel`. أي typeId جديد يُعرّف هنا لتجنب التضارب.
 - `StorageKey` و`StorageKeys`: مفاتيح التخزين المركزية.
-- اختر التخزين حسب الحساسية، ولا تحفظ Tokens في SharedPreferences.
+- اتبع سياسة تخزين Tokens في [قواعد المعمارية §6](ARCHITECTURE_RULES.md).
 
-## 3. تغطية الاختبارات (`test/core/`)
+## 3. تغطية الاختبارات
 
-الجدول من فحص ملفات الاختبار فعلياً. غياب اختبار مباشر لا يعني غياب أي تغطية غير مباشرة، لكن لم يُتحقق منها ما لم يُذكر.
-
-| المجال | الاختبارات الموجودة | ما تغطيه |
-|---|---|---|
-| Access | `access_cubit_test` و`permission_gate_test` و`permission_test` | حالة الدور، `can/canAny/canAll/require`، `PermissionGate`، `Permission.covers` و`Role` |
-| DI | `di_singletons_test` | أن `TokenManager` Singleton فقط |
-| Error | `failure_translator_test` | ترجمة `Failure` مرة واحدة فقط |
-| Foundation | `env_config_test` و`app_config_test` و`api_result_either_test` و`app_validator_test` | التحقق من `EnvConfig`، وتمرير `AppConfig` لقيم البيئة، و`ApiResult.toEither/toEitherAsync`، وقواعد `AppValidator` |
-| Network | `api_client_test` و`app_endpoints_test` و`language_interceptor_test` و`logger_redaction_test` و`network_info_test` و`refresh_token_interceptor_test` و`retry_interceptor_test` | تحليل الاستجابات، ترميز المسارات، Accept-Language، إخفاء الحقول الحساسة، `NetworkInfo`، تجديد الجلسة، سلوك Retry |
-| Responsive | `adaptive_layout_test` و`rh_builder_test` و`responsive_helper_equivalence_test` و`ui_text_of_test` | اختيار التخطيط، `Rh.builder`، تكافؤ padding/radius، و`context.ui.text.of` |
-| Theme | `app_theme_test` و`app_semantic_colors_test` | بناء الثيم دون `BuildContext`، و`AppSemanticColors` (`copyWith`/`lerp`/التسجيل/الوصول عبر `ui.theme`) و`ThemeModeExtension.nameKey` |
-| State management | `base_cubit_test` و`effect_mixin_test` | Effects والـ replay |
-| Widgets | `app_button_style_test` و`app_navigation_bar_style_test` و`app_navigation_rail_style_test` و`app_sidebar_style_test` و`app_text_test` و`message_view_widgets_test` | أنماط وسلوك الأزرار والتنقل والنص، وألوان وسلوك رسائل SnackBar/Dialog/Loading |
-| Storage | `token_manager_test` | `TokenManager` فقط (الكتابة، التراجع، `sessionCleared`) |
-
-### الفجوات المسجلة
-- **Error:** لا يوجد اختبار مباشر لـ `ExceptionMapper`. (اختبارات Auth تستخدم أنواع `Failure` لكنها لا تختبره.) `FailureTranslator` له اختبار مباشر.
-- **Localization:** لا يوجد اختبار مباشر لـ `LocaleCubit`. يُستخدم داخل `language_interceptor_test` لتأكيد أن تغيير اللغة يصل إلى الطلب التالي، وهي تغطية غير مباشرة محدودة.
-- **Routing:** لا يوجد مجلد `test/core/routing`. حراس المسارات الفعلية (خارج Core) مغطاة في `test/routing/route_guards_test.dart`، ولا يغطي ذلك `AppRoutes` أو `RouteTransitions` أو `MyNavObserver`.
-- **Storage:** لا يوجد اختبار شامل؛ لا اختبار مباشر لـ Hive (`HiveManager` و`HiveStorageService` و`HiveObjectBox` و`CacheManager`) أو `PrefsStorageService` أو `SecureStorageService` أو `AppSettingsManager`.
-- **أخرى بلا ملف اختبار مباشر:** `AuthInterceptor` و`ConnectivityInterceptor` و`CancelTokenRegistry` و`AppIcon` و`AppImage` و`AppAppBar` و`BlocEffectListener` و`AppBlocObserver` و`ThemeCubit`. وبالنسبة إلى `BlocEffectListener` تحديداً، تبقى سلامة التحليل وlifecycle `NOT_VERIFIED` حتى تشغيل `flutter analyze` واختبار Widget مخصص.
+تفاصيل ملفات الاختبار الموجودة وما تغطيه والفجوات المعروفة في [تغطية اختبارات Core](CORE_TEST_COVERAGE.md).
 
 ## 4. ملاحظات وحدود هذه الخريطة
 
@@ -179,5 +154,4 @@
 - افحص الكود الحالي دائماً؛ قد تتغير الملفات أو APIs.
 - لا تعني الإشارة إلى أداة أنها مناسبة لكل استعمال؛ تحقق من حدودها وتوقيعها وطبقتها.
 - وجود API في Core لا يعني نقل منطق Feature إليه.
-- لا تدّعِ نجاح `flutter analyze/test` إلا بعد تشغيلهما فعلياً في بيئة فيها Flutter SDK.
 - الفرض الآلي للقواعد المعمارية غير موجود حالياً (راجع `ARCHITECTURE_RULES.md`).

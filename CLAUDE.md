@@ -5,6 +5,7 @@
 مرجع العمل المعماري والـ Core هو [فهرس الوثائق](docs/architecture/README.md):
 - `ARCHITECTURE_RULES.md`: السياسة المعمارية وحدود الطبقات (المرجع الوحيد لهذه السياسة).
 - `CORE_MAP.md`: اكتشاف الأدوات الموجودة، ثم التحقق من تنفيذها الفعلي.
+- `CORE_TEST_COVERAGE.md`: ملفات الاختبار الموجودة والفجوات المعروفة.
 - `CORE_USAGE.md`: أمثلة الاستخدام.
 - `CODING_STANDARDS.md`: أسلوب كتابة Dart/Flutter.
 - `FEATURE_CHECKLIST.md`: مراجعة تنفيذ الميزة.

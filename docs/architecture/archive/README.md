@@ -1,10 +1,18 @@
-# Archived Architecture Guidance
+# الأرشيف التاريخي لوثائق المعمارية
 
-The files in this folder are preserved for historical context. They are not current policy and must not override the active documentation index in [../README.md](../README.md).
+تُحفظ الملفات في هذا المجلد للرجوع التاريخي فقط. لا تمثل سياسة حالية ولا تتقدم على [فهرس وثائق المعمارية](../README.md).
 
-## Superseded documents
+## أدلة معمارية مستبدلة
 
-- [CORE_CONTRACT.md](CORE_CONTRACT.md) — archived because its blanket “mandatory Core reuse” wording conflicts with the current evidence-based Core admission criteria in `ARCHITECTURE_RULES.md`.
-- [FEATURE_GUIDE.md](FEATURE_GUIDE.md) — archived as a legacy feature guide whose structure and references predate the current checklist and coding standards. Preserve it for historical context; use [FEATURE_CHECKLIST.md](../FEATURE_CHECKLIST.md), [CODING_STANDARDS.md](../CODING_STANDARDS.md), and [CORE_USAGE.md](../CORE_USAGE.md) for current work.
+- [CORE_CONTRACT.md](CORE_CONTRACT.md) — صياغة سابقة لعقد Core؛ استُبدلت سياسته بمعايير الإضافة القائمة على المسؤولية المشتركة في `ARCHITECTURE_RULES.md`.
+- [FEATURE_GUIDE.md](FEATURE_GUIDE.md) — دليل تنفيذ ميزات سابق؛ المرجع الحالي هو `FEATURE_CHECKLIST.md` و`CODING_STANDARDS.md` و`CORE_USAGE.md`.
 
-No source content is discarded: both documents are retained byte-for-byte under this directory. Historical refactor reports under `docs/core_refactor/` and the separate audit record under `docs/audit-status.md` remain in their original locations.
+## سجلات تاريخية وتقارير تدقيق
+
+- [REBUILD_VALIDATION.md](REBUILD_VALIDATION.md) — سجل تحقق مؤرخ لإعادة بناء الوثائق السابقة، وليس تقرير الحالة الحالية للفرع.
+- [audit-status.md](audit-status.md) — لقطة تاريخية لتدقيقات سابقة، تتضمن حالات لم تُحسم وقت الأرشفة.
+- [00_prompt.md](00_prompt.md) — طلب/خطة إعادة تنظيم Core.
+- [01_inspection_report.md](01_inspection_report.md) — تقرير الفحص السابق لإعادة التنظيم.
+- [02_final_report.md](02_final_report.md) — التقرير الختامي التاريخي لإعادة تنظيم Core.
+
+الوثائق التاريخية محفوظة مع محتواها الأصلي، ويضاف إليها فقط تنبيه يوضح تاريخ أرشفتها وأنها ليست سياسة حالية.

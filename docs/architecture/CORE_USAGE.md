@@ -193,7 +193,7 @@ final t = AppKeys.valid.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع �
 
 - مفتاح جديد: عرّفه في `AppKeys` (`app_keys.dart`) ثم أضف نصه في `app_ar.dart` و`app_en.dart`.
 - اللغة: `LocaleCubit`/`AppLanguage`/`AppSettingsManager`؛ لا locale provider مستقل.
-- اتجاه النص: `context.isRTL` و`context.directionalIcon(rtl:, ltr:)` و`context.directionalValue(rtl:, ltr:)` من `DirectionExtension` (أو `context.ui.dir`).
+- **مدخل الاتجاه الموصى به لهذا الدليل:** `context.ui.dir.isRTL` و`context.ui.dir.icon(rtl:, ltr:)` و`context.ui.dir.value(rtl:, ltr:)` و`context.ui.dir.transformFlip(...)`؛ وهو جزء من مدخل `context.ui` الموحد. يوجد أيضاً `DirectionExtension` في `localization_extension.dart`، لكنه يكرر بعض الوظائف بأسماء مختلفة ولا يُستخدم في ملفات الميزات المفحوصة (باستثناء مثال معلّق). لا تعتمد عليه في كود جديد. اختيار المدخل الموحد هنا مقترح توثيقي ينتظر موافقتك.
 - **ممنوع:** `'string'.tr()` ونصوص واجهة ثابتة وقاموس ترجمة خاص بميزة.
 
 ## 8. الشبكة والأخطاء
@@ -202,7 +202,8 @@ final t = AppKeys.valid.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع �
 final result = await apiClient.get<UserModel>(
   AppEndpoints.auth.user,
   fromJson: UserModel.fromJson,
-);
+  requiresAuth: true,
+)
 final either = result.toEither();   // Either<Failure, UserModel>
 ```
 
@@ -210,13 +211,7 @@ final either = result.toEither();   // Either<Failure, UserModel>
 - مسار الأخطاء: Data يرمي `AppException` ← `ExceptionMapper.map(e)` يعيد `Failure` ← اعرض `failure.messageKey` عبر `AppText`/`MessageViewWidgets`. لا تترجم داخل Repository.
 - `FailureTranslator.translate(failure)` فقط حيث يلزم `String` جاهز (يترجم مرة واحدة).
 - لا يوجد Realtime فعّال: `RealtimeClient` عقد مجرد فقط.
-- إعادة المحاولة التلقائية للقراءة فقط. كتابة idempotent فعلاً فقط:
-
-```dart
-const options = Options(extra: {'idempotent': true}); // ثم مرّره إلى post/put/patch/delete
-```
-
-لا تضع `idempotent` على عملية مالية دون ضمان idempotency حقيقي من الخادم.
+- سياسة Retry وidempotency، بما فيها السماح بإعادة عمليات الكتابة، موضحة في [قواعد المعمارية §6](ARCHITECTURE_RULES.md).
 
 ## 9. الإعدادات والتحقق من المدخلات
 
@@ -287,7 +282,7 @@ class ExampleCubit extends BaseCubit<ExampleState, ExampleEffect> {
 - إعدادات بسيطة: `AppSettingsManager` / `PrefsStorageService`.
 - بيانات حساسة وTokens: `SecureStorageService` / `TokenManager`.
 - كاش وكائنات: `HiveStorageService` / `CacheManager`؛ الصناديق عبر `HiveManager.openBox` وأسماؤها `HiveBoxNames` ومعرّفات الـ adapters `HiveBoxTypeId`.
-- ممنوع Tokens في SharedPreferences.
+- اتبع سياسة تخزين Tokens في [قواعد المعمارية §6](ARCHITECTURE_RULES.md).
 
 ## 13. التنقل والصلاحيات
 
