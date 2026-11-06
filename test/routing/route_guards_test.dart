@@ -85,12 +85,19 @@ void main() {
     });
 
     test('password recovery pages are reachable while signed out', () {
-      for (final route in [
-        AppRoutes.forgotPassword,
-        AppRoutes.verifyResetCode,
-        AppRoutes.resetPassword,
-      ]) {
+      for (final route in [AppRoutes.forgotPassword, AppRoutes.resetPassword]) {
         expect(run(route.path), isNull, reason: route.path);
+      }
+    });
+
+    test('recovery pages stay open in every step of the recovery flow', () {
+      for (final state in [
+        const AuthState.resetCodeSent(email: 'a@b.c'),
+        const AuthState.codeVerified(email: 'a@b.c'),
+        const AuthState.passwordResetEmailSent(),
+      ]) {
+        expect(run(AppRoutes.resetPassword.path, auth: state), isNull);
+        expect(run(AppRoutes.forgotPassword.path, auth: state), isNull);
       }
     });
   });
