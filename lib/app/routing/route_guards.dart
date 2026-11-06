@@ -12,7 +12,6 @@ final Set<String> publicRoutes = {
   AppRoutes.login.path,
   AppRoutes.register.path,
   AppRoutes.forgotPassword.path,
-  AppRoutes.verifyResetCode.path,
   AppRoutes.resetPassword.path,
 };
 

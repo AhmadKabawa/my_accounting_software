@@ -10,7 +10,10 @@ import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/routing/app_router_observer.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/pages/forgot_password/forgot_password_screen.dart';
+import 'package:accounting_software/app/features/auth/presentation/pages/forgot_password/reset_password_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/login/login_screen.dart';
+import 'package:accounting_software/app/features/auth/presentation/pages/signup/signup_screen.dart';
 // import 'package:accounting_software/app/features/chat/presentation/pages/chat_screen.dart';
 import 'package:accounting_software/app/features/favorites/presentation/pages/favorite_screen.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
@@ -94,8 +97,53 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.login.path,
         name: AppRoutes.login.name,
-        pageBuilder: (context, state) =>
-            RouteTransitions.fade(context, state, const LoginScreen()),
+        pageBuilder: (context, state) => RouteTransitions.fade(
+          context,
+          state,
+          _withAuth(const LoginScreen()),
+        ),
+      ),
+
+      /// ─────────────────────────────────────────
+      /// Register
+      /// ─────────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.register.path,
+        name: AppRoutes.register.name,
+        pageBuilder: (context, state) => RouteTransitions.slide(
+          context,
+          state,
+          _withAuth(const SignUpScreen()),
+        ),
+      ),
+
+      /// ─────────────────────────────────────────
+      /// Password recovery: e-mail → code + new password
+      /// ─────────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.forgotPassword.path,
+        name: AppRoutes.forgotPassword.name,
+        pageBuilder: (context, state) => RouteTransitions.slide(
+          context,
+          state,
+          _withAuth(const ForgotPasswordScreen()),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword.path,
+        name: AppRoutes.resetPassword.name,
+        // Opened without an e-mail (deep link, refresh): start over.
+        redirect: (context, state) =>
+            (state.uri.queryParameters['email'] ?? '').isEmpty
+            ? AppRoutes.forgotPassword.path
+            : null,
+        pageBuilder: (context, state) => RouteTransitions.slide(
+          context,
+          state,
+          _withAuth(
+            ResetPasswordScreen(email: state.uri.queryParameters['email']!),
+          ),
+        ),
       ),
 
       /// ─────────────────────────────────────────
@@ -199,6 +247,11 @@ class AppRouter {
       ),
     ];
   }
+
+  /// The auth pages share the app-wide [authCubit] singleton: `.value` so that
+  /// leaving a page does not close it.
+  static Widget _withAuth(Widget page) =>
+      BlocProvider<AuthCubit>.value(value: authCubit, child: page);
 
   static Future<String?> _redirect(
     BuildContext context,

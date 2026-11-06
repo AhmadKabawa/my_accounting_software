@@ -8,10 +8,8 @@ class AppRoutes {
   static const register = RouteItem('/register', 'register');
   // Password recovery: reached by people who cannot sign in, so public.
   static const forgotPassword = RouteItem('/forgot-password', 'forgotPassword');
-  static const verifyResetCode = RouteItem(
-    '/forgot-password/verify',
-    'verifyResetCode',
-  );
+  // The e-mailed code is verified together with the new password, so there is
+  // no separate "verify code" route (see `confirmNewPassword`).
   static const resetPassword = RouteItem(
     '/forgot-password/reset',
     'resetPassword',
@@ -44,7 +42,6 @@ class AppRoutes {
     login,
     register,
     forgotPassword,
-    verifyResetCode,
     resetPassword,
     mainPages,
     home,
