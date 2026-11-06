@@ -157,6 +157,8 @@ final class _CommonKeys {
   final optional = const AppKey('common.optional');
   final appName = const AppKey('common.app_name');
   final comingSoon = const AppKey('common.coming_soon');
+  final pageNotFound = const AppKey('common.page_not_found');
+  final goHome = const AppKey('common.go_home');
 }
 
 /// ── Profile ─────────────────────────────────────

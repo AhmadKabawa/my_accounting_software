@@ -111,6 +111,8 @@ final TranslationMap _enCommon = {
   AppKeys.common.optional: "Optional",
   AppKeys.common.appName: "Accounting Software",
   AppKeys.common.comingSoon: "Coming soon",
+  AppKeys.common.pageNotFound: "Page not found",
+  AppKeys.common.goHome: "Go home",
 };
 final TranslationMap _enValidation = {
   AppKeys.valid.required: "This field is required",

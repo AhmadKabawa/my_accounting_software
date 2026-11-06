@@ -61,6 +61,8 @@ final TranslationMap _arCommon = {
   AppKeys.common.optional: "اختياري",
   AppKeys.common.appName: "البرنامج المحاسبي",
   AppKeys.common.comingSoon: "قريباً",
+  AppKeys.common.pageNotFound: "الصفحة غير موجودة",
+  AppKeys.common.goHome: "العودة للرئيسية",
 };
 
 final TranslationMap _arValidation = {

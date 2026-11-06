@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/routing/go_router_refresh_stream.dart';
+import 'package:accounting_software/app/routing/not_found_screen.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/core/routing/route_transitions.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
@@ -262,41 +263,4 @@ class AppRouter {
     onboarded: await settings.isOnboarded(),
     authState: authCubit.state,
   );
-}
-
-class NotFoundScreen extends StatelessWidget {
-  final String? location;
-
-  const NotFoundScreen({super.key, this.location});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Page not found")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "404",
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 12),
-
-            Text(location ?? "Unknown route"),
-
-            const SizedBox(height: 24),
-
-            ElevatedButton(
-              onPressed: () {
-                context.go('/home');
-              },
-              child: const Text("Go Home"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

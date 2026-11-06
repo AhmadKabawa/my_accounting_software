@@ -16,7 +16,7 @@ import 'package:accounting_software/app/features/home/presentation/widgets/share
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
-import 'package:accounting_software/app/features/home/presentation/pages/data.dart';
+import 'package:accounting_software/app/features/home/presentation/data/home_demo_data.dart';
 import 'package:accounting_software/app/features/home/presentation/widgets/banner/home_hero_text_content.dart';
 import 'package:accounting_software/app/features/home/presentation/widgets/banner/home_stats_bar.dart';
 import 'package:accounting_software/app/features/home/presentation/widgets/shared/home_painters.dart';
