@@ -96,6 +96,7 @@ final TranslationMap _enAuth = {
   AppKeys.auth.resetPasswordSubtitle:
       "Enter the code we emailed you and choose a new password",
   AppKeys.auth.resetPassword: "Reset password",
+  AppKeys.auth.signOut: "Sign out",
 };
 
 final TranslationMap _enCommon = {
@@ -108,6 +109,8 @@ final TranslationMap _enCommon = {
   AppKeys.common.success: "Success",
   AppKeys.common.unknownError: "An unexpected error occurred",
   AppKeys.common.optional: "Optional",
+  AppKeys.common.appName: "Accounting Software",
+  AppKeys.common.comingSoon: "Coming soon",
 };
 final TranslationMap _enValidation = {
   AppKeys.valid.required: "This field is required",

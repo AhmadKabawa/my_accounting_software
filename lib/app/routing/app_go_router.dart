@@ -221,7 +221,7 @@ class AppRouter {
                 path: AppRoutes.profile.path,
                 name: AppRoutes.profile.name,
                 pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: ProfileScreen()),
+                    NoTransitionPage(child: _withAuth(const ProfileScreen())),
 
                 routes: [
                   // GoRoute(

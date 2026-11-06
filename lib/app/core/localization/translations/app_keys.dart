@@ -65,6 +65,7 @@ final class _AuthKeys {
   final resetPasswordTitle = const AppKey('auth.reset_password_title');
   final resetPasswordSubtitle = const AppKey('auth.reset_password_subtitle');
   final resetPassword = const AppKey('auth.reset_password');
+  final signOut = const AppKey('auth.sign_out');
 }
 
 /// ── Fields ──────────────────────────────────────
@@ -154,6 +155,8 @@ final class _CommonKeys {
   final success = const AppKey('common.success');
   final unknownError = const AppKey('common.unknown_error');
   final optional = const AppKey('common.optional');
+  final appName = const AppKey('common.app_name');
+  final comingSoon = const AppKey('common.coming_soon');
 }
 
 /// ── Profile ─────────────────────────────────────

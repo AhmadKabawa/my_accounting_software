@@ -46,6 +46,7 @@ final TranslationMap _arAuth = {
   AppKeys.auth.resetPasswordSubtitle:
       "أدخل الرمز الذي وصلك على بريدك واختر كلمة مرور جديدة",
   AppKeys.auth.resetPassword: "إعادة تعيين كلمة المرور",
+  AppKeys.auth.signOut: "تسجيل الخروج",
 };
 
 final TranslationMap _arCommon = {
@@ -58,6 +59,8 @@ final TranslationMap _arCommon = {
   AppKeys.common.success: "تم بنجاح",
   AppKeys.common.unknownError: "حدث خطأ غير متوقع",
   AppKeys.common.optional: "اختياري",
+  AppKeys.common.appName: "البرنامج المحاسبي",
+  AppKeys.common.comingSoon: "قريباً",
 };
 
 final TranslationMap _arValidation = {

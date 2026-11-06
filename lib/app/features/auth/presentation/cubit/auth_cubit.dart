@@ -239,7 +239,8 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
       },
       (_) {
         emit(const AuthState.unauthenticated());
-        _emitSuccess(AppKeys.success.signout);
+        // The router sends the user to login right away: show it there.
+        _emitSuccess(AppKeys.success.signout, replayable: true);
       },
     );
   }
