@@ -11,5 +11,6 @@ part 'app_enums/app_radius.dart';
 part 'app_enums/app_font_size.dart';
 part 'app_enums/app_icon_size.dart';
 part 'app_enums/app_elevation.dart';
+part 'app_enums/app_border_width.dart';
 part 'app_enums/app_component_size.dart';
 part 'app_enums/app_aspect_ratio.dart';

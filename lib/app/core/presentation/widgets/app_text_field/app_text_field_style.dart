@@ -11,8 +11,6 @@ class AppTextFieldStyle {
   final BuildContext context;
 
   static const _adaptive = ResponsiveMode.adaptiveOnly;
-  static const _borderWidth = 1.0;
-  static const _focusedBorderWidth = 2.0;
 
   ColorScheme get _scheme => Theme.of(context).colorScheme;
 
@@ -43,10 +41,15 @@ class AppTextFieldStyle {
   TextStyle get errorStyle =>
       context.ui.text.of(AppTextType.bodySmall).copyWith(color: _scheme.error);
 
-  OutlineInputBorder _border(Color color, {double width = _borderWidth}) =>
+  OutlineInputBorder _border(Color color, {bool emphasized = false}) =>
       OutlineInputBorder(
         borderRadius: radius,
-        borderSide: BorderSide(color: color, width: width),
+        borderSide: BorderSide(
+          color: color,
+          width: (emphasized ? AppBorderWidth.thick : AppBorderWidth.thin).of(
+            context,
+          ),
+        ),
       );
 
   /// The decoration for a labelled field. [prefix] / [suffix] are optional.
@@ -69,9 +72,9 @@ class AppTextFieldStyle {
       errorMaxLines: 3,
       border: _border(_scheme.outline),
       enabledBorder: _border(_scheme.outline),
-      focusedBorder: _border(_scheme.primary, width: _focusedBorderWidth),
+      focusedBorder: _border(_scheme.primary, emphasized: true),
       errorBorder: _border(_scheme.error),
-      focusedErrorBorder: _border(_scheme.error, width: _focusedBorderWidth),
+      focusedErrorBorder: _border(_scheme.error, emphasized: true),
       disabledBorder: _border(disabled),
     );
   }
