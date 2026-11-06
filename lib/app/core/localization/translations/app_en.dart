@@ -85,6 +85,17 @@ final TranslationMap _enAuth = {
   AppKeys.auth.resendEmail: "Resend email",
   AppKeys.auth.registerTitle: "Create new account",
   AppKeys.auth.registerSubtitle: "Enter your details to get started",
+  AppKeys.auth.loginTitle: "Welcome back",
+  AppKeys.auth.loginSubtitle: "Sign in to continue to your account",
+  AppKeys.auth.haveAccount: "Already have an account? Sign in",
+  AppKeys.auth.noAccount: "Don't have an account? Create one",
+  AppKeys.auth.sendCode: "Send code",
+  AppKeys.auth.forgotPasswordSubtitle:
+      "Enter your email and we will send you a code to reset your password",
+  AppKeys.auth.resetPasswordTitle: "Set a new password",
+  AppKeys.auth.resetPasswordSubtitle:
+      "Enter the code we emailed you and choose a new password",
+  AppKeys.auth.resetPassword: "Reset password",
 };
 
 final TranslationMap _enCommon = {
@@ -161,6 +172,7 @@ final TranslationMap _enFields = {
   AppKeys.fields.bio: "Bio",
   AppKeys.fields.currentPassword: "Current password",
   AppKeys.fields.newPassword: "New password",
+  AppKeys.fields.resetCode: "Verification code",
 };
 
 final TranslationMap _enProfile = {

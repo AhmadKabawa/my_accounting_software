@@ -86,8 +86,9 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
     replayable: replayable,
   );
 
-  void _emitSuccess(AppKey key) => emitEffect(
+  void _emitSuccess(AppKey key, {bool replayable = false}) => emitEffect(
     AuthEffect.showMessage(messageKey: key, type: MessageType.success),
+    replayable: replayable,
   );
 
   /// The stored session was removed behind our back (e.g. the refresh token
@@ -333,7 +334,8 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
       },
       (_) {
         emit(const AuthState.unauthenticated());
-        _emitSuccess(AppKeys.success.passwordChanged); // ← مفتاح مناسب
+        // The reset page closes right after this: the login screen shows it.
+        _emitSuccess(AppKeys.success.passwordChanged, replayable: true);
       },
     );
   }
@@ -358,7 +360,7 @@ class AuthCubit extends BaseCubit<AuthState, AuthEffect> with CancellableMixin {
       },
       (_) {
         emit(const AuthState.unauthenticated());
-        _emitSuccess(AppKeys.success.passwordChanged);
+        _emitSuccess(AppKeys.success.passwordChanged, replayable: true);
       },
     );
   }

@@ -56,6 +56,15 @@ final class _AuthKeys {
   final resendEmail = const AppKey('auth.resend_email');
   final registerTitle = const AppKey('auth.register_title');
   final registerSubtitle = const AppKey('auth.register_subtitle');
+  final loginTitle = const AppKey('auth.login_title');
+  final loginSubtitle = const AppKey('auth.login_subtitle');
+  final haveAccount = const AppKey('auth.have_account');
+  final noAccount = const AppKey('auth.no_account');
+  final sendCode = const AppKey('auth.send_code');
+  final forgotPasswordSubtitle = const AppKey('auth.forgot_password_subtitle');
+  final resetPasswordTitle = const AppKey('auth.reset_password_title');
+  final resetPasswordSubtitle = const AppKey('auth.reset_password_subtitle');
+  final resetPassword = const AppKey('auth.reset_password');
 }
 
 /// ── Fields ──────────────────────────────────────
@@ -71,6 +80,7 @@ final class _FieldKeys {
   final bio = const AppKey('fields.bio');
   final currentPassword = const AppKey('fields.current_password');
   final newPassword = const AppKey('fields.new_password');
+  final resetCode = const AppKey('fields.reset_code');
 }
 
 /// ── Validation ──────────────────────────────────

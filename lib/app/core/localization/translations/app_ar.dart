@@ -35,6 +35,17 @@ final TranslationMap _arAuth = {
   AppKeys.auth.resendEmail: "إعادة إرسال البريد الإلكتروني",
   AppKeys.auth.registerTitle: "إنشاء حساب جديد",
   AppKeys.auth.registerSubtitle: "أدخل بياناتك للبدء",
+  AppKeys.auth.loginTitle: "مرحباً بعودتك",
+  AppKeys.auth.loginSubtitle: "سجّل الدخول للمتابعة إلى حسابك",
+  AppKeys.auth.haveAccount: "لديك حساب؟ سجّل الدخول",
+  AppKeys.auth.noAccount: "ليس لديك حساب؟ أنشئ حساباً",
+  AppKeys.auth.sendCode: "إرسال الرمز",
+  AppKeys.auth.forgotPasswordSubtitle:
+      "أدخل بريدك الإلكتروني وسنرسل لك رمزاً لإعادة تعيين كلمة المرور",
+  AppKeys.auth.resetPasswordTitle: "تعيين كلمة مرور جديدة",
+  AppKeys.auth.resetPasswordSubtitle:
+      "أدخل الرمز الذي وصلك على بريدك واختر كلمة مرور جديدة",
+  AppKeys.auth.resetPassword: "إعادة تعيين كلمة المرور",
 };
 
 final TranslationMap _arCommon = {
@@ -112,6 +123,7 @@ final TranslationMap _arFields = {
   AppKeys.fields.bio: "السيرة الذاتية",
   AppKeys.fields.currentPassword: "كلمة المرور الحالية",
   AppKeys.fields.newPassword: "كلمة المرور الجديدة",
+  AppKeys.fields.resetCode: "رمز التحقق",
 };
 
 final TranslationMap _arProfile = {
