@@ -1,158 +1,111 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:iconsax/iconsax.dart';
-// import 'package:easy_localization/easy_localization.dart';
-// import 'package:accounting_software/app/core/localization/translations/app_strings.dart';
-// import 'package:accounting_software/app/core/routing/navigator_extensions.dart';
-// import 'package:accounting_software/app/core/routing/routes.dart';
-// import 'package:accounting_software/app/core/utils/helper/app_message_helpers.dart';
-// import 'package:accounting_software/app/core/foundation/validation/form_validator.dart';
-// import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
-// import 'package:accounting_software/app/features/auth/presentation/pages/login/widgets/customCheck_box.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/core/routing/routes.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
+import 'package:accounting_software/app/features/auth/presentation/widgets/auth_divider.dart';
+import 'package:accounting_software/app/features/auth/presentation/widgets/auth_text_field.dart';
+import 'package:accounting_software/app/features/auth/presentation/widgets/google_sign_in_button.dart';
+import 'package:accounting_software/app/features/auth/presentation/widgets/password_field.dart';
 
-// class LoginFormSection extends StatefulWidget {
-//   const LoginFormSection({super.key});
+class LoginFormSection extends StatefulWidget {
+  const LoginFormSection({super.key});
 
-//   @override
-//   State<LoginFormSection> createState() => _LoginFormSectionState();
-// }
+  @override
+  State<LoginFormSection> createState() => _LoginFormSectionState();
+}
 
-// class _LoginFormSectionState extends State<LoginFormSection> {
-//   final _formKey = GlobalKey<FormState>();
-//   final _emailController = TextEditingController();
-//   final _passwordController = TextEditingController();
-//   bool _rememberMe = true;
-//   bool _obscurePassword = true;
+class _LoginFormSectionState extends State<LoginFormSection> {
+  final _formKey = GlobalKey<FormState>();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
 
-//   @override
-//   void dispose() {
-//     _emailController.dispose();
-//     _passwordController.dispose();
-//     super.dispose();
-//   }
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
 
-//   void _handleLogin() {
-//     if (_formKey.currentState!.validate()) {
-//       context.read<AuthCubit>().signInWithEmailEvent(
-//         email: _emailController.text.trim(),
-//         password: _passwordController.text.trim(),
-//       );
-//     }
-//   }
+  void _submit() {
+    MessageViewWidgets.hideKeyboard();
+    if (!_formKey.currentState!.validate()) return;
+    context.read<AuthCubit>().signInWithEmail(
+      email: _email.text.trim(),
+      password: _password.text,
+    );
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     context.locale;
-//     return BlocBuilder<AuthCubit, AuthState>(
-//       builder: (context, state) {
-//         return Padding(
-//           padding: const EdgeInsets.symmetric(vertical: 32),
-//           child: Form(
-//             key: _formKey,
-//             child: Column(
-//               children: [
-//                 // Email Field
-//                 TextFormField(
-//                   controller: _emailController,
-//                   keyboardType: TextInputType.emailAddress,
-//                   decoration: InputDecoration(
-//                     prefixIcon: const Icon(Iconsax.direct_right),
-//                     labelText: FieldKeys.email.tr(),
-//                   ),
-//                   validator: (value) {
-//                     return AppValidator.validate(value, [
-//                       ValidationRule.required,
-//                       ValidationRule.email,
-//                     ]);
-//                   },
-//                 ),
+  @override
+  Widget build(BuildContext context) {
+    final loading = context.select<AuthCubit, bool>(
+      (cubit) => cubit.state is AuthLoading,
+    );
+    final gap = context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical);
 
-//                 const SizedBox(height: 16),
-
-//                 // Password Field
-//                 TextFormField(
-//                   controller: _passwordController,
-//                   obscureText: _obscurePassword,
-//                   decoration: InputDecoration(
-//                     prefixIcon: const Icon(Iconsax.password_check),
-//                     suffixIcon: IconButton(
-//                       icon: Icon(
-//                         _obscurePassword ? Iconsax.eye_slash : Iconsax.eye,
-//                       ),
-//                       onPressed: () {
-//                         setState(() {
-//                           _obscurePassword = !_obscurePassword;
-//                         });
-//                       },
-//                     ),
-//                     labelText: FieldKeys.password.tr(),
-//                   ),
-//                   validator: (value) {
-//                     return AppValidator.validate(value, [
-//                       ValidationRule.required,
-//                     ]);
-//                   },
-//                 ),
-
-//                 const SizedBox(height: 8),
-
-//                 // Remember Me & Forgot Password Row
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     CustomCheckBox(
-//                       title: AuthKeys.rememberMe.tr(),
-//                       onChanged: (value) {
-//                         setState(() {
-//                           _rememberMe = value ?? false;
-//                         });
-//                       },
-//                       checkvalue: _rememberMe,
-//                     ),
-//                     TextButton(
-//                       onPressed: () {
-//                         context.pushNamed(AppRoutes.forgotPassword);
-//                       },
-//                       child: Text(AuthKeys.forgotPassword.tr()),
-//                     ),
-//                   ],
-//                 ),
-
-//                 const SizedBox(height: 32),
-
-//                 // Sign In Button
-//                 SizedBox(
-//                   width: double.infinity,
-//                   child: ElevatedButton(
-//                     onPressed: state is AuthLoading
-//                         ? null
-//                         : () {
-//                             AppMessageHelper.hideKeyboard();
-//                             _handleLogin();
-//                           },
-//                     child: state is AuthLoading
-//                         ? Text(CommonKeys.loading.tr())
-//                         : Text(AuthKeys.signIn.tr()),
-//                   ),
-//                 ),
-
-//                 const SizedBox(height: 16),
-
-//                 // Create Account Button
-//                 SizedBox(
-//                   width: double.infinity,
-//                   child: OutlinedButton(
-//                     onPressed: () {
-//                       context.pushNamed(AppRoutes.signup);
-//                     },
-//                     child: Text(AuthKeys.createAccount.tr()),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AuthTextField(
+            controller: _email,
+            labelKey: AppKeys.fields.email,
+            icon: Icons.mail_outline,
+            keyboardType: TextInputType.emailAddress,
+            validator: (v) => AppValidator.validate(v, [
+              ValidationRule.required,
+              ValidationRule.email,
+            ]),
+          ),
+          gap,
+          PasswordField(
+            controller: _password,
+            labelKey: AppKeys.fields.password,
+            textInputAction: TextInputAction.done,
+            onSubmitted: loading ? null : _submit,
+            // No complexity rules at sign-in: only the server judges the password.
+            validator: (v) =>
+                AppValidator.validate(v, [ValidationRule.required]),
+          ),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton(
+              onPressed: () => context.pushNamed(AppRoutes.forgotPassword.name),
+              child: AppText(
+                AppKeys.auth.forgotPassword,
+                type: AppTextType.labelLarge,
+              ),
+            ),
+          ),
+          gap,
+          AppButton(
+            AppKeys.auth.signIn,
+            expand: true,
+            isLoading: loading,
+            onPressed: _submit,
+          ),
+          gap,
+          const AuthDivider(textKey: AppKeys.auth.orSignInWith),
+          gap,
+          const GoogleSignInButton(),
+          gap,
+          TextButton(
+            onPressed: () => context.pushNamed(AppRoutes.register.name),
+            child: AppText(
+              AppKeys.auth.noAccount,
+              type: AppTextType.labelLarge,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

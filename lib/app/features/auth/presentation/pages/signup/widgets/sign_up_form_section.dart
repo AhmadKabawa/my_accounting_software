@@ -1,215 +1,143 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:iconsax/iconsax.dart';
-// import 'package:easy_localization/easy_localization.dart';
-// import 'package:accounting_software/app/core/localization/translations/app_strings.dart';
-// import 'package:accounting_software/app/core/foundation/validation/form_validator.dart';
-// import 'package:accounting_software/app/core/utils/helper/app_message_helpers.dart';
-// import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
+import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/core/routing/routes.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
+import 'package:accounting_software/app/features/auth/presentation/widgets/auth_divider.dart';
+import 'package:accounting_software/app/features/auth/presentation/widgets/auth_text_field.dart';
+import 'package:accounting_software/app/features/auth/presentation/widgets/google_sign_in_button.dart';
+import 'package:accounting_software/app/features/auth/presentation/widgets/password_field.dart';
 
-// class SignUpFormSection extends StatefulWidget {
-//   const SignUpFormSection({super.key});
+class SignUpFormSection extends StatefulWidget {
+  const SignUpFormSection({super.key});
 
-//   @override
-//   State<SignUpFormSection> createState() => _SignUpFormSectionState();
-// }
+  @override
+  State<SignUpFormSection> createState() => _SignUpFormSectionState();
+}
 
-// class _SignUpFormSectionState extends State<SignUpFormSection> {
-//   final _formKey = GlobalKey<FormState>();
-//   bool _obscurePassword = true;
-//   bool _obscureConfirmPassword = true;
+class _SignUpFormSectionState extends State<SignUpFormSection> {
+  final _formKey = GlobalKey<FormState>();
+  final _name = TextEditingController();
+  final _email = TextEditingController();
+  final _phone = TextEditingController();
+  final _password = TextEditingController();
+  final _confirm = TextEditingController();
 
-//   final TextEditingController _firstNameController = TextEditingController();
-//   final TextEditingController _lastNameController = TextEditingController();
-//   final TextEditingController _emailController = TextEditingController();
-//   final TextEditingController _phoneController = TextEditingController();
-//   final TextEditingController _passwordController = TextEditingController();
-//   final TextEditingController _confirmPasswordController =
-//       TextEditingController();
+  @override
+  void dispose() {
+    _name.dispose();
+    _email.dispose();
+    _phone.dispose();
+    _password.dispose();
+    _confirm.dispose();
+    super.dispose();
+  }
 
-//   @override
-//   void dispose() {
-//     _firstNameController.dispose();
-//     _lastNameController.dispose();
-//     _emailController.dispose();
-//     _phoneController.dispose();
-//     _passwordController.dispose();
-//     _confirmPasswordController.dispose();
-//     super.dispose();
-//   }
+  void _submit() {
+    MessageViewWidgets.hideKeyboard();
+    if (!_formKey.currentState!.validate()) return;
+    final phone = _phone.text.trim();
+    context.read<AuthCubit>().signUpWithEmail(
+      email: _email.text.trim().toLowerCase(),
+      password: _password.text,
+      fullName: _name.text.trim(),
+      phone: phone.isEmpty ? null : phone,
+    );
+  }
 
-//   void _handleRegistration() {
-//     if (_formKey.currentState!.validate()) {
-//       context.read<AuthCubit>().signUpWithEmailEvent(
-//         email: _emailController.text.trim().toLowerCase(),
-//         password: _passwordController.text.trim(),
-//         fullName:
-//             '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}',
-//         phone: _phoneController.text.trim().isEmpty
-//             ? null
-//             : _phoneController.text.trim(),
-//       );
-//     }
-//   }
+  @override
+  Widget build(BuildContext context) {
+    final loading = context.select<AuthCubit, bool>(
+      (cubit) => cubit.state is AuthLoading,
+    );
+    final gap = context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Form(
-//       key: _formKey,
-//       child: Column(
-//         children: [
-//           // First Name & Last Name Row
-//           Row(
-//             children: [
-//               Expanded(
-//                 child: TextFormField(
-//                   controller: _firstNameController,
-//                   validator: (value) {
-//                     return AppValidator.validate(value, [
-//                       ValidationRule.required,
-//                     ]);
-//                   },
-//                   decoration: InputDecoration(
-//                     prefixIcon: const Icon(Iconsax.user),
-//                     labelText: FieldKeys.firstName.tr(),
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(width: 16),
-//               Expanded(
-//                 child: TextFormField(
-//                   controller: _lastNameController,
-//                   validator: (value) {
-//                     return AppValidator.validate(value, [
-//                       ValidationRule.required,
-//                     ]);
-//                   },
-//                   decoration: InputDecoration(
-//                     prefixIcon: const Icon(Iconsax.user),
-//                     labelText: FieldKeys.lastName.tr(),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-
-//           const SizedBox(height: 16),
-
-//           // Email Field
-//           TextFormField(
-//             keyboardType: TextInputType.emailAddress,
-//             controller: _emailController,
-//             validator: (value) {
-//               return AppValidator.validate(value, [
-//                 ValidationRule.required,
-//                 ValidationRule.email,
-//               ]);
-//             },
-//             decoration: InputDecoration(
-//               prefixIcon: const Icon(Iconsax.direct),
-//               labelText: FieldKeys.email.tr(),
-//             ),
-//           ),
-
-//           const SizedBox(height: 16),
-
-//           // Phone Field (Optional)
-//           TextFormField(
-//             keyboardType: TextInputType.phone,
-//             controller: _phoneController,
-//             validator: (value) {
-//               if (value != null && value.isNotEmpty) {
-//                 return AppValidator.validate(value, [ValidationRule.phone]);
-//               }
-//               return null;
-//             },
-//             decoration: InputDecoration(
-//               prefixIcon: const Icon(Iconsax.call),
-//               labelText:
-//                   '${FieldKeys.phone.tr()} (${CommonKeys.optional.tr()})',
-//             ),
-//           ),
-
-//           const SizedBox(height: 16),
-
-//           // Password Field
-//           TextFormField(
-//             keyboardType: TextInputType.visiblePassword,
-//             controller: _passwordController,
-//             validator: (value) {
-//               return AppValidator.validate(value, [
-//                 ValidationRule.required,
-//                 ValidationRule.password,
-//               ]);
-//             },
-//             obscureText: _obscurePassword,
-//             decoration: InputDecoration(
-//               prefixIcon: const Icon(Iconsax.password_check),
-//               suffixIcon: IconButton(
-//                 icon: Icon(_obscurePassword ? Iconsax.eye_slash : Iconsax.eye),
-//                 onPressed: () {
-//                   setState(() {
-//                     _obscurePassword = !_obscurePassword;
-//                   });
-//                 },
-//               ),
-//               labelText: FieldKeys.password.tr(),
-//             ),
-//           ),
-
-//           const SizedBox(height: 16),
-
-//           // Confirm Password Field
-//           TextFormField(
-//             keyboardType: TextInputType.visiblePassword,
-//             controller: _confirmPasswordController,
-//             validator: (value) {
-//               return AppValidator.validate(
-//                 value,
-//                 [ValidationRule.required],
-//                 params: {ValidationRule.match: _passwordController.text},
-//               );
-//             },
-//             obscureText: _obscureConfirmPassword,
-//             decoration: InputDecoration(
-//               prefixIcon: const Icon(Iconsax.password_check),
-//               suffixIcon: IconButton(
-//                 icon: Icon(
-//                   _obscureConfirmPassword ? Iconsax.eye_slash : Iconsax.eye,
-//                 ),
-//                 onPressed: () {
-//                   setState(() {
-//                     _obscureConfirmPassword = !_obscureConfirmPassword;
-//                   });
-//                 },
-//               ),
-//               labelText: FieldKeys.confirmPassword.tr(),
-//             ),
-//           ),
-
-//           const SizedBox(height: 16),
-
-//           // Create Account Button
-//           SizedBox(
-//             width: double.infinity,
-//             child: BlocBuilder<AuthCubit, AuthState>(
-//               builder: (context, state) {
-//                 return ElevatedButton(
-//                   onPressed: state is AuthLoading
-//                       ? null
-//                       : () {
-//                           AppMessageHelper.hideKeyboard();
-//                           _handleRegistration();
-//                         },
-//                   child: state is AuthLoading
-//                       ? Text(CommonKeys.loading.tr())
-//                       : Text(AuthKeys.createAccount.tr()),
-//                 );
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AuthTextField(
+            controller: _name,
+            labelKey: AppKeys.fields.fullName,
+            icon: Icons.person_outline,
+            validator: (v) => AppValidator.validate(
+              v,
+              [ValidationRule.required, ValidationRule.minLength],
+              params: {ValidationRule.minLength: 2},
+            ),
+          ),
+          gap,
+          AuthTextField(
+            controller: _email,
+            labelKey: AppKeys.fields.email,
+            icon: Icons.mail_outline,
+            keyboardType: TextInputType.emailAddress,
+            validator: (v) => AppValidator.validate(v, [
+              ValidationRule.required,
+              ValidationRule.email,
+            ]),
+          ),
+          gap,
+          AuthTextField(
+            controller: _phone,
+            labelKey: AppKeys.fields.phone,
+            icon: Icons.phone_outlined,
+            keyboardType: TextInputType.phone,
+            // Optional: validated only when something was typed.
+            validator: (v) => (v == null || v.trim().isEmpty)
+                ? null
+                : AppValidator.validate(v, [ValidationRule.phone]),
+          ),
+          gap,
+          PasswordField(
+            controller: _password,
+            labelKey: AppKeys.fields.password,
+            validator: (v) => AppValidator.validate(v, [
+              ValidationRule.required,
+              ValidationRule.password,
+            ]),
+          ),
+          gap,
+          PasswordField(
+            controller: _confirm,
+            labelKey: AppKeys.fields.confirmPassword,
+            textInputAction: TextInputAction.done,
+            onSubmitted: loading ? null : _submit,
+            validator: (v) => AppValidator.validate(
+              v,
+              [ValidationRule.required, ValidationRule.match],
+              params: {ValidationRule.match: _password.text},
+            ),
+          ),
+          gap,
+          AppButton(
+            AppKeys.auth.createAccount,
+            expand: true,
+            isLoading: loading,
+            onPressed: _submit,
+          ),
+          gap,
+          const AuthDivider(textKey: AppKeys.auth.orSignUpWith),
+          gap,
+          const GoogleSignInButton(),
+          gap,
+          TextButton(
+            onPressed: () => context.goNamed(AppRoutes.login.name),
+            child: AppText(
+              AppKeys.auth.haveAccount,
+              type: AppTextType.labelLarge,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
