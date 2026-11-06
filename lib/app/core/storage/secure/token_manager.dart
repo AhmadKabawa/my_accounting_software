@@ -13,7 +13,7 @@ class TokenManager {
   TokenManager({required StorageService storage}) : _storage = storage;
 
   // Synchronous so a listener sees the event before the caller's await
-  // resumes (lets AuthCubit tell a deliberate sign-out from an expiry).
+  // resumes (lets SessionCubit tell a deliberate sign-out from an expiry).
   final _sessionCleared = StreamController<void>.broadcast(sync: true);
 
   /// Fires whenever the stored session is removed ([clearTokens]).

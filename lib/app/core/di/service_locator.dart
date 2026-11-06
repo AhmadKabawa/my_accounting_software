@@ -3,6 +3,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
+import 'package:accounting_software/app/core/storage/hive/cache_manager.dart';
+import 'package:accounting_software/app/core/storage/hive/hive_manager.dart';
+import 'package:accounting_software/app/core/storage/hive/hive_storage_service.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/prefs_storage_service.dart';
@@ -14,6 +17,7 @@ import 'package:accounting_software/app/core/network/network_info/network_info.d
 import 'package:accounting_software/app/core/network/network_info/network_info_impl.dart';
 import 'package:accounting_software/app/core/storage/secure/secure_storage_service.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/cubit/theme_cubit.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
@@ -42,6 +46,15 @@ Future<void> initCoreDI() async {
   sl.registerLazySingleton<TokenManager>(
     () => TokenManager(storage: sl<SecureStorageService>()),
   );
+  // Hive-backed cache. Lazy: `HiveManager.init()` (main) has opened the box by
+  // the time anything resolves these.
+  sl.registerLazySingleton<HiveStorageService>(
+    () => HiveStorageService(box: HiveManager.cacheBox),
+  );
+  sl.registerLazySingleton<CacheManager>(
+    () => CacheManager(stringCache: sl<HiveStorageService>()),
+  );
+
   // Dio
 
   sl.registerLazySingleton<DioService>(
@@ -63,6 +76,9 @@ Future<void> initCoreDI() async {
   sl.registerLazySingleton<AppSettingsManager>(
     () => AppSettingsManager(storage: sl<PrefsStorageService>()),
   );
+
+  // Messages that must survive a page change (sign-out, session expired...)
+  sl.registerLazySingleton<FlashMessages>(FlashMessages.new);
 
   //! ==================== Theme & Localization ====================
 

@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/access/role.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_rail/app_navigation_rail.dart';
@@ -17,7 +17,7 @@ const _secret = Permission('shell_test.view');
 
 AppDestination _dest(IconData icon, int branch, {Permission? permission}) =>
     AppDestination(
-      item: NavBarItem(icon: icon, label: AppKeys.home),
+      item: NavBarItem(icon: icon, label: NavKeys.home),
       branchIndex: branch,
       permission: permission,
     );

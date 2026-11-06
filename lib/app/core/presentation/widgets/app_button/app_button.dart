@@ -9,10 +9,13 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
 export 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart'
     show AppButtonVariant, AppButtonSize;
+export 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart'
+    show AppIconData, AppIcons;
 
 class AppButton extends StatefulWidget {
   /// key للترجمة
@@ -26,7 +29,7 @@ class AppButton extends StatefulWidget {
 
   final AppButtonVariant variant;
   final AppButtonSize size;
-  final IconData? icon;
+  final AppIconData? icon;
 
   /// يعرض مؤشر تحميل بدل الأيقونة ويمنع الضغط (من دون مظهر التعطيل)
   final bool isLoading;
@@ -136,7 +139,11 @@ class _AppButtonState extends State<AppButton> {
 
     final icon = widget.icon;
     if (icon == null) return null;
-    return Icon(icon, size: visual.iconSize, color: visual.foreground);
+    return AppIcon.fixed(
+      icon,
+      pixelSize: visual.iconSize,
+      color: visual.foreground,
+    );
   }
 
   Widget _buildLabel(ButtonVisual visual) {

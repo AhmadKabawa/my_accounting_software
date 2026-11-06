@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_cubit.dart';
@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AppText(AppKeys.common.appName, type: AppTextType.headlineMedium),
+            AppText(CommonKeys.appName, type: AppTextType.headlineMedium),
             context.ui.spacing.gap(AppSpacing.lg, axis: Axis.vertical),
             const CircularProgressIndicator(),
           ],

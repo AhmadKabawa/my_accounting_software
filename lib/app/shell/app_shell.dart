@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_rail/app_navigation_rail.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
@@ -73,7 +74,8 @@ class AppShell extends StatelessWidget {
       ),
     );
 
-    return Rh.builder(
+    return FlashMessageListener(
+      child: Rh.builder(
       context: context,
       mobile: (_) => Scaffold(
         body: navigationShell,
@@ -101,6 +103,7 @@ class AppShell extends StatelessWidget {
           onIndexChanged: onSelect,
         ),
       ),
+    ),
     );
   }
 }

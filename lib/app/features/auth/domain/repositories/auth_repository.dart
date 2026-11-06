@@ -34,22 +34,11 @@ abstract class AuthRepository {
   /// إرسال كود إعادة تعيين كلمة المرور
   Future<Either<Failure, Unit>> sendResetCode({required String email});
 
-  /// التحقق من كود إعادة تعيين كلمة المرور
-  Future<Either<Failure, Unit>> verifyResetCode({
-    required String email,
-    required String code,
-  });
-
-  /// تأكيد كلمة المرور الجديدة
+  /// تأكيد الكود وتعيين كلمة المرور الجديدة في خطوة واحدة (Supabase يتحقق
+  /// من الرمز مع كلمة المرور الجديدة)
   Future<Either<Failure, Unit>> confirmNewPassword({
     required String email,
     required String code,
-    required String newPassword,
-  });
-
-  /// إعادة تعيين كلمة المرور (باستخدام token)
-  Future<Either<Failure, Unit>> resetPassword({
-    required String token,
     required String newPassword,
   });
 

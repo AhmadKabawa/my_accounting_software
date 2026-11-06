@@ -1,12 +1,11 @@
-// lib/features/auth/data/repositories/auth_repository_impl.dart
-// lib/features/auth/data/repositories/auth_repository_impl.dart
-
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
+import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/local_data_source/auth_local_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/remote_data_source/auth_remote_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/models/auth_result/auth_result_model.dart';
@@ -15,7 +14,7 @@ import 'package:accounting_software/app/features/auth/domain/entity/auth_result/
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/features/auth/domain/repositories/auth_repository.dart';
 
-class AuthRepositoryImpl implements AuthRepository {
+class AuthRepositoryImpl with RepositoryExecutor implements AuthRepository {
   final AuthRemoteDataSource _remote;
   final AuthLocalDataSource _local;
 
@@ -25,27 +24,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }) : _remote = remote,
        _local = local;
 
-  // ─── Helper مشترك ───────────────────────────────────
-  Future<Either<Failure, T>> _execute<T>(
-    Future<Either<Failure, T>> Function() action,
-  ) async {
-    try {
-      return await action();
-    } on AppException catch (e) {
-      return Left(ExceptionMapper.map(e));
-    } catch (e) {
-      final exception = ApiException.unknown(serverMessage: e.toString());
-
-      return Left(ExceptionMapper.map(exception));
-    }
-  }
-
   // ─── Login ──────────────────────────────────────────
   @override
   Future<Either<Failure, AuthResultEntity>> login({
     required String email,
     required String password,
-  }) => _execute(() async {
+  }) => execute(() async {
     final result = await _remote.login(email: email, password: password);
     return result.toEitherAsync(_startSession);
   });
@@ -57,7 +41,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
     String? phone,
-  }) => _execute(() async {
+  }) => execute(() async {
     final result = await _remote.register(
       name: name,
       email: email,
@@ -70,7 +54,7 @@ class AuthRepositoryImpl implements AuthRepository {
   // ─── Google Sign-In ─────────────────────────────────
   @override
   Future<Either<Failure, AuthResultEntity>> signInWithGoogle() =>
-      _execute(() async {
+      execute(() async {
         final result = await _remote.signInWithGoogle();
         return result.toEitherAsync(_startSession);
       });
@@ -78,10 +62,18 @@ class AuthRepositoryImpl implements AuthRepository {
   // ─── Logout ─────────────────────────────────────────
   @override
   Future<Either<Failure, Unit>> logout() async {
+    // Security decision (documented in docs/architecture/SECURITY_DECISIONS.md):
+    // the user always leaves locally, even when the server cannot be told, so
+    // the refresh token may stay valid server-side until it expires.
     try {
-      // حاول تعلم السيرفر — لو فشل (مافي نت) اكمل
       await _remote.logout();
-    } catch (_) {}
+    } catch (e) {
+      Logger.warning(
+        'Logout: server revocation failed; clearing the local session anyway '
+        '(${e.runtimeType})',
+        name: 'AuthRepository',
+      );
+    }
 
     try {
       await _local.clearAll();
@@ -94,17 +86,7 @@ class AuthRepositoryImpl implements AuthRepository {
   // ─── Send Reset Code ────────────────────────────────
   @override
   Future<Either<Failure, Unit>> sendResetCode({required String email}) =>
-      _execute(() async => (await _remote.sendResetCode(email: email)).toEither());
-
-  // ─── Verify Reset Code ──────────────────────────────
-  @override
-  Future<Either<Failure, Unit>> verifyResetCode({
-    required String email,
-    required String code,
-  }) => _execute(
-    () async =>
-        (await _remote.verifyResetCode(email: email, code: code)).toEither(),
-  );
+      execute(() async => (await _remote.sendResetCode(email: email)).toEither());
 
   // ─── Confirm New Password ───────────────────────────
   @override
@@ -112,22 +94,10 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String code,
     required String newPassword,
-  }) => _execute(
+  }) => execute(
     () async => (await _remote.confirmNewPassword(
       email: email,
       code: code,
-      newPassword: newPassword,
-    )).toEither(),
-  );
-
-  // ─── Reset Password ─────────────────────────────────
-  @override
-  Future<Either<Failure, Unit>> resetPassword({
-    required String token,
-    required String newPassword,
-  }) => _execute(
-    () async => (await _remote.resetPassword(
-      token: token,
       newPassword: newPassword,
     )).toEither(),
   );
@@ -137,7 +107,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, Unit>> changePassword({
     required String currentPassword,
     required String newPassword,
-  }) => _execute(
+  }) => execute(
     () async => (await _remote.changePassword(
       currentPassword: currentPassword,
       newPassword: newPassword,
@@ -150,7 +120,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String? fullName,
     String? avatarUrl,
     String? phone,
-  }) => _execute(() async {
+  }) => execute(() async {
     final result = await _remote.updateProfile(
       fullName: fullName,
       avatarUrl: avatarUrl,
@@ -202,8 +172,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
   // ─── Private: Start Session ─────────────────────────
   Future<AuthResultEntity> _startSession(AuthResultModel authResult) async {
-    await _local.cacheUser(authResult.user);
+    // Token first: if the second write fails, a token without a cached user is
+    // harmless (getCurrentUser fetches the user from the server), whereas a
+    // cached user without a token would look like a half-open session.
     await _local.saveToken(authResult.tokens);
+    await _local.cacheUser(authResult.user);
     return AuthResultEntity(
       user: authResult.user.toEntity(),
       tokens: authResult.tokens.toEntity(),

@@ -10,7 +10,10 @@ import 'package:accounting_software/app/core/routing/route_transitions.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/routing/app_router_observer.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/profile/profile_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/forgot_password/forgot_password_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/forgot_password/reset_password_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/login/login_screen.dart';
@@ -28,7 +31,8 @@ import 'package:accounting_software/app/features/splash/presentation/pages/splas
 import 'package:accounting_software/app/shell/app_shell.dart';
 
 class AppRouter {
-  static final AuthCubit authCubit = sl<AuthCubit>();
+  /// The router sees the session only through its contract.
+  static final SessionGate session = sl<SessionGate>();
   static final AppSettingsManager settings = sl<AppSettingsManager>();
   static final SplashCubit splashCubit = sl<SplashCubit>();
   static final AccessCubit accessCubit = sl<AccessCubit>();
@@ -41,7 +45,7 @@ class AppRouter {
     observers: [MyNavObserver()],
 
     refreshListenable: GoRouterRefreshStream([
-      authCubit.stream,
+      session.changes,
       splashCubit.stream,
       accessCubit.stream, // أعد تقييم حراس الصلاحيات عند تغيّر الدور
     ]),
@@ -101,7 +105,7 @@ class AppRouter {
         pageBuilder: (context, state) => RouteTransitions.fade(
           context,
           state,
-          _withAuth(const LoginScreen()),
+          _withAuthFlow(const LoginScreen()),
         ),
       ),
 
@@ -114,7 +118,7 @@ class AppRouter {
         pageBuilder: (context, state) => RouteTransitions.slide(
           context,
           state,
-          _withAuth(const SignUpScreen()),
+          _withAuthFlow(const SignUpScreen()),
         ),
       ),
 
@@ -127,7 +131,7 @@ class AppRouter {
         pageBuilder: (context, state) => RouteTransitions.slide(
           context,
           state,
-          _withAuth(const ForgotPasswordScreen()),
+          _withAuthFlow(const ForgotPasswordScreen()),
         ),
       ),
       GoRoute(
@@ -141,7 +145,7 @@ class AppRouter {
         pageBuilder: (context, state) => RouteTransitions.slide(
           context,
           state,
-          _withAuth(
+          _withAuthFlow(
             ResetPasswordScreen(email: state.uri.queryParameters['email']!),
           ),
         ),
@@ -222,7 +226,7 @@ class AppRouter {
                 path: AppRoutes.profile.path,
                 name: AppRoutes.profile.name,
                 pageBuilder: (context, state) =>
-                    NoTransitionPage(child: _withAuth(const ProfileScreen())),
+                    NoTransitionPage(child: _withSession(const ProfileScreen())),
 
                 routes: [
                   // GoRoute(
@@ -249,10 +253,23 @@ class AppRouter {
     ];
   }
 
-  /// The auth pages share the app-wide [authCubit] singleton: `.value` so that
-  /// leaving a page does not close it.
-  static Widget _withAuth(Widget page) =>
-      BlocProvider<AuthCubit>.value(value: authCubit, child: page);
+  /// Auth pages get their own [AuthFlowCubit] (a new one per page, closed with
+  /// it), so loading state never leaks between pages.
+  static Widget _withAuthFlow(Widget page) =>
+      BlocProvider<AuthFlowCubit>(
+        create: (_) => sl<AuthFlowCubit>(),
+        child: page,
+      );
+
+  /// The profile page: the app-wide session (`.value`, never closed with the
+  /// page) plus its own [ProfileCubit].
+  static Widget _withSession(Widget page) => MultiBlocProvider(
+    providers: [
+      BlocProvider<SessionCubit>.value(value: sl<SessionCubit>()),
+      BlocProvider<ProfileCubit>(create: (_) => sl<ProfileCubit>()),
+    ],
+    child: page,
+  );
 
   static Future<String?> _redirect(
     BuildContext context,
@@ -261,6 +278,6 @@ class AppRouter {
     location: state.matchedLocation,
     splashDone: splashCubit.state is SplashDone,
     onboarded: await settings.isOnboarded(),
-    authState: authCubit.state,
+    session: session.current,
   );
 }

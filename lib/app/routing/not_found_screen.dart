@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -25,11 +25,11 @@ class NotFoundScreen extends StatelessWidget {
             children: [
               const AppText.raw('404', type: AppTextType.displayMedium),
               gap,
-              AppText(AppKeys.common.pageNotFound, type: AppTextType.titleLarge),
+              AppText(CommonKeys.pageNotFound, type: AppTextType.titleLarge),
               if (location != null) AppText.raw(location, textAlign: TextAlign.center),
               gap,
               AppButton(
-                AppKeys.common.goHome,
+                CommonKeys.goHome,
                 onPressed: () => context.go(AppRoutes.home.path),
               ),
             ],

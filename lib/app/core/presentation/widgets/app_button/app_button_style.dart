@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 
-enum AppButtonVariant { primary, secondary, outlined, danger }
+enum AppButtonVariant { primary, secondary, outlined, danger, text }
 
 enum AppButtonSize { small, medium, large }
 
@@ -105,6 +105,10 @@ class AppButtonStyle {
     mode: _adaptive,
   );
 
+  /// Minimum touch target of an icon-only button (>= 48 on every screen type).
+  double get touchTarget =>
+      Rh.height(context, AppComponentSize.large, mode: _adaptive);
+
   BorderRadius get radius =>
       Rh.circularRadius(context, AppRadius.md, mode: _adaptive);
 
@@ -123,6 +127,7 @@ class AppButtonStyle {
     ),
     AppButtonVariant.outlined => (Colors.transparent, _scheme.onSurface),
     AppButtonVariant.danger => (_scheme.error, _scheme.onError),
+    AppButtonVariant.text => (Colors.transparent, _scheme.primary),
   };
 
   // ═══════════════════════════════════════════
@@ -137,6 +142,8 @@ class AppButtonStyle {
   }) {
     final (enabledBackground, enabledForeground) = _colors(variant);
     final isOutlined = variant == AppButtonVariant.outlined;
+    // Outlined and text buttons have no fill of their own.
+    final isTransparent = isOutlined || variant == AppButtonVariant.text;
 
     final Color background;
     final Color foreground;
@@ -156,7 +163,7 @@ class AppButtonStyle {
         borderColor = isOutlined ? _scheme.outline : null;
       case AppButtonState.disabled:
         foreground = _scheme.onSurface.withOpacity(_disabledForegroundOpacity);
-        background = isOutlined
+        background = isTransparent
             ? Colors.transparent
             : _scheme.onSurface.withOpacity(_disabledBackgroundOpacity);
         borderColor = isOutlined

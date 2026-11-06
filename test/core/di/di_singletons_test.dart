@@ -13,7 +13,7 @@ void main() {
 
   tearDown(() => sl.reset());
 
-  // AuthCubit listens to TokenManager.sessionCleared. If the locator ever
+  // SessionCubit listens to TokenManager.sessionCleared. If the locator ever
   // built a new TokenManager per call, the cubit would listen to a stream
   // nobody emits on and "session expired" would silently never show.
   test('TokenManager is a singleton', () {

@@ -99,23 +99,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         fromJson: (_) => unit,
       );
 
-  /// Supabase cannot check a recovery code without consuming it: verifying it
-  /// creates the session. Use [confirmNewPassword], which verifies the code and
-  /// sets the new password in one step.
-  @override
-  Future<ApiResult<Unit>> verifyResetCode({
-    required String email,
-    required String code,
-  }) async => ApiFailure<Unit>(
-    ApiException.unknown(
-      serverMessage: 'verifyResetCode is not supported; use confirmNewPassword',
-    ),
-  );
-
   /// [token] is the access token of a recovery session (for example the one
   /// delivered by the e-mail recovery link).
-  @override
-  Future<ApiResult<Unit>> resetPassword({
+  Future<ApiResult<Unit>> _setPasswordWithRecoveryToken({
     required String token,
     required String newPassword,
   }) => _updateUser(
@@ -146,7 +132,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       fromJson: sessionFromSupabase,
     );
     return switch (verified) {
-      ApiSuccess(:final data) => await resetPassword(
+      ApiSuccess(:final data) => await _setPasswordWithRecoveryToken(
         token: data.tokens.accessToken,
         newPassword: newPassword,
       ),

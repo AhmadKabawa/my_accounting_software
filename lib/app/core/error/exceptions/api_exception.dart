@@ -1,5 +1,5 @@
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 
 class ApiException extends AppException {
   final ApiExceptionType type;
@@ -14,21 +14,21 @@ class ApiException extends AppException {
 
   factory ApiException.noInternet({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.network.toString(),
+      message: serverMessage ?? ErrorKeys.network.key,
       type: ApiExceptionType.noInternet,
     );
   }
 
   factory ApiException.timeout({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.timeout.toString(),
+      message: serverMessage ?? ErrorKeys.timeout.key,
       type: ApiExceptionType.timeout,
     );
   }
 
   factory ApiException.cancelled({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.cancelled.toString(),
+      message: serverMessage ?? ErrorKeys.cancelled.key,
       type: ApiExceptionType.cancelled,
     );
   }
@@ -37,7 +37,7 @@ class ApiException extends AppException {
 
   factory ApiException.unauthorized({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.unauthorized.toString(),
+      message: serverMessage ?? ErrorKeys.unauthorized.key,
       statusCode: 401,
       type: ApiExceptionType.unauthorized,
     );
@@ -45,7 +45,7 @@ class ApiException extends AppException {
 
   factory ApiException.forbidden({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.forbidden.toString(),
+      message: serverMessage ?? ErrorKeys.forbidden.key,
       statusCode: 403,
       type: ApiExceptionType.forbidden,
     );
@@ -55,7 +55,7 @@ class ApiException extends AppException {
 
   factory ApiException.badRequest({String? serverMessage, int? statusCode}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.badRequest.toString(),
+      message: serverMessage ?? ErrorKeys.badRequest.key,
       statusCode: statusCode ?? 400,
       type: ApiExceptionType.badRequest,
     );
@@ -63,7 +63,7 @@ class ApiException extends AppException {
 
   factory ApiException.notFound({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.notFound.toString(),
+      message: serverMessage ?? ErrorKeys.notFound.key,
       statusCode: 404,
       type: ApiExceptionType.notFound,
     );
@@ -71,7 +71,7 @@ class ApiException extends AppException {
 
   factory ApiException.validationError({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.validation.toString(),
+      message: serverMessage ?? ErrorKeys.validation.key,
       statusCode: 422,
       type: ApiExceptionType.validation,
     );
@@ -79,7 +79,7 @@ class ApiException extends AppException {
 
   factory ApiException.conflict({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.conflict.toString(),
+      message: serverMessage ?? ErrorKeys.conflict.key,
       statusCode: 409,
       type: ApiExceptionType.conflict,
     );
@@ -89,7 +89,7 @@ class ApiException extends AppException {
 
   factory ApiException.server({int? statusCode, String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.server.toString(),
+      message: serverMessage ?? ErrorKeys.server.key,
       statusCode: statusCode ?? 500,
       type: ApiExceptionType.serverError,
     );
@@ -97,7 +97,7 @@ class ApiException extends AppException {
 
   factory ApiException.serviceUnavailable({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.serviceUnavailable.toString(),
+      message: serverMessage ?? ErrorKeys.serviceUnavailable.key,
       statusCode: 503,
       type: ApiExceptionType.serverError,
     );
@@ -107,7 +107,7 @@ class ApiException extends AppException {
 
   factory ApiException.unknown({String? serverMessage}) {
     return ApiException._(
-      message: serverMessage ?? AppKeys.errors.unknown.toString(),
+      message: serverMessage ?? ErrorKeys.unknown.key,
       type: ApiExceptionType.unknown,
     );
   }

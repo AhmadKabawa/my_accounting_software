@@ -21,11 +21,6 @@ abstract class AuthRemoteDataSource {
 
   Future<ApiResult<Unit>> logout();
 
-  Future<ApiResult<Unit>> resetPassword({
-    required String token,
-    required String newPassword,
-  });
-
   Future<ApiResult<Unit>> changePassword({
     required String currentPassword,
     required String newPassword,
@@ -38,11 +33,6 @@ abstract class AuthRemoteDataSource {
   });
 
   Future<ApiResult<Unit>> sendResetCode({required String email});
-
-  Future<ApiResult<Unit>> verifyResetCode({
-    required String email,
-    required String code,
-  });
 
   Future<ApiResult<Unit>> confirmNewPassword({
     required String email,

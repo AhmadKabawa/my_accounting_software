@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
+import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_effect.dart';
 import 'package:accounting_software/app/features/auth/presentation/widgets/auth_page_scaffold.dart';
-import 'package:accounting_software/app/features/auth/presentation/widgets/auth_text_field.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/features/auth/presentation/widgets/password_field.dart';
 
 /// Step 2 of password recovery: the e-mailed code and the new password.
@@ -42,7 +44,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   void _submit() {
     MessageViewWidgets.hideKeyboard();
     if (!_formKey.currentState!.validate()) return;
-    context.read<AuthCubit>().confirmNewPassword(
+    context.read<AuthFlowCubit>().confirmNewPassword(
       email: widget.email,
       code: _code.text.trim(),
       newPassword: _password.text,
@@ -53,25 +55,25 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Widget build(BuildContext context) {
     final gap = context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical);
 
-    return BlocListener<AuthCubit, AuthState>(
-      // Loading -> Unauthenticated is the success path of this call (a failure
-      // goes back to CodeVerified).
-      listenWhen: (previous, current) =>
-          previous is AuthLoading && current is Unauthenticated,
-      listener: (context, _) => context.goNamed(AppRoutes.login.name),
+    return BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
+      onEffect: (context, effect) {
+        if (effect is PasswordResetEffect) {
+          context.goNamed(AppRoutes.login.name);
+        }
+      },
       child: AuthPageScaffold(
-        titleKey: AppKeys.auth.resetPasswordTitle,
-        subtitleKey: AppKeys.auth.resetPasswordSubtitle,
+        titleKey: AuthKeys.resetPasswordTitle,
+        subtitleKey: AuthKeys.resetPasswordSubtitle,
         showBack: true,
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              AuthTextField(
+              AppTextField(
                 controller: _code,
-                labelKey: AppKeys.fields.resetCode,
-                icon: Icons.pin_outlined,
+                labelKey: FieldKeys.resetCode,
+                prefixIcon: AppIcons.pin,
                 keyboardType: TextInputType.number,
                 validator: (v) =>
                     AppValidator.validate(v, [ValidationRule.required]),
@@ -79,7 +81,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               gap,
               PasswordField(
                 controller: _password,
-                labelKey: AppKeys.fields.newPassword,
+                labelKey: FieldKeys.newPassword,
                 validator: (v) => AppValidator.validate(v, [
                   ValidationRule.required,
                   ValidationRule.password,
@@ -88,7 +90,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               gap,
               PasswordField(
                 controller: _confirm,
-                labelKey: AppKeys.fields.confirmPassword,
+                labelKey: FieldKeys.confirmPassword,
                 textInputAction: TextInputAction.done,
                 onSubmitted: _submit,
                 validator: (v) => AppValidator.validate(
@@ -99,10 +101,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ),
               gap,
               AppButton(
-                AppKeys.auth.resetPassword,
+                AuthKeys.resetPassword,
                 expand: true,
-                isLoading: context.select<AuthCubit, bool>(
-                  (c) => c.state is AuthLoading,
+                isLoading: context.select<AuthFlowCubit, bool>(
+                  (c) => c.isLoading,
                 ),
                 onPressed: _submit,
               ),

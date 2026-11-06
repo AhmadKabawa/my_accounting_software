@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -97,7 +97,7 @@ class MessageViewWidgets {
           content: text,
           actions: [
             AppButton(
-              AppKeys.common.ok,
+              CommonKeys.ok,
               variant: type == MessageType.error
                   ? AppButtonVariant.danger
                   : AppButtonVariant.primary,

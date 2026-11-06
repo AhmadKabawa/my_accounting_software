@@ -24,9 +24,12 @@ features/<feature>/
 
 ## ما يُنسخ من Auth
 
-- **إطار الصفحة:** `AuthPageScaffold` يجمع التخطيط والتمرير وحد العرض والعنوان، وهو المكان الوحيد الذي يحوّل `AuthEffect` إلى رسالة. صفحة جديدة تعطيه `child` فقط.
-- **الحالة مقابل الأثر:** البيانات المستمرة في `AuthState`، والرسائل في `AuthEffect` عبر `AppKey` (لا نصاً مترجماً). أثر يجب أن يبقى بعد انتقال الصفحة يُرسَل `replayable: true`.
-- **الحقول:** `AuthTextField` و`PasswordField` مع `AppValidator`؛ لا validator موازياً.
+- **إطار الصفحة:** `AuthPageScaffold` يجمع التخطيط والتمرير وحد العرض والعنوان و`FlashMessageListener` الذي يعرض الرسائل. صفحة جديدة تعطيه `child` فقط.
+- **الـ Cubits:** `SessionCubit` عام (singleton، يطبّق `SessionGate`: checking/authenticated/unauthenticated)، و`AuthFlowCubit` لكل صفحة (factory، حالته idle/loading، وآثار التنقل `AuthFlowEffect`)، و`ProfileCubit` لتحديث الملف وكلمة المرور بتحميل محلي. الرسائل عبر `FlashMessages` بـ `AppKey` (لا نصاً مترجماً). بريد الاسترجاع يمر بين الصفحتين كمعامل مسار.
+- **عقد الجلسة:** Splash والـ Router يعتمدان على `SessionGate` فقط.
+- **النصوص:** enum لكل ميزة + سطر في `key_registry.dart` ([LOCALIZATION.md](LOCALIZATION.md)).
+- **المجلدات:** `pages/<page>/sections/` للأقسام الكبيرة، و`widgets/` للصغيرة.
+- **الحقول:** `AppTextField` (core) و`PasswordField` (غلاف رقيق فوقه) مع `AppValidator`؛ لا validator موازياً.
 - **النصوص والأزرار:** `AppText` و`AppButton` ومفاتيح `AppKeys` في ملفي ar/en.
 - **المسارات:** المسار في `AppRoutes` وفي `AppRoutes.all` وفي `publicRoutes` أو `protectedRoutes`، ثم تسجيله في `app_go_router.dart`. الصفحات التي تشارك Cubit مفرداً تأخذه بـ `BlocProvider.value` (`AppRouter._withAuth`).
 - **الحراس:** `resolveRedirect` دالة نقية مغطاة في `test/routing/route_guards_test.dart`.
@@ -41,4 +44,6 @@ features/<feature>/
 ## قيود معروفة
 
 - `features/home` ما زال محتوى تجريبياً من قالب سابق (بيانات banners ثابتة وألوان خام) ولم يُحوَّل إلى هذا القالب.
-- `splash_di.dart` يستورد `AuthCubit` مباشرة؛ انظر «المخالفات المعروفة» في قواعد المعمارية.
+- `home` و`on_boarding` ما زالا تجريبيين ومستثنيين من اختبار منع العناصر الخام.
+- لا قالب CRUD (قائمة + تفاصيل + نموذج) بعد؛ يُبنى على أول ميزة حقيقية.
+- قرارا أمان الجلسة: [SECURITY_DECISIONS.md](SECURITY_DECISIONS.md).

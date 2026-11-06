@@ -41,12 +41,6 @@ class _FakeRemote implements AuthRemoteDataSource {
   Future<ApiResult<Unit>> logout() => throw UnimplementedError('logout');
 
   @override
-  Future<ApiResult<Unit>> resetPassword({
-    required String token,
-    required String newPassword,
-  }) => throw UnimplementedError('resetPassword');
-
-  @override
   Future<ApiResult<Unit>> changePassword({
     required String currentPassword,
     required String newPassword,
@@ -62,12 +56,6 @@ class _FakeRemote implements AuthRemoteDataSource {
   @override
   Future<ApiResult<Unit>> sendResetCode({required String email}) =>
       throw UnimplementedError('sendResetCode');
-
-  @override
-  Future<ApiResult<Unit>> verifyResetCode({
-    required String email,
-    required String code,
-  }) => throw UnimplementedError('verifyResetCode');
 
   @override
   Future<ApiResult<Unit>> confirmNewPassword({

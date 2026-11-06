@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/routing/app_go_router.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 
 /// المسارات المتاحة دون تسجيل دخول. أي مسار آخر محمي افتراضيًا (deny by default).
 final Set<String> publicRoutes = {
@@ -40,12 +40,13 @@ final Set<String> _authOnlyEntryRoutes = {
 /// دالة نقية تحدد وجهة التوجيه. تعيد null عند عدم الحاجة لأي توجيه.
 ///
 /// الترتيب: Splash ← Onboarding ← المصادقة. لا يحدث أي توجيه أثناء
-/// [AuthChecking] أو [AuthLoading] حتى لا يُطرد المستخدم أثناء عملية جارية.
+/// [SessionChecking] حتى لا يُطرد المستخدم قبل التحقق من جلسته. الراوتر يعتمد
+/// على عقد [SessionStatus] فقط، لا على أي Cubit.
 String? resolveRedirect({
   required String location,
   required bool splashDone,
   required bool onboarded,
-  required AuthState authState,
+  required SessionStatus session,
 }) {
   final splash = AppRoutes.splash.path;
   final onboarding = AppRoutes.onboarding.path;
@@ -54,9 +55,9 @@ String? resolveRedirect({
 
   if (!splashDone) return location == splash ? null : splash;
 
-  if (authState is AuthChecking || authState is AuthLoading) return null;
+  if (session is SessionChecking) return null;
 
-  final authenticated = authState is Authenticated;
+  final authenticated = session is SessionAuthenticated;
 
   if (location == splash) {
     if (!onboarded) return onboarding;

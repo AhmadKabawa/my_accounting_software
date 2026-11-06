@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/validation_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 /// أنواع التحقق الممكنة
@@ -143,27 +143,27 @@ class AppValidator {
   static AppKey _defaultKey(ValidationRule rule) {
     switch (rule) {
       case ValidationRule.required:
-        return AppKeys.valid.required;
+        return ValidationKeys.required;
       case ValidationRule.email:
-        return AppKeys.valid.emailInvalid;
+        return ValidationKeys.emailInvalid;
       case ValidationRule.minLength:
-        return AppKeys.valid.fieldMinLength;
+        return ValidationKeys.fieldMinLength;
       case ValidationRule.maxLength:
-        return AppKeys.valid.fieldMaxLength;
+        return ValidationKeys.fieldMaxLength;
 
       case ValidationRule.hasUppercase:
-        return AppKeys.valid.passwordNeedsUpper;
+        return ValidationKeys.passwordNeedsUpper;
       case ValidationRule.hasNumber:
-        return AppKeys.valid.passwordNeedsNumber;
+        return ValidationKeys.passwordNeedsNumber;
       case ValidationRule.hasSpecialChar:
-        return AppKeys.valid.passwordNeedsSpecial;
+        return ValidationKeys.passwordNeedsSpecial;
       case ValidationRule.phone:
-        return AppKeys.valid.phoneInvalid;
+        return ValidationKeys.phoneInvalid;
       case ValidationRule.match:
-        return AppKeys.valid.passwordsNotMatch;
+        return ValidationKeys.passwordsNotMatch;
       case ValidationRule.password:
       case ValidationRule.async:
-        return AppKeys.valid.required;
+        return ValidationKeys.required;
     }
   }
 }

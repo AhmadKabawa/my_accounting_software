@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 
 /// Base class for all exceptions
 abstract class AppException implements Exception {
@@ -16,16 +16,16 @@ abstract class AppException implements Exception {
 /// Cache exception - when local storage fails
 class CacheException extends AppException {
   CacheException({String? message})
-    : super(message: message ?? AppKeys.errors.cache.toString());
+    : super(message: message ?? ErrorKeys.cache.key);
 }
 
 /// Validation exception - when input validation fails
 class ValidationException extends AppException {
   ValidationException({String? message})
-    : super(message: message ?? AppKeys.errors.validation.toString());
+    : super(message: message ?? ErrorKeys.validation.key);
 }
 
 class PermissionException extends AppException {
   PermissionException({String? message})
-    : super(message: message ?? AppKeys.errors.permission.toString());
+    : super(message: message ?? ErrorKeys.permission.key);
 }

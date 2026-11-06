@@ -1,68 +1,71 @@
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/server_error_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 class ServerErrorMapper {
   ServerErrorMapper._();
   static final Map<String, AppKey> _serverToKey = {
     // ───────────── Email ─────────────
-    'already been taken': AppKeys.server.emailAlreadyExists,
-    'email already exists': AppKeys.server.emailAlreadyExists,
-    'email_already_exists': AppKeys.server.emailAlreadyExists,
-    'duplicate entry': AppKeys.server.emailAlreadyExists,
-    'email not found': AppKeys.server.emailNotFound,
-    'email_not_found': AppKeys.server.emailNotFound,
+    'already been taken': ServerErrorKeys.emailAlreadyExists,
+    'email already exists': ServerErrorKeys.emailAlreadyExists,
+    'email_already_exists': ServerErrorKeys.emailAlreadyExists,
+    'duplicate entry': ServerErrorKeys.emailAlreadyExists,
+    'email not found': ServerErrorKeys.emailNotFound,
+    'email_not_found': ServerErrorKeys.emailNotFound,
 
     // ───────────── Credentials ─────────────
-    'invalid credentials': AppKeys.server.invalidCredentials,
-    'invalid_credentials': AppKeys.server.invalidCredentials,
-    'wrong password': AppKeys.server.invalidCredentials,
-    'incorrect password': AppKeys.server.invalidCredentials,
-    'these credentials do not': AppKeys.server.invalidCredentials,
-    'authentication failed': AppKeys.server.invalidCredentials,
+    'invalid login credentials': ServerErrorKeys.invalidCredentials,
+    'invalid credentials': ServerErrorKeys.invalidCredentials,
+    'invalid_credentials': ServerErrorKeys.invalidCredentials,
+    'wrong password': ServerErrorKeys.invalidCredentials,
+    'incorrect password': ServerErrorKeys.invalidCredentials,
+    'these credentials do not': ServerErrorKeys.invalidCredentials,
+    'authentication failed': ServerErrorKeys.invalidCredentials,
 
     // ───────────── Account ─────────────
-    'account disabled': AppKeys.server.accountDisabled,
-    'account_disabled': AppKeys.server.accountDisabled,
-    'account suspended': AppKeys.server.accountDisabled,
-    'user disabled': AppKeys.server.accountDisabled,
+    'account disabled': ServerErrorKeys.accountDisabled,
+    'account_disabled': ServerErrorKeys.accountDisabled,
+    'account suspended': ServerErrorKeys.accountDisabled,
+    'user disabled': ServerErrorKeys.accountDisabled,
 
     // ───────────── Rate limiting ─────────────
-    'too many attempts': AppKeys.server.tooManyAttempts,
-    'too_many_attempts': AppKeys.server.tooManyAttempts,
-    'rate limit': AppKeys.server.tooManyAttempts,
-    'too many requests': AppKeys.server.tooManyAttempts,
+    'too many attempts': ServerErrorKeys.tooManyAttempts,
+    'too_many_attempts': ServerErrorKeys.tooManyAttempts,
+    'rate limit': ServerErrorKeys.tooManyAttempts,
+    'too many requests': ServerErrorKeys.tooManyAttempts,
 
     // ───────────── Password ─────────────
-    'current password': AppKeys.server.passwordIncorrect,
-    'password_incorrect': AppKeys.server.passwordIncorrect,
-    'old password is wrong': AppKeys.server.passwordIncorrect,
+    'current password is': ServerErrorKeys.passwordIncorrect,
+    'incorrect current password': ServerErrorKeys.passwordIncorrect,
+    'password_incorrect': ServerErrorKeys.passwordIncorrect,
+    'old password is wrong': ServerErrorKeys.passwordIncorrect,
 
     // ───────────── Token ─────────────
-    'token expired': AppKeys.server.tokenExpired,
-    'token_expired': AppKeys.server.tokenExpired,
-    'link expired': AppKeys.server.tokenExpired,
-    'token invalid': AppKeys.server.tokenInvalid,
-    'token_invalid': AppKeys.server.tokenInvalid,
-    'invalid token': AppKeys.server.tokenInvalid,
+    'token expired': ServerErrorKeys.tokenExpired,
+    'token_expired': ServerErrorKeys.tokenExpired,
+    'link expired': ServerErrorKeys.tokenExpired,
+    'token invalid': ServerErrorKeys.tokenInvalid,
+    'token_invalid': ServerErrorKeys.tokenInvalid,
+    'invalid token': ServerErrorKeys.tokenInvalid,
 
     // ───────────── User ─────────────
-    'user not found': AppKeys.server.userNotFound,
-    'user_not_found': AppKeys.server.userNotFound,
-    'no user': AppKeys.server.userNotFound,
+    'user not found': ServerErrorKeys.userNotFound,
+    'user_not_found': ServerErrorKeys.userNotFound,
+    'no user found': ServerErrorKeys.userNotFound,
 
     // ───────────── Phone ─────────────
-    'phone already': AppKeys.server.phoneAlreadyExists,
-    'phone_already_exists': AppKeys.server.phoneAlreadyExists,
+    'phone already': ServerErrorKeys.phoneAlreadyExists,
+    'phone_already_exists': ServerErrorKeys.phoneAlreadyExists,
 
     // ───────────── Auth ─────────────
-    'unauthenticated': AppKeys.server.unauthenticated,
-    'not authenticated': AppKeys.server.unauthenticated,
-    'please login': AppKeys.server.unauthenticated,
+    'unauthenticated': ServerErrorKeys.unauthenticated,
+    'not authenticated': ServerErrorKeys.unauthenticated,
+    'please login': ServerErrorKeys.unauthenticated,
 
     // ───────────── Email verification ─────────────
-    'email not verified': AppKeys.server.unverifiedEmail,
-    'unverified_email': AppKeys.server.unverifiedEmail,
-    'verify your email': AppKeys.server.unverifiedEmail,
+    'email not verified': ServerErrorKeys.unverifiedEmail,
+    'unverified_email': ServerErrorKeys.unverifiedEmail,
+    'verify your email': ServerErrorKeys.unverifiedEmail,
   };
 
   static AppKey map(String? serverMessage, {int? statusCode}) {
@@ -83,17 +86,17 @@ class ServerErrorMapper {
 
   static AppKey _fallbackByStatusCode(int? code) {
     return switch (code) {
-      400 => AppKeys.errors.validation,
-      401 => AppKeys.errors.unauthorized,
-      403 => AppKeys.errors.forbidden,
-      404 => AppKeys.errors.notFound,
-      408 => AppKeys.errors.timeout,
-      409 => AppKeys.errors.conflict,
-      422 => AppKeys.errors.validation,
-      429 => AppKeys.server.tooManyAttempts,
-      500 => AppKeys.errors.server,
-      503 => AppKeys.errors.serviceUnavailable,
-      _ => AppKeys.errors.unexpected,
+      400 => ErrorKeys.validation,
+      401 => ErrorKeys.unauthorized,
+      403 => ErrorKeys.forbidden,
+      404 => ErrorKeys.notFound,
+      408 => ErrorKeys.timeout,
+      409 => ErrorKeys.conflict,
+      422 => ErrorKeys.validation,
+      429 => ServerErrorKeys.tooManyAttempts,
+      500 => ErrorKeys.server,
+      503 => ErrorKeys.serviceUnavailable,
+      _ => ErrorKeys.unexpected,
     };
   }
 }

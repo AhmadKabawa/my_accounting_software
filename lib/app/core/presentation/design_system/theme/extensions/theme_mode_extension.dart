@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/theme_keys.dart';
 
 /// وظائف عرض مساعدة على [ThemeMode] (أيقونة واسم مترجم).
 extension ThemeModeExtension on ThemeMode {
@@ -19,11 +19,11 @@ extension ThemeModeExtension on ThemeMode {
   AppKey get nameKey {
     switch (this) {
       case ThemeMode.light:
-        return AppKeys.theme.light;
+        return ThemeKeys.light;
       case ThemeMode.dark:
-        return AppKeys.theme.dark;
+        return ThemeKeys.dark;
       case ThemeMode.system:
-        return AppKeys.theme.system;
+        return ThemeKeys.system;
     }
   }
 }

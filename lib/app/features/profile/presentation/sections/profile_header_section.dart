@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 
 /// Avatar initial, name and e-mail of the signed-in user.
 class ProfileHeaderSection extends StatelessWidget {
@@ -12,9 +12,9 @@ class ProfileHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.select<AuthCubit, UserEntity?>(
-      (cubit) => switch (cubit.state) {
-        Authenticated(:final user) => user,
+    final user = context.select<SessionCubit, UserEntity?>(
+      (cubit) => switch (cubit.current) {
+        SessionAuthenticated(:final user) => user,
         _ => null,
       },
     );

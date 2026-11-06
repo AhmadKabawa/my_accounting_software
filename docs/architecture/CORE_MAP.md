@@ -49,7 +49,7 @@
 - `Failure` (`error/failures/failure.dart`): عقد الخطأ الذي يصل إلى Domain/Presentation، ويحمل `messageKey` من نوع `AppKey` و`statusCode` اختيارياً.
 - `ExceptionMapper.map` (`error/mappers/exception_mapper.dart`): يحوّل `AppException` إلى `Failure`. مستخدم في Repositories (مثل `AuthRepositoryImpl`).
 - `ServerErrorMapper.map`: يحوّل رسائل الخادم أو Status Code إلى `AppKey`.
-- `FailureTranslator.translate(Failure)` (`error/translators/failure_translator.dart`): أداة مستقلة عن `ExceptionMapper`؛ تحوّل `Failure` إلى نص مترجم **مرة واحدة** (`failure.messageKey.tran`). لا يستهلكها كود فعّال حالياً: `AuthCubit` يمرر `failure.messageKey` (AppKey) مباشرة في `AuthEffect.showMessage` وتتم الترجمة وقت العرض. استخدمها فقط حيث يلزم `String` جاهز. الترتيب: `ExceptionMapper` (Exception → Failure) ثم الترجمة عند العرض. لا تترجم داخل Repository.
+- `FailureTranslator.translate(Failure)` (`error/translators/failure_translator.dart`): أداة مستقلة عن `ExceptionMapper`؛ تحوّل `Failure` إلى نص مترجم **مرة واحدة** (`failure.messageKey.tran`). لا يستهلكها كود فعّال حالياً: `AuthFlowCubit`/`SessionCubit` يمرران `failure.messageKey` (AppKey) إلى `FlashMessages` وتتم الترجمة وقت العرض. استخدمها فقط حيث يلزم `String` جاهز. الترتيب: `ExceptionMapper` (Exception → Failure) ثم الترجمة عند العرض. لا تترجم داخل Repository.
 
 ### Foundation
 - `ApiResult<T>`: نتيجة طبقة البيانات (`ApiSuccess` و`ApiFailure`) مع `toEither()` و`toEitherAsync()`.
@@ -155,3 +155,15 @@
 - لا تعني الإشارة إلى أداة أنها مناسبة لكل استعمال؛ تحقق من حدودها وتوقيعها وطبقتها.
 - وجود API في Core لا يعني نقل منطق Feature إليه.
 - الفرض الآلي للقواعد المعمارية غير موجود حالياً (راجع `ARCHITECTURE_RULES.md`).
+
+
+## إضافات الدفعة C (ودجتس core الجديدة)
+
+- `AppIconData` (sealed: material/svg/networkSvg/image/networkImage) و`AppIcons` (المكان الوحيد لتعريف الأيقونات) و`AppIcon(AppIconData, size: AppIconSize)` بحجم responsive. `AppIcon` غير قابل للضغط عمداً.
+- `AppButtonVariant.text` (زر نصي) وأيقونة `AppButton.icon` من نوع `AppIconData`.
+- `AppIconButton` (`widgets/app_button/app_icon_button.dart`): ضمن نظام الأزرار، `tooltipKey` مطلوب، منطقة لمس >= 48 من التوكنز.
+- `AppTextField` + `AppTextFieldStyle` (`widgets/app_text_field/`).
+- `AppDivider` (نص اختياري) و`AppPageAppBar` (شريط الصفحات العادية؛ `AppAppBar` هو شريط الرئيسية).
+- `FlashMessages` + `FlashMessageListener` (`widgets/app_message/flash_messages.dart`): رسائل تعيش بعد انتقال الصفحة.
+- `RepositoryExecutor` (`foundation/base/repository_executor.dart`): mixin لنمط try/catch + `ExceptionMapper`.
+- `HiveStorageService` و`CacheManager` تُسجَّلان في core DI.

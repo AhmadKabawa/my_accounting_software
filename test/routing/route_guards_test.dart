@@ -2,26 +2,26 @@ import 'dart:io';
 
 import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/states/auth_states.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const unauth = AuthState.unauthenticated();
+  const unauth = SessionUnauthenticated();
 
   String? run(
     String location, {
     bool splashDone = true,
     bool onboarded = true,
-    AuthState auth = unauth,
+    SessionStatus auth = unauth,
   }) => resolveRedirect(
     location: location,
     splashDone: splashDone,
     onboarded: onboarded,
-    authState: auth,
+    session: auth,
   );
 
-  final authed = AuthState.authenticated(user: _user());
+  final authed = SessionAuthenticated(_user());
 
   group('splash', () {
     test('everything goes to splash until it is done', () {
@@ -40,12 +40,11 @@ void main() {
     });
   });
 
-  group('auth in progress', () {
-    test('never redirects while checking or loading', () {
-      for (final s in [const AuthState.checking(), const AuthState.loading()]) {
-        expect(run('/profile', auth: s), isNull);
-        expect(run('/favorites', auth: s), isNull);
-      }
+  group('session check in progress', () {
+    test('never redirects while checking', () {
+      const checking = SessionChecking();
+      expect(run('/profile', auth: checking), isNull);
+      expect(run('/favorites', auth: checking), isNull);
     });
   });
 
@@ -87,17 +86,6 @@ void main() {
     test('password recovery pages are reachable while signed out', () {
       for (final route in [AppRoutes.forgotPassword, AppRoutes.resetPassword]) {
         expect(run(route.path), isNull, reason: route.path);
-      }
-    });
-
-    test('recovery pages stay open in every step of the recovery flow', () {
-      for (final state in [
-        const AuthState.resetCodeSent(email: 'a@b.c'),
-        const AuthState.codeVerified(email: 'a@b.c'),
-        const AuthState.passwordResetEmailSent(),
-      ]) {
-        expect(run(AppRoutes.resetPassword.path, auth: state), isNull);
-        expect(run(AppRoutes.forgotPassword.path, auth: state), isNull);
       }
     });
   });

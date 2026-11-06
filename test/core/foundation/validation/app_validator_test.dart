@@ -4,7 +4,7 @@ import 'package:easy_localization/src/translations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import '../../../helpers/test_key.dart';
 
 void main() {
   setUpAll(() {
@@ -51,7 +51,7 @@ void main() {
     final result = AppValidator.validate(
       '',
       [ValidationRule.required],
-      customKeys: {ValidationRule.required: const AppKey('custom.req')},
+      customKeys: {ValidationRule.required: const TestKey('custom.req')},
     );
     expect(result, 'CUSTOM');
   });
@@ -60,7 +60,7 @@ void main() {
     final result = AppValidator.validate('', [
       ValidationRule.required,
       ValidationRule.email,
-    ], customKeys: {ValidationRule.required: const AppKey('custom.req')});
+    ], customKeys: {ValidationRule.required: const TestKey('custom.req')});
     expect(result, 'CUSTOM');
   });
 }

@@ -2,7 +2,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/error/mappers/server_error_mapper.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 
@@ -15,18 +15,18 @@ class ExceptionMapper {
     }
 
     if (exception is CacheException) {
-      return CacheFailure(messageKey: AppKeys.errors.cache);
+      return CacheFailure(messageKey: ErrorKeys.cache);
     }
 
     if (exception is ValidationException) {
-      return ValidationFailure(messageKey: AppKeys.errors.validation);
+      return ValidationFailure(messageKey: ErrorKeys.validation);
     }
 
     if (exception is PermissionException) {
-      return PermissionFailure(messageKey: AppKeys.errors.permission);
+      return PermissionFailure(messageKey: ErrorKeys.permission);
     }
 
-    return UnexpectedFailure(messageKey: AppKeys.errors.unexpected);
+    return UnexpectedFailure(messageKey: ErrorKeys.unexpected);
   }
 
   static Failure _mapApiException(ApiException e) {

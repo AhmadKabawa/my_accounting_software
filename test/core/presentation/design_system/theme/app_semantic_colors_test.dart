@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/app_semantic_colors.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/theme_mode_extension.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/theme_keys.dart';
 
 void main() {
   group('AppSemanticColors', () {
@@ -94,8 +94,8 @@ void main() {
   });
 
   test('ThemeModeExtension maps modes to translation keys', () {
-    expect(ThemeMode.light.nameKey, AppKeys.theme.light);
-    expect(ThemeMode.dark.nameKey, AppKeys.theme.dark);
-    expect(ThemeMode.system.nameKey, AppKeys.theme.system);
+    expect(ThemeMode.light.nameKey, ThemeKeys.light);
+    expect(ThemeMode.dark.nameKey, ThemeKeys.dark);
+    expect(ThemeMode.system.nameKey, ThemeKeys.system);
   });
 }

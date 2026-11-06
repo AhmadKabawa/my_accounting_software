@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 abstract class Failure extends Equatable {
@@ -18,7 +18,7 @@ abstract class Failure extends Equatable {
 class ValidationFailure extends Failure {
   ValidationFailure({AppKey? messageKey, int? statusCode})
     : super(
-        messageKey: messageKey ?? AppKeys.errors.validation,
+        messageKey: messageKey ?? ErrorKeys.validation,
         statusCode: statusCode,
       );
 }
@@ -28,7 +28,7 @@ class ValidationFailure extends Failure {
 class NetworkFailure extends Failure {
   NetworkFailure({AppKey? messageKey, int? statusCode})
     : super(
-        messageKey: messageKey ?? AppKeys.errors.network,
+        messageKey: messageKey ?? ErrorKeys.network,
         statusCode: statusCode,
       );
 }
@@ -36,7 +36,7 @@ class NetworkFailure extends Failure {
 
 class CacheFailure extends Failure {
   CacheFailure({AppKey? messageKey})
-    : super(messageKey: messageKey ?? AppKeys.errors.cache);
+    : super(messageKey: messageKey ?? ErrorKeys.cache);
 }
 
 // ─────────── ServerFailure ───────────
@@ -44,7 +44,7 @@ class CacheFailure extends Failure {
 class ServerFailure extends Failure {
   ServerFailure({AppKey? messageKey, int? statusCode})
     : super(
-        messageKey: messageKey ?? AppKeys.errors.server,
+        messageKey: messageKey ?? ErrorKeys.server,
         statusCode: statusCode,
       );
 }
@@ -52,25 +52,25 @@ class ServerFailure extends Failure {
 
 class GoogleSignInFailure extends Failure {
   GoogleSignInFailure({AppKey? messageKey})
-    : super(messageKey: messageKey ?? AppKeys.errors.googleSignIn);
+    : super(messageKey: messageKey ?? ErrorKeys.googleSignIn);
 }
 
 class PermissionFailure extends Failure {
   PermissionFailure({AppKey? messageKey})
-    : super(messageKey: messageKey ?? AppKeys.errors.permission);
+    : super(messageKey: messageKey ?? ErrorKeys.permission);
 }
 
 class UnexpectedFailure extends Failure {
   UnexpectedFailure({AppKey? messageKey})
-    : super(messageKey: messageKey ?? AppKeys.errors.unknown);
+    : super(messageKey: messageKey ?? ErrorKeys.unknown);
 }
 
 class UnauthorizedFailure extends Failure {
   UnauthorizedFailure({AppKey? messageKey})
-    : super(messageKey: messageKey ?? AppKeys.errors.unauthorized);
+    : super(messageKey: messageKey ?? ErrorKeys.unauthorized);
 }
 
 class NotFoundFailure extends Failure {
   NotFoundFailure({AppKey? messageKey})
-    : super(messageKey: messageKey ?? AppKeys.errors.notFound);
+    : super(messageKey: messageKey ?? ErrorKeys.notFound);
 }

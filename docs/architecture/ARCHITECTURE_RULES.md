@@ -49,7 +49,7 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 
 شمل الفحص ملفات Dart في `lib/app/core/` وعددها 137 ملفاً، وملفات الميزات في `lib/app/features/` وعددها 102 ملف.
 
-- **مخالفة وحيدة ظهرت للمقترح الجديد:** يستورد `lib/app/features/splash/di/splash_di.dart` مباشرةً `package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart`، ثم ينشئ `SplashCubit` باستخدام `sl<AuthCubit>().checkAuthentication`. هذا ربط مباشر بين Featureين، كما أنه يعتمد على Cubit من طبقة Presentation في Feature أخرى. لم يظهر استيراد مباشر آخر بين Features ضمن الملفات المفحوصة.
+- **(تاريخي، عولجت بـ SessionGate) مخالفة ظهرت للمقترح الجديد:** يستورد `lib/app/features/splash/di/splash_di.dart` مباشرةً `package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart`، ثم ينشئ `SplashCubit` باستخدام `sl<AuthCubit>().checkAuthentication`. هذا ربط مباشر بين Featureين، كما أنه يعتمد على Cubit من طبقة Presentation في Feature أخرى. لم يظهر استيراد مباشر آخر بين Features ضمن الملفات المفحوصة.
 - **Core → Features:** لم يُعثر على استيرادات من `lib/app/core/` إلى `features/` عند فحص استيرادات ملفات Core الحالية.
 - **Data → Presentation:** لم يُعثر على استيرادات من مجلدات `data/` إلى `presentation/` في ملفات الميزات المفحوصة.
 - **Domain → Flutter/Dio:** لم يُعثر على استيرادات Flutter أو Dio داخل مجلدات `domain/` المفحوصة.
@@ -149,3 +149,18 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 3. لا تضف وظائف لمجرد إضافتها (راجع شروط §2).
 4. إن احتاج نظام موجود إلى تطوير، فطوّره بدل إنشاء بديل.
 5. لا تغيّر بنية الأنظمة المستقرة دون مبرر واختبارات.
+
+
+## قاعدة «فجوة الـ core»
+
+1. قبل أي ودجت UI في feature ابحث في `core/presentation/widgets` و`design_system`. إن وُجد فاستخدمه، وإن نقصه خيار فوسّعه في core ولا تغلّفه محلياً.
+2. إن لم يوجد وكان عاماً (يصلح لميزتين أو أكثر، أو عنصر أساسي: حقل نص، زر أيقونة، فاصل، حوار، بطاقة، حالة فارغة) فأنشئه في core أولاً ثم استخدمه.
+3. ودجت core الجديد: ملف الودجت + `*_style.dart` إن كانت له variants/states، يقرأ التوكنز، يدعم RTL، ويُسجَّل في `CORE_MAP.md` و`CORE_USAGE.md` مع اختبار.
+4. إن كان خاصاً بالميزة فعلاً يبقى فيها مع سطر يشرح السبب.
+5. ممنوع داخل `features/`: `Icon(` `IconButton(` `TextFormField(` `TextButton(` `AppBar(` `Colors.` (عدا `transparent`) `TextStyle(` و`EdgeInsets` بأرقام، و`Icons.`. يفرضه `test/architecture/no_raw_ui_in_features_test.dart` (`home` و`on_boarding` مستثنيان مؤقتاً لأنهما تجريبيان).
+6. أي نص ظاهر يُضاف إلى enum قسمه ([LOCALIZATION.md](LOCALIZATION.md)).
+
+## اتجاه الاعتماد (محدَّث)
+
+- سجل النصوص `lib/app/localization/key_registry.dart` خارج core، فلا يستورد core من features.
+- Splash والـ Router يعتمدان على `SessionGate` (domain) فقط؛ `SessionCubit` يطبّقها. ربط `checkAuthentication` بالـ Splash يتم في `app_di.dart` (جذر التركيب). لا مخالفات معروفة متبقية في هذا الباب، ولا ADR مطلوب.

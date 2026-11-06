@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
 /// Placeholder module: the destination exists in the shell, its content is
@@ -11,7 +11,7 @@ class FavoriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: AppText(AppKeys.common.comingSoon, type: AppTextType.titleMedium),
+        child: AppText(CommonKeys.comingSoon, type: AppTextType.titleMedium),
       ),
     );
   }

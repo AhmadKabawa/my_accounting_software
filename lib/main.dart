@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/presentation/state_management/app_bloc_observer.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
+import 'package:accounting_software/app/localization/key_registry.dart';
 import 'package:accounting_software/app/core/storage/hive/hive_manager.dart';
 
 void main() async {
@@ -33,7 +34,7 @@ void main() async {
       path: 'assets/translations', // مكان ملفات الترجمة
       supportedLocales: LocaleCubit.supportedLocales,
       fallbackLocale: LocaleCubit.fallbackLocale,
-      assetLoader: const MyDartLoader(),
+      assetLoader: MyDartLoader(allKeys),
       child: const MyApp(),
     ),
   );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
@@ -30,12 +30,12 @@ const _items = [
   NavBarItem(
     icon: Icons.home_outlined,
     activeIcon: Icons.home,
-    label: AppKeys.home,
+    label: NavKeys.home,
   ),
   NavBarItem(
     icon: Icons.person_outline,
     activeIcon: Icons.person,
-    label: AppKeys.person,
+    label: NavKeys.person,
   ),
 ];
 

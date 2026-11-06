@@ -178,10 +178,10 @@ import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/core/routing/routes.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/effect/auth_effect.dart';
 
-BlocEffectListener<AuthEffect, AuthCubit>(
+BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
   onEffect: (context, effect) => effect.whenOrNull(
     showMessage: (key, type) =>
         MessageViewWidgets.showMessage(context, messageKey: key, type: type),
@@ -326,3 +326,43 @@ final check = accessCubit.require(Permissions.sales.post); // Right(unit) أو L
 ## 14. قاعدة ما قبل الإنشاء
 
 قبل كتابة أي helper/widget/service جديد: ابحث في `CORE_MAP.md` ثم في `lib/app/core`، وإن لم تجد فطبّق معايير `ARCHITECTURE_RULES.md` §2 و§11، وأضف اختباراً وحدّث `CORE_MAP.md` (وهذا الملف عند تغيّر نمط الاستخدام).
+
+
+## الأيقونات والأزرار والحقول (الدفعة C)
+
+```dart
+AppIcon(AppIcons.email, size: AppIconSize.md)
+
+AppButton(AuthKeys.forgotPassword, variant: AppButtonVariant.text, onPressed: ...)
+AppButton(AuthKeys.signIn, icon: AppIcons.google, onPressed: ...)
+
+AppIconButton(AppIcons.visibility,
+    tooltipKey: AuthKeys.showPassword, onPressed: toggle)
+
+AppTextField(
+  controller: c, labelKey: FieldKeys.email, prefixIcon: AppIcons.email,
+  validator: (v) => AppValidator.validate(v, [ValidationRule.required]),
+)
+
+const AppDivider(labelKey: AuthKeys.orSignInWith)
+Scaffold(appBar: AppPageAppBar(titleKey: ProfileKeys.title), ...)
+```
+
+تغيير أيقونة من Material إلى SVG = سطر واحد في `AppIcons`.
+
+## رسائل تعيش بعد انتقال الصفحة
+
+```dart
+sl<FlashMessages>().post(AuthKeys.signOutSuccess, MessageType.success);
+// يعرضها FlashMessageListener (موجود في AuthPageScaffold وAppShell)؛
+// إن لم يوجد مستمع تنتظر وتُعاد لأول مستمع جديد.
+```
+
+## Cubit بأثر تنقل
+
+```dart
+BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
+  onEffect: (context, effect) { if (effect is ResetCodeSentEffect) { ... } },
+  child: ...,
+)
+```

@@ -18,7 +18,7 @@ class SplashCubit extends Cubit<SplashState> {
   /// then signals [SplashDone]. Later calls are ignored.
   ///
   /// A failing check is logged and does not abort the splash: the check is
-  /// responsible for leaving the session in a definite state (AuthCubit falls
+  /// responsible for leaving the session in a definite state (SessionCubit falls
   /// back to Unauthenticated), and the minimum duration is still honoured.
   Future<void> init() async {
     if (_started) return;
