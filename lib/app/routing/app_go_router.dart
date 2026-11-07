@@ -167,8 +167,15 @@ class AppRouter {
                 path: AppRoutes.home.path,
                 name: AppRoutes.home.name,
                 pageBuilder: (context, state) => NoTransitionPage(
-                  child: BlocProvider(
-                    create: (_) => sl<HomeCubit>()..init(),
+                  child: MultiBlocProvider(
+                    providers: [
+                      BlocProvider<SessionCubit>.value(
+                        value: sl<SessionCubit>(),
+                      ),
+                      BlocProvider<HomeCubit>(
+                        create: (_) => sl<HomeCubit>()..load(),
+                      ),
+                    ],
                     child: const HomeScreen(),
                   ),
                 ),

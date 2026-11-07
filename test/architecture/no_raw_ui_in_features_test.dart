@@ -6,10 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 /// AppIcon...), never from raw Material widgets or hard-coded visual values.
 /// Raw elements are allowed only inside `lib/app/core/`.
 ///
-/// `home` and `on_boarding` are demo code that predates the rule; they are
-/// listed in [_legacy] so the rule protects every other feature now. Remove an
-/// entry when that feature is cleaned up.
-const _legacy = {'home', 'on_boarding'};
+/// `on_boarding` is demo code that predates the rule; it is listed in
+/// [_legacy] so the rule protects every other feature now. Remove the entry
+/// when that feature is cleaned up.
+const _legacy = {'on_boarding'};
 
 final _forbidden = <String, RegExp>{
   'Icon(': RegExp(r'(?<![\w.])Icon\('),

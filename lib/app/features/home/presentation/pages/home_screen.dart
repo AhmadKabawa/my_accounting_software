@@ -1,111 +1,99 @@
-// ════════════════════════════════════════════════════════════
-//  presentation/screens/home_screen.dart
-//  Root screen — owns scroll controller + AppBar fade logic.
-//  Delegates each visual section to its own widget.
-// ════════════════════════════════════════════════════════════
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_appbar/app_appbar.dart';
+import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_appbar/app_page_app_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/features/home/domain/entity/home_summary.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
-import 'package:accounting_software/app/features/home/presentation/widgets/banner/home_hero_banner.dart';
-import 'package:accounting_software/app/features/home/presentation/widgets/categories/home_categories_section.dart';
-import 'package:accounting_software/app/features/home/presentation/widgets/featured/home_featured_section.dart';
-import 'package:accounting_software/app/features/home/presentation/widgets/products/home_best_products_section.dart';
-import 'package:accounting_software/app/features/home/presentation/widgets/products/home_new_products_section.dart';
-import 'package:accounting_software/app/features/home/presentation/widgets/shared/home_promo_banner.dart';
-import 'package:accounting_software/app/features/home/presentation/widgets/sport_cards/hone_sport_cards_section.dart';
+import 'package:accounting_software/app/features/home/presentation/localization/home_keys.dart';
+import 'package:accounting_software/app/features/home/presentation/sections/home_greeting_section.dart';
+import 'package:accounting_software/app/features/home/presentation/sections/home_overview_section.dart';
+import 'package:accounting_software/app/features/home/presentation/sections/home_quick_actions_section.dart';
+import 'package:accounting_software/app/features/home/presentation/sections/home_recent_activity_section.dart';
+import 'package:accounting_software/app/features/home/presentation/sections/home_sample_notice_section.dart';
 
-class HomeScreen extends StatefulWidget {
+/// Needs a `HomeCubit` and a `SessionCubit` above it (provided by the router).
+/// The screen only arranges the sections for the current state.
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final _scrollController = ScrollController();
-  double _appBarProgress = 0.0;
-  double _scrollOffset = 0.0;
-
-  static const double _appBarFadeDistance = 160.0;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-    // Kick off all data loads
-    context.read<HomeCubit>().init();
-  }
-
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final offset = _scrollController.offset;
-    final progress = (offset / _appBarFadeDistance).clamp(0.0, 1.0);
-    if (offset != _scrollOffset || progress != _appBarProgress) {
-      setState(() {
-        _scrollOffset = offset;
-        _appBarProgress = progress;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      extendBody: true,
-      backgroundColor: const Color(0xFF0A0E1A),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppAppBar(progress: _appBarProgress),
+      appBar: const AppPageAppBar(titleKey: NavKeys.home),
+      body: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) => switch (state) {
+          HomeLoading() => const Center(child: CircularProgressIndicator()),
+          HomeFailed(:final messageKey) => _Failure(messageKey: messageKey),
+          HomeLoaded(:final summary) => _Content(summary: summary),
+        },
       ),
-      body: CustomScrollView(
-        controller: _scrollController,
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // ── Hero banner slider ──────────────────────────────
-          SliverToBoxAdapter(
-            child: HomeHeroBanner(scrollOffset: _scrollOffset),
-          ),
+    );
+  }
+}
 
-          // // // ── Categories + Sport cards ────────────────────────
-          SliverToBoxAdapter(
-            child: HomeCategoriesSection(scrollOffset: _scrollOffset),
-          ),
-          // SliverToBoxAdapter(
-          //   child: HomeSportCardsSection(scrollOffset: _scrollOffset),
-          // ),
+class _Content extends StatelessWidget {
+  const _Content({required this.summary});
 
-          // // ── Best products grid ──────────────────────────────
-          // SliverToBoxAdapter(
-          //   child: HomeBestProductsSection(scrollOffset: _scrollOffset),
-          // ),
+  final HomeSummary summary;
 
-          // // ── Promo banner ────────────────────────────────────
-          // const SliverToBoxAdapter(child: HomePromoBanner()),
+  @override
+  Widget build(BuildContext context) {
+    Widget gap() => context.ui.spacing.gap(AppSpacing.lg, axis: Axis.vertical);
+    Widget title(AppKey key) => Padding(
+      padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
+      child: AppText(key, type: AppTextType.titleMedium),
+    );
 
-          // // ── New products horizontal list ────────────────────
-          // SliverToBoxAdapter(
-          //   child: HomeNewProductsSection(scrollOffset: _scrollOffset),
-          // ),
-
-          // // ── Featured gear list ──────────────────────────────
-          // SliverToBoxAdapter(
-          //   child: HomeFeaturedSection(scrollOffset: _scrollOffset),
-          // ),
-
-          // const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+    return RefreshIndicator(
+      onRefresh: context.read<HomeCubit>().load,
+      child: ListView(
+        padding: context.ui.padding.all(AppSpacing.lg),
+        children: [
+          const HomeGreetingSection(),
+          gap(),
+          if (summary.isSample) ...[const HomeSampleNoticeSection(), gap()],
+          title(HomeKeys.overview),
+          HomeOverviewSection(summary: summary),
+          gap(),
+          title(HomeKeys.quickActions),
+          const HomeQuickActionsSection(),
+          gap(),
+          title(HomeKeys.recentActivity),
+          HomeRecentActivitySection(items: summary.recent),
         ],
+      ),
+    );
+  }
+}
+
+class _Failure extends StatelessWidget {
+  const _Failure({required this.messageKey});
+
+  final AppKey messageKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: context.ui.padding.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppText(messageKey, textAlign: TextAlign.center),
+            context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+            AppButton(
+              HomeKeys.retry,
+              icon: AppIcons.refresh,
+              onPressed: context.read<HomeCubit>().load,
+            ),
+          ],
+        ),
       ),
     );
   }
