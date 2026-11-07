@@ -61,7 +61,7 @@ class AppIcon extends StatelessWidget {
         height: px,
         colorFilter: _filter(tint),
         fit: fit,
-        placeholderBuilder: (_) => _placeholder(px),
+        placeholderBuilder: (_) => _placeholder(context, px),
       ),
       ImageIconData(:final asset) => _tinted(
         Image.asset(asset, width: px, height: px, fit: fit),
@@ -75,7 +75,7 @@ class AppIcon extends StatelessWidget {
         color: tint,
         colorBlendMode: tint != null ? BlendMode.srcIn : null,
         loadingBuilder: (_, image, progress) =>
-            progress == null ? image : _placeholder(px),
+            progress == null ? image : _placeholder(context, px),
         errorBuilder: (_, __, ___) => SizedBox.square(
           dimension: px,
           child: Icon(Icons.broken_image_outlined, size: px * 0.7),
@@ -103,12 +103,14 @@ class AppIcon extends StatelessWidget {
           child: image,
         );
 
-  Widget _placeholder(double px) => SizedBox.square(
+  Widget _placeholder(BuildContext context, double px) => SizedBox.square(
     dimension: px,
     child: Center(
       child: SizedBox.square(
         dimension: px * 0.6,
-        child: const CircularProgressIndicator(strokeWidth: 1.5),
+        child: CircularProgressIndicator(
+          strokeWidth: AppBorderWidth.thick.of(context),
+        ),
       ),
     ),
   );

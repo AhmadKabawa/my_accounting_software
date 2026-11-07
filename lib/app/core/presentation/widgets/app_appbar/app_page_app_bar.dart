@@ -3,7 +3,7 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
 /// The plain app bar for ordinary pages (back arrow + optional translated
-/// title), themed by `app_bar_theme.dart`. `AppAppBar` is the brand home bar.
+/// title), themed by `app_bar_theme.dart`.
 class AppPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AppPageAppBar({super.key, this.titleKey, this.actions});
 
