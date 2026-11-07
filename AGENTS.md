@@ -93,6 +93,6 @@
 
 ## قواعد حديثة (فجوة الـ core والنصوص)
 
-- قبل أي ودجت UI في feature ابحث في core؛ العام يُنشأ في core أولاً. ممنوع داخل `features/` العناصر الخام (`Icon(`, `IconButton(`, `TextFormField(`, `TextButton(`, `AppBar(`, `Colors.`, `TextStyle(`, `EdgeInsets` بأرقام). التفاصيل في `docs/architecture/ARCHITECTURE_RULES.md`.
+- قبل أي ودجت UI في feature ابحث في core؛ العام يُنشأ في core أولاً. ممنوع داخل `features/` العناصر الخام (`Icon(`, `IconButton(`, `TextFormField(`, `TextButton(`, `AppBar(`, `Colors.`, `TextStyle(`, `EdgeInsets` بأرقام) وأي رقم مباشر لقيمة مرئية (عرض/ارتفاع/نصف قطر/سُمك حدّ...): استخدم التوكن (`AppSpacing`, `AppRadius`, `AppBorderWidth`...). التفاصيل في `docs/architecture/ARCHITECTURE_RULES.md`.
 - كل نص ظاهر يُضاف إلى enum قسمه ويُسجَّل في `lib/app/localization/key_registry.dart`؛ لا نصوص حرة ولا `AppKeys`. انظر `docs/architecture/LOCALIZATION.md`.
 - Splash والـ Router يعتمدان على `SessionGate` لا على Cubit.

@@ -141,7 +141,7 @@ AppButton(AppKeys.common.save, isLoading: state.isBusy, onPressed: onSave);
 ```
 
 **متى Core Widget ومتى Flutter Widget؟**
-- Core Widget عندما يغطي الحاجة: `AppText` للنص، `AppButton` للأزرار، `AppIcon` و`AppImage` للأيقونات والصور، `AppAppBar` و`AppNavigationBar`/`AppNavigationRail`/`AppSidebar` للتنقل.
+- Core Widget عندما يغطي الحاجة: `AppText` للنص، `AppButton` للأزرار، `AppIcon` و`AppImage` للأيقونات والصور، `AppPageAppBar` و`AppCard` للتجميع، و`AppNavigationBar`/`AppNavigationRail`/`AppSidebar` للتنقل. أبعاد وسُمك الحدود دائماً من التوكنز (`AppSpacing` و`AppRadius` و`AppBorderWidth`...) لا بأرقام حرفية.
 - Flutter Widget مباشرة للتخطيط الهيكلي (`Row` و`Column` و`Stack` و`Expanded` و`Padding` و`Scaffold` و`ListView`...) ولما ليس له مقابل في Core، مع قيم من `context.ui` والثيم.
 - لا تبنِ زراً/نصاً/شريط تنقل مشتركاً بديلاً.
 

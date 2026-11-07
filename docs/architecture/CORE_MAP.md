@@ -124,7 +124,6 @@
 - `AppText`: نص مترجم عبر `AppKey` أو `AppText.raw`، ويدعم `rich` و`selectable`.
 - `AppButton`: زر موحد، بـ `AppKey` أو `AppButton.raw`، مع variants/sizes/loading. التصميم في `AppButtonStyle`.
 - `AppIcon` و`AppImage`: عرض الأيقونات والصور؛ اقرأ الـ API قبل إعادة التنفيذ.
-- `AppAppBar` (`lib/app/core/presentation/widgets/app_appbar/app_appbar.dart`): يأخذ `progress` ويُستخدم في `features/home/presentation/pages/home_screen.dart`. يحمل التنفيذ الحالي علامة VAUDE التجارية، وأزرار القائمة والبحث والحقيبة بلا callbacks افتراضياً؛ لذلك لا يُعد AppBar عاماً مكتملاً لكل الميزات.
 - `AppNavigationBar` و`AppNavigationRail` و`AppSidebar` وأنماطها: عناصر التنقل حسب حجم الشاشة.
 - `MessageViewWidgets` و`MessageType` (`widgets/app_message/message_view_widgets.dart`): نظام الرسائل الموحد (SnackBar/Dialog/Loading). يقبل `messageKey` (AppKey، المفضل) أو `message` (String للتوافق)، ويبني على `AppText`/`AppButton`، وألوانه من `colors.error` و`semanticColors`. أنواع الرسالة: error وsuccess وwarning وinfo وloading. لا يوجد استهلاك فعّال حالياً (شاشات auth التي ستستخدمه معلّقة).
 
@@ -163,7 +162,9 @@
 - `AppButtonVariant.text` (زر نصي) وأيقونة `AppButton.icon` من نوع `AppIconData`.
 - `AppIconButton` (`widgets/app_button/app_icon_button.dart`): ضمن نظام الأزرار، `tooltipKey` مطلوب، منطقة لمس >= 48 من التوكنز.
 - `AppTextField` + `AppTextFieldStyle` (`widgets/app_text_field/`).
-- `AppDivider` (نص اختياري) و`AppPageAppBar` (شريط الصفحات العادية؛ `AppAppBar` هو شريط الرئيسية).
+- `AppDivider` (نص اختياري) و`AppPageAppBar` (شريط الصفحات العادية؛ أُزيل شريط الرئيسية القديم `AppAppBar` لأنه خاص بعلامة تجارية).
+- `AppCard` (`widgets/app_card/app_card.dart`): سطح بحدّ لتجميع المحتوى (بطاقات الأرقام، القوائم)؛ الحشو والزوايا من التوكنز، والحدّ بـ `AppBorderWidth.thin`، وقابل للنقر عند تمرير `onTap`.
+- `AppBorderWidth` (`design_system/responsive/engine/app_enums/app_border_width.dart`): توكن سُمك الحدود والخطوط (`thin` و`thick`) يُقرأ بـ `.of(context)`؛ لا سُمك حدّ برقم حرفي.
 - `FlashMessages` + `FlashMessageListener` (`widgets/app_message/flash_messages.dart`): رسائل تعيش بعد انتقال الصفحة.
 - `RepositoryExecutor` (`foundation/base/repository_executor.dart`): mixin لنمط try/catch + `ExceptionMapper`.
 - `HiveStorageService` و`CacheManager` تُسجَّلان في core DI.
