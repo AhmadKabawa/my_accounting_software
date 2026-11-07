@@ -53,7 +53,7 @@ class HomeOverviewSection extends StatelessWidget {
       final slice = tiles.skip(start).take(columns).toList();
       rows.add(
         Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             for (var i = 0; i < columns; i++) ...[
               if (i > 0) gap,

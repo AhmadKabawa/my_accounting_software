@@ -1,3 +1,4 @@
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/features/on_boarding/data/model/on_boarding_model.dart';
@@ -16,14 +17,14 @@ class OnBoardingPage extends StatelessWidget {
             height: 800 * .6,
             image: AssetImage(onBoardingModel.image),
           ),
-          Text(
-            onBoardingModel.title.tr(),
+          AppText(
+            onBoardingModel.title ,
             style: Theme.of(context).textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16.0),
-          Text(
-            onBoardingModel.description.tr(),
+          AppText(
+            onBoardingModel.description ,
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
