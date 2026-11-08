@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/home/domain/usecase/get_home_summary_usecase.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
 import 'package:accounting_software/app/features/home/presentation/localization/home_keys.dart';
+import 'package:accounting_software/app/features/home/presentation/model/quick_action.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit({
@@ -30,7 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// A quick action was tapped. The target modules do not exist yet, so say
   /// so instead of doing nothing; [action] is kept for the future navigation.
-  void openAction(AppKey action) {
+  void openAction(QuickAction action) {
     _flash.post(HomeKeys.comingSoon, MessageType.info);
   }
 }

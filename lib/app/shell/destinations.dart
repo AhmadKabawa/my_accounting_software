@@ -37,18 +37,10 @@ const appDestinations = [
   ),
   AppDestination(
     item: NavBarItem(
-      icon: Icons.favorite_outline,
-      activeIcon: Icons.favorite,
-      label: NavKeys.favorite,
-    ),
-    branchIndex: 1,
-  ),
-  AppDestination(
-    item: NavBarItem(
       icon: Icons.person_outline,
       activeIcon: Icons.person,
       label: NavKeys.person,
     ),
-    branchIndex: 2,
+    branchIndex: 1,
   ),
 ];

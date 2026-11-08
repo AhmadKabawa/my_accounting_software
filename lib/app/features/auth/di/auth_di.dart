@@ -65,7 +65,7 @@ void initAuthDI() {
       googleSignIn: sl(),
       sendResetCode: sl(),
       confirmNewPassword: sl(),
-      session: sl(),
+      session: sl<SessionCubit>(),
       flash: sl<FlashMessages>(),
     ),
   );

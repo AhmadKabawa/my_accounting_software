@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_authenticator.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/get_cached_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/logout_usecase.dart';
@@ -19,7 +20,7 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 ///
 /// Messages that must outlive the page (signed out, session expired...) go
 /// through [FlashMessages].
-class SessionCubit extends Cubit<SessionStatus> implements SessionGate {
+class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionAuthenticator {
   SessionCubit({
     required GetCurrentUserUseCase getCurrentUser,
     required LogoutUseCase logout,
@@ -99,6 +100,7 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate {
   }
 
   /// Called by the sign-in / sign-up flows once the server accepted them.
+  @override
   void onAuthenticated(UserEntity user) => emit(SessionAuthenticated(user));
 
   /// Called by the profile flow after the user's data changed.

@@ -25,7 +25,7 @@ features/<feature>/
 ## ما يُنسخ من Auth
 
 - **إطار الصفحة:** `AuthPageScaffold` يجمع التخطيط والتمرير وحد العرض والعنوان و`FlashMessageListener` الذي يعرض الرسائل. صفحة جديدة تعطيه `child` فقط.
-- **الـ Cubits:** `SessionCubit` عام (singleton، يطبّق `SessionGate`: checking/authenticated/unauthenticated)، و`AuthFlowCubit` لكل صفحة (factory، حالته idle/loading، وآثار التنقل `AuthFlowEffect`)، و`ProfileCubit` لتحديث الملف وكلمة المرور بتحميل محلي. الرسائل عبر `FlashMessages` بـ `AppKey` (لا نصاً مترجماً). بريد الاسترجاع يمر بين الصفحتين كمعامل مسار.
+- **الـ Cubits:** `SessionCubit` عام (singleton، يطبّق `SessionGate`: checking/authenticated/unauthenticated)، و`AuthFlowCubit` لكل صفحة (factory، يعتمد على الواجهة الصغيرة `SessionAuthenticator` (`onAuthenticated` فقط) لا على `SessionCubit` مباشرة، حالته idle/loading، وآثار التنقل `AuthFlowEffect`)، و`ProfileCubit` لتحديث الملف وكلمة المرور بتحميل محلي. الرسائل عبر `FlashMessages` بـ `AppKey` (لا نصاً مترجماً). بريد الاسترجاع يمر بين الصفحتين كمعامل مسار.
 - **عقد الجلسة:** Splash والـ Router يعتمدان على `SessionGate` فقط.
 - **النصوص:** enum لكل ميزة + سطر في `key_registry.dart` ([LOCALIZATION.md](LOCALIZATION.md)).
 - **المجلدات:** `pages/<page>/sections/` للأقسام الكبيرة، و`widgets/` للصغيرة.
@@ -44,6 +44,6 @@ features/<feature>/
 ## قيود معروفة
 
 - `features/home` لوحة محاسبة بدائية على بيانات تجريبية (`SampleHomeRepository`) وتتبع هذا القالب؛ يُستبدل المستودع بتجميع الوحدات الحقيقية لاحقاً.
-- `on_boarding` ما زال تجريبياً ومستثنى من اختبارَي منع العناصر الخام والأرقام المباشرة.
+- `on_boarding` ما زال تجريبياً ومستثنى من اختبار منع العناصر الخام فقط؛ الأرقام المباشرة صارت مفحوصة فيه أيضاً.
 - لا قالب CRUD (قائمة + تفاصيل + نموذج) بعد؛ يُبنى على أول ميزة حقيقية.
 - قرارا أمان الجلسة: [SECURITY_DECISIONS.md](SECURITY_DECISIONS.md).

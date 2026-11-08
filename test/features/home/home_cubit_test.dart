@@ -7,6 +7,7 @@ import 'package:accounting_software/app/features/home/data/repository/sample_hom
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_state.dart';
 import 'package:accounting_software/app/features/home/presentation/localization/home_keys.dart';
+import 'package:accounting_software/app/features/home/presentation/model/quick_action.dart';
 import 'package:accounting_software/app/features/home/presentation/support/home_format.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -60,7 +61,7 @@ void main() {
       flash: flash,
     );
 
-    cubit.openAction(HomeKeys.newSale);
+    cubit.openAction(QuickAction.newSale);
 
     expect(shown, hasLength(1));
     expect(shown.single.key, HomeKeys.comingSoon);

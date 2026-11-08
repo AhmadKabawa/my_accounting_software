@@ -3,27 +3,33 @@ import 'dart:async';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
-import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
+import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_authenticator.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/confirm_new_password_usecase.dart';
-import 'package:accounting_software/app/features/auth/domain/usecase/get_cached_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/login_usecase.dart';
-import 'package:accounting_software/app/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/register_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/send_reset_code_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/signin_with_google_usecase.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_effect.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_auth_repository.dart';
 
+/// Records who the flow reported as signed in.
+class _FakeSession implements SessionAuthenticator {
+  final authenticated = <UserEntity>[];
+
+  @override
+  void onAuthenticated(UserEntity user) => authenticated.add(user);
+}
+
 void main() {
   late FakeAuthRepository repo;
   late FlashMessages flash;
-  late SessionCubit session;
+  late _FakeSession session;
   late AuthFlowCubit cubit;
   late List<FlashMessage> shown;
   late List<AuthFlowEffect> effects;
@@ -34,12 +40,7 @@ void main() {
     flash = FlashMessages();
     shown = [];
     flash.listen(shown.add);
-    session = SessionCubit(
-      getCurrentUser: GetCurrentUserUseCase(repository: repo),
-      logout: LogoutUseCase(repository: repo),
-      sessionCleared: const Stream<void>.empty(),
-      flash: flash,
-    );
+    session = _FakeSession();
     cubit = AuthFlowCubit(
       login: LoginUseCase(repository: repo),
       register: RegisterUseCase(repository: repo),
@@ -57,7 +58,6 @@ void main() {
 
   tearDown(() async {
     await cubit.close();
-    await session.close();
   });
 
   Future<void> settle() => Future<void>.delayed(Duration.zero);
@@ -68,16 +68,16 @@ void main() {
       await settle();
 
       expect(states, [AuthFlowStatus.loading, AuthFlowStatus.idle]);
-      expect(session.state, const SessionAuthenticated(testUser));
+      expect(session.authenticated, [testUser]);
       expect(shown.single.key, AuthKeys.signInSuccess);
       expect(shown.single.type, MessageType.success);
     });
 
-    test('failure keeps the session signed out and shows the error', () async {
+    test('failure does not authenticate the session and shows the error', () async {
       repo.authResult = Left(UnauthorizedFailure());
       await cubit.signInWithEmail(email: 'a@b.c', password: 'bad');
 
-      expect(session.state, isA<SessionChecking>());
+      expect(session.authenticated, isEmpty);
       expect(shown.single.type, MessageType.error);
       expect(cubit.state, AuthFlowStatus.idle);
     });
@@ -92,7 +92,7 @@ void main() {
 
     test('google sign-in authenticates the session', () async {
       await cubit.signInWithGoogle();
-      expect(session.state, isA<SessionAuthenticated>());
+      expect(session.authenticated, [testUser]);
       expect(repo.calls, ['google']);
     });
   });
@@ -104,14 +104,14 @@ void main() {
         password: 'x',
         fullName: 'Ann',
       );
-      expect(session.state, isA<SessionAuthenticated>());
+      expect(session.authenticated, [testUser]);
       expect(shown.single.key, AuthKeys.signUpSuccess);
     });
 
     test('failure shows the error only', () async {
       repo.authResult = Left(ValidationFailure());
       await cubit.signUpWithEmail(email: 'a@b.c', password: 'x', fullName: 'A');
-      expect(session.state, isA<SessionChecking>());
+      expect(session.authenticated, isEmpty);
       expect(shown.single.type, MessageType.error);
     });
   });
@@ -146,7 +146,7 @@ void main() {
       expect(effects.single, isA<PasswordResetEffect>());
       expect(shown.single.key, AuthKeys.passwordResetSuccess);
       // Recovery never signs the user in.
-      expect(session.state, isA<SessionChecking>());
+      expect(session.authenticated, isEmpty);
     });
   });
 }

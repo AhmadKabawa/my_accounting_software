@@ -11,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// `core/presentation/widgets`. The token definitions themselves
 /// (`design_system/`) are where the numbers live, so they are not scanned.
 /// Zero is allowed (`width: 0`, `EdgeInsets.all(0)`).
-const _legacyFeatures = {'on_boarding'};
+const _legacyFeatures = <String>{};
 
 const _label = r'width|height|size|fontSize|elevation|radius|strokeWidth|'
     r'thickness|dimension|blurRadius|spreadRadius|minHeight|minWidth|'

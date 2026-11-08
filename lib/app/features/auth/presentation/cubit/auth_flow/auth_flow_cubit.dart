@@ -4,13 +4,13 @@ import 'package:accounting_software/app/core/presentation/state_management/base_
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/auth_result/auth_result.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_authenticator.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/confirm_new_password_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/login_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/register_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/send_reset_code_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/signin_with_google_usecase.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_effect.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 
 enum AuthFlowStatus { idle, loading }
@@ -26,7 +26,7 @@ class AuthFlowCubit extends BaseCubit<AuthFlowStatus, AuthFlowEffect> {
     required SignInWithGoogleUseCase googleSignIn,
     required SendResetCodeUseCase sendResetCode,
     required ConfirmNewPasswordUseCase confirmNewPassword,
-    required SessionCubit session,
+    required SessionAuthenticator session,
     required FlashMessages flash,
   }) : _login = login,
        _register = register,
@@ -42,7 +42,7 @@ class AuthFlowCubit extends BaseCubit<AuthFlowStatus, AuthFlowEffect> {
   final SignInWithGoogleUseCase _googleSignIn;
   final SendResetCodeUseCase _sendResetCode;
   final ConfirmNewPasswordUseCase _confirmNewPassword;
-  final SessionCubit _session;
+  final SessionAuthenticator _session;
   final FlashMessages _flash;
 
   bool get isLoading => state == AuthFlowStatus.loading;

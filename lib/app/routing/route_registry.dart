@@ -1,6 +1,5 @@
 import 'package:accounting_software/app/core/routing/route_item.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
-import 'package:accounting_software/app/features/favorites/presentation/routing/favorites_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
@@ -16,6 +15,5 @@ const List<RouteItem> allRoutes = [
   ...OnBoardingRoutes.all,
   ...AuthRoutes.all,
   ...HomeRoutes.all,
-  ...FavoritesRoutes.all,
   ...ProfileRoutes.all,
 ];

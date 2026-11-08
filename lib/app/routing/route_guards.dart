@@ -5,7 +5,6 @@ import 'package:accounting_software/app/routing/app_go_router.dart';
 import 'package:accounting_software/app/core/routing/route_item.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
-import 'package:accounting_software/app/features/favorites/presentation/routing/favorites_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
@@ -26,7 +25,6 @@ final Set<String> publicRoutes = {
 /// `route_guards_test.dart`، ويفشل كذلك إن بقي هنا مسار لم يعد مسجلاً.
 final Set<String> protectedRoutes = {
   HomeRoutes.home.path,
-  FavoritesRoutes.favorites.path,
   ProfileRoutes.profile.path,
 };
 

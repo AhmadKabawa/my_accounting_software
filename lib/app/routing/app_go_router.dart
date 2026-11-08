@@ -18,8 +18,6 @@ import 'package:accounting_software/app/features/auth/presentation/pages/forgot_
 import 'package:accounting_software/app/features/auth/presentation/pages/login/login_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/signup/signup_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
-import 'package:accounting_software/app/features/favorites/presentation/pages/favorite_screen.dart';
-import 'package:accounting_software/app/features/favorites/presentation/routing/favorites_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:accounting_software/app/features/home/presentation/pages/home_screen.dart';
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
@@ -183,18 +181,6 @@ class AppRouter {
                     child: const HomeScreen(),
                   ),
                 ),
-              ),
-            ],
-          ),
-
-          /// ───────── FAVORITES ─────────
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: FavoritesRoutes.favorites.path,
-                name: FavoritesRoutes.favorites.name,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: FavoriteScreen()),
               ),
             ],
           ),

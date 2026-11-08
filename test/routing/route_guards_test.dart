@@ -55,7 +55,7 @@ void main() {
     test('never redirects while checking', () {
       const checking = SessionChecking();
       expect(run('/profile', auth: checking), isNull);
-      expect(run('/favorites', auth: checking), isNull);
+      expect(run('/reports', auth: checking), isNull);
     });
   });
 
@@ -134,8 +134,8 @@ void main() {
   });
 
   group('deny by default', () {
-    test('protects unlisted routes such as /favorites', () {
-      expect(run('/favorites'), '/login');
+    test('protects unlisted routes such as /reports', () {
+      expect(run('/reports'), '/login');
       expect(run('/profile'), '/login');
       expect(run('/anything/else'), '/login');
     });
@@ -147,7 +147,7 @@ void main() {
     });
 
     test('authenticated users reach protected routes', () {
-      expect(run('/favorites', auth: authed), isNull);
+      expect(run('/reports', auth: authed), isNull);
       expect(run('/home', auth: authed), isNull);
     });
 
