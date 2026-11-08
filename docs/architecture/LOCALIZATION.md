@@ -47,6 +47,7 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 ## الاختبارات (`test/localization/key_registry_test.dart`)
 
 تفرّد المفاتيح عبر السجل، واكتمال السجل (كل `enum … implements AppKey` مسجَّل)، ونصوص غير فارغة، وتطابق متغيرات `@name` بين اللغتين.
+وبعد تهيئة `easy_localization` بالمحمّل نفسه `MyDartLoader(allKeys)` لكل لغة (ar وen) يتحقق الاختبار أن `key.tr()` لكل مفتاح مسجَّل يعيد نصاً غير المفتاح نفسه (أي أن السجل يصل فعلاً إلى `tr()`).
 
 ## المتغيرات
 
