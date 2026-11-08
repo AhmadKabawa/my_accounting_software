@@ -7,10 +7,10 @@ import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
-import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_effect.dart';
+import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/auth/presentation/widgets/auth_page_scaffold.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/features/auth/presentation/widgets/password_field.dart';
@@ -58,7 +58,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
       onEffect: (context, effect) {
         if (effect is PasswordResetEffect) {
-          context.goNamed(AppRoutes.login.name);
+          context.goNamed(AuthRoutes.login.name);
         }
       },
       child: AuthPageScaffold(

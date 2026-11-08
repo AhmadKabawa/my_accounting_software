@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
-import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_effect.dart';
 import 'package:accounting_software/app/features/on_boarding/data/model/on_boarding_model.dart';
@@ -66,7 +65,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
             OnBoardingEffect
           >(
             onEffect: (context, effect) => switch (effect) {
-              NavigateToHome() => context.pushNamed(AppRoutes.login),
+              NavigateToHome() => context.pushNamed(AuthRoutes.login.name),
             },
 
             child: Stack(
@@ -94,7 +93,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
       // BlocConsumer<OnBoardingCubit, OnBoardingState>(
       // listener: (context, state) => state is OnBoardingFinished
-      //     ? Navigator.of(context).pushNamed(AppRoutes.login)
+      //     ? Navigator.of(context).pushNamed(AuthRoutes.login.name)
       //     : null,
       // builder: (context, state) {}
 */

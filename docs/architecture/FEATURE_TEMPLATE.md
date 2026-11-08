@@ -31,7 +31,7 @@ features/<feature>/
 - **المجلدات:** `pages/<page>/sections/` للأقسام الكبيرة، و`widgets/` للصغيرة.
 - **الحقول:** `AppTextField` (core) و`PasswordField` (غلاف رقيق فوقه) مع `AppValidator`؛ لا validator موازياً.
 - **النصوص والأزرار:** `AppText` و`AppButton` ومفاتيح `AppKeys` في ملفي ar/en.
-- **المسارات:** المسار في `AppRoutes` وفي `AppRoutes.all` وفي `publicRoutes` أو `protectedRoutes`، ثم تسجيله في `app_go_router.dart`. الصفحات التي تشارك Cubit مفرداً تأخذه بـ `BlocProvider.value` (`AppRouter._withAuth`).
+- **المسارات:** المسار في `presentation/routing/<feature>_routes.dart` وفي `all` الخاص بها، و`...<Feature>Routes.all` في `route_registry.dart`، وفي `publicRoutes` أو `protectedRoutes`، ثم تسجيله في `app_go_router.dart`. الصفحات التي تشارك Cubit مفرداً تأخذه بـ `BlocProvider.value` (`AppRouter._withAuth`).
 - **الحراس:** `resolveRedirect` دالة نقية مغطاة في `test/routing/route_guards_test.dart`.
 
 ## كيف تضيف ميزة جديدة

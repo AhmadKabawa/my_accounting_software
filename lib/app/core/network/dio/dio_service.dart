@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/connectivity_interceptor.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
@@ -14,10 +15,14 @@ import 'interceptors/retry_interceptor.dart';
 class DioService {
   late final Dio _dio;
 
+  /// [refreshEndpoint] is the backend's token endpoint, used to renew the
+  /// session after a 401. It comes from the composition root because core
+  /// cannot import the feature that owns it.
   DioService({
     required TokenManager tokenManager,
     required NetworkInfo networkInfoImpl,
     required LanguageProvider languageProvider,
+    required AppEndpoint refreshEndpoint,
   }) {
     _dio = Dio(
       BaseOptions(
@@ -44,7 +49,11 @@ class DioService {
       AuthInterceptor(tokenManager),
 
       // 3. جدّد الـ token عند 401
-      RefreshTokenInterceptor(_dio, tokenManager),
+      RefreshTokenInterceptor(
+        _dio,
+        tokenManager,
+        refreshEndpoint: refreshEndpoint,
+      ),
 
       // 4. أعد المحاولة عند الفشل
       RetryInterceptor(_dio),

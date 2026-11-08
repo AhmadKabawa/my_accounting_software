@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/auth_interceptor.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/refresh_token_interceptor.dart';
 
@@ -25,7 +26,11 @@ void main() {
       ..httpClientAdapter = adapter;
     dio.interceptors.addAll([
       AuthInterceptor(tokens),
-      RefreshTokenInterceptor(dio, tokens),
+      RefreshTokenInterceptor(
+        dio,
+        tokens,
+        refreshEndpoint: const AppEndpoint('/auth/v1/token'),
+      ),
     ]);
     return dio;
   }

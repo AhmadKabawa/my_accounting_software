@@ -7,7 +7,6 @@ import 'package:accounting_software/app/core/routing/go_router_refresh_stream.da
 import 'package:accounting_software/app/routing/not_found_screen.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/core/routing/route_transitions.dart';
-import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/routing/app_router_observer.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
@@ -18,16 +17,21 @@ import 'package:accounting_software/app/features/auth/presentation/pages/forgot_
 import 'package:accounting_software/app/features/auth/presentation/pages/forgot_password/reset_password_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/login/login_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/signup/signup_screen.dart';
-// import 'package:accounting_software/app/features/chat/presentation/pages/chat_screen.dart';
+import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/favorites/presentation/pages/favorite_screen.dart';
+import 'package:accounting_software/app/features/favorites/presentation/routing/favorites_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:accounting_software/app/features/home/presentation/pages/home_screen.dart';
+import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/pages/on_boarding_screen.dart';
+import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
 import 'package:accounting_software/app/features/profile/presentation/pages/profile_screen.dart';
+import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_cubit.dart';
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_state.dart';
 import 'package:accounting_software/app/features/splash/presentation/pages/splash_screen.dart';
+import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 import 'package:accounting_software/app/shell/app_shell.dart';
 
 class AppRouter {
@@ -38,7 +42,7 @@ class AppRouter {
   static final AccessCubit accessCubit = sl<AccessCubit>();
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.splash.path,
+    initialLocation: SplashRoutes.splash.path,
 
     routes: _buildRoutes(),
     redirect: _redirect,
@@ -64,8 +68,8 @@ class AppRouter {
       /// Splash
       /// ─────────────────────────────────────────
       GoRoute(
-        path: AppRoutes.splash.path,
-        name: AppRoutes.splash.name,
+        path: SplashRoutes.splash.path,
+        name: SplashRoutes.splash.name,
         pageBuilder: (context, state) => RouteTransitions.fade(
           context,
           state,
@@ -80,8 +84,8 @@ class AppRouter {
       /// Onboarding
       /// ─────────────────────────────────────────
       GoRoute(
-        path: AppRoutes.onboarding.path,
-        name: AppRoutes.onboarding.name,
+        path: OnBoardingRoutes.onboarding.path,
+        name: OnBoardingRoutes.onboarding.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
           context,
           state,
@@ -100,8 +104,8 @@ class AppRouter {
       /// Login
       /// ─────────────────────────────────────────
       GoRoute(
-        path: AppRoutes.login.path,
-        name: AppRoutes.login.name,
+        path: AuthRoutes.login.path,
+        name: AuthRoutes.login.name,
         pageBuilder: (context, state) => RouteTransitions.fade(
           context,
           state,
@@ -113,8 +117,8 @@ class AppRouter {
       /// Register
       /// ─────────────────────────────────────────
       GoRoute(
-        path: AppRoutes.register.path,
-        name: AppRoutes.register.name,
+        path: AuthRoutes.register.path,
+        name: AuthRoutes.register.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
           context,
           state,
@@ -126,8 +130,8 @@ class AppRouter {
       /// Password recovery: e-mail → code + new password
       /// ─────────────────────────────────────────
       GoRoute(
-        path: AppRoutes.forgotPassword.path,
-        name: AppRoutes.forgotPassword.name,
+        path: AuthRoutes.forgotPassword.path,
+        name: AuthRoutes.forgotPassword.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
           context,
           state,
@@ -135,12 +139,12 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path: AppRoutes.resetPassword.path,
-        name: AppRoutes.resetPassword.name,
+        path: AuthRoutes.resetPassword.path,
+        name: AuthRoutes.resetPassword.name,
         // Opened without an e-mail (deep link, refresh): start over.
         redirect: (context, state) =>
             (state.uri.queryParameters['email'] ?? '').isEmpty
-            ? AppRoutes.forgotPassword.path
+            ? AuthRoutes.forgotPassword.path
             : null,
         pageBuilder: (context, state) => RouteTransitions.slide(
           context,
@@ -164,8 +168,8 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.home.path,
-                name: AppRoutes.home.name,
+                path: HomeRoutes.home.path,
+                name: HomeRoutes.home.name,
                 pageBuilder: (context, state) => NoTransitionPage(
                   child: MultiBlocProvider(
                     providers: [
@@ -179,47 +183,16 @@ class AppRouter {
                     child: const HomeScreen(),
                   ),
                 ),
-
-                routes: [
-                  // GoRoute(
-                  //   path: 'products',
-                  //   name: AppRoutes.products.name,
-                  //   builder: (context, state) {
-                  //     return const ProductsScreen();
-                  //   },
-                  // ),
-
-                  // GoRoute(
-                  //   path: 'products/:id',
-                  //   name: AppRoutes.productDetails.name,
-                  //   builder: (context, state) {
-                  //     final id = state.pathParameters['id']!;
-                  //     return ProductDetailsScreen(id: id);
-                  //   },
-                  // ),
-                ],
               ),
             ],
           ),
-
-          // /// ───────── CHAT ─────────
-          // StatefulShellBranch(
-          //   routes: [
-          //     GoRoute(
-          //       path: AppRoutes.chat.path,
-          //       name: AppRoutes.chat.name,
-          //       pageBuilder: (context, state) =>
-          //           const NoTransitionPage(child: ChatScreen()),
-          //     ),
-          //   ],
-          // ),
 
           /// ───────── FAVORITES ─────────
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.favorites.path,
-                name: AppRoutes.favorites.name,
+                path: FavoritesRoutes.favorites.path,
+                name: FavoritesRoutes.favorites.name,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: FavoriteScreen()),
               ),
@@ -230,28 +203,10 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.profile.path,
-                name: AppRoutes.profile.name,
+                path: ProfileRoutes.profile.path,
+                name: ProfileRoutes.profile.name,
                 pageBuilder: (context, state) =>
                     NoTransitionPage(child: _withSession(const ProfileScreen())),
-
-                routes: [
-                  // GoRoute(
-                  //   path: 'orders',
-                  //   name: AppRoutes.profileOrders.name,
-                  //   builder: (context, state) {
-                  //     return const ProfileOrdersScreen();
-                  //   },
-                  // ),
-
-                  // GoRoute(
-                  //   path: 'reviews',
-                  //   name: AppRoutes.profileReviews.name,
-                  //   builder: (context, state) {
-                  //     return const ProfileReviewsScreen();
-                  //   },
-                  // ),
-                ],
               ),
             ],
           ),

@@ -12,14 +12,23 @@ import 'package:accounting_software/app/core/network/api_end_points.dart';
 /// - A replayed request is marked `authRetried` and is never refreshed twice.
 /// - The session is cleared only when the server rejects the refresh token;
 ///   a network failure keeps it so the user is not logged out while offline.
+///
+/// [refreshEndpoint] is the token endpoint of the backend. It is injected, not
+/// imported, because core must not depend on the auth feature that owns it
+/// (`app_di.dart` passes `AuthEndpoints.token`).
 class RefreshTokenInterceptor extends Interceptor {
-  RefreshTokenInterceptor(this._dio, this._tokens)
-    : _refreshDio = Dio(_dio.options.copyWith())
-        ..httpClientAdapter = _dio.httpClientAdapter;
+  RefreshTokenInterceptor(
+    this._dio,
+    this._tokens, {
+    required AppEndpoint refreshEndpoint,
+  }) : _refreshEndpoint = refreshEndpoint,
+       _refreshDio = Dio(_dio.options.copyWith())
+         ..httpClientAdapter = _dio.httpClientAdapter;
 
   final Dio _dio;
   final Dio _refreshDio;
   final TokenManager _tokens;
+  final AppEndpoint _refreshEndpoint;
 
   Future<String?>? _refreshing;
 
@@ -66,7 +75,7 @@ class RefreshTokenInterceptor extends Interceptor {
 
     try {
       final res = await _refreshDio.post<Map<String, dynamic>>(
-        AppEndpoints.auth.token.toStringPath(),
+        _refreshEndpoint.toStringPath(),
         queryParameters: {'grant_type': 'refresh_token'},
         data: {'refresh_token': refreshToken},
       );

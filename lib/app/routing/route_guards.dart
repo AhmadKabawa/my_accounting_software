@@ -2,39 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/routing/app_go_router.dart';
-import 'package:accounting_software/app/core/routing/routes.dart';
+import 'package:accounting_software/app/core/routing/route_item.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
+import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
+import 'package:accounting_software/app/features/favorites/presentation/routing/favorites_routes.dart';
+import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
+import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
+import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
+import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 
 /// المسارات المتاحة دون تسجيل دخول. أي مسار آخر محمي افتراضيًا (deny by default).
 final Set<String> publicRoutes = {
-  AppRoutes.splash.path,
-  AppRoutes.onboarding.path,
-  AppRoutes.login.path,
-  AppRoutes.register.path,
-  AppRoutes.forgotPassword.path,
-  AppRoutes.resetPassword.path,
+  SplashRoutes.splash.path,
+  OnBoardingRoutes.onboarding.path,
+  AuthRoutes.login.path,
+  AuthRoutes.register.path,
+  AuthRoutes.forgotPassword.path,
+  AuthRoutes.resetPassword.path,
 };
 
-/// المسارات المحمية، مذكورة صراحةً. أي مسار جديد في [AppRoutes] يجب أن يظهر
-/// هنا أو في [publicRoutes] وإلا يفشل `route_guards_test.dart`.
+/// المسارات المحمية، مذكورة صراحةً. أي مسار جديد في `allRoutes`
+/// (`route_registry.dart`) يجب أن يظهر هنا أو في [publicRoutes] وإلا يفشل
+/// `route_guards_test.dart`، ويفشل كذلك إن بقي هنا مسار لم يعد مسجلاً.
 final Set<String> protectedRoutes = {
-  AppRoutes.mainPages.path,
-  AppRoutes.home.path,
-  AppRoutes.profile.path,
-  AppRoutes.chat.path,
-  AppRoutes.favorites.path,
-  AppRoutes.products.path,
-  AppRoutes.productDetails.path,
-  AppRoutes.addProduct.path,
-  AppRoutes.editProduct.path,
-  AppRoutes.settings.path,
-  AppRoutes.profileOrders.path,
-  AppRoutes.profileReviews.path,
+  HomeRoutes.home.path,
+  FavoritesRoutes.favorites.path,
+  ProfileRoutes.profile.path,
 };
 
 final Set<String> _authOnlyEntryRoutes = {
-  AppRoutes.login.path,
-  AppRoutes.register.path,
+  AuthRoutes.login.path,
+  AuthRoutes.register.path,
 };
 
 /// دالة نقية تحدد وجهة التوجيه. تعيد null عند عدم الحاجة لأي توجيه.
@@ -48,10 +46,10 @@ String? resolveRedirect({
   required bool onboarded,
   required SessionStatus session,
 }) {
-  final splash = AppRoutes.splash.path;
-  final onboarding = AppRoutes.onboarding.path;
-  final login = AppRoutes.login.path;
-  final home = AppRoutes.home.path;
+  final splash = SplashRoutes.splash.path;
+  final onboarding = OnBoardingRoutes.onboarding.path;
+  final login = AuthRoutes.login.path;
+  final home = HomeRoutes.home.path;
 
   if (!splashDone) return location == splash ? null : splash;
 
@@ -80,7 +78,7 @@ abstract class AccessRoutingLogic {
   /// يجب ألا يكون [fallback] نفسه محميًا بنفس الصلاحية لتجنب حلقة توجيه.
   static GoRouterRedirect require(
     Permission permission, {
-    RouteItem fallback = AppRoutes.home,
+    RouteItem fallback = HomeRoutes.home,
   }) => (context, state) =>
       AppRouter.accessCubit.can(permission) ? null : fallback.path;
 }

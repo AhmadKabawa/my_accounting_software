@@ -7,10 +7,10 @@ import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
-import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_divider/app_divider.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/auth/presentation/widgets/google_sign_in_button.dart';
 import 'package:accounting_software/app/features/auth/presentation/widgets/password_field.dart';
 
@@ -80,7 +80,7 @@ class _LoginFormSectionState extends State<LoginFormSection> {
               AuthKeys.forgotPassword,
               variant: AppButtonVariant.text,
               size: AppButtonSize.small,
-              onPressed: () => context.pushNamed(AppRoutes.forgotPassword.name),
+              onPressed: () => context.pushNamed(AuthRoutes.forgotPassword.name),
             ),
           ),
           gap,
@@ -102,7 +102,7 @@ class _LoginFormSectionState extends State<LoginFormSection> {
             AuthKeys.noAccount,
             variant: AppButtonVariant.text,
             size: AppButtonSize.small,
-            onPressed: () => context.pushNamed(AppRoutes.register.name),
+            onPressed: () => context.pushNamed(AuthRoutes.register.name),
           ),
         ],
       ),

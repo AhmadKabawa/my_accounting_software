@@ -80,7 +80,9 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 ## 6. Network وStorage وErrors
 
 - استخدم `IApiClient` و`DioService` والـ Interceptors الموجودة؛ لا Dio لكل Feature.
-- أضف المسارات إلى `AppEndpoints` ولا تكرر المسارات النصية.
+- كل ميزة تملك endpoints الخاصة بها في `features/<feature>/data/<feature>_endpoints.dart` (قيم `AppEndpoint`)، ولا تكرر المسارات النصية. Core يحتفظ بالأداتين `AppEndpoint` و`encodePathSegment` فقط، ولا يعرف أي ميزة؛ ما يحتاجه من ميزة (مثل مسار تجديد الجلسة) يُمرَّر من `app_di.dart`.
+- **المسارات (routes):** كل ميزة تملك `features/<feature>/presentation/routing/<feature>_routes.dart` (مع `all`). `lib/app/routing/route_registry.dart` يجمعها في `allRoutes`. Core يحتفظ بـ `RouteItem` فقط.
+- **الاستيراد بين الميزات:** مسموح لميزة أن تستورد ملف routes الخاص بميزة أخرى فقط (للتنقل)، لا صفحاتها ولا cubits ولا data. يفرضه `test/architecture/feature_imports_test.dart`؛ الديون القديمة مسجلة فيه في `_knownDebt` ويجوز أن تتقلص فقط.
 - مسار الأخطاء الموحد: Data يرمي `AppException` ← `ExceptionMapper` يحولها إلى `Failure` ← تُمرَّر `failure.messageKey` (AppKey) وتُترجم وقت العرض (`AppText` أو `MessageViewWidgets`)، و`FailureTranslator` فقط حيث يلزم `String` جاهز (ويترجم مرة واحدة). Effects ورسائل الواجهة تحمل `AppKey` لا نصاً مترجماً. لا تترجم داخل Repository ولا وقت الإصدار.
 - **الترجمة:** `AppKey` للودجتات، و`.tran` فقط حيث يلزم `String`، و`.tr(args:/namedArgs:)` عند وجود متغيرات. ممنوع `'text'.tr()` ونصوص واجهة ثابتة جديدة؛ أضف المفتاح في `AppKeys` وملفات ar/en.
 - **الإعدادات:** `AppConfig` هو المدخل الوحيد لإعدادات التطبيق وقيم البيئة؛ Features لا تستورد `EnvConfig`. قراءة `fromEnvironment` تبقى `const` وقت البناء.

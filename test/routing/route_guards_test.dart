@@ -1,10 +1,21 @@
 import 'dart:io';
 
-import 'package:accounting_software/app/core/routing/routes.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
+import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
+import 'package:accounting_software/app/routing/route_registry.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// Every `<feature>_routes.dart` under `features/*/presentation/routing/`.
+Iterable<File> _featureRouteFiles() => Directory('lib/app/features')
+    .listSync(recursive: true)
+    .whereType<File>()
+    .where((f) {
+      final path = f.path.replaceAll(r'\', '/');
+      return path.contains('/presentation/routing/') &&
+          path.endsWith('_routes.dart');
+    });
 
 void main() {
   const unauth = SessionUnauthenticated();
@@ -60,8 +71,8 @@ void main() {
   });
 
   group('route classification', () {
-    test('every AppRoutes entry is explicitly public or protected', () {
-      for (final route in AppRoutes.all) {
+    test('every registered route is explicitly public or protected', () {
+      for (final route in allRoutes) {
         final isPublic = publicRoutes.contains(route.path);
         final isProtected = protectedRoutes.contains(route.path);
         expect(
@@ -74,17 +85,49 @@ void main() {
       }
     });
 
-    test('AppRoutes.all lists every route declared in routes.dart', () {
-      final source = File('lib/app/core/routing/routes.dart').readAsStringSync();
-      final declared = RegExp(
+    test('every classified path belongs to a registered route', () {
+      final registered = allRoutes.map((r) => r.path).toSet();
+      for (final path in {...publicRoutes, ...protectedRoutes}) {
+        expect(
+          registered.contains(path),
+          isTrue,
+          reason:
+              '$path is classified in route_guards.dart but no feature '
+              'declares it (stale entry?)',
+        );
+      }
+    });
+
+    test('route paths and names are unique across features', () {
+      final paths = allRoutes.map((r) => r.path).toList();
+      final names = allRoutes.map((r) => r.name).toList();
+      expect(paths.toSet().length, paths.length, reason: 'duplicate path');
+      expect(names.toSet().length, names.length, reason: 'duplicate name');
+    });
+
+    test('allRoutes lists every route declared in the features', () {
+      final files = _featureRouteFiles().toList();
+      expect(files, isNotEmpty, reason: 'no *_routes.dart file was found');
+
+      final declaration = RegExp(
         r'^\s*static const \w+ = RouteItem\(',
         multiLine: true,
-      ).allMatches(source).length;
-      expect(AppRoutes.all.length, declared);
+      );
+      final declared = files
+          .map((f) => declaration.allMatches(f.readAsStringSync()).length)
+          .fold<int>(0, (sum, n) => sum + n);
+
+      expect(
+        allRoutes.length,
+        declared,
+        reason:
+            'a route declared in a feature is missing from its `all` list, or '
+            'the feature is not spread in route_registry.dart',
+      );
     });
 
     test('password recovery pages are reachable while signed out', () {
-      for (final route in [AppRoutes.forgotPassword, AppRoutes.resetPassword]) {
+      for (final route in [AuthRoutes.forgotPassword, AuthRoutes.resetPassword]) {
         expect(run(route.path), isNull, reason: route.path);
       }
     });

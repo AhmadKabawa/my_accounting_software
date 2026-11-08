@@ -23,12 +23,14 @@ class _Lang implements LanguageProvider {
 }
 
 const _endpoint = AppEndpoint('/rest/v1/items');
+const _refreshEndpoint = AppEndpoint('/auth/v1/token');
 
 ApiClient clientFor(String body, {int status = 200}) {
   final service = DioService(
     tokenManager: TokenManager(storage: MemoryStorage()),
     networkInfoImpl: _Online(),
     languageProvider: _Lang(),
+    refreshEndpoint: _refreshEndpoint,
   );
   service.dio.httpClientAdapter = RoutedAdapter(
     (_) async => RoutedAdapter.json(status, body),
@@ -109,6 +111,7 @@ void main() {
         tokenManager: TokenManager(storage: MemoryStorage()),
         networkInfoImpl: _Online(),
         languageProvider: _Lang(),
+        refreshEndpoint: _refreshEndpoint,
       );
       service.dio.httpClientAdapter = RoutedAdapter(
         (o) async => throw DioException(requestOptions: o, type: type),

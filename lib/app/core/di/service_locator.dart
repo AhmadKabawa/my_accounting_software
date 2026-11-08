@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/prefs_storage_service.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/network/dio/api_client.dart';
 import 'package:accounting_software/app/core/network/dio/dio_service.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
@@ -24,7 +25,11 @@ final sl = GetIt.instance;
 
 /// Registers core infrastructure only. Features register themselves from
 /// the composition root (lib/app/app_di.dart).
-Future<void> initCoreDI() async {
+///
+/// [refreshEndpoint] is the backend's token endpoint (used to renew the
+/// session). The feature that owns it is not known to core, so the composition
+/// root passes it in.
+Future<void> initCoreDI({required AppEndpoint refreshEndpoint}) async {
   //! ==================== External ====================
   // Connectivity
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
@@ -62,6 +67,7 @@ Future<void> initCoreDI() async {
       tokenManager: sl(),
       networkInfoImpl: sl(),
       languageProvider: sl(),
+      refreshEndpoint: refreshEndpoint,
     ),
   );
   sl.registerLazySingleton<IApiClient>(() => ApiClient(dioService: sl()));

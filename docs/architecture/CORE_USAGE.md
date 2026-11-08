@@ -17,12 +17,12 @@
 | زراً | `AppButton` | `widgets/app_button/app_button.dart` |
 | رسالة للمستخدم | `MessageViewWidgets.showMessage` | `widgets/app_message/message_view_widgets.dart` |
 | نصاً مترجماً | `AppKeys` + `AppKey` | `localization/translations/` |
-| طلب شبكة | `IApiClient` + `AppEndpoints` | `network/` |
+| طلب شبكة | `IApiClient` + `<Feature>Endpoints` | `network/` + `features/<f>/data/` |
 | تحويل خطأ | `ExceptionMapper` ثم `Failure.messageKey` | `error/` |
 | إعداداً أو قيمة بيئة | `AppConfig` | `foundation/config/app_config.dart` |
 | تحققاً من حقل نموذج | `AppValidator` | `foundation/validation/app_validator.dart` |
 | تخزيناً | `PrefsStorageService` / `SecureStorageService` / Hive | `storage/` |
-| تنقلاً | `AppRoutes` + GoRouter | `routing/routes.dart` |
+| تنقلاً | `<Feature>Routes` + GoRouter | `features/<f>/presentation/routing/` |
 | صلاحية | `PermissionGate` / `context.can` | `access/` |
 
 افتراضياً الاستيراد الأساسي للواجهات:
@@ -177,7 +177,7 @@ MessageViewWidgets.hideMessage(context);
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
-import 'package:accounting_software/app/core/routing/routes.dart';
+import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/effect/auth_effect.dart';
 
@@ -185,13 +185,13 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
   onEffect: (context, effect) => effect.whenOrNull(
     showMessage: (key, type) =>
         MessageViewWidgets.showMessage(context, messageKey: key, type: type),
-    navigateToHome: (_) => context.go(AppRoutes.home.path),
+    navigateToHome: (_) => context.go(HomeRoutes.home.path),
   ),
   child: const LoginBody(),
 )
 ```
 
-- الـ Effect أحادي الاستخدام (راجع §10)، والتنقل بعده عبر GoRouter و`AppRoutes`، لا `Navigator.pushNamed` ولا مسار نصي حرفي.
+- الـ Effect أحادي الاستخدام (راجع §10)، والتنقل بعده عبر GoRouter و`<Feature>Routes`، لا `Navigator.pushNamed` ولا مسار نصي حرفي.
 
 ## 7. الترجمة
 
@@ -214,18 +214,18 @@ final t = AppKeys.valid.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع �
 
 ```dart
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
-import 'package:accounting_software/app/core/network/api_end_points.dart';
+import 'package:accounting_software/app/features/auth/data/auth_endpoints.dart';
 import 'package:accounting_software/app/features/auth/data/models/user/user_model.dart';
 
 final result = await apiClient.get<UserModel>(
-  AppEndpoints.auth.user,
+  AuthEndpoints.user,
   fromJson: UserModel.fromJson,
   requiresAuth: true,
 );
 final either = result.toEither();   // Either<Failure, UserModel>
 ```
 
-- `IApiClient` يُحقن من GetIt؛ لا Dio جديد داخل Feature. أضف المسارات إلى `AppEndpoints` (المقاطع الديناميكية تُرمَّز تلقائياً).
+- `IApiClient` يُحقن من GetIt؛ لا Dio جديد داخل Feature. أضف المسارات إلى `<feature>_endpoints.dart` الخاص بميزتك، وأي جزء ديناميكي يمر بـ `encodePathSegment` (من `api_end_points.dart` في core).
 - مسار الأخطاء: Data يرمي `AppException` ← `ExceptionMapper.map(e)` يعيد `Failure` ← اعرض `failure.messageKey` عبر `AppText`/`MessageViewWidgets`. لا تترجم داخل Repository.
 - `FailureTranslator.translate(failure)` فقط حيث يلزم `String` جاهز (يترجم مرة واحدة).
 - لا يوجد Realtime فعّال: `RealtimeClient` عقد مجرد فقط.
@@ -304,8 +304,8 @@ class ExampleCubit extends BaseCubit<ExampleState, ExampleEffect> {
 
 ## 13. التنقل والصلاحيات
 
-- مسار جديد: عرّفه في `AppRoutes` وأضفه إلى `AppRoutes.all`، ثم صنّفه public/protected في `lib/app/routing/route_guards.dart` (اختبار `route_guards_test` يفشل إن نقص)، وابنِ وجهته في `AppRouter` (`lib/app/routing/app_go_router.dart`).
-- التنقل: `context.go(AppRoutes.x.path)` أو `context.goNamed(AppRoutes.x.name)`. لا مسارات نصية حرفية ولا `Navigator` للصفحات.
+- مسار جديد: عرّفه في `<feature>_routes.dart` الخاص بميزتك وأضفه إلى `all` (وأضف `...<Feature>Routes.all` إلى `lib/app/routing/route_registry.dart` لميزة جديدة)، ثم صنّفه public/protected في `lib/app/routing/route_guards.dart` (اختبار `route_guards_test` يفشل إن نقص)، وابنِ وجهته في `AppRouter` (`lib/app/routing/app_go_router.dart`).
+- التنقل: `context.go(<Feature>Routes.x.path)` أو `context.goNamed(<Feature>Routes.x.name)`. لا مسارات نصية حرفية ولا `Navigator` للصفحات.
 - استخدم `RouteTransitions` و`GoRouterRefreshStream` الموجودين.
 - الصلاحيات:
 

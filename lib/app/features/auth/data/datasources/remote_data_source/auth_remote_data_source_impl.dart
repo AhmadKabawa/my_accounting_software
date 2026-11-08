@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
-import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/features/auth/data/auth_endpoints.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/remote_data_source/auth_remote_data_source.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/remote_data_source/supabase_auth_mapper.dart';
 import 'package:accounting_software/app/features/auth/data/models/auth_result/auth_result_model.dart';
@@ -25,7 +25,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String grantType,
     Map<String, dynamic> data,
   ) => _apiClient.post(
-    AppEndpoints.auth.token,
+    AuthEndpoints.token,
     queryParameters: {'grant_type': grantType},
     data: data,
     requiresAuth: false,
@@ -47,7 +47,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     String? phone,
   }) => _apiClient.post(
-    AppEndpoints.auth.signup,
+    AuthEndpoints.signup,
     data: {
       'email': email,
       'password': password,
@@ -59,7 +59,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<ApiResult<UserModel>> getCurrentUser() =>
-      _apiClient.get(AppEndpoints.auth.user, fromJson: userFromSupabase);
+      _apiClient.get(AuthEndpoints.user, fromJson: userFromSupabase);
 
   @override
   Future<ApiResult<AuthResultModel>> signInWithGoogle() async {
@@ -84,7 +84,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<ApiResult<Unit>> logout() => _apiClient.post<Unit>(
-    AppEndpoints.auth.logout,
+    AuthEndpoints.logout,
     fromJson: (_) => unit,
   );
 
@@ -93,7 +93,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<ApiResult<Unit>> sendResetCode({required String email}) =>
       _apiClient.post<Unit>(
-        AppEndpoints.auth.recover,
+        AuthEndpoints.recover,
         data: {'email': email},
         requiresAuth: false,
         fromJson: (_) => unit,
@@ -126,7 +126,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String newPassword,
   }) async {
     final verified = await _apiClient.post<AuthResultModel>(
-      AppEndpoints.auth.verify,
+      AuthEndpoints.verify,
       data: {'type': 'recovery', 'email': email, 'token': code},
       requiresAuth: false,
       fromJson: sessionFromSupabase,
@@ -148,7 +148,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? avatarUrl,
     String? phone,
   }) => _apiClient.put(
-    AppEndpoints.auth.user,
+    AuthEndpoints.user,
     data: {
       'data': {
         if (fullName != null) 'full_name': fullName,
@@ -164,7 +164,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     Options? options,
     bool requiresAuth = true,
   }) => _apiClient.put<Unit>(
-    AppEndpoints.auth.user,
+    AuthEndpoints.user,
     data: data,
     options: options,
     requiresAuth: requiresAuth,

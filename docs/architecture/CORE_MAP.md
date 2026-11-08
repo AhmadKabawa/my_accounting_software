@@ -24,7 +24,7 @@
 | `presentation/design_system/theme/` | Light/Dark Theme والألوان والطباعة وThemeCubit | `presentation/design_system/theme/app_theme.dart` |
 | `presentation/state_management/` | BaseCubit وEffects وBlocObserver | `presentation/state_management/base_cubit.dart` |
 | `presentation/widgets/` | Widgets موحدة مشتركة | `presentation/widgets/app_*` |
-| `routing/` | تعريفات المسارات، transitions، observer ومساعدات GoRouter | `routing/routes.dart` |
+| `routing/` | `RouteItem`، transitions، observer ومساعدات GoRouter (المسارات نفسها في الميزات) | `routing/route_item.dart` |
 | `storage/` | عقد التخزين وتطبيقات SharedPreferences وSecure وHive | `storage/storage_service.dart` |
 
 ## 2. تفاصيل الأدوات الموجودة
@@ -74,7 +74,7 @@
 - `ApiClient`: التنفيذ عبر Dio وتحويل الاستجابة إلى `ApiResult`.
 - `DioService`: إنشاء Dio وإضافة Interceptors.
 - Interceptors (`network/dio/interceptors/`): Auth وConnectivity وLanguage وLogger وRefreshToken وRetry.
-- `AppEndpoint` و`AppEndpoints` (`network/api_end_points.dart`): تعريف مسارات API؛ المقاطع الديناميكية تُرمَّز وتُرفض `.` و`..`.
+- `AppEndpoint` و`encodePathSegment` (`network/api_end_points.dart`): أداتان فقط. الـ endpoints نفسها في `features/<feature>/data/<feature>_endpoints.dart` (مثل `AuthEndpoints`)؛ المقاطع الديناميكية تمر بـ `encodePathSegment` فتُرمَّز وتُرفض `.` و`..`. `DioService`/`initCoreDI` يستقبلان `refreshEndpoint` من `app_di.dart` لأن Core لا يستورد ميزة.
 - `NetworkInfo` و`NetworkInfoImpl`: معرفة الاتصال. لا يثبت وحده الوصول إلى الخادم.
 - `CancellableMixin` و`CancelTokenRegistry`: إلغاء الطلبات المرتبطة بعمر Cubit/Controller.
 - لا تنشئ Dio داخل Feature ولا تكرر Interceptors.
@@ -128,8 +128,8 @@
 - `MessageViewWidgets` و`MessageType` (`widgets/app_message/message_view_widgets.dart`): نظام الرسائل الموحد (SnackBar/Dialog/Loading). يقبل `messageKey` (AppKey، المفضل) أو `message` (String للتوافق)، ويبني على `AppText`/`AppButton`، وألوانه من `colors.error` و`semanticColors`. أنواع الرسالة: error وsuccess وwarning وinfo وloading. لا يوجد استهلاك فعّال حالياً (شاشات auth التي ستستخدمه معلّقة).
 
 ### Routing
-- Core يوفر `AppRoutes` و`RouteItem` و`RouteTransitions` و`GoRouterRefreshStream` و`MyNavObserver` (`lib/app/core/routing/app_router_observer.dart`): الاسم الفعلي للمراقب؛ لا يوجد `AppRouterObserver`. يسجل أحداث التنقل عبر `debugPrint`، ويُستخدم في `AppRouter`.
-- تكوين GoRouter والحراس موجودان خارج Core في `lib/app/routing/app_go_router.dart` و`route_guards.dart`.
+- Core يوفر `RouteItem` (`routing/route_item.dart`) و`RouteTransitions` و`GoRouterRefreshStream` و`MyNavObserver` (`lib/app/core/routing/app_router_observer.dart`): الاسم الفعلي للمراقب؛ لا يوجد `AppRouterObserver`. يسجل أحداث التنقل عبر `debugPrint`، ويُستخدم في `AppRouter`.
+- تكوين GoRouter والحراس وسجل المسارات موجودة خارج Core في `lib/app/routing/app_go_router.dart` و`route_guards.dart` و`route_registry.dart` (`allRoutes` يجمع `<Feature>Routes.all`).
 
 ### Storage
 - `StorageService`: العقد العام read/write/delete/clearAll/containsKey.

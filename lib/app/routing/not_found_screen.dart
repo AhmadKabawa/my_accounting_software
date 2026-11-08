@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/localization/keys/common_keys.dart'
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/core/routing/routes.dart';
+import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 
 /// The router's `errorPageBuilder` page for unknown locations.
 class NotFoundScreen extends StatelessWidget {
@@ -30,7 +30,7 @@ class NotFoundScreen extends StatelessWidget {
               gap,
               AppButton(
                 CommonKeys.goHome,
-                onPressed: () => context.go(AppRoutes.home.path),
+                onPressed: () => context.go(HomeRoutes.home.path),
               ),
             ],
           ),
