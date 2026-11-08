@@ -8,7 +8,7 @@ class OnBoardingCubit extends BaseCubit<OnBoardingState, OnBoardingEffect> {
   final AppSettingsManager _settingsManager;
   OnBoardingCubit({required AppSettingsManager settingsManager})
     : _settingsManager = settingsManager,
-      super(OnBoardingState.initial());
+      super(const OnBoardingState());
 
   void changePage(int index) {
     emit(state.copyWith(currentIndexPage: index));
@@ -33,7 +33,7 @@ class OnBoardingCubit extends BaseCubit<OnBoardingState, OnBoardingEffect> {
   void _completeOnboarding() {
     _settingsManager.setOnboarded();
 
-    emitEffect(const OnBoardingEffect.navigateHome());
+    emitEffect(const NavigateToHome());
   }
 }
 

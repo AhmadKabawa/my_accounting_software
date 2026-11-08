@@ -40,6 +40,7 @@
 ## 5. إدارة الحالة والعمليات غير المتزامنة
 
 - ضع بيانات الشاشة المستمرة في State، واستخدم Effects للتنقل والحوارات والرسائل المؤقتة.
+- حالات Cubit/Bloc: `sealed class` + `Equatable` (لا freezed للحالات). Cubit افتراضي، وBloc مع `bloc_concurrency` عند الحاجة لـ restartable/droppable/sequential. التفاصيل في [قالب الميزة](FEATURE_TEMPLATE.md) و[ADR-0002](ADR/0002-state-modeling-and-bloc-vs-cubit.md).
 - فضّل عقود المشروع `BaseCubit` و`EffectMixin` و`BlocEffectListener` بدلاً من إدخال قناة أحداث أخرى.
 - عالج الأخطاء صراحة؛ لا تبتلع الاستثناءات ولا تعرض استثناءات البنية التحتية على Widgets.
 - تحقق من صلاحية BuildContext قبل استخدامه بعد فجوة غير متزامنة.

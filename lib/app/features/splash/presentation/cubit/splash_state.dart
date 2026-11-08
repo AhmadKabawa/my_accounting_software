@@ -1,15 +1,20 @@
- import 'package:freezed_annotation/freezed_annotation.dart';
-part 'splash_state.freezed.dart';
-@freezed
- sealed  class SplashState with _$SplashState {
- 
+import 'package:equatable/equatable.dart';
 
-  const SplashState._();
-   const factory SplashState.initial() = SplashInitial;
-  const factory SplashState.loading() = SplashLoading;
-  const factory SplashState.done() = SplashDone;
+sealed class SplashState extends Equatable {
+  const SplashState();
 
- 
+  @override
+  List<Object?> get props => const [];
 }
 
- 
+final class SplashInitial extends SplashState {
+  const SplashInitial();
+}
+
+final class SplashLoading extends SplashState {
+  const SplashLoading();
+}
+
+final class SplashDone extends SplashState {
+  const SplashDone();
+}

@@ -1,8 +1,8 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+/// One-time signals from the cubit to the screen.
+sealed class OnBoardingEffect {
+  const OnBoardingEffect();
+}
 
-part 'on_boarding_effect.freezed.dart';
-
-@freezed
-class OnBoardingEffect with _$OnBoardingEffect {
-  const factory OnBoardingEffect.navigateHome() = NavigateToHome;
+final class NavigateToHome extends OnBoardingEffect {
+  const NavigateToHome();
 }

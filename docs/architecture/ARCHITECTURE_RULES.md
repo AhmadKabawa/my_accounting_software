@@ -166,4 +166,5 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 ## اتجاه الاعتماد (محدَّث)
 
 - سجل النصوص `lib/app/localization/key_registry.dart` خارج core، فلا يستورد core من features.
+- حالات Cubit/Bloc: `sealed class` + `Equatable` بلا freezed، وBloc مع `bloc_concurrency` فقط عند الحاجة لتحكم تزامن؛ freezed للكيانات الكبيرة في domain ([ADR-0002](ADR/0002-state-modeling-and-bloc-vs-cubit.md)).
 - Splash والـ Router يعتمدان على `SessionGate` (domain) فقط؛ `SessionCubit` يطبّقها. التدفقات التي تُبلغ الجلسة بالدخول (`AuthFlowCubit`) تعتمد على `SessionAuthenticator` (domain، دالة `onAuthenticated` فقط) ويطبّقها `SessionCubit` أيضاً؛ فلا يعتمد cubit على cubit ملموس ويُختبر بـ fake. إجراءات الشاشة الرئيسية معرّفة بـ `enum QuickAction` (الهوية هي القيمة، والنص `label` للعرض فقط). ربط `checkAuthentication` بالـ Splash يتم في `app_di.dart` (جذر التركيب). لا مخالفات معروفة متبقية في هذا الباب، ولا ADR مطلوب.

@@ -1,15 +1,15 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 
-part   'on_boarding_state.freezed.dart';
+/// A single data state (the page being shown), so it is one Equatable class
+/// rather than a sealed hierarchy.
+final class OnBoardingState extends Equatable {
+  const OnBoardingState({this.currentIndexPage = 0});
 
-@freezed
-sealed class OnBoardingState with _$OnBoardingState  {
- 
+  final int currentIndexPage;
 
-  const factory  OnBoardingState( { @Default(0) int currentIndexPage})= _OnBoardingState;
-factory OnBoardingState.initial() => const OnBoardingState(currentIndexPage:   0);
- 
+  OnBoardingState copyWith({int? currentIndexPage}) =>
+      OnBoardingState(currentIndexPage: currentIndexPage ?? this.currentIndexPage);
+
+  @override
+  List<Object?> get props => [currentIndexPage];
 }
-
- 
- 

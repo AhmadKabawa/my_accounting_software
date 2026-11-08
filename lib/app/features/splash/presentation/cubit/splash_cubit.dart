@@ -8,7 +8,7 @@ class SplashCubit extends Cubit<SplashState> {
     Duration minDuration = const Duration(seconds: 2),
   }) : _checkSession = checkSession,
        _minDuration = minDuration,
-       super(const SplashState.initial());
+       super(const SplashInitial());
 
   final Future<void> Function() _checkSession;
   final Duration _minDuration;
@@ -24,9 +24,9 @@ class SplashCubit extends Cubit<SplashState> {
     if (_started) return;
     _started = true;
 
-    emit(const SplashState.loading());
+    emit(const SplashLoading());
     await Future.wait([_runCheck(), Future<void>.delayed(_minDuration)]);
-    emit(const SplashState.done());
+    emit(const SplashDone());
   }
 
   Future<void> _runCheck() async {

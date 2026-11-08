@@ -5,6 +5,7 @@
 ## القرارات المعتمدة
 
 - [ADR-0001: حدود Core والمرجع المعتمد لوثائق المعمارية](0001-core-boundaries-and-documentation-authority.md)
+- [ADR-0002: نمذجة الحالات واختيار Cubit أو Bloc وموضع freezed](0002-state-modeling-and-bloc-vs-cubit.md)
 
 ## إضافة ADR
 

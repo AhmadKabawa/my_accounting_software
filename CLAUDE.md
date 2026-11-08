@@ -13,3 +13,5 @@
 استخدم Skill `.claude/skills/core-usage/SKILL.md` فقط في الحالات المحددة في وصفه. لا تنسخ قواعد الوثائق إلى هذه التعليمات؛ حدّث المرجع المختص عند تغييرها.
 
 القواعد الجديدة (فجوة الـ core، النصوص، الممنوعات في features) موجودة في `ARCHITECTURE_RULES.md` و[LOCALIZATION.md](docs/architecture/LOCALIZATION.md)؛ لا تنسخها هنا.
+
+نمذجة الحالات واختيار Cubit/Bloc وموضع freezed: [ADR-0002](docs/architecture/ADR/0002-state-modeling-and-bloc-vs-cubit.md) وقسم "متى أستخدم ماذا" في `FEATURE_TEMPLATE.md`؛ لا تنسخهما هنا.

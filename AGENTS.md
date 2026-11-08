@@ -57,7 +57,7 @@
 
 ## 7. الحالة والتنقل ودورة الحياة
 
-- التزم بـ Cubit/Bloc المعتمد، واجعل كل Cubit مسؤولاً عن نطاق محدد.
+- التزم بـ Cubit/Bloc المعتمد، واجعل كل Cubit مسؤولاً عن نطاق محدد. Cubit افتراضي وحالاته `sealed` + `Equatable` بلا freezed؛ Bloc فقط عند الحاجة لتحكم تزامن (انظر [ADR-0002](docs/architecture/ADR/0002-state-modeling-and-bloc-vs-cubit.md) و"متى أستخدم ماذا" في [FEATURE_TEMPLATE.md](docs/architecture/FEATURE_TEMPLATE.md)).
 - لا تنشئ نسخاً متعارضة من Cubit أو Repository عندما يجب مشاركة الحالة نفسها.
 - ضع بيانات الشاشة المستمرة في State والأفعال أحادية الاستخدام في Effects.
 - استخدم GoRouter ومسارات موحدة؛ لا تجعل Domain أو Data ينفذان التنقل.

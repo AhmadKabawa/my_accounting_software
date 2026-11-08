@@ -34,6 +34,63 @@ features/<feature>/
 - **المسارات:** المسار في `presentation/routing/<feature>_routes.dart` وفي `all` الخاص بها، و`...<Feature>Routes.all` في `route_registry.dart`، وفي `publicRoutes` أو `protectedRoutes`، ثم تسجيله في `app_go_router.dart`. الصفحات التي تشارك Cubit مفرداً تأخذه بـ `BlocProvider.value` (`AppRouter._withAuth`).
 - **الحراس:** `resolveRedirect` دالة نقية مغطاة في `test/routing/route_guards_test.dart`.
 
+## متى أستخدم ماذا
+
+| الحاجة | الأداة | القاعدة |
+|---|---|---|
+| شاشة عادية: تحميل، إرسال نموذج، أفعال متتابعة | **Cubit** (الافتراضي، غالباً `BaseCubit` عند وجود Effects) | لا تُنشئ Bloc دون سبب من الصفين التاليين |
+| بحث/تصفية يجب إلغاء ما سبقه، أو زر يجب ألا يتكرر، أو عمليات يجب ألا تتداخل | **Bloc** مع `bloc_concurrency` | `restartable()` للبحث وإلغاء الأقدم، و`droppable()` لتجاهل النقرات أثناء التنفيذ، و`sequential()` لعمليات مرتبة (debounce يحتاج `stream_transform` وتُضاف عند أول شاشة تحتاجها) |
+| حالات الـ Cubit/Bloc | **`sealed class` + `Equatable`** | لا freezed للحالات؛ حالة بيانات واحدة تكفي لها `final class` بـ Equatable (مثل `OnBoardingState`) |
+| كيان نطاق كبير (فاتورة، سطور، حالات، نسخ) | **freezed** | `copyWith` والمساواة وfromJson لكيانات كبيرة فقط؛ كيانات/نماذج auth الصغيرة الحالية باقية كما هي |
+
+الأمثلة هنا للتوضيح فقط ولا ميزة وهمية في `lib/`.
+
+Bloc بـ `restartable` (بحث يُلغى فيه الطلب الأقدم):
+
+```dart
+sealed class SearchEvent { const SearchEvent(); }
+final class QueryChanged extends SearchEvent {
+  const QueryChanged(this.query);
+  final String query;
+}
+
+class SearchBloc extends Bloc<SearchEvent, SearchState> {
+  SearchBloc(this._search) : super(const SearchIdle()) {
+    on<QueryChanged>(_onQuery, transformer: restartable());
+  }
+  final SearchUseCase _search;
+
+  Future<void> _onQuery(QueryChanged e, Emitter<SearchState> emit) async {
+    emit(const SearchLoading());
+    final result = await _search(e.query); // الأقدم يُلغى عند وصول أحدث
+    emit(result.fold(SearchFailed.new, SearchLoaded.new));
+  }
+}
+```
+
+كيان freezed كبير (في `domain/entity/`):
+
+```dart
+part 'invoice.freezed.dart';
+
+@freezed
+class Invoice with _$Invoice {
+  const Invoice._();
+  const factory Invoice({
+    required String id,
+    required String customerId,
+    required List<InvoiceLine> lines,
+    @Default(InvoiceStatus.draft) InvoiceStatus status,
+    DateTime? dueDate,
+  }) = _Invoice;
+
+  // قاعدة نطاق على الكيان؛ المبالغ الفعلية تنتظر قرار نوع Money (ADR-0001).
+  bool get isEditable => status == InvoiceStatus.draft;
+}
+```
+
+انظر [ADR-0002](ADR/0002-state-modeling-and-bloc-vs-cubit.md).
+
 ## كيف تضيف ميزة جديدة
 
 1. أنشئ الشجرة أعلاه بالطبقات التي لها مسؤولية فعلية فقط.
