@@ -73,7 +73,7 @@
 
 - [ ] أضف Unit tests مركزة لقواعد Domain والحسابات.
 - [ ] أضف اختبارات Data/Repository للـ mapping وتحويل الاستثناءات وحالات API الحدية.
-- [ ] أضف اختبارات Cubit/Bloc للتحميل والنجاح والفشل والإلغاء وEffects.
+- [ ] أضف اختبارات Cubit/Bloc للتحميل والنجاح والفشل والإلغاء وEffects بـ `blocTest` (`bloc_test`)؛ الـ Effects تُجمع عبر `listen` على `effectStream` وتُفحص في `verify`. المستودعات fakes يدوية (مثل `FakeAuthRepository`)، و`mocktail` للواجهات الصغيرة فقط (مثل `SessionAuthenticator`).
 - [ ] أضف Widget tests لتفاعلات المستخدم والحالات الظاهرة المهمة.
 - [ ] أضف اختبارات المسارات والصلاحيات عند تغيير التنقل أو الوصول.
 - [ ] نفّذ `dart format` و`flutter analyze` والاختبارات ذات الصلة عندما تتوفر Flutter SDK.

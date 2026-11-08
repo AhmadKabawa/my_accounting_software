@@ -9,6 +9,7 @@ import 'package:accounting_software/app/features/home/presentation/cubit/home_st
 import 'package:accounting_software/app/features/home/presentation/localization/home_keys.dart';
 import 'package:accounting_software/app/features/home/presentation/model/quick_action.dart';
 import 'package:accounting_software/app/features/home/presentation/support/home_format.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -28,45 +29,45 @@ void main() {
     flash.listen(shown.add);
   });
 
-  test('load emits the summary from the repository', () async {
-    final cubit = HomeCubit(
+  blocTest<HomeCubit, HomeState>(
+    'load emits loading then the summary from the repository',
+    build: () => HomeCubit(
       getSummary: const GetHomeSummaryUseCase(SampleHomeRepository()),
       flash: flash,
-    );
-    expect(cubit.state, isA<HomeLoading>());
+    ),
+    act: (c) => c.load(),
+    expect: () => [
+      isA<HomeLoading>(),
+      isA<HomeLoaded>().having((s) => s.summary.isSample, 'isSample', isTrue),
+    ],
+  );
 
-    await cubit.load();
-
-    final state = cubit.state;
-    expect(state, isA<HomeLoaded>());
-    expect((state as HomeLoaded).summary.isSample, isTrue);
-    await cubit.close();
-  });
-
-  test('load emits HomeFailed with the failure message key', () async {
-    final cubit = HomeCubit(
+  blocTest<HomeCubit, HomeState>(
+    'load emits HomeFailed with the failure message key',
+    build: () => HomeCubit(
       getSummary: GetHomeSummaryUseCase(_FailingRepository()),
       flash: flash,
-    );
+    ),
+    act: (c) => c.load(),
+    expect: () => [
+      isA<HomeLoading>(),
+      HomeFailed(NetworkFailure().messageKey),
+    ],
+  );
 
-    await cubit.load();
-
-    expect(cubit.state, isA<HomeFailed>());
-    await cubit.close();
-  });
-
-  test('openAction tells the user the module is not available yet', () async {
-    final cubit = HomeCubit(
+  blocTest<HomeCubit, HomeState>(
+    'openAction tells the user the module is not available yet',
+    build: () => HomeCubit(
       getSummary: const GetHomeSummaryUseCase(SampleHomeRepository()),
       flash: flash,
-    );
-
-    cubit.openAction(QuickAction.newSale);
-
-    expect(shown, hasLength(1));
-    expect(shown.single.key, HomeKeys.comingSoon);
-    await cubit.close();
-  });
+    ),
+    act: (c) => c.openAction(QuickAction.newSale),
+    expect: () => <HomeState>[],
+    verify: (_) {
+      expect(shown, hasLength(1));
+      expect(shown.single.key, HomeKeys.comingSoon);
+    },
+  );
 
   group('formatting', () {
     test('formatAmount groups thousands and keeps the sign', () {

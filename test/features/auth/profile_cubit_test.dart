@@ -12,6 +12,7 @@ import 'package:accounting_software/app/features/auth/domain/usecase/update_prof
 import 'package:accounting_software/app/features/auth/presentation/cubit/profile/profile_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,69 +46,108 @@ void main() {
     );
   });
 
+  const updated = UserEntity(id: 'u1', email: 'a@b.c', fullName: 'New');
+
   tearDown(() async {
     await cubit.close();
     await session.close();
     await cleared.close();
   });
 
-  test('loading is local: the session is never put in loading', () async {
-    session.onAuthenticated(testUser);
-    repo.profile = Completer();
-    final pending = cubit.updateProfile(fullName: 'x');
+  const loadingThenIdle = [ProfileStatus.loading, ProfileStatus.idle];
 
-    expect(cubit.state, ProfileStatus.loading);
-    expect(session.state, isA<SessionAuthenticated>());
+  blocTest<ProfileCubit, ProfileStatus>(
+    'loading is local: the session is never put in loading',
+    setUp: () {
+      session.onAuthenticated(testUser);
+      repo.profile = Completer();
+    },
+    build: () => cubit,
+    act: (c) async {
+      final pending = c.updateProfile(fullName: 'x');
 
-    repo.profile!.complete(const Right(UserEntity(id: 'u1', email: 'a@b.c', fullName: 'x')));
-    await pending;
-    expect(cubit.state, ProfileStatus.idle);
-  });
+      expect(c.state, ProfileStatus.loading);
+      expect(session.state, isA<SessionAuthenticated>());
 
-  test('a successful update refreshes the session user and says so', () async {
-    session.onAuthenticated(testUser);
-    const updated = UserEntity(id: 'u1', email: 'a@b.c', fullName: 'New');
-    repo.profileResult = const Right(updated);
+      repo.profile!.complete(
+        const Right(UserEntity(id: 'u1', email: 'a@b.c', fullName: 'x')),
+      );
+      await pending;
+    },
+    expect: () => loadingThenIdle,
+  );
 
-    await cubit.updateProfile(fullName: 'New');
+  blocTest<ProfileCubit, ProfileStatus>(
+    'a successful update refreshes the session user and says so',
+    setUp: () {
+      session.onAuthenticated(testUser);
+      repo.profileResult = const Right(updated);
+    },
+    build: () => cubit,
+    act: (c) => c.updateProfile(fullName: 'New'),
+    expect: () => loadingThenIdle,
+    verify: (_) {
+      expect((session.state as SessionAuthenticated).user, updated);
+      expect(shown.single.key, ProfileKeys.profileUpdated);
+      expect(shown.single.type, MessageType.success);
+    },
+  );
 
-    expect((session.state as SessionAuthenticated).user, updated);
-    expect(shown.single.key, ProfileKeys.profileUpdated);
-    expect(shown.single.type, MessageType.success);
-  });
+  blocTest<ProfileCubit, ProfileStatus>(
+    'a failed update keeps the user and shows the error',
+    setUp: () {
+      session.onAuthenticated(testUser);
+      repo.profileResult = Left(NetworkFailure());
+    },
+    build: () => cubit,
+    act: (c) => c.updateProfile(fullName: 'New'),
+    expect: () => loadingThenIdle,
+    verify: (_) {
+      expect((session.state as SessionAuthenticated).user, testUser);
+      expect(shown.single.type, MessageType.error);
+    },
+  );
 
-  test('a failed update keeps the user and shows the error', () async {
-    session.onAuthenticated(testUser);
-    repo.profileResult = Left(NetworkFailure());
+  blocTest<ProfileCubit, ProfileStatus>(
+    'updating while signed out is refused without calling the server',
+    build: () => cubit,
+    act: (c) => c.updateProfile(fullName: 'x'),
+    expect: () => <ProfileStatus>[],
+    verify: (_) {
+      expect(repo.calls, isEmpty);
+      expect(shown.single.type, MessageType.error);
+    },
+  );
 
-    await cubit.updateProfile(fullName: 'New');
+  blocTest<ProfileCubit, ProfileStatus>(
+    'change password reports success',
+    setUp: () => session.onAuthenticated(testUser),
+    build: () => cubit,
+    act: (c) => c.changePassword(currentPassword: 'a', newPassword: 'b'),
+    expect: () => loadingThenIdle,
+    verify: (_) {
+      expect(repo.calls, ['changePassword']);
+      expect(shown.single.key, ProfileKeys.passwordChanged);
+    },
+  );
 
-    expect((session.state as SessionAuthenticated).user, testUser);
-    expect(shown.single.type, MessageType.error);
-  });
+  blocTest<ProfileCubit, ProfileStatus>(
+    'a session cleared during the update is not overwritten',
+    setUp: () {
+      session.onAuthenticated(testUser);
+      repo.profile = Completer();
+    },
+    build: () => cubit,
+    act: (c) async {
+      final pending = c.updateProfile(fullName: 'x');
 
-  test('updating while signed out is refused without calling the server', () async {
-    await cubit.updateProfile(fullName: 'x');
-    expect(repo.calls, isEmpty);
-    expect(shown.single.type, MessageType.error);
-  });
-
-  test('change password reports success', () async {
-    session.onAuthenticated(testUser);
-    await cubit.changePassword(currentPassword: 'a', newPassword: 'b');
-    expect(repo.calls, ['changePassword']);
-    expect(shown.single.key, ProfileKeys.passwordChanged);
-  });
-
-  test('a session cleared during the update is not overwritten', () async {
-    session.onAuthenticated(testUser);
-    repo.profile = Completer();
-    final pending = cubit.updateProfile(fullName: 'x');
-
-    cleared.add(null);
-    repo.profile!.complete(const Right(UserEntity(id: 'u1', email: 'a@b.c')));
-    await pending;
-
-    expect(session.state, isA<SessionUnauthenticated>());
-  });
+      cleared.add(null);
+      repo.profile!.complete(
+        const Right(UserEntity(id: 'u1', email: 'a@b.c')),
+      );
+      await pending;
+    },
+    expect: () => loadingThenIdle,
+    verify: (_) => expect(session.state, isA<SessionUnauthenticated>()),
+  );
 }

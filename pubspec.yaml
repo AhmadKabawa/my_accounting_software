@@ -64,6 +64,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  bloc_test: ^10.0.0 # blocTest for Cubit/Bloc tests (supports bloc 9)
+  mocktail: ^1.0.4 # mocks for small interfaces (repositories stay manual fakes)
   freezed:
   build_runner: ^2.4.13
   hive_generator: ^2.0.1
