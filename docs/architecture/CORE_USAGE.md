@@ -149,7 +149,9 @@ AppButton(CommonKeys.save, isLoading: state.isBusy, onPressed: onSave);
 
 ```dart
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 
 // SnackBar بمفتاح ترجمة (المفضل: تُترجم وقت العرض):
 MessageViewWidgets.showMessage(context, messageKey: AuthKeys.signInSuccess, type: MessageType.success);
@@ -247,15 +249,24 @@ final clientId = AppConfig.googleClientId;   // مدخل واحد؛ لا تست�
 
 ```dart
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
+import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
 
-TextFormField(
+// بريد إلكتروني: AppTextField هو الودجت المعتمد داخل Features.
+AppTextField(
+  controller: emailController,
+  labelKey: FieldKeys.email,
+  keyboardType: TextInputType.emailAddress,
   validator: (value) => AppValidator.validate(
     value,
     [ValidationRule.required, ValidationRule.email],
   ),
 )
 
-TextFormField(
+// كلمة مرور: القاعدة المركبة password تطبق الحد الأدنى وبقية شروط كلمة المرور.
+AppTextField(
+  controller: passwordController,
+  labelKey: FieldKeys.password,
   obscureText: true,
   validator: (value) => AppValidator.validate(
     value,
@@ -264,8 +275,11 @@ TextFormField(
   ),
 )
 
-// تطابق حقلين: مرّر قيمة الحقل الآخر
-TextFormField(
+// تطابق حقلين: مرّر قيمة الحقل الآخر في params.
+AppTextField(
+  controller: confirmPasswordController,
+  labelKey: FieldKeys.confirmPassword,
+  obscureText: true,
   validator: (value) => AppValidator.validate(
     value,
     [ValidationRule.required, ValidationRule.match],
@@ -274,8 +288,8 @@ TextFormField(
 )
 ```
 
-- استخدمه لقواعد الحقول العامة (مطلوب، بريد، طول، هاتف، كلمة مرور، تطابق). رسالة مخصصة: `customKeys: {ValidationRule.required: AppKey('...')}`.
-- لا تستخدمه لقواعد أعمال أو محاسبية (مكانها Domain/Use Case). لا تنشئ validator موازياً. `ValidationRule.async` غير منفذة بعد.
+- استخدمه لقواعد الحقول العامة (مطلوب، بريد، طول، هاتف، كلمة مرور، تطابق). يمكن تخصيص رسالة قاعدة عبر `customKeys` بتمرير قيمة موجودة من enum يطبق `AppKey`، مثل `ValidationKeys.required`؛ لا تنشئ `AppKey` من سلسلة.
+- لا تستخدمه لقواعد أعمال أو محاسبية (مكانها Domain/Use Case). لا تنشئ validator موازياً. `ValidationRule.async` محجوزة وغير منفذة في `validate()`.
 
 ## 10. State management وEffects
 
