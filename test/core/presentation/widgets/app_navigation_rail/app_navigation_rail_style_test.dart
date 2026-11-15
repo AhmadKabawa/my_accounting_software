@@ -80,8 +80,8 @@ void main() {
       final scheme = AppTheme.light().colorScheme;
 
       expect(styles.background, scheme.surfaceContainer);
-      expect(styles.selectedBackground, scheme.secondaryContainer);
-      expect(styles.selectedForeground, scheme.onSecondaryContainer);
+      expect(styles.selectedBackground, scheme.primaryContainer);
+      expect(styles.selectedForeground, scheme.onPrimaryContainer);
       expect(styles.foreground, scheme.onSurfaceVariant);
     });
 

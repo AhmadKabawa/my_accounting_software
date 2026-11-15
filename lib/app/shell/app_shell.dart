@@ -85,7 +85,6 @@ class AppShell extends StatelessWidget {
                   items: items,
                   activeIndex: current,
                   onIndexChanged: onSelect,
-                  elevation: 2,
                   showLabelsAlways: false,
                 ),
         ),

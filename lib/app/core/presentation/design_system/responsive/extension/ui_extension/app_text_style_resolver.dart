@@ -24,5 +24,9 @@ extension AppTextStyleResolver on AppTextStyle {
     letterSpacing: 0,
     respectTextScaler: respectTextScaler ?? this.respectTextScaler,
     mode: mode ?? this.mode,
-  ).copyWith(decoration: decoration);
+  ).copyWith(
+    decoration: decoration,
+    fontFamily: fontFamily,
+    fontFeatures: fontFeatures,
+  );
 }

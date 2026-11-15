@@ -17,6 +17,7 @@ class HomeOverviewSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final semantic = context.ui.theme.semanticColors;
     final tiles = <Widget>[
       _KpiTile(
         label: HomeKeys.cashBalance,
@@ -28,19 +29,19 @@ class HomeOverviewSection extends StatelessWidget {
         label: HomeKeys.monthSales,
         value: summary.monthSales,
         icon: AppIcons.trendUp,
-        color: scheme.tertiary,
+        color: semantic.chartColor(0),
       ),
       _KpiTile(
         label: HomeKeys.receivables,
         value: summary.receivables,
         icon: AppIcons.receivable,
-        color: scheme.secondary,
+        color: semantic.chartColor(1),
       ),
       _KpiTile(
         label: HomeKeys.payables,
         value: summary.payables,
         icon: AppIcons.payable,
-        color: scheme.error,
+        color: semantic.chartColor(3),
       ),
     ];
 

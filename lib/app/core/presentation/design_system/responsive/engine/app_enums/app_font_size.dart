@@ -21,17 +21,16 @@ class AppFontSize extends ResponsiveToken {
 
   // ─── Predefined tokens ───────────────────────────────────────────
 
-  /// Tiny text — captions, metadata, timestamps
-  /// Mobile: 8px | Tablet: 10px | Desktop: 12px
-  static const tiny = AppFontSize(8, 10, 12);
+  // The old `tiny` (8/10/12) was removed: financial text must stay readable,
+  // so the smallest text on a phone is 12.
 
-  /// Extra small text — secondary information, badges
-  /// Mobile: 10px | Tablet: 12px | Desktop: 14px
-  static const xs = AppFontSize(10, 12, 14);
+  /// Extra small text — captions, table headers, badges, metadata
+  /// Mobile: 12px | Tablet: 12px | Desktop: 13px
+  static const xs = AppFontSize(12, 12, 13);
 
   /// Small text — helper text, footnotes, labels
-  /// Mobile: 12px | Tablet: 13px | Desktop: 14px
-  static const sm = AppFontSize(12, 13, 14);
+  /// Mobile: 13px | Tablet: 13px | Desktop: 14px
+  static const sm = AppFontSize(13, 13, 14);
 
   /// Base text — body text, paragraphs (default)
   /// Mobile: 14px | Tablet: 15px | Desktop: 16px

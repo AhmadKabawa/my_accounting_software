@@ -1,19 +1,18 @@
 // ─────────────────────────────────────────────────────────────────
 // app_navigation_bar.dart
 // Navigation Bar احترافي مع:
-//   - Multiple styles (Elegant, Glassmorphism, Pill, Minimal, Neon)
+//   - Two styles: Minimal (default) and Pill
 //   - Smooth animations
 //   - Custom configurations
 //   - ✅ دقيق جداً لتقدير عرض العنصر النشط
 //
-// كل القيم البصرية (أحجام، ألوان، ظلال، blur) في AppNavigationBarStyle
+// كل القيم البصرية (أحجام، ألوان، ظلال) في AppNavigationBarStyle
 // (AppNavigationBarStyle)؛ هنا فقط الأنيميشن والـ scale والحالة.
 // ─────────────────────────────────────────────────────────────────
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/tokens/app_motion.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
@@ -53,15 +52,12 @@ class AppNavigationBar extends StatefulWidget {
   final bool deleteLabelsAlways;
   final double? borderRadius;
 
-  /// null = the default elevation of the style.
-  final double? elevation;
-
   const AppNavigationBar({
     super.key,
     required this.items,
     required this.activeIndex,
     required this.onIndexChanged,
-    this.style = NavBarStyle.elegant,
+    this.style = NavBarStyle.minimal,
     this.backgroundColor,
     this.activeColor,
     this.inactiveColor,
@@ -70,7 +66,6 @@ class AppNavigationBar extends StatefulWidget {
     this.borderRadius,
     this.maxItemSize,
     this.maxWidthActiveItemSize,
-    this.elevation,
   }) : assert(items.length > 0);
 
   @override
@@ -85,7 +80,6 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
       backgroundColor: widget.backgroundColor,
       activeColor: widget.activeColor,
       borderRadius: widget.borderRadius,
-      elevation: widget.elevation,
     );
 
     Widget result = Container(
@@ -100,17 +94,6 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
       ),
       child: _buildItemsRow(),
     );
-
-    final blur = variant.blur;
-    if (blur != null) {
-      result = ClipRRect(
-        borderRadius: variant.radius,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-          child: result,
-        ),
-      );
-    }
 
     // The bar sits at the bottom edge: it keeps itself clear of the system
     // gesture area, so its parent does not have to wrap it in a SafeArea.
@@ -282,8 +265,8 @@ class _NavBarItemWidgetState extends State<NavBarItemWidget>
         animation: _controller,
         builder: (context, _) {
           return AnimatedContainer(
-            duration: const Duration(milliseconds: 280),
-            curve: Curves.easeInOut,
+            duration: AppMotion.duration(context, AppMotionDuration.slow),
+            curve: AppMotion.standard,
             height: height,
             width: widget.showLabel ? widget.activeItemWidth : height,
             decoration: BoxDecoration(

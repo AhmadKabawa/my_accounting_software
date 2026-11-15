@@ -48,7 +48,7 @@ final shimmerBase = context.ui.theme.value(dark: darkColor, light: lightColor);
 
 **ممنوع / قديم ← البديل**
 - `Colors.green` و`Color(0xFF...)` في الواجهة ← `semanticColors` أو `colors`.
-- `AppColors.x` في الواجهة (للثيم فقط) ← `context.ui.theme`.
+- `AppColors.x` أو `AppLightColors.x` أو `AppDarkColors.x` في الواجهة (للثيم فقط) ← `context.ui.theme`.
 - `Theme.of(context).colorScheme` ← `context.ui.theme.colors`.
 - `context.isDark` / `context.colors` / `context.themeColor` (الامتداد القديم المحذوف) ← `context.ui.theme.isDark` / `colors` / `value(dark:, light:)`.
 

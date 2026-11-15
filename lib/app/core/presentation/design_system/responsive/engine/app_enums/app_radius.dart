@@ -26,31 +26,31 @@ class AppRadius extends ResponsiveToken {
   /// Mobile: 0px | Tablet: 0px | Desktop: 0px
   static const none = AppRadius(0, 0, 0);
 
-  /// Extra small radius — subtle rounding (buttons, chips)
+  /// Extra small radius — checkboxes, tiny marks
   /// Mobile: 4px | Tablet: 6px | Desktop: 8px
   static const xs = AppRadius(4, 6, 8);
 
-  /// Small radius — standard for small elements (inputs, cards)
+  /// Small radius — thumbnails
+  /// Mobile: 6px | Tablet: 8px | Desktop: 10px
+  static const sm = AppRadius(6, 8, 10);
+
+  /// Medium radius — inputs, standard buttons, snackbars, nav items
   /// Mobile: 8px | Tablet: 10px | Desktop: 12px
-  static const sm = AppRadius(8, 10, 12);
+  static const md = AppRadius(8, 10, 12);
 
-  /// Medium radius — default for most containers
+  /// Large radius — cards and KPI tiles
   /// Mobile: 12px | Tablet: 14px | Desktop: 16px
-  static const md = AppRadius(12, 14, 16);
+  static const lg = AppRadius(12, 14, 16);
 
-  /// Large radius — prominent cards, modals, dialogs
+  /// Extra large radius — dialogs, bottom sheets
   /// Mobile: 16px | Tablet: 20px | Desktop: 24px
-  static const lg = AppRadius(16, 20, 24);
+  static const xl = AppRadius(16, 20, 24);
 
-  /// Extra large radius — floating panels, bottom sheets
-  /// Mobile: 24px | Tablet: 28px | Desktop: 32px
-  static const xl = AppRadius(24, 28, 32);
-
-  /// Double extra large radius — hero sections, feature cards
+  /// Outside the design scale: only the floating pill navigation bar uses it.
   /// Mobile: 32px | Tablet: 40px | Desktop: 48px
   static const xxl = AppRadius(32, 40, 48);
 
-  /// Full circular radius — perfect circles (avatars, badges)
+  /// Full circular radius — badges, chips, pill buttons
   /// Mobile: 999px | Tablet: 999px | Desktop: 999px
   static const full = AppRadius(999, 999, 999);
 

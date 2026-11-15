@@ -31,6 +31,20 @@ enum AppTextType {
   /// Button labels (the theme has no text role for them, so no theme color).
   buttonText,
   buttonTextSmall,
+
+  /// Numbers and amounts (tabular + lining figures).
+  amountKpi,
+  amountLg,
+  amountTable,
+
+  /// Document number or code (INV-0001).
+  docCode,
+
+  /// Table column header.
+  tableHeader,
+
+  /// Barcode and SKU only (IBM Plex Mono).
+  codeMono,
 }
 
 extension AppTextTypeX on AppTextType {
@@ -53,6 +67,12 @@ extension AppTextTypeX on AppTextType {
     AppTextType.labelSmall => AppTextStyles.labelSmall,
     AppTextType.buttonText => AppTextStyles.buttonText,
     AppTextType.buttonTextSmall => AppTextStyles.buttonTextSmall,
+    AppTextType.amountKpi => AppTextStyles.amountKpi,
+    AppTextType.amountLg => AppTextStyles.amountLg,
+    AppTextType.amountTable => AppTextStyles.amountTable,
+    AppTextType.docCode => AppTextStyles.docCode,
+    AppTextType.tableHeader => AppTextStyles.tableHeader,
+    AppTextType.codeMono => AppTextStyles.codeMono,
   };
 
   /// The color the theme gives this type (it differs per type and between
@@ -76,6 +96,14 @@ extension AppTextTypeX on AppTextType {
       AppTextType.labelSmall => textTheme.labelSmall,
       // No theme role: the caller (e.g. AppButton) supplies the color.
       AppTextType.buttonText || AppTextType.buttonTextSmall => null,
+      // Amounts, codes and monospace text use the primary text color; the
+      // table header uses the secondary one (table-header textColor).
+      AppTextType.amountKpi ||
+      AppTextType.amountLg ||
+      AppTextType.amountTable ||
+      AppTextType.docCode ||
+      AppTextType.codeMono => textTheme.bodyLarge,
+      AppTextType.tableHeader => textTheme.bodyMedium,
     };
     return themeStyle?.color;
   }

@@ -28,6 +28,8 @@ class AppTextFieldStyle {
 
   Color get iconColor => _scheme.onSurfaceVariant;
 
+  Color get _focusRing => context.ui.theme.semanticColors.focusRing;
+
   TextStyle get textStyle => context.ui.text.of(AppTextType.bodyLarge);
 
   TextStyle get labelStyle => context.ui.text
@@ -72,7 +74,7 @@ class AppTextFieldStyle {
       errorMaxLines: 3,
       border: _border(_scheme.outline),
       enabledBorder: _border(_scheme.outline),
-      focusedBorder: _border(_scheme.primary, emphasized: true),
+      focusedBorder: _border(_focusRing, emphasized: true),
       errorBorder: _border(_scheme.error),
       focusedErrorBorder: _border(_scheme.error, emphasized: true),
       disabledBorder: _border(disabled),

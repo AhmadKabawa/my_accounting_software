@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
@@ -99,8 +100,9 @@ void main() {
         AppButtonSize.large,
       );
 
-      expect(small.height, 32);
-      expect(medium.height, 40);
+      // Design: sm 36, md 44 (hit area), lg 48 on a phone.
+      expect(small.height, 36);
+      expect(medium.height, 44);
       expect(large.height, 48);
       expect(small.iconSize, lessThan(medium.iconSize));
       expect(medium.iconSize, lessThan(large.iconSize));
@@ -153,8 +155,8 @@ void main() {
         desktop,
       )).resolve(AppButtonVariant.primary, AppButtonSize.medium);
 
-      expect(onPhone.height, 40);
-      expect(onDesktop.height, 48);
+      expect(onPhone.height, 44);
+      expect(onDesktop.height, AppComponentSize.hitArea.desktop);
       expect(onDesktop.iconSize, greaterThan(onPhone.iconSize));
       expect(
         onDesktop.padding.horizontal,
@@ -177,7 +179,7 @@ void main() {
       );
       final large = tester.getSize(find.byType(AppButton)).height;
 
-      expect(small, 32);
+      expect(small, 36);
       expect(large, 48);
     });
 

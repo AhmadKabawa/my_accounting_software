@@ -45,7 +45,7 @@ class MessageViewWidgets {
           child: Center(
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: dialogContext.ui.radius.lg,
+                borderRadius: dialogContext.ui.radius.xl,
               ),
               child: Padding(
                 padding: dialogContext.ui.padding.all(AppSpacing.xl),
@@ -77,7 +77,7 @@ class MessageViewWidgets {
         context: context,
         builder: (dialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: dialogContext.ui.radius.lg,
+            borderRadius: dialogContext.ui.radius.xl,
           ),
           title: Row(
             children: [

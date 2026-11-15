@@ -151,7 +151,7 @@ abstract final class ResponsiveHelper {
         return ScaleEngine.scaleFont(
           context,
           designValue: size.mobile,
-          minValue: (min ?? AppFontSize.tiny).mobile,
+          minValue: (min ?? AppFontSize.xs).mobile,
           maxValue: (max ?? AppFontSize.display).mobile,
           respectTextScaler: respectTextScaler,
         );
@@ -163,7 +163,7 @@ abstract final class ResponsiveHelper {
         final scaled = ScaleEngine.adaptiveScale(
           context,
           size: size,
-          min: min ?? AppFontSize.tiny,
+          min: min ?? AppFontSize.xs,
           max: max ?? AppFontSize.display,
         );
         return ScaleEngine.applyTextScaler(

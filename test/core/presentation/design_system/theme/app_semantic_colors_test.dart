@@ -16,6 +16,63 @@ void main() {
       expect(copy.debit, AppSemanticColors.light.debit);
     });
 
+    test('copyWith keeps the new roles and replaces them on request', () {
+      const status = StatusColor(
+        foreground: Colors.black,
+        container: Colors.white,
+      );
+      final copy = AppSemanticColors.light.copyWith(
+        balanceNegative: Colors.purple,
+        statusPosted: status,
+        chart: const [Colors.red],
+        focusRing: Colors.orange,
+      );
+
+      expect(copy.balanceNegative, Colors.purple);
+      expect(copy.statusPosted, status);
+      expect(copy.chart, const [Colors.red]);
+      expect(copy.focusRing, Colors.orange);
+      expect(copy.statusDraft, AppSemanticColors.light.statusDraft);
+      expect(copy.successContainer, AppSemanticColors.light.successContainer);
+      expect(copy.onSurfaceMuted, AppSemanticColors.light.onSurfaceMuted);
+    });
+
+    test('lerp interpolates status pairs and chart series', () {
+      final start = AppSemanticColors.light;
+      final end = AppSemanticColors.dark;
+
+      final mid = start.lerp(end, 0.5);
+
+      expect(
+        mid.statusPosted.foreground,
+        Color.lerp(
+          start.statusPosted.foreground,
+          end.statusPosted.foreground,
+          0.5,
+        ),
+      );
+      expect(
+        mid.statusPosted.container,
+        Color.lerp(
+          start.statusPosted.container,
+          end.statusPosted.container,
+          0.5,
+        ),
+      );
+      expect(mid.chart, hasLength(8));
+      expect(mid.chart.first, Color.lerp(start.chart.first, end.chart.first, 0.5));
+      expect(start.lerp(end, 0).focusRing, start.focusRing);
+      expect(start.lerp(end, 1).focusRing, end.focusRing);
+    });
+
+    test('chartColor cycles through the 8 series', () {
+      final semantic = AppSemanticColors.light;
+
+      expect(semantic.chartColor(0), semantic.chart[0]);
+      expect(semantic.chartColor(7), semantic.chart[7]);
+      expect(semantic.chartColor(8), semantic.chart[0]);
+    });
+
     test('lerp interpolates and returns this for a foreign type', () {
       final mid = AppSemanticColors.light.lerp(AppSemanticColors.dark, 0.5);
 

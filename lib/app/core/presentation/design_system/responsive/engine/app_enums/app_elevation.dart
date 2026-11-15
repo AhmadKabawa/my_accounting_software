@@ -68,7 +68,6 @@ class AppElevation extends ResponsiveToken {
   /// Card(
   ///   elevation: AppElevation.md.of(context),
   ///   // or use custom shadows:
-  ///   // shadowColor: Colors.black.withOpacity(0.1),
   /// )
   /// ```
   List<BoxShadow> shadows(BuildContext context) {
@@ -78,7 +77,7 @@ class AppElevation extends ResponsiveToken {
         offset: Offset(0, value / 2),
         blurRadius: value,
         spreadRadius: value / 4,
-        color: Colors.black.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.shadow.withOpacity(0.12),
       ),
     ];
   }

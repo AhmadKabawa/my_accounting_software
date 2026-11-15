@@ -69,8 +69,8 @@ class AppButtonStyle {
   static const _adaptive = ResponsiveMode.adaptiveOnly;
 
   double _height(AppButtonSize size) => Rh.height(context, switch (size) {
-    AppButtonSize.small => AppComponentSize.tiny,
-    AppButtonSize.medium => AppComponentSize.medium,
+    AppButtonSize.small => AppComponentSize.small,
+    AppButtonSize.medium => AppComponentSize.hitArea,
     AppButtonSize.large => AppComponentSize.large,
   }, mode: _adaptive);
 

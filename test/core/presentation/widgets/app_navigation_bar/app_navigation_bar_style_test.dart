@@ -23,73 +23,62 @@ Future<AppNavigationBarStyle> _navbarAt(WidgetTester tester, Size size) async {
   return styles;
 }
 
-BorderSide _side(NavbarVariant v) => (v.border!).top;
-
 void main() {
   const phone = Size(390, 844);
   const desktop = Size(1440, 900);
 
-  // The values below are the literals app_navigation_bar.dart used before
-  // they moved into AppNavigationBarStyle.
-  group('AppNavigationBarStyle.variant on mobile', () {
-    testWidgets('elegant', (tester) async {
-      final v = (await _navbarAt(tester, phone)).variant(NavBarStyle.elegant);
+  test('only the minimal and pill styles exist (minimal is the default)', () {
+    expect(NavBarStyle.values, [NavBarStyle.minimal, NavBarStyle.pill]);
+  });
 
-      expect(v.padding, const EdgeInsets.all(8));
-      expect(_side(v).width, 1);
-      expect(v.shadows.single.blurRadius, 8);
-      expect(v.shadows.single.offset, const Offset(0, 4));
-      expect(v.blur, isNull);
+  group('AppNavigationBarStyle.variant on mobile', () {
+    testWidgets('minimal is a flat surface with a hairline top border', (
+      tester,
+    ) async {
+      final styles = await _navbarAt(tester, phone);
+      final scheme = AppTheme.light().colorScheme;
+
+      final v = styles.variant(NavBarStyle.minimal);
+
+      expect(v.radius, BorderRadius.zero);
+      expect(v.shadows, isEmpty);
+      expect(v.gradient, isNull);
+      expect(v.margin, EdgeInsets.zero);
+      expect(v.background, scheme.surface);
+      expect(v.border!.top.width, 1);
+      expect(v.border!.top.color, scheme.outlineVariant);
     });
 
-    testWidgets('elegant honours the elevation override', (tester) async {
+    testWidgets('minimal honours the background override', (tester) async {
       final styles = await _navbarAt(tester, phone);
 
-      final v = styles.variant(NavBarStyle.elegant, elevation: 2);
+      final v = styles.variant(
+        NavBarStyle.minimal,
+        backgroundColor: Colors.purple,
+      );
 
-      expect(v.shadows.single.blurRadius, 2);
+      expect(v.background, Colors.purple);
     });
 
-    testWidgets('glassmorphism blurs the backdrop', (tester) async {
-      final v = (await _navbarAt(
-        tester,
-        phone,
-      )).variant(NavBarStyle.glassmorphism);
+    testWidgets('pill has a gradient and a glow, and no border', (
+      tester,
+    ) async {
+      final styles = await _navbarAt(tester, phone);
 
-      expect(v.blur, 10);
-      expect(_side(v).width, 1.5);
-      expect(_side(v).color, Colors.white.withOpacity(0.3));
-      expect(v.shadows.single.blurRadius, 10);
-      expect(v.shadows.single.offset, const Offset(0, 5));
-    });
-
-    testWidgets('pill has a gradient, a glow and no blur', (tester) async {
-      final v = (await _navbarAt(tester, phone)).variant(NavBarStyle.pill);
+      final v = styles.variant(NavBarStyle.pill);
 
       expect(v.gradient, isNotNull);
-      expect(v.blur, isNull);
+      expect(v.border, isNull);
       expect(v.shadows.single.blurRadius, 15);
       expect(v.shadows.single.offset, const Offset(0, 8));
     });
 
-    testWidgets('minimal is a flat bar with a hairline top border', (
-      tester,
-    ) async {
-      final v = (await _navbarAt(tester, phone)).variant(NavBarStyle.minimal);
+    testWidgets('pill honours the radius override', (tester) async {
+      final styles = await _navbarAt(tester, phone);
 
-      expect(v.radius, BorderRadius.zero);
-      expect(v.shadows, isEmpty);
-      expect(_side(v).width, 0.5);
-      // transparent and without a gradient -> blurred, as before
-      expect(v.blur, 10);
-    });
+      final v = styles.variant(NavBarStyle.pill, borderRadius: 7);
 
-    testWidgets('neon glows', (tester) async {
-      final v = (await _navbarAt(tester, phone)).variant(NavBarStyle.neon);
-
-      expect(_side(v).width, 1.5);
-      expect(v.shadows.single.blurRadius, 16);
-      expect(v.shadows.single.offset, const Offset(0, 4));
+      expect(v.radius, BorderRadius.circular(7));
     });
   });
 
@@ -97,12 +86,9 @@ void main() {
     testWidgets('desktop keeps the same decorative values', (tester) async {
       final styles = await _navbarAt(tester, desktop);
 
-      final elegant = styles.variant(NavBarStyle.elegant);
-      final glass = styles.variant(NavBarStyle.glassmorphism);
+      final pill = styles.variant(NavBarStyle.pill);
 
-      expect(elegant.padding, const EdgeInsets.all(8));
-      expect(elegant.shadows.single.blurRadius, 8);
-      expect(glass.blur, 10);
+      expect(pill.shadows.single.blurRadius, 15);
       expect(styles.minGap, 4);
       expect(styles.maxGap, 12);
     });

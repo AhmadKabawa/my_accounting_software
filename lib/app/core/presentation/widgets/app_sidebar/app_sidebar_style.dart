@@ -44,9 +44,9 @@ class AppSidebarStyle {
 
   Color get background => _scheme.surfaceContainer;
 
-  Color get selectedBackground => _scheme.secondaryContainer;
+  Color get selectedBackground => _scheme.primaryContainer;
 
-  Color get selectedForeground => _scheme.onSecondaryContainer;
+  Color get selectedForeground => _scheme.onPrimaryContainer;
 
   Color get foreground => _scheme.onSurfaceVariant;
 

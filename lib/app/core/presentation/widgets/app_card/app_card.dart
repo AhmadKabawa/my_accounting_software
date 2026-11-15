@@ -9,7 +9,7 @@ class AppCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = AppSpacing.md,
-    this.radius = AppRadius.md,
+    this.radius = AppRadius.lg,
     this.onTap,
     this.semanticsLabel,
   });
@@ -40,7 +40,7 @@ class AppCard extends StatelessWidget {
     }
 
     final card = Material(
-      color: scheme.surfaceContainerLow,
+      color: scheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
         side: BorderSide(

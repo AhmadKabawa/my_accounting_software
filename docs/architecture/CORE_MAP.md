@@ -92,7 +92,8 @@
 - `ScreenEngine`: مصدر واحد لتحديد نوع الشاشة والأبعاد وحدود الشاشات (Breakpoints). افتحه لمعرفة القيم الحالية ولا تنسخها.
 - `ScaleEngine`: حساب القياس والاستيفاء بين tokens وقياس الخط مع TextScaler.
 - `ResponsiveMode`: أنماط القياس (`fixed` و`scaleOnly` و`adaptiveOnly` و`adaptiveScale`).
-- Tokens/enums: `AppSpacing` و`AppRadius` و`AppFontSize` و`AppIconSize` و`AppElevation` و`AppComponentSize` و`AppAspectRatio` و`AppBaseWidth` و`ResponsiveToken` و`ScreenType` و`AppOrientation`.
+- Tokens/enums: `AppSpacing` و`AppRadius` و`AppFontSize` و`AppIconSize` و`AppElevation` و`AppBorderWidth` و`AppComponentSize` و`AppAspectRatio` و`AppBaseWidth` و`ResponsiveToken` و`ScreenType` و`AppOrientation`، والجديدة: `AppGrid` (أعمدة/هامش/فاصل لكل فئة جهاز) و`AppDensity` (comfortable/compact لارتفاع الصف والرأس والحقل). تقع في `responsive/engine/app_enums/`.
+- `design_system/tokens/` (مستقلة عن Responsive): `AppMotion`/`AppMotionDuration` (مدد ومنحنيات الحركة، وتصير المدة صفراً عند «تقليل الحركة») و`AppLayer` (z-index للطبقات).
 - `Rh` (اسم مستعار لـ `ResponsiveHelper` في `responsive_helper.dart`): API ساكنة للقياس واختيار الـ builders.
 - `context.ui` من `UIContextExtension`: **المدخل العام الموحد** إلى `padding` و`size` و`text` و`spacing` و`radius` و`icon` و`shadow` و`grid` و`screen` و`theme` و`dir`. تم حذف `ResponsiveContextExtension` (اختصارات `context.spacing()`/`pad()`/...)؛ لا تستخدمها ولا تعد إنشاءها.
 - `context.ui.text`: `of(AppTextType)` لنمط نص متجاوب بلون الثيم، و`size` و`style` لأحجام وأنماط خارج الأدوار.
@@ -107,9 +108,9 @@
 ### Theme
 - `AppTheme.light()` و`AppTheme.dark()`: إنشاء ThemeData دون BuildContext.
 - `buildTheme`: تجميع ColorScheme وTextTheme وثيمات مكونات Material (`theme/components/`).
-- `light_theme.dart` و`dark_theme.dart`: ثيمات الوضعين.
-- `AppColors` و`AppTextStyles`: القيم الخام للألوان وتعريفات الأنماط النصية. `AppColors` للاستخدام داخل ملفات الثيم فقط، والواجهات تصل للألوان عبر `context.ui.theme`.
-- `AppSemanticColors` (`theme/extensions/app_semantic_colors.dart`): `ThemeExtension` حقيقي (`copyWith` و`lerp`) بألوان `success` و`warning` و`info` وما يقابلها `onX` و`debit` و`credit`، ومسجل في الثيمين عبر `buildTheme`. القراءة: `context.ui.theme.semanticColors`. قيم `debit`/`credit` مؤقتة (placeholder) بانتظار الهوية البصرية. لا لون خطأ دلالي منفصل: استخدم `colors.error`. لا يستورد محرك Responsive.
+- `light_theme.dart` و`dark_theme.dart`: `ColorScheme` الوضعين (الداكن تصميم مستقل لا قلب آلي). `buildTheme` يستقبل `background` (لون الصفحة) منفصلاً عن `surface` (البطاقات).
+- `AppColors` (السلالم الخام green/neutral) و`AppLightColors` و`AppDarkColors` (الأدوار بالأسماء نفسها) و`AppTextStyles` (الأنماط النصية بما فيها أدوار المبالغ `amount*` و`docCode` و`tableHeader` و`codeMono`) و`AppFontFamily`. الأدوار الخام للاستخدام داخل ملفات الثيم فقط، والواجهات تصل للألوان عبر `context.ui.theme`. التفاصيل والقرارات: [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
+- `AppSemanticColors` (`theme/extensions/app_semantic_colors.dart`): `ThemeExtension` حقيقي (`copyWith` و`lerp`) بألوان `success` و`warning` و`info` (مع `onX` و`xContainer`) والمحاسبة (`debit`/`credit` محايدان، `balancePositive`/`balanceNegative`) وخمس حالات مستندات (`StatusColor` = fg/bg) وسلاسل الرسوم (`chart` و`chartColor(i)`) و`onSurfaceMuted` و`outlineStrong` و`focusRing`، ومسجل في الثيمين عبر `buildTheme`. القراءة: `context.ui.theme.semanticColors`. لا لون خطأ دلالي منفصل: استخدم `colors.error`. لا يستورد محرك Responsive.
 - `ThemeCubit` و`ThemeState`: اختيار light/dark/system وحفظه عبر `AppSettingsManager`.
 - `theme/extensions/theme_mode_extension.dart`: `ThemeModeExtension` على `ThemeMode` (`icon` و`nameKey` وهو `AppKey` من `AppKeys.theme`). لا يوجد مستهلك فعّال حالياً. الامتداد القديم على `BuildContext` المسمى `ThemeExtension` (الذي يتعارض مع كلاس Flutter) حُذف؛ استخدم `context.ui.theme`.
 - ألوان `ColorScheme` الحالية (وتعارض مسميات مثل `primary`/`primaryLight`/`primaryDark`) لم تُراجع بعد.

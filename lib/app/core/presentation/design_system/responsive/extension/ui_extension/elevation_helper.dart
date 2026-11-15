@@ -9,6 +9,9 @@ class ElevationHelper {
 
   const ElevationHelper(this.context);
 
+  /// Shadow color is the theme's `shadow` (neutral-900) at 8–16% opacity.
+  static const _shadowOpacity = 0.12;
+
   /// Elevation value
   double value(AppElevation elevation) => Rh.elevation(context, elevation);
 
@@ -18,7 +21,7 @@ class ElevationHelper {
       offset: Offset(0, value(elevation) / 2),
       blurRadius: value(elevation),
       spreadRadius: value(elevation) / 4,
-      color: Colors.black.withOpacity(0.1),
+      color: Theme.of(context).colorScheme.shadow.withOpacity(_shadowOpacity),
     ),
   ];
 

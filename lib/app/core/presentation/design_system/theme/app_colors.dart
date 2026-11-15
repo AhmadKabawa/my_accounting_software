@@ -1,198 +1,214 @@
 import 'package:flutter/material.dart';
 
-/// ملف يحتوي على جميع ألوان التطبيق
-/// الألوان الأساسية مأخوذة من النسخة الأولى
-/// التنظيم والهيكل مأخوذ من النسخة الثانية
-class AppColors {
+/// ألوان التطبيق، وفق "Ledger Design System" (طبقتان):
+///
+/// 1. [AppColors]: السلالم الخام (`green-50…900` و`neutral-0…900`). لا تُستعمل
+///    من الشاشات ولا من المكوّنات.
+/// 2. [AppLightColors] و[AppDarkColors]: الأدوار (`primary`, `surface`,
+///    `on-surface`…) بالأسماء نفسها. الفاتح يشير إلى السلالم، والداكن تصميم
+///    مستقل بقيم صريحة (ليس قلباً آلياً للفاتح).
+///
+/// الوصول من الواجهات يكون عبر `context.ui.theme.colors` (ColorScheme) و
+/// `context.ui.theme.semanticColors` فقط. الأدوار تُمرَّر إلى الثيم في
+/// `light_theme.dart` و`dark_theme.dart` و`app_semantic_colors.dart`.
+abstract final class AppColors {
   AppColors._();
 
-  /* ==================== 🎨 PRIMARY COLORS (الأزرق الأساسي) ==================== */
-  /// اللون الأساسي للتطبيق - من النسخة الأولى (#4b68ff)
-  static const Color primary = Color(0xFF4b68ff);
+  // ─── Brand: أخضر مائل للفيروزي ───
+  static const Color green50 = Color(0xFFEEF8F2);
+  static const Color green100 = Color(0xFFD6EEDF);
+  static const Color green200 = Color(0xFFB0DCC3);
+  static const Color green300 = Color(0xFF7EC3A1);
+  static const Color green400 = Color(0xFF4AA57E);
+  static const Color green500 = Color(0xFF2B8A64);
+  static const Color green600 = Color(0xFF1F7352);
+  static const Color green700 = Color(0xFF1A5C43);
+  static const Color green800 = Color(0xFF164A37);
+  static const Color green900 = Color(0xFF11392B);
 
-  /// نسخة فاتحة من الأساسي (مشتق من accent في النسخة الأولى)
-  static const Color primaryLight = Color(0xFF277359);
+  // ─── Neutrals: رماديات محايدة بميل أخضر خفيف ───
+  static const Color neutral0 = Color(0xFFFFFFFF);
+  static const Color neutral50 = Color(0xFFF7F8F7);
+  static const Color neutral100 = Color(0xFFF0F2F1);
+  static const Color neutral200 = Color(0xFFE3E6E4);
+  static const Color neutral300 = Color(0xFFD0D4D2);
+  static const Color neutral400 = Color(0xFF8F9692);
+  static const Color neutral500 = Color(0xFF6B726E);
+  static const Color neutral600 = Color(0xFF4B524F);
+  static const Color neutral700 = Color(0xFF3E4341);
+  static const Color neutral800 = Color(0xFF262A28);
+  static const Color neutral900 = Color(0xFF171A19);
+}
 
-  /// نسخة غامقة من الأساسي
-  static const Color primaryDark = Color(0xFF5BCFA0);
+/// أدوار الوضع الفاتح.
+abstract final class AppLightColors {
+  AppLightColors._();
 
-  /// اللون الذي يظهر فوق الأساسي (نص، أيقونات)
-  static const Color onPrimary = white;
+  // ─── Roles ───
+  static const Color primary = AppColors.green600;
+  static const Color onPrimary = AppColors.neutral0;
+  static const Color primaryHover = AppColors.green700;
+  static const Color primaryContainer = AppColors.green100;
+  static const Color onPrimaryContainer = AppColors.green900;
+  static const Color secondary = AppColors.neutral700;
+  static const Color onSecondary = AppColors.neutral0;
+  static const Color secondaryContainer = AppColors.neutral200;
+  static const Color onSecondaryContainer = AppColors.neutral900;
 
-  /* ==================== 🟡 SECONDARY COLORS (الأصفر الثانوي) ==================== */
-  /// اللون الثانوي - من النسخة الأولى (#FFE24B)
-  static const Color secondary = Color(0xFFFFE24B);
+  /// خلفية الصفحة (Scaffold).
+  static const Color background = AppColors.neutral50;
 
-  /// نسخة فاتحة من الثانوي
-  static const Color secondaryLight = Color(0xFFFFF0A3);
+  /// البطاقات والجداول.
+  static const Color surface = AppColors.neutral0;
+  static const Color surfaceLow = AppColors.neutral50;
+  static const Color surfaceContainer = AppColors.neutral100;
+  static const Color surfaceHigh = Color(0xFFE8EBE9);
+  static const Color surfaceHighest = AppColors.neutral200;
+  static const Color onSurface = AppColors.neutral900;
+  static const Color onSurfaceVariant = AppColors.neutral600;
+  static const Color onSurfaceMuted = AppColors.neutral500;
 
-  /// نسخة غامقة من الثانوي
-  static const Color secondaryDark = Color(0xFFE6CA29);
+  /// فواصل وحدود البطاقات (زخرفية).
+  static const Color outline = AppColors.neutral200;
+  static const Color outlineStrong = AppColors.neutral300;
 
-  /// اللون الذي يظهر فوق الثانوي
-  static const Color onSecondary = black;
+  /// حدود الحقول والـ Controls (تباين 3:1).
+  static const Color outlineControl = AppColors.neutral400;
+  static const Color focusRing = AppColors.green500;
+  static const Color scrim = Color(0x99171A19);
 
-  /* ==================== 🟠 ACCENT COLORS (البرتقالي) ==================== */
-  /// اللون التمييزي - من النسخة الثانية للتنوع
-  static const Color accent = Color(0xFFFF6B35);
-  static const Color accentLight = Color(0xFFFF8C61);
-  static const Color accentDark = Color(0xFFE85A2B);
-  static const Color onAccent = white;
+  /// ظل الطبقات العائمة (يُطبَّق بشفافية 8–16%).
+  static const Color shadow = AppColors.neutral900;
 
-  /* ==================== ✅ STATUS COLORS (من النسخة الأولى) ==================== */
-  static const Color success = Color(0xFF388E3C);
-  static const Color warning = Color(0xFFF57C00);
-  static const Color error = Color(0xFFD32F2F);
-  static const Color info = Color(0xFF1976D2);
+  /// Snackbar.
+  static const Color inverseSurface = AppColors.neutral800;
+  static const Color onInverseSurface = AppColors.neutral0;
+  static const Color inversePrimary = AppColors.green300;
 
-  /// ألوان الحالة مع تحسينات للوضع الغامق
-  static const Color successDark = Color(0xFF4CAF50);
-  static const Color warningDark = Color(0xFFFFC107);
-  static const Color errorDark = Color(0xFFEF4444);
-  static const Color infoDark = Color(0xFF2196F3);
+  // ─── Semantic ───
+  static const Color success = Color(0xFF3F7A1F);
+  static const Color onSuccess = AppColors.neutral0;
+  static const Color successContainer = Color(0xFFEEF6E8);
+  static const Color warning = Color(0xFF8A5200);
+  static const Color onWarning = AppColors.neutral0;
+  static const Color warningContainer = Color(0xFFFFF3DC);
+  static const Color error = Color(0xFFB3261E);
+  static const Color onError = AppColors.neutral0;
+  static const Color errorContainer = Color(0xFFFDECEA);
+  static const Color info = Color(0xFF1A62B5);
+  static const Color onInfo = AppColors.neutral0;
+  static const Color infoContainer = Color(0xFFE7F0FB);
 
-  /// PLACEHOLDER: مدين/دائن. قيم مؤقتة بانتظار الهوية البصرية للنظام المحاسبي.
-  static const Color debit = Color(0xFFC62828);
-  static const Color credit = Color(0xFF2E7D32);
-  static const Color debitDark = Color(0xFFEF5350);
-  static const Color creditDark = Color(0xFF66BB6A);
+  // ─── Accounting: محايدة عمداً (لا أحمر/أخضر) ───
+  static const Color debit = Color(0xFF2F3E4E);
+  static const Color credit = Color(0xFF2F4A3F);
+  static const Color balancePositive = AppColors.neutral900;
+  static const Color balanceNegative = Color(0xFF9B3D1F);
 
-  /* ==================== ⚫ NEUTRAL COLORS (من النسخة الأولى) ==================== */
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color black = Color(0xFF232323); // أسود رمادي
-  /* ==================== ❌ ERROR LIGHT ==================== */
+  // ─── Document status (fg / bg) ───
+  static const Color statusDraft = AppColors.neutral600;
+  static const Color statusDraftContainer = Color(0xFFECEFED);
+  static const Color statusApproved = info;
+  static const Color statusApprovedContainer = infoContainer;
+  static const Color statusPosted = Color(0xFF14563D);
+  static const Color statusPostedContainer = Color(0xFFDDF1E7);
+  static const Color statusCanceled = Color(0xFF5F6662);
+  static const Color statusCanceledContainer = AppColors.neutral100;
+  static const Color statusReversed = Color(0xFF5E4296);
+  static const Color statusReversedContainer = Color(0xFFEFEAF8);
 
-  /// خلفية تنبيه خطأ في الوضع الفاتح
-  static const Color errorLight = Color(0xFFFEE2E2);
+  // ─── Charts: 8 سلاسل (Okabe-Ito) آمنة لعمى الألوان ───
+  static const List<Color> chart = [
+    Color(0xFF0072B2),
+    Color(0xFFB87500),
+    Color(0xFF00855F),
+    Color(0xFFB04C85),
+    Color(0xFF3A93C9),
+    Color(0xFFC24E12),
+    Color(0xFF8A7E00),
+    AppColors.neutral500,
+  ];
+}
 
-  /* ==================== 📦 CARD LIGHT ==================== */
+/// أدوار الوضع الداكن: تصميم مستقل (رمادي منخفض التشبع بدرجات متقاربة).
+abstract final class AppDarkColors {
+  AppDarkColors._();
 
-  /// لون Card في الوضع الفاتح (فرق بسيط عن الأبيض)
-  static const Color cardLight = Color(0xFFF8FAFC);
+  // ─── Roles ───
+  static const Color primary = Color(0xFF4FBF92);
+  static const Color onPrimary = Color(0xFF0B2A1E);
+  static const Color primaryHover = Color(0xFF6FD0A9);
+  static const Color primaryContainer = Color(0xFF173B2C);
+  static const Color onPrimaryContainer = Color(0xFFBFEBD6);
+  static const Color secondary = Color(0xFFD4D4D4);
+  static const Color onSecondary = Color(0xFF171717);
+  static const Color secondaryContainer = Color(0xFF2A2A2A);
+  static const Color onSecondaryContainer = Color(0xFFECECEC);
+  static const Color background = Color(0xFF171717);
+  static const Color surface = Color(0xFF1C1C1C);
+  static const Color surfaceLow = Color(0xFF1C1C1C);
+  static const Color surfaceContainer = Color(0xFF222222);
+  static const Color surfaceHigh = Color(0xFF2A2A2A);
+  static const Color surfaceHighest = Color(0xFF323232);
+  static const Color onSurface = Color(0xFFECECEC);
+  static const Color onSurfaceVariant = Color(0xFFA8A8A8);
+  static const Color onSurfaceMuted = Color(0xFF8A8A8A);
+  static const Color outline = Color(0xFF242424);
+  static const Color outlineStrong = Color(0xFF2E2E2E);
+  static const Color outlineControl = Color(0xFF6A6A6A);
+  static const Color focusRing = Color(0xFF4FBF92);
+  static const Color scrim = Color(0xB3000000);
 
-  /* ==================== 🚧 BORDER LIGHT ==================== */
+  /// في الداكن يُستعاض عن الظل بدرجة سطح أفتح وحدّ؛ يبقى الظل للعناصر العائمة.
+  static const Color shadow = Color(0xFF000000);
 
-  /// حدود خفيفة جدًا للوضع الفاتح
-  static const Color borderLight = Color(0xFFE5E7EB);
+  /// Snackbar. القيم غير واردة في ملف التصميم للداكن؛ اشتُقت من on-surface
+  /// وbackground لتبقى عالية التباين (15:1).
+  static const Color inverseSurface = Color(0xFFECECEC);
+  static const Color onInverseSurface = Color(0xFF171717);
+  static const Color inversePrimary = Color(0xFF1F7352);
 
-  /* ==================== 🌞 SURFACE CONTAINER LEVELS (LIGHT) ==================== */
+  // ─── Semantic ───
+  static const Color success = Color(0xFF8FD16A);
+  static const Color onSuccess = background;
+  static const Color successContainer = Color(0xFF1F2B18);
+  static const Color warning = Color(0xFFF2B13C);
+  static const Color onWarning = background;
+  static const Color warningContainer = Color(0xFF2E2410);
+  static const Color error = Color(0xFFFF8F86);
+  static const Color onError = onPrimary;
+  static const Color errorContainer = Color(0xFF3A1D1B);
+  static const Color info = Color(0xFF7DB8F5);
+  static const Color onInfo = background;
+  static const Color infoContainer = Color(0xFF162536);
 
-  /// أقل مستوى فوق الخلفية
-  static const Color surfaceContainerLowLight = Color(0xFFFAFAFA);
+  // ─── Accounting ───
+  static const Color debit = Color(0xFFB9C7D6);
+  static const Color credit = Color(0xFFB7D2C4);
+  static const Color balancePositive = Color(0xFFECECEC);
+  static const Color balanceNegative = Color(0xFFF0A27E);
 
-  /// Card عادي
-  static const Color surfaceContainerLight = Color(0xFFF5F5F5);
+  // ─── Document status (fg / bg) ───
+  static const Color statusDraft = Color(0xFFB5B5B5);
+  static const Color statusDraftContainer = Color(0xFF2A2A2A);
+  static const Color statusApproved = Color(0xFF7DB8F5);
+  static const Color statusApprovedContainer = Color(0xFF162536);
+  static const Color statusPosted = Color(0xFF8FDDBA);
+  static const Color statusPostedContainer = Color(0xFF173B2C);
+  static const Color statusCanceled = Color(0xFF8A8A8A);
+  static const Color statusCanceledContainer = Color(0xFF222222);
+  static const Color statusReversed = Color(0xFFBDA8F0);
+  static const Color statusReversedContainer = Color(0xFF2B2342);
 
-  /// Card مرتفع / Dialog
-  static const Color surfaceContainerHighLight = Color(0xFFEEEEEE);
-
-  /// أعلى مستوى
-  static const Color surfaceContainerHighestLight = Color(0xFFE5E7EB);
-
-  /* ==================== 🌙 SURFACE CONTAINER LEVELS (DARK) ==================== */
-
-  /// أقل مستوى فوق الخلفية الداكنة
-  static const Color surfaceContainerLowDark = Color(0xFF273549);
-
-  /// Card عادي في الداكن
-  static const Color surfaceContainerDark = Color(0xFF2F3E55);
-
-  /// Card مرتفع
-  static const Color surfaceContainerHighDark = Color.fromARGB(255, 39, 51, 68);
-
-  /// أعلى مستوى
-  static const Color surfaceContainerHighestDark = Color(0xFF41546E);
-
-  /// تدرجات الرمادي من النسخة الأولى
-  static const Color darkerGrey = Color(0xFF4F4F4F);
-  static const Color darkGrey = Color(0xFF939393);
-  static const Color grey = Color(0xFFE0E0E0);
-  static const Color softGrey = Color(0xFFF4F4F4);
-  static const Color lightGrey = Color(0xFFF9F9F9);
-
-  /* ==================== 📝 TEXT COLORS (من النسخة الأولى) ==================== */
-  static const Color textPrimary = Color(0xFF333333);
-  static const Color textSecondary = Color(0xFF6C757D);
-  static const Color textWhite = white;
-
-  /// ألوان النص للوضع الغامق (من النسخة الثانية)
-  static const Color textPrimaryDark = Color(0xFFE5E7EB);
-  static const Color textSecondaryDark = Color(0xFF94A3B8);
-
-  /* ==================== 🎭 BACKGROUND COLORS (من النسخة الأولى) ==================== */
-  static const Color light = Color(0xFFF6F6F6);
-  static const Color dark = Color(0xFF272727);
-  static const Color primaryBackground = Color(0xFFF3F5FF);
-
-  /// خلفيات إضافية من النسخة الثانية
-  static const Color backgroundLight = Color(0xFFF5F5F5);
-  static const Color backgroundDark = Color(0xFF0F172A);
-
-  /* ==================== 📦 CONTAINER COLORS (من النسخة الأولى) ==================== */
-  static const Color lightContainer = Color(0xFFF6F6F6);
-  static const Color darkContainer = Color(0x1AFFFFFF);
-
-  /// حاويات إضافية من النسخة الثانية
-  static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color surfaceDark = Color(0xFF1E293B);
-  static const Color cardDark = Color(0xFF334155);
-
-  /* ==================== 🎛️ BUTTON COLORS (من النسخة الأولى) ==================== */
-  static const Color buttonPrimary = Color(0xFF4b68ff);
-  static const Color buttonSecondary = Color(0xFF6C757D);
-  static const Color buttonDisabled = Color(0xFFC4C4C4);
-
-  /* ==================== 🚧 BORDER COLORS (من النسخة الأولى) ==================== */
-  static const Color borderPrimary = Color(0xFFD9D9D9);
-  static const Color borderSecondary = Color(0xFFE6E6E6);
-
-  /// حدود إضافية من النسخة الثانية
-  static const Color border = Color(0xFFE2E8F0);
-  static const Color borderDark = Color(0xFF475569);
-  static const Color divider = Color(0xFFE5E7EB);
-
-  /* ==================== 🔘 INPUT COLORS (من النسخة الثانية) ==================== */
-  static const Color inputBackground = Color(0xFFF1F5F9);
-  static const Color disabled = Color(0xFFCBD5E1);
-
-  /* ==================== 🌫️ GLASSMORPHISM (من النسخة الثانية) ==================== */
-  static final Color glassLight = white.withOpacity(0.1);
-  static final Color glassDark = surfaceDark.withOpacity(0.3);
-  static final Color glassBlur = white.withOpacity(0.05);
-
-  /* ==================== 🏷️ CATEGORY COLORS (من النسخة الثانية) ==================== */
-  static const Color categoryShoes = secondary;
-  static const Color categoryClothes = primary;
-  static const Color categoryEquipment = accent;
-
-  /* ==================== ✨ GRADIENTS (من النسخة الثانية) ==================== */
-  static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primary, primaryLight],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static const LinearGradient secondaryGradient = LinearGradient(
-    colors: [secondary, secondaryLight],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static const LinearGradient darkGradient = LinearGradient(
-    colors: [dark, surfaceDark],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  static const LinearGradient accentGradient = LinearGradient(
-    colors: [secondary, primary],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  /* ==================== 🎯 SHADOWS & OVERLAYS (من النسخة الثانية) ==================== */
-  static const Color shadow = Color(0x1A000000);
-  static const Color overlay = Color(0x80000000);
-
-  /* ==================== 🛠️ HELPER METHODS ==================== */
+  // ─── Charts ───
+  static const List<Color> chart = [
+    Color(0xFF56B4E9),
+    Color(0xFFF5B83D),
+    Color(0xFF2FBF94),
+    Color(0xFFE08FBD),
+    Color(0xFF8FD0F2),
+    Color(0xFFF0824A),
+    Color(0xFFE8DC4A),
+    Color(0xFFA8A8A8),
+  ];
 }
