@@ -248,9 +248,11 @@ final clientId = AppConfig.googleClientId;   // مدخل واحد؛ لا تست�
 التحقق من حقول النماذج (`AppValidator`، رسائله `AppKey`):
 
 ```dart
+import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/validation_keys.dart';
 
 // بريد إلكتروني: AppTextField هو الودجت المعتمد داخل Features.
 AppTextField(
