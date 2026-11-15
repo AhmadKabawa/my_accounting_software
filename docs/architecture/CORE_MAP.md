@@ -64,8 +64,10 @@
 ### Localization
 - `LocaleCubit` و`LocaleState`: حالة اللغة (الحالة تحمل `Locale` فقط).
 - `AppLanguage`: اللغات المدعومة وتحويل الكود إلى Locale.
-- `AppKey` و`AppKeys`: مفاتيح الترجمة المنظمة (`AppKey.tran` للترجمة المباشرة، و`.tr(args:/namedArgs:)` عند وجود متغيرات). ملفا `app_ar.dart` و`app_en.dart` يحويان النصوص. مفاتيح الثيم في `AppKeys.theme` و«موافق» في `AppKeys.common.ok`.
-- `MyDartLoader` (`lib/app/core/localization/translations/asset_loader.dart`): تنفيذ `easy_localization.AssetLoader` يختار `app_en.dart` أو `app_ar.dart`، ويُستخدم في `main.dart`.
+- `AppKey` (`localization/translations/app_key.dart`): عقد النص المترجم، يحمل `key` و`ar` و`en`، ويوفر `.tran` للنص الجاهز و`.tr(args:/namedArgs:)` عند وجود متغيرات.
+- مفاتيح النصوص معرفة كـ enum مستقل لكل قسم (`CommonKeys` و`FieldKeys` و`ValidationKeys` و`ErrorKeys` و`ServerErrorKeys` و`ThemeKeys` و`NavKeys`) في `localization/keys/`، ومفاتيح الميزات في `features/<feature>/presentation/localization/`. المفتاح مشتق من اسم القيمة؛ لا يوجد `AppKeys` أو قاموس `app_ar.dart`/`app_en.dart`.
+- `key_registry.dart` (`lib/app/localization/key_registry.dart`) يجمع `allKeys` خارج Core حتى لا يعتمد Core على Features. يمرر جذر التركيب القائمة إلى `MyDartLoader(allKeys)`.
+- `MyDartLoader` (`lib/app/core/localization/translations/asset_loader.dart`): تنفيذ `easy_localization.AssetLoader` يعيد نصوص `AppKey.ar` أو `AppKey.en` من السجل الممرر إليه.
 - `DirectionExtension` (`lib/app/core/localization/translations/localization_extension.dart`): امتداد مستقل على `BuildContext` يوفر `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`. المدخل الموحد الموصى به في هذا الدليل هو `context.ui.dir`؛ أما هذا الامتداد فيبقى تعريفاً منفصلاً غير مستخدم في ملفات الميزات المفحوصة، ولا يُعد بديلاً متوافقاً بالكامل لأن سلوك `transformFlip` يختلف عندما تكون `isRtlChild: false`.
 - لا تنشئ قاموس ترجمة موازياً.
 
@@ -112,7 +114,7 @@
 - `AppColors` (السلالم الخام green/neutral) و`AppLightColors` و`AppDarkColors` (الأدوار بالأسماء نفسها) و`AppTextStyles` (الأنماط النصية بما فيها أدوار المبالغ `amount*` و`docCode` و`tableHeader` و`codeMono`) و`AppFontFamily`. الأدوار الخام للاستخدام داخل ملفات الثيم فقط، والواجهات تصل للألوان عبر `context.ui.theme`. التفاصيل والقرارات: [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
 - `AppSemanticColors` (`theme/extensions/app_semantic_colors.dart`): `ThemeExtension` حقيقي (`copyWith` و`lerp`) بألوان `success` و`warning` و`info` (مع `onX` و`xContainer`) والمحاسبة (`debit`/`credit` محايدان، `balancePositive`/`balanceNegative`) وخمس حالات مستندات (`StatusColor` = fg/bg) وسلاسل الرسوم (`chart` و`chartColor(i)`) و`onSurfaceMuted` و`outlineStrong` و`focusRing`، ومسجل في الثيمين عبر `buildTheme`. القراءة: `context.ui.theme.semanticColors`. لا لون خطأ دلالي منفصل: استخدم `colors.error`. لا يستورد محرك Responsive.
 - `ThemeCubit` و`ThemeState`: اختيار light/dark/system وحفظه عبر `AppSettingsManager`.
-- `theme/extensions/theme_mode_extension.dart`: `ThemeModeExtension` على `ThemeMode` (`icon` و`nameKey` وهو `AppKey` من `AppKeys.theme`). لا يوجد مستهلك فعّال حالياً. الامتداد القديم على `BuildContext` المسمى `ThemeExtension` (الذي يتعارض مع كلاس Flutter) حُذف؛ استخدم `context.ui.theme`.
+- `theme/extensions/theme_mode_extension.dart`: `ThemeModeExtension` على `ThemeMode` (`icon` و`nameKey` وهو `AppKey` من `ThemeKeys`). لا يوجد مستهلك فعّال حالياً. الامتداد القديم على `BuildContext` المسمى `ThemeExtension` (الذي يتعارض مع كلاس Flutter) حُذف؛ استخدم `context.ui.theme`.
 - ألوان `ColorScheme` الحالية (وتعارض مسميات مثل `primary`/`primaryLight`/`primaryDark`) لم تُراجع بعد.
 
 ### State management

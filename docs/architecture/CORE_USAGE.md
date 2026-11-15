@@ -16,7 +16,7 @@
 | تخطيطاً حسب الجهاز أو المساحة | `context.ui.grid.widget/adaptive` | `ui_extension.dart` |
 | زراً | `AppButton` | `widgets/app_button/app_button.dart` |
 | رسالة للمستخدم | `MessageViewWidgets.showMessage` | `widgets/app_message/message_view_widgets.dart` |
-| نصاً مترجماً | `AppKeys` + `AppKey` | `localization/translations/` |
+| نصاً مترجماً | `AppKey` من enum القسم (`CommonKeys` أو `AuthKeys` مثلاً) | `localization/keys/` أو `features/<feature>/presentation/localization/` |
 | طلب شبكة | `IApiClient` + `<Feature>Endpoints` | `network/` + `features/<f>/data/` |
 | تحويل خطأ | `ExceptionMapper` ثم `Failure.messageKey` | `error/` |
 | إعداداً أو قيمة بيئة | `AppConfig` | `foundation/config/app_config.dart` |
@@ -56,9 +56,9 @@ final shimmerBase = context.ui.theme.value(dark: darkColor, light: lightColor);
 
 ```dart
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 
-AppText(AppKeys.common.save, type: AppTextType.titleMedium); // نص مترجم
+AppText(CommonKeys.save, type: AppTextType.titleMedium); // نص مترجم
 AppText.raw(user.name); // نص بيانات (غير مترجم)
 
 // عند الحاجة إلى TextStyle فقط:
@@ -71,7 +71,7 @@ final style = context.ui.text.of(AppTextType.bodyLarge);
 
 **ممنوع / قديم ← البديل**
 - `Text('...')` لنص واجهة ← `AppText` / `AppText.raw`.
-- `'key'.tr()` ونصوص ثابتة ← `AppKeys` (أضف المفتاح، راجع §7).
+- `'key'.tr()` ونصوص ثابتة ← `AppKey` من enum القسم (أضف القيمة، راجع §7).
 - `context.ui.text.h1()/body()/caption()/button()` (حُذفت) ← `context.ui.text.of(AppTextType.x)`.
 - `TextStyle(fontSize: 14)` و`Theme.of(context).textTheme.x.fontSize` ← `AppTextType`.
 
@@ -132,12 +132,12 @@ if (context.ui.screen.isDesktop) { /* ... */ }
 
 ```dart
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 
-AppButton(AppKeys.common.save, onPressed: onSave); // مترجم
+AppButton(CommonKeys.save, onPressed: onSave); // مترجم
 AppButton.raw('Save', onPressed: onSave); // نص خام
-AppButton(AppKeys.common.cancel, variant: AppButtonVariant.outlined, onPressed: onCancel);
-AppButton(AppKeys.common.save, isLoading: state.isBusy, onPressed: onSave);
+AppButton(CommonKeys.cancel, variant: AppButtonVariant.outlined, onPressed: onCancel);
+AppButton(CommonKeys.save, isLoading: state.isBusy, onPressed: onSave);
 ```
 
 **متى Core Widget ومتى Flutter Widget؟**
@@ -152,19 +152,19 @@ import 'package:accounting_software/app/core/presentation/widgets/app_message/me
 import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
 
 // SnackBar بمفتاح ترجمة (المفضل: تُترجم وقت العرض):
-MessageViewWidgets.showMessage(context, messageKey: AppKeys.success.signin, type: MessageType.success);
+MessageViewWidgets.showMessage(context, messageKey: AuthKeys.signInSuccess, type: MessageType.success);
 
 // Dialog:
 MessageViewWidgets.showMessage(
   context,
   messageKey: failure.messageKey,
-  titleKey: AppKeys.errors.unexpected,
+  titleKey: ErrorKeys.unexpected,
   type: MessageType.error,
   isDialog: true,
 );
 
 // تحميل ثم إغلاق:
-MessageViewWidgets.showMessage(context, messageKey: AppKeys.common.loading, type: MessageType.loading);
+MessageViewWidgets.showMessage(context, messageKey: CommonKeys.loading, type: MessageType.loading);
 MessageViewWidgets.hideMessage(context);
 ```
 
@@ -198,14 +198,17 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 ```dart
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/localization/translations/app_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/validation_keys.dart';
+import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 
-AppText(AppKeys.auth.signIn); // في الودجت
-final s = AppKeys.auth.signIn.tran;          // String عند الحاجة فقط
-final t = AppKeys.valid.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع متغيرات
+AppText(AuthKeys.signIn); // في الودجت
+final s = AuthKeys.signIn.tran; // String عند الحاجة فقط
+final t = ValidationKeys.fieldMinLength.tr(namedArgs: {'length': '8'}); // مع متغيرات
 ```
 
-- مفتاح جديد: عرّفه في `AppKeys` (`app_keys.dart`) ثم أضف نصه في `app_ar.dart` و`app_en.dart`.
+- نص جديد: أضف قيمة إلى enum القسم المناسب، مع `ar` و`en` إلزاميين؛ المفتاح مشتق من اسم القيمة.
+- قسم/ميزة جديدة: أنشئ `enum XKeys implements AppKey` في مجلدها، ثم أضف `...XKeys.values` إلى `lib/app/localization/key_registry.dart`.
+- لا تنشئ `app_keys.dart` أو ملفي `app_ar.dart` و`app_en.dart`؛ تفاصيل التسجيل والاختبارات في [LOCALIZATION.md](LOCALIZATION.md).
 - اللغة: `LocaleCubit`/`AppLanguage`/`AppSettingsManager`؛ لا locale provider مستقل.
 - **مدخل الاتجاه الموصى به لهذا الدليل:** `context.ui.dir.isRTL` و`context.ui.dir.icon(rtl:, ltr:)` و`context.ui.dir.value(rtl:, ltr:)` و`context.ui.dir.transformFlip(...)`؛ وهو جزء من مدخل `context.ui` الموحد. يوجد أيضاً `DirectionExtension` في `localization_extension.dart`، لكنه يكرر بعض الوظائف بأسماء مختلفة ولا يُستخدم في ملفات الميزات المفحوصة (باستثناء مثال معلّق)، كما أن `transformFlip` فيه لا يطابق سلوك `context.ui.dir` عندما تكون `isRtlChild: false`؛ لذلك لا يُعد بديلاً متوافقاً بالكامل ولا يُنصح به في كود جديد. اختيار المدخل الموحد هنا مقترح توثيقي ينتظر موافقتك.
 - **ممنوع:** `'string'.tr()` ونصوص واجهة ثابتة وقاموس ترجمة خاص بميزة.

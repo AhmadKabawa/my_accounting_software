@@ -84,7 +84,7 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 - **المسارات (routes):** كل ميزة تملك `features/<feature>/presentation/routing/<feature>_routes.dart` (مع `all`). `lib/app/routing/route_registry.dart` يجمعها في `allRoutes`. Core يحتفظ بـ `RouteItem` فقط.
 - **الاستيراد بين الميزات:** مسموح لميزة أن تستورد ملف routes الخاص بميزة أخرى فقط (للتنقل)، لا صفحاتها ولا cubits ولا data. يفرضه `test/architecture/feature_imports_test.dart`؛ الديون القديمة مسجلة فيه في `_knownDebt` ويجوز أن تتقلص فقط.
 - مسار الأخطاء الموحد: Data يرمي `AppException` ← `ExceptionMapper` يحولها إلى `Failure` ← تُمرَّر `failure.messageKey` (AppKey) وتُترجم وقت العرض (`AppText` أو `MessageViewWidgets`)، و`FailureTranslator` فقط حيث يلزم `String` جاهز (ويترجم مرة واحدة). Effects ورسائل الواجهة تحمل `AppKey` لا نصاً مترجماً. لا تترجم داخل Repository ولا وقت الإصدار.
-- **الترجمة:** `AppKey` للودجتات، و`.tran` فقط حيث يلزم `String`، و`.tr(args:/namedArgs:)` عند وجود متغيرات. ممنوع `'text'.tr()` ونصوص واجهة ثابتة جديدة؛ أضف المفتاح في `AppKeys` وملفات ar/en.
+- **الترجمة:** استخدم `AppKey` من enum القسم/الميزة في الودجتات، و`.tran` فقط حيث يلزم `String`، و`.tr(args:/namedArgs:)` عند وجود متغيرات. كل قيمة enum تحمل `ar` و`en` ويُشتق مفتاحها من اسمها؛ سجّل قيم enum في `lib/app/localization/key_registry.dart`. ممنوع `'text'.tr()` ونصوص واجهة ثابتة جديدة، و`AppKeys` أو ملفات `app_ar.dart`/`app_en.dart` المنفصلة. راجع [LOCALIZATION.md](LOCALIZATION.md).
 - **الإعدادات:** `AppConfig` هو المدخل الوحيد لإعدادات التطبيق وقيم البيئة؛ Features لا تستورد `EnvConfig`. قراءة `fromEnvironment` تبقى `const` وقت البناء.
 - **التحقق من المدخلات:** `AppValidator`/`ValidationRule` هو النظام الوحيد؛ لا validator موازياً.
 ### سياسة Retry وidempotency — `RetryInterceptor`

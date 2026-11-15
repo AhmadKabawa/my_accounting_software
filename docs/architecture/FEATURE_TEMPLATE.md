@@ -30,7 +30,7 @@ features/<feature>/
 - **النصوص:** enum لكل ميزة + سطر في `key_registry.dart` ([LOCALIZATION.md](LOCALIZATION.md)).
 - **المجلدات:** `pages/<page>/sections/` للأقسام الكبيرة، و`widgets/` للصغيرة.
 - **الحقول:** `AppTextField` (core) و`PasswordField` (غلاف رقيق فوقه) مع `AppValidator`؛ لا validator موازياً.
-- **النصوص والأزرار:** `AppText` و`AppButton` ومفاتيح `AppKeys` في ملفي ar/en.
+- **النصوص والأزرار:** `AppText` و`AppButton` يستقبلان `AppKey` من enum القسم (`AuthKeys` مثلاً)، وكل قيمة تحمل `ar` و`en`. سجّل enum الميزة في `key_registry.dart`؛ لا تستخدم `AppKeys` أو ملفي ar/en. راجع [LOCALIZATION.md](LOCALIZATION.md).
 - **المسارات:** المسار في `presentation/routing/<feature>_routes.dart` وفي `all` الخاص بها، و`...<Feature>Routes.all` في `route_registry.dart`، وفي `publicRoutes` أو `protectedRoutes`، ثم تسجيله في `app_go_router.dart`. الصفحات التي تشارك Cubit مفرداً تأخذه بـ `BlocProvider.value` (`AppRouter._withAuth`).
 - **الحراس:** `resolveRedirect` دالة نقية مغطاة في `test/routing/route_guards_test.dart`.
 
@@ -84,7 +84,7 @@ class Invoice with _$Invoice {
     DateTime? dueDate,
   }) = _Invoice;
 
-  // قاعدة نطاق على الكيان؛ المبالغ الفعلية تنتظر قرار نوع Money (ADR-0001).
+  // قاعدة نطاق على الكيان؛ لا يحدد هذا المثال نوع تمثيل المبالغ المالية.
   bool get isEditable => status == InvoiceStatus.draft;
 }
 ```
@@ -95,7 +95,7 @@ class Invoice with _$Invoice {
 
 1. أنشئ الشجرة أعلاه بالطبقات التي لها مسؤولية فعلية فقط.
 2. سجّل الاعتماديات في `features/<feature>/di/` واستدعِها من `app_di.dart` بعد ما تعتمد عليه.
-3. أضف المسارات ومفاتيح الترجمة بلغتين.
+3. أضف المسارات، وعرّف نصوص الميزة في enum يحمل `ar` و`en`، ثم سجّل قيمه في `key_registry.dart` وفق [LOCALIZATION.md](LOCALIZATION.md).
 4. اتبع [قائمة مراجعة الميزة](FEATURE_CHECKLIST.md).
 
 ## قيود معروفة
