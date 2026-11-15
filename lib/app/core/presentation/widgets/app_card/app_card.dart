@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 
 /// A bordered surface that groups related content (summary tiles, list
@@ -33,7 +32,11 @@ class AppCard extends StatelessWidget {
       child: child,
     );
     if (onTap != null) {
-      content = InkWell(onTap: onTap, borderRadius: borderRadius, child: content);
+      content = InkWell(
+        onTap: onTap,
+        borderRadius: borderRadius,
+        child: content,
+      );
     }
 
     final card = Material(

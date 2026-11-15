@@ -44,10 +44,9 @@ void main() {
 
   test('POST can opt in to retry when explicitly idempotent', () async {
     final adapter = FakeAdapter([500, 200]);
-    final res = await buildDio(adapter).post<dynamic>(
-      '/invoices',
-      options: Options(extra: {'idempotent': true}),
-    );
+    final res = await buildDio(
+      adapter,
+    ).post<dynamic>('/invoices', options: Options(extra: {'idempotent': true}));
 
     expect(res.statusCode, 200);
     expect(adapter.requests.length, 2);

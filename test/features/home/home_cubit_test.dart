@@ -49,10 +49,7 @@ void main() {
       flash: flash,
     ),
     act: (c) => c.load(),
-    expect: () => [
-      isA<HomeLoading>(),
-      HomeFailed(NetworkFailure().messageKey),
-    ],
+    expect: () => [isA<HomeLoading>(), HomeFailed(NetworkFailure().messageKey)],
   );
 
   blocTest<HomeCubit, HomeState>(

@@ -21,10 +21,7 @@ TextTheme buildTextTheme({required ColorScheme colorScheme}) {
 
     // TITLE — card / section titles (less important ones use a secondary color)
     titleLarge: style(AppTextStyles.titleLarge, colorScheme.onSurface),
-    titleMedium: style(
-      AppTextStyles.titleMedium,
-      colorScheme.onSurfaceVariant,
-    ),
+    titleMedium: style(AppTextStyles.titleMedium, colorScheme.onSurfaceVariant),
     titleSmall: style(AppTextStyles.titleSmall, colorScheme.onSurfaceVariant),
 
     // BODY — regular text
@@ -34,10 +31,7 @@ TextTheme buildTextTheme({required ColorScheme colorScheme}) {
 
     // LABEL — buttons and chips
     labelLarge: style(AppTextStyles.labelLarge, colorScheme.onSurface),
-    labelMedium: style(
-      AppTextStyles.labelMedium,
-      colorScheme.onSurfaceVariant,
-    ),
+    labelMedium: style(AppTextStyles.labelMedium, colorScheme.onSurfaceVariant),
     labelSmall: style(AppTextStyles.labelSmall, colorScheme.onSurfaceVariant),
   );
 }

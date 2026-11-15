@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_cubit.dart';
-import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_effect.dart';
-import 'package:accounting_software/app/features/on_boarding/data/model/on_boarding_model.dart';
-import 'package:accounting_software/app/features/on_boarding/presentation/pages/widgets/on_boarding_dot_navigation.dart';
-import 'package:accounting_software/app/features/on_boarding/presentation/pages/widgets/on_boarding_next_button.dart';
-import 'package:accounting_software/app/features/on_boarding/presentation/pages/widgets/on_boarding_page.dart';
-import 'package:accounting_software/app/features/on_boarding/presentation/pages/widgets/on_boarding_skip_button.dart';
 
 class OnBoardingScreen extends StatelessWidget {
+  const OnBoardingScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +24,7 @@ class OnBoardingScreen extends StatelessWidget {
       ),
     );
   }
-}  
+}
 
 /*
 class OnBoardingScreen extends StatefulWidget {

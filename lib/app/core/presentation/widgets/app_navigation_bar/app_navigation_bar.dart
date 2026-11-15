@@ -57,7 +57,7 @@ class AppNavigationBar extends StatefulWidget {
   final double? elevation;
 
   const AppNavigationBar({
-    Key? key,
+    super.key,
     required this.items,
     required this.activeIndex,
     required this.onIndexChanged,
@@ -71,8 +71,7 @@ class AppNavigationBar extends StatefulWidget {
     this.maxItemSize,
     this.maxWidthActiveItemSize,
     this.elevation,
-  }) : assert(items.length > 0),
-       super(key: key);
+  }) : assert(items.length > 0);
 
   @override
   State<AppNavigationBar> createState() => _AppNavigationBarState();
@@ -197,7 +196,7 @@ class NavBarItemWidget extends StatefulWidget {
   final VoidCallback onTap;
 
   const NavBarItemWidget({
-    Key? key,
+    super.key,
     required this.item,
     required this.isActive,
     required this.style,
@@ -207,7 +206,7 @@ class NavBarItemWidget extends StatefulWidget {
     required this.itemHeight,
     required this.activeItemWidth,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<NavBarItemWidget> createState() => _NavBarItemWidgetState();

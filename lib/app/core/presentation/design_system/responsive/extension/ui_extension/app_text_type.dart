@@ -82,8 +82,7 @@ extension AppTextTypeX on AppTextType {
 
   /// The responsive style for the screen under [context]. [mode] overrides the
   /// descriptor's own [ResponsiveMode].
-  TextStyle resolve(BuildContext context, {ResponsiveMode? mode}) =>
-      descriptor
-          .resolve(context, mode: mode)
-          .copyWith(color: _themeColor(Theme.of(context).textTheme));
+  TextStyle resolve(BuildContext context, {ResponsiveMode? mode}) => descriptor
+      .resolve(context, mode: mode)
+      .copyWith(color: _themeColor(Theme.of(context).textTheme));
 }

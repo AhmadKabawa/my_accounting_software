@@ -73,12 +73,6 @@ final ColorScheme lightColorScheme = ColorScheme(
 
   // خلفية Scaffold - الشاشة الرئيسية
   onSurface: AppColors.textPrimary,
-  // النص الأساسي في التطبيق
-
-  // ======================================================
-  // 📦 SURFACE VARIANT (Container فوق الخلفية)
-  // ======================================================
-  surfaceVariant: AppColors.cardLight,
 
   // Card - TextField - Containers خفيفة
   onSurfaceVariant: AppColors.textSecondary,

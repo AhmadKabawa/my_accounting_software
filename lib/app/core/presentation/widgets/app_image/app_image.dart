@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // app_image_shape.dart
-// 
+//
 // أشكال الصور المدعومة:
 // ✅ rectangle - مستطيل عادي
 // ✅ rounded - مستطيل بزوايا دائرية
@@ -25,19 +25,19 @@ import 'package:flutter/material.dart';
 enum AppImageShape {
   /// مستطيل عادي بدون زوايا دائرية
   rectangle,
-  
+
   /// مستطيل بزوايا دائرية (تحدد عن طريق borderRadius)
   rounded,
-  
+
   /// شكل دائري (مثالي للصور الشخصية/Avatars)
   circle;
-  
+
   /// تحقق إذا كان الشكل دائرياً
   bool get isCircle => this == circle;
-  
+
   /// تحقق إذا كان الشكل مدوراً
   bool get isRounded => this == rounded;
-  
+
   /// تحقق إذا كان الشكل مستطيلاً عادياً
   bool get isRectangle => this == rectangle;
 }
@@ -49,16 +49,16 @@ class AppImage extends StatelessWidget {
 
   final String path;
   final bool isNetwork;
-  final double? width;         // العرض (يمكن أن null ويتكيف)
-  final double? height;        // الارتفاع (يمكن أن null ويتكيف)
+  final double? width; // العرض (يمكن أن null ويتكيف)
+  final double? height; // الارتفاع (يمكن أن null ويتكيف)
   final AppImageShape shape;
-  final double borderRadius;    // فعّال فقط مع AppImageShape.rounded
+  final double borderRadius; // فعّال فقط مع AppImageShape.rounded
   final BoxFit fit;
   final VoidCallback? onTap;
-  final String? heroTag;        // لتفعيل Hero animation
+  final String? heroTag; // لتفعيل Hero animation
   final String? semanticsLabel;
-  final Widget? errorWidget;    // custom error widget
-  final Widget? loadingWidget;  // custom loading widget
+  final Widget? errorWidget; // custom error widget
+  final Widget? loadingWidget; // custom loading widget
 
   // ───────────────────────────────────────────────────────────────
   // CONSTRUCTORS
@@ -109,9 +109,9 @@ class AppImage extends StatelessWidget {
     this.errorWidget,
     this.loadingWidget,
     bool isNetwork = true,
-  })  : isNetwork = isNetwork,
-        shape = AppImageShape.circle,
-        borderRadius = 0;
+  }) : isNetwork = isNetwork,
+       shape = AppImageShape.circle,
+       borderRadius = 0;
 
   /// banner عرض كامل
   const AppImage.banner(
@@ -126,9 +126,9 @@ class AppImage extends StatelessWidget {
     this.errorWidget,
     this.loadingWidget,
     bool isNetwork = true,
-  })  : isNetwork = isNetwork,
-        shape = AppImageShape.rounded,
-        borderRadius = 16;
+  }) : isNetwork = isNetwork,
+       shape = AppImageShape.rounded,
+       borderRadius = 16;
 
   /// صورة مربعة (Square)
   const AppImage.square(
@@ -144,9 +144,9 @@ class AppImage extends StatelessWidget {
     this.errorWidget,
     this.loadingWidget,
     bool isNetwork = true,
-  })  : isNetwork = isNetwork,
-        width = size,
-        height = size;
+  }) : isNetwork = isNetwork,
+       width = size,
+       height = size;
 
   // ───────────────────────────────────────────────────────────────
   // BUILD
@@ -218,29 +218,25 @@ class AppImage extends StatelessWidget {
   // ───────────────────────────────────────────────────────────────
 
   Widget _applyShape(Widget child, double? w, double? h) => switch (shape) {
-        AppImageShape.rectangle => SizedBox(
-            width: w == double.infinity ? null : w,
-            height: h,
-            child: child,
-          ),
+    AppImageShape.rectangle => SizedBox(
+      width: w == double.infinity ? null : w,
+      height: h,
+      child: child,
+    ),
 
-        AppImageShape.rounded => ClipRRect(
-            borderRadius: BorderRadius.circular(borderRadius),
-            child: SizedBox(
-              width: w == double.infinity ? null : w,
-              height: h,
-              child: child,
-            ),
-          ),
+    AppImageShape.rounded => ClipRRect(
+      borderRadius: BorderRadius.circular(borderRadius),
+      child: SizedBox(
+        width: w == double.infinity ? null : w,
+        height: h,
+        child: child,
+      ),
+    ),
 
-        AppImageShape.circle => ClipOval(
-            child: SizedBox(
-              width: w,
-              height: h,
-              child: child,
-            ),
-          ),
-      };
+    AppImageShape.circle => ClipOval(
+      child: SizedBox(width: w, height: h, child: child),
+    ),
+  };
 
   // ───────────────────────────────────────────────────────────────
   // PLACEHOLDER / ERROR
@@ -253,9 +249,9 @@ class AppImage extends StatelessWidget {
     final borderRadiusValue = shape == AppImageShape.circle
         ? (width ?? height) / 2
         : shape == AppImageShape.rounded
-            ? borderRadius
-            : 0.0;
-    
+        ? borderRadius
+        : 0.0;
+
     return _ShimmerBox(
       width: width == double.infinity ? null : width,
       height: height,
@@ -268,7 +264,7 @@ class AppImage extends StatelessWidget {
     final width = w;
     final height = h ?? 100;
     final iconSize = (width ?? height) * 0.4;
-    
+
     return Container(
       width: width == double.infinity ? null : width,
       height: height,
@@ -291,11 +287,7 @@ class _ShimmerBox extends StatefulWidget {
   final double height;
   final double borderRadius;
 
-  const _ShimmerBox({
-    this.width,
-    required this.height,
-    this.borderRadius = 0,
-  });
+  const _ShimmerBox({this.width, required this.height, this.borderRadius = 0});
 
   @override
   State<_ShimmerBox> createState() => _ShimmerBoxState();
@@ -313,9 +305,10 @@ class _ShimmerBoxState extends State<_ShimmerBox>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     )..repeat();
-    _animation = Tween<double>(begin: -1, end: 2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: -1,
+      end: 2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -342,9 +335,9 @@ class _ShimmerBoxState extends State<_ShimmerBox>
               (_animation.value + 0.3).clamp(0.0, 1.0),
             ],
             colors: const [
-              Color(0xFFE0E0E0),  // grey.shade300
-              Color(0xFFF5F5F5),  // grey.shade100
-              Color(0xFFE0E0E0),  // grey.shade300
+              Color(0xFFE0E0E0), // grey.shade300
+              Color(0xFFF5F5F5), // grey.shade100
+              Color(0xFFE0E0E0), // grey.shade300
             ],
           ),
         ),

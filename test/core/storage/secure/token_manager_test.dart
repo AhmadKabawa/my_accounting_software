@@ -63,17 +63,24 @@ void partialFailureTests() {
     expect(await tokens.getUserId(), isNull);
   });
 
-  test('saveTokens replaces the refresh token only when one is given', () async {
-    final tokens = TokenManager(storage: MemoryStorage());
-    await tokens.saveAuthTokens(accessToken: 'a', refreshToken: 'r', userId: 'u');
+  test(
+    'saveTokens replaces the refresh token only when one is given',
+    () async {
+      final tokens = TokenManager(storage: MemoryStorage());
+      await tokens.saveAuthTokens(
+        accessToken: 'a',
+        refreshToken: 'r',
+        userId: 'u',
+      );
 
-    await tokens.saveTokens(accessToken: 'a2');
-    expect(await tokens.getAccessToken(), 'a2');
-    expect(await tokens.getRefreshToken(), 'r');
+      await tokens.saveTokens(accessToken: 'a2');
+      expect(await tokens.getAccessToken(), 'a2');
+      expect(await tokens.getRefreshToken(), 'r');
 
-    await tokens.saveTokens(accessToken: 'a3', refreshToken: 'r3');
-    expect(await tokens.getRefreshToken(), 'r3');
-  });
+      await tokens.saveTokens(accessToken: 'a3', refreshToken: 'r3');
+      expect(await tokens.getRefreshToken(), 'r3');
+    },
+  );
 }
 
 /// Fails writes to one specific key.
@@ -89,20 +96,22 @@ class _KeyFailingStorage extends MemoryStorage {
 }
 
 void sessionSignalTests() {
-  test('a failed login write rolls back WITHOUT signalling sessionCleared',
-      () async {
-    final tokens = TokenManager(storage: _FailingStorage(2));
-    var signals = 0;
-    tokens.sessionCleared.listen((_) => signals++);
+  test(
+    'a failed login write rolls back WITHOUT signalling sessionCleared',
+    () async {
+      final tokens = TokenManager(storage: _FailingStorage(2));
+      var signals = 0;
+      tokens.sessionCleared.listen((_) => signals++);
 
-    await expectLater(
-      tokens.saveAuthTokens(accessToken: 'a', refreshToken: 'r', userId: 'u'),
-      throwsStateError,
-    );
+      await expectLater(
+        tokens.saveAuthTokens(accessToken: 'a', refreshToken: 'r', userId: 'u'),
+        throwsStateError,
+      );
 
-    expect(await tokens.getAccessToken(), isNull);
-    expect(signals, 0);
-  });
+      expect(await tokens.getAccessToken(), isNull);
+      expect(signals, 0);
+    },
+  );
 
   test('a failed refresh-token write keeps the new access token', () async {
     final storage = _KeyFailingStorage(StorageKeys.refreshToken);
@@ -119,20 +128,22 @@ void sessionSignalTests() {
     expect(signals, 0);
   });
 
-  test('a failed access-token write during refresh ends the session visibly',
-      () async {
-    final storage = _KeyFailingStorage(StorageKeys.accessToken);
-    final tokens = TokenManager(storage: storage);
-    storage.values[StorageKeys.refreshToken] = 'old-refresh';
-    var signals = 0;
-    tokens.sessionCleared.listen((_) => signals++);
+  test(
+    'a failed access-token write during refresh ends the session visibly',
+    () async {
+      final storage = _KeyFailingStorage(StorageKeys.accessToken);
+      final tokens = TokenManager(storage: storage);
+      storage.values[StorageKeys.refreshToken] = 'old-refresh';
+      var signals = 0;
+      tokens.sessionCleared.listen((_) => signals++);
 
-    await expectLater(
-      tokens.saveTokens(accessToken: 'new-access', refreshToken: 'new-r'),
-      throwsStateError,
-    );
+      await expectLater(
+        tokens.saveTokens(accessToken: 'new-access', refreshToken: 'new-r'),
+        throwsStateError,
+      );
 
-    expect(await tokens.getRefreshToken(), isNull);
-    expect(signals, 1);
-  });
+      expect(await tokens.getRefreshToken(), isNull);
+      expect(signals, 1);
+    },
+  );
 }

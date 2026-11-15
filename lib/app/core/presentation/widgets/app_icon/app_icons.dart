@@ -20,7 +20,9 @@ abstract final class AppIcons {
   static const payment = AppIconData.material(Icons.payments_outlined);
   static const customers = AppIconData.material(Icons.groups_outlined);
   static const reports = AppIconData.material(Icons.bar_chart_outlined);
-  static const cash = AppIconData.material(Icons.account_balance_wallet_outlined);
+  static const cash = AppIconData.material(
+    Icons.account_balance_wallet_outlined,
+  );
   static const receivable = AppIconData.material(Icons.south_west);
   static const payable = AppIconData.material(Icons.north_east);
   static const trendUp = AppIconData.material(Icons.trending_up);

@@ -49,13 +49,8 @@ EdgeInsets oldPadding(
   final effectiveMax =
       max ?? allValues.reduce((a, b) => a.mobile > b.mobile ? a : b);
 
-  double sp(AppSpacing s) => Rh.spacing(
-    context,
-    s,
-    min: effectiveMin,
-    max: effectiveMax,
-    mode: mode,
-  );
+  double sp(AppSpacing s) =>
+      Rh.spacing(context, s, min: effectiveMin, max: effectiveMax, mode: mode);
   return EdgeInsets.only(
     left: sp(resolvedLeft),
     right: sp(resolvedRight),
@@ -146,7 +141,12 @@ Future<BuildContext> _contextAt(WidgetTester tester, double width) async {
 }
 
 void main() {
-  const spacings = [AppSpacing.none, AppSpacing.xs, AppSpacing.md, AppSpacing.xl];
+  const spacings = [
+    AppSpacing.none,
+    AppSpacing.xs,
+    AppSpacing.md,
+    AppSpacing.xl,
+  ];
   const radii = [AppRadius.xs, AppRadius.md, AppRadius.xl, AppRadius.full];
 
   testWidgets('padding matches the original implementation', (tester) async {
@@ -203,40 +203,42 @@ void main() {
     expect(compared, greaterThan(1000));
   });
 
-  testWidgets('paddingDirectional equals padding with start/end as left/right',
-      (tester) async {
-    for (final width in _widths) {
-      final ctx = await _contextAt(tester, width);
-      for (final mode in ResponsiveMode.values) {
-        for (final all in spacings) {
-          final expected = oldPadding(
-            ctx,
-            all: all,
-            left: AppSpacing.lg,
-            right: AppSpacing.sm,
-            mode: mode,
-          );
-          final actual = Rh.paddingDirectional(
-            context: ctx,
-            all: all,
-            start: AppSpacing.lg,
-            end: AppSpacing.sm,
-            mode: mode,
-          );
-          expect(
-            actual,
-            EdgeInsetsDirectional.only(
-              start: expected.left,
-              end: expected.right,
-              top: expected.top,
-              bottom: expected.bottom,
-            ),
-            reason: 'w=$width mode=$mode all=$all',
-          );
+  testWidgets(
+    'paddingDirectional equals padding with start/end as left/right',
+    (tester) async {
+      for (final width in _widths) {
+        final ctx = await _contextAt(tester, width);
+        for (final mode in ResponsiveMode.values) {
+          for (final all in spacings) {
+            final expected = oldPadding(
+              ctx,
+              all: all,
+              left: AppSpacing.lg,
+              right: AppSpacing.sm,
+              mode: mode,
+            );
+            final actual = Rh.paddingDirectional(
+              context: ctx,
+              all: all,
+              start: AppSpacing.lg,
+              end: AppSpacing.sm,
+              mode: mode,
+            );
+            expect(
+              actual,
+              EdgeInsetsDirectional.only(
+                start: expected.left,
+                end: expected.right,
+                top: expected.top,
+                bottom: expected.bottom,
+              ),
+              reason: 'w=$width mode=$mode all=$all',
+            );
+          }
         }
       }
-    }
-  });
+    },
+  );
 
   testWidgets('radius matches the original implementation', (tester) async {
     for (final width in _widths) {
@@ -279,8 +281,9 @@ void main() {
     }
   });
 
-  testWidgets('radiusDirectional matches radius with start/end as left/right',
-      (tester) async {
+  testWidgets('radiusDirectional matches radius with start/end as left/right', (
+    tester,
+  ) async {
     for (final width in _widths) {
       final ctx = await _contextAt(tester, width);
       for (final mode in ResponsiveMode.values) {

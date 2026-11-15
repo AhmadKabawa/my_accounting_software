@@ -51,7 +51,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     data: {
       'email': email,
       'password': password,
-      'data': {'full_name': name, if (phone != null) 'phone': phone},
+      'data': {'full_name': name, 'phone': ?phone},
     },
     requiresAuth: false,
     fromJson: sessionFromSupabase,
@@ -83,10 +83,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<Unit>> logout() => _apiClient.post<Unit>(
-    AuthEndpoints.logout,
-    fromJson: (_) => unit,
-  );
+  Future<ApiResult<Unit>> logout() =>
+      _apiClient.post<Unit>(AuthEndpoints.logout, fromJson: (_) => unit);
 
   // ── Password Management ───────────────────────────────────────
 
@@ -151,9 +149,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     AuthEndpoints.user,
     data: {
       'data': {
-        if (fullName != null) 'full_name': fullName,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
-        if (phone != null) 'phone': phone,
+        'full_name': ?fullName,
+        'avatar_url': ?avatarUrl,
+        'phone': ?phone,
       },
     },
     fromJson: userFromSupabase,

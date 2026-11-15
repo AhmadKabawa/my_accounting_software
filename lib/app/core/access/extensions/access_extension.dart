@@ -6,7 +6,6 @@ import 'package:accounting_software/app/core/access/permission.dart';
 /// اختصار للواجهة: `context.can(Permissions.sales.create)`.
 /// يعيد البناء عند تغيّر الدور، لذا يُستخدم داخل `build` فقط.
 extension AccessContextX on BuildContext {
-  bool can(Permission permission) => select<AccessCubit, bool>(
-    (cubit) => cubit.state.role.allows(permission),
-  );
+  bool can(Permission permission) =>
+      select<AccessCubit, bool>((cubit) => cubit.state.role.allows(permission));
 }

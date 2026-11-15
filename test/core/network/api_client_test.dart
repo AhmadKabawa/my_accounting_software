@@ -48,10 +48,9 @@ _Item _parse(Map<String, dynamic> json) => _Item(json['id'] as int);
 void main() {
   group('objects and arrays', () {
     test('an object is parsed with fromJson', () async {
-      final result = await clientFor('{"id":1}').get<_Item>(
-        _endpoint,
-        fromJson: _parse,
-      );
+      final result = await clientFor(
+        '{"id":1}',
+      ).get<_Item>(_endpoint, fromJson: _parse);
 
       expect((result as ApiSuccess<_Item>).data.id, 1);
     });
@@ -63,30 +62,27 @@ void main() {
             list.map((e) => _parse(e as Map<String, dynamic>)).toList(),
       );
 
-      expect(
-        (result as ApiSuccess<List<_Item>>).data.map((e) => e.id),
-        [1, 2],
-      );
+      expect((result as ApiSuccess<List<_Item>>).data.map((e) => e.id), [1, 2]);
     });
 
     test('an array without fromJsonList is a failure, not a crash', () async {
-      final result = await clientFor('[{"id":1}]').get<_Item>(
-        _endpoint,
-        fromJson: _parse,
-      );
+      final result = await clientFor(
+        '[{"id":1}]',
+      ).get<_Item>(_endpoint, fromJson: _parse);
 
       expect(result, isA<ApiFailure<_Item>>());
     });
 
-    test('an object without fromJson is a failure when only a list parser is given',
-        () async {
-      final result = await clientFor('{"id":1}').get<List<_Item>>(
-        _endpoint,
-        fromJsonList: (_) => [],
-      );
+    test(
+      'an object without fromJson is a failure when only a list parser is given',
+      () async {
+        final result = await clientFor(
+          '{"id":1}',
+        ).get<List<_Item>>(_endpoint, fromJsonList: (_) => []);
 
-      expect(result, isA<ApiFailure<List<_Item>>>());
-    });
+        expect(result, isA<ApiFailure<List<_Item>>>());
+      },
+    );
   });
 
   group('no parser', () {
@@ -97,9 +93,9 @@ void main() {
     });
 
     test('a mismatched type is a failure instead of a TypeError', () async {
-      final result = await clientFor('[1,2]').get<Map<String, dynamic>>(
-        _endpoint,
-      );
+      final result = await clientFor(
+        '[1,2]',
+      ).get<Map<String, dynamic>>(_endpoint);
 
       expect(result, isA<ApiFailure<Map<String, dynamic>>>());
     });
@@ -150,28 +146,26 @@ void main() {
 
   group('errors never escape', () {
     test('a throwing fromJson becomes an ApiFailure', () async {
-      final result = await clientFor('{"id":1}').get<_Item>(
-        _endpoint,
-        fromJson: (_) => throw StateError('bad'),
-      );
+      final result = await clientFor(
+        '{"id":1}',
+      ).get<_Item>(_endpoint, fromJson: (_) => throw StateError('bad'));
 
       expect(result, isA<ApiFailure<_Item>>());
     });
 
     test('a failing paginated parse becomes an ApiFailure', () async {
-      final result = await clientFor('[1,2]').getPaginated<_Item>(
-        _endpoint,
-        fromJson: _parse,
-      );
+      final result = await clientFor(
+        '[1,2]',
+      ).getPaginated<_Item>(_endpoint, fromJson: _parse);
 
       expect(result, isA<ApiFailure<dynamic>>());
     });
 
     test('an HTTP error status is mapped', () async {
-      final result = await clientFor('{"msg":"nope"}', status: 400).get<_Item>(
-        _endpoint,
-        fromJson: _parse,
-      );
+      final result = await clientFor(
+        '{"msg":"nope"}',
+        status: 400,
+      ).get<_Item>(_endpoint, fromJson: _parse);
 
       expect(result, isA<ApiFailure<_Item>>());
     });

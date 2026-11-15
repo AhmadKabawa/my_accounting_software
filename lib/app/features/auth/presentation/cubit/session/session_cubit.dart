@@ -20,7 +20,8 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 ///
 /// Messages that must outlive the page (signed out, session expired...) go
 /// through [FlashMessages].
-class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionAuthenticator {
+class SessionCubit extends Cubit<SessionStatus>
+    implements SessionGate, SessionAuthenticator {
   SessionCubit({
     required GetCurrentUserUseCase getCurrentUser,
     required LogoutUseCase logout,

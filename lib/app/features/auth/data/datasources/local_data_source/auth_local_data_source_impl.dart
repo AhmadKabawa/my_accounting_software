@@ -41,7 +41,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       _safeExecute(() async => _userBox.get(StorageKeys.userData));
 
   @override
-  Future<void> clearUser() => _safeExecute(() => _userBox.delete(StorageKeys.userData));
+  Future<void> clearUser() =>
+      _safeExecute(() => _userBox.delete(StorageKeys.userData));
 
   // ============================================================
   // Tokens

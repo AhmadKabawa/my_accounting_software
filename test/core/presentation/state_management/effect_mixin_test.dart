@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:accounting_software/app/core/presentation/state_management/effect_mixin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,18 +14,20 @@ void main() {
   setUp(() => probe = _Probe());
   tearDown(() => probe.disposeEffects());
 
-  test('replayable effects emitted before any listener arrive in order',
-      () async {
-    probe
-      ..emitEffect(1, replayable: true)
-      ..emitEffect(2, replayable: true);
+  test(
+    'replayable effects emitted before any listener arrive in order',
+    () async {
+      probe
+        ..emitEffect(1, replayable: true)
+        ..emitEffect(2, replayable: true);
 
-    final received = <int>[];
-    probe.effectStream.listen(received.add);
-    await pump();
+      final received = <int>[];
+      probe.effectStream.listen(received.add);
+      await pump();
 
-    expect(received, [1, 2]);
-  });
+      expect(received, [1, 2]);
+    },
+  );
 
   test('a delivered effect is never replayed to a later listener', () async {
     probe.emitEffect(1, replayable: true);
@@ -67,8 +67,7 @@ void main() {
     expect(received, isEmpty);
   });
 
-  test('a replayable effect older than the replay window is dropped',
-      () async {
+  test('a replayable effect older than the replay window is dropped', () async {
     probe.emitEffect(4, replayable: true);
     await Future<void>.delayed(const Duration(milliseconds: 120));
 
@@ -98,10 +97,13 @@ void main() {
     probe.emitEffect(5);
     await pump();
 
-    expect([a, b], [
-      [5],
-      [5],
-    ]);
+    expect(
+      [a, b],
+      [
+        [5],
+        [5],
+      ],
+    );
   });
 
   test('emitting after dispose is ignored', () async {

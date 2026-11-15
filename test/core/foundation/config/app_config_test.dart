@@ -10,22 +10,25 @@ void main() {
       expect(AppConfig.googleClientId, EnvConfig.googleClientId);
     });
 
-    test('ensureConfigured behaves exactly like EnvConfig.ensureConfigured', () {
-      Object? viaApp;
-      Object? viaEnv;
-      try {
-        AppConfig.ensureConfigured();
-      } catch (e) {
-        viaApp = e;
-      }
-      try {
-        EnvConfig.ensureConfigured();
-      } catch (e) {
-        viaEnv = e;
-      }
-      expect(viaApp.runtimeType, viaEnv.runtimeType);
-      expect(viaApp?.toString(), viaEnv?.toString());
-    });
+    test(
+      'ensureConfigured behaves exactly like EnvConfig.ensureConfigured',
+      () {
+        Object? viaApp;
+        Object? viaEnv;
+        try {
+          AppConfig.ensureConfigured();
+        } catch (e) {
+          viaApp = e;
+        }
+        try {
+          EnvConfig.ensureConfigured();
+        } catch (e) {
+          viaEnv = e;
+        }
+        expect(viaApp.runtimeType, viaEnv.runtimeType);
+        expect(viaApp?.toString(), viaEnv?.toString());
+      },
+    );
 
     test('keeps the general constants', () {
       expect(AppConfig.defaultPageSize, 10);

@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
 class GoRouterRefreshStream extends ChangeNotifier {
   final List<StreamSubscription> _subscriptions = [];
 

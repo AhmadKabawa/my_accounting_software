@@ -9,7 +9,10 @@ Future<void> _pump(WidgetTester tester, Widget child) {
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   return tester.pumpWidget(
-    MaterialApp(theme: AppTheme.light(), home: Scaffold(body: child)),
+    MaterialApp(
+      theme: AppTheme.light(),
+      home: Scaffold(body: child),
+    ),
   );
 }
 

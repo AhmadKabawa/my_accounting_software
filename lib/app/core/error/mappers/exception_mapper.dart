@@ -3,7 +3,6 @@ import 'package:accounting_software/app/core/error/exceptions/api_exception.dart
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/error/mappers/server_error_mapper.dart';
 import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 
 class ExceptionMapper {

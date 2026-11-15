@@ -129,11 +129,14 @@ void main() {
     ApiException.timeout(),
     ApiException.server(),
   ]) {
-    test('${exception.statusCode ?? exception.message} keeps the session', () async {
-      final result = await repo(ApiFailure(exception)).getCurrentUser();
+    test(
+      '${exception.statusCode ?? exception.message} keeps the session',
+      () async {
+        final result = await repo(ApiFailure(exception)).getCurrentUser();
 
-      expect(result.isLeft(), isTrue);
-      expect(local.clearedAll, isFalse);
-    });
+        expect(result.isLeft(), isTrue);
+        expect(local.clearedAll, isFalse);
+      },
+    );
   }
 }

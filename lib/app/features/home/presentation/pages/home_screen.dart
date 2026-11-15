@@ -5,7 +5,6 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_appbar/app_page_app_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/home/domain/entity/home_summary.dart';
 import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';

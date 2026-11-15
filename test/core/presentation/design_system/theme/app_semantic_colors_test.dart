@@ -71,7 +71,10 @@ void main() {
 
       await pump(AppTheme.dark());
       expect(seen, AppSemanticColors.dark);
-      expect(AppSemanticColors.light.success, isNot(AppSemanticColors.dark.success));
+      expect(
+        AppSemanticColors.light.success,
+        isNot(AppSemanticColors.dark.success),
+      );
     });
 
     testWidgets('falls back to defaults when the theme has no extension', (

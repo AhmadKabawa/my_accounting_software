@@ -42,10 +42,7 @@ void main() {
   });
 
   test('non-ASCII values are percent-encoded as UTF-8', () {
-    expect(
-      _Items.byCategory('أحذية').path,
-      startsWith('/items/category/%D8'),
-    );
+    expect(_Items.byCategory('أحذية').path, startsWith('/items/category/%D8'));
   });
 
   test('"." and ".." are rejected instead of being passed through', () {

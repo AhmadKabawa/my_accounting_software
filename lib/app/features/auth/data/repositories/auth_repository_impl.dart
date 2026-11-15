@@ -86,7 +86,9 @@ class AuthRepositoryImpl with RepositoryExecutor implements AuthRepository {
   // ─── Send Reset Code ────────────────────────────────
   @override
   Future<Either<Failure, Unit>> sendResetCode({required String email}) =>
-      execute(() async => (await _remote.sendResetCode(email: email)).toEither());
+      execute(
+        () async => (await _remote.sendResetCode(email: email)).toEither(),
+      );
 
   // ─── Confirm New Password ───────────────────────────
   @override

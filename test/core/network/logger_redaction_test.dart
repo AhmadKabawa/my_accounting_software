@@ -42,10 +42,10 @@ void main() {
   });
 
   test('parses JSON strings before masking', () {
-    expect(
-      redactSensitive('{"refresh_token":"abc","ok":true}'),
-      {'refresh_token': '***', 'ok': true},
-    );
+    expect(redactSensitive('{"refresh_token":"abc","ok":true}'), {
+      'refresh_token': '***',
+      'ok': true,
+    });
   });
 
   test('does not print non-JSON bodies', () {
@@ -60,10 +60,30 @@ void main() {
 
   test('masks every extended sensitive key', () {
     const keys = [
-      'password', 'passwd', 'token', 'access_token', 'refreshToken',
-      'secret', 'Authorization', 'auth', 'session', 'sessionId', 'refresh',
-      'access', 'jwt', 'Cookie', 'Set-Cookie', 'api_key', 'apikey', 'api-key',
-      'pin', 'otp', 'code', 'verification_code', 'reset_code', 'sms_otp',
+      'password',
+      'passwd',
+      'token',
+      'access_token',
+      'refreshToken',
+      'secret',
+      'Authorization',
+      'auth',
+      'session',
+      'sessionId',
+      'refresh',
+      'access',
+      'jwt',
+      'Cookie',
+      'Set-Cookie',
+      'api_key',
+      'apikey',
+      'api-key',
+      'pin',
+      'otp',
+      'code',
+      'verification_code',
+      'reset_code',
+      'sms_otp',
       'passcode',
     ];
     for (final key in keys) {
@@ -73,7 +93,12 @@ void main() {
 
   test('does not mask look-alike keys', () {
     for (final key in [
-      'zipcode', 'option', 'spinner', 'email', 'name', 'error_code',
+      'zipcode',
+      'option',
+      'spinner',
+      'email',
+      'name',
+      'error_code',
     ]) {
       expect(redactSensitive({key: 'v'}), {key: 'v'}, reason: key);
     }
@@ -88,10 +113,10 @@ void main() {
     test('masks JWT-like and long opaque path segments', () {
       const jwt = 'aaaaaaaaaa.bbbbbbbbbb.cccccccccc';
       final opaque = 'a' * 40;
-      expect(
-        redactUri(Uri.parse('https://x.co/verify/$jwt')).pathSegments,
-        ['verify', '***'],
-      );
+      expect(redactUri(Uri.parse('https://x.co/verify/$jwt')).pathSegments, [
+        'verify',
+        '***',
+      ]);
       expect(
         redactUri(Uri.parse('https://x.co/reset/$opaque/done')).pathSegments,
         ['reset', '***', 'done'],

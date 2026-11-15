@@ -80,7 +80,8 @@ class _LoginFormSectionState extends State<LoginFormSection> {
               AuthKeys.forgotPassword,
               variant: AppButtonVariant.text,
               size: AppButtonSize.small,
-              onPressed: () => context.pushNamed(AuthRoutes.forgotPassword.name),
+              onPressed: () =>
+                  context.pushNamed(AuthRoutes.forgotPassword.name),
             ),
           ),
           gap,

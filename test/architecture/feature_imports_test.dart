@@ -60,10 +60,13 @@ Set<String> crossFeatureViolations(Map<String, String> sources) {
 
     for (final match in _directive.allMatches(content)) {
       final target = _resolve(importer, match.group(1)!);
-      final to = target == null ? null : _featureOf.firstMatch(target)?.group(1);
+      final to = target == null
+          ? null
+          : _featureOf.firstMatch(target)?.group(1);
       if (target == null || to == null || to == from) continue;
 
-      final routesFile = 'lib/app/features/$to/presentation/routing/${to}_routes.dart';
+      final routesFile =
+          'lib/app/features/$to/presentation/routing/${to}_routes.dart';
       if (target != routesFile) violations.add('$importer -> $target');
     }
   });
@@ -71,10 +74,11 @@ Set<String> crossFeatureViolations(Map<String, String> sources) {
 }
 
 Map<String, String> _readFeatureSources() => {
-  for (final file in Directory('lib/app/features')
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((f) => f.path.endsWith('.dart')))
+  for (final file
+      in Directory('lib/app/features')
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.dart')))
     _posix(file.path): file.readAsStringSync(),
 };
 

@@ -16,61 +16,52 @@ abstract class Failure extends Equatable {
 
 // ✅ أضف const للـ constructor إذا كانت الـ AppKey ثابتة
 class ValidationFailure extends Failure {
-  ValidationFailure({AppKey? messageKey, int? statusCode})
-    : super(
-        messageKey: messageKey ?? ErrorKeys.validation,
-        statusCode: statusCode,
-      );
+  const ValidationFailure({AppKey? messageKey, super.statusCode})
+    : super(messageKey: messageKey ?? ErrorKeys.validation);
 }
 
 // ─────────── NetworkFailure ───────────
 
 class NetworkFailure extends Failure {
-  NetworkFailure({AppKey? messageKey, int? statusCode})
-    : super(
-        messageKey: messageKey ?? ErrorKeys.network,
-        statusCode: statusCode,
-      );
+  const NetworkFailure({AppKey? messageKey, super.statusCode})
+    : super(messageKey: messageKey ?? ErrorKeys.network);
 }
 // ─────────── CacheFailure ───────────
 
 class CacheFailure extends Failure {
-  CacheFailure({AppKey? messageKey})
+  const CacheFailure({AppKey? messageKey})
     : super(messageKey: messageKey ?? ErrorKeys.cache);
 }
 
 // ─────────── ServerFailure ───────────
 
 class ServerFailure extends Failure {
-  ServerFailure({AppKey? messageKey, int? statusCode})
-    : super(
-        messageKey: messageKey ?? ErrorKeys.server,
-        statusCode: statusCode,
-      );
+  const ServerFailure({AppKey? messageKey, super.statusCode})
+    : super(messageKey: messageKey ?? ErrorKeys.server);
 }
 // ─────────── Other Failures ───────────
 
 class GoogleSignInFailure extends Failure {
-  GoogleSignInFailure({AppKey? messageKey})
+  const GoogleSignInFailure({AppKey? messageKey})
     : super(messageKey: messageKey ?? ErrorKeys.googleSignIn);
 }
 
 class PermissionFailure extends Failure {
-  PermissionFailure({AppKey? messageKey})
+  const PermissionFailure({AppKey? messageKey})
     : super(messageKey: messageKey ?? ErrorKeys.permission);
 }
 
 class UnexpectedFailure extends Failure {
-  UnexpectedFailure({AppKey? messageKey})
+  const UnexpectedFailure({AppKey? messageKey})
     : super(messageKey: messageKey ?? ErrorKeys.unknown);
 }
 
 class UnauthorizedFailure extends Failure {
-  UnauthorizedFailure({AppKey? messageKey})
+  const UnauthorizedFailure({AppKey? messageKey})
     : super(messageKey: messageKey ?? ErrorKeys.unauthorized);
 }
 
 class NotFoundFailure extends Failure {
-  NotFoundFailure({AppKey? messageKey})
+  const NotFoundFailure({AppKey? messageKey})
     : super(messageKey: messageKey ?? ErrorKeys.notFound);
 }

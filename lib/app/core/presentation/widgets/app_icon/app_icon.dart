@@ -115,7 +115,6 @@ class AppIcon extends StatelessWidget {
     ),
   );
 
-  Color? _defaultColor(BuildContext context) => icon is MaterialIconData
-      ? Theme.of(context).colorScheme.onSurface
-      : null;
+  Color? _defaultColor(BuildContext context) =>
+      icon is MaterialIconData ? Theme.of(context).colorScheme.onSurface : null;
 }

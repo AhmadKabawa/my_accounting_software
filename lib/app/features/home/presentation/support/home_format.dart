@@ -15,8 +15,7 @@ String formatAmount(num value) {
 /// Greeting by the hour; the boundary is a named constant, not a loose number.
 const _eveningStartsAtHour = 12;
 
-HomeKeys greetingFor(DateTime now) =>
-    now.hour < _eveningStartsAtHour
+HomeKeys greetingFor(DateTime now) => now.hour < _eveningStartsAtHour
     ? HomeKeys.greetingMorning
     : HomeKeys.greetingEvening;
 

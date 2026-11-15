@@ -54,7 +54,10 @@ void main() {
     setUp: () => repo.currentUser = const Right(testUser),
     build: () => cubit,
     act: (c) => c.checkAuthentication(),
-    expect: () => [isA<SessionChecking>(), const SessionAuthenticated(testUser)],
+    expect: () => [
+      isA<SessionChecking>(),
+      const SessionAuthenticated(testUser),
+    ],
   );
 
   blocTest<SessionCubit, SessionStatus>(
@@ -137,12 +140,15 @@ void main() {
     verify: (_) => expect(shown.single.type, MessageType.error),
   );
 
-  test('messages posted with no listener replay to the first new one', () async {
-    final late = FlashMessages()
-      ..post(AuthKeys.signOutSuccess, MessageType.success);
-    final got = <FlashMessage>[];
-    late.listen(got.add);
-    expect(got.single.key, AuthKeys.signOutSuccess);
-    expect(late.pendingCount, 0);
-  });
+  test(
+    'messages posted with no listener replay to the first new one',
+    () async {
+      final late = FlashMessages()
+        ..post(AuthKeys.signOutSuccess, MessageType.success);
+      final got = <FlashMessage>[];
+      late.listen(got.add);
+      expect(got.single.key, AuthKeys.signOutSuccess);
+      expect(late.pendingCount, 0);
+    },
+  );
 }

@@ -26,7 +26,8 @@ class NotFoundScreen extends StatelessWidget {
               const AppText.raw('404', type: AppTextType.displayMedium),
               gap,
               AppText(CommonKeys.pageNotFound, type: AppTextType.titleLarge),
-              if (location != null) AppText.raw(location, textAlign: TextAlign.center),
+              if (location != null)
+                AppText.raw(location, textAlign: TextAlign.center),
               gap,
               AppButton(
                 CommonKeys.goHome,

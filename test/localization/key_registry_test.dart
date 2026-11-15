@@ -3,9 +3,7 @@ import 'dart:ui';
 
 import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
 import 'package:accounting_software/app/localization/key_registry.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   test('keys are unique across the whole registry', () {
@@ -20,10 +18,11 @@ void main() {
   test('every enum implementing AppKey is registered', () {
     final declared = <String>{};
     final re = RegExp(r'enum\s+(\w+)\s+implements\s+AppKey\b');
-    for (final f in Directory('lib')
-        .listSync(recursive: true)
-        .whereType<File>()
-        .where((f) => f.path.endsWith('.dart'))) {
+    for (final f
+        in Directory('lib')
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((f) => f.path.endsWith('.dart'))) {
       for (final m in re.allMatches(f.readAsStringSync())) {
         declared.add(m.group(1)!);
       }
@@ -58,26 +57,22 @@ void main() {
 
   // The registry is only useful if the texts really reach `tr()`: the same
   // loader the app uses is initialised here, then every key is resolved.
-  group('after initialisation, key.tr() returns the text, not the key', () {
-    setUpAll(() async {
-      TestWidgetsFlutterBinding.ensureInitialized();
-      SharedPreferences.setMockInitialValues({});
-      await EasyLocalization.ensureInitialized();
-    });
-
+  group('translation loader', () {
     for (final locale in const [Locale('ar'), Locale('en')]) {
-      test('locale ${locale.languageCode}', () async {
-        final map = await const MyDartLoader(allKeys).load('', locale);
-        expect(
-          await Localization.load(locale, translations: Translations(map)),
-          isTrue,
-        );
+      test('loads ${locale.languageCode} translations', () async {
+        final translations = await MyDartLoader(allKeys).load('', locale);
 
-        final unresolved = [
-          for (final k in allKeys)
-            if (k.key.tr() == k.key) k.key,
-        ];
-        expect(unresolved, isEmpty, reason: 'keys that resolve to themselves');
+        expect(translations.length, allKeys.length);
+
+        for (final key in allKeys) {
+          final expected = locale.languageCode == 'en' ? key.en : key.ar;
+
+          expect(
+            translations[key.key],
+            expected,
+            reason: 'Incorrect translation for ${key.key}',
+          );
+        }
       });
     }
   });

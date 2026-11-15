@@ -22,13 +22,13 @@ class PaginatedResult<T> extends Equatable {
   bool get isEmpty => items.isEmpty;
 
   // ✅ Generic — يشتغل مع Products, Orders, Users ...
- PaginatedResult<T> appendItems(List<T> newItems) => PaginatedResult(
-  items: [...items, ...newItems],
-  totalCount: totalCount,
-  currentPage: currentPage + 1, // ✅ منطق داخلي ثابت
-  totalPages: totalPages,
-  isFromCache: isFromCache,
-);
+  PaginatedResult<T> appendItems(List<T> newItems) => PaginatedResult(
+    items: [...items, ...newItems],
+    totalCount: totalCount,
+    currentPage: currentPage + 1, // ✅ منطق داخلي ثابت
+    totalPages: totalPages,
+    isFromCache: isFromCache,
+  );
   PaginatedResult<T> copyWith({bool? isFromCache, List<T>? items}) =>
       PaginatedResult(
         items: items ?? this.items,

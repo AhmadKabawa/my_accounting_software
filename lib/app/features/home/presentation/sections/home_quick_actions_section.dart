@@ -33,10 +33,7 @@ class HomeQuickActionsSection extends StatelessWidget {
                       action.icon,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    context.ui.spacing.gap(
-                      AppSpacing.sm,
-                      axis: Axis.vertical,
-                    ),
+                    context.ui.spacing.gap(AppSpacing.sm, axis: Axis.vertical),
                     AppText(
                       action.label,
                       type: AppTextType.labelMedium,

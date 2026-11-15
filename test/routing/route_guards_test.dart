@@ -127,7 +127,10 @@ void main() {
     });
 
     test('password recovery pages are reachable while signed out', () {
-      for (final route in [AuthRoutes.forgotPassword, AuthRoutes.resetPassword]) {
+      for (final route in [
+        AuthRoutes.forgotPassword,
+        AuthRoutes.resetPassword,
+      ]) {
         expect(run(route.path), isNull, reason: route.path);
       }
     });

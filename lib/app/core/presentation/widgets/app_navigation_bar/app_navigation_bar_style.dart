@@ -133,8 +133,7 @@ class AppNavigationBarStyle {
 
   Color get glassBackground => background.withOpacity(_glassOpacity);
 
-  Color get glassBorderColor =>
-      Colors.white.withOpacity(_glassBorderOpacity);
+  Color get glassBorderColor => Colors.white.withOpacity(_glassBorderOpacity);
 
   Color get activeColor => _scheme.primary;
 
@@ -220,7 +219,10 @@ class AppNavigationBarStyle {
           padding: _glassPadding,
           margin: margin,
           background: glassBackground,
-          border: Border.all(color: glassBorderColor, width: _strongBorderWidth),
+          border: Border.all(
+            color: glassBorderColor,
+            width: _strongBorderWidth,
+          ),
           shadows: [
             BoxShadow(
               color: shadowColor,

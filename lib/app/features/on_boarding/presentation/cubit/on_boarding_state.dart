@@ -7,8 +7,9 @@ final class OnBoardingState extends Equatable {
 
   final int currentIndexPage;
 
-  OnBoardingState copyWith({int? currentIndexPage}) =>
-      OnBoardingState(currentIndexPage: currentIndexPage ?? this.currentIndexPage);
+  OnBoardingState copyWith({int? currentIndexPage}) => OnBoardingState(
+    currentIndexPage: currentIndexPage ?? this.currentIndexPage,
+  );
 
   @override
   List<Object?> get props => [currentIndexPage];

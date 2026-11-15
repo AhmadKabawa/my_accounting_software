@@ -67,12 +67,6 @@ final ColorScheme darkColorScheme = ColorScheme(
 
   // خلفية التطبيق
   onSurface: AppColors.textPrimaryDark,
-  // النص الأساسي
-
-  // ======================================================
-  // 📦 SURFACE VARIANT
-  // ======================================================
-  surfaceVariant: AppColors.cardDark,
 
   // Card في الداكن
   onSurfaceVariant: AppColors.textSecondaryDark,

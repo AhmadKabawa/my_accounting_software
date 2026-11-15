@@ -11,10 +11,7 @@ class RouteTransitions {
       key: state.pageKey,
       child: child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       },
     );
   }
@@ -31,13 +28,13 @@ class RouteTransitions {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;
         const curve = Curves.easeInOut;
-        
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+
+        var tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }
@@ -54,13 +51,13 @@ class RouteTransitions {
         const begin = Offset(0.0, 1.0);
         const end = Offset.zero;
         const curve = Curves.easeOutCubic;
-        
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+
+        var tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }
@@ -76,10 +73,7 @@ class RouteTransitions {
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return ScaleTransition(
           scale: animation,
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -97,13 +91,13 @@ class RouteTransitions {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;
         const curve = Curves.easeInOut;
-        
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+
+        var tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }

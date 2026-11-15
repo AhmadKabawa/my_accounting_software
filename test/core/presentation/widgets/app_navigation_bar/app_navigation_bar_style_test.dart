@@ -23,7 +23,7 @@ Future<AppNavigationBarStyle> _navbarAt(WidgetTester tester, Size size) async {
   return styles;
 }
 
-BorderSide _side(NavbarVariant v) => (v.border! as Border).top;
+BorderSide _side(NavbarVariant v) => (v.border!).top;
 
 void main() {
   const phone = Size(390, 844);

@@ -23,22 +23,26 @@ void main() {
     expect(() => validate(), returnsNormally);
   });
 
-  test('an empty Google client ID is rejected on the web with a clear message',
-      () {
-    expect(
-      () => validate(web: true),
-      throwsA(
-        isA<StateError>().having(
-          (e) => e.message,
-          'message',
-          contains('GOOGLE_CLIENT_ID'),
+  test(
+    'an empty Google client ID is rejected on the web with a clear message',
+    () {
+      expect(
+        () => validate(web: true),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('GOOGLE_CLIENT_ID'),
+          ),
         ),
-      ),
-    );
-  });
+      );
+    },
+  );
 
   test('a Google client ID satisfies the web check', () {
-    expect(() => validate(web: true, google: 'id.apps.googleusercontent.com'),
-        returnsNormally);
+    expect(
+      () => validate(web: true, google: 'id.apps.googleusercontent.com'),
+      returnsNormally,
+    );
   });
 }

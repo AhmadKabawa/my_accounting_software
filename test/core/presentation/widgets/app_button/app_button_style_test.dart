@@ -76,21 +76,28 @@ void main() {
       expect(outlined.borderColor, scheme.outline);
       expect(outlined.borderWidth, greaterThan(0));
       expect(primary.borderColor, isNull);
-      expect(
-        {primary.background, secondary.background, danger.background},
-        hasLength(3),
-      );
+      expect({
+        primary.background,
+        secondary.background,
+        danger.background,
+      }, hasLength(3));
     });
 
     testWidgets('sizes give increasing heights on mobile', (tester) async {
       final styles = await _buttonStylesAt(tester, phone);
 
-      final small = styles.resolve(AppButtonVariant.primary, AppButtonSize.small);
+      final small = styles.resolve(
+        AppButtonVariant.primary,
+        AppButtonSize.small,
+      );
       final medium = styles.resolve(
         AppButtonVariant.primary,
         AppButtonSize.medium,
       );
-      final large = styles.resolve(AppButtonVariant.primary, AppButtonSize.large);
+      final large = styles.resolve(
+        AppButtonVariant.primary,
+        AppButtonSize.large,
+      );
 
       expect(small.height, 32);
       expect(medium.height, 40);
@@ -149,7 +156,10 @@ void main() {
       expect(onPhone.height, 40);
       expect(onDesktop.height, 48);
       expect(onDesktop.iconSize, greaterThan(onPhone.iconSize));
-      expect(onDesktop.padding.horizontal, greaterThan(onPhone.padding.horizontal));
+      expect(
+        onDesktop.padding.horizontal,
+        greaterThan(onPhone.padding.horizontal),
+      );
     });
   });
 

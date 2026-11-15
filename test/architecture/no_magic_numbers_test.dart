@@ -13,13 +13,15 @@ import 'package:flutter_test/flutter_test.dart';
 /// Zero is allowed (`width: 0`, `EdgeInsets.all(0)`).
 const _legacyFeatures = <String>{};
 
-const _label = r'width|height|size|fontSize|elevation|radius|strokeWidth|'
+const _label =
+    r'width|height|size|fontSize|elevation|radius|strokeWidth|'
     r'thickness|dimension|blurRadius|spreadRadius|minHeight|minWidth|'
     r'maxWidth|maxHeight';
 
 final _rules = <String, RegExp>{
-  'a number after a size-like named argument':
-      RegExp('(?<![\\w])(?:$_label)\\s*:\\s*(?!0\\b)\\d'),
+  'a number after a size-like named argument': RegExp(
+    '(?<![\\w])(?:$_label)\\s*:\\s*(?!0\\b)\\d',
+  ),
   'Radius.circular(number)': RegExp(r'Radius\.circular\(\s*(?!0\b)\d'),
   'EdgeInsets with a number': RegExp(r'EdgeInsets\w*\.\w+\(\s*(?!0\b)\d'),
   'Size(number)': RegExp(r'(?<![\w])Size(?:\.square)?\(\s*(?!0\b)\d'),
@@ -52,14 +54,19 @@ List<String> _scan(Iterable<File> files) {
 }
 
 void main() {
-  const how = 'Use a design token (docs/architecture/ARCHITECTURE_RULES.md, '
+  const how =
+      'Use a design token (docs/architecture/ARCHITECTURE_RULES.md, '
       'no-raw-numbers rule). If none fits, add one in core first.';
 
   test('features use tokens, not raw numbers', () {
     final files = Directory('lib/app/features')
         .listSync()
         .whereType<Directory>()
-        .where((d) => !_legacyFeatures.contains(d.path.split(Platform.pathSeparator).last))
+        .where(
+          (d) => !_legacyFeatures.contains(
+            d.path.split(Platform.pathSeparator).last,
+          ),
+        )
         .expand(_dartFiles);
     expect(_scan(files), isEmpty, reason: how);
   });

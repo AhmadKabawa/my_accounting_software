@@ -142,9 +142,7 @@ void main() {
       final pending = c.updateProfile(fullName: 'x');
 
       cleared.add(null);
-      repo.profile!.complete(
-        const Right(UserEntity(id: 'u1', email: 'a@b.c')),
-      );
+      repo.profile!.complete(const Right(UserEntity(id: 'u1', email: 'a@b.c')));
       await pending;
     },
     expect: () => loadingThenIdle,

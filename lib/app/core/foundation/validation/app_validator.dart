@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:accounting_software/app/core/localization/keys/validation_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 

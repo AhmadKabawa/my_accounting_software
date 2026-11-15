@@ -44,7 +44,10 @@ class AuthPageScaffold extends StatelessWidget {
                   children: [
                     AppText(titleKey, type: AppTextType.headlineMedium),
                     if (subtitleKey != null) ...[
-                      context.ui.spacing.gap(AppSpacing.xs, axis: Axis.vertical),
+                      context.ui.spacing.gap(
+                        AppSpacing.xs,
+                        axis: Axis.vertical,
+                      ),
                       AppText(subtitleKey!, type: AppTextType.bodyMedium),
                     ],
                     context.ui.spacing.gap(AppSpacing.xl, axis: Axis.vertical),

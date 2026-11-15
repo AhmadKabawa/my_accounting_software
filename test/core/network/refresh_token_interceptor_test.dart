@@ -95,7 +95,11 @@ void main() {
     await expectLater(
       buildDio(adapter).get<dynamic>('/rest/v1/items'),
       throwsA(
-        isA<DioException>().having((e) => e.response?.statusCode, 'status', 401),
+        isA<DioException>().having(
+          (e) => e.response?.statusCode,
+          'status',
+          401,
+        ),
       ),
     );
     expect(await tokens.getAccessToken(), isNull);
@@ -133,21 +137,24 @@ void main() {
     expect(adapter.requests.where(isRefresh), isEmpty);
   });
 
-  test('a replayed request that still gets 401 is not refreshed again', () async {
-    final adapter = RoutedAdapter((o) async {
-      if (isRefresh(o)) {
-        return RoutedAdapter.json(
-          200,
-          '{"access_token":"new-access","refresh_token":"new-refresh"}',
-        );
-      }
-      return RoutedAdapter.json(401, '{"msg":"still unauthorized"}');
-    });
+  test(
+    'a replayed request that still gets 401 is not refreshed again',
+    () async {
+      final adapter = RoutedAdapter((o) async {
+        if (isRefresh(o)) {
+          return RoutedAdapter.json(
+            200,
+            '{"access_token":"new-access","refresh_token":"new-refresh"}',
+          );
+        }
+        return RoutedAdapter.json(401, '{"msg":"still unauthorized"}');
+      });
 
-    await expectLater(
-      buildDio(adapter).get<dynamic>('/rest/v1/items'),
-      throwsA(isA<DioException>()),
-    );
-    expect(adapter.requests.where(isRefresh).length, 1);
-  });
+      await expectLater(
+        buildDio(adapter).get<dynamic>('/rest/v1/items'),
+        throwsA(isA<DioException>()),
+      );
+      expect(adapter.requests.where(isRefresh).length, 1);
+    },
+  );
 }

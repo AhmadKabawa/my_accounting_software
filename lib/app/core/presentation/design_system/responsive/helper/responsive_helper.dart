@@ -1,4 +1,6 @@
 /// Export app enums from tokens file
+library;
+
 export '../engine/app_enums.dart';
 
 import 'package:flutter/material.dart';
@@ -6,7 +8,6 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_gap.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/scale_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
-
 
 /// Shortcut typedef for quick usage of ResponsiveHelper
 typedef Rh = ResponsiveHelper;

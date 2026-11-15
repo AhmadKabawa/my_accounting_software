@@ -4,7 +4,6 @@ part 'auth_tokens.freezed.dart';
 
 @freezed
 class AuthTokensEntity with _$AuthTokensEntity {
-
   const factory AuthTokensEntity({
     required String accessToken,
     String? refreshToken,

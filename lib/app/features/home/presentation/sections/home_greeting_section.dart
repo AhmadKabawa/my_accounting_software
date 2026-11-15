@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
@@ -17,7 +16,9 @@ class HomeGreetingSection extends StatelessWidget {
     final name = context.select<SessionCubit, String>(
       (cubit) => switch (cubit.current) {
         SessionAuthenticated(:final user) =>
-          (user.fullName ?? '').trim().isEmpty ? user.email : user.fullName!.trim(),
+          (user.fullName ?? '').trim().isEmpty
+              ? user.email
+              : user.fullName!.trim(),
         _ => '',
       },
     );
@@ -27,7 +28,10 @@ class HomeGreetingSection extends StatelessWidget {
     return AppText.raw(
       HomeKeys.greetingWithName.tr(
         context: context,
-        namedArgs: {'greeting': greeting.tr(context: context), 'name': name},
+        namedArgs: {
+          'greeting': greeting.tr(context: context),
+          'name': name,
+        },
       ),
       type: AppTextType.headlineSmall,
     );

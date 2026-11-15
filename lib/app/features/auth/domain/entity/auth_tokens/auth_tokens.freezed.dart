@@ -12,7 +12,8 @@ part of 'auth_tokens.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$AuthTokensEntity {
@@ -28,8 +29,9 @@ mixin _$AuthTokensEntity {
 /// @nodoc
 abstract class $AuthTokensEntityCopyWith<$Res> {
   factory $AuthTokensEntityCopyWith(
-          AuthTokensEntity value, $Res Function(AuthTokensEntity) then) =
-      _$AuthTokensEntityCopyWithImpl<$Res, AuthTokensEntity>;
+    AuthTokensEntity value,
+    $Res Function(AuthTokensEntity) then,
+  ) = _$AuthTokensEntityCopyWithImpl<$Res, AuthTokensEntity>;
   @useResult
   $Res call({String accessToken, String? refreshToken, String? userId});
 }
@@ -51,20 +53,23 @@ class _$AuthTokensEntityCopyWithImpl<$Res, $Val extends AuthTokensEntity>
     Object? refreshToken = freezed,
     Object? userId = freezed,
   }) {
-    return _then(_value.copyWith(
-      accessToken: null == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      refreshToken: freezed == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            accessToken: null == accessToken
+                ? _value.accessToken
+                : accessToken // ignore: cast_nullable_to_non_nullable
+                      as String,
+            refreshToken: freezed == refreshToken
+                ? _value.refreshToken
+                : refreshToken // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userId: freezed == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -72,8 +77,9 @@ class _$AuthTokensEntityCopyWithImpl<$Res, $Val extends AuthTokensEntity>
 abstract class _$$AuthTokensImplCopyWith<$Res>
     implements $AuthTokensEntityCopyWith<$Res> {
   factory _$$AuthTokensImplCopyWith(
-          _$AuthTokensImpl value, $Res Function(_$AuthTokensImpl) then) =
-      __$$AuthTokensImplCopyWithImpl<$Res>;
+    _$AuthTokensImpl value,
+    $Res Function(_$AuthTokensImpl) then,
+  ) = __$$AuthTokensImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String accessToken, String? refreshToken, String? userId});
@@ -84,8 +90,9 @@ class __$$AuthTokensImplCopyWithImpl<$Res>
     extends _$AuthTokensEntityCopyWithImpl<$Res, _$AuthTokensImpl>
     implements _$$AuthTokensImplCopyWith<$Res> {
   __$$AuthTokensImplCopyWithImpl(
-      _$AuthTokensImpl _value, $Res Function(_$AuthTokensImpl) _then)
-      : super(_value, _then);
+    _$AuthTokensImpl _value,
+    $Res Function(_$AuthTokensImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -94,28 +101,33 @@ class __$$AuthTokensImplCopyWithImpl<$Res>
     Object? refreshToken = freezed,
     Object? userId = freezed,
   }) {
-    return _then(_$AuthTokensImpl(
-      accessToken: null == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      refreshToken: freezed == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$AuthTokensImpl(
+        accessToken: null == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
+                  as String,
+        refreshToken: freezed == refreshToken
+            ? _value.refreshToken
+            : refreshToken // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userId: freezed == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$AuthTokensImpl implements _AuthTokens {
-  const _$AuthTokensImpl(
-      {required this.accessToken, this.refreshToken, this.userId});
+  const _$AuthTokensImpl({
+    required this.accessToken,
+    this.refreshToken,
+    this.userId,
+  });
 
   @override
   final String accessToken;
@@ -153,10 +165,11 @@ class _$AuthTokensImpl implements _AuthTokens {
 }
 
 abstract class _AuthTokens implements AuthTokensEntity {
-  const factory _AuthTokens(
-      {required final String accessToken,
-      final String? refreshToken,
-      final String? userId}) = _$AuthTokensImpl;
+  const factory _AuthTokens({
+    required final String accessToken,
+    final String? refreshToken,
+    final String? userId,
+  }) = _$AuthTokensImpl;
 
   @override
   String get accessToken;

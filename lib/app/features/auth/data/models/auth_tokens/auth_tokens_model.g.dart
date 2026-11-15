@@ -7,17 +7,17 @@ part of 'auth_tokens_model.dart';
 // **************************************************************************
 
 _$AuthTokensModelImpl _$$AuthTokensModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AuthTokensModelImpl(
-      accessToken: json['accessToken'] as String,
-      refreshToken: json['refreshToken'] as String?,
-      userId: json['userId'] as String?,
-    );
+  Map<String, dynamic> json,
+) => _$AuthTokensModelImpl(
+  accessToken: json['accessToken'] as String,
+  refreshToken: json['refreshToken'] as String?,
+  userId: json['userId'] as String?,
+);
 
 Map<String, dynamic> _$$AuthTokensModelImplToJson(
-        _$AuthTokensModelImpl instance) =>
-    <String, dynamic>{
-      'accessToken': instance.accessToken,
-      'refreshToken': instance.refreshToken,
-      'userId': instance.userId,
-    };
+  _$AuthTokensModelImpl instance,
+) => <String, dynamic>{
+  'accessToken': instance.accessToken,
+  'refreshToken': instance.refreshToken,
+  'userId': instance.userId,
+};

@@ -3,8 +3,6 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon_data.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/home/domain/entity/home_summary.dart';
 import 'package:accounting_software/app/features/home/presentation/localization/home_keys.dart';
@@ -67,8 +65,7 @@ class HomeOverviewSection extends StatelessWidget {
     return Column(
       children: [
         for (var i = 0; i < rows.length; i++) ...[
-          if (i > 0)
-            context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+          if (i > 0) context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
           rows[i],
         ],
       ],

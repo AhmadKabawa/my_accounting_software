@@ -28,7 +28,6 @@ import 'package:accounting_software/app/features/auth/presentation/cubit/profile
 import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 
-
 /// Storage this feature owns (the users box and its adapter). Runs before
 /// [initAuthDI], which only registers dependencies.
 Future<void> initAuthStorage() async {

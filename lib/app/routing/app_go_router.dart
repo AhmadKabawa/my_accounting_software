@@ -71,10 +71,7 @@ class AppRouter {
         pageBuilder: (context, state) => RouteTransitions.fade(
           context,
           state,
-          BlocProvider.value(
-            value: splashCubit,
-            child: const SplashScreen(),
-          ),
+          BlocProvider.value(value: splashCubit, child: const SplashScreen()),
         ),
       ),
 
@@ -191,8 +188,9 @@ class AppRouter {
               GoRoute(
                 path: ProfileRoutes.profile.path,
                 name: ProfileRoutes.profile.name,
-                pageBuilder: (context, state) =>
-                    NoTransitionPage(child: _withSession(const ProfileScreen())),
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: _withSession(const ProfileScreen()),
+                ),
               ),
             ],
           ),
@@ -203,11 +201,10 @@ class AppRouter {
 
   /// Auth pages get their own [AuthFlowCubit] (a new one per page, closed with
   /// it), so loading state never leaks between pages.
-  static Widget _withAuthFlow(Widget page) =>
-      BlocProvider<AuthFlowCubit>(
-        create: (_) => sl<AuthFlowCubit>(),
-        child: page,
-      );
+  static Widget _withAuthFlow(Widget page) => BlocProvider<AuthFlowCubit>(
+    create: (_) => sl<AuthFlowCubit>(),
+    child: page,
+  );
 
   /// The profile page: the app-wide session (`.value`, never closed with the
   /// page) plus its own [ProfileCubit].

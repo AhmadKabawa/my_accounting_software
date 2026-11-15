@@ -27,7 +27,10 @@ ThemeData buildTheme({
     colorScheme: colorScheme,
     extensions: [semanticColors],
     textTheme: textTheme,
-    appBarTheme: buildAppBarTheme(colorScheme: colorScheme, textTheme: textTheme),
+    appBarTheme: buildAppBarTheme(
+      colorScheme: colorScheme,
+      textTheme: textTheme,
+    ),
     bottomSheetTheme: buildBottomSheetTheme(colorScheme: colorScheme),
     checkboxTheme: buildCheckboxTheme(colorScheme: colorScheme),
     chipTheme: buildChipTheme(colorScheme: colorScheme, textTheme: textTheme),

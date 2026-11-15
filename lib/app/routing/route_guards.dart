@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/routing/app_go_router.dart';
@@ -77,6 +76,7 @@ abstract class AccessRoutingLogic {
   static GoRouterRedirect require(
     Permission permission, {
     RouteItem fallback = HomeRoutes.home,
-  }) => (context, state) =>
-      AppRouter.accessCubit.can(permission) ? null : fallback.path;
+  }) =>
+      (context, state) =>
+          AppRouter.accessCubit.can(permission) ? null : fallback.path;
 }

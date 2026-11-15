@@ -16,10 +16,10 @@ import 'cancel_token_registry.dart';
 ///       cancelRequests(); // ← سطر واحد
 ///       super.dispose();
 ///     }
-///   } 
+///   }
 mixin CancellableMixin {
   late final String _scope = "${runtimeType}_${identityHashCode(this)}";
-  
+
   CancelToken get cancelToken => CancelTokenRegistry.instance.tokenFor(_scope);
 
   void cancelRequests() => CancelTokenRegistry.instance.cancelScope(_scope);

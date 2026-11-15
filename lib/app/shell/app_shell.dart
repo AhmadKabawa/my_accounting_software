@@ -76,34 +76,34 @@ class AppShell extends StatelessWidget {
 
     return FlashMessageListener(
       child: Rh.builder(
-      context: context,
-      mobile: (_) => Scaffold(
-        body: navigationShell,
-        bottomNavigationBar: items.isEmpty
-            ? null
-            : AppNavigationBar(
-                items: items,
-                activeIndex: current,
-                onIndexChanged: onSelect,
-                elevation: 2,
-                showLabelsAlways: false,
-              ),
-      ),
-      tablet: (_) => withSideNav(
-        AppNavigationRail(
-          items: items,
-          activeIndex: current,
-          onIndexChanged: onSelect,
+        context: context,
+        mobile: (_) => Scaffold(
+          body: navigationShell,
+          bottomNavigationBar: items.isEmpty
+              ? null
+              : AppNavigationBar(
+                  items: items,
+                  activeIndex: current,
+                  onIndexChanged: onSelect,
+                  elevation: 2,
+                  showLabelsAlways: false,
+                ),
+        ),
+        tablet: (_) => withSideNav(
+          AppNavigationRail(
+            items: items,
+            activeIndex: current,
+            onIndexChanged: onSelect,
+          ),
+        ),
+        desktop: (_) => withSideNav(
+          AppSidebar(
+            items: items,
+            activeIndex: current,
+            onIndexChanged: onSelect,
+          ),
         ),
       ),
-      desktop: (_) => withSideNav(
-        AppSidebar(
-          items: items,
-          activeIndex: current,
-          onIndexChanged: onSelect,
-        ),
-      ),
-    ),
     );
   }
 }

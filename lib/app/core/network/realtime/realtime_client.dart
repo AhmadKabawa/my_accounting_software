@@ -3,7 +3,6 @@
 typedef RealtimeEventHandler = void Function(Map<String, dynamic> data);
 
 abstract class RealtimeClient {
-
   // اتصال وقطع
   Future<void> connect();
   Future<void> disconnect();
@@ -22,11 +21,11 @@ abstract class RealtimeClient {
 
   // اشتراك في تغييرات جدول — sugar method للـ Supabase
   void onTableChange({
-    required String                          table,
-    required String                          filter,
-    required RealtimeEventHandler            onInsert,
-    RealtimeEventHandler?                    onUpdate,
-    RealtimeEventHandler?                    onDelete,
+    required String table,
+    required String filter,
+    required RealtimeEventHandler onInsert,
+    RealtimeEventHandler? onUpdate,
+    RealtimeEventHandler? onDelete,
   });
 
   // إلغاء اشتراك جدول

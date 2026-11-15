@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 
 enum AppButtonVariant { primary, secondary, outlined, danger, text }
@@ -69,15 +68,11 @@ class AppButtonStyle {
 
   static const _adaptive = ResponsiveMode.adaptiveOnly;
 
-  double _height(AppButtonSize size) => Rh.height(
-    context,
-    switch (size) {
-      AppButtonSize.small => AppComponentSize.tiny,
-      AppButtonSize.medium => AppComponentSize.medium,
-      AppButtonSize.large => AppComponentSize.large,
-    },
-    mode: _adaptive,
-  );
+  double _height(AppButtonSize size) => Rh.height(context, switch (size) {
+    AppButtonSize.small => AppComponentSize.tiny,
+    AppButtonSize.medium => AppComponentSize.medium,
+    AppButtonSize.large => AppComponentSize.large,
+  }, mode: _adaptive);
 
   EdgeInsets _padding(AppButtonSize size) => Rh.symmetricPadding(
     context,
@@ -89,15 +84,11 @@ class AppButtonStyle {
     mode: _adaptive,
   );
 
-  double _iconSize(AppButtonSize size) => Rh.iconSize(
-    context,
-    switch (size) {
-      AppButtonSize.small => AppIconSize.sm,
-      AppButtonSize.medium => AppIconSize.md,
-      AppButtonSize.large => AppIconSize.lg,
-    },
-    mode: _adaptive,
-  );
+  double _iconSize(AppButtonSize size) => Rh.iconSize(context, switch (size) {
+    AppButtonSize.small => AppIconSize.sm,
+    AppButtonSize.medium => AppIconSize.md,
+    AppButtonSize.large => AppIconSize.lg,
+  }, mode: _adaptive);
 
   double _iconGap(AppButtonSize size) => Rh.spacing(
     context,

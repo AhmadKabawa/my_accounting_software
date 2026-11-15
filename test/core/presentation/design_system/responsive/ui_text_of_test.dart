@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_text_styles.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
 void main() {
   testWidgets('context.ui.text.of resolves a text role responsively', (

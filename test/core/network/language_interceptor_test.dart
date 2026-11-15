@@ -20,7 +20,6 @@ Dio dioWith(LanguageProvider provider, RoutedAdapter adapter) =>
       ..interceptors.add(LanguageInterceptor(languageProvider: provider));
 
 void main() {
-
   test('adds Accept-Language to every request', () async {
     final adapter = RoutedAdapter((_) async => RoutedAdapter.json(200, '{}'));
     final dio = dioWith(_FixedLanguage('ar'), adapter);
@@ -28,29 +27,31 @@ void main() {
     await dio.get<dynamic>('/a');
     await dio.post<dynamic>('/b');
 
-    expect(
-      adapter.requests.map((r) => r.headers['Accept-Language']),
-      ['ar', 'ar'],
-    );
+    expect(adapter.requests.map((r) => r.headers['Accept-Language']), [
+      'ar',
+      'ar',
+    ]);
   });
 
-  test('follows LocaleCubit: a language change reaches the next request',
-      () async {
-    final cubit = LocaleCubit(
-      appSettingsManager: AppSettingsManager(storage: MemoryStorage()),
-    );
-    final adapter = RoutedAdapter((_) async => RoutedAdapter.json(200, '{}'));
-    final dio = dioWith(AppLanguageProvider(localeCubit: cubit), adapter);
+  test(
+    'follows LocaleCubit: a language change reaches the next request',
+    () async {
+      final cubit = LocaleCubit(
+        appSettingsManager: AppSettingsManager(storage: MemoryStorage()),
+      );
+      final adapter = RoutedAdapter((_) async => RoutedAdapter.json(200, '{}'));
+      final dio = dioWith(AppLanguageProvider(localeCubit: cubit), adapter);
 
-    await cubit.changeLanguage(AppLanguage.en);
-    await dio.get<dynamic>('/a');
-    await cubit.changeLanguage(AppLanguage.ar);
-    await dio.get<dynamic>('/b');
+      await cubit.changeLanguage(AppLanguage.en);
+      await dio.get<dynamic>('/a');
+      await cubit.changeLanguage(AppLanguage.ar);
+      await dio.get<dynamic>('/b');
 
-    expect(
-      adapter.requests.map((r) => r.headers['Accept-Language']),
-      ['en', 'ar'],
-    );
-    await cubit.close();
-  });
+      expect(adapter.requests.map((r) => r.headers['Accept-Language']), [
+        'en',
+        'ar',
+      ]);
+      await cubit.close();
+    },
+  );
 }

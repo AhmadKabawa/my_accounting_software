@@ -12,7 +12,8 @@ part of 'auth_tokens_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AuthTokensModel _$AuthTokensModelFromJson(Map<String, dynamic> json) {
   return _AuthTokensModel.fromJson(json);
@@ -33,8 +34,9 @@ mixin _$AuthTokensModel {
 /// @nodoc
 abstract class $AuthTokensModelCopyWith<$Res> {
   factory $AuthTokensModelCopyWith(
-          AuthTokensModel value, $Res Function(AuthTokensModel) then) =
-      _$AuthTokensModelCopyWithImpl<$Res, AuthTokensModel>;
+    AuthTokensModel value,
+    $Res Function(AuthTokensModel) then,
+  ) = _$AuthTokensModelCopyWithImpl<$Res, AuthTokensModel>;
   @useResult
   $Res call({String accessToken, String? refreshToken, String? userId});
 }
@@ -56,29 +58,33 @@ class _$AuthTokensModelCopyWithImpl<$Res, $Val extends AuthTokensModel>
     Object? refreshToken = freezed,
     Object? userId = freezed,
   }) {
-    return _then(_value.copyWith(
-      accessToken: null == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      refreshToken: freezed == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            accessToken: null == accessToken
+                ? _value.accessToken
+                : accessToken // ignore: cast_nullable_to_non_nullable
+                      as String,
+            refreshToken: freezed == refreshToken
+                ? _value.refreshToken
+                : refreshToken // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userId: freezed == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AuthTokensModelImplCopyWith<$Res>
     implements $AuthTokensModelCopyWith<$Res> {
-  factory _$$AuthTokensModelImplCopyWith(_$AuthTokensModelImpl value,
-          $Res Function(_$AuthTokensModelImpl) then) =
-      __$$AuthTokensModelImplCopyWithImpl<$Res>;
+  factory _$$AuthTokensModelImplCopyWith(
+    _$AuthTokensModelImpl value,
+    $Res Function(_$AuthTokensModelImpl) then,
+  ) = __$$AuthTokensModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String accessToken, String? refreshToken, String? userId});
@@ -89,8 +95,9 @@ class __$$AuthTokensModelImplCopyWithImpl<$Res>
     extends _$AuthTokensModelCopyWithImpl<$Res, _$AuthTokensModelImpl>
     implements _$$AuthTokensModelImplCopyWith<$Res> {
   __$$AuthTokensModelImplCopyWithImpl(
-      _$AuthTokensModelImpl _value, $Res Function(_$AuthTokensModelImpl) _then)
-      : super(_value, _then);
+    _$AuthTokensModelImpl _value,
+    $Res Function(_$AuthTokensModelImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -99,29 +106,33 @@ class __$$AuthTokensModelImplCopyWithImpl<$Res>
     Object? refreshToken = freezed,
     Object? userId = freezed,
   }) {
-    return _then(_$AuthTokensModelImpl(
-      accessToken: null == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      refreshToken: freezed == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$AuthTokensModelImpl(
+        accessToken: null == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
+                  as String,
+        refreshToken: freezed == refreshToken
+            ? _value.refreshToken
+            : refreshToken // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userId: freezed == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AuthTokensModelImpl extends _AuthTokensModel {
-  const _$AuthTokensModelImpl(
-      {required this.accessToken, this.refreshToken, this.userId})
-      : super._();
+  const _$AuthTokensModelImpl({
+    required this.accessToken,
+    this.refreshToken,
+    this.userId,
+  }) : super._();
 
   factory _$AuthTokensModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthTokensModelImplFromJson(json);
@@ -160,21 +171,22 @@ class _$AuthTokensModelImpl extends _AuthTokensModel {
   @pragma('vm:prefer-inline')
   _$$AuthTokensModelImplCopyWith<_$AuthTokensModelImpl> get copyWith =>
       __$$AuthTokensModelImplCopyWithImpl<_$AuthTokensModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthTokensModelImplToJson(
-      this,
-    );
+    return _$$AuthTokensModelImplToJson(this);
   }
 }
 
 abstract class _AuthTokensModel extends AuthTokensModel {
-  const factory _AuthTokensModel(
-      {required final String accessToken,
-      final String? refreshToken,
-      final String? userId}) = _$AuthTokensModelImpl;
+  const factory _AuthTokensModel({
+    required final String accessToken,
+    final String? refreshToken,
+    final String? userId,
+  }) = _$AuthTokensModelImpl;
   const _AuthTokensModel._() : super._();
 
   factory _AuthTokensModel.fromJson(Map<String, dynamic> json) =

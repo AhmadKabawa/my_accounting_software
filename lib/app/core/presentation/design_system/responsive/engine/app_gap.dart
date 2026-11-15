@@ -37,18 +37,10 @@ class Gap extends StatelessWidget {
   /// If true, expands like a [Spacer] (ignores [size]).
   final bool expand;
 
-  const Gap(
-    this.size, {
-    this.axis,
-    this.expand = false,
-    super.key,
-  });
+  const Gap(this.size, {this.axis, this.expand = false, super.key});
 
   /// Creates an expanding gap (equivalent to [Spacer]).
-  const Gap.expand({super.key})
-      : size = 0,
-        axis = null,
-        expand = true;
+  const Gap.expand({super.key}) : size = 0, axis = null, expand = true;
 
   Axis _resolveAxis(BuildContext context) {
     if (axis != null) return axis!;

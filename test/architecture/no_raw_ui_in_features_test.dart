@@ -27,17 +27,24 @@ final _forbidden = <String, RegExp>{
 void main() {
   test('features use core widgets, not raw Material elements', () {
     final violations = <String>[];
-    final features = Directory('lib/app/features').listSync().whereType<Directory>();
+    final features = Directory(
+      'lib/app/features',
+    ).listSync().whereType<Directory>();
 
     for (final feature in features) {
       final name = feature.path.split(Platform.pathSeparator).last;
       if (_legacy.contains(name)) continue;
 
-      for (final file in feature
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.dart'))
-          .where((f) => !f.path.endsWith('.freezed.dart') && !f.path.endsWith('.g.dart'))) {
+      for (final file
+          in feature
+              .listSync(recursive: true)
+              .whereType<File>()
+              .where((f) => f.path.endsWith('.dart'))
+              .where(
+                (f) =>
+                    !f.path.endsWith('.freezed.dart') &&
+                    !f.path.endsWith('.g.dart'),
+              )) {
         final lines = file.readAsLinesSync();
         for (var i = 0; i < lines.length; i++) {
           final line = lines[i].trimLeft();
@@ -54,7 +61,8 @@ void main() {
     expect(
       violations,
       isEmpty,
-      reason: 'Use a core widget (or extend core first): see '
+      reason:
+          'Use a core widget (or extend core first): see '
           'docs/architecture/ARCHITECTURE_RULES.md (core-gap rule).\n'
           '${violations.join('\n')}',
     );
