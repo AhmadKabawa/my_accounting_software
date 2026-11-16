@@ -1345,6 +1345,9 @@ from: currencies, price_lists, product_variants, variant_prices
 
 ## 13) ملاحظات أمنية وفجوات معروفة
 
+> **سجل البنود الموحّد:** [`docs/OPEN_DECISIONS.md`](../OPEN_DECISIONS.md). يبقى هذا القسم للتفصيل التاريخي؛ لا تُضف فيه بنداً جديداً.
+
+
 **مقروءة من القاعدة:**
 - **schema `erp`**: `anon` بلا `USAGE`؛ `authenticated` و`service_role` لديهما `USAGE`. كثير من دوال erp قابلة للتنفيذ من PUBLIC (ظاهر كـ `ANON` في فحص الامتياز) لكن غياب `USAGE` على الـ schema يمنع استدعاءها عبر API. لا إعداد `pgrst.db_schemas` ظاهر من SQL، فتأكّد من إعدادات "Exposed schemas" في لوحة Supabase أنها لا تتضمن `erp`.
 - **دوال public**: كلها EXECUTE لـ `authenticated` فقط (لا `anon`)؛ الجديدة (`apply_advance`, `list_party_advances`, `get_party_advance_balance`, `attach_expense_receipt`) سُحب عنها `public` و`anon`.

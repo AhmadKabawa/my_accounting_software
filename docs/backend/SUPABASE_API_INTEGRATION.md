@@ -1117,6 +1117,9 @@ final response = await dio.post(
 
 ## 11. قرارات/تحققات لازمة لإغلاق عقد API
 
+> **سجل البنود الموحّد:** [`docs/OPEN_DECISIONS.md`](../OPEN_DECISIONS.md). يبقى هذا القسم للتفصيل التاريخي؛ لا تُضف فيه بنداً جديداً.
+
+
 الحالة بعد مراجعة 2026-11-16 (القرارات في `docs/product/scenarios/A4_decisions_log.md`):
 
 | # | الموضوع | الحالة | المرجع أو المطلوب |
