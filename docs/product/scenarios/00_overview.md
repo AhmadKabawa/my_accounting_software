@@ -7,7 +7,7 @@
 | **البند** | **التفصيل** |
 | --- | --- |
 | المصدر | مخطط قاعدة بيانات Supabase: المشروع test vaude store with claude (schema public) |
-| حجم القاعدة | 121 جدولاً، 460 سياسة RLS في public، 8 سياسات Storage، 292 Trigger، 55 دالة في public، 103 دوال في erp، 19 View |
+| حجم القاعدة | 121 جدولاً، 460 سياسة RLS في public، 8 سياسات Storage، 292 Trigger (280 منها في public، والباقي في realtime وstorage)، 55 دالة في public، 103 دوال في erp، 19 View |
 | المنصة | Flutter: ويب وتطبيق موبايل وWindows. متصل بالإنترنت (قرار-02) |
 | الأدوار | SUPER_ADMIN MANAGER CASHIER WAREHOUSE ACCOUNTANT PURCHASER AUDITOR |
 | عدد السيناريوهات | 81 سيناريو (45 أصلياً محدَّثة و36 جديدة)، كلٌّ بهدف واحد وحتى 4 جداول رئيسية |
@@ -42,7 +42,7 @@
 
 | **الدور** | **يستطيع (الأكواد)** | **لا يستطيع** |
 | --- | --- | --- |
-| SUPER_ADMIN (45) | كل شيء عبر is_super_admin()، وتشمل صلاحياته users.manage وorg.manage وsettings.manage وhr.manage؛ ويحمل كل الصلاحيات المربوطة عدا parties.quick_add لأنه يملك parties.manage. | لا شيء (لكن يلزم سبب عند الإلغاء). |
+| SUPER_ADMIN (45) | كل شيء عبر is_super_admin()، وتشمل صلاحياته users.manage وorg.manage وsettings.manage وhr.manage؛ ويحمل كل الصلاحيات المربوطة عدا parties.quick_add لأنه يملك parties.manage. (لكن get_my_access تعيد له 46 صلاحية بما فيها parties.quick_add: انظر docs/backend/GET_MY_ACCESS.md.) | لا شيء (لكن يلزم سبب عند الإلغاء). |
 | MANAGER (36) | accounting.view audit.view catalog.manage costs.manage costs.view discount.exceptional finance.expenses finance.payments finance.view fx.rate.manual hr.manage hr.view inventory.adjust inventory.transfer inventory.transfer.approve inventory.view inventory.view_other_branches masterdata.manage parties.manage parties.view payment.cancel pos.manage pos.session pricing.manage purchasing.create purchasing.post purchasing.return purchasing.view reconcile.cash reports.view sales.create sales.discount sales.post sales.return sales.view warehouse.central.access | users.manage org.manage settings.manage finance.manage accounting.manage accounting.post balance.adjust fx.rate.manage owner.transactions parties.quick_add |
 | CASHIER (13) | finance.expenses finance.payments inventory.view inventory.view_other_branches parties.quick_add parties.view pos.session reconcile.cash sales.create sales.discount sales.post sales.return sales.view | parties.manage (فلا يكتب في parties وcustomers مباشرة) costs.view inventory.adjust purchasing.\* accounting.\* catalog.manage pos.manage hr.\* |
 | WAREHOUSE (9) | catalog.manage inventory.adjust inventory.transfer inventory.transfer.approve inventory.view inventory.view_other_branches masterdata.manage purchasing.view warehouse.central.access | المبيعات والمالية والمحاسبة (وكتابة ملاحظات المورد) |

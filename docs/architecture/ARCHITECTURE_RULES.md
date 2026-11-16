@@ -41,15 +41,15 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 - Feature لا تنشئ Dio أو Storage أو Error system أو Service Locator موازياً.
 - لا تضف package أو abstraction دون حاجة موثقة.
 
-### مقترح سياسة اعتماد Feature على Feature — بانتظار موافقة مالك المشروع
+### اعتماد Feature على Feature (ADR-0004)
 
-المقترح: لا تستورد Feature من Feature أخرى مباشرة. يكون التواصل عبر Core أو عقد Domain عام موثّق ومستقل عن تفاصيل Presentation وData. يحتاج أي استثناء إلى توثيق مبرره في ADR قبل اعتماده. **هذه قاعدة جديدة مقترحة وليست سياسة معتمدة بعد؛ لا تُنشأ لها ADR-0002 قبل موافقة مالك المشروع.**
+لا تستورد Feature من Feature أخرى إلا ملف routes الخاص بها (للتنقل). لا صفحاتها ولا Cubits ولا data. التواصل الآخر عبر Core أو عقد Domain عام موثّق. أي استثناء يحتاج ADR. القاعدة **معتمدة** في [ADR-0004](ADR/0004-feature-imports-through-routes-only.md) ويفرضها `test/architecture/feature_imports_test.dart`.
 
 ### المخالفات المعروفة — فحص استيرادات نصي بتاريخ 2026-11-04
 
-شمل الفحص ملفات Dart في `lib/app/core/` وعددها 137 ملفاً، وملفات الميزات في `lib/app/features/` وعددها 102 ملف.
+شمل الفحص ملفات Dart في `lib/app/core/` وفي `lib/app/features/` (الأعداد غير مثبّتة هنا لأنها تتقادم؛ المرجع الاختبار نفسه).
 
-- **(تاريخي، عولجت بـ SessionGate) مخالفة ظهرت للمقترح الجديد:** يستورد `lib/app/features/splash/di/splash_di.dart` مباشرةً `package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart`، ثم ينشئ `SplashCubit` باستخدام `sl<AuthCubit>().checkAuthentication`. هذا ربط مباشر بين Featureين، كما أنه يعتمد على Cubit من طبقة Presentation في Feature أخرى. لم يظهر استيراد مباشر آخر بين Features ضمن الملفات المفحوصة.
+- **(تاريخي، عولجت بـ SessionGate) مخالفة ظهرت لقاعدة ADR-0004:** يستورد `lib/app/features/splash/di/splash_di.dart` مباشرةً `package:accounting_software/app/features/auth/presentation/cubit/auth_cubit.dart`، ثم ينشئ `SplashCubit` باستخدام `sl<AuthCubit>().checkAuthentication`. هذا ربط مباشر بين Featureين، كما أنه يعتمد على Cubit من طبقة Presentation في Feature أخرى. لم يظهر استيراد مباشر آخر بين Features ضمن الملفات المفحوصة.
 - **Core → Features:** لم يُعثر على استيرادات من `lib/app/core/` إلى `features/` عند فحص استيرادات ملفات Core الحالية.
 - **Data → Presentation:** لم يُعثر على استيرادات من مجلدات `data/` إلى `presentation/` في ملفات الميزات المفحوصة.
 - **Domain → Flutter/Dio:** لم يُعثر على استيرادات Flutter أو Dio داخل مجلدات `domain/` المفحوصة.
@@ -58,7 +58,7 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 
 
 ### حالة الفرض الآلي
-هذه القواعد **غير مفروضة آلياً حالياً**: لا يوجد CI في المستودع (لا `.github/workflows`)، و`analysis_options.yaml` يعتمد `flutter_lints` فقط، ولا يوجد `import_lint` أو اختبار معماري. تُراجع يدوياً عند المراجعة. تحسين مستقبلي مقترح: فحص imports عبر أداة مناسبة (مثل `import_lint` أو اختبار يمسح imports) بعد إضافة CI، وبقرار منفصل عن هذا الملف. لا يُدّعى أن القواعد مفروضة آلياً قبل ذلك.
+تفرض اختبارات `test/architecture/` أجزاء من هذه القواعد: `feature_imports_test` (الاستيراد بين الميزات)، و`no_raw_ui_in_features_test` (العناصر الخام في الميزات)، و`no_magic_numbers_test` (الأرقام المباشرة). تعمل ضمن `flutter test`. **لا يوجد CI** في المستودع (لا `.github/workflows`)، و`analysis_options.yaml` يعتمد `flutter_lints` فقط، فلا يُدّعى فرض آلي قبل تشغيل هذه الاختبارات فعلاً وتوثيق نتيجتها (§9). بقية القواعد تُراجع يدوياً. تحسين مستقبلي: إضافة CI بقرار منفصل.
 
 ## 5. Responsive وTheme وWidgets
 
@@ -160,11 +160,11 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 2. إن لم يوجد وكان عاماً (يصلح لميزتين أو أكثر، أو عنصر أساسي: حقل نص، زر أيقونة، فاصل، حوار، بطاقة، حالة فارغة) فأنشئه في core أولاً ثم استخدمه.
 3. ودجت core الجديد: ملف الودجت + `*_style.dart` إن كانت له variants/states، يقرأ التوكنز، يدعم RTL، ويُسجَّل في `CORE_MAP.md` و`CORE_USAGE.md` مع اختبار.
 4. إن كان خاصاً بالميزة فعلاً يبقى فيها مع سطر يشرح السبب.
-5. ممنوع داخل `features/`: `Icon(` `IconButton(` `TextFormField(` `TextButton(` `AppBar(` `Colors.` (عدا `transparent`) `TextStyle(` و`EdgeInsets` بأرقام، و`Icons.`. يفرضه `test/architecture/no_raw_ui_in_features_test.dart` (`home` و`on_boarding` مستثنيان مؤقتاً لأنهما تجريبيان).
+5. ممنوع داخل `features/`: `Icon(` `IconButton(` `TextFormField(` `TextButton(` `AppBar(` `Colors.` (عدا `transparent`) `TextStyle(` و`EdgeInsets` بأرقام، و`Icons.`. يفرضه `test/architecture/no_raw_ui_in_features_test.dart` (`on_boarding` مستثنى مؤقتاً لأنه تجريبي، وهو الوحيد في `_legacy` داخل الاختبار).
 6. أي نص ظاهر يُضاف إلى enum قسمه ([LOCALIZATION.md](LOCALIZATION.md)).
 
 ## اتجاه الاعتماد (محدَّث)
 
 - سجل النصوص `lib/app/localization/key_registry.dart` خارج core، فلا يستورد core من features.
 - حالات Cubit/Bloc: `sealed class` + `Equatable` بلا freezed، وBloc مع `bloc_concurrency` فقط عند الحاجة لتحكم تزامن؛ freezed للكيانات الكبيرة في domain ([ADR-0002](ADR/0002-state-modeling-and-bloc-vs-cubit.md)).
-- Splash والـ Router يعتمدان على `SessionGate` (domain) فقط؛ `SessionCubit` يطبّقها. التدفقات التي تُبلغ الجلسة بالدخول (`AuthFlowCubit`) تعتمد على `SessionAuthenticator` (domain، دالة `onAuthenticated` فقط) ويطبّقها `SessionCubit` أيضاً؛ فلا يعتمد cubit على cubit ملموس ويُختبر بـ fake. إجراءات الشاشة الرئيسية معرّفة بـ `enum QuickAction` (الهوية هي القيمة، والنص `label` للعرض فقط). ربط `checkAuthentication` بالـ Splash يتم في `app_di.dart` (جذر التركيب). لا مخالفات معروفة متبقية في هذا الباب، ولا ADR مطلوب.
+- Splash والـ Router يعتمدان على `SessionGate` (domain) فقط؛ `SessionCubit` يطبّقها. التدفقات التي تُبلغ الجلسة بالدخول (`AuthFlowCubit`) تعتمد على `SessionAuthenticator` (domain، دالة `onAuthenticated` فقط) ويطبّقها `SessionCubit` أيضاً؛ فلا يعتمد cubit على cubit ملموس ويُختبر بـ fake. إجراءات الشاشة الرئيسية معرّفة بـ `enum QuickAction` (الهوية هي القيمة، والنص `label` للعرض فقط). ربط `checkAuthentication` بالـ Splash يتم في `app_di.dart` (جذر التركيب). الديون المعروفة في الاستيراد بين الميزات مسجلة في `_knownDebt` داخل `test/architecture/feature_imports_test.dart` ويجوز أن تتقلص فقط (ADR-0004).

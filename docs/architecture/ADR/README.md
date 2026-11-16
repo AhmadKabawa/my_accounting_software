@@ -7,6 +7,7 @@
 - [ADR-0001: حدود Core والمرجع المعتمد لوثائق المعمارية](0001-core-boundaries-and-documentation-authority.md)
 - [ADR-0002: نمذجة الحالات واختيار Cubit أو Bloc وموضع freezed](0002-state-modeling-and-bloc-vs-cubit.md)
 - [ADR-0003: اعتماد Ledger Design System للثيم والتوكنز](0003-ledger-design-system.md)
+- [ADR-0004: الاستيراد بين الميزات عبر ملف routes فقط](0004-feature-imports-through-routes-only.md)
 
 ## إضافة ADR
 

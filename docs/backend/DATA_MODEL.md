@@ -55,7 +55,7 @@
 | FK | 392 | | UNIQUE | 92 |
 | CHECK | 162 | | فهارس (public) | 585 |
 | سياسات RLS (public) | **460** | | سياسات storage | **8** |
-| Triggers (public) | **280** (30 اسماً مميزاً) | | دوال public | **55** |
+| Triggers (public) | **280** (30 اسماً مميزاً؛ الإجمالي 292 مع `realtime` 1 و`storage` 11، فحص 2026-11-16) | | دوال public | **55** |
 | دوال erp | **103** | | أعمدة identity | 100 |
 | ENUM types | 0 | | جداول مقسَّمة | 0 |
 | الصلاحيات `permissions` | 46 | | روابط `role_permissions` | 151 |
@@ -1351,6 +1351,8 @@ from: currencies, price_lists, product_variants, variant_prices
 - **4 Views بلا `security_invoker`** (`v_purchase_items_costs`, `v_sale_items_costs`, `v_stock_movements_costs`, `v_transfer_costs`): تعمل بصلاحيات المالك وتُنبَّه في مستشار الأمان؛ مقصودة لحجب التكلفة.
 - مهلة الجلسات: `anon` 3s، `authenticated` 8s (statement_timeout).
 - تحذير Auth في مستشار الأمان (حماية كلمات المرور المسرّبة) خارج مخطط البيانات.
+
+**حالة البيانات (فحص 2026-11-16):** جدولا `attributes` و`product_type_attributes` فارغان، فلا خصائص إلزامية معرّفة بعد. `get_my_access()` تعيد للمدير العام 46 صلاحية بما فيها `parties.quick_add` (انظر `GET_MY_ACCESS.md`).
 
 **فجوات/قرارات مفتوحة:**
 1. **لا عمود `payment_number`** في `payments` (الرقم في `reference_number`؛ السلف القديمة بلا رقم وتُعرض `PAY-<id>`).
