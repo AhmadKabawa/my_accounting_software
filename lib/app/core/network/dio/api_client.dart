@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/core/localization/keys/erp_error_keys.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
@@ -354,6 +355,15 @@ class ApiClient implements IApiClient {
   }
 
   ApiException _mapStatusCode(DioException e) {
+    final erp = _extractErpError(e.response?.data);
+    if (erp != null) {
+      return ApiException.erp(
+        errorCode: erp.code,
+        serverMessage: erp.message,
+        details: erp.details,
+        statusCode: e.response?.statusCode,
+      );
+    }
     return switch (e.response?.statusCode) {
       400 => ApiException.badRequest(
         serverMessage: _extractMessage(e.response?.data),
@@ -375,6 +385,22 @@ class ApiClient implements IApiClient {
         serverMessage: _extractMessage(e.response?.data),
       ),
     };
+  }
+
+  /// PostgREST reports a database error as `{code, message, details, hint}`;
+  /// a business rule has `code` = `ERPnn` (decision 76). Anything else is
+  /// not a business-rule error and keeps the existing mapping.
+  ({String code, String? message, String? details})? _extractErpError(
+    dynamic data,
+  ) {
+    if (data is! Map) return null;
+    final code = data['code']?.toString();
+    if (!ErpErrorKeys.isErpCode(code)) return null;
+    return (
+      code: code!,
+      message: data['message']?.toString(),
+      details: data['details']?.toString(),
+    );
   }
 
   String? _extractMessage(dynamic data) {

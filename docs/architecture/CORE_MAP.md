@@ -65,7 +65,7 @@
 - `LocaleCubit` و`LocaleState`: حالة اللغة (الحالة تحمل `Locale` فقط).
 - `AppLanguage`: اللغات المدعومة وتحويل الكود إلى Locale.
 - `AppKey` (`localization/translations/app_key.dart`): عقد النص المترجم، يحمل `key` و`ar` و`en`، ويوفر `.tran` للنص الجاهز و`.tr(args:/namedArgs:)` عند وجود متغيرات.
-- مفاتيح النصوص معرفة كـ enum مستقل لكل قسم (`CommonKeys` و`FieldKeys` و`ValidationKeys` و`ErrorKeys` و`ServerErrorKeys` و`ThemeKeys` و`NavKeys`) في `localization/keys/`، ومفاتيح الميزات في `features/<feature>/presentation/localization/`. المفتاح مشتق من اسم القيمة؛ لا يوجد `AppKeys` أو قاموس `app_ar.dart`/`app_en.dart`.
+- مفاتيح النصوص معرفة كـ enum مستقل لكل قسم (`CommonKeys` و`FieldKeys` و`ValidationKeys` و`ErrorKeys` و`ServerErrorKeys` و`ErpErrorKeys` و`ThemeKeys` و`NavKeys`) في `localization/keys/`، ومفاتيح الميزات في `features/<feature>/presentation/localization/`. المفتاح مشتق من اسم القيمة؛ لا يوجد `AppKeys` أو قاموس `app_ar.dart`/`app_en.dart`.
 - `key_registry.dart` (`lib/app/localization/key_registry.dart`) يجمع `allKeys` خارج Core حتى لا يعتمد Core على Features. يمرر جذر التركيب القائمة إلى `MyDartLoader(allKeys)`.
 - `MyDartLoader` (`lib/app/core/localization/translations/asset_loader.dart`): تنفيذ `easy_localization.AssetLoader` يعيد نصوص `AppKey.ar` أو `AppKey.en` من السجل الممرر إليه.
 - `DirectionExtension` (`lib/app/core/localization/translations/localization_extension.dart`): امتداد مستقل على `BuildContext` يوفر `isRTL` و`directionalIcon` و`directionalValue` و`transformFlip`. المدخل الموحد الموصى به في هذا الدليل هو `context.ui.dir`؛ أما هذا الامتداد فيبقى تعريفاً منفصلاً غير مستخدم في ملفات الميزات المفحوصة، ولا يُعد بديلاً متوافقاً بالكامل لأن سلوك `transformFlip` يختلف عندما تكون `isRtlChild: false`.

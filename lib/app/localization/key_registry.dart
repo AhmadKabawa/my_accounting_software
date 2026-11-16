@@ -1,4 +1,5 @@
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/erp_error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
@@ -24,6 +25,7 @@ final List<AppKey> allKeys = <AppKey>[
   ...ValidationKeys.values,
   ...ErrorKeys.values,
   ...ServerErrorKeys.values,
+  ...ErpErrorKeys.values,
   ...ThemeKeys.values,
   ...NavKeys.values,
   // features

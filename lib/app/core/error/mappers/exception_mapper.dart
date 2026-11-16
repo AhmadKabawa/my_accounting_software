@@ -2,6 +2,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/error/mappers/server_error_mapper.dart';
+import 'package:accounting_software/app/core/localization/keys/erp_error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/foundation/utils/logger.dart';
 
@@ -29,6 +30,15 @@ class ExceptionMapper {
   }
 
   static Failure _mapApiException(ApiException e) {
+    // A database business-rule code (ERPnn) has its own translated text;
+    // the server's raw message is never shown (decision 76).
+    if (e.type == ApiExceptionType.businessRule) {
+      final erpKey = ErpErrorKeys.fromCode(e.errorCode);
+      return e.errorCode == 'ERP16'
+          ? PermissionFailure(messageKey: erpKey)
+          : ValidationFailure(messageKey: erpKey, statusCode: e.statusCode);
+    }
+
     final messageKey = ServerErrorMapper.map(
       e.message,
       statusCode: e.statusCode,
@@ -51,6 +61,7 @@ class ExceptionMapper {
       ApiExceptionType.forbidden => PermissionFailure(messageKey: messageKey),
 
       // ── Client ──
+      ApiExceptionType.businessRule ||
       ApiExceptionType.validation ||
       ApiExceptionType.badRequest ||
       ApiExceptionType.conflict => ValidationFailure(

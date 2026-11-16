@@ -28,7 +28,7 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 
 | القسم | المكان |
 |---|---|
-| `CommonKeys` `FieldKeys` `ValidationKeys` `ErrorKeys` `ServerErrorKeys` `ThemeKeys` `NavKeys` | `core/localization/keys/` |
+| `CommonKeys` `FieldKeys` `ValidationKeys` `ErrorKeys` `ServerErrorKeys` `ErpErrorKeys` `ThemeKeys` `NavKeys` | `core/localization/keys/` |
 | `AuthKeys` (بما فيها رسائل نجاح الدخول والتسجيل والخروج والاسترجاع) | `features/auth/presentation/localization/` |
 | `ProfileKeys` | `features/profile/presentation/localization/` |
 | `OnboardingKeys` | `features/on_boarding/presentation/localization/` |
@@ -48,6 +48,12 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 
 تفرّد المفاتيح عبر السجل، واكتمال السجل (كل `enum … implements AppKey` مسجَّل)، ونصوص غير فارغة، وتطابق متغيرات `@name` بين اللغتين.
 وبعد تهيئة `easy_localization` بالمحمّل نفسه `MyDartLoader(allKeys)` لكل لغة (ar وen) يتحقق الاختبار أن `key.tr()` لكل مفتاح مسجَّل يعيد نصاً غير المفتاح نفسه (أي أن السجل يصل فعلاً إلى `tr()`).
+
+## أخطاء القاعدة (ERPnn)
+
+أخطاء الأعمال من القاعدة (`SQLSTATE = ERPnn`، قرار-76) لها قسم `ErpErrorKeys` في `core/localization/keys/`: لكل رمز مفتاح بنصين عربي وإنجليزي، والعربي مأخوذ من `docs/backend/DATA_MODEL.md §5`. المسار: استجابة PostgREST `{code, message, details}` ← `ApiClient` يقرأ `code` فإن كان `ERPnn` أنشأ `ApiException.erp` (نوع `businessRule`) ← `ExceptionMapper` يربطه بـ `ErpErrorKeys.fromCode` ← `FailureTranslator`. نص الخادم والرمز والتفاصيل تُسجَّل للتشخيص ولا تُعرض. رمز غير معروف يعرض النص العام `ErpErrorKeys.unknown`. عند إضافة رمز في القاعدة أضف مدخلاً هنا؛ اختبار `test/core/error/erp_error_test.dart` يفشل إن اختلفت أكواد الوثيقة عن الـ enum.
+
+الأخطاء ذات المتغيرات (اسم الصنف، النسبة، الرصيد المتاح...) غير مدعومة بعد: تُحسم عند أول شاشة تحتاجها (انظر `docs/OPEN_DECISIONS.md`).
 
 ## المتغيرات
 

@@ -4,10 +4,20 @@ import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 class ApiException extends AppException {
   final ApiExceptionType type;
 
+  /// Business-rule code raised by the database (`ERPnn`), when there is one.
+  /// Drives the translated message (decision 76); [message] stays the raw
+  /// server text and is for diagnostics only in that case.
+  final String? errorCode;
+
+  /// Extra detail the database sent with the error (diagnostics only).
+  final String? details;
+
   const ApiException._({
     required super.message,
     required this.type,
     super.statusCode,
+    this.errorCode,
+    this.details,
   });
 
   // ───────────── Network ─────────────
@@ -85,6 +95,22 @@ class ApiException extends AppException {
     );
   }
 
+  /// A business rule of the database rejected the request (`ERPnn`).
+  factory ApiException.erp({
+    required String errorCode,
+    String? serverMessage,
+    String? details,
+    int? statusCode,
+  }) {
+    return ApiException._(
+      message: serverMessage ?? errorCode,
+      statusCode: statusCode ?? 400,
+      type: ApiExceptionType.businessRule,
+      errorCode: errorCode,
+      details: details,
+    );
+  }
+
   // ───────────── Server ─────────────
 
   factory ApiException.server({int? statusCode, String? serverMessage}) {
@@ -114,8 +140,10 @@ class ApiException extends AppException {
 
   @override
   String toString() {
+    final code = errorCode == null ? '' : ', code: $errorCode';
+    final extra = details == null ? '' : ', details: $details';
     return 'ApiException[$type] '
-        '(status: $statusCode, message: $message)';
+        '(status: $statusCode$code, message: $message$extra)';
   }
 }
 
@@ -129,6 +157,7 @@ enum ApiExceptionType {
   notFound,
   validation,
   conflict,
+  businessRule,
   serverError,
   unknown,
 }
