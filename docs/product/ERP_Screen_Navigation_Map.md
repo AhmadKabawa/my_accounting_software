@@ -6,7 +6,7 @@ status: مسودة للمراجعة
 date: 2026-11-15
 language: ar (RTL)
 source_documents:
-  - ERP_Use_Case_Scenarios_AR_v1_Final (81 سيناريو، الملحق ج: 174 شاشة)
+  - scenarios/ (81 سيناريو، الملحق ج: 174 شاشة)
   - ERP_System_Dependency_Map v1.1 (ERP-DEP-MAP: الموجات والطبقات والمسار الحرج)
   - DATA_MODEL (مستخرج من القاعدة 2026-11-15)
   - DESIGN_SYSTEM.md وADR-0003 (Ledger Design System في مستودع my_accounting_software، فرع vscode)
