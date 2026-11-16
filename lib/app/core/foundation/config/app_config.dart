@@ -37,8 +37,18 @@ class AppConfig {
   // ════════════════════════════════════════════════════
   //  📄 Pagination
   // ════════════════════════════════════════════════════
-  static const int defaultPageSize = 10;
+  static const int defaultPageSize = 25;
   static const int defaultPage = 1;
+
+  /// The only page sizes a list may offer (decision 75).
+  static const List<int> pageSizeOptions = [10, 25, 50, 100];
+
+  /// [requested] when it is one of [pageSizeOptions], otherwise
+  /// [defaultPageSize]; so an unsupported value never reaches a query.
+  static int resolvePageSize(int? requested) =>
+      requested != null && pageSizeOptions.contains(requested)
+      ? requested
+      : defaultPageSize;
 
   // ════════════════════════════════════════════════════
   //  🔁 Retry

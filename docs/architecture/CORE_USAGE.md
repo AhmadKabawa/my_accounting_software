@@ -241,7 +241,9 @@ final either = result.toEither();   // Either<Failure, UserModel>
 ```dart
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 
-final size = AppConfig.defaultPageSize;
+final size = AppConfig.defaultPageSize;                 // 25
+final chosen = AppConfig.resolvePageSize(userChoice);   // 10 أو 25 أو 50 أو 100، وغيرها يرجع للافتراضي
+final options = AppConfig.pageSizeOptions;              // لقائمة الاختيار في ترقيم الجدول
 final clientId = AppConfig.googleClientId;   // مدخل واحد؛ لا تستورد EnvConfig في Feature
 ```
 

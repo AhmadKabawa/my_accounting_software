@@ -31,9 +31,31 @@ void main() {
     );
 
     test('keeps the general constants', () {
-      expect(AppConfig.defaultPageSize, 10);
+      expect(AppConfig.defaultPageSize, 25);
       expect(AppConfig.supportedLanguages, containsAll(['ar', 'en']));
       expect(AppConfig.maxRetries, greaterThan(0));
+    });
+
+    group('page size', () {
+      test('offers exactly 10, 25, 50 and 100 and defaults to 25', () {
+        expect(AppConfig.pageSizeOptions, [10, 25, 50, 100]);
+        expect(AppConfig.defaultPageSize, 25);
+        expect(AppConfig.pageSizeOptions, contains(AppConfig.defaultPageSize));
+      });
+
+      test('resolvePageSize keeps a supported size', () {
+        for (final size in AppConfig.pageSizeOptions) {
+          expect(AppConfig.resolvePageSize(size), size);
+        }
+      });
+
+      test('resolvePageSize falls back to the default otherwise', () {
+        expect(AppConfig.resolvePageSize(null), AppConfig.defaultPageSize);
+        expect(AppConfig.resolvePageSize(0), AppConfig.defaultPageSize);
+        expect(AppConfig.resolvePageSize(-25), AppConfig.defaultPageSize);
+        expect(AppConfig.resolvePageSize(30), AppConfig.defaultPageSize);
+        expect(AppConfig.resolvePageSize(1000), AppConfig.defaultPageSize);
+      });
     });
   });
 }
