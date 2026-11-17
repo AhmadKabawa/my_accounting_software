@@ -22,6 +22,10 @@ class AppDensityScope extends InheritedWidget {
       context.dependOnInheritedWidgetOfExactType<AppDensityScope>()?.density ??
       AppDensity.comfortable;
 
+  /// The density from the nearest scope, or null when no scope exists.
+  static AppDensity? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AppDensityScope>()?.density;
+
   /// The control height to use, or null to keep the control's own height.
   ///
   /// Only [AppDensity.compact] on a non-phone screen shortens a control; it
