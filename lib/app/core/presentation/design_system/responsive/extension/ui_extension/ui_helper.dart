@@ -36,6 +36,9 @@ class UIHelper {
   /// معلومات الشاشة والـ Orientation
   ScreenHelper get screen => ScreenHelper(context);
 
+  /// Unified density access (comfortable by default).
+  DensityHelper get density => DensityHelper(context);
+
   /// نظام Themes والألوان (extension اختياري)
   // ThemeHelper get theme => ThemeHelper(context);
   ThemeHelper get theme => ThemeHelper(context);
