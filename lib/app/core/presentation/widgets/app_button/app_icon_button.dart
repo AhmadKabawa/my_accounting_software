@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 
@@ -19,6 +20,7 @@ class AppIconButton extends StatefulWidget {
     this.variant = AppButtonVariant.text,
     this.size = AppButtonSize.medium,
     this.color,
+    this.density,
   });
 
   /// Take it from `AppIcons`.
@@ -36,6 +38,9 @@ class AppIconButton extends StatefulWidget {
   /// Overrides the icon color only.
   final Color? color;
 
+  /// Optional per-button override; null inherits AppDensityScope.
+  final AppDensity? density;
+
   @override
   State<AppIconButton> createState() => _AppIconButtonState();
 }
@@ -50,7 +55,7 @@ class _AppIconButtonState extends State<AppIconButton> {
 
   @override
   Widget build(BuildContext context) {
-    final styles = AppButtonStyle(context);
+    final styles = AppButtonStyle(context, density: widget.density);
     final visual = styles.resolve(widget.variant, widget.size, state: _state);
     final borderColor = visual.borderColor;
     final label = widget.tooltipKey.tr(context: context);
