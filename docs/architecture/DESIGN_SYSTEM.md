@@ -17,6 +17,7 @@
 | الحركة وطبقات z-index | `tokens/app_motion.dart`, `tokens/app_layer.dart` |
 
 الوصول من الواجهات: `context.ui.theme.colors` (ColorScheme) و`context.ui.theme.semanticColors` و`context.ui.text.of(AppTextType.x)`. لا ألوان ولا أرقام مباشرة في الميزات.
+- كثافة المكونات: `context.ui.density.current` و`resolve(override)` و`fieldHeight/rowHeight/headerHeight` عبر `DensityHelper`. يحدد `AppDensityScope` الكثافة لشجرة فرعية، والافتراضي `comfortable`. يمكن تمرير `density` صراحةً إلى `AppButton` و`AppIconButton` و`AppTextField`؛ وعلى الهاتف لا يغيّر compact ارتفاع عناصر التحكم.
 
 ## 2. ما تغيّر
 
