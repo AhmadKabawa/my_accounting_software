@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_rail/app_navigation_rail_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -77,9 +78,9 @@ class _RailItem extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                AppIcon.fixed(
                   selected ? (item.activeIcon ?? item.icon) : item.icon,
-                  size: style.iconSize,
+                  pixelSize: style.iconSize,
                   color: color,
                 ),
                 SizedBox(height: style.iconLabelGap),

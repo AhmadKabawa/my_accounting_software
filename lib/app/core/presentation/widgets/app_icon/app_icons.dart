@@ -29,6 +29,14 @@ abstract final class AppIcons {
   static const info = AppIconData.material(Icons.info_outline);
   static const refresh = AppIconData.material(Icons.refresh);
 
+  /// Fallback drawn when an image fails to load.
+  static const brokenImage = AppIconData.material(Icons.broken_image_outlined);
+
+  static const home = AppIconData.material(Icons.home_outlined);
+  static const homeActive = AppIconData.material(Icons.home);
+  static const profile = AppIconData.material(Icons.person_outline);
+  static const profileActive = AppIconData.material(Icons.person);
+
   /// Placeholder until a brand SVG asset (`AppIconData.svg(...)`) is added.
   static const google = AppIconData.material(Icons.account_circle_outlined);
 }

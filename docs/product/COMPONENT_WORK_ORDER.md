@@ -25,7 +25,7 @@
 
 | الخطوة | الشاشة الطيّارة | المكوّنات (الطبقة) | تعتمد على |
 |---|---|---|---|
-| **0** | — أساس (متوازية) | **0-أ** `Money` + C13 AmountFormatter (L0) · **0-ب** `AppDensity` على الحقل والزر (G4) · **0-ج** إصلاح `MessageViewWidgets` · **0-د** C15 عتبة 900 + C14 الأيقونات (بعد الموافقة على الحزمة) | قرار-70 للأولى |
+| **0** | — أساس (0-ب و0-د نُفِّذا في الكود، غير مختبَرين تشغيلاً؛ المراجعة المتبقية: C15 مؤجل إلى C24) | **0-أ** `Money` + C13 AmountFormatter (L0) · **0-ب** `AppDensity` على الحقل والزر (G4) · **0-ج** إصلاح `MessageViewWidgets` · **0-د** C15 عتبة 900 + C14 الأيقونات (بعد الموافقة على الحزمة) | قرار-70 للأولى |
 | **1** | AUTH-01 ثم AUTH-02 | **1-أ (متوازية):** C09 Skeleton · C08 EmptyState · C38 InlineBanner (L1) ثم **1-ب:** C47 PermissionGate · C46 AppShell (L3) · C48 قالب T3 | الخطوة 0 |
 | **2** | AUTH-03 ثم AUTH-04 | C41 CountBadge · C07 ConfirmDialog · C12 ScopeSelector (L1–L2) ثم قالب T5 | 1 |
 | **3** | CAT-07 (ماركات: أول جدول) | **3-أ (متوازية):** C02 AppBadge (+DocStatusBadge) · C49 (AppDropdown وAppMenu وAppSwitch فقط عند الحاجة) ثم **3-ب:** C04 SearchableDropdown · C10 FilterBar ثم **3-ج:** C01 DataTable · قالب T1 | 0-ب، 1 |

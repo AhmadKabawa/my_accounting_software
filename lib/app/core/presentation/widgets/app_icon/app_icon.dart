@@ -78,7 +78,7 @@ class AppIcon extends StatelessWidget {
             progress == null ? image : _placeholder(context, px),
         errorBuilder: (_, __, ___) => SizedBox.square(
           dimension: px,
-          child: Icon(Icons.broken_image_outlined, size: px * 0.7),
+          child: AppIcon.fixed(AppIcons.brokenImage, pixelSize: px * 0.7),
         ),
       ),
     };

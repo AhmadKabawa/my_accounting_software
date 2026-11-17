@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 
 /// One place the shell can go to: what to show ([item], the model shared by
@@ -28,17 +28,17 @@ class AppDestination {
 /// line here plus its branch in the router.
 const appDestinations = [
   AppDestination(
-    item: NavBarItem(
-      icon: Icons.home_outlined,
-      activeIcon: Icons.home,
+    item: NavBarItem.icons(
+      icon: AppIcons.home,
+      activeIcon: AppIcons.homeActive,
       label: NavKeys.home,
     ),
     branchIndex: 0,
   ),
   AppDestination(
-    item: NavBarItem(
-      icon: Icons.person_outline,
-      activeIcon: Icons.person,
+    item: NavBarItem.icons(
+      icon: AppIcons.profile,
+      activeIcon: AppIcons.profileActive,
       label: NavKeys.person,
     ),
     branchIndex: 1,

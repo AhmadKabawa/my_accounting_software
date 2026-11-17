@@ -12,6 +12,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/design_system/tokens/app_motion.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -21,17 +22,27 @@ export 'package:accounting_software/app/core/presentation/widgets/app_navigation
 
 /// نموذج بيانات للـ navigation item
 class NavBarItem {
-  final IconData icon;
-  final IconData? activeIcon;
+  final AppIconData icon;
+  final AppIconData? activeIcon;
   final AppKey label;
   final VoidCallback? onTap;
 
-  const NavBarItem({
+  /// Preferred: take the icons from `AppIcons`.
+  const NavBarItem.icons({
     required this.icon,
     this.activeIcon,
     required this.label,
     this.onTap,
   });
+
+  /// Kept so existing call sites keep working; prefer [NavBarItem.icons].
+  const NavBarItem({
+    required IconData icon,
+    IconData? activeIcon,
+    required this.label,
+    this.onTap,
+  }) : icon = MaterialIconData(icon),
+       activeIcon = activeIcon == null ? null : MaterialIconData(activeIcon);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -288,11 +299,11 @@ class _NavBarItemWidgetState extends State<NavBarItemWidget>
                     children: [
                       ScaleTransition(
                         scale: _scaleAnim,
-                        child: Icon(
+                        child: AppIcon.fixed(
                           widget.isActive
                               ? (widget.item.activeIcon ?? widget.item.icon)
                               : widget.item.icon,
-                          size: iconSize,
+                          pixelSize: iconSize,
                           color: widget.isActive
                               ? onActiveColor
                               : onInactiveColor,
