@@ -16,7 +16,7 @@ void main() {
   });
 
   test('the IconData constructor wraps it as a Material AppIconData', () {
-    const item = NavBarItem(icon: Icons.home, label: NavKeys.home);
+    final item = NavBarItem(icon: Icons.home, label: NavKeys.home);
     expect(item.icon, isA<MaterialIconData>());
     expect((item.icon as MaterialIconData).data, Icons.home);
     expect(item.activeIcon, isNull);
