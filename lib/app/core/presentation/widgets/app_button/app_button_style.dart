@@ -109,11 +109,23 @@ class AppButtonStyle {
     mode: _adaptive,
   );
 
-  /// Touch target of an icon-only button: >= 48 on a phone, and in compact
-  /// density on larger screens it matches the field height.
-  double get touchTarget => _densityHeight(
-    Rh.height(context, AppComponentSize.large, mode: _adaptive),
-  );
+  /// Icon buttons retain the design-system hit-area minimum even in compact
+  /// density. Density may shrink visual buttons, but must not shrink this
+  /// interactive target below the accessibility token.
+  double get touchTarget {
+    final natural = Rh.height(
+      context,
+      AppComponentSize.large,
+      mode: _adaptive,
+    );
+    final compact = _densityHeight(natural);
+    final minimum = Rh.height(
+      context,
+      AppComponentSize.hitArea,
+      mode: _adaptive,
+    );
+    return compact < minimum ? minimum : compact;
+  }
 
   BorderRadius get radius =>
       Rh.circularRadius(context, AppRadius.md, mode: _adaptive);
