@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field_style.dart';
 
@@ -24,6 +25,7 @@ class AppTextField extends StatelessWidget {
     this.autofillHints,
     this.textInputAction = TextInputAction.next,
     this.onSubmitted,
+    this.density,
   });
 
   final TextEditingController controller;
@@ -40,9 +42,12 @@ class AppTextField extends StatelessWidget {
   final TextInputAction textInputAction;
   final VoidCallback? onSubmitted;
 
+  /// Optional per-field override; null inherits AppDensityScope.
+  final AppDensity? density;
+
   @override
   Widget build(BuildContext context) {
-    final style = AppTextFieldStyle(context);
+    final style = AppTextFieldStyle(context, density: density);
     final icon = prefixIcon;
 
     return TextFormField(
