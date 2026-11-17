@@ -26,7 +26,7 @@ Future<AppSidebarStyle> _styleAt(WidgetTester tester, Size size) async {
   return styles;
 }
 
-const _items = [
+final _items = [
   NavBarItem(
     icon: Icons.home_outlined,
     activeIcon: Icons.home,
