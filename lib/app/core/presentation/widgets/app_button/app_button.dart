@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -37,6 +38,9 @@ class AppButton extends StatefulWidget {
   /// يملأ عرض الأب (يتطلب أباً بعرض محدود)
   final bool expand;
 
+  /// Optional per-button override; null inherits AppDensityScope.
+  final AppDensity? density;
+
   /// زر بنص مترجم
   const AppButton(
     AppKey this.labelKey, {
@@ -47,6 +51,7 @@ class AppButton extends StatefulWidget {
     this.icon,
     this.isLoading = false,
     this.expand = false,
+    this.density,
   }) : rawLabel = null;
 
   /// زر بنص عادي بدون ترجمة
@@ -59,6 +64,7 @@ class AppButton extends StatefulWidget {
     this.icon,
     this.isLoading = false,
     this.expand = false,
+    this.density,
   }) : labelKey = null;
 
   @override
@@ -79,7 +85,7 @@ class _AppButtonState extends State<AppButton> {
 
   @override
   Widget build(BuildContext context) {
-    final styles = AppButtonStyle(context);
+    final styles = AppButtonStyle(context, density: widget.density);
     final visual = styles.resolve(widget.variant, widget.size, state: _state);
     final borderColor = visual.borderColor;
     final leading = _buildLeading(styles, visual);
