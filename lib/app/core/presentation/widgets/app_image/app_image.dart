@@ -11,6 +11,7 @@
 // ✅ تحكم كامل بالأبعاد من المستخدم
 // ─────────────────────────────────────────────────────────────────
 
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:flutter/material.dart';
 
 // ─────────────────────────────────────────────────────────────────
@@ -269,10 +270,10 @@ class AppImage extends StatelessWidget {
       width: width == double.infinity ? null : width,
       height: height,
       color: Colors.grey.shade200,
-      child: Icon(
-        Icons.broken_image_outlined,
+      child: AppIcon.fixed(
+        AppIcons.brokenImage,
+        pixelSize: iconSize.clamp(20.0, 80.0),
         color: Colors.grey.shade400,
-        size: iconSize.clamp(20.0, 80.0),
       ),
     );
   }

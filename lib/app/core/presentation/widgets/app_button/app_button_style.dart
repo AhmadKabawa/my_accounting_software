@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 
 enum AppButtonVariant { primary, secondary, outlined, danger, text }
@@ -40,13 +42,22 @@ class ButtonVisual {
 class AppButtonStyle {
   final BuildContext context;
 
-  const AppButtonStyle(this.context);
+  /// null = the density of the nearest `AppDensityScope`.
+  final AppDensity? density;
+
+  const AppButtonStyle(this.context, {this.density});
+
+  AppDensity get _density => density ?? AppDensityScope.of(context);
+
+  /// [natural] shortened to the field height in compact density (never taller).
+  double _densityHeight(double natural) {
+    final compact = AppDensityScope.compactHeight(context, _density);
+    return compact == null || compact >= natural ? natural : compact;
+  }
 
   // ═══════════════════════════════════════════
   // 🔹 CONSTANTS
   // ═══════════════════════════════════════════
-
-  static const _outlinedBorderWidth = 1.0;
 
   /// Disabled colors: the same opacities the Material button themes use.
   static const _disabledBackgroundOpacity = 0.12;
@@ -68,11 +79,13 @@ class AppButtonStyle {
 
   static const _adaptive = ResponsiveMode.adaptiveOnly;
 
-  double _height(AppButtonSize size) => Rh.height(context, switch (size) {
-    AppButtonSize.small => AppComponentSize.small,
-    AppButtonSize.medium => AppComponentSize.hitArea,
-    AppButtonSize.large => AppComponentSize.large,
-  }, mode: _adaptive);
+  double _height(AppButtonSize size) => _densityHeight(
+    Rh.height(context, switch (size) {
+      AppButtonSize.small => AppComponentSize.small,
+      AppButtonSize.medium => AppComponentSize.hitArea,
+      AppButtonSize.large => AppComponentSize.large,
+    }, mode: _adaptive),
+  );
 
   EdgeInsets _padding(AppButtonSize size) => Rh.symmetricPadding(
     context,
@@ -96,9 +109,11 @@ class AppButtonStyle {
     mode: _adaptive,
   );
 
-  /// Minimum touch target of an icon-only button (>= 48 on every screen type).
-  double get touchTarget =>
-      Rh.height(context, AppComponentSize.large, mode: _adaptive);
+  /// Touch target of an icon-only button: >= 48 on a phone, and in compact
+  /// density on larger screens it matches the field height.
+  double get touchTarget => _densityHeight(
+    Rh.height(context, AppComponentSize.large, mode: _adaptive),
+  );
 
   BorderRadius get radius =>
       Rh.circularRadius(context, AppRadius.md, mode: _adaptive);
@@ -166,7 +181,7 @@ class AppButtonStyle {
       background: background,
       foreground: foreground,
       borderColor: borderColor,
-      borderWidth: isOutlined ? _outlinedBorderWidth : 0,
+      borderWidth: isOutlined ? AppBorderWidth.thin.of(context) : 0,
       padding: _padding(size),
       radius: radius,
       height: _height(size),

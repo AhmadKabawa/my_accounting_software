@@ -94,7 +94,7 @@
 - `ScreenEngine`: مصدر واحد لتحديد نوع الشاشة والأبعاد وحدود الشاشات (Breakpoints). افتحه لمعرفة القيم الحالية ولا تنسخها.
 - `ScaleEngine`: حساب القياس والاستيفاء بين tokens وقياس الخط مع TextScaler.
 - `ResponsiveMode`: أنماط القياس (`fixed` و`scaleOnly` و`adaptiveOnly` و`adaptiveScale`).
-- Tokens/enums: `AppSpacing` و`AppRadius` و`AppFontSize` و`AppIconSize` و`AppElevation` و`AppBorderWidth` و`AppComponentSize` و`AppAspectRatio` و`AppBaseWidth` و`ResponsiveToken` و`ScreenType` و`AppOrientation`، والجديدة: `AppGrid` (أعمدة/هامش/فاصل لكل فئة جهاز) و`AppDensity` (comfortable/compact لارتفاع الصف والرأس والحقل). تقع في `responsive/engine/app_enums/`.
+- Tokens/enums: `AppSpacing` و`AppRadius` و`AppFontSize` و`AppIconSize` و`AppElevation` و`AppBorderWidth` و`AppComponentSize` و`AppAspectRatio` و`AppBaseWidth` و`ResponsiveToken` و`ScreenType` و`AppOrientation`، والجديدة: `AppGrid` (أعمدة/هامش/فاصل لكل فئة جهاز) و`AppDensity` (comfortable/compact لارتفاع الصف والرأس والحقل) و`AppDensityScope` (نطاق كثافة لشجرة فرعية؛ `AppDensityScope.of(context)`، الافتراضي comfortable). تقع في `responsive/engine/app_enums/`.
 - `design_system/tokens/` (مستقلة عن Responsive): `AppMotion`/`AppMotionDuration` (مدد ومنحنيات الحركة، وتصير المدة صفراً عند «تقليل الحركة») و`AppLayer` (z-index للطبقات).
 - `Rh` (اسم مستعار لـ `ResponsiveHelper` في `responsive_helper.dart`): API ساكنة للقياس واختيار الـ builders.
 - `context.ui` من `UIContextExtension`: **المدخل العام الموحد** إلى `padding` و`size` و`text` و`spacing` و`radius` و`icon` و`shadow` و`grid` و`screen` و`theme` و`dir`. تم حذف `ResponsiveContextExtension` (اختصارات `context.spacing()`/`pad()`/...)؛ لا تستخدمها ولا تعد إنشاءها.
@@ -161,7 +161,7 @@
 
 ## إضافات الدفعة C (ودجتس core الجديدة)
 
-- `AppIconData` (sealed: material/svg/networkSvg/image/networkImage) و`AppIcons` (المكان الوحيد لتعريف الأيقونات) و`AppIcon(AppIconData, size: AppIconSize)` بحجم responsive. `AppIcon` غير قابل للضغط عمداً.
+- `AppIconData` (sealed: material/svg/networkSvg/image/networkImage) و`AppIcons` (المكان الوحيد لتعريف الأيقونات؛ و`NavBarItem.icons` يأخذ `AppIconData`، والمُنشئ القديم بـ `IconData` ما زال يعمل) و`AppIcon(AppIconData, size: AppIconSize)` بحجم responsive. `AppIcon` غير قابل للضغط عمداً.
 - `AppButtonVariant.text` (زر نصي) وأيقونة `AppButton.icon` من نوع `AppIconData`.
 - `AppIconButton` (`widgets/app_button/app_icon_button.dart`): ضمن نظام الأزرار، `tooltipKey` مطلوب، منطقة لمس >= 48 من التوكنز.
 - `AppTextField` + `AppTextFieldStyle` (`widgets/app_text_field/`).
