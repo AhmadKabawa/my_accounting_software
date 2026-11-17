@@ -24,6 +24,7 @@ part 'ui_extension/icon_helper.dart';
 part 'ui_extension/elevation_helper.dart';
 part 'ui_extension/grid_helper.dart';
 part 'ui_extension/screen_helper.dart';
+part 'ui_extension/density_helper.dart';
 part 'ui_extension/app_text_style_resolver.dart';
 part 'ui_extension/app_text_type.dart';
 
