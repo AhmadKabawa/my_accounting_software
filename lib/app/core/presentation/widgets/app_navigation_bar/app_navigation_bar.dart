@@ -36,7 +36,7 @@ class NavBarItem {
   });
 
   /// Kept so existing call sites keep working; prefer [NavBarItem.icons].
-  const NavBarItem({
+  NavBarItem({
     required IconData icon,
     IconData? activeIcon,
     required this.label,
