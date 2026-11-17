@@ -15,6 +15,7 @@
 | الشاشات والتنقل | [`product/ERP_Screen_Navigation_Map.md`](product/ERP_Screen_Navigation_Map.md) | [`product/ERP_System_Dependency_Map.md`](product/ERP_System_Dependency_Map.md) |
 | المكوّنات | [`product/Missing_UI_Components_Priority_Plan.md`](product/Missing_UI_Components_Priority_Plan.md) | الكود في `lib/app/core/presentation` |
 | مظهر التصميم (توكنز وألوان وخطوط) | **الكود**، ثم [`architecture/DESIGN_SYSTEM.md`](architecture/DESIGN_SYSTEM.md) | ADR-0003 |
+| المنصات (ويب الآن، هاتف وWindows لاحقاً) | [`architecture/PLATFORM_STRATEGY.md`](architecture/PLATFORM_STRATEGY.md) | قرار-82 |
 | الهندسة والحدود بين الطبقات | [`architecture/ARCHITECTURE_RULES.md`](architecture/ARCHITECTURE_RULES.md) | ADR في `architecture/ADR/` |
 
 القاعدة: القاعدة (Supabase) مصدر الحقيقة للبيانات، فإن خالفتها وثيقة صُحّحت الوثيقة (قرار-51).

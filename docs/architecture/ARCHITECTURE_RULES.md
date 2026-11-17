@@ -58,7 +58,7 @@ Core هو موضع البنية التحتية والقدرات العرضية �
 
 
 ### حالة الفرض الآلي
-تفرض اختبارات `test/architecture/` أجزاء من هذه القواعد: `feature_imports_test` (الاستيراد بين الميزات)، و`no_raw_ui_in_features_test` (العناصر الخام في الميزات)، و`no_magic_numbers_test` (الأرقام المباشرة). تعمل ضمن `flutter test`. **لا يوجد CI** في المستودع (لا `.github/workflows`)، و`analysis_options.yaml` يعتمد `flutter_lints` فقط، فلا يُدّعى فرض آلي قبل تشغيل هذه الاختبارات فعلاً وتوثيق نتيجتها (§9). بقية القواعد تُراجع يدوياً. تحسين مستقبلي: إضافة CI بقرار منفصل.
+تفرض اختبارات `test/architecture/` أجزاء من هذه القواعد: `platform_isolation_test` (واجهات المنصة خارج `core/platform/`، انظر [PLATFORM_STRATEGY](PLATFORM_STRATEGY.md))، و`feature_imports_test` (الاستيراد بين الميزات)، و`no_raw_ui_in_features_test` (العناصر الخام في الميزات)، و`no_magic_numbers_test` (الأرقام المباشرة). تعمل ضمن `flutter test`. **لا يوجد CI** في المستودع (لا `.github/workflows`)، و`analysis_options.yaml` يعتمد `flutter_lints` فقط، فلا يُدّعى فرض آلي قبل تشغيل هذه الاختبارات فعلاً وتوثيق نتيجتها (§9). بقية القواعد تُراجع يدوياً. تحسين مستقبلي: إضافة CI بقرار منفصل.
 
 ## 5. Responsive وTheme وWidgets
 
