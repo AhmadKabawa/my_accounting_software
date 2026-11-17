@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
@@ -16,12 +18,18 @@ class AppTextFieldStyle {
 
   AppDensity get _density => density ?? AppDensityScope.of(context);
 
-  /// The field height in compact density on a non-phone screen, else null.
+  /// Compact target on non-phone screens; null preserves phone behavior.
   double? get _compactHeight =>
       AppDensityScope.compactHeight(context, _density);
 
-  /// Dense layout is used only when compact density applies.
   bool get isDense => _compactHeight != null;
+
+  BoxConstraints get _compactIconConstraints => BoxConstraints(
+    minWidth: _compactHeight!,
+    minHeight: _compactHeight!,
+  );
+
+  static const _fallbackLineHeight = 1.5;
 
   static const _adaptive = ResponsiveMode.adaptiveOnly;
 
@@ -43,8 +51,10 @@ class AppTextFieldStyle {
     // around one line of text, split on both sides (never more than the
     // comfortable padding).
     final textStyle = this.textStyle;
-    final line = (textStyle.fontSize ?? 0) * (textStyle.height ?? 1.2);
-    final vertical = ((target - line) / 2).clamp(0.0, padding.top);
+    final line = (textStyle.fontSize ?? 0) *
+        (textStyle.height ?? _fallbackLineHeight);
+    final vertical = math.max(0.0, (target - line) * 0.5)
+        .clamp(0.0, padding.top);
     return padding.copyWith(top: vertical, bottom: vertical);
   }
 
@@ -91,7 +101,9 @@ class AppTextFieldStyle {
       hintText: hint,
       prefixIcon: prefix,
       suffixIcon: suffix,
-      isDense: isDense,
+      isDense: isDense ? true : null,
+      prefixIconConstraints: isDense ? _compactIconConstraints : null,
+      suffixIconConstraints: isDense ? _compactIconConstraints : null,
       contentPadding: contentPadding,
       labelStyle: labelStyle,
       floatingLabelStyle: floatingLabelStyle,
