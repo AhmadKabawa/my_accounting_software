@@ -181,7 +181,8 @@ enum ErpErrorKeys implements AppKey {
   static final RegExp _pattern = RegExp(r'^ERP\d{2}$');
 
   /// True when [code] has the shape of a business-rule code.
-  static bool isErpCode(String? code) => code != null && _pattern.hasMatch(code);
+  static bool isErpCode(String? code) =>
+      code != null && _pattern.hasMatch(code);
 
   /// The text for [code]; [unknown] for a well-formed code this app does not
   /// know yet (a newer database), so the user never sees the raw server text.

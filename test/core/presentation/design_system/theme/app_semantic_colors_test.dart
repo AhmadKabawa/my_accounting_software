@@ -60,7 +60,10 @@ void main() {
         ),
       );
       expect(mid.chart, hasLength(8));
-      expect(mid.chart.first, Color.lerp(start.chart.first, end.chart.first, 0.5));
+      expect(
+        mid.chart.first,
+        Color.lerp(start.chart.first, end.chart.first, 0.5),
+      );
       expect(start.lerp(end, 0).focusRing, start.focusRing);
       expect(start.lerp(end, 1).focusRing, end.focusRing);
     });

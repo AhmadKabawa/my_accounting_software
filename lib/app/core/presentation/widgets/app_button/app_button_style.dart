@@ -113,11 +113,7 @@ class AppButtonStyle {
   /// density. Density may shrink visual buttons, but must not shrink this
   /// interactive target below the accessibility token.
   double get touchTarget {
-    final natural = Rh.height(
-      context,
-      AppComponentSize.large,
-      mode: _adaptive,
-    );
+    final natural = Rh.height(context, AppComponentSize.large, mode: _adaptive);
     final compact = _densityHeight(natural);
     final minimum = Rh.height(
       context,

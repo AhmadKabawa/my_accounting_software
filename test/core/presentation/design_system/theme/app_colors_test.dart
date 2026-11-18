@@ -26,20 +26,23 @@ void _expectNonText(String label, Color fg, Color bg) =>
 
 void main() {
   group('role mapping', () {
-    test('light: primary is green-600, page is neutral-50, cards are white', () {
-      final scheme = AppTheme.light().colorScheme;
+    test(
+      'light: primary is green-600, page is neutral-50, cards are white',
+      () {
+        final scheme = AppTheme.light().colorScheme;
 
-      expect(scheme.brightness, Brightness.light);
-      expect(scheme.primary, AppColors.green600);
-      expect(scheme.onPrimary, AppColors.neutral0);
-      expect(scheme.primaryContainer, AppColors.green100);
-      expect(scheme.surface, AppColors.neutral0);
-      expect(
-        AppTheme.light().scaffoldBackgroundColor,
-        AppLightColors.background,
-      );
-      expect(AppLightColors.background, AppColors.neutral50);
-    });
+        expect(scheme.brightness, Brightness.light);
+        expect(scheme.primary, AppColors.green600);
+        expect(scheme.onPrimary, AppColors.neutral0);
+        expect(scheme.primaryContainer, AppColors.green100);
+        expect(scheme.surface, AppColors.neutral0);
+        expect(
+          AppTheme.light().scaffoldBackgroundColor,
+          AppLightColors.background,
+        );
+        expect(AppLightColors.background, AppColors.neutral50);
+      },
+    );
 
     test('dark is a separate design, not an inverted light', () {
       final scheme = AppTheme.dark().colorScheme;
@@ -68,7 +71,10 @@ void main() {
     });
 
     test('debit and credit are neutral, never red and green', () {
-      for (final semantic in [AppSemanticColors.light, AppSemanticColors.dark]) {
+      for (final semantic in [
+        AppSemanticColors.light,
+        AppSemanticColors.dark,
+      ]) {
         for (final c in [semantic.debit, semantic.credit]) {
           // Neutral-ish: the channels stay close to each other.
           final spread =
@@ -87,16 +93,25 @@ void main() {
       _expectText('on-surface', AppLightColors.onSurface, s);
       _expectText('on-surface-variant', AppLightColors.onSurfaceVariant, s);
       _expectText('on-surface-muted', AppLightColors.onSurfaceMuted, s);
-      _expectText('on-primary on primary', AppLightColors.onPrimary,
-          AppLightColors.primary);
+      _expectText(
+        'on-primary on primary',
+        AppLightColors.onPrimary,
+        AppLightColors.primary,
+      );
       _expectText('primary on surface', AppLightColors.primary, s);
-      _expectText('nav-item-active', AppLightColors.onPrimaryContainer,
-          AppLightColors.primaryContainer);
+      _expectText(
+        'nav-item-active',
+        AppLightColors.onPrimaryContainer,
+        AppLightColors.primaryContainer,
+      );
       _expectText('debit', AppLightColors.debit, s);
       _expectText('credit', AppLightColors.credit, s);
       _expectText('balance-negative', AppLightColors.balanceNegative, s);
-      _expectText('balance-negative on page', AppLightColors.balanceNegative,
-          AppLightColors.background);
+      _expectText(
+        'balance-negative on page',
+        AppLightColors.balanceNegative,
+        AppLightColors.background,
+      );
     });
 
     test('dark text colors on their surface', () {
@@ -104,11 +119,17 @@ void main() {
       _expectText('on-surface', AppDarkColors.onSurface, s);
       _expectText('on-surface-variant', AppDarkColors.onSurfaceVariant, s);
       _expectText('on-surface-muted', AppDarkColors.onSurfaceMuted, s);
-      _expectText('on-primary on primary', AppDarkColors.onPrimary,
-          AppDarkColors.primary);
+      _expectText(
+        'on-primary on primary',
+        AppDarkColors.onPrimary,
+        AppDarkColors.primary,
+      );
       _expectText('primary on surface', AppDarkColors.primary, s);
-      _expectText('nav-item-active', AppDarkColors.onPrimaryContainer,
-          AppDarkColors.primaryContainer);
+      _expectText(
+        'nav-item-active',
+        AppDarkColors.onPrimaryContainer,
+        AppDarkColors.primaryContainer,
+      );
       _expectText('debit', AppDarkColors.debit, s);
       _expectText('credit', AppDarkColors.credit, s);
       _expectText('balance-negative', AppDarkColors.balanceNegative, s);
@@ -130,8 +151,16 @@ void main() {
           AppDarkColors.errorContainer,
         ),
       ]) {
-        _expectText('$name success', semantic.success, semantic.successContainer);
-        _expectText('$name warning', semantic.warning, semantic.warningContainer);
+        _expectText(
+          '$name success',
+          semantic.success,
+          semantic.successContainer,
+        );
+        _expectText(
+          '$name warning',
+          semantic.warning,
+          semantic.warningContainer,
+        );
         _expectText('$name info', semantic.info, semantic.infoContainer);
         _expectText('$name error', error, errorContainer);
         // Snackbars use the color as a fill with `onX` text.
@@ -142,7 +171,10 @@ void main() {
     });
 
     test('the five document status badges', () {
-      for (final semantic in [AppSemanticColors.light, AppSemanticColors.dark]) {
+      for (final semantic in [
+        AppSemanticColors.light,
+        AppSemanticColors.dark,
+      ]) {
         for (final status in [
           semantic.statusDraft,
           semantic.statusApproved,
@@ -156,10 +188,16 @@ void main() {
     });
 
     test('control borders reach 3:1 on a surface', () {
-      _expectNonText('light outline-control', AppLightColors.outlineControl,
-          AppLightColors.surface);
-      _expectNonText('dark outline-control', AppDarkColors.outlineControl,
-          AppDarkColors.surface);
+      _expectNonText(
+        'light outline-control',
+        AppLightColors.outlineControl,
+        AppLightColors.surface,
+      );
+      _expectNonText(
+        'dark outline-control',
+        AppDarkColors.outlineControl,
+        AppDarkColors.surface,
+      );
     });
 
     test('chart series reach 3:1 on a surface', () {

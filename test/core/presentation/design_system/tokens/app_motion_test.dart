@@ -55,17 +55,20 @@ void main() {
 
   group('AppLayer', () {
     test('z-index values follow the design', () {
-      expect({for (final l in AppLayer.values) l.name: l.zIndex}, {
-        'content': 0,
-        'stickyHeader': 10,
-        'navigation': 20,
-        'dropdown': 30,
-        'sidePanel': 40,
-        'modal': 50,
-        'snackbar': 60,
-        'tooltip': 70,
-        'loadingOverlay': 80,
-      });
+      expect(
+        {for (final l in AppLayer.values) l.name: l.zIndex},
+        {
+          'content': 0,
+          'stickyHeader': 10,
+          'navigation': 20,
+          'dropdown': 30,
+          'sidePanel': 40,
+          'modal': 50,
+          'snackbar': 60,
+          'tooltip': 70,
+          'loadingOverlay': 80,
+        },
+      );
     });
 
     test('layers are strictly ordered', () {

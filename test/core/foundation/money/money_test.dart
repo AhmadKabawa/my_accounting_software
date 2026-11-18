@@ -61,10 +61,9 @@ void main() {
     });
 
     test('convert: الضرب بسعر الصرف ويغيّر العملة', () {
-      final result = m('100').convert(
-        rate: Decimal.parse('13000.5'),
-        toCurrencyId: syp,
-      );
+      final result = m(
+        '100',
+      ).convert(rate: Decimal.parse('13000.5'), toCurrencyId: syp);
       expect(result, m('1300050', syp));
     });
 
@@ -137,8 +136,10 @@ void main() {
 
     test('رقم صحيح', () {
       expect(Money.fromRaw(5, usd), m('5'));
-      expect(Money.fromRaw(BigInt.parse('12345678901234567890'), usd),
-          m('12345678901234567890'));
+      expect(
+        Money.fromRaw(BigInt.parse('12345678901234567890'), usd),
+        m('12345678901234567890'),
+      );
     });
 
     test('رقم عشري قصير الدقة', () {
@@ -183,7 +184,9 @@ void main() {
   test('toPlainString بلا أس ولا فواصل للقيم الصغيرة والكبيرة', () {
     expect(m('0.0001').toPlainString(), '0.0001');
     expect(m('-0.0001').toPlainString(), '-0.0001');
-    expect(m('99999999999999999999.9999').toPlainString(),
-        '99999999999999999999.9999');
+    expect(
+      m('99999999999999999999.9999').toPlainString(),
+      '99999999999999999999.9999',
+    );
   });
 }

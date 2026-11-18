@@ -7,11 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Resolves button and field values for [density] at the given window [size].
-Future<({double button, double touch, EdgeInsets padding, bool dense})> _resolve(
-  WidgetTester tester,
-  Size size, {
-  AppDensity? density,
-}) async {
+Future<({double button, double touch, EdgeInsets padding, bool dense})>
+_resolve(WidgetTester tester, Size size, {AppDensity? density}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -35,9 +32,7 @@ Future<({double button, double touch, EdgeInsets padding, bool dense})> _resolve
   if (density != null) {
     probe = AppDensityScope(density: density, child: probe);
   }
-  await tester.pumpWidget(
-    MaterialApp(theme: AppTheme.light(), home: probe),
-  );
+  await tester.pumpWidget(MaterialApp(theme: AppTheme.light(), home: probe));
   return out;
 }
 
@@ -69,8 +64,9 @@ void main() {
     expect(comfortable.dense, isFalse);
   });
 
-  testWidgets('compact on desktop: control height does not exceed the field',
-      (tester) async {
+  testWidgets('compact on desktop: control height does not exceed the field', (
+    tester,
+  ) async {
     final plain = await _resolve(tester, desktop);
     final compact = await _resolve(
       tester,
@@ -84,8 +80,9 @@ void main() {
     expect(compact.padding.top, lessThanOrEqualTo(plain.padding.top));
   });
 
-  testWidgets('compact on a phone changes nothing (touch floor)',
-      (tester) async {
+  testWidgets('compact on a phone changes nothing (touch floor)', (
+    tester,
+  ) async {
     final plain = await _resolve(tester, phone);
     final compact = await _resolve(tester, phone, density: AppDensity.compact);
     expect(compact, plain);

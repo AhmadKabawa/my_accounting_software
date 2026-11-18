@@ -87,10 +87,7 @@ void main() {
     });
 
     test('الخطوة مع UP وDOWN', () {
-      expect(
-        withStep('5', 0, MoneyRoundingMethod.up).apply(d('11')),
-        d('15'),
-      );
+      expect(withStep('5', 0, MoneyRoundingMethod.up).apply(d('11')), d('15'));
       expect(
         withStep('5', 0, MoneyRoundingMethod.down).apply(d('14')),
         d('10'),

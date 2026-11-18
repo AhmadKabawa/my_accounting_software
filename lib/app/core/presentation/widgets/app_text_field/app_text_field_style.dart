@@ -24,10 +24,8 @@ class AppTextFieldStyle {
 
   bool get isDense => _compactHeight != null;
 
-  BoxConstraints get _compactIconConstraints => BoxConstraints(
-    minWidth: _compactHeight!,
-    minHeight: _compactHeight!,
-  );
+  BoxConstraints get _compactIconConstraints =>
+      BoxConstraints(minWidth: _compactHeight!, minHeight: _compactHeight!);
 
   static const _fallbackLineHeight = 1.5;
 
@@ -51,9 +49,10 @@ class AppTextFieldStyle {
     // around one line of text, split on both sides (never more than the
     // comfortable padding).
     final textStyle = this.textStyle;
-    final line = (textStyle.fontSize ?? 0) *
-        (textStyle.height ?? _fallbackLineHeight);
-    final vertical = math.max(0.0, (target - line) * 0.5)
+    final line =
+        (textStyle.fontSize ?? 0) * (textStyle.height ?? _fallbackLineHeight);
+    final vertical = math
+        .max(0.0, (target - line) * 0.5)
         .clamp(0.0, padding.top)
         .toDouble();
     return padding.copyWith(top: vertical, bottom: vertical);

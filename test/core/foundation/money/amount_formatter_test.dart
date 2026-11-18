@@ -90,8 +90,10 @@ void main() {
       expect(fmt('1234.5', 0), iso('1,235'));
       expect(fmt('1234.5', 0, method: MoneyRoundingMethod.down), iso('1,234'));
       expect(fmt('1234.1', 0, method: MoneyRoundingMethod.up), iso('1,235'));
-      expect(fmt('-1234.1', 0, method: MoneyRoundingMethod.up),
-          iso('${minus}1,235'));
+      expect(
+        fmt('-1234.1', 0, method: MoneyRoundingMethod.up),
+        iso('${minus}1,235'),
+      );
     });
   });
 
@@ -124,11 +126,7 @@ void main() {
   });
 
   group('format: مع رمز العملة', () {
-    const usd = CurrencyDisplay(
-      currencyId: 1,
-      decimalPlaces: 2,
-      label: 'USD',
-    );
+    const usd = CurrencyDisplay(currencyId: 1, decimalPlaces: 2, label: 'USD');
     final amount = Money.parse('1234.5', 1);
 
     test('الرمز بعد الرقم (الافتراضي)', () {
@@ -171,12 +169,11 @@ void main() {
         label: 'USD',
         labelPlacement: CurrencyLabelPlacement.none,
       );
-      const empty = CurrencyDisplay(
-        currencyId: 1,
-        decimalPlaces: 2,
-        label: '',
+      const empty = CurrencyDisplay(currencyId: 1, decimalPlaces: 2, label: '');
+      expect(
+        AmountFormatter.format(amount, currency: noLabel),
+        iso('1,234.50'),
       );
-      expect(AmountFormatter.format(amount, currency: noLabel), iso('1,234.50'));
       expect(AmountFormatter.format(amount, currency: none), iso('1,234.50'));
       expect(AmountFormatter.format(amount, currency: empty), iso('1,234.50'));
     });
@@ -190,10 +187,7 @@ void main() {
 
     test('fromRounding يأخذ الخانات والطريقة من إعدادات العملة', () {
       final display = CurrencyDisplay.fromRounding(
-        MoneyRounding(
-          decimalPlaces: 0,
-          method: MoneyRoundingMethod.down,
-        ),
+        MoneyRounding(decimalPlaces: 0, method: MoneyRoundingMethod.down),
         currencyId: 2,
         label: 'ل.س',
       );

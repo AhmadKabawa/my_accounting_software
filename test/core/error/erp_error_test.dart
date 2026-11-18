@@ -51,10 +51,10 @@ ApiClient _clientFor(int status, String body) {
 }
 
 Future<Failure> _failureOf(int status, String body) async {
-  final result = await _clientFor(status, body).post<Map<String, dynamic>>(
-    _endpoint,
-    fromJson: (j) => j,
-  );
+  final result = await _clientFor(
+    status,
+    body,
+  ).post<Map<String, dynamic>>(_endpoint, fromJson: (j) => j);
   return ExceptionMapper.map((result as ApiFailure).exception);
 }
 
@@ -101,10 +101,10 @@ void main() {
         '{"code":"ERP04","message":"raw server text","details":"item=7","hint":null}';
 
     test('a business-rule error keeps its code and details', () async {
-      final result = await _clientFor(400, body).post<Map<String, dynamic>>(
-        _endpoint,
-        fromJson: (j) => j,
-      );
+      final result = await _clientFor(
+        400,
+        body,
+      ).post<Map<String, dynamic>>(_endpoint, fromJson: (j) => j);
       final e = (result as ApiFailure).exception as ApiException;
 
       expect(e.type, ApiExceptionType.businessRule);

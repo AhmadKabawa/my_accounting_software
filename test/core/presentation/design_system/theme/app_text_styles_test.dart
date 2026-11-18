@@ -98,29 +98,33 @@ void main() {
       );
     });
 
-    testWidgets('amount roles keep tabular figures and the primary text color', (
-      tester,
-    ) async {
-      late TextStyle amount;
-      late TextStyle header;
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Builder(
-            builder: (context) {
-              amount = context.ui.text.of(AppTextType.amountTable);
-              header = context.ui.text.of(AppTextType.tableHeader);
-              return const SizedBox();
-            },
+    testWidgets(
+      'amount roles keep tabular figures and the primary text color',
+      (tester) async {
+        late TextStyle amount;
+        late TextStyle header;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Builder(
+              builder: (context) {
+                amount = context.ui.text.of(AppTextType.amountTable);
+                header = context.ui.text.of(AppTextType.tableHeader);
+                return const SizedBox();
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      final scheme = AppTheme.light().colorScheme;
-      expect(amount.fontFeatures, contains(const FontFeature.tabularFigures()));
-      expect(amount.color, scheme.onSurface);
-      expect(header.color, scheme.onSurfaceVariant);
-      expect(amount.letterSpacing, 0);
-    });
+        final scheme = AppTheme.light().colorScheme;
+        expect(
+          amount.fontFeatures,
+          contains(const FontFeature.tabularFigures()),
+        );
+        expect(amount.color, scheme.onSurface);
+        expect(header.color, scheme.onSurfaceVariant);
+        expect(amount.letterSpacing, 0);
+      },
+    );
   });
 }

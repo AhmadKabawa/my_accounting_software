@@ -54,8 +54,9 @@ Widget buildTestApp({
   Widget builder(BuildContext context, Widget? child) => Directionality(
     textDirection: direction,
     child: MediaQuery(
-      data: MediaQuery.of(context)
-          .copyWith(textScaler: TextScaler.linear(textScale)),
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: TextScaler.linear(textScale)),
       child: child!,
     ),
   );

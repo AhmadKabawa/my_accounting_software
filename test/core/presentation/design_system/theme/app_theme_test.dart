@@ -23,10 +23,21 @@ void main() {
       for (final theme in [AppTheme.light(), AppTheme.dark()]) {
         final t = theme.textTheme;
         for (final style in [
-          t.displayLarge, t.displayMedium, t.displaySmall, t.headlineLarge,
-          t.headlineMedium, t.headlineSmall, t.titleLarge, t.titleMedium,
-          t.titleSmall, t.bodyLarge, t.bodyMedium, t.bodySmall, t.labelLarge,
-          t.labelMedium, t.labelSmall,
+          t.displayLarge,
+          t.displayMedium,
+          t.displaySmall,
+          t.headlineLarge,
+          t.headlineMedium,
+          t.headlineSmall,
+          t.titleLarge,
+          t.titleMedium,
+          t.titleSmall,
+          t.bodyLarge,
+          t.bodyMedium,
+          t.bodySmall,
+          t.labelLarge,
+          t.labelMedium,
+          t.labelSmall,
         ]) {
           expect(style!.fontSize, greaterThanOrEqualTo(12));
         }
