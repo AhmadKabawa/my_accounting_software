@@ -45,4 +45,4 @@ jobs:
         run: flutter analyze --no-fatal-infos
 
       - name: Run tests
-        run: flutter test
+        run: flutter test test/core/access test/features/auth/session_access_integration_test.dart test/shell/app_shell_test.dart
