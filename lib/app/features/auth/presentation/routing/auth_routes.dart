@@ -21,9 +21,6 @@ abstract final class AuthRoutes {
   static const List<RouteItem> all = [
     login,
     if (AppConfig.signupEnabled) register,
-    if (AppConfig.forgotPasswordEnabled) ...[
-      forgotPassword,
-      resetPassword,
-    ],
+    if (AppConfig.forgotPasswordEnabled) ...[forgotPassword, resetPassword],
   ];
 }

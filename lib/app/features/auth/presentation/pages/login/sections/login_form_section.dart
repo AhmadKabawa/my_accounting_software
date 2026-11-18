@@ -99,8 +99,7 @@ class _LoginFormSectionState extends State<LoginFormSection> {
             gap,
             GoogleSignInButton(
               isLoading: loading,
-              onPressed: () =>
-                  context.read<AuthFlowCubit>().signInWithGoogle(),
+              onPressed: () => context.read<AuthFlowCubit>().signInWithGoogle(),
             ),
           ],
           if (AppConfig.signupEnabled) ...[

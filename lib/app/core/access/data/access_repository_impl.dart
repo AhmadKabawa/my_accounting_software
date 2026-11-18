@@ -8,13 +8,13 @@ import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 
 class AccessRepositoryImpl with RepositoryExecutor implements AccessRepository {
   const AccessRepositoryImpl({required AccessRemoteDataSource remote})
-      : _remote = remote;
+    : _remote = remote;
 
   final AccessRemoteDataSource _remote;
 
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() => execute(() async {
-        final result = await _remote.getMyAccess();
-        return result.toEither();
-      });
+    final result = await _remote.getMyAccess();
+    return result.toEither();
+  });
 }

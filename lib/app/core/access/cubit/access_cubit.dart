@@ -13,8 +13,8 @@ part 'access_state.dart';
 /// granted until get_my_access() succeeds; every failure is fail-closed.
 class AccessCubit extends Cubit<AccessState> {
   AccessCubit({required GetMyAccessUseCase getMyAccess})
-      : _getMyAccess = getMyAccess,
-        super(const AccessState());
+    : _getMyAccess = getMyAccess,
+      super(const AccessState());
 
   final GetMyAccessUseCase _getMyAccess;
   int _requestSequence = 0;
@@ -22,40 +22,42 @@ class AccessCubit extends Cubit<AccessState> {
   Future<void> load({int? preferredBranchId}) async {
     final request = ++_requestSequence;
     final branchToKeep = preferredBranchId ?? state.selectedBranchId;
-    emit(AccessState(
-      status: AccessStatus.loading,
-      selectedBranchId: branchToKeep,
-    ));
+    emit(
+      AccessState(status: AccessStatus.loading, selectedBranchId: branchToKeep),
+    );
 
     final result = await _getMyAccess(NoParams());
     if (isClosed || request != _requestSequence) return;
 
     result.fold(
-      (failure) => emit(AccessState(
-        status: AccessStatus.failure,
-        failure: failure,
-        selectedBranchId: branchToKeep,
-      )),
+      (failure) => emit(
+        AccessState(
+          status: AccessStatus.failure,
+          failure: failure,
+          selectedBranchId: branchToKeep,
+        ),
+      ),
       (snapshot) {
-        final selected = snapshot.branches.any(
-          (branch) => branch.id == branchToKeep && branch.canView,
-        )
+        final selected =
+            snapshot.branches.any(
+              (branch) => branch.id == branchToKeep && branch.canView,
+            )
             ? branchToKeep
             : snapshot.branches.length == 1 && snapshot.branches.single.canView
-                ? snapshot.branches.single.id
-                : null;
-        emit(AccessState(
-          status: AccessStatus.ready,
-          snapshot: snapshot,
-          selectedBranchId: selected,
-        ));
+            ? snapshot.branches.single.id
+            : null;
+        emit(
+          AccessState(
+            status: AccessStatus.ready,
+            snapshot: snapshot,
+            selectedBranchId: selected,
+          ),
+        );
       },
     );
   }
 
-  Future<void> retry() => load(
-        preferredBranchId: state.selectedBranchId,
-      );
+  Future<void> retry() => load(preferredBranchId: state.selectedBranchId);
 
   /// A branch change is accepted only for a branch in the current snapshot.
   /// The access snapshot is refreshed before the new scope is considered ready.
@@ -63,9 +65,7 @@ class AccessCubit extends Cubit<AccessState> {
     final snapshot = state.snapshot;
     if (!state.isReady ||
         snapshot == null ||
-        !snapshot.branches.any(
-          (item) => item.id == branchId && item.canView,
-        )) {
+        !snapshot.branches.any((item) => item.id == branchId && item.canView)) {
       return;
     }
     await load(preferredBranchId: branchId);

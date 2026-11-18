@@ -50,11 +50,7 @@ void main() {
     testWidgets('shows immediately when reduced motion is requested', (
       tester,
     ) async {
-      await pumpSkeleton(
-        tester,
-        const AppSkeleton.line(),
-        reduceMotion: true,
-      );
+      await pumpSkeleton(tester, const AppSkeleton.line(), reduceMotion: true);
 
       expect(
         find.descendant(
@@ -76,11 +72,7 @@ void main() {
       ];
 
       for (final variant in variants) {
-        await pumpSkeleton(
-          tester,
-          variant,
-          reduceMotion: true,
-        );
+        await pumpSkeleton(tester, variant, reduceMotion: true);
         expect(tester.takeException(), isNull);
         expect(find.byType(AppSkeleton), findsOneWidget);
       }

@@ -75,7 +75,9 @@ GoRouter _router() => GoRouter(
   ],
 );
 
-Future<({GoRouter router, AccessCubit access, _FakeAccessRepository repository})>
+Future<
+  ({GoRouter router, AccessCubit access, _FakeAccessRepository repository})
+>
 _pump(
   WidgetTester tester,
   Size size, {
@@ -87,9 +89,7 @@ _pump(
   addTearDown(tester.view.reset);
 
   final repository = _FakeAccessRepository(permissions);
-  final access = AccessCubit(
-    getMyAccess: GetMyAccessUseCase(repository),
-  );
+  final access = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
   await access.load();
   addTearDown(access.close);
 

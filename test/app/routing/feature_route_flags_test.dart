@@ -53,9 +53,9 @@ void main() {
     });
 
     test('enabled signup route is registered and public', () {
-      final routes = buildRouteRegistry(signupEnabled: true)
-          .map((route) => route.path)
-          .toSet();
+      final routes = buildRouteRegistry(
+        signupEnabled: true,
+      ).map((route) => route.path).toSet();
       final public = buildPublicRoutes(signupEnabled: true);
 
       expect(routes, contains(AuthRoutes.register.path));
@@ -63,9 +63,9 @@ void main() {
     });
 
     test('enabled password recovery routes are registered and public', () {
-      final routes = buildRouteRegistry(forgotPasswordEnabled: true)
-          .map((route) => route.path)
-          .toSet();
+      final routes = buildRouteRegistry(
+        forgotPasswordEnabled: true,
+      ).map((route) => route.path).toSet();
       final public = buildPublicRoutes(forgotPasswordEnabled: true);
 
       expect(routes, contains(AuthRoutes.forgotPassword.path));
@@ -75,9 +75,9 @@ void main() {
     });
 
     test('enabled onboarding route is registered and public', () {
-      final routes = buildRouteRegistry(onboardingEnabled: true)
-          .map((route) => route.path)
-          .toSet();
+      final routes = buildRouteRegistry(
+        onboardingEnabled: true,
+      ).map((route) => route.path).toSet();
       final public = buildPublicRoutes(onboardingEnabled: true);
 
       expect(routes, contains(OnBoardingRoutes.onboarding.path));

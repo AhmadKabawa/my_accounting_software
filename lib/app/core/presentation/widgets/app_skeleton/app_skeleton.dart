@@ -111,7 +111,8 @@ class _AppSkeletonState extends State<AppSkeleton> {
   }
 
   double _resolvedWidth(BuildContext context) =>
-      widget.width ?? switch (widget.variant) {
+      widget.width ??
+      switch (widget.variant) {
         AppSkeletonVariant.line => AppComponentSize.cardWidth.of(context),
         AppSkeletonVariant.block ||
         AppSkeletonVariant.card ||
@@ -119,10 +120,11 @@ class _AppSkeletonState extends State<AppSkeleton> {
       };
 
   double _resolvedHeight(BuildContext context) =>
-      widget.height ?? switch (widget.variant) {
+      widget.height ??
+      switch (widget.variant) {
         AppSkeletonVariant.line => AppIconSize.sm.of(context),
-        AppSkeletonVariant.block || AppSkeletonVariant.card =>
-          AppComponentSize.cardHeight.of(context),
+        AppSkeletonVariant.block ||
+        AppSkeletonVariant.card => AppComponentSize.cardHeight.of(context),
         AppSkeletonVariant.tableRow => AppComponentSize.hitArea.of(context),
       };
 
@@ -131,18 +133,16 @@ class _AppSkeletonState extends State<AppSkeleton> {
         ? AppRadius.lg.of(context)
         : AppRadius.sm.of(context);
 
-    Widget shape({
-      required double height,
-      double? width,
-      double? radius,
-    }) {
+    Widget shape({required double height, double? width, double? radius}) {
       return SizedBox(
         width: width ?? double.infinity,
         height: height,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(radius ?? AppRadius.sm.of(context)),
+            borderRadius: BorderRadius.circular(
+              radius ?? AppRadius.sm.of(context),
+            ),
           ),
         ),
       );
