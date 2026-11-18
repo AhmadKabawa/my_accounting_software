@@ -2,7 +2,10 @@
 
 يكمّل [خطة المكوّنات](Missing_UI_Components_Priority_Plan.md) (الإصدار 2.1) بثلاثة أشياء: ما هو موجود في الكود ويحتاج استكمالاً، وترتيب البناء، وقوالب تكليف جاهزة لأي وكيل ذكاء اصطناعي أو مطوّر. **الخطة هي المرجع** لوصف كل مكوّن وقبوله؛ هذا الملف لا ينسخه.
 
-آخر تحديث: 2026-11-18. تم تشغيل CI باستخدام Flutter 3.38.1؛ نجح `flutter pub get` و`flutter analyze --no-fatal-infos`. الاختبارات الكاملة ما زالت قيد الفحص، ولا يُعد نجاح التحليل دليلاً على نجاح الاختبارات.
+آخر تحديث: 2026-11-18. تحقق CI على الفرع `fix/foundation-green-baseline` باستخدام Flutter 3.38.1:
+- نجحت `dart format --set-exit-if-changed .` و`flutter analyze --no-fatal-infos` و`flutter test` في CI run #44418212322 (commit `06df458`).
+- نجحت اختبارات `flutter test <file> --timeout 60s --reporter expanded` لكل ملف على حدة: 73/73 في run #44418088703.
+لم يُشغَّل Flutter محلياً؛ كل أدلة النجاح من CI.
 
 ## 1. الموجود في الكود وما يحتاج استكمالاً
 
@@ -14,12 +17,12 @@
 | `MessageViewWidgets` | موجود؛ أُصلح `hideMessage` وأضيف `failureBanner` المرتبط بـ C38 | تبقى مراجعة استخدام `AppIcon` والنصوص الحرة وفق الخطة §10 |
 | `AppIcon` | موجود، والأيقونات `Icons.*` ما زالت مستعملة داخل `core` (app_image والتنقل والرسائل) | C14: توحيد خلف `AppIcon` (حزمة الرموز بحاجة موافقتك) |
 | `AppImage` (347 سطراً) | موجود | أساس C36؛ يُقيَّم `cached_network_image` على الويب قبل C36 |
-| `InlineBanner` (C38) | **مبني** في `app_inline_banner/` ومرتبط بـ `MessageViewWidgets.failureBanner` | التحقق النهائي من الاختبارات واستخدامه في الشاشة الطيّارة |
+| `InlineBanner` (C38) | **مبني ومختبَر آلياً** في `app_inline_banner/` ومرتبط بـ `MessageViewWidgets.failureBanner`؛ اختبار `inline_banner_test.dart` نجح في run #44418088703 | استخدامه في الشاشة الطيّارة والتحقق البصري |
 | `AppCard` وAppDivider وAppText وأشرطة التنقل (Rail وSidebar وBar) | موجودة | تُستعمل كما هي في C46 |
 | `AppPageAppBar` | موجود (24 سطراً) | يُراجع مع PageHeader (C48) |
-| `Money` وAmountFormatter (C13) | **مراجعة** — نُفِّذا في `core/foundation/money/`؛ لم تُشغَّل الاختبارات بعد | إبقاؤهما قيد المراجعة حتى نجاح `flutter test`؛ ثم استعمالهما في CAT-03 |
-| `AppSkeleton` (C09) | **موجود** — أشكال line/block/card/tableRow واختبار مباشر | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
-| `AppEmptyState` (C08) | **موجود** — `AppIcon` وعنوان ووصف `AppKey` وslot اختياري للإجراء، مع compact واختبار مباشر | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
+| `Money` وAmountFormatter (C13) | **موجودان ومختبَران آلياً** في `core/foundation/money/`؛ اختبارات Money وAmountFormatter نجحت في run #44418088703 | استعمالهما في CAT-03 والتحقق البصري؛ لا يُعدّان منجزين قبل الشاشة الطيّارة |
+| `AppSkeleton` (C09) | **موجود ومختبَر آلياً** — أشكال line/block/card/tableRow؛ `app_skeleton_test.dart` نجح في run #44418088703 | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
+| `AppEmptyState` (C08) | **موجود ومختبَر آلياً** — `AppIcon` وعنوان ووصف `AppKey` وslot اختياري للإجراء، مع compact؛ `app_empty_state_test.dart` نجح في run #44418088703 | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
 | بقية المكوّنات (C01..C49، عدا ما سُجّل أعلاه) | **غير موجودة** | جديدة، بالترتيب التالي |
 
 ## 2. الترتيب
@@ -28,8 +31,8 @@
 
 | الخطوة | الشاشة الطيّارة | المكوّنات (الطبقة) | تعتمد على |
 |---|---|---|---|
-| **0** | — أساس (0-ب و0-د نُفِّذا في الكود، غير مختبَرين تشغيلاً؛ المراجعة المتبقية: C15 مؤجل إلى C24) | **0-أ** `Money` + C13 AmountFormatter (L0) · **0-ب** `AppDensity` على الحقل والزر (G4) · **0-ج** إصلاح `MessageViewWidgets` · **0-د** C15 عتبة 900 + C14 الأيقونات (بعد الموافقة على الحزمة) | قرار-70 للأولى |
-| **1** | AUTH-01 ثم AUTH-02 | **1-أ (متوازية):** C09 Skeleton · C08 EmptyState · C38 InlineBanner (L1) ثم **1-ب:** C47 AccessSnapshot + PermissionGate (L3) — منفذ على فرع العمل الحالي، والتحقق بانتظار CI | الخطوة 0 |
+| **0** | — أساس (0-ب و0-ج اختُبرا آلياً ونجحا في CI؛ C15 مؤجل إلى C24، وC14 ينتظر اعتماد حزمة الأيقونات) |
+| **1** | AUTH-01 ثم AUTH-02 | **1-أ (متوازية):** C09 Skeleton · C08 EmptyState · C38 InlineBanner (L1) — اختبارات الودجت ناجحة؛ الاستخدام في الشاشة ما زال مطلوباً. ثم **1-ب:** C47 AccessSnapshot + PermissionGate (L3) — اختبارات access/snapshot/gate وShell نجحت في run #44418088703 | الخطوة 0 |
 | **2** | AUTH-03 ثم AUTH-04 | C41 CountBadge · C07 ConfirmDialog · C12 ScopeSelector (L1–L2)، ثم C46 AppShell (L3) + C48 PageHeader/T3؛ وبعدهما قالب T5 | 1 |
 | **3** | CAT-07 (ماركات: أول جدول) | **3-أ (متوازية):** C02 AppBadge (+DocStatusBadge) · C49 (AppDropdown وAppMenu وAppSwitch فقط عند الحاجة) ثم **3-ب:** C04 SearchableDropdown · C10 FilterBar ثم **3-ج:** C01 DataTable · قالب T1 | 0-ب، 1 |
 | **4** | CAT-07 (بقية التبويبات) | C26 ColorSwatch · C20 Tabs · C21 Stepper · C22 TreeView (إن كان التصنيف شجرياً: تحقق من S47) | 3 |
