@@ -14,7 +14,7 @@
 | `TextStyle` متجاوباً | `context.ui.text.of(AppTextType)` | `ui_extension.dart` |
 | مسافة/حشوة/زاوية/أيقونة/حجم | `context.ui.spacing/padding/radius/icon/size` | `ui_extension.dart` |
 | تخطيطاً حسب الجهاز أو المساحة | `context.ui.grid.widget/adaptive` | `ui_extension.dart` |
-| زراً | `AppButton` | `widgets/app_button/app_button.dart` |
+| زراً | `AppButton` | `widgets/app_button/app_button.dart` |\n| حالة فارغة | `AppEmptyState` مع `AppKey` و`AppIconData` وslot اختياري لـ `AppButton` | `widgets/app_empty_state/app_empty_state.dart` |\n| هيكل تحميل | `AppSkeleton.line/block/card/tableRow` | `widgets/app_skeleton/app_skeleton.dart` |
 | رسالة للمستخدم | `MessageViewWidgets.showMessage` | `widgets/app_message/message_view_widgets.dart` |
 | نصاً مترجماً | `AppKey` من enum القسم (`CommonKeys` أو `AuthKeys` مثلاً) | `localization/keys/` أو `features/<feature>/presentation/localization/` |
 | طلب شبكة | `IApiClient` + `<Feature>Endpoints` | `network/` + `features/<f>/data/` |
@@ -141,7 +141,7 @@ AppButton(CommonKeys.cancel, variant: AppButtonVariant.outlined, onPressed: onCa
 AppButton(CommonKeys.save, isLoading: state.isBusy, onPressed: onSave);
 ```
 
-**متى Core Widget ومتى Flutter Widget؟**
+**حالة فارغة وهيكل تحميل:** مرّر `AppKey` للنصين و`AppIcons.*` للأيقونة إلى `AppEmptyState`؛ لا تستخدم نصوصاً خاماً. مرّر `AppButton(AppKey, ...)` في slot الإجراء. استخدم `AppSkeleton` بالشكل الذي يحافظ على أبعاد المحتوى المتوقع. كلا المكوّنين قيد المراجعة حتى ربطهما بالشاشات الطيّارة AUTH-04 وCAT-07.\n\n**متى Core Widget ومتى Flutter Widget؟**
 - Core Widget عندما يغطي الحاجة: `AppText` للنص، `AppButton` للأزرار، `AppIcon` و`AppImage` للأيقونات والصور، `AppPageAppBar` و`AppCard` للتجميع، و`AppNavigationBar`/`AppNavigationRail`/`AppSidebar` للتنقل. أبعاد وسُمك الحدود دائماً من التوكنز (`AppSpacing` و`AppRadius` و`AppBorderWidth`...) لا بأرقام حرفية.
 - Flutter Widget مباشرة للتخطيط الهيكلي (`Row` و`Column` و`Stack` و`Expanded` و`Padding` و`Scaffold` و`ListView`...) ولما ليس له مقابل في Core، مع قيم من `context.ui` والثيم.
 - لا تبنِ زراً/نصاً/شريط تنقل مشتركاً بديلاً.

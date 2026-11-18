@@ -17,7 +17,7 @@
 | `InlineBanner` (C38) | **مبني** في `app_inline_banner/` | ربطه بأخطاء القاعدة في `MessageViewWidgets` والتحقق باختباراته |
 | `AppCard` وAppDivider وAppText وأشرطة التنقل (Rail وSidebar وBar) | موجودة | تُستعمل كما هي في C46 |
 | `AppPageAppBar` | موجود (24 سطراً) | يُراجع مع PageHeader (C48) |
-| `Money` وAmountFormatter (C13) | **مراجعة** — نُفِّذا في `core/foundation/money/`؛ لم تُشغَّل الاختبارات بعد | إبقاؤهما قيد المراجعة حتى نجاح `flutter test`؛ ثم استعمالهما في CAT-03 |\n| `AppSkeleton` (C09) | **مراجعة** — نُفّذ بأشكال line/block/card/tableRow | لم يُستخدم في شاشة طيّارة بعد؛ المراجعة عند AUTH-04 وCAT-07 |
+| `Money` وAmountFormatter (C13) | **مراجعة** — نُفِّذا في `core/foundation/money/`؛ لم تُشغَّل الاختبارات بعد | إبقاؤهما قيد المراجعة حتى نجاح `flutter test`؛ ثم استعمالهما في CAT-03 |\n| `AppSkeleton` (C09) | **مراجعة** — نُفّذ بأشكال line/block/card/tableRow | لم يُستخدم في شاشة طيّارة بعد؛ المراجعة عند AUTH-04 وCAT-07 |\n| `AppEmptyState` (C08) | **مراجعة** — `AppIcon` وعنوان ووصف `AppKey` وslot اختياري للإجراء، مع compact | لم يُستخدم في شاشة طيّارة بعد؛ المراجعة عند AUTH-04 وCAT-07 |
 | `AppEmptyState` (C08) | **مراجعة** — نُفّذ بأيقونة وعنوان ووصف وslot للإجراء | لم يُستخدم في شاشة طيّارة بعد؛ المراجعة عند AUTH-04 وCAT-07 |\n| بقية المكوّنات (C01..C49، عدا ما سُجّل أعلاه) | **غير موجودة** | جديدة، بالترتيب التالي |
 
 ## 2. الترتيب
