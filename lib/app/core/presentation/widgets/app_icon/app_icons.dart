@@ -37,6 +37,12 @@ abstract final class AppIcons {
   static const profile = AppIconData.material(Icons.person_outline);
   static const profileActive = AppIconData.material(Icons.person);
 
+  // Message kinds (InlineBanner, MessageViewWidgets). `info` is above.
+  static const success = AppIconData.material(Icons.check_circle_outline);
+  static const error = AppIconData.material(Icons.error_outline);
+  static const warning = AppIconData.material(Icons.warning_amber_outlined);
+  static const close = AppIconData.material(Icons.close);
+
   /// Placeholder until a brand SVG asset (`AppIconData.svg(...)`) is added.
   static const google = AppIconData.material(Icons.account_circle_outlined);
 }

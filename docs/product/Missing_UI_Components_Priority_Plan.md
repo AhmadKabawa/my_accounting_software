@@ -624,7 +624,7 @@ source_documents:
 | C13 | AmountFormatter | CB0 | لم يبدأ | | CAT-03 | | | | |
 | C14 | الأيقونات | CB0 | لم يبدأ | | الإطار | | | | |
 | C15 | عتبة 900 | CB0 | لم يبدأ | | | | | | |
-| C38 | InlineBanner | CB0 | لم يبدأ | | AUTH-01 | | | | |
+| C38 | InlineBanner | CB0 | مراجعة | `feat/ui-c38-inline-banner-message-fix` | AUTH-01 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `AI_3_REPORT.md` |
 | C08 | EmptyState | CB0 | لم يبدأ | | AUTH-04 | | | | |
 | C09 | Skeleton | CB0 | لم يبدأ | | CAT-07 | | | | |
 | C46 | AppShell | CB0 | لم يبدأ | | AUTH-03/04 | | | | |

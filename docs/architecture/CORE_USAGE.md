@@ -167,8 +167,23 @@ MessageViewWidgets.showMessage(
 
 // تحميل ثم إغلاق:
 MessageViewWidgets.showMessage(context, messageKey: CommonKeys.loading, type: MessageType.loading);
-MessageViewWidgets.hideMessage(context);
+MessageViewWidgets.hideMessage(context); // يُخفي نافذة الرسالة فقط، لا يغلق الصفحة أبداً
 ```
+
+خطأ داخل النموذج (بدل SnackBar زائل)، من `Failure` مباشرة:
+
+```dart
+if (state.failure case final failure?)
+  MessageViewWidgets.failureBanner(failure, onDismiss: cubit.clearError),
+
+// أو رسالة بمفتاح ترجمة:
+const InlineBanner(
+  variant: InlineBannerVariant.warning,
+  messageKey: AuthKeys.someKey,
+)
+```
+
+لا تمرّر نص الخادم أو رسالة استثناء إلى `message:`/`title:` ولا إلى أي نص ظاهر.
 
 - الأنواع: `error` (من `colors.error`) و`success` و`warning` و`info` (من `semanticColors`) و`loading`.
 - `message: 'نص جاهز'` (String) مقبول للتوافق فقط؛ فضّل `messageKey`.

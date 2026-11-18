@@ -28,7 +28,7 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 
 | القسم | المكان |
 |---|---|
-| `CommonKeys` `FieldKeys` `ValidationKeys` `ErrorKeys` `ServerErrorKeys` `ErpErrorKeys` `ThemeKeys` `NavKeys` | `core/localization/keys/` |
+| `CommonKeys` `FieldKeys` `ValidationKeys` `ErrorKeys` `ServerErrorKeys` `ErpErrorKeys` `ThemeKeys` `NavKeys` `MessageKeys` | `core/localization/keys/` |
 | `AuthKeys` (بما فيها رسائل نجاح الدخول والتسجيل والخروج والاسترجاع) | `features/auth/presentation/localization/` |
 | `ProfileKeys` | `features/profile/presentation/localization/` |
 | `OnboardingKeys` | `features/on_boarding/presentation/localization/` |
