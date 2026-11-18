@@ -26,7 +26,6 @@ mixin EffectMixin<E> {
   /// How long a replayable effect waits for a listener before being dropped.
   Duration get replayWindow => const Duration(seconds: 5);
 
-  @override
   Stream<E> get effectStream => _effectController.stream;
 
   void emitEffect(E effect, {bool replayable = false}) {

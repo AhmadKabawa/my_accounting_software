@@ -446,6 +446,6 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - المصدر الوحيد هو `get_my_access()`; لا تنشئ دوراً افتراضياً ولا تستخدم `SystemRoles`.
 - استدعاء البيانات يمر عبر `AccessRemoteDataSource` ← `AccessRepository` ← `GetMyAccessUseCase`، ويستخدم `IApiClient` و`AppEndpoint`.
 - `AccessCubit.load()` بعد نجاح المصادقة؛ `retry()` عند الفشل؛ `clear()` عند logout أو sessionCleared. الحالة ليست جاهزة إلا بعد تحليل الرد كاملاً.
-- افحص `AccessState.isReady` قبل إظهار وظائف محمية. `can(Permission)` يرجع false في initial/loading/failure.
+- لفّ Shell بـ `AccessStatusGate` ليبقى المحتوى المحمي مخفياً أثناء التحميل والفشل ويعرض زر إعادة المحاولة. افحص `AccessState.isReady` قبل إظهار وظائف محمية. `can(Permission)` يرجع false في initial/loading/failure.
 - تغيير الفرع يتم عبر `selectBranch(id)` من الفروع المسموح بعرضها، ويعيد تحميل snapshot قبل اكتمال التبديل. `canOperateInSelectedBranch` يعبّر عن `can_operate` على الفرع المحدد.
 - لا تخزن الصلاحيات محلياً؛ راجع ADR-0006.

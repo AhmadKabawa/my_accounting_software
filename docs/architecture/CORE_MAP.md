@@ -35,7 +35,7 @@
 - `AccessRepository` و`GetMyAccessUseCase` يمرران النتائج عبر `ApiResult.toEither` و`RepositoryExecutor`.
 - `AccessCubit` (`access/cubit/access_cubit.dart`): حالات initial/loading/ready/failure، و`load/retry/clear/selectBranch`، و`can/canAny/canAll/require`. لا صلاحيات أثناء التحميل أو الفشل؛ تغيير الفرع المقبول يعيد تحميل اللقطة.
 - `KnownPermissionCodes` يسجل الأكواد المعروفة للتطبيق؛ أي كود غير معروف يُهمل وفق العقد. لا توجد أدوار افتراضية أو `SystemRoles`.
-- `PermissionGate` و`AccessContextX` يعتمدان اللقطة الناجحة فقط. هذا فحص UX وليس حماية؛ التفويض الحقيقي يفرضه الخادم وRLS.
+- `PermissionGate` و`AccessContextX` يعتمدان اللقطة الناجحة فقط. `AccessStatusGate` يحجب Shell أثناء التحميل والفشل ويعرض إعادة المحاولة. هذا فحص UX وليس حماية؛ التفويض الحقيقي يفرضه الخادم وRLS.
 - سياسة الذاكرة وإعادة التحميل والمسح موثقة في [ADR-0006](ADR/0006-access-snapshot-lifecycle.md). DI للصلاحيات في `access/di/access_di.dart`، ويُستدعى من Composition Root بعد تسجيل الشبكة.
 
 ### Dependency Injection

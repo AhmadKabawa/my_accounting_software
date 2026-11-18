@@ -24,7 +24,6 @@ class MyDartLoader extends AssetLoader {
     return switch (language) {
       AppLanguage.en => build(keys, (k) => k.en),
       AppLanguage.ar => build(keys, (k) => k.ar),
-      _ => build(keys, (k) => k.ar),
     };
   }
 }
