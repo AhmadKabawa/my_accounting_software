@@ -52,16 +52,16 @@ void main() {
   test(
     'requests the authenticated get_my_access RPC and parses its snapshot',
     () async {
-    final client = _ApiClient();
-    final source = AccessRemoteDataSourceImpl(apiClient: client);
+      final client = _ApiClient();
+      final source = AccessRemoteDataSourceImpl(apiClient: client);
 
-    final result = await source.getMyAccess();
+      final result = await source.getMyAccess();
 
-    expect(client.requestedPath, AccessEndpoints.getMyAccess);
-    expect(client.requestedPath?.path, '/rest/v1/rpc/get_my_access');
-    expect(client.requestedData, isEmpty);
-    expect(client.requestedAuth, isTrue);
-    expect(result, isA<ApiSuccess<AccessSnapshot>>());
+      expect(client.requestedPath, AccessEndpoints.getMyAccess);
+      expect(client.requestedPath?.path, '/rest/v1/rpc/get_my_access');
+      expect(client.requestedData, isEmpty);
+      expect(client.requestedAuth, isTrue);
+      expect(result, isA<ApiSuccess<AccessSnapshot>>());
       expect((result as ApiSuccess<AccessSnapshot>).data.userId, 'u1');
     },
   );
