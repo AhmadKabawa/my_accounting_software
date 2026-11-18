@@ -10,6 +10,16 @@ void main() {
       expect(Permissions.sales.view.covers(Permissions.sales.post), isFalse);
     });
 
+    test('global wildcard does not cover a catalog permission', () {
+      expect(const Permission('*').covers(Permissions.sales.view), isFalse);
+    });
+
+    test('module wildcard does not cover an action or a prefixed module', () {
+      const wildcard = Permission('sales.*');
+      expect(wildcard.covers(Permissions.sales.post), isFalse);
+      expect(wildcard.covers(const Permission('salesman.view')), isFalse);
+    });
+
     test('of() builds module.action', () {
       expect(Permission.of('sales', PermissionAction.post).value, 'sales.post');
     });
