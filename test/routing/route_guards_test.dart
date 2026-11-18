@@ -51,7 +51,10 @@ void main() {
     });
 
     test('leaves splash once done', () {
-      expect(run('/', onboarded: false, onboardingEnabled: true), '/onboarding');
+      expect(
+        run('/', onboarded: false, onboardingEnabled: true),
+        '/onboarding',
+      );
       expect(run('/'), '/login');
       expect(run('/', auth: authed), '/home');
     });
@@ -67,12 +70,21 @@ void main() {
 
   group('onboarding', () {
     test('forces onboarding for every other route', () {
-      expect(run('/home', onboarded: false, onboardingEnabled: true), '/onboarding');
-      expect(run('/login', onboarded: false, onboardingEnabled: true), '/onboarding');
+      expect(
+        run('/home', onboarded: false, onboardingEnabled: true),
+        '/onboarding',
+      );
+      expect(
+        run('/login', onboarded: false, onboardingEnabled: true),
+        '/onboarding',
+      );
     });
 
     test('allows the onboarding page itself', () {
-      expect(run('/onboarding', onboarded: false, onboardingEnabled: true), isNull);
+      expect(
+        run('/onboarding', onboarded: false, onboardingEnabled: true),
+        isNull,
+      );
     });
   });
 
