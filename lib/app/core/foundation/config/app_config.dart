@@ -14,6 +14,12 @@ class AppConfig {
   static const String appName = 'Vaude';
   static const String appVersion = '1.0.0';
 
+  // Features deferred from v1 (decision 65).
+  static const bool signupEnabled = false;
+  static const bool googleSignInEnabled = false;
+  static const bool forgotPasswordEnabled = false;
+  static const bool onboardingEnabled = false;
+
   // ════════════════════════════════════════════════════
   //  🔧 API CONFIG  ← غيّر هذا حسب الـ backend اللي ستستخدمه
   // ════════════════════════════════════════════════════
