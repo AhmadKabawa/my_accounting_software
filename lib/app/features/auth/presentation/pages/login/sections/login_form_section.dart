@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
+import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
