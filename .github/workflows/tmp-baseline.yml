@@ -1,0 +1,41 @@
+# TEMPORARY: per-file test baseline for fix/foundation-green-baseline. Delete before the PR is merged.
+name: tmp-baseline
+on:
+  push:
+    branches: ['fix/foundation-green-baseline']
+permissions:
+  contents: read
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.1'
+          cache: true
+      - run: flutter pub get
+      - name: Run every test file alone with a timeout
+        run: |
+          mkdir -p /tmp/out
+          run_one() {
+            f="$1"; n=$(echo "$f" | tr '/' '_')
+            timeout 150 flutter test "$f" --reporter expanded > "/tmp/out/$n.log" 2>&1
+            echo "$?" > "/tmp/out/$n.code"
+          }
+          export -f run_one
+          find test -name '*_test.dart' | sort | xargs -P 4 -I{} bash -c 'run_one {}'
+          echo "===== SUMMARY (0=pass, 124=HANG, other=fail)"
+          for c in /tmp/out/*.code; do echo "$(cat $c) ${c#/tmp/out/}"; done | sort | sed 's/.code$//'
+          echo "===== FAILURE DETAILS"
+          for c in /tmp/out/*.code; do
+            code=$(cat $c)
+            if [ "$code" != "0" ]; then
+              l="${c%.code}.log"
+              echo "################ ${c#/tmp/out/} (exit $code)"
+              grep -E "\[E\]|Expected:|Actual:|was thrown|TypeError|Null check|Timeout|No element|Bad state|\.dart:[0-9]+" "$l" | grep -v "package:flutter/\|package:flutter_test/\|dart:" | head -25
+              tail -3 "$l"
+            fi
+          done
+          true
