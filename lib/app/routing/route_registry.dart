@@ -10,7 +10,6 @@ import 'package:accounting_software/app/features/splash/presentation/routing/spl
 /// features are absent from the registry, not merely hidden in the UI.
 List<RouteItem> buildRouteRegistry({
   bool signupEnabled = AppConfig.signupEnabled,
-  bool googleSignInEnabled = AppConfig.googleSignInEnabled,
   bool forgotPasswordEnabled = AppConfig.forgotPasswordEnabled,
   bool onboardingEnabled = AppConfig.onboardingEnabled,
 }) => [
