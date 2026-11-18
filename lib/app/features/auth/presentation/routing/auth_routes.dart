@@ -1,3 +1,4 @@
+import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/routing/route_item.dart';
 
 /// Routes owned by the auth feature.
@@ -19,8 +20,10 @@ abstract final class AuthRoutes {
   /// `route_guards_test.dart` fails if a route is missing from it.
   static const List<RouteItem> all = [
     login,
-    register,
-    forgotPassword,
-    resetPassword,
+    if (AppConfig.signupEnabled) register,
+    if (AppConfig.forgotPasswordEnabled) ...[
+      forgotPassword,
+      resetPassword,
+    ],
   ];
 }
