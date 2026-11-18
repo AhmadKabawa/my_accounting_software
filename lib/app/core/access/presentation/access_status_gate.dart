@@ -29,26 +29,14 @@ class AccessStatusGate extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (isFailure)
-                    AppText(
-                      AccessKeys.loadFailed,
-                      textAlign: TextAlign.center,
-                    )
+                    AppText(AccessKeys.loadFailed, textAlign: TextAlign.center)
                   else ...[
                     const CircularProgressIndicator(),
-                    context.ui.spacing.gap(
-                      AppSpacing.md,
-                      axis: Axis.vertical,
-                    ),
-                    AppText(
-                      AccessKeys.loading,
-                      textAlign: TextAlign.center,
-                    ),
+                    context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+                    AppText(AccessKeys.loading, textAlign: TextAlign.center),
                   ],
                   if (isFailure) ...[
-                    context.ui.spacing.gap(
-                      AppSpacing.md,
-                      axis: Axis.vertical,
-                    ),
+                    context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
                     AppButton(
                       CommonKeys.retry,
                       onPressed: context.read<AccessCubit>().retry,

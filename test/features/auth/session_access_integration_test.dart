@@ -20,17 +20,19 @@ class _AccessRepository implements AccessRepository {
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async {
     calls++;
-    return const Right(AccessSnapshot(
-      userId: 'u1',
-      username: 'admin',
-      email: null,
-      isSuperAdmin: false,
-      roles: [],
-      permissions: {},
-      branches: [],
-      warehouses: [],
-      posTerminals: [],
-    ));
+    return const Right(
+      AccessSnapshot(
+        userId: 'u1',
+        username: 'admin',
+        email: null,
+        isSuperAdmin: false,
+        roles: [],
+        permissions: {},
+        branches: [],
+        warehouses: [],
+        posTerminals: [],
+      ),
+    );
   }
 }
 
@@ -45,9 +47,7 @@ void main() {
     cleared = StreamController<void>.broadcast(sync: true);
     authRepository = FakeAuthRepository();
     accessRepository = _AccessRepository();
-    access = AccessCubit(
-      getMyAccess: GetMyAccessUseCase(accessRepository),
-    );
+    access = AccessCubit(getMyAccess: GetMyAccessUseCase(accessRepository));
     session = SessionCubit(
       getCurrentUser: GetCurrentUserUseCase(repository: authRepository),
       logout: LogoutUseCase(repository: authRepository),
@@ -73,15 +73,18 @@ void main() {
     expect(access.state.isReady, isTrue);
   });
 
-  test('loads access after sign-in and clears it immediately on logout', () async {
-    session.onAuthenticated(testUser);
-    await Future<void>.delayed(Duration.zero);
-    expect(access.state.isReady, isTrue);
+  test(
+    'loads access after sign-in and clears it immediately on logout',
+    () async {
+      session.onAuthenticated(testUser);
+      await Future<void>.delayed(Duration.zero);
+      expect(access.state.isReady, isTrue);
 
-    await session.signOut();
-    expect(access.state.status, AccessStatus.initial);
-    expect(access.state.snapshot, isNull);
-  });
+      await session.signOut();
+      expect(access.state.status, AccessStatus.initial);
+      expect(access.state.snapshot, isNull);
+    },
+  );
 
   test('sessionCleared clears the access snapshot', () async {
     session.onAuthenticated(testUser);

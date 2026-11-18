@@ -17,46 +17,44 @@ class _Repository implements AccessRepository {
 }
 
 AccessSnapshot _snapshot() => const AccessSnapshot(
-      userId: 'u1',
-      username: 'admin',
-      email: null,
-      isSuperAdmin: false,
-      roles: [],
-      permissions: {},
-      branches: [],
-      warehouses: [],
-      posTerminals: [],
-    );
+  userId: 'u1',
+  username: 'admin',
+  email: null,
+  isSuperAdmin: false,
+  roles: [],
+  permissions: {},
+  branches: [],
+  warehouses: [],
+  posTerminals: [],
+);
 
 void main() {
-  testWidgets('blocks shell during loading and after failure; retry can unlock it',
-      (tester) async {
-    final repository = _Repository();
-    final access = AccessCubit(
-      getMyAccess: GetMyAccessUseCase(repository),
-    );
-    addTearDown(access.close);
+  testWidgets(
+    'blocks shell during loading and after failure; retry can unlock it',
+    (tester) async {
+      final repository = _Repository();
+      final access = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
+      addTearDown(access.close);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: BlocProvider.value(
-          value: access,
-          child: const AccessStatusGate(
-            child: Text('protected shell'),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider.value(
+            value: access,
+            child: const AccessStatusGate(child: Text('protected shell')),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('protected shell'), findsNothing);
+      expect(find.text('protected shell'), findsNothing);
 
-    await access.load();
-    await tester.pump();
-    expect(find.text('protected shell'), findsNothing);
+      await access.load();
+      await tester.pump();
+      expect(find.text('protected shell'), findsNothing);
 
-    repository.result = Right(_snapshot());
-    await access.retry();
-    await tester.pump();
-    expect(find.text('protected shell'), findsOneWidget);
-  });
+      repository.result = Right(_snapshot());
+      await access.retry();
+      await tester.pump();
+      expect(find.text('protected shell'), findsOneWidget);
+    },
+  );
 }

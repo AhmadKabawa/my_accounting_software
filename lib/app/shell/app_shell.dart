@@ -44,8 +44,7 @@ class AppShell extends StatelessWidget {
           destination,
     ];
     final current = visible.indexWhere(
-      (destination) =>
-          destination.branchIndex == navigationShell.currentIndex,
+      (destination) => destination.branchIndex == navigationShell.currentIndex,
     );
 
     if (current == -1 && visible.isNotEmpty) {
