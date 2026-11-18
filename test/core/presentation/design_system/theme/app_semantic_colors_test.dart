@@ -130,6 +130,7 @@ void main() {
       expect(seen, AppSemanticColors.light);
 
       await pump(AppTheme.dark());
+      await tester.pumpAndSettle();
       expect(seen, AppSemanticColors.dark);
       expect(
         AppSemanticColors.light.success,

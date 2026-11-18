@@ -33,9 +33,9 @@ enum QuickAction {
   /// Who sees the action (visibility only; the server enforces it).
   Permission get permission => switch (this) {
     QuickAction.newSale => Permissions.sales.create,
-    QuickAction.newPurchase => Permissions.purchases.create,
+    QuickAction.newPurchase => Permissions.purchasing.create,
     QuickAction.receivePayment => Permissions.finance.payments,
-    QuickAction.customers => Permissions.customers.view,
+    QuickAction.customers => Permissions.parties.view,
     QuickAction.reports => Permissions.reports.view,
   };
 }

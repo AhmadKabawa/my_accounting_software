@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
-import '../../../helpers/localized_app.dart';
+import '../../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/access/domain/access_repository.dart';
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';

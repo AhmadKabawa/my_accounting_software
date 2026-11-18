@@ -572,11 +572,12 @@ abstract final class ResponsiveHelper {
       case ResponsiveMode.adaptiveOnly:
         return size.forType(screenType);
       case ResponsiveMode.adaptiveScale:
-        return ScaleEngine.adaptiveScale(
+        final designValue = size.forType(screenType);
+        return ScaleEngine.scale(
           context,
-          size: size,
-          min: min ?? AppRadius.none,
-          max: max ?? AppRadius.full,
+          designValue: designValue,
+          minValue: (min ?? AppRadius.none).forType(screenType),
+          maxValue: (max ?? AppRadius.full).forType(screenType),
         );
     }
   }
