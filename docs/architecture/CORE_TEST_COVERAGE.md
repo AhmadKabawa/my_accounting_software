@@ -8,7 +8,7 @@
 
 | المجال | الاختبارات الموجودة | ما تغطيه |
 |---|---|---|
-| Access | `access_snapshot_test` و`access_cubit_test` و`permission_gate_test` و`permission_test` | تحليل عقد `get_my_access`، تجاهل الأكواد غير المعروفة، البريد null، رفض الحقول المشوهة، حالات التحميل/الفشل/النجاح، retry، clear، تبديل الفرع، حجب Shell، fail-closed و`Permission.covers` |
+| Access | `access_snapshot_test` و`access_remote_data_source_test` و`access_cubit_test` و`permission_gate_test` و`permission_test` | طلب RPC المصادق عليه وتحليل عقد `get_my_access`، تجاهل الأكواد غير المعروفة، البريد null، رفض الحقول المشوهة، حالات التحميل/الفشل/النجاح، retry، clear، تبديل الفرع، حجب Shell، fail-closed و`Permission.covers` |
 | DI | `di_singletons_test` | أن `TokenManager` Singleton فقط |
 | Error | `failure_translator_test` | ترجمة `Failure` مرة واحدة فقط |
 | Architecture (Platform) | `platform_isolation_test` | لا `dart:io`/`dart:html`/`kIsWeb`/`Platform.isX` خارج `core/platform/` والاستثناءات الموثقة؛ لم يُشغَّل |
