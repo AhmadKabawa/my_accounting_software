@@ -1,10 +1,14 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/access/domain/access_repository.dart';
+import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
+import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
-import 'package:accounting_software/app/core/access/role.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
@@ -15,6 +19,28 @@ import 'package:accounting_software/app/shell/destinations.dart';
 
 const _secret = Permission('shell_test.view');
 
+AccessSnapshot _snapshot(Set<Permission> permissions) => AccessSnapshot(
+  userId: 'u1',
+  username: 'shell-test',
+  email: null,
+  isSuperAdmin: false,
+  roles: const [],
+  permissions: permissions,
+  branches: const [],
+  warehouses: const [],
+  posTerminals: const [],
+);
+
+class _FakeAccessRepository implements AccessRepository {
+  _FakeAccessRepository(Set<Permission> permissions)
+    : result = Right(_snapshot(permissions));
+
+  Either<Failure, AccessSnapshot> result;
+
+  @override
+  Future<Either<Failure, AccessSnapshot>> getMyAccess() async => result;
+}
+
 AppDestination _dest(IconData icon, int branch, {Permission? permission}) =>
     AppDestination(
       item: NavBarItem(icon: icon, label: NavKeys.home),
@@ -22,16 +48,12 @@ AppDestination _dest(IconData icon, int branch, {Permission? permission}) =>
       permission: permission,
     );
 
-// Three destinations: a (everyone), b (needs [_secret]), c (everyone).
 final _destinations = [
   _dest(Icons.looks_one_outlined, 0),
   _dest(Icons.looks_two_outlined, 1, permission: _secret),
   _dest(Icons.looks_3_outlined, 2),
 ];
 
-const _owner = Role(id: 'o', name: 'o', permissions: {Permission.all});
-
-/// A mini shell route with three branches: /a, /b, /c.
 GoRouter _router() => GoRouter(
   initialLocation: '/a',
   routes: [
@@ -53,18 +75,24 @@ GoRouter _router() => GoRouter(
   ],
 );
 
-Future<({GoRouter router, AccessCubit access})> _pump(
+Future<({GoRouter router, AccessCubit access, _FakeAccessRepository repository})>
+_pump(
   WidgetTester tester,
   Size size, {
-  Role role = _owner,
+  Set<Permission> permissions = const {Permission.all},
   List<AppDestination>? destinations,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  final access = AccessCubit()..setRole(role);
+  final repository = _FakeAccessRepository(permissions);
+  final access = AccessCubit(
+    getMyAccess: GetMyAccessUseCase(repository),
+  );
+  await access.load();
   addTearDown(access.close);
+
   final router = destinations == null
       ? _router()
       : GoRouter(
@@ -93,7 +121,7 @@ Future<({GoRouter router, AccessCubit access})> _pump(
     ),
   );
   await tester.pumpAndSettle();
-  return (router: router, access: access);
+  return (router: router, access: access, repository: repository);
 }
 
 String _location(GoRouter router) =>
@@ -173,7 +201,11 @@ void main() {
 
   group('permissions', () {
     testWidgets('a hidden destination is not shown', (tester) async {
-      await _pump(tester, const Size(1400, 900), role: Role.none);
+      await _pump(
+        tester,
+        const Size(1400, 900),
+        permissions: const <Permission>{},
+      );
 
       expect(find.byIcon(Icons.looks_one_outlined), findsOneWidget);
       expect(find.byIcon(Icons.looks_two_outlined), findsNothing);
@@ -183,8 +215,11 @@ void main() {
     testWidgets('filtering does not shift the branch of later tabs', (
       tester,
     ) async {
-      // c is the 2nd visible item but branch 2.
-      final env = await _pump(tester, const Size(1400, 900), role: Role.none);
+      final env = await _pump(
+        tester,
+        const Size(1400, 900),
+        permissions: const <Permission>{},
+      );
 
       await tester.tap(find.byIcon(Icons.looks_3_outlined));
       await tester.pumpAndSettle();
@@ -200,7 +235,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(_location(env.router), '/b');
 
-      env.access.setRole(Role.none);
+      env.repository.result = Right(_snapshot(const <Permission>{}));
+      await env.access.load();
       await tester.pumpAndSettle();
 
       expect(_location(env.router), '/a');
