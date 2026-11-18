@@ -34,11 +34,6 @@ final Set<String> protectedRoutes = {
   ProfileRoutes.profile.path,
 };
 
-final Set<String> _authOnlyEntryRoutes = {
-  AuthRoutes.login.path,
-  if (AppConfig.signupEnabled) AuthRoutes.register.path,
-};
-
 /// دالة نقية تحدد وجهة التوجيه. المسارات المعطّلة تُترك لـ GoRouter
 /// كي يعرض NotFoundScreen لأنها غير موجودة في شجرة المسارات.
 String? resolveRedirect({
@@ -54,6 +49,17 @@ String? resolveRedirect({
   final onboarding = OnBoardingRoutes.onboarding.path;
   final login = AuthRoutes.login.path;
   final home = HomeRoutes.home.path;
+
+  final disabledRoutes = {
+    if (!signupEnabled) AuthRoutes.register.path,
+    if (!forgotPasswordEnabled) ...[
+      AuthRoutes.forgotPassword.path,
+      AuthRoutes.resetPassword.path,
+    ],
+    if (!onboardingEnabled) OnBoardingRoutes.onboarding.path,
+  };
+  // Let GoRouter's errorPageBuilder render NotFoundScreen for disabled paths.
+  if (disabledRoutes.contains(location)) return null;
 
   if (!splashDone) return location == splash ? null : splash;
 
