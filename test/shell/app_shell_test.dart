@@ -133,6 +133,10 @@ _pump(
       ),
     ),
   );
+  addTearDown(() async {
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+  });
   await _pumpAnimations(tester);
   return (router: router, access: access, repository: repository);
 }
