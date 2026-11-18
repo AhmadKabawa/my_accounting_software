@@ -62,6 +62,11 @@ void main() {
       AppTheme.light().colorScheme.error,
     );
 
+    tester
+        .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+        .clearSnackBars();
+    await tester.pumpAndSettle();
+
     await _pump(
       tester,
       (context) => MessageViewWidgets.showMessage(

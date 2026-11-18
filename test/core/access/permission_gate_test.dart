@@ -63,7 +63,6 @@ void main() {
       cubit.clear();
       expect(cubit.state.isReady, isFalse);
       await tester.pump();
-      await tester.pump();
       expect(find.text('denied'), findsOneWidget);
     },
   );

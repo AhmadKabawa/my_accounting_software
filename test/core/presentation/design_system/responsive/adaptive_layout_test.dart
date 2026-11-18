@@ -27,10 +27,17 @@ Future<Map<String, int>> _pump(
     desktop: desktop ? probe('desktop') : null,
   );
   // Align gives the child loose constraints, so the SizedBox width wins.
-  if (width != null)
+  if (width != null) {
     layout = Align(
-      child: SizedBox(width: width, child: layout),
+      alignment: Alignment.centerLeft,
+      child: OverflowBox(
+        alignment: Alignment.centerLeft,
+        minWidth: width,
+        maxWidth: width,
+        child: SizedBox(width: width, child: layout),
+      ),
     );
+  }
 
   await tester.pumpWidget(
     MediaQuery(

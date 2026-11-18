@@ -24,6 +24,8 @@ void main() {
     String location, {
     bool splashDone = true,
     bool onboarded = true,
+    bool signupEnabled = false,
+    bool forgotPasswordEnabled = false,
     bool onboardingEnabled = false,
     SessionStatus auth = unauth,
   }) => resolveRedirect(
@@ -31,6 +33,8 @@ void main() {
     splashDone: splashDone,
     onboarded: onboarded,
     session: auth,
+    signupEnabled: signupEnabled,
+    forgotPasswordEnabled: forgotPasswordEnabled,
     onboardingEnabled: onboardingEnabled,
   );
 
@@ -74,8 +78,18 @@ void main() {
 
   group('route classification', () {
     test('every registered route is explicitly public or protected', () {
-      for (final route in allRoutes) {
-        final isPublic = publicRoutes.contains(route.path);
+      final routeCatalog = buildRouteRegistry(
+        signupEnabled: true,
+        forgotPasswordEnabled: true,
+        onboardingEnabled: true,
+      );
+      final publicPaths = buildPublicRoutes(
+        signupEnabled: true,
+        forgotPasswordEnabled: true,
+        onboardingEnabled: true,
+      );
+      for (final route in routeCatalog) {
+        final isPublic = publicPaths.contains(route.path);
         final isProtected = protectedRoutes.contains(route.path);
         expect(
           isPublic != isProtected,
@@ -88,8 +102,18 @@ void main() {
     });
 
     test('every classified path belongs to a registered route', () {
-      final registered = allRoutes.map((r) => r.path).toSet();
-      for (final path in {...publicRoutes, ...protectedRoutes}) {
+      final routeCatalog = buildRouteRegistry(
+        signupEnabled: true,
+        forgotPasswordEnabled: true,
+        onboardingEnabled: true,
+      );
+      final publicPaths = buildPublicRoutes(
+        signupEnabled: true,
+        forgotPasswordEnabled: true,
+        onboardingEnabled: true,
+      );
+      final registered = routeCatalog.map((r) => r.path).toSet();
+      for (final path in {...publicPaths, ...protectedRoutes}) {
         expect(
           registered.contains(path),
           isTrue,
@@ -101,8 +125,13 @@ void main() {
     });
 
     test('route paths and names are unique across features', () {
-      final paths = allRoutes.map((r) => r.path).toList();
-      final names = allRoutes.map((r) => r.name).toList();
+      final routeCatalog = buildRouteRegistry(
+        signupEnabled: true,
+        forgotPasswordEnabled: true,
+        onboardingEnabled: true,
+      );
+      final paths = routeCatalog.map((r) => r.path).toList();
+      final names = routeCatalog.map((r) => r.name).toList();
       expect(paths.toSet().length, paths.length, reason: 'duplicate path');
       expect(names.toSet().length, names.length, reason: 'duplicate name');
     });
@@ -120,7 +149,11 @@ void main() {
           .fold<int>(0, (sum, n) => sum + n);
 
       expect(
-        allRoutes.length,
+        buildRouteRegistry(
+          signupEnabled: true,
+          forgotPasswordEnabled: true,
+          onboardingEnabled: true,
+        ).length,
         declared,
         reason:
             'a route declared in a feature is missing from its `all` list, or '
@@ -133,7 +166,11 @@ void main() {
         AuthRoutes.forgotPassword,
         AuthRoutes.resetPassword,
       ]) {
-        expect(run(route.path), isNull, reason: route.path);
+        expect(
+          run(route.path, forgotPasswordEnabled: true),
+          isNull,
+          reason: route.path,
+        );
       }
     });
   });
@@ -147,7 +184,7 @@ void main() {
 
     test('public routes stay open', () {
       expect(run('/login'), isNull);
-      expect(run('/register'), isNull);
+      expect(run('/register', signupEnabled: true), isNull);
       expect(run('/onboarding', onboardingEnabled: true), isNull);
     });
 
@@ -158,7 +195,7 @@ void main() {
 
     test('authenticated users are moved away from login/register', () {
       expect(run('/login', auth: authed), '/home');
-      expect(run('/register', auth: authed), '/home');
+      expect(run('/register', auth: authed, signupEnabled: true), '/home');
     });
   });
 }

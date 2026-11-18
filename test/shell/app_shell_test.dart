@@ -1,16 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import '../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/access/domain/access_repository.dart';
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
-import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
-import 'package:accounting_software/app/localization/key_registry.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
@@ -112,44 +110,22 @@ _pump(
         );
   addTearDown(router.dispose);
 
-  await EasyLocalization.ensureInitialized();
   await tester.pumpWidget(
-    EasyLocalization(
-      supportedLocales: const [Locale('ar'), Locale('en')],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('ar'),
-      assetLoader: MyDartLoader(allKeys),
-      child: Builder(
-        builder: (context) => BlocProvider.value(
-          value: access,
-          child: MaterialApp.router(
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            theme: AppTheme.light(),
-            routerConfig: router,
-          ),
-        ),
-      ),
+    BlocProvider.value(
+      value: access,
+      child: buildTestApp(router: router, theme: AppTheme.light()),
     ),
   );
-  addTearDown(() async {
-    await tester.pumpWidget(const SizedBox.shrink());
-    await tester.pump();
-  });
-  await _pumpAnimations(tester);
+  await tester.pumpAndSettle();
   return (router: router, access: access, repository: repository);
-}
-
-Future<void> _pumpAnimations(WidgetTester tester) async {
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 500));
 }
 
 String _location(GoRouter router) =>
     router.routerDelegate.currentConfiguration.uri.path;
 
 void main() {
+  setUpAll(() => useTranslations(const Locale('en')));
+
   group('the navigation follows the device', () {
     testWidgets('phone → bottom bar only', (tester) async {
       await _pump(tester, const Size(390, 844));
@@ -215,7 +191,7 @@ void main() {
       expect(_location(env.router), '/a');
 
       await tester.tap(find.byIcon(Icons.looks_3_outlined));
-      await _pumpAnimations(tester);
+      await tester.pumpAndSettle();
 
       expect(_location(env.router), '/c');
     });
@@ -244,7 +220,7 @@ void main() {
       );
 
       await tester.tap(find.byIcon(Icons.looks_3_outlined));
-      await _pumpAnimations(tester);
+      await tester.pumpAndSettle();
 
       expect(_location(env.router), '/c');
     });
@@ -254,12 +230,12 @@ void main() {
     ) async {
       final env = await _pump(tester, const Size(1400, 900));
       env.router.go('/b');
-      await _pumpAnimations(tester);
+      await tester.pumpAndSettle();
       expect(_location(env.router), '/b');
 
       env.repository.result = Right(_snapshot(const <Permission>{}));
       await env.access.load();
-      await _pumpAnimations(tester);
+      await tester.pumpAndSettle();
 
       expect(_location(env.router), '/a');
       expect(find.byIcon(Icons.looks_two_outlined), findsNothing);
