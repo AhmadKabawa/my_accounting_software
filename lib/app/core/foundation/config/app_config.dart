@@ -11,8 +11,7 @@ class AppConfig {
   static const AppMode appMode = AppMode.development;
 
   // App Info
-  // TODO: اسم مؤقت (خطأ إملائي ولا يخص المشروع)؛ الاسم الرسمي بانتظار التأكيد.
-  static const String appName = 'sports srore app';
+  static const String appName = 'Vaude';
   static const String appVersion = '1.0.0';
 
   // ════════════════════════════════════════════════════
