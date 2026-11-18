@@ -1,0 +1,72 @@
+name: tmp-vscode-baseline
+
+on:
+  push:
+    branches: ['fix/foundation-green-baseline']
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout vscode baseline (without the fixes)
+        uses: actions/checkout@v4
+        with:
+          ref: vscode
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.1'
+          cache: true
+
+      - name: Get dependencies
+        timeout-minutes: 5
+        run: flutter pub get
+
+      - name: Run each test file independently on vscode
+        timeout-minutes: 180
+        shell: bash
+        run: |
+          mkdir -p /tmp/vscode-baseline
+          failures=0
+          while IFS= read -r file; do
+            name="${file//\//_}"
+            log="/tmp/vscode-baseline/${name}.log"
+            echo "::group::${file}"
+            if flutter test "${file}" --timeout 60s --reporter expanded >"${log}" 2>&1; then
+              status=0
+              classification=PASSED
+            else
+              status=$?
+              if grep -Eiq 'Test timed out|TimeoutException|timed out after' "${log}"; then
+                classification=HUNG
+              else
+                classification=FAILED
+              fi
+              failures=$((failures + 1))
+            fi
+            printf '%s\t%s\t%s\n' "${classification}" "${status}" "${file}" | tee -a /tmp/vscode-baseline/summary.tsv
+            if [ "${status}" -ne 0 ]; then
+              echo "${classification} (exit ${status}): ${file}"
+              tail -n 35 "${log}"
+            fi
+            echo "::endgroup::"
+          done < <(find test -type f -name '*_test.dart' | sort)
+          echo "===== PER-FILE SUMMARY ====="
+          cat /tmp/vscode-baseline/summary.tsv
+          echo "===== TOTALS ====="
+          awk -F '\t' '$1 == "PASSED" { passed++ } $1 == "FAILED" { failed++ } $1 == "HUNG" { hung++ } END { printf "passed=%d failed=%d hung=%d\n", passed, failed, hung }' /tmp/vscode-baseline/summary.tsv
+          if [ "${failures}" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Upload per-file logs and summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-pre-fix-per-file-baseline
+          path: /tmp/vscode-baseline/
+          if-no-files-found: error
