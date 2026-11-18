@@ -331,10 +331,14 @@ abstract final class ResponsiveHelper {
     required AppSpacing? max,
     required ResponsiveMode mode,
   }) {
-    // null means "not set" — AppSpacing.none is a real value, so
-    // padding(all: md, left: none) really gives left = 0.
+    // Preserve the original API semantics: AppSpacing.none means that a
+    // side/group was not supplied, so a non-none vertical value still applies.
     AppSpacing pick(AppSpacing? side, AppSpacing? group) =>
-        side ?? group ?? all ?? AppSpacing.none;
+        side != null && side != AppSpacing.none
+        ? side
+        : group != null && group != AppSpacing.none
+        ? group
+        : all ?? AppSpacing.none;
 
     final sides = [
       pick(leading, horizontal),

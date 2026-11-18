@@ -109,18 +109,12 @@ class AppButtonStyle {
     mode: _adaptive,
   );
 
-  /// Icon buttons retain the design-system hit-area minimum even in compact
-  /// density. Density may shrink visual buttons, but must not shrink this
-  /// interactive target below the accessibility token.
+  /// Compact density also applies to desktop icon targets. On phones,
+  /// [AppDensityScope.compactHeight] returns null, preserving the natural
+  /// touch target and its accessibility floor.
   double get touchTarget {
     final natural = Rh.height(context, AppComponentSize.large, mode: _adaptive);
-    final compact = _densityHeight(natural);
-    final minimum = Rh.height(
-      context,
-      AppComponentSize.hitArea,
-      mode: _adaptive,
-    );
-    return compact < minimum ? minimum : compact;
+    return _densityHeight(natural);
   }
 
   BorderRadius get radius =>
