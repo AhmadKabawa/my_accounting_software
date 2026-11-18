@@ -1,6 +1,6 @@
 # تغطية اختبارات Core
 
-> تسجل هذه الوثيقة ملفات الاختبار الموجودة وما تغطيه والفجوات التي ظهرت في الفحص النصي. وجود ملف اختبار لا يثبت نجاحه، وغياب اختبار مباشر لا ينفي وجود تغطية غير مباشرة. اختبارات C47 أضيفت في هذا الفرع ولم تُشغّل محلياً بعد.
+> تسجل هذه الوثيقة ملفات الاختبار الموجودة وما تغطيه والفجوات التي ظهرت في الفحص النصي. وجود ملف اختبار لا يثبت نجاحه، وغياب اختبار مباشر لا ينفي وجود تغطية غير مباشرة. اختبارات C47 و`session_access_integration_test` أضيفت في هذا الفرع؛ نتيجة CI هي المرجع للتحقق بعد اكتمال التشغيل.
 
 ## ملفات الاختبار الموجودة (`test/core/`)
 
@@ -8,7 +8,7 @@
 
 | المجال | الاختبارات الموجودة | ما تغطيه |
 |---|---|---|
-| Access | `access_snapshot_test` و`access_cubit_test` و`permission_gate_test` و`permission_test` | تحليل عقد `get_my_access`، تجاهل الأكواد غير المعروفة، البريد null، رفض الحقول المشوهة، حالات التحميل/الفشل/النجاح، retry، clear، تبديل الفرع، fail-closed و`Permission.covers` |
+| Access | `access_snapshot_test` و`access_cubit_test` و`permission_gate_test` و`permission_test` | تحليل عقد `get_my_access`، تجاهل الأكواد غير المعروفة، البريد null، رفض الحقول المشوهة، حالات التحميل/الفشل/النجاح، retry، clear، تبديل الفرع، حجب Shell، fail-closed و`Permission.covers` |
 | DI | `di_singletons_test` | أن `TokenManager` Singleton فقط |
 | Error | `failure_translator_test` | ترجمة `Failure` مرة واحدة فقط |
 | Architecture (Platform) | `platform_isolation_test` | لا `dart:io`/`dart:html`/`kIsWeb`/`Platform.isX` خارج `core/platform/` والاستثناءات الموثقة؛ لم يُشغَّل |

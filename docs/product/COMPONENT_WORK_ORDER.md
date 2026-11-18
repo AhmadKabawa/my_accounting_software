@@ -2,25 +2,24 @@
 
 يكمّل [خطة المكوّنات](Missing_UI_Components_Priority_Plan.md) (الإصدار 2.1) بثلاثة أشياء: ما هو موجود في الكود ويحتاج استكمالاً، وترتيب البناء، وقوالب تكليف جاهزة لأي وكيل ذكاء اصطناعي أو مطوّر. **الخطة هي المرجع** لوصف كل مكوّن وقبوله؛ هذا الملف لا ينسخه.
 
-آخر تحديث: 2026-11-17. مبني على قراءة المصدر والتعديلات المسجلة؛ لم يُشغَّل Flutter في بيئة التنفيذ.
+آخر تحديث: 2026-11-18. تم تشغيل CI باستخدام Flutter 3.38.1؛ نجح `flutter pub get` و`flutter analyze --no-fatal-infos`. الاختبارات الكاملة ما زالت قيد الفحص، ولا يُعد نجاح التحليل دليلاً على نجاح الاختبارات.
 
 ## 1. الموجود في الكود وما يحتاج استكمالاً
 
 | المكوّن | الحالة | المطلوب |
 |---|---|---|
-| `AppButton` وAppIconButton | موجود، مرجع النمط (ملف widget + ملف `_style` بـ enums) | تطبيق `AppDensity` (G4) |
-| `AppTextField` | موجود (70 سطراً) | تطبيق `AppDensity` (DESIGN_SYSTEM بند 11، لم يُنفَّذ)؛ حالات الخطأ/القراءة فقط/الكلمة السرية إن نقصت |
-| `AppDensity` (توكن) | موجود ولا يستعمله أي widget | يُطبَّق على الحقل والزر ثم الجدول |
-| `MessageViewWidgets` | موجود، فيه 4 ملاحظات (الخطة §10: `hideMessage` قد يغلق الشاشة، الأخطاء بـ SnackBar زائل، أيقونات `Icons.*`، مسار النص الحر) | إصلاح، وأخطاء القاعدة تنتقل إلى `InlineBanner` |
+| `AppButton` وAppIconButton | موجودان، وAppButton مرجع النمط (ملف widget + ملف `_style` بـ enums) | `AppDensity` مطبق على AppButton؛ يراجع AppIconButton عند استعماله في شاشة فعلية |
+| `AppTextField` | موجود (70 سطراً) | `AppDensity` مطبق؛ حالات الخطأ/القراءة فقط/الكلمة السرية تُراجع مع الشاشة الطيّارة |
+| `AppDensity` (توكن) | موجود ويستعمله `AppButton` و`AppTextField` | يُطبَّق على الجدول عند بنائه |
+| `MessageViewWidgets` | موجود؛ أُصلح `hideMessage` وأضيف `failureBanner` المرتبط بـ C38 | تبقى مراجعة استخدام `AppIcon` والنصوص الحرة وفق الخطة §10 |
 | `AppIcon` | موجود، والأيقونات `Icons.*` ما زالت مستعملة داخل `core` (app_image والتنقل والرسائل) | C14: توحيد خلف `AppIcon` (حزمة الرموز بحاجة موافقتك) |
 | `AppImage` (347 سطراً) | موجود | أساس C36؛ يُقيَّم `cached_network_image` على الويب قبل C36 |
-| `InlineBanner` (C38) | **مبني** في `app_inline_banner/` | ربطه بأخطاء القاعدة في `MessageViewWidgets` والتحقق باختباراته |
+| `InlineBanner` (C38) | **مبني** في `app_inline_banner/` ومرتبط بـ `MessageViewWidgets.failureBanner` | التحقق النهائي من الاختبارات واستخدامه في الشاشة الطيّارة |
 | `AppCard` وAppDivider وAppText وأشرطة التنقل (Rail وSidebar وBar) | موجودة | تُستعمل كما هي في C46 |
 | `AppPageAppBar` | موجود (24 سطراً) | يُراجع مع PageHeader (C48) |
 | `Money` وAmountFormatter (C13) | **مراجعة** — نُفِّذا في `core/foundation/money/`؛ لم تُشغَّل الاختبارات بعد | إبقاؤهما قيد المراجعة حتى نجاح `flutter test`؛ ثم استعمالهما في CAT-03 |
-| `AppSkeleton` (C09) | **مراجعة** — نُفّذ بأشكال line/block/card/tableRow | لم يُستخدم في شاشة طيّارة بعد؛ المراجعة عند AUTH-04 وCAT-07 |
-| `AppEmptyState` (C08) | **مراجعة** — `AppIcon` وعنوان ووصف `AppKey` وslot اختياري للإجراء، مع compact | لم يُستخدم في شاشة طيّارة بعد؛ المراجعة عند AUTH-04 وCAT-07 |
-| `AppEmptyState` (C08) | **مراجعة** — نُفّذ بأيقونة وعنوان ووصف وslot للإجراء | لم يُستخدم في شاشة طيّارة بعد؛ المراجعة عند AUTH-04 وCAT-07 |
+| `AppSkeleton` (C09) | **موجود** — أشكال line/block/card/tableRow واختبار مباشر | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
+| `AppEmptyState` (C08) | **موجود** — `AppIcon` وعنوان ووصف `AppKey` وslot اختياري للإجراء، مع compact واختبار مباشر | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
 | بقية المكوّنات (C01..C49، عدا ما سُجّل أعلاه) | **غير موجودة** | جديدة، بالترتيب التالي |
 
 ## 2. الترتيب
@@ -30,8 +29,8 @@
 | الخطوة | الشاشة الطيّارة | المكوّنات (الطبقة) | تعتمد على |
 |---|---|---|---|
 | **0** | — أساس (0-ب و0-د نُفِّذا في الكود، غير مختبَرين تشغيلاً؛ المراجعة المتبقية: C15 مؤجل إلى C24) | **0-أ** `Money` + C13 AmountFormatter (L0) · **0-ب** `AppDensity` على الحقل والزر (G4) · **0-ج** إصلاح `MessageViewWidgets` · **0-د** C15 عتبة 900 + C14 الأيقونات (بعد الموافقة على الحزمة) | قرار-70 للأولى |
-| **1** | AUTH-01 ثم AUTH-02 | **1-أ (متوازية):** C09 Skeleton · C08 EmptyState · C38 InlineBanner (L1) ثم **1-ب:** C47 PermissionGate · C46 AppShell (L3) · C48 قالب T3 | الخطوة 0 |
-| **2** | AUTH-03 ثم AUTH-04 | C41 CountBadge · C07 ConfirmDialog · C12 ScopeSelector (L1–L2) ثم قالب T5 | 1 |
+| **1** | AUTH-01 ثم AUTH-02 | **1-أ (متوازية):** C09 Skeleton · C08 EmptyState · C38 InlineBanner (L1) ثم **1-ب:** C47 AccessSnapshot + PermissionGate (L3) — منفذ على فرع العمل الحالي، والتحقق بانتظار CI | الخطوة 0 |
+| **2** | AUTH-03 ثم AUTH-04 | C41 CountBadge · C07 ConfirmDialog · C12 ScopeSelector (L1–L2)، ثم C46 AppShell (L3) + C48 PageHeader/T3؛ وبعدهما قالب T5 | 1 |
 | **3** | CAT-07 (ماركات: أول جدول) | **3-أ (متوازية):** C02 AppBadge (+DocStatusBadge) · C49 (AppDropdown وAppMenu وAppSwitch فقط عند الحاجة) ثم **3-ب:** C04 SearchableDropdown · C10 FilterBar ثم **3-ج:** C01 DataTable · قالب T1 | 0-ب، 1 |
 | **4** | CAT-07 (بقية التبويبات) | C26 ColorSwatch · C20 Tabs · C21 Stepper · C22 TreeView (إن كان التصنيف شجرياً: تحقق من S47) | 3 |
 | **5** | CAT-01 ثم CAT-02 | C24 DetailPane · C44 ChipSelect · C34 MoneyText · قالب T4 ثم C23 VariantMatrixGrid · C36 ImageUploader · C43 DynamicFormRenderer (`features/catalog`) | 0-أ، 4 |
@@ -41,7 +40,7 @@
 
 ### قرارات تحتاجها قبل بعض الخطوات (R11: لا حزمة بلا قرار)
 
-1. **`decimal` و`intl`** (الخطوة 0-أ): أُضيفت `decimal` (`^3.2.4`) فقط؛ لم تُضف `intl` مباشرة لأن التنسيق يدوي (ADR-0005). **لم يُشغَّل `flutter pub get`**، فتوافق `decimal` مع قيد `intl` الذي يثبّته Flutter، ومع الويب والمنصات الأخرى، غير مؤكد وعلى المراجع التحقق منه.
+1. **`decimal` و`intl`** (الخطوة 0-أ): أُضيفت `decimal` (`^3.2.4`) فقط؛ لم تُضف `intl` مباشرة لأن التنسيق يدوي (ADR-0005). نجح `flutter pub get` على Flutter 3.38.1 في CI؛ لم تُضف `intl` مباشرة لأن التنسيق الحالي يدوي (ADR-0005). لا يعني نجاح حل الاعتماديات اكتمال اختبارات المنصات أو الويب.
 2. **حزمة الأيقونات** (0-د): توصية الخطة Material Symbols (مثل `material_symbols_icons`)؛ لم تُعتمد بعد. إلى أن تُعتمد يبقى `Icons.*` خلف `AppIcon`.
 3. **منتقي الملفات/الصور** (5، C36): لم يُختر؛ يجب أن يعيد بايتات (`PLATFORM_STRATEGY` P3).
 4. **تقييم `cached_network_image` و`hive`** (قبل C36): تقول الخطة §10 إن كليهما قد يكون غير مصان وإن الأول بلا تخزين مؤقت على الويب؛ تُقيَّم قبل الاعتماد عليهما، لم تُتحقق هنا.
