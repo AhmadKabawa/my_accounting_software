@@ -14,7 +14,7 @@ List<RouteItem> buildRouteRegistry({
   bool onboardingEnabled = AppConfig.onboardingEnabled,
 }) => [
   ...SplashRoutes.all,
-  if (onboardingEnabled) ...OnBoardingRoutes.all,
+  ...OnBoardingRoutes.all(enabled: onboardingEnabled),
   AuthRoutes.login,
   if (signupEnabled) AuthRoutes.register,
   if (forgotPasswordEnabled) ...[

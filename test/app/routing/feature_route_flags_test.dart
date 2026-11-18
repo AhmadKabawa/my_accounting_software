@@ -75,6 +75,12 @@ void main() {
     });
 
     test('enabled onboarding route is registered and public', () {
+      expect(
+        OnBoardingRoutes.all(enabled: true),
+        [OnBoardingRoutes.onboarding],
+      );
+      expect(OnBoardingRoutes.all(enabled: false), isEmpty);
+
       final routes = buildRouteRegistry(
         onboardingEnabled: true,
       ).map((route) => route.path).toSet();

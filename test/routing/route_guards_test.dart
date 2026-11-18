@@ -24,12 +24,14 @@ void main() {
     String location, {
     bool splashDone = true,
     bool onboarded = true,
+    bool onboardingEnabled = false,
     SessionStatus auth = unauth,
   }) => resolveRedirect(
     location: location,
     splashDone: splashDone,
     onboarded: onboarded,
     session: auth,
+    onboardingEnabled: onboardingEnabled,
   );
 
   final authed = SessionAuthenticated(_user());
@@ -45,7 +47,7 @@ void main() {
     });
 
     test('leaves splash once done', () {
-      expect(run('/', onboarded: false), '/onboarding');
+      expect(run('/', onboarded: false, onboardingEnabled: true), '/onboarding');
       expect(run('/'), '/login');
       expect(run('/', auth: authed), '/home');
     });
@@ -61,12 +63,12 @@ void main() {
 
   group('onboarding', () {
     test('forces onboarding for every other route', () {
-      expect(run('/home', onboarded: false), '/onboarding');
-      expect(run('/login', onboarded: false), '/onboarding');
+      expect(run('/home', onboarded: false, onboardingEnabled: true), '/onboarding');
+      expect(run('/login', onboarded: false, onboardingEnabled: true), '/onboarding');
     });
 
     test('allows the onboarding page itself', () {
-      expect(run('/onboarding', onboarded: false), isNull);
+      expect(run('/onboarding', onboarded: false, onboardingEnabled: true), isNull);
     });
   });
 
@@ -146,7 +148,7 @@ void main() {
     test('public routes stay open', () {
       expect(run('/login'), isNull);
       expect(run('/register'), isNull);
-      expect(run('/onboarding'), isNull);
+      expect(run('/onboarding', onboardingEnabled: true), isNull);
     });
 
     test('authenticated users reach protected routes', () {
