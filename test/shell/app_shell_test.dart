@@ -133,8 +133,13 @@ _pump(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  await _pumpAnimations(tester);
   return (router: router, access: access, repository: repository);
+}
+
+Future<void> _pumpAnimations(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 String _location(GoRouter router) =>
@@ -206,7 +211,7 @@ void main() {
       expect(_location(env.router), '/a');
 
       await tester.tap(find.byIcon(Icons.looks_3_outlined));
-      await tester.pumpAndSettle();
+      await _pumpAnimations(tester);
 
       expect(_location(env.router), '/c');
     });
@@ -235,7 +240,7 @@ void main() {
       );
 
       await tester.tap(find.byIcon(Icons.looks_3_outlined));
-      await tester.pumpAndSettle();
+      await _pumpAnimations(tester);
 
       expect(_location(env.router), '/c');
     });
@@ -245,12 +250,12 @@ void main() {
     ) async {
       final env = await _pump(tester, const Size(1400, 900));
       env.router.go('/b');
-      await tester.pumpAndSettle();
+      await _pumpAnimations(tester);
       expect(_location(env.router), '/b');
 
       env.repository.result = Right(_snapshot(const <Permission>{}));
       await env.access.load();
-      await tester.pumpAndSettle();
+      await _pumpAnimations(tester);
 
       expect(_location(env.router), '/a');
       expect(find.byIcon(Icons.looks_two_outlined), findsNothing);
