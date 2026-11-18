@@ -66,12 +66,7 @@ GoRouter _router() => GoRouter(
       branches: [
         for (final path in ['/a', '/b', '/c'])
           StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: path,
-                builder: (_, _) => Text(path),
-              ),
-            ],
+            routes: [GoRoute(path: path, builder: (_, _) => Text(path))],
           ),
       ],
     ),

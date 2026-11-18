@@ -20,25 +20,23 @@ class _Repository implements AccessRepository {
 }
 
 AccessSnapshot _snapshot() => const AccessSnapshot(
-      userId: 'u1',
-      username: 'admin',
-      email: null,
-      isSuperAdmin: false,
-      roles: [],
-      permissions: {},
-      branches: [],
-      warehouses: [],
-      posTerminals: [],
-    );
+  userId: 'u1',
+  username: 'admin',
+  email: null,
+  isSuperAdmin: false,
+  roles: [],
+  permissions: {},
+  branches: [],
+  warehouses: [],
+  posTerminals: [],
+);
 
 void main() {
   testWidgets(
     'blocks shell during loading and after failure; retry can unlock it',
     (tester) async {
       final repository = _Repository();
-      final access = AccessCubit(
-        getMyAccess: GetMyAccessUseCase(repository),
-      );
+      final access = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
       addTearDown(access.close);
 
       await EasyLocalization.ensureInitialized();
@@ -55,9 +53,7 @@ void main() {
               locale: context.locale,
               home: BlocProvider.value(
                 value: access,
-                child: const AccessStatusGate(
-                  child: Text('protected shell'),
-                ),
+                child: const AccessStatusGate(child: Text('protected shell')),
               ),
             ),
           ),
