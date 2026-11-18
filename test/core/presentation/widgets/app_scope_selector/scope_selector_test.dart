@@ -226,8 +226,7 @@ void main() {
     testWidgets('a long name does not overflow a narrow space', (tester) async {
       const long = ScopeOption(
         id: 'long',
-        name:
-            'A very long branch name that does not fit in the top bar at all',
+        name: 'A very long branch name that does not fit in the top bar at all',
         viewOnly: true,
       );
       for (final direction in TextDirection.values) {

@@ -61,9 +61,8 @@ Future<void> _open(
   await tester.pumpAndSettle();
 }
 
-Finder _button(Object labelKey) => find.byWidgetPredicate(
-  (w) => w is AppButton && w.labelKey == labelKey,
-);
+Finder _button(Object labelKey) =>
+    find.byWidgetPredicate((w) => w is AppButton && w.labelKey == labelKey);
 
 AppButton _appButton(WidgetTester tester, Object labelKey) =>
     tester.widget<AppButton>(_button(labelKey));

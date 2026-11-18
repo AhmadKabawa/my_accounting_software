@@ -66,9 +66,8 @@ class CountBadgeStyle {
   /// Diameter of the dot style.
   double get dotSize => AppSpacing.sm.of(context);
 
-  EdgeInsets get padding => EdgeInsets.symmetric(
-    horizontal: AppSpacing.xs.of(context),
-  );
+  EdgeInsets get padding =>
+      EdgeInsets.symmetric(horizontal: AppSpacing.xs.of(context));
 
   BorderRadius get radius => AppRadius.full.circular(context);
 
