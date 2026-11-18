@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/routing/go_router_refresh_stream.dart';
 import 'package:accounting_software/app/routing/not_found_screen.dart';
@@ -78,18 +79,19 @@ class AppRouter {
       /// ─────────────────────────────────────────
       /// Onboarding
       /// ─────────────────────────────────────────
-      GoRoute(
-        path: OnBoardingRoutes.onboarding.path,
-        name: OnBoardingRoutes.onboarding.name,
-        pageBuilder: (context, state) => RouteTransitions.slide(
-          context,
-          state,
-          BlocProvider(
-            create: (context) => sl<OnBoardingCubit>(),
-            child: OnBoardingScreen(),
+      if (AppConfig.onboardingEnabled)
+        GoRoute(
+          path: OnBoardingRoutes.onboarding.path,
+          name: OnBoardingRoutes.onboarding.name,
+          pageBuilder: (context, state) => RouteTransitions.slide(
+            context,
+            state,
+            BlocProvider(
+              create: (context) => sl<OnBoardingCubit>(),
+              child: OnBoardingScreen(),
+            ),
           ),
         ),
-      ),
 
       // ─────────────────────────────────────────
       // ثانياً: صفحات المصادقة
@@ -111,44 +113,47 @@ class AppRouter {
       /// ─────────────────────────────────────────
       /// Register
       /// ─────────────────────────────────────────
-      GoRoute(
-        path: AuthRoutes.register.path,
-        name: AuthRoutes.register.name,
-        pageBuilder: (context, state) => RouteTransitions.slide(
-          context,
-          state,
-          _withAuthFlow(const SignUpScreen()),
+      if (AppConfig.signupEnabled)
+        GoRoute(
+          path: AuthRoutes.register.path,
+          name: AuthRoutes.register.name,
+          pageBuilder: (context, state) => RouteTransitions.slide(
+            context,
+            state,
+            _withAuthFlow(const SignUpScreen()),
+          ),
         ),
-      ),
 
       /// ─────────────────────────────────────────
       /// Password recovery: e-mail → code + new password
       /// ─────────────────────────────────────────
-      GoRoute(
-        path: AuthRoutes.forgotPassword.path,
-        name: AuthRoutes.forgotPassword.name,
-        pageBuilder: (context, state) => RouteTransitions.slide(
-          context,
-          state,
-          _withAuthFlow(const ForgotPasswordScreen()),
-        ),
-      ),
-      GoRoute(
-        path: AuthRoutes.resetPassword.path,
-        name: AuthRoutes.resetPassword.name,
-        // Opened without an e-mail (deep link, refresh): start over.
-        redirect: (context, state) =>
-            (state.uri.queryParameters['email'] ?? '').isEmpty
-            ? AuthRoutes.forgotPassword.path
-            : null,
-        pageBuilder: (context, state) => RouteTransitions.slide(
-          context,
-          state,
-          _withAuthFlow(
-            ResetPasswordScreen(email: state.uri.queryParameters['email']!),
+      if (AppConfig.forgotPasswordEnabled)
+        GoRoute(
+          path: AuthRoutes.forgotPassword.path,
+          name: AuthRoutes.forgotPassword.name,
+          pageBuilder: (context, state) => RouteTransitions.slide(
+            context,
+            state,
+            _withAuthFlow(const ForgotPasswordScreen()),
           ),
         ),
-      ),
+      if (AppConfig.forgotPasswordEnabled)
+        GoRoute(
+          path: AuthRoutes.resetPassword.path,
+          name: AuthRoutes.resetPassword.name,
+          // Opened without an e-mail (deep link, refresh): start over.
+          redirect: (context, state) =>
+              (state.uri.queryParameters['email'] ?? '').isEmpty
+              ? AuthRoutes.forgotPassword.path
+              : null,
+          pageBuilder: (context, state) => RouteTransitions.slide(
+            context,
+            state,
+            _withAuthFlow(
+              ResetPasswordScreen(email: state.uri.queryParameters['email']!),
+            ),
+          ),
+        ),
 
       /// ─────────────────────────────────────────
       /// MAIN APP (adaptive shell: bottom bar / rail / sidebar)
@@ -220,7 +225,7 @@ class AppRouter {
     BuildContext context,
     GoRouterState state,
   ) async => resolveRedirect(
-    location: state.matchedLocation,
+    location: state.uri.path,
     splashDone: splashCubit.state is SplashDone,
     onboarded: await settings.isOnboarded(),
     session: session.current,

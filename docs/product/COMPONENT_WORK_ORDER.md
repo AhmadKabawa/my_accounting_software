@@ -14,9 +14,10 @@
 | `MessageViewWidgets` | موجود، فيه 4 ملاحظات (الخطة §10: `hideMessage` قد يغلق الشاشة، الأخطاء بـ SnackBar زائل، أيقونات `Icons.*`، مسار النص الحر) | إصلاح، وأخطاء القاعدة تنتقل إلى `InlineBanner` |
 | `AppIcon` | موجود، والأيقونات `Icons.*` ما زالت مستعملة داخل `core` (app_image والتنقل والرسائل) | C14: توحيد خلف `AppIcon` (حزمة الرموز بحاجة موافقتك) |
 | `AppImage` (347 سطراً) | موجود | أساس C36؛ يُقيَّم `cached_network_image` على الويب قبل C36 |
+| `InlineBanner` (C38) | **مبني** في `app_inline_banner/` | ربطه بأخطاء القاعدة في `MessageViewWidgets` والتحقق باختباراته |
 | `AppCard` وAppDivider وAppText وأشرطة التنقل (Rail وSidebar وBar) | موجودة | تُستعمل كما هي في C46 |
 | `AppPageAppBar` | موجود (24 سطراً) | يُراجع مع PageHeader (C48) |
-| `Money` وAmountFormatter (C13) | نُفِّذا في `core/foundation/money/` (فرع المراجعة، لم يُشغَّل Flutter) | مراجعة وتشغيل الاختبارات، ثم استعمالهما في CAT-03 |
+| `Money` وAmountFormatter (C13) | **مراجعة** — نُفِّذا في `core/foundation/money/`؛ لم تُشغَّل الاختبارات بعد | إبقاؤهما قيد المراجعة حتى نجاح `flutter test`؛ ثم استعمالهما في CAT-03 |
 | بقية المكوّنات (C01..C49) | **غير موجودة** | جديدة، بالترتيب التالي |
 
 ## 2. الترتيب

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
@@ -74,16 +75,17 @@ class _LoginFormSectionState extends State<LoginFormSection> {
             validator: (v) =>
                 AppValidator.validate(v, [ValidationRule.required]),
           ),
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: AppButton(
-              AuthKeys.forgotPassword,
-              variant: AppButtonVariant.text,
-              size: AppButtonSize.small,
-              onPressed: () =>
-                  context.pushNamed(AuthRoutes.forgotPassword.name),
+          if (AppConfig.forgotPasswordEnabled)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: AppButton(
+                AuthKeys.forgotPassword,
+                variant: AppButtonVariant.text,
+                size: AppButtonSize.small,
+                onPressed: () =>
+                    context.pushNamed(AuthRoutes.forgotPassword.name),
+              ),
             ),
-          ),
           gap,
           AppButton(
             AuthKeys.signIn,
@@ -92,19 +94,24 @@ class _LoginFormSectionState extends State<LoginFormSection> {
             onPressed: _submit,
           ),
           gap,
-          const AppDivider(labelKey: AuthKeys.orSignInWith),
-          gap,
-          GoogleSignInButton(
-            isLoading: loading,
-            onPressed: () => context.read<AuthFlowCubit>().signInWithGoogle(),
-          ),
-          gap,
-          AppButton(
-            AuthKeys.noAccount,
-            variant: AppButtonVariant.text,
-            size: AppButtonSize.small,
-            onPressed: () => context.pushNamed(AuthRoutes.register.name),
-          ),
+          if (AppConfig.googleSignInEnabled) ...[
+            const AppDivider(labelKey: AuthKeys.orSignInWith),
+            gap,
+            GoogleSignInButton(
+              isLoading: loading,
+              onPressed: () =>
+                  context.read<AuthFlowCubit>().signInWithGoogle(),
+            ),
+          ],
+          if (AppConfig.signupEnabled) ...[
+            gap,
+            AppButton(
+              AuthKeys.noAccount,
+              variant: AppButtonVariant.text,
+              size: AppButtonSize.small,
+              onPressed: () => context.pushNamed(AuthRoutes.register.name),
+            ),
+          ],
         ],
       ),
     );
