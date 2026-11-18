@@ -29,7 +29,6 @@ void main() {
       expect(publicRoutes, isNot(contains(OnBoardingRoutes.onboarding.path)));
     });
 
-
     test('direct links to disabled routes are left for the not-found page', () {
       const session = SessionUnauthenticated();
       final disabledPaths = [
@@ -92,12 +91,15 @@ void main() {
         onboardingEnabled: true,
       ).map((route) => route.path).toSet();
 
-      expect(routes, containsAll([
-        AuthRoutes.register.path,
-        AuthRoutes.forgotPassword.path,
-        AuthRoutes.resetPassword.path,
-        OnBoardingRoutes.onboarding.path,
-      ]));
+      expect(
+        routes,
+        containsAll([
+          AuthRoutes.register.path,
+          AuthRoutes.forgotPassword.path,
+          AuthRoutes.resetPassword.path,
+          OnBoardingRoutes.onboarding.path,
+        ]),
+      );
     });
   });
 }
