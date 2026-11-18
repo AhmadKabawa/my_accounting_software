@@ -1,9 +1,22 @@
 part of 'access_cubit.dart';
 
+enum AccessStatus { initial, loading, ready, failure }
+
 class AccessState extends Equatable {
-  final Role role;
-  const AccessState(this.role);
+  const AccessState({
+    this.status = AccessStatus.initial,
+    this.snapshot,
+    this.failure,
+    this.selectedBranchId,
+  });
+
+  final AccessStatus status;
+  final AccessSnapshot? snapshot;
+  final Failure? failure;
+  final int? selectedBranchId;
+
+  bool get isReady => status == AccessStatus.ready && snapshot != null;
 
   @override
-  List<Object?> get props => [role];
+  List<Object?> get props => [status, snapshot, failure, selectedBranchId];
 }

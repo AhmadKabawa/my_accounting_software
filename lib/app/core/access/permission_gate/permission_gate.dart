@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 
-/// يعرض [child] فقط إذا كان للدور الحالي [permission]، وإلا يعرض [fallback].
-///
-/// للتحكم في الظهور فقط، وليس حماية: الخادم هو من يفرض الصلاحية.
+/// UI visibility only. Database policies remain the authorization boundary.
 class PermissionGate extends StatelessWidget {
   const PermissionGate({
     super.key,
@@ -21,7 +19,11 @@ class PermissionGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<AccessCubit, AccessState, bool>(
-      selector: (state) => state.role.allows(permission),
+      selector: (state) =>
+          state.isReady &&
+          state.snapshot!.permissions.any(
+            (granted) => granted.covers(permission),
+          ),
       builder: (context, allowed) => allowed ? child : fallback,
     );
   }

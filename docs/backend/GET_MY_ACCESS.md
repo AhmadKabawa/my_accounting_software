@@ -4,13 +4,9 @@
 
 ## ما فُحص فعلاً
 
-عينة حقيقية من قاعدة المشروع `test vaude store with claude` بتاريخ 2026-11-16، للحساب `admin` (SUPER_ADMIN)، داخل Transaction قراءة فقط انتهت بـ `ROLLBACK` (بتعيين JWT claims ثم دور `authenticated` في SQL). **لم يُفحص** بعد:
+تم فحص تعريف الدالة المنشور في قاعدة المشروع `test vaude store with claude` بتاريخ 2026-11-17 عبر `pg_get_functiondef`: التوقيع `public.get_my_access()` بلا معاملات، نوع الإرجاع `jsonb`، وتستند الدالة إلى `auth.uid()` ومستخدم فعّال في `public.users`. كما فُحصت أنواع أعمدة الهوية والنطاقات في قاعدة البيانات. عينة الرد السابقة موثقة أدناه؛ لم يُنفّذ بعد استدعاء REST فعلي بتوكن مستخدم.
 
-- مستخدم غير مدير (MANAGER أو AUDITOR أو CASHIER).
-- الاستدعاء عبر REST (`POST /rest/v1/rpc/get_my_access`) بتوكن دخول حقيقي، فغلاف الرد أدناه ناتج عن `select` في SQL.
-- حساب معطّل، أو مستخدم بلا فروع، أو مستخدم غير موجود في `users`.
-
-يُعاد فحص هذه الحالات عند بناء AUTH-01 بمستخدمي الاختبار (قرار-81)، ثم يُحدَّث هذا الملف.
+لم تُفحص بعد حالات مستخدم غير مدير (MANAGER أو AUDITOR أو CASHIER)، أو حساب معطّل، أو مستخدم بلا فروع، أو مستخدم غير موجود في `users`. يُعاد فحصها عند بناء AUTH-01 بمستخدمي الاختبار (قرار-81).
 
 ## شكل الرد (من العينة)
 
@@ -20,7 +16,7 @@
 {
   "user_id": "<uuid>",
   "username": "admin",
-  "email": "<البريد المسجَّل في Auth>",
+  "email": "<البريد المسجَّل في Auth أو null>",
   "is_super_admin": true,
   "roles": [{ "code": "SUPER_ADMIN", "name": "مدير النظام" }],
   "permissions": ["accounting.manage", "…"],
@@ -41,13 +37,15 @@
 |---|---|---|
 | `user_id` | uuid | هو `auth.users.id` |
 | `username` | نص | |
-| `email` | نص | البريد في Auth؛ قد يكون حقيقياً (انظر قرار-66) |
+| `email` | نص أو null | عمود `public.users.email` يسمح بـ null |
 | `is_super_admin` | منطقي | يتجاوز فحوص الفروع في القاعدة؛ لا يغني الواجهة عن قراءة `permissions` |
 | `roles[]` | `{code, name}` | تعدد الأدوار مدعوم (قرار-40) |
 | `permissions[]` | نصوص | أكواد مثل `catalog.manage`؛ تجاهل أي كود غير معروف للتطبيق |
-| `branches[]` | `{branch_id, code, name, can_view, can_operate}` | `can_operate = false` يعني «عرض فقط» |
-| `warehouses[]` | `{warehouse_id, code, name, type, branch_id, is_sellable}` | `branch_id` يكون `null` للمستودع المركزي |
-| `pos_terminals[]` | `{pos_terminal_id, code, name, branch_id, is_default}` | |
+| `branches[]` | `{branch_id, code, name, can_view, can_operate}` | `can_operate = false` يعني «عرض فقط»؛ المعرف bigint ويصل JSON كعدد صحيح |
+| `warehouses[]` | `{warehouse_id, code, name, type, branch_id, is_sellable}` | `branch_id` يكون `null` للمستودع المركزي؛ المعرف bigint |
+| `pos_terminals[]` | `{pos_terminal_id, code, name, branch_id, is_default}` | المعرفات bigint |
+| معاملات الدالة | لا شيء | `POST /rest/v1/rpc/get_my_access` مع جسم JSON فارغ `{}` |
+| نوع الإرجاع | jsonb | كائن JSON مطابق للعقد |
 
 ## ما تُظهره العينة عن المدير العام
 
@@ -56,7 +54,7 @@
 
 ## قواعد للعميل (قرار-68)
 
-1. لا افتراضات: أي حقل ناقص أو بشكل مختلف يُعامَل فشلاً في تحميل الصلاحيات.
+1. لا افتراضات: أي حقل مطلوب ناقص أو بشكل مختلف يُعامَل فشلاً في تحميل الصلاحيات. البريد وحده يقبل `null` لأن العمود يسمح بذلك.
 2. فشل التحميل يمنع وظائف ERP مع رسالة وزر إعادة محاولة، ولا تُمنح صلاحيات افتراضية.
 3. إخفاء الأزرار والمسارات من `permissions` ليس حماية؛ الحماية في القاعدة (ERP16).
-4. التخزين المؤقت والتحديث (متى تُعاد القراءة، وماذا عند تغيّر الصلاحيات) يقرره المنفّذ في ADR قبل البناء؛ ممنوع حل مؤقت يخزّن صلاحيات قديمة دون مهلة.
+4. سياسة التخزين والتحديث معتمدة في [ADR-0006](../architecture/ADR/0006-access-snapshot-lifecycle.md): ذاكرة فقط، ومسح عند انتهاء الجلسة، وإعادة تحميل عند تسجيل الدخول أو تغيير الفرع.

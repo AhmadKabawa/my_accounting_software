@@ -1,7 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/localization/cubit/locale_cubit.dart';
 import 'package:accounting_software/app/core/storage/hive/cache_manager.dart';
 import 'package:accounting_software/app/core/storage/hive/hive_manager.dart';
@@ -23,45 +22,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
 
-/// Registers core infrastructure only. Features register themselves from
-/// the composition root (lib/app/app_di.dart).
-///
-/// [refreshEndpoint] is the backend's token endpoint (used to renew the
-/// session). The feature that owns it is not known to core, so the composition
-/// root passes it in.
+/// Registers shared infrastructure. Feature/core access dependencies are
+/// registered by their own DI entry points from the composition root.
 Future<void> initCoreDI({required AppEndpoint refreshEndpoint}) async {
-  //! ==================== External ====================
-  // Connectivity
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
-
-  // Network Info
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
-
-  // Secure Storage
   sl.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     ),
   );
-
   sl.registerLazySingleton<SecureStorageService>(
     () => SecureStorageService(secureStorage: sl()),
   );
-
   sl.registerLazySingleton<TokenManager>(
     () => TokenManager(storage: sl<SecureStorageService>()),
   );
-  // Hive-backed cache. Lazy: `HiveManager.init()` (main) has opened the box by
-  // the time anything resolves these.
   sl.registerLazySingleton<HiveStorageService>(
     () => HiveStorageService(box: HiveManager.cacheBox),
   );
   sl.registerLazySingleton<CacheManager>(
     () => CacheManager(stringCache: sl<HiveStorageService>()),
   );
-
-  // Dio
-
   sl.registerLazySingleton<DioService>(
     () => DioService(
       tokenManager: sl(),
@@ -72,36 +54,22 @@ Future<void> initCoreDI({required AppEndpoint refreshEndpoint}) async {
   );
   sl.registerLazySingleton<IApiClient>(() => ApiClient(dioService: sl()));
 
-  // SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-
   sl.registerLazySingleton<PrefsStorageService>(
     () => PrefsStorageService(prefs: sl()),
   );
   sl.registerLazySingleton<AppSettingsManager>(
     () => AppSettingsManager(storage: sl<PrefsStorageService>()),
   );
-
-  // Messages that must survive a page change (sign-out, session expired...)
   sl.registerLazySingleton<FlashMessages>(FlashMessages.new);
-
-  //! ==================== Theme & Localization ====================
-
-  // Theme
   sl.registerLazySingleton<ThemeCubit>(
     () => ThemeCubit(appSettingsManager: sl()),
   );
-
-  // Localization
   sl.registerLazySingleton<LocaleCubit>(
     () => LocaleCubit(appSettingsManager: sl()),
   );
   sl.registerLazySingleton<LanguageProvider>(
     () => AppLanguageProvider(localeCubit: sl()),
   );
-
-  //! ==================== Access Control ====================
-  // Singleton: guards, widgets and use cases must observe the same role.
-  sl.registerLazySingleton<AccessCubit>(() => AccessCubit());
 }

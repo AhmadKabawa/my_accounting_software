@@ -1,3 +1,4 @@
+import 'package:accounting_software/app/core/access/keys/access_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/erp_error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
@@ -13,14 +14,7 @@ import 'package:accounting_software/app/features/home/presentation/localization/
 import 'package:accounting_software/app/features/on_boarding/presentation/localization/onboarding_keys.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 
-/// Every translatable text in the app. Composition root: lives outside `core`
-/// so `core` does not depend on `features`.
-///
-/// Adding a feature section = one line here. A guard test
-/// (`test/localization/key_registry_test.dart`) fails if an
-/// `enum X implements AppKey` is not registered.
 final List<AppKey> allKeys = <AppKey>[
-  // core
   ...CommonKeys.values,
   ...FieldKeys.values,
   ...ValidationKeys.values,
@@ -30,7 +24,7 @@ final List<AppKey> allKeys = <AppKey>[
   ...ThemeKeys.values,
   ...NavKeys.values,
   ...MessageKeys.values,
-  // features
+  ...AccessKeys.values,
   ...AuthKeys.values,
   ...ProfileKeys.values,
   ...HomeKeys.values,

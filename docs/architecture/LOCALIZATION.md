@@ -32,6 +32,7 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 | `AuthKeys` (بما فيها رسائل نجاح الدخول والتسجيل والخروج والاسترجاع) | `features/auth/presentation/localization/` |
 | `ProfileKeys` | `features/profile/presentation/localization/` |
 | `OnboardingKeys` | `features/on_boarding/presentation/localization/` |
+| `AccessKeys` | `core/access/keys/` (مفاتيح تحميل/فشل الوصول) |
 
 القاعدة: ما يخص ميزة يبقى فيها، والمشترك في `core`. إن تضخم قسم (أكثر من ~60 إدخالاً) يُقسَّم إلى أقسام فرعية (مثل `AuthLoginKeys`)، لأن الـ enum لا يُقسَّم على ملفات.
 

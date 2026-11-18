@@ -30,13 +30,13 @@
 ## 2. تفاصيل الأدوات الموجودة
 
 ### Access
-- `AccessCubit` (`access/cubit/access_cubit.dart`): المصدر الوحيد للدور الحالي. يدعم `setRole` و`clear` و`can` و`canAny` و`canAll` و`require` (تعيد `Right(unit)` أو `Left(PermissionFailure)`). مسجّل Singleton في `initCoreDI()`.
-- `AccessState` (`access/cubit/access_state.dart`): حالة تحمل `Role role` فقط. ملف `part of 'access_cubit.dart'`؛ لا يُنقل منفرداً.
-- `AccessContextX` (`access/extensions/access_extension.dart`): امتداد على `BuildContext` يوفر `context.can(Permission)`. يستخدم `select` فيعيد البناء عند تغيّر الدور، لذا يُستدعى داخل `build` فقط. لا يوجد له استخدام فعلي في `lib` خارج Core حالياً.
-- `Permission` و`PermissionAction` (`access/permission.dart`): `Permission` هو extension type على String بصيغة `module.action`، يدعم `*` و`module.*` عبر `covers`. `PermissionAction` enum بالإجراءات القياسية (view, create, edit, delete, post, reverse, approve, export). الإنشاء عبر `Permission.of(module, action)` أو `Permission.module(module)`.
-- `Permissions` و`Role`: تعريفات الصلاحيات الجاهزة والأدوار (`Role.none` قبل الدخول وبعد الخروج؛ `allows/allowsAny/allowsAll`).
-- `PermissionGate`: يعرض `child` إن توفرت الصلاحية وإلا `fallback`.
-- **حد أمني:** هذه الطبقة لتحسين تجربة المستخدم والفحص المبكر فقط. التفويض الحقيقي يفرضه الخادم وRLS.
+- `AccessSnapshot` (`access/models/access_snapshot.dart`): لقطة typed مطابقة لعقد `public.get_my_access()`، وتشمل المستخدم والأدوار والصلاحيات والفروع والمستودعات ونقاط البيع. تحليل الحقول المطلوبة صارم؛ البريد فقط يقبل `null` وفق مخطط قاعدة البيانات.
+- `AccessRemoteDataSource` يستدعي `POST /rest/v1/rpc/get_my_access` عبر `IApiClient` و`AppEndpoint` مع جلسة مصادق عليها؛ لا ينشئ Dio أو Supabase client جديداً.
+- `AccessRepository` و`GetMyAccessUseCase` يمرران النتائج عبر `ApiResult.toEither` و`RepositoryExecutor`.
+- `AccessCubit` (`access/cubit/access_cubit.dart`): حالات initial/loading/ready/failure، و`load/retry/clear/selectBranch`، و`can/canAny/canAll/require`. لا صلاحيات أثناء التحميل أو الفشل؛ تغيير الفرع المقبول يعيد تحميل اللقطة.
+- `KnownPermissionCodes` يسجل الأكواد المعروفة للتطبيق؛ أي كود غير معروف يُهمل وفق العقد. لا توجد أدوار افتراضية أو `SystemRoles`.
+- `PermissionGate` و`AccessContextX` يعتمدان اللقطة الناجحة فقط. هذا فحص UX وليس حماية؛ التفويض الحقيقي يفرضه الخادم وRLS.
+- سياسة الذاكرة وإعادة التحميل والمسح موثقة في [ADR-0006](ADR/0006-access-snapshot-lifecycle.md). DI للصلاحيات في `access/di/access_di.dart`، ويُستدعى من Composition Root بعد تسجيل الشبكة.
 
 ### Dependency Injection
 - `sl` هو `GetIt.instance` (`di/service_locator.dart`).

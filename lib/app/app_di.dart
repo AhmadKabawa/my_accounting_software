@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/access/di/access_di.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/features/auth/data/auth_endpoints.dart';
 import 'package:accounting_software/app/features/auth/di/auth_di.dart';
@@ -8,25 +8,13 @@ import 'package:accounting_software/app/features/home/di/home_di.dart';
 import 'package:accounting_software/app/features/on_boarding/di/on_boarding_di.dart';
 import 'package:accounting_software/app/features/splash/di/splash_di.dart';
 
-/// Composition root: the only place that wires core and every feature together.
-///
-/// Order matters:
-///  1. core first (everything depends on it). The backend's token endpoint
-///     belongs to auth, so it is passed in here: core never imports a feature;
-///  2. auth before splash — the splash runs the session check from auth
-///     (`initSplashDI` asserts this);
-///  3. the remaining features have no ordering requirements between them.
+/// Composition root: infrastructure first, then core access and features.
 Future<void> initServiceLocator() async {
   await initCoreDI(refreshEndpoint: AuthEndpoints.token);
+  initAccessDI();
   await initAuthStorage();
   initAuthDI();
   initOnBoardingDI();
   initSplashDI(checkSession: sl<SessionCubit>().checkAuthentication);
   initHomeDI();
-
-  // لا تبقى صلاحيات المستخدم السابق بعد الخروج أو انتهاء الجلسة.
-  // الاشتراك يعيش بعمر التطبيق (الـ cubits singletons).
-  sl<SessionGate>().changes
-      .where((status) => status is SessionUnauthenticated)
-      .listen((_) => sl<AccessCubit>().clear());
 }

@@ -9,6 +9,7 @@
 - [ADR-0003: اعتماد Ledger Design System للثيم والتوكنز](0003-ledger-design-system.md)
 - [ADR-0004: الاستيراد بين الميزات عبر ملف routes فقط](0004-feature-imports-through-routes-only.md)
 - [ADR-0005: نوع `Money` و`AmountFormatter` (C13)](0005-money-type-and-amount-formatter.md)
+- [ADR-0006: دورة حياة لقطة صلاحيات المستخدم (C47)](0006-access-snapshot-lifecycle.md)
 
 ## إضافة ADR
 

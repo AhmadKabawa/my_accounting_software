@@ -26,7 +26,7 @@
 | مبلغاً مالياً أو تنسيقه | `Money` + `AmountFormatter` | `foundation/money/` |
 | تخزيناً | `PrefsStorageService` / `SecureStorageService` / Hive | `storage/` |
 | تنقلاً | `<Feature>Routes` + GoRouter | `features/<f>/presentation/routing/` |
-| صلاحية | `PermissionGate` / `context.can` | `access/` |
+| صلاحية | `AccessCubit` (لقطة الخادم) + `PermissionGate` / `context.can` | `access/` |
 
 افتراضياً الاستيراد الأساسي للواجهات:
 
@@ -439,3 +439,13 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
   child: ...,
 )
 ```
+
+
+## الصلاحيات والوصول (C47)
+
+- المصدر الوحيد هو `get_my_access()`; لا تنشئ دوراً افتراضياً ولا تستخدم `SystemRoles`.
+- استدعاء البيانات يمر عبر `AccessRemoteDataSource` ← `AccessRepository` ← `GetMyAccessUseCase`، ويستخدم `IApiClient` و`AppEndpoint`.
+- `AccessCubit.load()` بعد نجاح المصادقة؛ `retry()` عند الفشل؛ `clear()` عند logout أو sessionCleared. الحالة ليست جاهزة إلا بعد تحليل الرد كاملاً.
+- افحص `AccessState.isReady` قبل إظهار وظائف محمية. `can(Permission)` يرجع false في initial/loading/failure.
+- تغيير الفرع يتم عبر `selectBranch(id)` من الفروع المسموح بعرضها، ويعيد تحميل snapshot قبل اكتمال التبديل. `canOperateInSelectedBranch` يعبّر عن `can_operate` على الفرع المحدد.
+- لا تخزن الصلاحيات محلياً؛ راجع ADR-0006.
