@@ -33,7 +33,7 @@
 - `AccessSnapshot` (`access/models/access_snapshot.dart`): لقطة typed مطابقة لعقد `public.get_my_access()`، وتشمل المستخدم والأدوار والصلاحيات والفروع والمستودعات ونقاط البيع. تحليل الحقول المطلوبة صارم؛ `email` و`warehouses[].branch_id` يقبلان `null` لكن يجب وجود المفتاحين وفق مخطط قاعدة البيانات.
 - `AccessRemoteDataSource` يستدعي `POST /rest/v1/rpc/get_my_access` عبر `IApiClient` و`AppEndpoint` مع جلسة مصادق عليها؛ لا ينشئ Dio أو Supabase client جديداً.
 - `AccessRepository` و`GetMyAccessUseCase` يمرران النتائج عبر `ApiResult.toEither` و`RepositoryExecutor`.
-- `AccessCubit` (`access/cubit/access_cubit.dart`): حالات initial/loading/ready/failure، و`load/retry/clear/selectBranch`، و`can/canAny/canAll/require`. لا صلاحيات أثناء التحميل أو الفشل؛ تغيير الفرع المقبول يعيد تحميل اللقطة.
+- `AccessCubit` (`access/cubit/access_cubit.dart`): حالات initial/loading/ready/failure، و`load/retry/clear/selectBranch`، و`can/canOperate/canOperateInSelectedBranch/canAny/canAll/require`. `AccessContextX` يوفّر `context.can` و`context.canOperate`. لا صلاحيات أثناء التحميل أو الفشل؛ تغيير الفرع المقبول يعيد تحميل اللقطة.
 - `KnownPermissionCodes` يسجل الأكواد المعروفة للتطبيق؛ أي كود غير معروف يُهمل وفق العقد. لا توجد أدوار افتراضية أو `SystemRoles`.
 - `PermissionGate` و`AccessContextX` يعتمدان اللقطة الناجحة فقط. `AccessStatusGate` يحجب Shell أثناء التحميل والفشل ويعرض إعادة المحاولة. هذا فحص UX وليس حماية؛ التفويض الحقيقي يفرضه الخادم وRLS.
 - سياسة الذاكرة وإعادة التحميل والمسح موثقة في [ADR-0006](ADR/0006-access-snapshot-lifecycle.md). DI للصلاحيات في `access/di/access_di.dart`، ويُستدعى من Composition Root بعد تسجيل الشبكة.
