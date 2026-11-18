@@ -22,7 +22,8 @@ class PermissionGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AccessCubit, AccessState>(
       builder: (context, state) {
-        final allowed = state.isReady &&
+        final allowed =
+            state.isReady &&
             state.snapshot!.permissions.any(
               (granted) => granted.covers(permission),
             ) &&

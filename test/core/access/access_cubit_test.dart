@@ -96,13 +96,16 @@ void main() {
     expect(cubit.canOperateInSelectedBranch, isFalse);
   });
 
-  test('read-only branch keeps view permission but denies operations', () async {
-    await cubit.load();
-    await cubit.selectBranch(2);
-    const permission = Permission('sales.post');
-    expect(cubit.can(permission), isTrue);
-    expect(cubit.canOperate(permission), isFalse);
-  });
+  test(
+    'read-only branch keeps view permission but denies operations',
+    () async {
+      await cubit.load();
+      await cubit.selectBranch(2);
+      const permission = Permission('sales.post');
+      expect(cubit.can(permission), isTrue);
+      expect(cubit.canOperate(permission), isFalse);
+    },
+  );
 
   test('rejects a branch not in the server snapshot', () async {
     await cubit.load();

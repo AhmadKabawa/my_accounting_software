@@ -12,63 +12,64 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 
 class _Repository implements AccessRepository {
   @override
-  Future<Either<Failure, AccessSnapshot>> getMyAccess() async =>
-      Right(AccessSnapshot(
-        userId: 'u1',
-        username: 'admin',
-        email: null,
-        isSuperAdmin: false,
-        roles: const [],
-        permissions: const {Permission('sales.post')},
-        branches: const [
-          AccessBranch(
-            id: 1,
-            code: 'MAIN',
-            name: 'Main',
-            canView: true,
-            canOperate: false,
-          ),
-        ],
-        warehouses: const [],
-        posTerminals: const [],
-      ));
+  Future<Either<Failure, AccessSnapshot>> getMyAccess() async => Right(
+    AccessSnapshot(
+      userId: 'u1',
+      username: 'admin',
+      email: null,
+      isSuperAdmin: false,
+      roles: const [],
+      permissions: const {Permission('sales.post')},
+      branches: const [
+        AccessBranch(
+          id: 1,
+          code: 'MAIN',
+          name: 'Main',
+          canView: true,
+          canOperate: false,
+        ),
+      ],
+      warehouses: const [],
+      posTerminals: const [],
+    ),
+  );
 }
 
 void main() {
-  testWidgets('remains closed while loading and opens only after server success',
-      (tester) async {
-    final cubit = AccessCubit(
-      getMyAccess: GetMyAccessUseCase(_Repository()),
-    );
-    addTearDown(cubit.close);
+  testWidgets(
+    'remains closed while loading and opens only after server success',
+    (tester) async {
+      final cubit = AccessCubit(getMyAccess: GetMyAccessUseCase(_Repository()));
+      addTearDown(cubit.close);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: BlocProvider.value(
-          value: cubit,
-          child: const PermissionGate(
-            permission: Permission('sales.post'),
-            fallback: Text('denied'),
-            child: Text('allowed'),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider.value(
+            value: cubit,
+            child: const PermissionGate(
+              permission: Permission('sales.post'),
+              fallback: Text('denied'),
+              child: Text('allowed'),
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('denied'), findsOneWidget);
-    await cubit.load();
-    await tester.pump();
-    expect(find.text('allowed'), findsOneWidget);
+      expect(find.text('denied'), findsOneWidget);
+      await cubit.load();
+      await tester.pump();
+      expect(find.text('allowed'), findsOneWidget);
 
-    cubit.clear();
-    await tester.pump();
-    expect(find.text('denied'), findsOneWidget);
-  });
+      cubit.clear();
+      await tester.pump();
+      expect(find.text('denied'), findsOneWidget);
+    },
+  );
 
-  testWidgets('operation gate hides actions in a read-only branch', (tester) async {
-    final cubit = AccessCubit(
-      getMyAccess: GetMyAccessUseCase(_Repository()),
-    );
+  testWidgets('operation gate hides actions in a read-only branch', (
+    tester,
+  ) async {
+    final cubit = AccessCubit(getMyAccess: GetMyAccessUseCase(_Repository()));
     addTearDown(cubit.close);
     await cubit.load();
 
