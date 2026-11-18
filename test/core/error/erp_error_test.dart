@@ -14,7 +14,6 @@ import 'package:accounting_software/app/core/network/dio/interceptors/language_i
 import 'package:accounting_software/app/core/network/network_info/network_info.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:accounting_software/app/localization/key_registry.dart';
-import 'package:dio/dio.dart';
 // ignore: implementation_imports
 import 'package:easy_localization/src/localization.dart';
 // ignore: implementation_imports
