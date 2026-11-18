@@ -7,7 +7,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text/app_t
 /// Reusable empty, no-results, and other content-absence presentation.
 ///
 /// All user-facing copy is supplied as [AppKey] values by the owning feature.
-/// [action] is an optional slot, normally an [AppButton] with its own AppKey.
+/// [action] is an optional slot, normally a localized action button.
 class AppEmptyState extends StatelessWidget {
   const AppEmptyState({
     super.key,
@@ -53,7 +53,6 @@ class AppEmptyState extends StatelessWidget {
             AppText(
               titleKey,
               type: AppTextType.titleMedium,
-              weight: FontWeight.w600,
               textAlign: textAlign,
             ),
             SizedBox(height: AppSpacing.xs.of(context)),
