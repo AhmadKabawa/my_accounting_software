@@ -63,6 +63,23 @@ void main() {
     expect(AccessSnapshot.fromJson(validResponse(email: null)).email, isNull);
   });
 
+  test('rejects a missing email key even though email may be null', () {
+    final json = validResponse()..remove('email');
+    expect(
+      () => AccessSnapshot.fromJson(json),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test('rejects a missing nullable warehouse branch_id key', () {
+    final json = validResponse();
+    (json['warehouses'] as List).first.remove('branch_id');
+    expect(
+      () => AccessSnapshot.fromJson(json),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
   test('rejects a missing required field', () {
     final json = validResponse()..remove('branches');
     expect(

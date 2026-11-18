@@ -68,6 +68,9 @@ class AccessSnapshot extends Equatable {
           .toList(growable: false);
     }
 
+    if (!json.containsKey('email')) {
+      throw const FormatException('get_my_access: missing email');
+    }
     final emailValue = json['email'];
     if (emailValue != null && emailValue is! String) {
       throw const FormatException('get_my_access: invalid email');
@@ -111,6 +114,9 @@ class AccessSnapshot extends Equatable {
           .toList(growable: false),
       warehouses: objects('warehouses')
           .map((item) {
+            if (!item.containsKey('branch_id')) {
+              throw const FormatException('get_my_access: missing branch_id');
+            }
             final branchId = item['branch_id'];
             if (branchId != null && branchId is! int) {
               throw const FormatException('get_my_access: invalid branch_id');

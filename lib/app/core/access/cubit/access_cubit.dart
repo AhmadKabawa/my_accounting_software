@@ -82,6 +82,9 @@ class AccessCubit extends Cubit<AccessState> {
     return snapshot.permissions.any((granted) => granted.covers(permission));
   }
 
+  bool canOperate(Permission permission) =>
+      can(permission) && canOperateInSelectedBranch;
+
   bool canAny(Iterable<Permission> permissions) => permissions.any(can);
 
   bool canAll(Iterable<Permission> permissions) =>

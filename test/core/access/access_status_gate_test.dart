@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,8 @@ import 'package:accounting_software/app/core/access/domain/get_my_access_usecase
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/access/presentation/access_status_gate.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
+import 'package:accounting_software/app/localization/key_registry.dart';
 
 class _Repository implements AccessRepository {
   Either<Failure, AccessSnapshot> result = Left(NetworkFailure());

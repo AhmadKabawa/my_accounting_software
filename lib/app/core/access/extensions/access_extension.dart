@@ -7,4 +7,8 @@ extension AccessContextX on BuildContext {
   /// Read inside build; returns false while access is loading or failed.
   bool can(Permission permission) =>
       select<AccessCubit, bool>((cubit) => cubit.can(permission));
+
+  /// Permission plus the selected branch's `can_operate` scope.
+  bool canOperate(Permission permission) =>
+      select<AccessCubit, bool>((cubit) => cubit.canOperate(permission));
 }
