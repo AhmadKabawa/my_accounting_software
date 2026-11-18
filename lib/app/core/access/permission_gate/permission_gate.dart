@@ -10,21 +10,27 @@ class PermissionGate extends StatelessWidget {
     required this.permission,
     required this.child,
     this.fallback = const SizedBox.shrink(),
+    this.requiresOperation = false,
   });
 
   final Permission permission;
   final Widget child;
   final Widget fallback;
+  final bool requiresOperation;
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<AccessCubit, AccessState, bool>(
-      selector: (state) =>
-          state.isReady &&
-          state.snapshot!.permissions.any(
-            (granted) => granted.covers(permission),
-          ),
-      builder: (context, allowed) => allowed ? child : fallback,
+    return BlocBuilder<AccessCubit, AccessState>(
+      builder: (context, state) {
+        final allowed =
+            state.isReady &&
+            state.snapshot!.permissions.any(
+              (granted) => granted.covers(permission),
+            ) &&
+            (!requiresOperation ||
+                context.read<AccessCubit>().canOperateInSelectedBranch);
+        return allowed ? child : fallback;
+      },
     );
   }
 }

@@ -20,26 +20,33 @@ class FakeAccessRepository implements AccessRepository {
 }
 
 AccessSnapshot snapshot({List<AccessBranch>? branches}) => AccessSnapshot(
-      userId: 'u1',
-      username: 'admin',
-      email: null,
-      isSuperAdmin: false,
-      roles: const [AccessRole(code: 'MANAGER', name: 'مدير')],
-      permissions: const {Permission('sales.view'), Permission('sales.post')},
-      branches: branches ??
-          const [
-            AccessBranch(
-              id: 1, code: 'MAIN', name: 'Main',
-              canView: true, canOperate: true,
-            ),
-            AccessBranch(
-              id: 2, code: 'SEC', name: 'Second',
-              canView: true, canOperate: false,
-            ),
-          ],
-      warehouses: const [],
-      posTerminals: const [],
-    );
+  userId: 'u1',
+  username: 'admin',
+  email: null,
+  isSuperAdmin: false,
+  roles: const [AccessRole(code: 'MANAGER', name: 'مدير')],
+  permissions: const {Permission('sales.view'), Permission('sales.post')},
+  branches:
+      branches ??
+      const [
+        AccessBranch(
+          id: 1,
+          code: 'MAIN',
+          name: 'Main',
+          canView: true,
+          canOperate: true,
+        ),
+        AccessBranch(
+          id: 2,
+          code: 'SEC',
+          name: 'Second',
+          canView: true,
+          canOperate: false,
+        ),
+      ],
+  warehouses: const [],
+  posTerminals: const [],
+);
 
 void main() {
   late FakeAccessRepository repository;
@@ -47,9 +54,7 @@ void main() {
 
   setUp(() {
     repository = FakeAccessRepository(Right(snapshot()));
-    cubit = AccessCubit(
-      getMyAccess: GetMyAccessUseCase(repository),
-    );
+    cubit = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
   });
   tearDown(() => cubit.close());
 
@@ -66,12 +71,19 @@ void main() {
   });
 
   test('selects the only visible branch automatically', () async {
-    repository.result = Right(snapshot(branches: const [
-      AccessBranch(
-        id: 1, code: 'MAIN', name: 'Main',
-        canView: true, canOperate: true,
+    repository.result = Right(
+      snapshot(
+        branches: const [
+          AccessBranch(
+            id: 1,
+            code: 'MAIN',
+            name: 'Main',
+            canView: true,
+            canOperate: true,
+          ),
+        ],
       ),
-    ]));
+    );
     await cubit.load();
     expect(cubit.state.selectedBranchId, 1);
   });
@@ -83,6 +95,17 @@ void main() {
     expect(cubit.state.selectedBranchId, 2);
     expect(cubit.canOperateInSelectedBranch, isFalse);
   });
+
+  test(
+    'read-only branch keeps view permission but denies operations',
+    () async {
+      await cubit.load();
+      await cubit.selectBranch(2);
+      const permission = Permission('sales.post');
+      expect(cubit.can(permission), isTrue);
+      expect(cubit.canOperate(permission), isFalse);
+    },
+  );
 
   test('rejects a branch not in the server snapshot', () async {
     await cubit.load();

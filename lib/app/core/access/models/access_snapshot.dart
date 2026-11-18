@@ -58,14 +58,19 @@ class AccessSnapshot extends Equatable {
     List<Map<String, dynamic>> objects(String key) {
       final value = json[key];
       if (value is! List) throw FormatException('get_my_access: invalid $key');
-      return value.map((item) {
-        if (item is! Map) {
-          throw FormatException('get_my_access: invalid $key item');
-        }
-        return Map<String, dynamic>.from(item);
-      }).toList(growable: false);
+      return value
+          .map((item) {
+            if (item is! Map) {
+              throw FormatException('get_my_access: invalid $key item');
+            }
+            return Map<String, dynamic>.from(item);
+          })
+          .toList(growable: false);
     }
 
+    if (!json.containsKey('email')) {
+      throw const FormatException('get_my_access: missing email');
+    }
     final emailValue = json['email'];
     if (emailValue != null && emailValue is! String) {
       throw const FormatException('get_my_access: invalid email');
@@ -88,23 +93,30 @@ class AccessSnapshot extends Equatable {
       email: emailValue as String?,
       isSuperAdmin: requiredBool(json, 'is_super_admin'),
       roles: objects('roles')
-          .map((item) => AccessRole(
-                code: nestedString(item, 'code'),
-                name: nestedString(item, 'name'),
-              ))
+          .map(
+            (item) => AccessRole(
+              code: nestedString(item, 'code'),
+              name: nestedString(item, 'name'),
+            ),
+          )
           .toList(growable: false),
       permissions: permissions,
       branches: objects('branches')
-          .map((item) => AccessBranch(
-                id: requiredInt(item, 'branch_id'),
-                code: nestedString(item, 'code'),
-                name: nestedString(item, 'name'),
-                canView: requiredBool(item, 'can_view'),
-                canOperate: requiredBool(item, 'can_operate'),
-              ))
+          .map(
+            (item) => AccessBranch(
+              id: requiredInt(item, 'branch_id'),
+              code: nestedString(item, 'code'),
+              name: nestedString(item, 'name'),
+              canView: requiredBool(item, 'can_view'),
+              canOperate: requiredBool(item, 'can_operate'),
+            ),
+          )
           .toList(growable: false),
       warehouses: objects('warehouses')
           .map((item) {
+            if (!item.containsKey('branch_id')) {
+              throw const FormatException('get_my_access: missing branch_id');
+            }
             final branchId = item['branch_id'];
             if (branchId != null && branchId is! int) {
               throw const FormatException('get_my_access: invalid branch_id');
@@ -120,22 +132,31 @@ class AccessSnapshot extends Equatable {
           })
           .toList(growable: false),
       posTerminals: objects('pos_terminals')
-          .map((item) => AccessPosTerminal(
-                id: requiredInt(item, 'pos_terminal_id'),
-                code: nestedString(item, 'code'),
-                name: nestedString(item, 'name'),
-                branchId: requiredInt(item, 'branch_id'),
-                isDefault: requiredBool(item, 'is_default'),
-              ))
+          .map(
+            (item) => AccessPosTerminal(
+              id: requiredInt(item, 'pos_terminal_id'),
+              code: nestedString(item, 'code'),
+              name: nestedString(item, 'name'),
+              branchId: requiredInt(item, 'branch_id'),
+              isDefault: requiredBool(item, 'is_default'),
+            ),
+          )
           .toList(growable: false),
     );
   }
 
   @override
   List<Object?> get props => [
-        userId, username, email, isSuperAdmin, roles, permissions,
-        branches, warehouses, posTerminals,
-      ];
+    userId,
+    username,
+    email,
+    isSuperAdmin,
+    roles,
+    permissions,
+    branches,
+    warehouses,
+    posTerminals,
+  ];
 }
 
 class AccessRole extends Equatable {

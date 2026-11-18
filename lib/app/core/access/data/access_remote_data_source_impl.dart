@@ -6,7 +6,7 @@ import 'package:accounting_software/app/core/network/api_client_interface.dart';
 
 class AccessRemoteDataSourceImpl implements AccessRemoteDataSource {
   const AccessRemoteDataSourceImpl({required IApiClient apiClient})
-      : _apiClient = apiClient;
+    : _apiClient = apiClient;
 
   final IApiClient _apiClient;
 
