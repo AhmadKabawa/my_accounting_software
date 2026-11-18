@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/routing/go_router_refresh_stream.dart';
 import 'package:accounting_software/app/routing/not_found_screen.dart';
@@ -78,7 +79,7 @@ class AppRouter {
       /// ─────────────────────────────────────────
       /// Onboarding
       /// ─────────────────────────────────────────
-      GoRoute(
+      if (AppConfig.onboardingEnabled) GoRoute(
         path: OnBoardingRoutes.onboarding.path,
         name: OnBoardingRoutes.onboarding.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
@@ -111,7 +112,7 @@ class AppRouter {
       /// ─────────────────────────────────────────
       /// Register
       /// ─────────────────────────────────────────
-      GoRoute(
+      if (AppConfig.signupEnabled) GoRoute(
         path: AuthRoutes.register.path,
         name: AuthRoutes.register.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
@@ -124,7 +125,7 @@ class AppRouter {
       /// ─────────────────────────────────────────
       /// Password recovery: e-mail → code + new password
       /// ─────────────────────────────────────────
-      GoRoute(
+      if (AppConfig.forgotPasswordEnabled) GoRoute(
         path: AuthRoutes.forgotPassword.path,
         name: AuthRoutes.forgotPassword.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
@@ -133,7 +134,7 @@ class AppRouter {
           _withAuthFlow(const ForgotPasswordScreen()),
         ),
       ),
-      GoRoute(
+      if (AppConfig.forgotPasswordEnabled) GoRoute(
         path: AuthRoutes.resetPassword.path,
         name: AuthRoutes.resetPassword.name,
         // Opened without an e-mail (deep link, refresh): start over.
