@@ -94,6 +94,7 @@ void main() {
     expect(fieldIsDense, isTrue);
     expect(iconTouchTarget, AppDensity.compact.field);
   });
+
   testWidgets('compact on a phone preserves the minimum touch target', (
     tester,
   ) async {
@@ -121,5 +122,4 @@ void main() {
 
     expect(touchTarget, greaterThanOrEqualTo(minimumHitArea));
   });
-
 }
