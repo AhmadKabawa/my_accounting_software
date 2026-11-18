@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_colors.dart';
 
@@ -15,6 +16,16 @@ class StatusColor {
         foreground: Color.lerp(a.foreground, b.foreground, t)!,
         container: Color.lerp(a.container, b.container, t)!,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StatusColor &&
+          foreground == other.foreground &&
+          container == other.container;
+
+  @override
+  int get hashCode => Object.hash(foreground, container);
 }
 
 /// الألوان الخاصة بالتطبيق، وهي ليست جزءاً من [ColorScheme]:
@@ -234,6 +245,59 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       focusRing: focusRing ?? this.focusRing,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppSemanticColors &&
+          success == other.success &&
+          onSuccess == other.onSuccess &&
+          successContainer == other.successContainer &&
+          warning == other.warning &&
+          onWarning == other.onWarning &&
+          warningContainer == other.warningContainer &&
+          info == other.info &&
+          onInfo == other.onInfo &&
+          infoContainer == other.infoContainer &&
+          debit == other.debit &&
+          credit == other.credit &&
+          balancePositive == other.balancePositive &&
+          balanceNegative == other.balanceNegative &&
+          statusDraft == other.statusDraft &&
+          statusApproved == other.statusApproved &&
+          statusPosted == other.statusPosted &&
+          statusCanceled == other.statusCanceled &&
+          statusReversed == other.statusReversed &&
+          listEquals(chart, other.chart) &&
+          onSurfaceMuted == other.onSurfaceMuted &&
+          outlineStrong == other.outlineStrong &&
+          focusRing == other.focusRing;
+
+  @override
+  int get hashCode => Object.hashAll([
+    success,
+    onSuccess,
+    successContainer,
+    warning,
+    onWarning,
+    warningContainer,
+    info,
+    onInfo,
+    infoContainer,
+    debit,
+    credit,
+    balancePositive,
+    balanceNegative,
+    statusDraft,
+    statusApproved,
+    statusPosted,
+    statusCanceled,
+    statusReversed,
+    Object.hashAll(chart),
+    onSurfaceMuted,
+    outlineStrong,
+    focusRing,
+  ]);
 
   @override
   AppSemanticColors lerp(ThemeExtension<AppSemanticColors>? other, double t) {

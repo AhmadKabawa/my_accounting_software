@@ -41,22 +41,29 @@ bool _looksSensitiveSegment(String segment) =>
 /// (passwords, tokens, secrets, one-time codes) are masked at any depth.
 /// Strings are parsed as JSON when possible; other bodies are not printed.
 @visibleForTesting
-Object? redactSensitive(Object? data) {
+Object? redactSensitive(Object? data) =>
+    _redactSensitive(data, isTopLevel: true);
+
+Object? _redactSensitive(Object? data, {bool isTopLevel = false}) {
   switch (data) {
     case Map<dynamic, dynamic>():
       return {
         for (final entry in data.entries)
           entry.key: _sensitiveKey.hasMatch('${entry.key}')
               ? _masked
-              : redactSensitive(entry.value),
+              : _redactSensitive(entry.value),
       };
     case List<dynamic>():
-      return data.map(redactSensitive).toList();
+      return data.map(_redactSensitive).toList();
     case String():
       try {
-        return redactSensitive(jsonDecode(data));
+        final decoded = jsonDecode(data);
+        if (decoded is Map || decoded is List) {
+          return _redactSensitive(decoded);
+        }
+        return isTopLevel ? decoded : data;
       } on FormatException {
-        return '<non-JSON body, ${data.length} chars>';
+        return isTopLevel ? '<non-JSON body, ${data.length} chars>' : data;
       }
     case null || num() || bool():
       return data;
