@@ -11,6 +11,7 @@
 // ─────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/dialog_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
@@ -70,37 +71,42 @@ Future<bool> showConfirmDialog(
     stacked: stacked,
   );
 
-  final result = sheet
-      ? await showModalBottomSheet<bool>(
-          context: context,
-          isScrollControlled: true,
-          useSafeArea: true,
-          builder: (sheetContext) => Padding(
-            // Keeps the content above the keyboard.
-            padding: MediaQuery.viewInsetsOf(sheetContext),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(sheetContext.ui.spacing.lg),
-              child: content(stacked: true),
-            ),
+  final bool? result;
+  if (sheet) {
+    result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (sheetContext) => Padding(
+        // Keeps the content above the keyboard.
+        padding: MediaQuery.viewInsetsOf(sheetContext),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(sheetContext.ui.spacing.lg),
+          child: content(stacked: true),
+        ),
+      ),
+    );
+  } else {
+    result = await showDialog<bool>(
+      context: context,
+      // A critical confirmation is not dismissed by tapping outside. (Flutter
+      // also turns Esc off when the barrier is not dismissible, so the
+      // content handles Esc itself: see CallbackShortcuts below.)
+      barrierDismissible: severity != ConfirmDialogSeverity.critical,
+      builder: (dialogContext) => Dialog(
+        insetPadding: EdgeInsets.all(dialogContext.ui.spacing.lg),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: AppComponentSize.cardWidth.of(dialogContext) * 1.5,
           ),
-        )
-      : await showDialog<bool>(
-          context: context,
-          // A critical confirmation is not dismissed by tapping outside.
-          barrierDismissible: severity != ConfirmDialogSeverity.critical,
-          builder: (dialogContext) => Dialog(
-            insetPadding: EdgeInsets.all(dialogContext.ui.spacing.lg),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: AppComponentSize.cardWidth.of(dialogContext) * 1.5,
-              ),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(dialogContext.ui.spacing.lg),
-                child: content(stacked: false),
-              ),
-            ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(dialogContext.ui.spacing.lg),
+            child: content(stacked: false),
           ),
-        );
+        ),
+      ),
+    );
+  }
 
   return result ?? false;
 }
@@ -179,6 +185,11 @@ class _ConfirmDialogContentState extends State<ConfirmDialogContent> {
 
   void _onTyped() => setState(() {});
 
+  void _cancel() {
+    if (_busy) return;
+    Navigator.of(context).pop(false);
+  }
+
   Future<void> _confirm() async {
     // `_busy` is set before the first await, so a double click cannot start
     // the action twice.
@@ -215,6 +226,18 @@ class _ConfirmDialogContentState extends State<ConfirmDialogContent> {
 
   @override
   Widget build(BuildContext context) {
+    return CallbackShortcuts(
+      // Esc cancels (and does nothing while the action runs).
+      bindings: {const SingleActivator(LogicalKeyboardKey.escape): _cancel},
+      child: PopScope(
+        // No back gesture while the action runs.
+        canPop: !_busy,
+        child: _buildBody(context),
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     final ui = context.ui;
     final scheme = ui.theme.colors;
     final severity = widget.severity;
@@ -238,120 +261,113 @@ class _ConfirmDialogContentState extends State<ConfirmDialogContent> {
     final cancelButton = AppButton(
       widget.cancelLabelKey ?? CommonKeys.cancel,
       variant: AppButtonVariant.outlined,
-      onPressed: _busy ? null : () => Navigator.of(context).pop(false),
+      onPressed: _busy ? null : _cancel,
       // A critical action opens with focus on Cancel: Enter cannot confirm.
       autofocus: _critical,
       expand: widget.stacked,
     );
 
-    return PopScope(
-      // No Esc / back while the action runs.
-      canPop: !_busy,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (severity != ConfirmDialogSeverity.normal) ...[
-                AppIcon(
-                  _critical ? AppIcons.error : AppIcons.warning,
-                  color: _critical
-                      ? scheme.error
-                      : ui.theme.semanticColors.warning,
-                  semanticsLabel:
-                      (_critical
-                              ? DialogKeys.criticalLabel
-                              : DialogKeys.warningLabel)
-                          .tr(context: context),
-                ),
-                ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-              ],
-              Expanded(
-                child: AppText(
-                  widget.titleKey,
-                  type: AppTextType.titleLarge,
-                  color: _critical ? scheme.error : null,
-                ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (severity != ConfirmDialogSeverity.normal) ...[
+              AppIcon(
+                _critical ? AppIcons.error : AppIcons.warning,
+                color: _critical
+                    ? scheme.error
+                    : ui.theme.semanticColors.warning,
+                semanticsLabel:
+                    (_critical
+                            ? DialogKeys.criticalLabel
+                            : DialogKeys.warningLabel)
+                        .tr(context: context),
               ),
+              ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
             ],
-          ),
+            Expanded(
+              child: AppText(
+                widget.titleKey,
+                type: AppTextType.titleLarge,
+                color: _critical ? scheme.error : null,
+              ),
+            ),
+          ],
+        ),
+        ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+        AppText.raw(message, type: AppTextType.bodyMedium),
+        if (widget.impactKeys.isNotEmpty) ...[
           ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
-          AppText.raw(message, type: AppTextType.bodyMedium),
-          if (widget.impactKeys.isNotEmpty) ...[
-            ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
-            const AppText(DialogKeys.impactTitle, type: AppTextType.labelLarge),
-            ui.spacing.gap(AppSpacing.xs, axis: Axis.vertical),
-            for (final impact in widget.impactKeys)
-              Padding(
-                padding: EdgeInsetsDirectional.only(top: ui.spacing.xs),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const AppText.raw('•', type: AppTextType.bodyMedium),
-                    ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-                    Expanded(
-                      child: AppText(impact, type: AppTextType.bodyMedium),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-          if (targetName != null && targetName.isNotEmpty) ...[
-            ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
-            AppText.raw(
-              targetName,
-              type: AppTextType.bodyMedium,
-              weight: FontWeight.w700,
-            ),
-          ],
-          if (widget.requireTypedName) ...[
-            ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
-            AppText.raw(
-              DialogKeys.typeToConfirm.tr(
-                context: context,
-                namedArgs: {'name': targetName!},
-              ),
-              type: AppTextType.bodySmall,
-            ),
-            ui.spacing.gap(AppSpacing.sm, axis: Axis.vertical),
-            AppTextField(
-              controller: _typed,
-              labelKey: DialogKeys.typedNameLabel,
-              enabled: !_busy,
-              // Enter in this field must not confirm.
-              textInputAction: TextInputAction.done,
-            ),
-          ],
-          if (_error != null) ...[
-            ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
-            InlineBanner(
-              messageKey: _error!,
-              variant: InlineBannerVariant.error,
-            ),
-          ],
-          ui.spacing.gap(AppSpacing.lg, axis: Axis.vertical),
-          if (widget.stacked)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                confirmButton,
-                ui.spacing.gap(AppSpacing.sm, axis: Axis.vertical),
-                cancelButton,
-              ],
-            )
-          else
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: Wrap(
-                spacing: ui.spacing.sm,
-                runSpacing: ui.spacing.sm,
-                children: [cancelButton, confirmButton],
+          const AppText(DialogKeys.impactTitle, type: AppTextType.labelLarge),
+          ui.spacing.gap(AppSpacing.xs, axis: Axis.vertical),
+          for (final impact in widget.impactKeys)
+            Padding(
+              padding: EdgeInsetsDirectional.only(top: ui.spacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const AppText.raw('•', type: AppTextType.bodyMedium),
+                  ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
+                  Expanded(
+                    child: AppText(impact, type: AppTextType.bodyMedium),
+                  ),
+                ],
               ),
             ),
         ],
-      ),
+        if (targetName != null && targetName.isNotEmpty) ...[
+          ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+          AppText.raw(
+            targetName,
+            type: AppTextType.bodyMedium,
+            weight: FontWeight.w700,
+          ),
+        ],
+        if (widget.requireTypedName) ...[
+          ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+          AppText.raw(
+            DialogKeys.typeToConfirm.tr(
+              context: context,
+              namedArgs: {'name': targetName!},
+            ),
+            type: AppTextType.bodySmall,
+          ),
+          ui.spacing.gap(AppSpacing.sm, axis: Axis.vertical),
+          AppTextField(
+            controller: _typed,
+            labelKey: DialogKeys.typedNameLabel,
+            enabled: !_busy,
+            // Enter in this field must not confirm.
+            textInputAction: TextInputAction.done,
+          ),
+        ],
+        if (_error != null) ...[
+          ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+          InlineBanner(messageKey: _error!, variant: InlineBannerVariant.error),
+        ],
+        ui.spacing.gap(AppSpacing.lg, axis: Axis.vertical),
+        if (widget.stacked)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              confirmButton,
+              ui.spacing.gap(AppSpacing.sm, axis: Axis.vertical),
+              cancelButton,
+            ],
+          )
+        else
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: Wrap(
+              spacing: ui.spacing.sm,
+              runSpacing: ui.spacing.sm,
+              children: [cancelButton, confirmButton],
+            ),
+          ),
+      ],
     );
   }
 }

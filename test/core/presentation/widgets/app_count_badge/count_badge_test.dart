@@ -100,6 +100,8 @@ void main() {
           const CountBadge(count: 4, variant: CountBadgeVariant.error),
           theme: theme,
         );
+        // MaterialApp animates a theme change; read the colors after it.
+        await tester.pumpAndSettle();
 
         final decoration =
             tester

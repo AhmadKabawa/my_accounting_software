@@ -1,0 +1,27 @@
+# TEMPORARY fast feedback for the step-2 branch. Delete before merging.
+name: tmp-step2-check
+on:
+  push:
+    branches: ['feat/ui-step2-c41-c07-c12']
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.1'
+          cache: true
+      - run: flutter pub get
+      - name: Format diff
+        run: |
+          dart format lib test > /dev/null
+          git diff --no-color || true
+          git diff --quiet
+      - name: Analyze new files
+        run: flutter analyze lib/app/core/presentation/widgets/app_count_badge lib/app/core/presentation/widgets/app_confirm_dialog lib/app/core/presentation/widgets/app_scope_selector lib/app/core/localization test/core/presentation/widgets/app_count_badge test/core/presentation/widgets/app_confirm_dialog test/core/presentation/widgets/app_scope_selector
+      - name: Tests (new + guards)
+        run: flutter test test/core/presentation/widgets/app_count_badge test/core/presentation/widgets/app_confirm_dialog test/core/presentation/widgets/app_scope_selector test/core/presentation/widgets/app_button test/localization test/architecture --timeout 60s
