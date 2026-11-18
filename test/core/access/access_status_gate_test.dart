@@ -20,30 +20,46 @@ class _Repository implements AccessRepository {
 }
 
 AccessSnapshot _snapshot() => const AccessSnapshot(
-  userId: 'u1',
-  username: 'admin',
-  email: null,
-  isSuperAdmin: false,
-  roles: [],
-  permissions: {},
-  branches: [],
-  warehouses: [],
-  posTerminals: [],
-);
+      userId: 'u1',
+      username: 'admin',
+      email: null,
+      isSuperAdmin: false,
+      roles: [],
+      permissions: {},
+      branches: [],
+      warehouses: [],
+      posTerminals: [],
+    );
 
 void main() {
   testWidgets(
     'blocks shell during loading and after failure; retry can unlock it',
     (tester) async {
       final repository = _Repository();
-      final access = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
+      final access = AccessCubit(
+        getMyAccess: GetMyAccessUseCase(repository),
+      );
       addTearDown(access.close);
 
+      await EasyLocalization.ensureInitialized();
       await tester.pumpWidget(
-        MaterialApp(
-          home: BlocProvider.value(
-            value: access,
-            child: const AccessStatusGate(child: Text('protected shell')),
+        EasyLocalization(
+          supportedLocales: const [Locale('ar'), Locale('en')],
+          path: 'assets/translations',
+          fallbackLocale: const Locale('ar'),
+          assetLoader: MyDartLoader(allKeys),
+          child: Builder(
+            builder: (context) => MaterialApp(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              home: BlocProvider.value(
+                value: access,
+                child: const AccessStatusGate(
+                  child: Text('protected shell'),
+                ),
+              ),
+            ),
           ),
         ),
       );

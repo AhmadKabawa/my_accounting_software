@@ -69,7 +69,7 @@ GoRouter _router() => GoRouter(
             routes: [
               GoRoute(
                 path: path,
-                builder: (_, _) => Text(path, textDirection: TextDirection.ltr),
+                builder: (_, _) => Text(path),
               ),
             ],
           ),
