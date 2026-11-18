@@ -61,6 +61,8 @@ void main() {
       expect(find.text('allowed'), findsOneWidget);
 
       cubit.clear();
+      expect(cubit.state.isReady, isFalse);
+      await tester.pump();
       await tester.pump();
       expect(find.text('denied'), findsOneWidget);
     },
