@@ -10,22 +10,6 @@ void main() {
       expect(Permissions.sales.view.covers(Permissions.sales.post), isFalse);
     });
 
-    test('module wildcard covers its module but not others', () {
-      expect(Permissions.sales.all.covers(Permissions.sales.post), isTrue);
-      expect(Permissions.sales.all.covers(Permissions.purchases.view), isFalse);
-    });
-
-    test('module wildcard does not match a module with the same prefix', () {
-      expect(
-        const Permission('sales.*').covers(const Permission('salesman.view')),
-        isFalse,
-      );
-    });
-
-    test('global wildcard covers a server permission', () {
-      expect(Permission.all.covers(Permissions.journal.post), isTrue);
-    });
-
     test('of() builds module.action', () {
       expect(Permission.of('sales', PermissionAction.post).value, 'sales.post');
     });
@@ -38,7 +22,7 @@ void main() {
       Permissions.sales.discount,
       Permissions.sales.post,
       Permissions.sales.returnDocument,
-      Permissions.purchases.view,
+      Permissions.purchasing.view,
       Permissions.purchases.create,
       Permissions.purchases.post,
       Permissions.purchases.returnDocument,

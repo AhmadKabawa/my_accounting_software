@@ -5,15 +5,10 @@ import 'package:accounting_software/app/core/access/permission.dart';
 /// module.action combinations that are absent from the server catalog.
 abstract final class Permissions {
   static const sales = SalesPermissions();
-  static const purchases = PurchasingPermissions();
   static const purchasing = PurchasingPermissions();
   static const inventory = InventoryPermissions();
-  static const customers = PartiesPermissions();
-  static const suppliers = PartiesPermissions();
   static const parties = PartiesPermissions();
-  static const payments = FinancePermissions();
   static const finance = FinancePermissions();
-  static const journal = AccountingPermissions();
   static const accounting = AccountingPermissions();
   static const reports = ReportsPermissions();
   static const settings = SettingsPermissions();
@@ -42,7 +37,6 @@ final class SalesPermissions {
   Permission get discount => const Permission('sales.discount');
   Permission get post => const Permission('sales.post');
   Permission get returnDocument => const Permission('sales.return');
-  Permission get all => Permission.module('sales');
 }
 
 final class PurchasingPermissions {
@@ -51,7 +45,6 @@ final class PurchasingPermissions {
   Permission get create => const Permission('purchasing.create');
   Permission get post => const Permission('purchasing.post');
   Permission get returnDocument => const Permission('purchasing.return');
-  Permission get all => Permission.module('purchasing');
 }
 
 final class InventoryPermissions {
@@ -63,7 +56,6 @@ final class InventoryPermissions {
       const Permission('inventory.transfer.approve');
   Permission get viewOtherBranches =>
       const Permission('inventory.view_other_branches');
-  Permission get all => Permission.module('inventory');
 }
 
 final class PartiesPermissions {
@@ -71,7 +63,6 @@ final class PartiesPermissions {
   Permission get view => const Permission('parties.view');
   Permission get manage => const Permission('parties.manage');
   Permission get quickAdd => const Permission('parties.quick_add');
-  Permission get all => Permission.module('parties');
 }
 
 final class FinancePermissions {
@@ -80,7 +71,6 @@ final class FinancePermissions {
   Permission get manage => const Permission('finance.manage');
   Permission get payments => const Permission('finance.payments');
   Permission get expenses => const Permission('finance.expenses');
-  Permission get all => Permission.module('finance');
 }
 
 final class AccountingPermissions {
@@ -88,44 +78,37 @@ final class AccountingPermissions {
   Permission get view => const Permission('accounting.view');
   Permission get manage => const Permission('accounting.manage');
   Permission get post => const Permission('accounting.post');
-  Permission get all => Permission.module('accounting');
 }
 
 final class ReportsPermissions {
   const ReportsPermissions();
   Permission get view => const Permission('reports.view');
-  Permission get all => Permission.module('reports');
 }
 
 final class SettingsPermissions {
   const SettingsPermissions();
   Permission get manage => const Permission('settings.manage');
-  Permission get all => Permission.module('settings');
 }
 
 final class UsersPermissions {
   const UsersPermissions();
   Permission get manage => const Permission('users.manage');
-  Permission get all => Permission.module('users');
 }
 
 final class OrganizationPermissions {
   const OrganizationPermissions();
   Permission get manage => const Permission('org.manage');
-  Permission get all => Permission.module('org');
 }
 
 final class CatalogPermissions {
   const CatalogPermissions();
   Permission get manage => const Permission('catalog.manage');
-  Permission get all => Permission.module('catalog');
 }
 
 final class CostsPermissions {
   const CostsPermissions();
   Permission get view => const Permission('costs.view');
   Permission get manage => const Permission('costs.manage');
-  Permission get all => Permission.module('costs');
 }
 
 final class DiscountPermissions {

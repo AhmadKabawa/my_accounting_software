@@ -16,25 +16,12 @@ enum PermissionAction {
 /// extension type بنفس نمط [StorageKey] و`AppKey`: لا تكلفة وقت تشغيل،
 /// ومنع خلط الصلاحيات مع النصوص العادية.
 ///
-/// الرموز الخاصة (للمنح فقط):
-/// - `*` يغطي كل شيء (المالك).
-/// - `module.*` يغطي كل إجراءات الوحدة.
+/// لا تُستخدم wildcards: الخادم يعيد أكواداً صريحة من KnownPermissionCodes.
 extension type const Permission(String value) {
-  /// صلاحية كل شيء.
-  static const all = Permission('*');
-
   /// `module.action`
   Permission.of(String module, PermissionAction action)
     : this('$module.${action.name}');
 
-  /// كل إجراءات وحدة معينة: `module.*`
-  Permission.module(String module) : this('$module.*');
-
-  /// هل هذه الصلاحية الممنوحة تغطي الصلاحية المطلوبة [required]؟
-  bool covers(Permission required) {
-    if (value == '*' || value == required.value) return true;
-    if (!value.endsWith('.*')) return false;
-    // `sales.*` → البادئة `sales.`
-    return required.value.startsWith(value.substring(0, value.length - 1));
-  }
+  /// صلاحيتان متطابقتان فقط؛ لا تُوسَّع الصلاحية إلى وحدة أو النظام كله.
+  bool covers(Permission required) => value == required.value;
 }

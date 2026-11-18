@@ -20,7 +20,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/ap
 import 'package:accounting_software/app/shell/app_shell.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
-const _secret = Permission('shell_test.view');
+const _secret = Permission('sales.view');
 
 AccessSnapshot _snapshot(Set<Permission> permissions) => AccessSnapshot(
   userId: 'u1',
@@ -79,7 +79,7 @@ Future<
 _pump(
   WidgetTester tester,
   Size size, {
-  Set<Permission> permissions = const {Permission.all},
+  Set<Permission> permissions = const {Permission('sales.view')},
   List<AppDestination>? destinations,
 }) async {
   tester.view.physicalSize = size;
