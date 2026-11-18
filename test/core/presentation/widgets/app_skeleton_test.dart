@@ -25,6 +25,7 @@ void main() {
       tester,
     ) async {
       await pumpSkeleton(tester, const AppSkeleton.line());
+      final sizeBeforeReveal = tester.getSize(find.byType(AppSkeleton));
 
       expect(
         find.descendant(
@@ -36,6 +37,7 @@ void main() {
 
       await tester.pump(const Duration(milliseconds: 200));
 
+      expect(tester.getSize(find.byType(AppSkeleton)), sizeBeforeReveal);
       expect(
         find.descendant(
           of: find.byType(AppSkeleton),

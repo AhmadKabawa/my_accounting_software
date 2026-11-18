@@ -85,7 +85,10 @@ class _AppSkeletonState extends State<AppSkeleton> {
   @override
   Widget build(BuildContext context) {
     if (!_visible) {
-      return SizedBox(width: widget.width, height: widget.height);
+      return SizedBox(
+        width: _resolvedWidth(context),
+        height: _resolvedHeight(context),
+      );
     }
 
     final scheme = Theme.of(context).colorScheme;
@@ -106,6 +109,22 @@ class _AppSkeletonState extends State<AppSkeleton> {
       child: _buildPlaceholder(context, baseColor),
     );
   }
+
+  double _resolvedWidth(BuildContext context) =>
+      widget.width ?? switch (widget.variant) {
+        AppSkeletonVariant.line => AppComponentSize.cardWidth.of(context),
+        AppSkeletonVariant.block ||
+        AppSkeletonVariant.card ||
+        AppSkeletonVariant.tableRow => double.infinity,
+      };
+
+  double _resolvedHeight(BuildContext context) =>
+      widget.height ?? switch (widget.variant) {
+        AppSkeletonVariant.line => AppIconSize.sm.of(context),
+        AppSkeletonVariant.block || AppSkeletonVariant.card =>
+          AppComponentSize.cardHeight.of(context),
+        AppSkeletonVariant.tableRow => AppComponentSize.hitArea.of(context),
+      };
 
   Widget _buildPlaceholder(BuildContext context, Color color) {
     final radius = widget.variant == AppSkeletonVariant.card
