@@ -633,10 +633,10 @@ source_documents:
 | C47 | PermissionGate | CB0 | لم يبدأ | | AUTH-04 | | | | |
 | C48 | قوالب T1..T7 | CB0..3 | لم يبدأ | | | | | | |
 | C49 | مدخلات أساسية | CB0/1 | لم يبدأ | | | | | | |
-| C12 | ScopeSelector | CB1 | لم يبدأ | | AUTH-03 | | | | |
-| C07 | ConfirmDialog | CB1 | لم يبدأ | | AUTH-03 | | | | |
+| C12 | ScopeSelector | CB1 | مراجعة | `feat/ui-step2-c41-c07-c12` | AUTH-03 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `core/presentation/widgets/app_scope_selector/`؛ لم تُشغَّل `analyze` ولا الاختبارات (لا Flutter SDK في الجلسة)؛ قائمة على ويب/Windows وورقة سفلية على الجوال؛ حارس السلة عبر `beforeChange` والشاشة تفتح C07 |
+| C07 | ConfirmDialog | CB1 | مراجعة | `feat/ui-step2-c41-c07-c12` | AUTH-03 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `core/presentation/widgets/app_confirm_dialog/`؛ لم تُشغَّل `analyze` ولا الاختبارات؛ أُضيف `AppButton.autofocus`؛ الدرجة التحذيرية حوار مركزي على الجوال (القرار: المواصفة تذكر العادية والحرجة فقط) |
 | C06 | KpiCard | CB1 | لم يبدأ | | AUTH-04 | | | | |
-| C41 | CountBadge | CB1 | لم يبدأ | | AUTH-04 | | | | |
+| C41 | CountBadge | CB1 | مراجعة | `feat/ui-step2-c41-c07-c12` | AUTH-04 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `core/presentation/widgets/app_count_badge/`؛ لم تُشغَّل `analyze` ولا الاختبارات |
 | C22 | TreeView | CB1 | لم يبدأ | | ORG-01 | | | | |
 | C01 | DataTable | CB1 | لم يبدأ | | CAT-07 | | | | |
 | C02 | AppBadge + DocStatusBadge | CB1 | لم يبدأ | | CAT-07 | | | | |
