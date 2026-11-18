@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/access/data/access_endpoints.dart';
 import 'package:accounting_software/app/core/access/data/access_remote_data_source_impl.dart';
@@ -48,7 +49,9 @@ class _ApiClient implements IApiClient {
 }
 
 void main() {
-  test('requests the authenticated get_my_access RPC and parses its snapshot', () async {
+  test(
+    'requests the authenticated get_my_access RPC and parses its snapshot',
+    () async {
     final client = _ApiClient();
     final source = AccessRemoteDataSourceImpl(apiClient: client);
 
@@ -59,6 +62,7 @@ void main() {
     expect(client.requestedData, isEmpty);
     expect(client.requestedAuth, isTrue);
     expect(result, isA<ApiSuccess<AccessSnapshot>>());
-    expect((result as ApiSuccess<AccessSnapshot>).data.userId, 'u1');
-  });
+      expect((result as ApiSuccess<AccessSnapshot>).data.userId, 'u1');
+    },
+  );
 }
