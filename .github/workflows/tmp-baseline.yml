@@ -15,6 +15,8 @@ jobs:
           flutter-version: '3.38.1'
           cache: true
       - run: flutter pub get
+      - name: Preview formatter output for route tests
+        run: dart format --output=show test/app/routing/feature_route_flags_test.dart test/routing/route_guards_test.dart
       - name: Run each test file independently (60-second limit)
         timeout-minutes: 180
         shell: bash
