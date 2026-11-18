@@ -81,17 +81,17 @@ class AppRouter {
       /// ─────────────────────────────────────────
       if (AppConfig.onboardingEnabled)
         GoRoute(
-        path: OnBoardingRoutes.onboarding.path,
-        name: OnBoardingRoutes.onboarding.name,
-        pageBuilder: (context, state) => RouteTransitions.slide(
-          context,
-          state,
-          BlocProvider(
-            create: (context) => sl<OnBoardingCubit>(),
-            child: OnBoardingScreen(),
+          path: OnBoardingRoutes.onboarding.path,
+          name: OnBoardingRoutes.onboarding.name,
+          pageBuilder: (context, state) => RouteTransitions.slide(
+            context,
+            state,
+            BlocProvider(
+              create: (context) => sl<OnBoardingCubit>(),
+              child: OnBoardingScreen(),
+            ),
           ),
         ),
-      ),
 
       // ─────────────────────────────────────────
       // ثانياً: صفحات المصادقة
@@ -115,45 +115,45 @@ class AppRouter {
       /// ─────────────────────────────────────────
       if (AppConfig.signupEnabled)
         GoRoute(
-        path: AuthRoutes.register.path,
-        name: AuthRoutes.register.name,
-        pageBuilder: (context, state) => RouteTransitions.slide(
-          context,
-          state,
-          _withAuthFlow(const SignUpScreen()),
+          path: AuthRoutes.register.path,
+          name: AuthRoutes.register.name,
+          pageBuilder: (context, state) => RouteTransitions.slide(
+            context,
+            state,
+            _withAuthFlow(const SignUpScreen()),
+          ),
         ),
-      ),
 
       /// ─────────────────────────────────────────
       /// Password recovery: e-mail → code + new password
       /// ─────────────────────────────────────────
       if (AppConfig.forgotPasswordEnabled)
         GoRoute(
-        path: AuthRoutes.forgotPassword.path,
-        name: AuthRoutes.forgotPassword.name,
-        pageBuilder: (context, state) => RouteTransitions.slide(
-          context,
-          state,
-          _withAuthFlow(const ForgotPasswordScreen()),
-        ),
-      ),
-      if (AppConfig.forgotPasswordEnabled)
-        GoRoute(
-        path: AuthRoutes.resetPassword.path,
-        name: AuthRoutes.resetPassword.name,
-        // Opened without an e-mail (deep link, refresh): start over.
-        redirect: (context, state) =>
-            (state.uri.queryParameters['email'] ?? '').isEmpty
-            ? AuthRoutes.forgotPassword.path
-            : null,
-        pageBuilder: (context, state) => RouteTransitions.slide(
-          context,
-          state,
-          _withAuthFlow(
-            ResetPasswordScreen(email: state.uri.queryParameters['email']!),
+          path: AuthRoutes.forgotPassword.path,
+          name: AuthRoutes.forgotPassword.name,
+          pageBuilder: (context, state) => RouteTransitions.slide(
+            context,
+            state,
+            _withAuthFlow(const ForgotPasswordScreen()),
           ),
         ),
-      ),
+      if (AppConfig.forgotPasswordEnabled)
+        GoRoute(
+          path: AuthRoutes.resetPassword.path,
+          name: AuthRoutes.resetPassword.name,
+          // Opened without an e-mail (deep link, refresh): start over.
+          redirect: (context, state) =>
+              (state.uri.queryParameters['email'] ?? '').isEmpty
+              ? AuthRoutes.forgotPassword.path
+              : null,
+          pageBuilder: (context, state) => RouteTransitions.slide(
+            context,
+            state,
+            _withAuthFlow(
+              ResetPasswordScreen(email: state.uri.queryParameters['email']!),
+            ),
+          ),
+        ),
 
       /// ─────────────────────────────────────────
       /// MAIN APP (adaptive shell: bottom bar / rail / sidebar)
