@@ -43,6 +43,10 @@ abstract final class AppIcons {
   static const warning = AppIconData.material(Icons.warning_amber_outlined);
   static const close = AppIconData.material(Icons.close);
 
+  // Pickers (ScopeSelector).
+  static const expand = AppIconData.material(Icons.expand_more);
+  static const check = AppIconData.material(Icons.check);
+
   /// Placeholder until a brand SVG asset (`AppIconData.svg(...)`) is added.
   static const google = AppIconData.material(Icons.account_circle_outlined);
 }

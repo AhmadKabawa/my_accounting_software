@@ -41,6 +41,10 @@ class AppButton extends StatefulWidget {
   /// Optional per-button override; null inherits AppDensityScope.
   final AppDensity? density;
 
+  /// Takes keyboard focus when it first appears (a destructive dialog focuses
+  /// its cancel button, so Enter never confirms by accident).
+  final bool autofocus;
+
   /// زر بنص مترجم
   const AppButton(
     AppKey this.labelKey, {
@@ -52,6 +56,7 @@ class AppButton extends StatefulWidget {
     this.isLoading = false,
     this.expand = false,
     this.density,
+    this.autofocus = false,
   }) : rawLabel = null;
 
   /// زر بنص عادي بدون ترجمة
@@ -65,6 +70,7 @@ class AppButton extends StatefulWidget {
     this.isLoading = false,
     this.expand = false,
     this.density,
+    this.autofocus = false,
   }) : labelKey = null;
 
   @override
@@ -105,6 +111,7 @@ class _AppButtonState extends State<AppButton> {
           ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
+            autofocus: widget.autofocus,
             onTap: _tappable ? widget.onPressed : null,
             onHighlightChanged: (isPressed) =>
                 setState(() => _pressed = isPressed),
