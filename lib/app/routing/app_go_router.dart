@@ -221,7 +221,7 @@ class AppRouter {
     BuildContext context,
     GoRouterState state,
   ) async => resolveRedirect(
-    location: state.matchedLocation,
+    location: state.uri.path,
     splashDone: splashCubit.state is SplashDone,
     onboarded: await settings.isOnboarded(),
     session: session.current,
