@@ -38,6 +38,10 @@ void main() {
       final repository = _Repository();
       final access = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
       addTearDown(access.close);
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+      });
 
       await EasyLocalization.ensureInitialized();
       await tester.pumpWidget(
