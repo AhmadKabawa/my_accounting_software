@@ -36,12 +36,12 @@ jobs:
             name="${file//\//_}"
             log="/tmp/vscode-baseline/${name}.log"
             echo "::group::${file}"
-            if flutter test "${file}" --timeout 60s --reporter expanded >"${log}" 2>&1; then
+            if timeout --signal=TERM --kill-after=10s 75s flutter test "${file}" --timeout 60s --reporter expanded >"${log}" 2>&1; then
               status=0
               classification=PASSED
             else
               status=$?
-              if grep -Eiq 'Test timed out|TimeoutException|timed out after' "${log}"; then
+              if [ "${status}" -eq 124 ] || [ "${status}" -eq 137 ] || [ "${status}" -eq 143 ] || grep -Eiq 'Test timed out|TimeoutException|timed out after' "${log}"; then
                 classification=HUNG
               else
                 classification=FAILED
