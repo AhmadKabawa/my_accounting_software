@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
@@ -13,7 +14,7 @@ Future<AppNavigationRailStyle> _styleAt(WidgetTester tester, Size size) async {
 
   late AppNavigationRailStyle styles;
   await tester.pumpWidget(
-    MaterialApp(
+    buildTestApp(
       theme: AppTheme.light(),
       home: Builder(
         builder: (context) {
@@ -50,10 +51,9 @@ Future<void> _pumpRail(
   addTearDown(tester.view.reset);
 
   await tester.pumpWidget(
-    MaterialApp(
+    buildTestApp(
       theme: AppTheme.light(),
-      builder: (context, child) =>
-          Directionality(textDirection: direction, child: child!),
+      direction: direction,
       home: Scaffold(
         body: Row(
           children: [
@@ -71,6 +71,8 @@ Future<void> _pumpRail(
 }
 
 void main() {
+  setUpAll(() => useTranslations(const Locale('en')));
+
   const tablet = Size(800, 1280);
   const desktop = Size(1440, 900);
 

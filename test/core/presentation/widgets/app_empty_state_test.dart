@@ -5,10 +5,13 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../helpers/localized_app.dart';
 
 import '../../../helpers/test_key.dart';
 
 void main() {
+  setUpAll(() => useTranslations(const Locale('en')));
+
   const title = TestKey('test.empty.title');
   const description = TestKey('test.empty.description');
 
@@ -23,7 +26,7 @@ void main() {
     addTearDown(tester.view.reset);
 
     return tester.pumpWidget(
-      MaterialApp(
+      buildTestApp(
         theme: AppTheme.light(),
         home: Scaffold(
           body: AppEmptyState(

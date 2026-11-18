@@ -3,10 +3,13 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../helpers/localized_app.dart';
 
 import '../../../helpers/test_key.dart';
 
 void main() {
+  setUpAll(() => useTranslations(const Locale('en')));
+
   const tooltip = TestKey('test.tooltip');
 
   Future<void> pump(WidgetTester tester, {VoidCallback? onPressed}) {
@@ -14,7 +17,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     return tester.pumpWidget(
-      MaterialApp(
+      buildTestApp(
         theme: AppTheme.light(),
         home: Scaffold(
           body: Center(
