@@ -34,7 +34,7 @@ enum QuickAction {
   Permission get permission => switch (this) {
     QuickAction.newSale => Permissions.sales.create,
     QuickAction.newPurchase => Permissions.purchases.create,
-    QuickAction.receivePayment => Permissions.payments.create,
+    QuickAction.receivePayment => Permissions.finance.payments,
     QuickAction.customers => Permissions.customers.view,
     QuickAction.reports => Permissions.reports.view,
   };
