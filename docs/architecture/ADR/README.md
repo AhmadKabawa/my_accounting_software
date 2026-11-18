@@ -8,6 +8,7 @@
 - [ADR-0002: نمذجة الحالات واختيار Cubit أو Bloc وموضع freezed](0002-state-modeling-and-bloc-vs-cubit.md)
 - [ADR-0003: اعتماد Ledger Design System للثيم والتوكنز](0003-ledger-design-system.md)
 - [ADR-0004: الاستيراد بين الميزات عبر ملف routes فقط](0004-feature-imports-through-routes-only.md)
+- [ADR-0005: نوع `Money` و`AmountFormatter` (C13)](0005-money-type-and-amount-formatter.md)
 
 ## إضافة ADR
 

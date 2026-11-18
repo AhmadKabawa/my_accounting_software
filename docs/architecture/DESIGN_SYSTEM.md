@@ -58,6 +58,9 @@
 - نوافذ الرسائل (Dialog) زاوية `xl`. `AppTextField` يستخدم `focusRing`.
 - `home_overview_section`: لم تعد تستعمل `secondary/tertiary/error` لأرقام الملخص بل ألوان الرسوم.
 
+### تنسيق المبالغ
+- `AmountFormatter` (C13) و`Money` في `lib/app/core/foundation/money/` ([ADR-0005](ADR/0005-money-type-and-amount-formatter.md)): أرقام غربية، فاصل آلاف `,` وعشري `.`، كسور حسب العملة، علامة `−` (U+2212) تختفي لقيمة تصير صفراً، عزل Bidi (`LRI…PDI`) حول الرقم بعلامته، رمز العملة خارج العزل، ولا اختصار. لم يُشغَّل `flutter test`، ولم يُستعمل في شاشة بعد (طيّاره CAT-03).
+
 ### الاختبارات
 جديد: `app_colors_test` (ربط الأدوار + تباين WCAG للوضعين)، `app_text_styles_test`، `design_tokens_test` (radius/spacing/component/grid/density)، `tokens/app_motion_test`. معدَّل: semantic colors وtheme وbutton وnavigation bar/rail/sidebar.
 

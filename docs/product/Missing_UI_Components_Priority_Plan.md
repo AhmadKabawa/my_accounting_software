@@ -621,7 +621,7 @@ source_documents:
 | المعرّف | المكوّن | الموجة | الحالة | PR / فرع | الطيّار | ويب | جوال | Windows | ملاحظات |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | G1..G7 | بوابات CB0 | CB0 | لم يبدأ | | | | | | |
-| C13 | AmountFormatter | CB0 | لم يبدأ | | CAT-03 | | | | |
+| C13 | AmountFormatter + `Money` (G2) | CB0 | مراجعة | فرع المراجعة (`AI_1_REPORT.md`) | CAT-03 | غير مُشغَّل | لم يُختبر | لم يُختبر | `core/foundation/money/`؛ لم تُشغَّل `pub get` ولا الاختبارات؛ ينتظر طيّار CAT-03 |
 | C14 | الأيقونات | CB0 | لم يبدأ | | الإطار | | | | |
 | C15 | عتبة 900 | CB0 | لم يبدأ | | | | | | |
 | C38 | InlineBanner | CB0 | مراجعة | `feat/ui-c38-inline-banner-message-fix` | AUTH-01 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `AI_3_REPORT.md` |
@@ -671,7 +671,7 @@ source_documents:
 
 | القرار | الجواب | التاريخ | ADR |
 | --- | --- | --- | --- |
-| D-UI-01 نوع المال | | | |
+| D-UI-01 نوع المال | (أ) `Money` فوق `decimal`، التقريب من القاعدة (قرار-70) | 2026-11-16 | [ADR-0005](../architecture/ADR/0005-money-type-and-amount-formatter.md) |
 | D-UI-02 الخطوط | | | |
 | D-UI-03 بناء DataTable | | | |
 | D-UI-04 الطباعة والتصدير | | | |

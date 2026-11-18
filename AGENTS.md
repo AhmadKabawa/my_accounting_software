@@ -46,7 +46,7 @@
 
 - الدقة المالية وصحة العمليات أهم من اختصار الكود.
 - اتبع قواعد الأموال والقيود والسجلات في [قواعد المعمارية §7](docs/architecture/ARCHITECTURE_RULES.md).
-- **فجوة حالية:** لا يوجد نوع `Money` ولا تمثيل عشري دقيق في الكود بعد. القرار معتمد (قرار-70): `Money(amount, currencyId)` فوق `decimal`، والتقريب من بيانات العملة في القاعدة (`decimal_places` و`rounding_increment` و`rounding_method`)، ولا `double` في أي حساب مالي. لا تفترض وجوده ولا تقدمه كمنفذ؛ يُبنى قبل أي عملية مالية فعلية.
+- **Money:** نُفِّذ `Money(amount, currencyId)` فوق `decimal` في `lib/app/core/foundation/money/` مع `AmountFormatter` (C13)، [ADR-0005](docs/architecture/ADR/0005-money-type-and-amount-formatter.md). حالته «مراجعة»: لم يُشغَّل `flutter pub get` ولا `flutter analyze` ولا `flutter test`، فلا تصفه بالنجاح. استعمله لكل مبلغ ولا `double` في أي حساب مالي؛ التقريب من بيانات العملة في القاعدة (`decimal_places` و`rounding_increment` و`rounding_method`) يُمرَّر إلى `MoneyRounding`. لا ميزة تستعمله بعد، ودلالات `rounding_increment` تحتاج مطابقة مع `erp.round_currency` قبل أي ترحيل يعتمد عليه.
 - لا تخترع قواعد محاسبية؛ اطلب توضيحاً عندما يؤثر الغموض في الأرصدة أو المخزون أو العملات.
 
 ## 7. الحالة والتنقل ودورة الحياة

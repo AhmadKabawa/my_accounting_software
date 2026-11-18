@@ -60,6 +60,9 @@
 - `UseCase` و`UseCaseNoParams`: عقود Use Cases.
 - `AppValidator` و`ValidationRule` (`lib/app/core/foundation/validation/app_validator.dart`): نظام التحقق من مدخلات النماذج، ورسائله `AppKey`. التوقيع `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. نوع قيم `params` هو `dynamic`؛ و`ValidationRule.async` و`AsyncValidator` محجوزان ولا يوجد مسار async في `validate()`.
 - `AppPathImage` و`AppPathImages` (`lib/app/core/foundation/constants/image_constants.dart`): ثوابت مسارات الصور والأصول. يجمع `AppPathImage.path` مسار الأصل مع الاسم، ويحدد `isRtl` ما إذا كان الأصل مرتبطاً باتجاه النص.
+- `Money` و`CurrencyMismatchException` (`lib/app/core/foundation/money/money.dart`): نوع المال `Money(amount, currencyId)` فوق `decimal` (قرار-70، [ADR-0005](ADR/0005-money-type-and-amount-formatter.md)). الجمع والطرح والمقارنة بعملة واحدة فقط وإلا `CurrencyMismatchException`؛ `times` و`convert` صريحان؛ ولا تقريب ضمني (`Money.rounded(MoneyRounding)`). `Money.fromRaw` يقرأ قيم PostgREST دون المرور بـ `double` حين تصل نصاً. ممنوع تسجيل قيمه في `Logger`. حالة التحقق: `NOT_RUN`.
+- `MoneyRounding` و`MoneyRoundingMethod` (`money_rounding.dart` و`money_rounding_method.dart`): إعدادات تقريب العملة من جدول `currencies` (`decimal_places` و`rounding_increment` و`rounding_method`) تُمرَّر معاملاً ولا تُثبَّت في Flutter. دلالات `rounding_increment` > 0 و`UP`/`DOWN` للسالب تحتاج مطابقة مع `erp.round_currency`. `MoneyDecimalMath` (`money_decimal_math.dart`) أدوات داخلية لا تُستعمل من الميزات.
+- `AmountFormatter` و`CurrencyDisplay` و`CurrencyLabelPlacement` (`foundation/money/amount_formatter.dart`، C13): تنسيق المبالغ بدوال خالصة: أرقام غربية، فاصل آلاف وعشري، كسور العملة لا القيمة، علامة `−`، عزل Bidi (`LRI…PDI`) حول الرقم، رمز العملة خارج العزل، بلا اختصار. التقريب في العرض لا يغيّر القيمة المحفوظة.
 
 ### Localization
 - `LocaleCubit` و`LocaleState`: حالة اللغة (الحالة تحمل `Locale` فقط).

@@ -21,6 +21,7 @@
 | تحويل خطأ | `ExceptionMapper` ثم `Failure.messageKey` | `error/` |
 | إعداداً أو قيمة بيئة | `AppConfig` | `foundation/config/app_config.dart` |
 | تحققاً من حقل نموذج | `AppValidator` | `foundation/validation/app_validator.dart` |
+| مبلغاً مالياً أو تنسيقه | `Money` + `AmountFormatter` | `foundation/money/` |
 | تخزيناً | `PrefsStorageService` / `SecureStorageService` / Hive | `storage/` |
 | تنقلاً | `<Feature>Routes` + GoRouter | `features/<f>/presentation/routing/` |
 | صلاحية | `PermissionGate` / `context.can` | `access/` |
@@ -385,6 +386,38 @@ Scaffold(appBar: AppPageAppBar(titleKey: ProfileKeys.title), ...)
 ```
 
 تغيير أيقونة من Material إلى SVG = سطر واحد في `AppIcons`.
+
+## المبالغ المالية (Money وAmountFormatter)
+
+```dart
+import 'package:decimal/decimal.dart';
+import 'package:accounting_software/app/core/foundation/money/amount_formatter.dart';
+import 'package:accounting_software/app/core/foundation/money/money.dart';
+import 'package:accounting_software/app/core/foundation/money/money_rounding.dart';
+
+// القراءة من PostgREST (نص numeric أو رقم) دون المرور بـ double للنصوص:
+final price = Money.fromRaw(row['amount'], currencyId);
+final total = Money.sum(currencyId, lines.map((l) => l.price.times(l.qty)));
+
+// التقريب من بيانات العملة في القاعدة، صراحةً:
+final rounding = MoneyRounding.fromCurrencyRow(
+  decimalPlaces: currency['decimal_places'] as int,
+  roundingIncrement: currency['rounding_increment'],
+  roundingMethod: currency['rounding_method'] as String,
+);
+final posted = total.rounded(rounding);
+
+// العرض (C13): الرقم داخل عزل Bidi، والرمز خارجه:
+final text = AmountFormatter.format(
+  posted,
+  currency: CurrencyDisplay.fromRounding(rounding, currencyId: currencyId, label: 'USD'),
+);
+```
+
+- لا `double` في أي حساب مالي. جمع/طرح/مقارنة بين عملتين مختلفتين يرمي `CurrencyMismatchException`؛ التحويل بين العملات عبر `convert(rate:, toCurrencyId:)` بمعامل جاهز ثم `rounded`.
+- `AmountFormatter` لا يجمع ولا يحوّل؛ يعرض ما يُعطى له. للرقم وحده: `AmountFormatter.formatDecimal(value, decimalPlaces: n)`؛ `bidiIsolate: false` لمخرجات لا تدعم محارف الاتجاه (CSV).
+- ممنوع تسجيل قيم `Money` في `Logger`. القيم الرقمية JSON تمر بـ `double` قبل وصولها (دقة نحو 15 رقماً)؛ للمبالغ الكبيرة اطلب النص من الخادم.
+- حالة التحقق: `NOT_RUN` (لم يُشغَّل Flutter). انظر [ADR-0005](ADR/0005-money-type-and-amount-formatter.md).
 
 ## رسائل تعيش بعد انتقال الصفحة
 

@@ -1,0 +1,6 @@
+diff a/docs/architecture/DESIGN_SYSTEM.md b/docs/architecture/DESIGN_SYSTEM.md	(rejected hunks)
+@@ -70,3 +73,3 @@
+ 
+-6. **تنسيق المبالغ:** فواصل الآلاف، كسور حسب العملة، علامة `−`، `Bidi isolate`: غير منفذ (لا Formatter بعد).
++6. **تنسيق المبالغ:** نُفِّذ (`AmountFormatter` في `core/foundation/money/`، انظر «تنسيق المبالغ» في §2). المتبقي: تشغيل الاختبارات، واستعماله في شاشة طيّار (CAT-03) والتحقق البصري من موضع `−` داخل نص عربي.
+ 

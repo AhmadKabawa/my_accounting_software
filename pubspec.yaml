@@ -47,6 +47,7 @@ dependencies:
 
   shared_preferences: ^2.5.4
   dartz: ^0.10.1
+  decimal: ^3.2.4 # exact decimal math for Money (قرار-70، ADR-0005)
 
   get_it: ^9.2.0
   connectivity_plus:
