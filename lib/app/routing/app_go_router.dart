@@ -79,7 +79,8 @@ class AppRouter {
       /// ─────────────────────────────────────────
       /// Onboarding
       /// ─────────────────────────────────────────
-      if (AppConfig.onboardingEnabled) GoRoute(
+      if (AppConfig.onboardingEnabled)
+        GoRoute(
         path: OnBoardingRoutes.onboarding.path,
         name: OnBoardingRoutes.onboarding.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
@@ -112,7 +113,8 @@ class AppRouter {
       /// ─────────────────────────────────────────
       /// Register
       /// ─────────────────────────────────────────
-      if (AppConfig.signupEnabled) GoRoute(
+      if (AppConfig.signupEnabled)
+        GoRoute(
         path: AuthRoutes.register.path,
         name: AuthRoutes.register.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
@@ -125,7 +127,8 @@ class AppRouter {
       /// ─────────────────────────────────────────
       /// Password recovery: e-mail → code + new password
       /// ─────────────────────────────────────────
-      if (AppConfig.forgotPasswordEnabled) GoRoute(
+      if (AppConfig.forgotPasswordEnabled)
+        GoRoute(
         path: AuthRoutes.forgotPassword.path,
         name: AuthRoutes.forgotPassword.name,
         pageBuilder: (context, state) => RouteTransitions.slide(
@@ -134,7 +137,8 @@ class AppRouter {
           _withAuthFlow(const ForgotPasswordScreen()),
         ),
       ),
-      if (AppConfig.forgotPasswordEnabled) GoRoute(
+      if (AppConfig.forgotPasswordEnabled)
+        GoRoute(
         path: AuthRoutes.resetPassword.path,
         name: AuthRoutes.resetPassword.name,
         // Opened without an e-mail (deep link, refresh): start over.
