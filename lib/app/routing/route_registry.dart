@@ -1,3 +1,4 @@
+import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/routing/route_item.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
@@ -5,15 +6,25 @@ import 'package:accounting_software/app/features/on_boarding/presentation/routin
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 
-/// Every route of the app, gathered from the features that own them.
-///
-/// A new feature with routes = one line here. `route_guards_test.dart` checks
-/// this list against the `*_routes.dart` files and against the public/protected
-/// classification in `route_guards.dart`.
-const List<RouteItem> allRoutes = [
+/// Build the route catalogue for the selected feature flags. Disabled
+/// features are absent from the registry, not merely hidden in the UI.
+List<RouteItem> buildRouteRegistry({
+  bool signupEnabled = AppConfig.signupEnabled,
+  bool googleSignInEnabled = AppConfig.googleSignInEnabled,
+  bool forgotPasswordEnabled = AppConfig.forgotPasswordEnabled,
+  bool onboardingEnabled = AppConfig.onboardingEnabled,
+}) => [
   ...SplashRoutes.all,
-  ...OnBoardingRoutes.all,
-  ...AuthRoutes.all,
+  if (onboardingEnabled) ...OnBoardingRoutes.all,
+  AuthRoutes.login,
+  if (signupEnabled) AuthRoutes.register,
+  if (forgotPasswordEnabled) ...[
+    AuthRoutes.forgotPassword,
+    AuthRoutes.resetPassword,
+  ],
   ...HomeRoutes.all,
   ...ProfileRoutes.all,
 ];
+
+/// Routes used by the running application.
+final List<RouteItem> allRoutes = buildRouteRegistry();
