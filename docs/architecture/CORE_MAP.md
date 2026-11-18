@@ -127,7 +127,9 @@
 - `AppBlocObserver`: مراقبة Bloc/Cubit.
 
 ### Shared widgets
-- `AppText`: نص مترجم عبر `AppKey` أو `AppText.raw`، ويدعم `rich` و`selectable`.\n- `AppSkeleton` (`widgets/app_skeleton/app_skeleton.dart`, C09): هياكل تحميل responsive بأشكال `line` و`block` و`card` و`tableRow`؛ يستعمل `shimmer` الموجودة، يؤخر الظهور 200ms افتراضياً ويوقف الحركة عند تفضيل تقليلها. **قيد المراجعة** حتى استعماله في AUTH-04 وCAT-07.\n- `AppEmptyState` (`widgets/app_empty_state/app_empty_state.dart`, C08): حالة فارغة بأيقونة `AppIcon` وعنوان ووصف من `AppKey` وslot اختياري للإجراء؛ يدعم عرضاً مضغوطاً للحاويات المضمّنة. **قيد المراجعة** حتى استعماله في AUTH-04 وCAT-07.
+- `AppText`: نص مترجم عبر `AppKey` أو `AppText.raw`، ويدعم `rich` و`selectable`.
+- `AppSkeleton` (`widgets/app_skeleton/app_skeleton.dart`, C09): هياكل تحميل responsive بأشكال `line` و`block` و`card` و`tableRow`؛ يستعمل `shimmer` الموجودة، يؤخر الظهور 200ms افتراضياً ويوقف الحركة عند تفضيل تقليلها. **قيد المراجعة** حتى استعماله في AUTH-04 وCAT-07.
+- `AppEmptyState` (`widgets/app_empty_state/app_empty_state.dart`, C08): حالة فارغة بأيقونة `AppIcon` وعنوان ووصف من `AppKey` وslot اختياري للإجراء؛ يدعم عرضاً مضغوطاً للحاويات المضمّنة. **قيد المراجعة** حتى استعماله في AUTH-04 وCAT-07.
 - `AppButton`: زر موحد، بـ `AppKey` أو `AppButton.raw`، مع variants/sizes/loading. التصميم في `AppButtonStyle`.
 - `AppIcon` و`AppImage`: عرض الأيقونات والصور؛ اقرأ الـ API قبل إعادة التنفيذ.
 - `AppNavigationBar` و`AppNavigationRail` و`AppSidebar` وأنماطها: عناصر التنقل حسب حجم الشاشة.
