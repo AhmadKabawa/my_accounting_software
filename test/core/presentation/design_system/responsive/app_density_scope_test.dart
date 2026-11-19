@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Resolves button and field values for [density] at the given window [size].
-Future<({double button, double touch, EdgeInsets padding, bool dense})>
+Future<({double button, double iconTouchTarget, double hitArea, EdgeInsets padding, bool dense})>
 _resolve(WidgetTester tester, Size size, {AppDensity? density}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  late ({double button, double touch, EdgeInsets padding, bool dense}) out;
+  late ({double button, double iconTouchTarget, double hitArea, EdgeInsets padding, bool dense}) out;
   Widget probe = Builder(
     builder: (context) {
       final button = AppButtonStyle(context);
@@ -22,7 +22,8 @@ _resolve(WidgetTester tester, Size size, {AppDensity? density}) async {
         button: button
             .resolve(AppButtonVariant.primary, AppButtonSize.medium)
             .height,
-        touch: button.touchTarget,
+        iconTouchTarget: button.touchTarget,
+        hitArea: AppComponentSize.hitArea.of(context),
         padding: field.contentPadding,
         dense: field.isDense,
       );
@@ -64,7 +65,7 @@ void main() {
     expect(comfortable.dense, isFalse);
   });
 
-  testWidgets('compact on desktop: control height does not exceed the field', (
+  testWidgets('compact on desktop keeps visual height compact and icon target accessible', (
     tester,
   ) async {
     final plain = await _resolve(tester, desktop);
@@ -74,7 +75,7 @@ void main() {
       density: AppDensity.compact,
     );
     expect(compact.button, lessThanOrEqualTo(AppDensity.compact.field));
-    expect(compact.touch, lessThanOrEqualTo(AppDensity.compact.field));
+    expect(compact.iconTouchTarget, greaterThanOrEqualTo(compact.hitArea));
     expect(compact.button, lessThanOrEqualTo(plain.button));
     expect(compact.dense, isTrue);
     expect(compact.padding.top, lessThanOrEqualTo(plain.padding.top));
