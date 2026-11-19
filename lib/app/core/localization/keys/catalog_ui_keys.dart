@@ -12,6 +12,7 @@ enum CatalogUiKeys implements AppKey {
   cancel(ar: 'إلغاء', en: 'Cancel'),
   previousPage(ar: 'السابق', en: 'Previous'),
   nextPage(ar: 'التالي', en: 'Next'),
+  loadMore(ar: 'تحميل المزيد', en: 'Load more'),
   rowsPerPage(ar: 'عدد الصفوف', en: 'Rows per page'),
   page(ar: 'صفحة', en: 'Page'),
   of(ar: 'من', en: 'of'),

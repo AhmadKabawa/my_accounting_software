@@ -68,6 +68,8 @@ class AppDataTable<T> extends StatelessWidget {
     this.totalCount = 0,
     this.onPageChanged,
     this.onPageSizeChanged,
+    this.hasMore = false,
+    this.onLoadMore,
     this.density,
   });
 
@@ -92,6 +94,8 @@ class AppDataTable<T> extends StatelessWidget {
   final int totalCount;
   final ValueChanged<int>? onPageChanged;
   final ValueChanged<int>? onPageSizeChanged;
+  final bool hasMore;
+  final VoidCallback? onLoadMore;
   final AppDensity? density;
 
   @override
@@ -195,7 +199,7 @@ class AppDataTable<T> extends StatelessWidget {
             ),
           ),
         if (summaryBuilder != null) summaryBuilder!,
-        _pagination(context),
+        _pagination(context, mobile: true),
       ],
     );
   }
@@ -315,7 +319,14 @@ class AppDataTable<T> extends StatelessWidget {
     );
   }
 
-  Widget _pagination(BuildContext context) {
+  Widget _pagination(BuildContext context, {bool mobile = false}) {
+    if (mobile) {
+      if (!hasMore || onLoadMore == null) return const SizedBox.shrink();
+      return Padding(
+        padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
+        child: AppButton(CatalogUiKeys.loadMore, onPressed: onLoadMore),
+      );
+    }
     if (onPageChanged == null && onPageSizeChanged == null) return const SizedBox.shrink();
     final lastPage = totalCount == 0 ? 1 : (totalCount / pageSize).ceil();
     return Padding(

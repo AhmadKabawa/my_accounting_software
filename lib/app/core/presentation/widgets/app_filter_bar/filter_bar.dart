@@ -82,11 +82,6 @@ class _FilterBarState extends State<FilterBar> {
     _debounce = Timer(widget.debounce, () => widget.onSearchChanged(value));
   }
 
-  void _apply() {
-    widget.onApply?.call();
-    Navigator.maybePop(context);
-  }
-
   Future<void> _openFilters() async {
     final builder = widget.filterPanelBuilder;
     if (builder == null) return;
@@ -98,7 +93,8 @@ class _FilterBarState extends State<FilterBar> {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (sheetContext) => Padding(
+      builder: (sheetContext) => SingleChildScrollView(
+        child: Padding(
         padding: sheetContext.ui.padding.all(AppSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -114,6 +110,7 @@ class _FilterBarState extends State<FilterBar> {
               Navigator.of(sheetContext).pop();
             }),
           ],
+        ),
         ),
       ),
     );
@@ -200,7 +197,7 @@ class _FilterBarState extends State<FilterBar> {
             children: [
               for (final filter in widget.activeFilters)
                 InputChip(
-                  label: Text('${filter.label.tr(context: context)}: ${filter.value}'),
+                  label: AppText.raw('${filter.label.tr(context: context)}: ${filter.value}'),
                   onDeleted: filter.onRemove,
                 ),
             ],
