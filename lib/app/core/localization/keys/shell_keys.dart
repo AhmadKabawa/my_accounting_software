@@ -6,7 +6,8 @@ enum ShellKeys implements AppKey {
     ar: 'الإشعارات غير متاحة حالياً',
     en: 'Notifications are unavailable',
   ),
-  userMenu(ar: 'قائمة المستخدم', en: 'User menu');
+  userMenu(ar: 'قائمة المستخدم', en: 'User menu'),
+  more(ar: 'المزيد', en: 'More');
 
   const ShellKeys({required this.ar, required this.en});
 

@@ -32,6 +32,10 @@ import 'package:accounting_software/app/features/splash/presentation/cubit/splas
 import 'package:accounting_software/app/features/splash/presentation/pages/splash_screen.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 import 'package:accounting_software/app/shell/app_shell.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
+import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 
 class AppRouter {
   /// The router sees the session only through its contract.
@@ -160,7 +164,21 @@ class AppRouter {
       /// ─────────────────────────────────────────
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
-          return AppShell(navigationShell: navigationShell);
+          return AppShell(
+            navigationShell: navigationShell,
+            userMenuEntries: [
+              AppMenuEntry(
+                label: ProfileKeys.title,
+                icon: AppIcons.person,
+                onSelected: () => context.go(ProfileRoutes.profile.path),
+              ),
+              AppMenuEntry(
+                label: AuthKeys.signOut,
+                icon: AppIcons.logout,
+                onSelected: () => sl<SessionCubit>().signOut(),
+              ),
+            ],
+          );
         },
 
         branches: [

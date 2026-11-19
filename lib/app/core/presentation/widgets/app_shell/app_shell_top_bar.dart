@@ -38,7 +38,8 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final branches = [
       for (final branch in snapshot.branches)
-        ScopeOption(
+        if (branch.canView)
+          ScopeOption(
           id: branch.id.toString(),
           name: branch.name,
           viewOnly: !branch.canOperate,
