@@ -255,6 +255,7 @@ class AppShell extends StatelessWidget {
                       activeIndex: activeMobileIndex,
                       onDestinationSelected: (index) =>
                           _select(context, mobileDestinations, index),
+                      moreIndex: hasOverflow ? mobileDestinations.length : null,
                       onMoreSelected: () => _showMore(context, overflow),
                     ),
             );
@@ -346,12 +347,14 @@ class _ShellMobileNavigation extends StatefulWidget {
     required this.items,
     required this.activeIndex,
     required this.onDestinationSelected,
+    required this.moreIndex,
     required this.onMoreSelected,
   });
 
   final List<NavBarItem> items;
   final int activeIndex;
   final ValueChanged<int> onDestinationSelected;
+  final int? moreIndex;
   final Future<void> Function() onMoreSelected;
 
   @override
@@ -363,7 +366,7 @@ class _ShellMobileNavigationState extends State<_ShellMobileNavigation> {
   bool _moreSheetOpen = false;
 
   Future<void> _select(int index) async {
-    if (index < widget.items.length - 1) {
+    if (widget.moreIndex == null || index != widget.moreIndex) {
       widget.onDestinationSelected(index);
       return;
     }
