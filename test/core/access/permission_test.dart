@@ -10,14 +10,20 @@ void main() {
       expect(Permissions.sales.view.covers(Permissions.sales.post), isFalse);
     });
 
-    test('global wildcard does not cover a catalog permission', () {
-      expect(const Permission('*').covers(Permissions.sales.view), isFalse);
+    test('module wildcard covers its module but not others', () {
+      expect(Permissions.sales.all.covers(Permissions.sales.post), isTrue);
+      expect(Permissions.sales.all.covers(Permissions.purchases.view), isFalse);
     });
 
-    test('module wildcard does not cover an action or a prefixed module', () {
-      const wildcard = Permission('sales.*');
-      expect(wildcard.covers(Permissions.sales.post), isFalse);
-      expect(wildcard.covers(const Permission('salesman.view')), isFalse);
+    test('module wildcard does not match a module with the same prefix', () {
+      expect(
+        const Permission('sales.*').covers(const Permission('salesman.view')),
+        isFalse,
+      );
+    });
+
+    test('global wildcard covers a server permission', () {
+      expect(Permission.all.covers(Permissions.journal.post), isTrue);
     });
 
     test('of() builds module.action', () {
@@ -32,10 +38,10 @@ void main() {
       Permissions.sales.discount,
       Permissions.sales.post,
       Permissions.sales.returnDocument,
-      Permissions.purchasing.view,
-      Permissions.purchasing.create,
-      Permissions.purchasing.post,
-      Permissions.purchasing.returnDocument,
+      Permissions.purchases.view,
+      Permissions.purchases.create,
+      Permissions.purchases.post,
+      Permissions.purchases.returnDocument,
       Permissions.inventory.view,
       Permissions.inventory.adjust,
       Permissions.inventory.transfer,
