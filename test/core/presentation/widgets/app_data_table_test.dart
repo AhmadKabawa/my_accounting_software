@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
@@ -37,6 +38,8 @@ void main() {
     ValueChanged<Set<Object>>? onSelectionChanged,
     bool hasMore = false,
     VoidCallback? onLoadMore,
+    AppKey? errorKey,
+    VoidCallback? onRetry,
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
@@ -51,6 +54,8 @@ void main() {
             rows: rows,
             rowId: (value) => value,
             loading: loading,
+            errorKey: errorKey,
+            onRetry: onRetry,
             onSort: onSort,
             onPageChanged: onPageChanged,
             onPageSizeChanged: onPageSizeChanged,
@@ -128,6 +133,17 @@ void main() {
     );
     await tester.tap(find.text('Load more'));
     expect(loaded, isTrue);
+  });
+
+  testWidgets('renders error and delegates retry', (tester) async {
+    var retries = 0;
+    await pumpTable(
+      tester,
+      errorKey: CatalogUiKeys.retry,
+      onRetry: () => retries++,
+    );
+    await tester.tap(find.text('Retry').last);
+    expect(retries, 1);
   });
 
   testWidgets('renders empty data safely in dark LTR at tablet width', (

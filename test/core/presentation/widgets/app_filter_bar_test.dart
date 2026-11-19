@@ -73,6 +73,35 @@ void main() {
     expect(find.byType(BottomSheet), findsNothing);
   });
 
+  testWidgets('mobile sheet can host filter controls without a builder', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: FilterBar(
+            onSearchChanged: (_) {},
+            activeFilters: const [],
+            onClearAll: () {},
+            filterControls: [
+              TextButton(
+                onPressed: () {},
+                child: const Text('Status control'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Filters'));
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsOneWidget);
+    expect(find.text('Status control'), findsOneWidget);
+  });
+
   testWidgets('mobile opens filter editor in a bottom sheet', (tester) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
