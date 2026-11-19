@@ -117,7 +117,10 @@ class _SidebarItem extends StatelessWidget {
               child: Padding(
                 padding: style.itemPadding,
                 child: collapsed
-                    ? Tooltip(message: label, child: Center(child: icon))
+                    ? Tooltip(
+                        message: label,
+                        child: Center(child: icon),
+                      )
                     : Row(
                         children: [
                           icon,

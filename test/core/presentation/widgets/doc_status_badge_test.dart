@@ -21,9 +21,7 @@ void main() {
   for (final (status, label) in cases) {
     testWidgets('$status displays its translated label', (tester) async {
       await tester.pumpWidget(
-        buildTestApp(
-          home: DocStatusBadge(status: status),
-        ),
+        buildTestApp(home: DocStatusBadge(status: status)),
       );
       expect(find.text(label), findsOneWidget);
       expect(find.byType(AppBadge), findsOneWidget);

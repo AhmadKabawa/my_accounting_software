@@ -108,8 +108,11 @@ class AppDataTable<T> extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final type = ScreenEngine.screenTypeForWidth(constraints.maxWidth);
-        final effectiveDensity = density ??
-            (type == ScreenType.desktop ? AppDensity.compact : AppDensity.comfortable);
+        final effectiveDensity =
+            density ??
+            (type == ScreenType.desktop
+                ? AppDensity.compact
+                : AppDensity.comfortable);
         return AppDensityScope(
           density: effectiveDensity,
           child: _buildForWidth(context, type, effectiveDensity),
@@ -127,7 +130,10 @@ class AppDataTable<T> extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InlineBanner(messageKey: errorKey!, variant: InlineBannerVariant.error),
+          InlineBanner(
+            messageKey: errorKey!,
+            variant: InlineBannerVariant.error,
+          ),
           if (onRetry != null)
             Align(
               alignment: AlignmentDirectional.centerEnd,
@@ -138,12 +144,13 @@ class AppDataTable<T> extends StatelessWidget {
     }
     if (loading) return _loading(context);
     if (rows.isEmpty) {
-      return emptyState ?? AppEmptyState(
-        icon: AppIcons.info,
-        titleKey: CatalogUiKeys.emptyTitle,
-        descriptionKey: CatalogUiKeys.emptyDescription,
-        compact: type != ScreenType.mobile,
-      );
+      return emptyState ??
+          AppEmptyState(
+            icon: AppIcons.info,
+            titleKey: CatalogUiKeys.emptyTitle,
+            descriptionKey: CatalogUiKeys.emptyDescription,
+            compact: type != ScreenType.mobile,
+          );
     }
     final style = DataTableStyle(context, density: density);
     if (type == ScreenType.mobile) return _cards(context, style);
@@ -160,7 +167,9 @@ class AppDataTable<T> extends StatelessWidget {
 
   Widget _cards(BuildContext context, DataTableStyle style) {
     final visible = columns
-        .where((column) => column.priority != DataTableColumnPriority.hiddenOnMobile)
+        .where(
+          (column) => column.priority != DataTableColumnPriority.hiddenOnMobile,
+        )
         .toList();
     final declaredPrimary = visible
         .where((column) => column.priority == DataTableColumnPriority.primary)
@@ -176,9 +185,7 @@ class AppDataTable<T> extends StatelessWidget {
         )
         .take(_maxSecondaryCardFields)
         .toList();
-    final sortableColumns = visible
-        .where((column) => column.sortable)
-        .toList();
+    final sortableColumns = visible.where((column) => column.sortable).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -281,10 +288,7 @@ class AppDataTable<T> extends StatelessWidget {
                 onPressed: () {
                   final key = column.sortKey!;
                   onSort?.call(
-                    DataTableSort(
-                      key,
-                      sortKey == key ? !sortAscending : true,
-                    ),
+                    DataTableSort(key, sortKey == key ? !sortAscending : true),
                   );
                   Navigator.of(sheetContext).pop();
                 },
@@ -295,14 +299,19 @@ class AppDataTable<T> extends StatelessWidget {
     );
   }
 
-  Widget _table(BuildContext context, DataTableStyle style, {required bool full}) {
+  Widget _table(
+    BuildContext context,
+    DataTableStyle style, {
+    required bool full,
+  }) {
     final visible = columns
         .where(
           (column) =>
               full || column.priority != DataTableColumnPriority.secondary,
         )
         .toList();
-    if (!full && visible.isEmpty && columns.isNotEmpty) visible.add(columns.first);
+    if (!full && visible.isEmpty && columns.isNotEmpty)
+      visible.add(columns.first);
     Widget cells(T? row, {required bool header}) => Row(
       children: [
         if (onSelectionChanged != null)
@@ -310,7 +319,9 @@ class AppDataTable<T> extends StatelessWidget {
             width: context.ui.size.width(AppComponentSize.hitArea),
             child: header
                 ? Checkbox(
-                    value: rows.isNotEmpty && rows.every((r) => selectedIds.contains(rowId(r))),
+                    value:
+                        rows.isNotEmpty &&
+                        rows.every((r) => selectedIds.contains(rowId(r))),
                     onChanged: (value) => _toggleAll(value ?? false),
                   )
                 : Checkbox(
@@ -328,13 +339,31 @@ class AppDataTable<T> extends StatelessWidget {
                       button: column.sortable,
                       child: InkWell(
                         onTap: column.sortable && onSort != null
-                            ? () => onSort!(DataTableSort(column.sortKey!, sortKey == column.sortKey ? !sortAscending : true))
+                            ? () => onSort!(
+                                DataTableSort(
+                                  column.sortKey!,
+                                  sortKey == column.sortKey
+                                      ? !sortAscending
+                                      : true,
+                                ),
+                              )
                             : null,
                         child: Row(
                           children: [
-                            Expanded(child: AppText(column.labelKey, type: AppTextType.tableHeader, maxLines: 2)),
+                            Expanded(
+                              child: AppText(
+                                column.labelKey,
+                                type: AppTextType.tableHeader,
+                                maxLines: 2,
+                              ),
+                            ),
                             if (column.sortable && sortKey == column.sortKey)
-                              AppIcon(sortAscending ? AppIcons.sortAscending : AppIcons.sortDescending, size: AppIconSize.sm),
+                              AppIcon(
+                                sortAscending
+                                    ? AppIcons.sortAscending
+                                    : AppIcons.sortDescending,
+                                size: AppIconSize.sm,
+                              ),
                           ],
                         ),
                       ),
@@ -348,7 +377,12 @@ class AppDataTable<T> extends StatelessWidget {
             ),
           ),
         if (rowActionsBuilder != null)
-          Expanded(flex: 1, child: header ? const SizedBox.shrink() : rowActionsBuilder!(context, row as T)),
+          Expanded(
+            flex: 1,
+            child: header
+                ? const SizedBox.shrink()
+                : rowActionsBuilder!(context, row as T),
+          ),
       ],
     );
 
@@ -365,7 +399,10 @@ class AppDataTable<T> extends StatelessWidget {
         Expanded(
           child: ListView.separated(
             itemCount: rows.length,
-            separatorBuilder: (_, __) => Divider(height: AppBorderWidth.thin.of(context), color: style.divider),
+            separatorBuilder: (_, __) => Divider(
+              height: AppBorderWidth.thin.of(context),
+              color: style.divider,
+            ),
             itemBuilder: (context, index) {
               final row = rows[index];
               return Focus(
@@ -456,10 +493,14 @@ class AppDataTable<T> extends StatelessWidget {
                 CatalogUiKeys.previousPage,
                 size: AppButtonSize.small,
                 variant: AppButtonVariant.outlined,
-                onPressed: page > 1 && onPageChanged != null ? () => onPageChanged!(page - 1) : null,
+                onPressed: page > 1 && onPageChanged != null
+                    ? () => onPageChanged!(page - 1)
+                    : null,
               ),
               Padding(
-                padding: context.ui.padding.symmetric(horizontal: AppSpacing.sm),
+                padding: context.ui.padding.symmetric(
+                  horizontal: AppSpacing.sm,
+                ),
                 child: AppText.raw(
                   CatalogUiKeys.paginationLabel.tr(
                     context: context,
@@ -475,7 +516,9 @@ class AppDataTable<T> extends StatelessWidget {
                 CatalogUiKeys.nextPage,
                 size: AppButtonSize.small,
                 variant: AppButtonVariant.outlined,
-                onPressed: page < lastPage && onPageChanged != null ? () => onPageChanged!(page + 1) : null,
+                onPressed: page < lastPage && onPageChanged != null
+                    ? () => onPageChanged!(page + 1)
+                    : null,
               ),
             ],
           ),

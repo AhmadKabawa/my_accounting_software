@@ -12,5 +12,6 @@ class SearchableDropdownStyle {
     horizontal: AppSpacing.md,
     vertical: AppSpacing.sm,
   );
-  double get maxOptionsHeight => context.ui.size.height(AppComponentSize.cardHeight) * 2;
+  double get maxOptionsHeight =>
+      context.ui.size.height(AppComponentSize.cardHeight) * 2;
 }

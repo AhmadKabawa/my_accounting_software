@@ -64,10 +64,7 @@ class AppMenu extends StatelessWidget {
               children: [
                 if (entries[i].icon != null) ...[
                   AppIcon(entries[i].icon!, size: AppIconSize.md),
-                  context.ui.spacing.gap(
-                    AppSpacing.sm,
-                    axis: Axis.horizontal,
-                  ),
+                  context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
                 ],
                 AppText(entries[i].label, type: AppTextType.bodyMedium),
               ],
@@ -85,10 +82,7 @@ class AppMenu extends StatelessWidget {
               if (icon != null) AppIcon(icon!, size: AppIconSize.md),
               if (labelKey != null) ...[
                 if (icon != null)
-                  context.ui.spacing.gap(
-                    AppSpacing.xs,
-                    axis: Axis.horizontal,
-                  ),
+                  context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
                 AppText(labelKey!, type: AppTextType.labelLarge),
               ],
             ],

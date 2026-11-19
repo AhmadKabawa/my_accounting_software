@@ -161,7 +161,8 @@ class _FilterBarState extends State<FilterBar> {
               AppButton(
                 CatalogUiKeys.filters,
                 variant: AppButtonVariant.outlined,
-                onPressed: widget.filterPanelBuilder == null &&
+                onPressed:
+                    widget.filterPanelBuilder == null &&
                         widget.filterControls.isEmpty
                     ? null
                     : _openFilters,

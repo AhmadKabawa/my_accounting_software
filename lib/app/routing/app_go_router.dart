@@ -44,8 +44,7 @@ class AppRouter {
   /// The router sees the session only through its contract.
   static final SessionGate session = sl<SessionGate>();
   static final AppSettingsManager settings = sl<AppSettingsManager>();
-  static final UnsavedChangesGuard unsavedChangesGuard =
-      UnsavedChangesGuard();
+  static final UnsavedChangesGuard unsavedChangesGuard = UnsavedChangesGuard();
   static final SplashCubit splashCubit = sl<SplashCubit>();
   static final AccessCubit accessCubit = sl<AccessCubit>();
 

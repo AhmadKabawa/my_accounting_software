@@ -73,11 +73,13 @@ class _SearchableDropdownState<T extends Object>
   @override
   void initState() {
     super.initState();
-    _pickerData = ValueNotifier(_PickerData<T>(
-      options: widget.options,
-      loading: widget.loading,
-      errorKey: widget.errorKey,
-    ));
+    _pickerData = ValueNotifier(
+      _PickerData<T>(
+        options: widget.options,
+        loading: widget.loading,
+        errorKey: widget.errorKey,
+      ),
+    );
     _desktopController = TextEditingController(text: _selectedLabel);
     _desktopFocusNode = FocusNode()..addListener(_onDesktopFocusChanged);
   }
@@ -126,7 +128,8 @@ class _SearchableDropdownState<T extends Object>
     super.didUpdateWidget(oldWidget);
 
     final optionsChanged = !identical(oldWidget.options, widget.options);
-    final stateChanged = oldWidget.loading != widget.loading ||
+    final stateChanged =
+        oldWidget.loading != widget.loading ||
         oldWidget.errorKey != widget.errorKey;
     if (optionsChanged || stateChanged) {
       _pickerData.value = _PickerData<T>(
@@ -244,7 +247,8 @@ class _SearchableDropdownState<T extends Object>
               textInputAction: TextInputAction.search,
               onChanged: _query,
               onSubmitted: onFieldSubmitted,
-              suffix: !widget.clearable ||
+              suffix:
+                  !widget.clearable ||
                       (widget.value == null && controller.text.isEmpty)
                   ? null
                   : AppIconButton(
@@ -455,9 +459,10 @@ class _MobileSearchPickerState<T extends Object>
         final options = widget.filterLocally && _query.trim().isNotEmpty
             ? data.options.where(
                 (option) =>
-                    widget.optionLabel(option).toLowerCase().contains(
-                      _query.trim().toLowerCase(),
-                    ) ||
+                    widget
+                        .optionLabel(option)
+                        .toLowerCase()
+                        .contains(_query.trim().toLowerCase()) ||
                     (widget.optionSubtitle
                             ?.call(option)
                             ?.toLowerCase()
@@ -489,49 +494,51 @@ class _MobileSearchPickerState<T extends Object>
                           variant: InlineBannerVariant.error,
                         )
                       : data.loading
-                          ? const AppSkeleton.block()
-                          : options.isEmpty
-                              ? Center(child: AppText(widget.emptyKey))
-                              : ListView(
-                                  children: [
-                                    for (final option in options)
-                                      Semantics(
-                                        button: true,
-                                        child: InkWell(
-                                          onTap: () => widget.onSelect(option),
-                                          child: Padding(
-                                            padding: context.ui.padding.symmetric(
-                                              vertical: AppSpacing.sm,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                AppText.raw(
-                                                  widget.optionLabel(option),
-                                                  maxLines: 2,
-                                                ),
-                                                if (widget.optionSubtitle
-                                                        ?.call(option) !=
-                                                    null)
-                                                  AppText.raw(
-                                                    widget.optionSubtitle!(
-                                                      option,
-                                                    )!,
-                                                    type: AppTextType.bodySmall,
-                                                    color: context.ui.theme.colors
-                                                        .onSurfaceVariant,
-                                                    maxLines: 2,
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
+                      ? const AppSkeleton.block()
+                      : options.isEmpty
+                      ? Center(child: AppText(widget.emptyKey))
+                      : ListView(
+                          children: [
+                            for (final option in options)
+                              Semantics(
+                                button: true,
+                                child: InkWell(
+                                  onTap: () => widget.onSelect(option),
+                                  child: Padding(
+                                    padding: context.ui.padding.symmetric(
+                                      vertical: AppSpacing.sm,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppText.raw(
+                                          widget.optionLabel(option),
+                                          maxLines: 2,
                                         ),
-                                      ),
-                                    if (widget.onAddNew != null)
-                                      widget.onAddNew!(context),
-                                  ],
+                                        if (widget.optionSubtitle?.call(
+                                              option,
+                                            ) !=
+                                            null)
+                                          AppText.raw(
+                                            widget.optionSubtitle!(option)!,
+                                            type: AppTextType.bodySmall,
+                                            color: context
+                                                .ui
+                                                .theme
+                                                .colors
+                                                .onSurfaceVariant,
+                                            maxLines: 2,
+                                          ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
+                              ),
+                            if (widget.onAddNew != null)
+                              widget.onAddNew!(context),
+                          ],
+                        ),
                 ),
               ],
             ),

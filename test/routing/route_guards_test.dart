@@ -78,10 +78,7 @@ void main() {
     });
 
     test('stays on the picker while a branch is required', () {
-      expect(
-        run('/select-branch', auth: authed, branchRequired: true),
-        isNull,
-      );
+      expect(run('/select-branch', auth: authed, branchRequired: true), isNull);
     });
 
     test('leaves the picker once no branch is required', () {

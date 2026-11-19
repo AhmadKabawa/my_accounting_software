@@ -78,10 +78,7 @@ class AppShell extends StatelessWidget {
     if (!await _canNavigateTo(context, selectedBranch) || !context.mounted) {
       return;
     }
-    navigationShell.goBranch(
-      selectedBranch,
-      initialLocation: isActiveBranch,
-    );
+    navigationShell.goBranch(selectedBranch, initialLocation: isActiveBranch);
     if (isActiveBranch) unsavedChangesGuard?.discardBranch(selectedBranch);
   }
 
@@ -111,10 +108,7 @@ class AppShell extends StatelessWidget {
     final branch = visible[index].branchIndex;
     if (!await _canNavigateTo(context, branch) || !context.mounted) return;
     final isActiveBranch = branch == navigationShell.currentIndex;
-    navigationShell.goBranch(
-      branch,
-      initialLocation: isActiveBranch,
-    );
+    navigationShell.goBranch(branch, initialLocation: isActiveBranch);
     if (isActiveBranch) unsavedChangesGuard?.discardBranch(branch);
   }
 
@@ -200,9 +194,8 @@ class AppShell extends StatelessWidget {
         ? visible.first.item.label
         : null;
 
-    final routeBreadcrumbs = breadcrumbBuilder?.call(
-      GoRouterState.of(context),
-    ) ?? breadcrumbs;
+    final routeBreadcrumbs =
+        breadcrumbBuilder?.call(GoRouterState.of(context)) ?? breadcrumbs;
 
     PreferredSizeWidget? topBar;
     if (snapshot != null && titleKey != null) {
@@ -366,8 +359,7 @@ class _ShellMobileNavigation extends StatefulWidget {
   final Future<void> Function() onMoreSelected;
 
   @override
-  State<_ShellMobileNavigation> createState() =>
-      _ShellMobileNavigationState();
+  State<_ShellMobileNavigation> createState() => _ShellMobileNavigationState();
 }
 
 class _ShellMobileNavigationState extends State<_ShellMobileNavigation> {

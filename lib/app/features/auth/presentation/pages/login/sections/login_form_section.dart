@@ -142,8 +142,7 @@ class _LoginFormSectionState extends State<LoginFormSection> {
                   AuthKeys.noAccount,
                   variant: AppButtonVariant.text,
                   size: AppButtonSize.small,
-                  onPressed: () =>
-                      context.pushNamed(AuthRoutes.register.name),
+                  onPressed: () => context.pushNamed(AuthRoutes.register.name),
                 ),
               ],
             ],

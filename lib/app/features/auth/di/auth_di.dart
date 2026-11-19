@@ -71,10 +71,8 @@ void initAuthDI() {
   );
 
   sl.registerLazySingleton(
-    () => LoginUseCase(
-      repository: sl(),
-      emailDomain: AppConfig.loginEmailDomain,
-    ),
+    () =>
+        LoginUseCase(repository: sl(), emailDomain: AppConfig.loginEmailDomain),
   );
   sl.registerLazySingleton(() => RegisterUseCase(repository: sl()));
   sl.registerLazySingleton(() => LogoutUseCase(repository: sl()));

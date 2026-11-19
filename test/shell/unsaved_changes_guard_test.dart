@@ -99,9 +99,7 @@ _pump(
   addTearDown(tester.view.reset);
 
   final access = AccessCubit(
-    getMyAccess: GetMyAccessUseCase(
-      _Repository(withBranches: withBranches),
-    ),
+    getMyAccess: GetMyAccessUseCase(_Repository(withBranches: withBranches)),
   );
   await access.load();
   addTearDown(access.close);
@@ -194,11 +192,7 @@ void main() {
   testWidgets('rejecting confirmation keeps the current branch', (
     tester,
   ) async {
-    final env = await _pump(
-      tester,
-      size: const Size(390, 844),
-      dirty: true,
-    );
+    final env = await _pump(tester, size: const Size(390, 844), dirty: true);
 
     await tester.tap(find.byIcon(_icons[0]));
     await tester.pumpAndSettle();
@@ -213,11 +207,7 @@ void main() {
   testWidgets('a clean form changes branch without showing a dialog', (
     tester,
   ) async {
-    final env = await _pump(
-      tester,
-      size: const Size(390, 844),
-      dirty: false,
-    );
+    final env = await _pump(tester, size: const Size(390, 844), dirty: false);
 
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
@@ -231,11 +221,7 @@ void main() {
   testWidgets('rapid repeated navigation opens only one confirmation', (
     tester,
   ) async {
-    final env = await _pump(
-      tester,
-      size: const Size(390, 844),
-      dirty: true,
-    );
+    final env = await _pump(tester, size: const Size(390, 844), dirty: true);
     final navigation = tester.widget<AppNavigationBar>(
       find.byType(AppNavigationBar),
     );
@@ -302,11 +288,7 @@ void main() {
   });
 
   testWidgets('rapid More taps open only one sheet', (tester) async {
-    await _pump(
-      tester,
-      size: const Size(390, 844),
-      dirty: true,
-    );
+    await _pump(tester, size: const Size(390, 844), dirty: true);
     final navigation = tester.widget<AppNavigationBar>(
       find.byType(AppNavigationBar),
     );
@@ -442,11 +424,7 @@ void main() {
   testWidgets('clicking the active bottom destination asks the guard', (
     tester,
   ) async {
-    final env = await _pump(
-      tester,
-      size: const Size(390, 844),
-      dirty: true,
-    );
+    final env = await _pump(tester, size: const Size(390, 844), dirty: true);
     await tester.tap(find.byIcon(_icons[0]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsOneWidget);
@@ -460,11 +438,7 @@ void main() {
   testWidgets('clicking the active rail destination asks the guard', (
     tester,
   ) async {
-    final env = await _pump(
-      tester,
-      size: const Size(900, 1000),
-      dirty: true,
-    );
+    final env = await _pump(tester, size: const Size(900, 1000), dirty: true);
     await tester.tap(find.byIcon(_icons[0]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsOneWidget);
@@ -478,11 +452,7 @@ void main() {
   testWidgets('clicking the active sidebar destination asks the guard', (
     tester,
   ) async {
-    final env = await _pump(
-      tester,
-      size: const Size(1400, 900),
-      dirty: true,
-    );
+    final env = await _pump(tester, size: const Size(1400, 900), dirty: true);
     await tester.tap(find.byIcon(_icons[0]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsOneWidget);

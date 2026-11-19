@@ -242,7 +242,6 @@ class DashboardTemplate extends StatelessWidget {
   );
 }
 
-
 /// T1 list frame. The feature supplies the page state and the already-wired
 /// FilterBar/DataTable; neither data access nor business rules live here.
 ///
@@ -302,11 +301,13 @@ class ListPageTemplate extends StatelessWidget {
                   const AppSkeleton.tableRow(),
               ],
             ),
-            AppPageState.empty => emptyState ?? AppEmptyState(
-              icon: AppIcons.info,
-              titleKey: TemplateKeys.emptyTitle,
-              descriptionKey: TemplateKeys.emptyDescription,
-            ),
+            AppPageState.empty =>
+              emptyState ??
+                  AppEmptyState(
+                    icon: AppIcons.info,
+                    titleKey: TemplateKeys.emptyTitle,
+                    descriptionKey: TemplateKeys.emptyDescription,
+                  ),
             // AppDataTable owns its error banner and retry action. Do not
             // render a second page-level error/retry pair here.
             AppPageState.content || AppPageState.error => dataTable,

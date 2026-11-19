@@ -71,8 +71,10 @@ void main() {
     expect(find.textContaining('Create'), findsNothing);
     expect(find.text('Forgot password?'), findsNothing);
     // Recovery is the administrator's job.
-    expect(find.textContaining('Contact your system administrator'),
-        findsOneWidget);
+    expect(
+      find.textContaining('Contact your system administrator'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('empty fields are rejected without calling the server', (

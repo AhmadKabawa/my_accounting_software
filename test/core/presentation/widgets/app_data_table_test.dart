@@ -159,7 +159,9 @@ void main() {
     expect(requestedSize, 50);
   });
 
-  testWidgets('mobile sorting is available from a bottom sheet', (tester) async {
+  testWidgets('mobile sorting is available from a bottom sheet', (
+    tester,
+  ) async {
     DataTableSort? requestedSort;
     await pumpTable(
       tester,
@@ -198,10 +200,7 @@ void main() {
 
   testWidgets('supports selection and loading skeletons', (tester) async {
     Set<Object>? selected;
-    await pumpTable(
-      tester,
-      onSelectionChanged: (value) => selected = value,
-    );
+    await pumpTable(tester, onSelectionChanged: (value) => selected = value);
     await tester.tap(find.byType(Checkbox).at(1));
     expect(selected, contains('Alpha'));
 
@@ -223,11 +222,7 @@ void main() {
 
   testWidgets('renders error and delegates retry', (tester) async {
     var retries = 0;
-    await pumpTable(
-      tester,
-      errorKey: _loadFailed,
-      onRetry: () => retries++,
-    );
+    await pumpTable(tester, errorKey: _loadFailed, onRetry: () => retries++);
     // The error replaces the rows; the banner text and the retry action
     // are two distinct widgets.
     expect(find.text('test.table.loadFailed'), findsOneWidget);

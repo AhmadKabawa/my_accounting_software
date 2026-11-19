@@ -34,7 +34,9 @@ void main() {
             'A very long catalog item description that must wrap safely',
           ],
           rowId: (value) => value,
-          errorKey: state == AppPageState.error ? CatalogUiKeys.emptyDescription : null,
+          errorKey: state == AppPageState.error
+              ? CatalogUiKeys.emptyDescription
+              : null,
           onRetry: onRetry,
         ),
         state: state,

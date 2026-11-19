@@ -63,12 +63,15 @@ void main() {
     expect(cubit.can(const Permission('sales.view')), isFalse);
   });
 
-  test('needsBranchSelection: several viewable branches, none chosen', () async {
-    await cubit.load();
-    expect(cubit.state.needsBranchSelection, isTrue);
-    await cubit.selectBranch(1);
-    expect(cubit.state.needsBranchSelection, isFalse);
-  });
+  test(
+    'needsBranchSelection: several viewable branches, none chosen',
+    () async {
+      await cubit.load();
+      expect(cubit.state.needsBranchSelection, isTrue);
+      await cubit.selectBranch(1);
+      expect(cubit.state.needsBranchSelection, isFalse);
+    },
+  );
 
   test('needsBranchSelection is false for a single viewable branch', () async {
     repository.result = Right(

@@ -19,7 +19,10 @@ enum CatalogUiKeys implements AppKey {
   sortBy(ar: 'ترتيب حسب', en: 'Sort by'),
   paginationLabel(ar: 'صفحة @page من @lastPage', en: 'Page @page of @lastPage'),
   emptyTitle(ar: 'لا توجد بيانات', en: 'No data'),
-  emptyDescription(ar: 'لا توجد سجلات لعرضها', en: 'There are no records to display'),
+  emptyDescription(
+    ar: 'لا توجد سجلات لعرضها',
+    en: 'There are no records to display',
+  ),
   retry(ar: 'إعادة المحاولة', en: 'Retry');
 
   const CatalogUiKeys({required this.ar, required this.en});
