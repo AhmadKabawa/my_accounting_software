@@ -290,17 +290,6 @@ class ListPageTemplate extends StatelessWidget {
           ),
         filterBar,
         context.ui.spacing.gap(AppSpacing.md),
-        if (state == AppPageState.error) ...[
-          InlineBanner(
-            messageKey: errorKey ?? TemplateKeys.defaultError,
-            variant: InlineBannerVariant.error,
-          ),
-          if (onRetry != null)
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: AppButton(TemplateKeys.retry, onPressed: onRetry),
-            ),
-        ],
         Expanded(
           child: switch (state) {
             AppPageState.loading => ListView(
@@ -314,6 +303,8 @@ class ListPageTemplate extends StatelessWidget {
               titleKey: TemplateKeys.emptyTitle,
               descriptionKey: TemplateKeys.emptyDescription,
             ),
+            // AppDataTable owns its error banner and retry action. Do not
+            // render a second page-level error/retry pair here.
             AppPageState.content || AppPageState.error => dataTable,
           },
         ),
