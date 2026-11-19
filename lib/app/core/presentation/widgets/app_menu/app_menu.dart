@@ -10,12 +10,14 @@ class AppMenuEntry {
     required this.onSelected,
     this.icon,
     this.enabled = true,
+    this.requiresUnsavedChangesCheck = false,
   });
 
   final AppKey label;
   final AppIconData? icon;
   final VoidCallback onSelected;
   final bool enabled;
+  final bool requiresUnsavedChangesCheck;
 }
 
 /// General anchored menu for page, account and row actions.

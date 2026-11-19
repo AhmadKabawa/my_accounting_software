@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/routing/unsaved_changes_guard.dart';
 import 'package:accounting_software/app/core/access/presentation/access_status_gate.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
@@ -33,6 +34,8 @@ class AppShell extends StatelessWidget {
   final AppKey? cashierSessionKey;
   final bool supportsCollapsibleSidebar;
   final AppSettingsManager? settingsManager;
+  final UnsavedChangesGuard? unsavedChangesGuard;
+  final Future<bool> Function(int destinationBranch)? beforeDestinationChange;
 
   const AppShell({
     super.key,
@@ -45,6 +48,8 @@ class AppShell extends StatelessWidget {
     this.cashierSessionKey,
     this.supportsCollapsibleSidebar = false,
     this.settingsManager,
+    this.unsavedChangesGuard,
+    this.beforeDestinationChange,
   });
 
   Future<void> _showMore(
@@ -68,15 +73,45 @@ class AppShell extends StatelessWidget {
         ],
       ),
     );
-    if (selectedBranch != null) navigationShell.goBranch(selectedBranch);
+    if (selectedBranch == null || !context.mounted) return;
+    if (!await _canNavigateTo(context, selectedBranch) || !context.mounted) {
+      return;
+    }
+    navigationShell.goBranch(selectedBranch);
   }
 
-  void _select(List<AppDestination> visible, int index) {
+  Future<bool> _canNavigateTo(
+    BuildContext context,
+    int destinationBranch,
+  ) async {
+    final beforeChange = beforeDestinationChange;
+    if (beforeChange != null) {
+      final allowed = await beforeChange(destinationBranch);
+      if (!allowed || !context.mounted) return false;
+    }
+    final guard = unsavedChangesGuard;
+    if (guard == null) return true;
+    final allowed = await guard.confirmBranch(navigationShell.currentIndex);
+    return allowed && context.mounted;
+  }
+
+  Future<void> _select(
+    BuildContext context,
+    List<AppDestination> visible,
+    int index,
+  ) async {
     final branch = visible[index].branchIndex;
+    if (!await _canNavigateTo(context, branch) || !context.mounted) return;
     navigationShell.goBranch(
       branch,
       initialLocation: branch == navigationShell.currentIndex,
     );
+  }
+
+  Future<bool> _confirmActiveBranch() async {
+    final guard = unsavedChangesGuard;
+    if (guard == null) return true;
+    return guard.confirmBranch(navigationShell.currentIndex);
   }
 
   @override
@@ -101,7 +136,35 @@ class AppShell extends StatelessWidget {
     }
 
     final items = [for (final destination in visible) destination.item];
-    void onSelect(int index) => _select(visible, index);
+    Future<void> onSelect(int index) => _select(context, visible, index);
+    Future<bool> confirmBranchChange(ScopeOption option) async {
+      if (!await _confirmActiveBranch() || !context.mounted) return false;
+      final allowed = await beforeBranchChange?.call(option) ?? true;
+      return allowed && context.mounted;
+    }
+
+    final guardedUserMenuEntries = [
+      for (final entry in userMenuEntries)
+        AppMenuEntry(
+          label: entry.label,
+          icon: entry.icon,
+          enabled: entry.enabled,
+          requiresUnsavedChangesCheck: entry.requiresUnsavedChangesCheck,
+          onSelected: () async {
+            if (entry.requiresUnsavedChangesCheck) {
+              if (!await _confirmActiveBranch() || !context.mounted) return;
+            }
+            entry.onSelected();
+          },
+        ),
+    ];
+    final shellContent = unsavedChangesGuard == null
+        ? navigationShell
+        : UnsavedChangesGuardScope(
+            guard: unsavedChangesGuard!,
+            activeBranchIndex: navigationShell.currentIndex,
+            child: navigationShell,
+          );
     final snapshot = access.state.snapshot;
     final titleKey = current >= 0
         ? visible[current].item.label
@@ -119,10 +182,12 @@ class AppShell extends StatelessWidget {
         snapshot: snapshot,
         selectedBranchId: access.state.selectedBranchId,
         onBranchChanged: access.selectBranch,
-        beforeBranchChange: beforeBranchChange,
+        beforeBranchChange: unsavedChangesGuard == null
+            ? beforeBranchChange
+            : confirmBranchChange,
         breadcrumbs: routeBreadcrumbs,
         cashierSessionKey: cashierSessionKey,
-        userMenuEntries: userMenuEntries,
+        userMenuEntries: guardedUserMenuEntries,
         leading: supportsCollapsibleSidebar && GoRouter.of(context).canPop()
             ? AppIconButton(
                 AppIcons.back,
@@ -138,7 +203,7 @@ class AppShell extends StatelessWidget {
       body: Row(
         children: [
           nav,
-          Expanded(child: navigationShell),
+          Expanded(child: shellContent),
         ],
       ),
     );
@@ -170,7 +235,7 @@ class AppShell extends StatelessWidget {
 
             return Scaffold(
               appBar: topBar,
-              body: navigationShell,
+              body: shellContent,
               bottomNavigationBar: mobileItems.isEmpty
                   ? null
                   : AppNavigationBar(
@@ -178,7 +243,7 @@ class AppShell extends StatelessWidget {
                       activeIndex: activeMobileIndex,
                       onIndexChanged: (index) {
                         if (index < mobileDestinations.length) {
-                          _select(mobileDestinations, index);
+                          _select(context, mobileDestinations, index);
                         } else {
                           _showMore(context, overflow);
                         }

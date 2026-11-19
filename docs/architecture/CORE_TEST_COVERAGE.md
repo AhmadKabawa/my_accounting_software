@@ -45,7 +45,10 @@
 - `test/shell/app_page_templates_test.dart`: FormPageTemplate في Loading/Empty/Error/Content، عدم وجود Expanded داخل ScrollView، تمركز EmptyState في مساحة التمرير، تأكيد الخروج مرة واحدة، الإلغاء يبقي الصفحة، والتأكيد يخرج ويستدعي `onDiscard`.
 - `test/shell/dashboard_template_test.dart`: DashboardTemplate في Loading/Empty/Error/Grid.
 - `test/core/presentation/widgets/app_icon_button_test.dart`: مساحة اللمس وسلوك التفعيل والتعطيل لـ `AppIconButton`.
-- لا يوجد اختبار Widget مستقل لـ `AppShellTopBar` حتى الآن، ولا تحقق بصري على المتصفح أو أجهزة فعلية. اختبارات الودجت لا تثبت وحدها سلوكاً على المنصات الفعلية.
+- `test/shell/stateful_shell_route_preservation_test.dart`: اختبار مكتوب للتحقق من بقاء حالة نموذج الفرع عند التبديل إلى فرع آخر والعودة ضمن indexedStack.
+- `test/shell/app_shell_windows_sidebar_test.dart`: اختبار مكتوب لطي Sidebar واستعادة التفضيل من AppSettingsManager.
+- `test/shell/unsaved_changes_guard_test.dart`: اختبارات مكتوبة للسماح والرفض، الحالة النظيفة، النقر المزدوج، الشريط السفلي وRail وSidebar وورقة المزيد وقائمة المستخدم وتغيير الفرع المؤسسي.
+- لم تُشغّل هذه الاختبارات في هذه الدفعة بناءً على طلب المالك؛ وجودها لا يثبت نجاحها. لا يوجد اختبار Widget مستقل لـ `AppShellTopBar` حتى الآن، ولا تحقق بصري على المتصفح أو أجهزة فعلية.
 
 ## حالة التشغيل
 

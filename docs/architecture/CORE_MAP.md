@@ -196,6 +196,7 @@
 - أضيفت حالات Empty افتراضية إلى FormPageTemplate وDashboardTemplate باستخدام AppEmptyState، مع إمكانية تمرير حالة فارغة مخصصة.
 - على Windows فقط، يتيح AppSidebar الطي إلى شريط أيقونات ويحفظ التفضيل عبر AppSettingsManager؛ الويب يبقي Sidebar الموسع. يُقرأ دعم الطي من PlatformCapabilities عبر تنفيذ شرطي داخل core/platform، لا من Widget.
 - زر الرجوع الداخلي في Windows يظهر عند وجود مسار داخلي قابل للرجوع. لم تُبنَ أو تُختبر منصة Windows في هذه الدفعة.
+- `UnsavedChangesGuard` يُحقن في AppShell؛ يسجل FormPageTemplate حالة dirty لكل فرع، ويُستشار قبل التنقل من BottomBar وRail وSidebar وورقة المزيد، وعند تغيير الفرع المؤسسي أو إجراء قائمة مستخدم معلّم بالحارس. يمنع طلب تنقل ثانياً أثناء الحوار.
 
 
 ## قوالب الصفحات والقشرة — عقود الاستخدام

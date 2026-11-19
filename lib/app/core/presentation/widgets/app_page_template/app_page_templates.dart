@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
+import 'package:accounting_software/app/core/routing/unsaved_changes_guard.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
@@ -46,29 +47,84 @@ class FormPageTemplate extends StatefulWidget {
 }
 
 class _FormPageTemplateState extends State<FormPageTemplate> {
+  UnsavedChangesGuard? _guard;
+  int? _guardBranchIndex;
+  bool _discarded = false;
+
+  bool get _isDirty => widget.dirty && !_discarded;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final scope = UnsavedChangesGuardScope.maybeOf(context);
+    if (scope == null) {
+      _guard?.unregister(this);
+      _guard = null;
+      _guardBranchIndex = null;
+      return;
+    }
+    if (!identical(_guard, scope.guard)) {
+      _guard?.unregister(this);
+      _guard = scope.guard;
+      _guardBranchIndex = scope.activeBranchIndex;
+    } else {
+      // A branch keeps its State in indexedStack; retain the branch index
+      // captured when this form was first mounted.
+      _guardBranchIndex ??= scope.activeBranchIndex;
+    }
+    _syncGuardRegistration();
+  }
+
+  @override
+  void didUpdateWidget(FormPageTemplate oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.dirty || !oldWidget.dirty) _discarded = false;
+    _syncGuardRegistration();
+  }
+
+  void _syncGuardRegistration() {
+    final guard = _guard;
+    final branchIndex = _guardBranchIndex;
+    if (guard == null || branchIndex == null) return;
+    guard.updateForm(
+      key: this,
+      branchIndex: branchIndex,
+      dirty: _isDirty,
+      confirm: _confirmLeave,
+    );
+  }
+
   Future<bool> _confirmLeave() async {
-    if (!widget.dirty) return true;
+    if (!_isDirty) return true;
     final confirmed = await showConfirmDialog(
       context,
       titleKey: widget.titleKey,
       messageKey: TemplateKeys.unsavedChanges,
       severity: ConfirmDialogSeverity.warning,
     );
-    if (confirmed) widget.onDiscard?.call();
+    if (confirmed && mounted) {
+      setState(() => _discarded = true);
+      _syncGuardRegistration();
+      widget.onDiscard?.call();
+    }
     return confirmed;
+  }
+
+  @override
+  void dispose() {
+    _guard?.unregister(this);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: !widget.dirty,
+      canPop: !_isDirty,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop || !widget.dirty) return;
+        if (didPop || !_isDirty) return;
         final leave = await _confirmLeave();
         if (leave && mounted) {
-          // Navigator.pop bypasses this PopScope's canPop check. Calling
-          // maybePop here would re-check the stale canPop value and reopen
-          // the confirmation dialog before the next frame rebuilds.
+          // Navigator.pop bypasses this PopScope's canPop check.
           Navigator.of(context).pop();
         }
       },

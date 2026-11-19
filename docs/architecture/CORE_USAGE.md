@@ -462,7 +462,9 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - FormPageTemplate هو T3 وDashboardTemplate هو T5. الشاشة المالكة تمرر المحتوى والحالة والبطاقات؛ لا تضع الصلاحيات أو منطق الأعمال داخل القالب.
 - AppShell يقبل beforeBranchChange ليقرر صاحب الشاشة ما إذا كان تغيير الفرع مسموحاً بعد تأكيد C07. لا يعرف Shell شيئاً عن سلة البيع.
 - على Windows يمرر AppRouter قدرة supportsCollapsibleSidebar من PlatformCapabilities وAppSettingsManager؛ لا يستعمل الويب هذه القدرة، ويبقى Sidebar موسعاً. زر الرجوع الداخلي يستخدم go_router.
-- عناصر قائمة المستخدم وشارة جلسة الكاشير حالياً slots؛ لم يُربط تسجيل الخروج أو جلسة POS بعد.
+- `UnsavedChangesGuard` يمرر من AppRouter إلى AppShell. FormPageTemplate يسجل نفسه تلقائياً عندما `dirty=true` داخل نطاق القشرة، ويستعمل ConfirmDialog نفسه لحارس PopScope ولتغيير الفرع/الوجهة.
+- علّم عنصر قائمة المستخدم الذي يجب أن يطلب تأكيد التغييرات بـ `requiresUnsavedChangesCheck: true` (يُستخدم لتسجيل الخروج). يمكن للمالك تمرير `beforeDestinationChange` لتقرير السماح بتغيير الوجهة قبل سؤال الحارس.
+- الحراسة تغطي التنقلات التي تمر عبر AppShell فقط. `context.go` البرمجي، وزر الرجوع في المتصفح، وتغيير الرابط يدوياً غير مغطاة في هذه الآلية.
 
 
 ## متابعة الاستخدام — 2026-11-19

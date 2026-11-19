@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
+import 'package:accounting_software/app/core/routing/unsaved_changes_guard.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/routing/go_router_refresh_stream.dart';
@@ -42,6 +43,8 @@ class AppRouter {
   /// The router sees the session only through its contract.
   static final SessionGate session = sl<SessionGate>();
   static final AppSettingsManager settings = sl<AppSettingsManager>();
+  static final UnsavedChangesGuard unsavedChangesGuard =
+      UnsavedChangesGuard();
   static final SplashCubit splashCubit = sl<SplashCubit>();
   static final AccessCubit accessCubit = sl<AccessCubit>();
 
@@ -170,6 +173,7 @@ class AppRouter {
             supportsCollapsibleSidebar:
                 PlatformCapabilities.supportsCollapsibleSidebar,
             settingsManager: settings,
+            unsavedChangesGuard: unsavedChangesGuard,
             userMenuEntries: [
               AppMenuEntry(
                 label: ProfileKeys.title,
@@ -179,6 +183,7 @@ class AppRouter {
               AppMenuEntry(
                 label: AuthKeys.signOut,
                 icon: AppIcons.logout,
+                requiresUnsavedChangesCheck: true,
                 onSelected: () => sl<SessionCubit>().signOut(),
               ),
             ],
