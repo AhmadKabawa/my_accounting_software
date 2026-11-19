@@ -161,9 +161,7 @@ class _SearchableDropdownState<T extends Object>
           optionsBuilder: (value) => _options(value.text),
           onSelected: widget.onChanged,
           fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-            if (selected != null &&
-                controller.text != label &&
-                !focusNode.hasFocus) {
+            if (!focusNode.hasFocus && controller.text != label) {
               controller.text = label;
             }
             return TextField(
