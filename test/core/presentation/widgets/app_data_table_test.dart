@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.d
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import '../../../helpers/localized_app.dart';
 
@@ -76,7 +77,7 @@ void main() {
     tester,
   ) async {
     await pumpTable(tester, size: const Size(360, 800));
-    expect(find.byType(Card), findsNWidgets(2));
+    expect(find.byType(AppCard), findsNWidgets(2));
 
     await pumpTable(tester, size: const Size(900, 900));
     expect(find.byType(Card), findsNothing);
