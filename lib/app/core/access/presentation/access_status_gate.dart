@@ -33,11 +33,14 @@ class _AccessStatusGateState extends State<AccessStatusGate> {
         final isReady = state.isReady && !hasNoBranches;
         if (isReady) _hasRenderedChild = true;
 
-        final Widget? statusView = hasNoBranches
-            ? _buildNoBranches(context)
-            : isReady
-            ? null
-            : _buildLoadingOrFailure(context, state);
+        final Widget? statusView;
+        if (hasNoBranches) {
+          statusView = _buildNoBranches(context);
+        } else if (isReady) {
+          statusView = null;
+        } else {
+          statusView = _buildLoadingOrFailure(context, state);
+        }
 
         if (!_hasRenderedChild) return statusView!;
 

@@ -39,42 +39,43 @@ class _Repository implements AccessRepository {
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async {
     _calls++;
     if (failOnSecondCall && _calls == 2) return Left(NetworkFailure());
+
     return Right(
       AccessSnapshot(
-      userId: 'guard-test',
-      username: 'guard-test',
-      email: null,
-      isSuperAdmin: false,
-      roles: const [],
-      permissions: const {Permission('sales.view')},
-      branches: withBranches
-          ? const [
-              AccessBranch(
-                id: 1,
-                code: 'ONE',
-                name: 'First branch',
-                canView: true,
-                canOperate: true,
-              ),
-              AccessBranch(
-                id: 2,
-                code: 'TWO',
-                name: 'Second branch',
-                canView: true,
-                canOperate: true,
-              ),
-            ]
-          : const [
-              AccessBranch(
-                id: 1,
-                code: 'ONE',
-                name: 'First branch',
-                canView: true,
-                canOperate: true,
-              ),
-            ],
-      warehouses: const [],
-      posTerminals: const [],
+        userId: 'guard-test',
+        username: 'guard-test',
+        email: null,
+        isSuperAdmin: false,
+        roles: const [],
+        permissions: const {Permission('sales.view')},
+        branches: withBranches
+            ? const [
+                AccessBranch(
+                  id: 1,
+                  code: 'ONE',
+                  name: 'First branch',
+                  canView: true,
+                  canOperate: true,
+                ),
+                AccessBranch(
+                  id: 2,
+                  code: 'TWO',
+                  name: 'Second branch',
+                  canView: true,
+                  canOperate: true,
+                ),
+              ]
+            : const [
+                AccessBranch(
+                  id: 1,
+                  code: 'ONE',
+                  name: 'First branch',
+                  canView: true,
+                  canOperate: true,
+                ),
+              ],
+        warehouses: const [],
+        posTerminals: const [],
       ),
     );
   }
