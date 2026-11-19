@@ -54,14 +54,14 @@ class AppBadgeStyle {
     final vertical = small
         ? context.ui.spacing.xs / 2
         : compact
-        ? AppSpacing.none
-        : AppSpacing.xs;
+        ? context.ui.spacing.none
+        : context.ui.spacing.xs;
     return BadgeVisual(
       background: background,
       foreground: foreground,
       padding: EdgeInsets.symmetric(
         horizontal: context.ui.spacing.value(horizontal),
-        vertical: context.ui.spacing.value(vertical),
+        vertical: vertical,
       ),
       radius: context.ui.radius.full,
       iconSize: context.ui.icon.size(small ? AppIconSize.sm : AppIconSize.md),
