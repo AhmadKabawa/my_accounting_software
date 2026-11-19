@@ -237,3 +237,5 @@
 - C04 يبقي TextEditingController وFocusNode على سطح المكتب ويعيد تهيئة RawAutocomplete عند استبدال مجموعة الخيارات، مع الاحتفاظ بنص البحث؛ وعلى الهاتف يستهلك BottomSheet ValueListenable لحالة options/loading/error حتى تظهر نتائج البحث البعيد أثناء بقاء الورقة مفتوحة.
 - C10 يقبل `filterControls` كعناصر يمررها مالك الصفحة (ومنها SearchableDropdown C04) أو `filterPanelBuilder`؛ على الهاتف يفتح أياً منهما داخل ورقة سفلية قابلة للتمرير.
 - C01 في الهاتف يعرض Load more عبر callback `onLoadMore/hasMore`؛ التابلت/سطح المكتب يعرضان page/pageSize callbacks. صفوف الجدول قابلة للتنقل بلوحة المفاتيح، وEnter ينفذ `onRowActivated` وSpace يبدل التحديد.
+
+- C01 يستخدم AppCard الموجود لبطاقات الهاتف بدلاً من إنشاء Card style موازٍ؛ `cardBuilder` يخصص المحتوى مع بقاء selection/actions slots مستقلة.

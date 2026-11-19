@@ -91,3 +91,5 @@
 - لم يُتحقق بعد من التباين/overflow بصرياً على Chrome عند 360/600/900/1200 أو من دعم المنصات الأخرى؛ الاختبارات المكتوبة لا تُعد ناجحة قبل تشغيلها.
 
 - C01 يختار mobile load more من `hasMore/onLoadMore`، بينما tablet/desktop يرسلان page/pageSize callbacks؛ لا تُحمّل المجموعة كاملة لفرزها محلياً.
+
+- C01 يستعمل AppCard لسطح بطاقات الهاتف؛ لا يُعاد تعريف radius أو border أو surface colors داخل DataTable.
