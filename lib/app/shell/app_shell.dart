@@ -148,7 +148,7 @@ class AppShell extends StatelessWidget {
     Future<bool> confirmBranchChange(ScopeOption option) async {
       final ownerAllows = await beforeBranchChange?.call(option) ?? true;
       if (!ownerAllows || !context.mounted) return false;
-      return _confirmActiveBranch() && context.mounted;
+      return await _confirmActiveBranch() && context.mounted;
     }
 
     void selectBranch(int branchId) {
