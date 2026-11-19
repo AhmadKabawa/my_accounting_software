@@ -68,7 +68,7 @@ void main() {
         home: buildListPage(AppPageState.error, onRetry: () => retries++),
       ),
     );
-    expect(find.text(CatalogUiKeys.retry.en), findsOneWidget);
+    expect(find.text(CatalogUiKeys.retry.en), findsNWidgets(2));
     expect(find.text('Alpha'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

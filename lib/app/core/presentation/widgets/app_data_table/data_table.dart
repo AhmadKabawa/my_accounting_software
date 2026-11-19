@@ -107,7 +107,7 @@ class AppDataTable<T> extends StatelessWidget {
             (type == ScreenType.desktop ? AppDensity.compact : AppDensity.comfortable);
         return AppDensityScope(
           density: effectiveDensity,
-          child: _buildForWidth(context, constraints.maxWidth, type, effectiveDensity),
+          child: _buildForWidth(context, type, effectiveDensity),
         );
       },
     );
@@ -115,7 +115,6 @@ class AppDataTable<T> extends StatelessWidget {
 
   Widget _buildForWidth(
     BuildContext context,
-    double width,
     ScreenType type,
     AppDensity density,
   ) {

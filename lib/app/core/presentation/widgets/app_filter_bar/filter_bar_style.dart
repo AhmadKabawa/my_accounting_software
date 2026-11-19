@@ -6,6 +6,5 @@ class FilterBarStyle {
   final BuildContext context;
   ColorScheme get colors => context.ui.theme.colors;
   EdgeInsets get padding => context.ui.padding.all(AppSpacing.sm);
-  BorderRadius get chipRadius => context.ui.radius.md;
   double get gap => context.ui.spacing.sm;
 }

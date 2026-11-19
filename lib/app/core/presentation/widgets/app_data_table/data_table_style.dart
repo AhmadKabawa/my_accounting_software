@@ -15,6 +15,5 @@ class DataTableStyle {
     horizontal: AppSpacing.md,
     vertical: AppSpacing.sm,
   );
-  BorderRadius get cardRadius => context.ui.radius.md;
   Color get divider => colors.outlineVariant;
 }
