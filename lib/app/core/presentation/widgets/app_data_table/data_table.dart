@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -169,13 +170,12 @@ class AppDataTable<T> extends StatelessWidget {
     return ListView(
       children: [
         for (final row in rows)
-          Card(
-            margin: EdgeInsetsDirectional.only(bottom: style.gap),
-            child: InkWell(
+          Padding(
+            padding: EdgeInsetsDirectional.only(bottom: style.gap),
+            child: AppCard(
+              padding: AppSpacing.md,
               onTap: onRowActivated == null ? null : () => onRowActivated!(row),
-              child: Padding(
-                padding: style.cellPadding,
-                child: Column(
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (onSelectionChanged != null)
