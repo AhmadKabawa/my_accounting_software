@@ -40,60 +40,6 @@ class _FakeAccessRepository implements AccessRepository {
 
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async => result;
-  group('responsive shell breakpoints', () {
-    testWidgets('360 width uses the mobile bottom bar', (tester) async {
-      await _pump(tester, const Size(360, 800));
-
-      expect(find.byType(AppNavigationBar), findsOneWidget);
-      expect(find.byType(AppNavigationRail), findsNothing);
-      expect(find.byType(AppSidebar), findsNothing);
-    });
-
-    testWidgets('600 width uses the tablet rail', (tester) async {
-      await _pump(tester, const Size(600, 900));
-
-      expect(find.byType(AppNavigationRail), findsOneWidget);
-      expect(find.byType(AppNavigationBar), findsNothing);
-      expect(find.byType(AppSidebar), findsNothing);
-    });
-
-    testWidgets('900 width uses the tablet rail', (tester) async {
-      await _pump(tester, const Size(900, 1200));
-
-      expect(find.byType(AppNavigationRail), findsOneWidget);
-      expect(find.byType(AppNavigationBar), findsNothing);
-      expect(find.byType(AppSidebar), findsNothing);
-    });
-
-    testWidgets('1200 width uses the desktop sidebar', (tester) async {
-      await _pump(tester, const Size(1200, 900));
-
-      expect(find.byType(AppSidebar), findsOneWidget);
-      expect(find.byType(AppNavigationBar), findsNothing);
-      expect(find.byType(AppNavigationRail), findsNothing);
-    });
-  });
-
-  group('direction and appearance', () {
-    for (final theme in [AppTheme.light(), AppTheme.dark()]) {
-      for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
-        testWidgets(
-          '${theme.brightness.name} theme with ${direction.name} direction',
-          (tester) async {
-            await _pump(
-              tester,
-              const Size(390, 844),
-              theme: theme,
-              direction: direction,
-            );
-
-            expect(find.byType(AppNavigationBar), findsOneWidget);
-          },
-        );
-      }
-    }
-  });
-
 }
 
 AppDestination _dest(IconData icon, int branch, {Permission? permission}) =>
@@ -313,4 +259,58 @@ void main() {
       expect(tester.takeException(), isA<AssertionError>());
     });
   });
+  group('responsive shell breakpoints', () {
+    testWidgets('360 width uses the mobile bottom bar', (tester) async {
+      await _pump(tester, const Size(360, 800));
+
+      expect(find.byType(AppNavigationBar), findsOneWidget);
+      expect(find.byType(AppNavigationRail), findsNothing);
+      expect(find.byType(AppSidebar), findsNothing);
+    });
+
+    testWidgets('600 width uses the tablet rail', (tester) async {
+      await _pump(tester, const Size(600, 900));
+
+      expect(find.byType(AppNavigationRail), findsOneWidget);
+      expect(find.byType(AppNavigationBar), findsNothing);
+      expect(find.byType(AppSidebar), findsNothing);
+    });
+
+    testWidgets('900 width uses the tablet rail', (tester) async {
+      await _pump(tester, const Size(900, 1200));
+
+      expect(find.byType(AppNavigationRail), findsOneWidget);
+      expect(find.byType(AppNavigationBar), findsNothing);
+      expect(find.byType(AppSidebar), findsNothing);
+    });
+
+    testWidgets('1200 width uses the desktop sidebar', (tester) async {
+      await _pump(tester, const Size(1200, 900));
+
+      expect(find.byType(AppSidebar), findsOneWidget);
+      expect(find.byType(AppNavigationBar), findsNothing);
+      expect(find.byType(AppNavigationRail), findsNothing);
+    });
+  });
+
+  group('direction and appearance', () {
+    for (final theme in [AppTheme.light(), AppTheme.dark()]) {
+      for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
+        testWidgets(
+          '${theme.brightness.name} theme with ${direction.name} direction',
+          (tester) async {
+            await _pump(
+              tester,
+              const Size(390, 844),
+              theme: theme,
+              direction: direction,
+            );
+
+            expect(find.byType(AppNavigationBar), findsOneWidget);
+          },
+        );
+      }
+    }
+  });
+
 }
