@@ -7,8 +7,8 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar_style.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field_style.dart';
 
 export 'filter_bar_style.dart';
 
@@ -130,14 +130,11 @@ class _FilterBarState extends State<FilterBar> {
       children: [
         LayoutBuilder(
           builder: (context, constraints) {
-            final search = TextField(
+            final search = AppTextField(
               controller: _controller,
+              labelKey: CatalogUiKeys.search,
+              hintKey: widget.searchHintKey,
               onChanged: _search,
-              style: AppTextFieldStyle(context).textStyle,
-              decoration: AppTextFieldStyle(context).decoration(
-                label: CatalogUiKeys.search.tr(context: context),
-                hint: widget.searchHintKey.tr(context: context),
-              ),
             );
             if (mobile) {
               return Column(
