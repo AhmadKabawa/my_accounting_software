@@ -102,6 +102,10 @@ void main() {
       await pumpTable(
         tester,
         size: sizes[index],
+        rows: const [
+          'A very long catalog item description that must wrap without overflow',
+          'Beta',
+        ],
         dark: index.isOdd,
         direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
         textScale: 2,
