@@ -74,13 +74,15 @@ class AppShell extends StatelessWidget {
       ),
     );
     if (selectedBranch == null || !context.mounted) return;
+    final isActiveBranch = selectedBranch == navigationShell.currentIndex;
     if (!await _canNavigateTo(context, selectedBranch) || !context.mounted) {
       return;
     }
-    navigationShell.goBranch(selectedBranch);
-    if (selectedBranch == navigationShell.currentIndex) {
-      unsavedChangesGuard?.discardBranch(selectedBranch);
-    }
+    navigationShell.goBranch(
+      selectedBranch,
+      initialLocation: isActiveBranch,
+    );
+    if (isActiveBranch) unsavedChangesGuard?.discardBranch(selectedBranch);
   }
 
   Future<bool> _canNavigateTo(
