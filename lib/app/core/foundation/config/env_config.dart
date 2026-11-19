@@ -13,6 +13,17 @@ class EnvConfig {
     'SUPABASE_ANON_KEY',
   );
 
+  /// Domain appended to a plain username to build the Auth e-mail
+  /// (decision 66): `admin` signs in as `admin@<domain>`. provision-user
+  /// creates accounts as `username@store.local`, hence the default; an
+  /// account whose Auth e-mail is a real address signs in by typing that
+  /// address. Whether the default stays is settled by O-05 (a real sign-in
+  /// test), not assumed here.
+  static const String loginEmailDomain = String.fromEnvironment(
+    'LOGIN_EMAIL_DOMAIN',
+    defaultValue: 'store.local',
+  );
+
   /// OAuth client ID for Google Sign-In. Optional: null when not provided,
   /// in which case the platform's own configuration is used.
   static const String _googleClientId = String.fromEnvironment(

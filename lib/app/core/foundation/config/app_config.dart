@@ -26,6 +26,9 @@ class AppConfig {
   static const String baseUrl = EnvConfig.supabaseUrl;
   static const String supabaseAnonKey = EnvConfig.supabaseAnonKey;
 
+  /// نطاق البريد الذي يُضاف إلى اسم المستخدم عند الدخول (قرار-66).
+  static const String loginEmailDomain = EnvConfig.loginEmailDomain;
+
   /// OAuth client ID لـ Google Sign-In؛ null إن لم يُمرَّر (تُستخدم تهيئة المنصة).
   static String? get googleClientId => EnvConfig.googleClientId;
 

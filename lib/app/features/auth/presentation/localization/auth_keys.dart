@@ -8,6 +8,10 @@ enum AuthKeys implements AppKey {
   rememberMe(ar: 'تذكرني', en: 'Remember me'),
   forgotPassword(ar: 'نسيت كلمة المرور؟', en: 'Forgot password?'),
   signIn(ar: 'تسجيل الدخول', en: 'Sign In'),
+  contactAdmin(
+    ar: 'نسيت كلمة المرور؟ تواصل مع مدير النظام',
+    en: 'Forgot your password? Contact your system administrator',
+  ),
   createAccount(ar: 'إنشاء حساب', en: 'Create Account'),
   sendMessageToEmail(
     ar: 'إرسال رسالة إلى البريد الإلكتروني',
@@ -25,8 +29,8 @@ enum AuthKeys implements AppKey {
   ),
   loginTitle(ar: 'مرحباً بعودتك', en: 'Welcome back'),
   loginSubtitle(
-    ar: 'سجّل الدخول للمتابعة إلى حسابك',
-    en: 'Sign in to continue to your account',
+    ar: 'أدخل اسم المستخدم وكلمة المرور للمتابعة',
+    en: 'Enter your username and password to continue',
   ),
   haveAccount(
     ar: 'لديك حساب؟ سجّل الدخول',

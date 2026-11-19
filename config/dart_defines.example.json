@@ -1,5 +1,6 @@
 {
   "SUPABASE_URL": "https://your-project.supabase.co",
   "SUPABASE_ANON_KEY": "your-public-anon-key",
+  "LOGIN_EMAIL_DOMAIN": "store.local",
   "GOOGLE_CLIENT_ID": ""
 }

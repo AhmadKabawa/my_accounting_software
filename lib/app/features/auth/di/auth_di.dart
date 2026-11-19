@@ -70,7 +70,12 @@ void initAuthDI() {
     ),
   );
 
-  sl.registerLazySingleton(() => LoginUseCase(repository: sl()));
+  sl.registerLazySingleton(
+    () => LoginUseCase(
+      repository: sl(),
+      emailDomain: AppConfig.loginEmailDomain,
+    ),
+  );
   sl.registerLazySingleton(() => RegisterUseCase(repository: sl()));
   sl.registerLazySingleton(() => LogoutUseCase(repository: sl()));
   sl.registerLazySingleton(() => SignInWithGoogleUseCase(repository: sl()));

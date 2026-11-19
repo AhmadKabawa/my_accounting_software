@@ -16,12 +16,16 @@ class AuthPageScaffold extends StatelessWidget {
     required this.child,
     this.subtitleKey,
     this.showBack = false,
+    this.header,
   });
 
   final AppKey titleKey;
   final AppKey? subtitleKey;
   final Widget child;
   final bool showBack;
+
+  /// Optional brand block above the title (the login page's wordmark).
+  final Widget? header;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +46,13 @@ class AuthPageScaffold extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    if (header != null) ...[
+                      header!,
+                      context.ui.spacing.gap(
+                        AppSpacing.xl,
+                        axis: Axis.vertical,
+                      ),
+                    ],
                     AppText(titleKey, type: AppTextType.headlineMedium),
                     if (subtitleKey != null) ...[
                       context.ui.spacing.gap(

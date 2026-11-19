@@ -45,6 +45,7 @@ flutter pub get
    `cp config/dart_defines.example.json config/dart_defines.json`
 2. أدخل القيم المطلوبة:
    - `SUPABASE_URL` و`SUPABASE_ANON_KEY` — مطلوبتان لإعداد التطبيق.
+   - `LOGIN_EMAIL_DOMAIN` — نطاق البريد الذي يُضاف إلى اسم المستخدم عند الدخول (قرار-66)؛ الافتراضي `store.local`. من يدخل ببريد كامل (يحوي `@`) يُستعمل بريده كما هو.
    - `GOOGLE_CLIENT_ID` — معرّف OAuth لعميل Web؛ مطلوب لمصادقة Google على Web، بينما تستخدم Android وiOS إعدادات المنصة.
 3. شغّل التطبيق باستخدام الملف:
 

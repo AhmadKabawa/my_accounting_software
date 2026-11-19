@@ -16,6 +16,9 @@ class FakeAuthRepository implements AuthRepository {
   final void Function()? onLogout;
   final calls = <String>[];
 
+  /// The e-mail the last `login` call received (after username resolution).
+  String? lastLoginEmail;
+
   Either<Failure, AuthResultEntity>? authResult;
   Either<Failure, UserEntity?> currentUser = const Right(null);
   Object? currentUserError;
@@ -43,7 +46,10 @@ class FakeAuthRepository implements AuthRepository {
   Future<Either<Failure, AuthResultEntity>> login({
     required String email,
     required String password,
-  }) => _auth('login');
+  }) {
+    lastLoginEmail = email;
+    return _auth('login');
+  }
 
   @override
   Future<Either<Failure, AuthResultEntity>> register({

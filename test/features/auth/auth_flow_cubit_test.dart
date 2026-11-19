@@ -37,7 +37,7 @@ void main() {
     flash.listen(shown.add);
     session = _MockSession();
     cubit = AuthFlowCubit(
-      login: LoginUseCase(repository: repo),
+      login: LoginUseCase(repository: repo, emailDomain: 'store.local'),
       register: RegisterUseCase(repository: repo),
       googleSignIn: SignInWithGoogleUseCase(repository: repo),
       sendResetCode: SendResetCodeUseCase(repository: repo),
@@ -58,7 +58,7 @@ void main() {
     blocTest<AuthFlowCubit, AuthFlowStatus>(
       'success authenticates the session and says so',
       build: () => cubit,
-      act: (c) => c.signInWithEmail(email: 'a@b.c', password: 'x'),
+      act: (c) => c.signIn(identifier: 'a@b.c', password: 'x'),
       expect: () => loadingThenIdle,
       verify: (_) {
         verify(() => session.onAuthenticated(testUser)).called(1);
@@ -71,20 +71,45 @@ void main() {
       'failure does not authenticate the session and shows the error',
       setUp: () => repo.authResult = Left(UnauthorizedFailure()),
       build: () => cubit,
-      act: (c) => c.signInWithEmail(email: 'a@b.c', password: 'bad'),
+      act: (c) async {
+        await c.signIn(identifier: 'a@b.c', password: 'bad');
+        await settle();
+      },
       expect: () => loadingThenIdle,
       verify: (_) {
         verifyNever(() => session.onAuthenticated(any()));
-        expect(shown.single.type, MessageType.error);
+        // The page shows it inline (banner); no snackbar is posted as well.
+        expect(shown, isEmpty);
+        expect(effects.single, isA<SignInFailedEffect>());
+        expect(
+          (effects.single as SignInFailedEffect).messageKey,
+          UnauthorizedFailure().messageKey,
+        );
       },
+    );
+
+    blocTest<AuthFlowCubit, AuthFlowStatus>(
+      'a username is sent to the server as username@domain',
+      build: () => cubit,
+      act: (c) => c.signIn(identifier: 'Ahmad', password: 'x'),
+      expect: () => loadingThenIdle,
+      verify: (_) => expect(repo.lastLoginEmail, 'ahmad@store.local'),
+    );
+
+    blocTest<AuthFlowCubit, AuthFlowStatus>(
+      'a full e-mail is sent as typed',
+      build: () => cubit,
+      act: (c) => c.signIn(identifier: 'Admin@Real.com', password: 'x'),
+      expect: () => loadingThenIdle,
+      verify: (_) => expect(repo.lastLoginEmail, 'Admin@Real.com'),
     );
 
     blocTest<AuthFlowCubit, AuthFlowStatus>(
       'a second call while loading is ignored',
       build: () => cubit,
       act: (c) => Future.wait([
-        c.signInWithEmail(email: 'a@b.c', password: 'x'),
-        c.signInWithEmail(email: 'a@b.c', password: 'x'),
+        c.signIn(identifier: 'a@b.c', password: 'x'),
+        c.signIn(identifier: 'a@b.c', password: 'x'),
       ]),
       expect: () => loadingThenIdle,
       verify: (_) =>

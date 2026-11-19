@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 /// Add a text by adding one entry; the key is `<prefix>.<name>` (derived),
 /// so it cannot be mistyped or duplicated inside the section.
 enum FieldKeys implements AppKey {
+  username(ar: 'اسم المستخدم', en: 'Username'),
   email(ar: 'البريد الإلكتروني', en: 'Email'),
   firstName(ar: 'الاسم الأول', en: 'First name'),
   lastName(ar: 'اسم العائلة', en: 'Last name'),

@@ -507,3 +507,10 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - حالات التحميل والخطأ و«لا نتائج» تظهر تحت الحقل لا داخل اللوحة (RawAutocomplete لا يعرض لوحة بلا خيارات)، ويظهر `onAddNew` في الحالة نفسها عند عدم وجود نتائج.
 - على الهاتف يُعلن SearchableDropdown كزر واحد (التسمية + القيمة الحالية) بمظهر فعّال؛ حقل البحث وحقل FilterBar يعرضان زر «بحث» على لوحة المفاتيح، والإرسال يبحث فوراً دون انتظار debounce.
 - AppBadge القابل للإزالة: مساحة لمس زر الإزالة لا تقل عن `AppComponentSize.hitArea` على الهاتف (تكبر الشارة هناك)، والنص يُقرأ مرة واحدة من تسمية الحاوية.
+
+## AUTH-01: الدخول باسم المستخدم (قرار-66)
+
+- `resolveLoginEmail` (domain) يحوّل اسم المستخدم إلى `username@<LOGIN_EMAIL_DOMAIN>` بأحرف صغيرة؛ وما فيه `@` يُرسَل كما كُتب. التحويل داخل `LoginUseCase` وحده، والنطاق يُحقن من `AppConfig.loginEmailDomain`.
+- `AuthFlowCubit.signIn(identifier:, password:)` (بدل `signInWithEmail`). رفض الدخول يصل الصفحة كـ `SignInFailedEffect` فتعرضه في `InlineBanner` واحد (C38) فوق الحقول، ولا يُرسَل flash مكرر. بقية أخطاء المسارات الأخرى كما كانت.
+- `AuthPageScaffold(header:)` لكتلة العلامة فوق العنوان؛ شعار v1 نص `vaude` بلا أصل صورة.
+- مع `forgotPasswordEnabled = false` يظهر نص «تواصل مع مدير النظام» بدل رابط الاستعادة.

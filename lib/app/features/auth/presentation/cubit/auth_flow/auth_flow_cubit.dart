@@ -59,15 +59,22 @@ class AuthFlowCubit extends BaseCubit<AuthFlowStatus, AuthFlowEffect> {
     _flash.post(message, MessageType.success);
   }
 
-  Future<void> signInWithEmail({
-    required String email,
+  /// [identifier] is a username, or a full e-mail (decision 66). A rejection
+  /// goes to the page as [SignInFailedEffect] (shown inline), not as a flash.
+  Future<void> signIn({
+    required String identifier,
     required String password,
   }) async {
     if (isLoading) return;
     _setStatus(AuthFlowStatus.loading);
-    final result = await _login(LoginParams(email: email, password: password));
+    final result = await _login(
+      LoginParams(identifier: identifier, password: password),
+    );
     _setStatus(AuthFlowStatus.idle);
-    result.fold(_error, (data) => _signedIn(data, AuthKeys.signInSuccess));
+    result.fold(
+      (failure) => emitEffect(SignInFailedEffect(failure.messageKey)),
+      (data) => _signedIn(data, AuthKeys.signInSuccess),
+    );
   }
 
   Future<void> signInWithGoogle() async {
