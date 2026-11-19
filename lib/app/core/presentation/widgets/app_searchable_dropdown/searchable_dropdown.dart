@@ -10,8 +10,9 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown_style.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field_style.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 
 export 'searchable_dropdown_style.dart';
 
@@ -72,7 +73,9 @@ class _SearchableDropdownState<T extends Object>
       loading: widget.loading,
       errorKey: widget.errorKey,
     ));
-    _desktopController = TextEditingController();
+    _desktopController = TextEditingController(
+      text: widget.value == null ? '' : widget.optionLabel(widget.value as T),
+    );
     _desktopFocusNode = FocusNode();
   }
 
@@ -83,26 +86,25 @@ class _SearchableDropdownState<T extends Object>
     final stateChanged = oldWidget.loading != widget.loading ||
         oldWidget.errorKey != widget.errorKey;
     if (optionsChanged || stateChanged) {
-      final nextData = _PickerData<T>(
+      _pickerData.value = _PickerData<T>(
         options: widget.options,
         loading: widget.loading,
         errorKey: widget.errorKey,
       );
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _pickerData.value = nextData;
-        if (optionsChanged && _desktopFocusNode.hasFocus) {
-          final current = _desktopController.value;
-          final query = current.text;
-          _desktopController.value = TextEditingValue(
-            text: '$query ',
-            selection: TextSelection.collapsed(offset: query.length + 1),
-          );
-          _desktopController.value = current;
-        }
-      });
+    }
+
+    if (oldWidget.value != widget.value && !_desktopFocusNode.hasFocus) {
+      _desktopController.value = TextEditingValue(
+        text: widget.value == null ? '' : widget.optionLabel(widget.value as T),
+        selection: TextSelection.collapsed(
+          offset: widget.value == null
+              ? 0
+              : widget.optionLabel(widget.value as T).length,
+        ),
+      );
     }
   }
+
   String _lastQuery = '';
 
   @override
@@ -141,12 +143,10 @@ class _SearchableDropdownState<T extends Object>
     final isMobile = ScreenEngine.isMobile(context);
 
     if (!widget.enabled || widget.readOnly) {
-      return InputDecorator(
-        decoration: InputDecoration(
-          labelText: widget.labelKey.tr(context: context),
-          enabled: widget.enabled,
-        ),
-        child: AppText.raw(label, maxLines: 2),
+      return AppTextField(
+        controller: _desktopController,
+        labelKey: widget.labelKey,
+        enabled: false,
       );
     }
 
@@ -154,15 +154,12 @@ class _SearchableDropdownState<T extends Object>
       return InkWell(
         onTap: () => _openMobilePicker(context),
         borderRadius: style.radius,
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: widget.labelKey.tr(context: context),
-            suffixIcon: const AppIcon(AppIcons.expand),
-          ),
-          child: AppText.raw(
-            label.isEmpty ? CatalogUiKeys.chooseOption.tr(context: context) : label,
-            color: label.isEmpty ? style.colors.onSurfaceVariant : null,
-            maxLines: 2,
+        child: IgnorePointer(
+          child: AppTextField(
+            controller: _desktopController,
+            labelKey: widget.labelKey,
+            enabled: false,
+            suffix: const AppIcon(AppIcons.expand),
           ),
         ),
       );
@@ -178,20 +175,11 @@ class _SearchableDropdownState<T extends Object>
           optionsBuilder: (value) => _options(value.text),
           onSelected: widget.onChanged,
           fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-            if (!focusNode.hasFocus && controller.text != label) {
-              controller.text = label;
-            }
-            return TextField(
+            return AppTextField(
               controller: controller,
-              focusNode: focusNode,
-              enabled: widget.enabled,
-              readOnly: widget.readOnly,
+              labelKey: widget.labelKey,
+              hintKey: CatalogUiKeys.search,
               onChanged: _query,
-              style: AppTextFieldStyle(context).textStyle,
-              decoration: AppTextFieldStyle(context).decoration(
-                label: widget.labelKey.tr(context: context),
-                hint: CatalogUiKeys.search.tr(context: context),
-              ),
             );
           },
           optionsViewBuilder: (context, onSelected, options) => _optionsPanel(
@@ -205,8 +193,7 @@ class _SearchableDropdownState<T extends Object>
             messageKey: widget.errorKey!,
             variant: InlineBannerVariant.error,
           ),
-        if (widget.loading)
-          const Center(child: CircularProgressIndicator()),
+        if (widget.loading) const AppSkeleton.block(),
         if (!widget.loading &&
             widget.errorKey == null &&
             _lastQuery.isNotEmpty &&
@@ -264,13 +251,16 @@ class _SearchableDropdownState<T extends Object>
     if (widget.loading) {
       return Padding(
         padding: context.ui.padding.all(AppSpacing.lg),
-        child: const Center(child: CircularProgressIndicator()),
+        child: const AppSkeleton.block(),
       );
     }
     if (options.isEmpty) {
       return Padding(
         padding: context.ui.padding.all(AppSpacing.md),
-        child: AppText(widget.emptyKey, color: Theme.of(context).colorScheme.onSurfaceVariant),
+        child: AppText(
+          widget.emptyKey,
+          color: context.ui.theme.colors.onSurfaceVariant,
+        ),
       );
     }
     return ListView(
@@ -372,7 +362,14 @@ class _MobileSearchPicker<T extends Object> extends StatefulWidget {
 
 class _MobileSearchPickerState<T extends Object>
     extends State<_MobileSearchPicker<T>> {
+  final TextEditingController _searchController = TextEditingController();
   String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -397,16 +394,14 @@ class _MobileSearchPickerState<T extends Object>
             padding: context.ui.padding.all(AppSpacing.md),
             child: Column(
               children: [
-                TextField(
-                  autofocus: true,
+                AppTextField(
+                  controller: _searchController,
+                  labelKey: widget.labelKey,
+                  prefixIcon: AppIcons.search,
                   onChanged: (value) {
                     setState(() => _query = value);
                     widget.onQueryChanged?.call(value);
                   },
-                  decoration: InputDecoration(
-                    labelText: widget.labelKey.tr(context: context),
-                    prefixIcon: const AppIcon(AppIcons.search),
-                  ),
                 ),
                 context.ui.spacing.gap(AppSpacing.md),
                 Expanded(
@@ -424,21 +419,38 @@ class _MobileSearchPickerState<T extends Object>
                               : ListView(
                                   children: [
                                     for (final option in options)
-                                      ListTile(
-                                        title: AppText.raw(
-                                          widget.optionLabel(option),
-                                          maxLines: 2,
-                                        ),
-                                        subtitle:
-                                            widget.optionSubtitle?.call(option) ==
-                                                    null
-                                                ? null
-                                                : AppText.raw(
+                                      Semantics(
+                                        button: true,
+                                        child: InkWell(
+                                          onTap: () => widget.onSelect(option),
+                                          child: Padding(
+                                            padding: context.ui.padding.symmetric(
+                                              vertical: AppSpacing.sm,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                AppText.raw(
+                                                  widget.optionLabel(option),
+                                                  maxLines: 2,
+                                                ),
+                                                if (widget.optionSubtitle
+                                                        ?.call(option) !=
+                                                    null)
+                                                  AppText.raw(
                                                     widget.optionSubtitle!(
                                                       option,
                                                     )!,
+                                                    type: AppTextType.bodySmall,
+                                                    color: context.ui.theme.colors
+                                                        .onSurfaceVariant,
+                                                    maxLines: 2,
                                                   ),
-                                        onTap: () => widget.onSelect(option),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     if (widget.onAddNew != null)
                                       widget.onAddNew!(context),
