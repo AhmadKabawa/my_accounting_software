@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import '../../../helpers/localized_app.dart';
 
@@ -34,9 +35,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 301));
     expect(query, 'brand');
 
-    final chip = tester.widget<InputChip>(find.byType(InputChip).first);
+    final chip = tester.widget<AppBadge>(find.byType(AppBadge).first);
     expect(removed, 0);
-    chip.onDeleted!.call();
+    chip.onRemove!.call();
     expect(removed, 1);
 
     await tester.tap(find.text('Clear all'));
