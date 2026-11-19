@@ -60,9 +60,9 @@
 
 | المكوّن | الاختبار | التغطية المكتوبة | حالة التشغيل |
 |---|---|---|---|
-| C04 SearchableDropdown | `test/core/presentation/widgets/app_searchable_dropdown_test.dart` | بحث محلي واختيار، remote debounce وتحديث نتائج desktop/mobile، BottomSheet للجوال، error وdisabled، رسالة no-results مرة واحدة، تحديث قائمة جديدة بالمحتوى نفسه مع الحفاظ على query/focus، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
+| C04 SearchableDropdown | `test/core/presentation/widgets/app_searchable_dropdown_test.dart` | بحث محلي واختيار، remote debounce وتحديث نتائج desktop/mobile، BottomSheet للجوال، error وdisabled، رسالة no-results مرة واحدة، تحديث قائمة جديدة بالمحتوى نفسه مع الحفاظ على query/focus، رجوع النص المكتوب إلى القيمة المختارة عند فقدان التركيز وتحرير الاستعلام، زر المسح (يظهر/يختفي/clearable)، إتاحة «إضافة جديد» عند انعدام النتائج، قراءة فقط مقابل معطّل، دلالات زر الهاتف (تسمية+قيمة+نقر)، تحرير الاستعلام بعد إغلاق الورقة، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
 | C10 FilterBar | `test/core/presentation/widgets/app_filter_bar_test.dart` | debounce، إزالة/مسح المرشحات عبر AppBadge قابل للإزالة، namedArgs لاسم/قيمة المرشح، محرر desktop inline وmobile BottomSheet، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
-| C01 DataTable | `test/core/presentation/widgets/app_data_table_test.dart` | بطاقات/مضغوط/كامل، sort/page/pageSize callbacks، فرز الهاتف عبر BottomSheet، mobile load more، selection، retry/loading/empty، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
+| C01 DataTable | `test/core/presentation/widgets/app_data_table_test.dart` | بطاقات/مضغوط/كامل (تحقق من بطاقات AppCard وعناوين الأعمدة لكل عرض بمفاتيح اختبار مستقلة)، sort/page/pageSize callbacks، فرز الهاتف عبر BottomSheet، mobile load more، selection، retry/loading/empty، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
 | T1 ListPageTemplate | `test/core/presentation/widgets/list_page_template_test.dart` | تكامل PageHeader/FilterBar/DataTable وحالات loading/empty/error؛ مصدر واحد لرسالة الخطأ وRetry، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
 
 نتيجة GitHub Actions للدفعة: `dart format --set-exit-if-changed .` فشل؛ Analyze وTest تم تخطيهما. لم يُشغّل Flutter محلياً. لا توجد نتيجة نجاح موثقة لهذه الاختبارات.
@@ -71,3 +71,11 @@
 ### مراجعة جودة Catalog UI — 2026-11-19
 
 أضيفت تغطية مكتوبة لتحديث خيارات C04 بقائمة جديدة مساوية في المحتوى مع التحقق من بقاء نص البحث والتركيز، وفرز C01 على الهاتف من BottomSheet، وملكية Retry واحدة في T1. هذه الاختبارات لم تُشغّل. لم تُنفذ dart format أو flutter analyze أو flutter test في هذه المهمة، لذلك لا توجد نتيجة تشغيل يمكن تسجيلها.
+
+
+### إضافات إصلاحات المراجعة 2026-11-19
+
+- app_text_field_test.dart (جديد): الافتراضيات، `readOnly` بمظهر فعّال مع `onTap`، و`enabled: false` حالة مختلفة.
+- app_badge_test.dart: أضيفت مجموعة «removable badge» (استدعاء الإزالة، قراءة النص مرة واحدة وزر الإزالة عقدة مستقلة، مساحة اللمس >= 44 على الهاتف).
+- app_data_table_test.dart وapp_searchable_dropdown_test.dart: أُزيل استعمال مفاتيح غير مرتبطة (search/filters/retry) لأسماء الأعمدة ورسائل الخطأ، واستُبدل `find.byType(Card), findsNothing` بتحقق من AppCard وعناوين الأعمدة.
+- جميعها مكتوبة ولم تُشغّل (لا Flutter SDK في بيئة التنفيذ)؛ لا تُعد ناجحة قبل `flutter test`.

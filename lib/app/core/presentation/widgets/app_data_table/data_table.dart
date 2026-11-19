@@ -443,7 +443,10 @@ class AppDataTable<T> extends StatelessWidget {
                 labelKey: CatalogUiKeys.rowsPerPage,
                 optionLabel: (value) => value.toString(),
                 value: pageSize,
-                onChanged: (value) { if (value != null) onPageSizeChanged!(value); },
+                clearable: false,
+                onChanged: (value) {
+                  if (value != null) onPageSizeChanged!(value);
+                },
               ),
             ),
           Row(

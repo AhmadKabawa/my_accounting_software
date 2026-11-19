@@ -245,6 +245,12 @@ class DashboardTemplate extends StatelessWidget {
 
 /// T1 list frame. The feature supplies the page state and the already-wired
 /// FilterBar/DataTable; neither data access nor business rules live here.
+///
+/// Error contract: unlike [FormPageTemplate] and [DashboardTemplate], this
+/// template draws no error banner or retry of its own. [AppDataTable] owns
+/// them, so [AppPageState.error] only keeps the table on screen. A screen
+/// that reports `state: AppPageState.error` MUST also pass `errorKey` (and
+/// `onRetry`) to its [AppDataTable]; otherwise the failure is invisible.
 class ListPageTemplate extends StatelessWidget {
   static const _loadingPlaceholderCount = 5;
 
@@ -263,6 +269,8 @@ class ListPageTemplate extends StatelessWidget {
   final AppKey titleKey;
   final Widget filterBar;
   final Widget dataTable;
+
+  /// `error` renders [dataTable]; see the error contract on the class.
   final AppPageState state;
   final int? count;
   final Widget? primaryAction;

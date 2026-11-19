@@ -104,3 +104,8 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 - removeFilter لوصف إجراء إزالة شارة المرشح.
 - sortBy لفتح خيارات فرز الجدول على الهاتف.
 - paginationLabel لعرض الصفحة الحالية وآخر صفحة ضمن مفتاح واحد مع @page و@lastPage.
+
+
+## تعديل مفاتيح Catalog UI — إصلاحات المراجعة 2026-11-19
+
+أضيف `CatalogUiKeys.clearSelection` (زر مسح اختيار SearchableDropdown). وحُذفت مفاتيح لم يستعملها أي كود أو اختبار: `page` و`of` و`selectAll` و`selected` و`cancel` و`loading` و`sortAscending` و`sortDescending`؛ ترقيم الصفحات يستعمل `paginationLabel` وحده. أعد إضافة أي منها عند وجود شاشة تستهلكه فعلاً.

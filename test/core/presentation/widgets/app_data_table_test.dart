@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import '../../../helpers/localized_app.dart';
+import '../../../helpers/test_key.dart';
+
+// Dedicated keys: columns and errors must not borrow unrelated catalog texts
+// (e.g. "Search"), which would make finders match the wrong widget.
+const _nameColumn = TestKey('test.table.name');
+const _statusColumn = TestKey('test.table.status');
+const _loadFailed = TestKey('test.table.loadFailed');
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
   final columns = <DataTableColumn<String>>[
     DataTableColumn<String>(
-      labelKey: CatalogUiKeys.search,
+      labelKey: _nameColumn,
       sortKey: 'name',
       priority: DataTableColumnPriority.primary,
       cellBuilder: (_, value) => Text(value),
     ),
     DataTableColumn<String>(
-      labelKey: CatalogUiKeys.filters,
+      labelKey: _statusColumn,
       sortKey: 'status',
       priority: DataTableColumnPriority.secondary,
       cellBuilder: (_, value) => Text('Status: $value'),
@@ -78,14 +84,24 @@ void main() {
   testWidgets('uses cards on phones and compact/full table on wider widths', (
     tester,
   ) async {
+    // Phone: one AppCard per row; a secondary column is a labelled field on
+    // each card, and the primary column has no label row.
     await pumpTable(tester, size: const Size(360, 800));
     expect(find.byType(AppCard), findsNWidgets(2));
+    expect(find.text('test.table.status'), findsNWidgets(2));
+    expect(find.text('test.table.name'), findsNothing);
 
+    // Tablet: a table without cards that drops secondary columns.
     await pumpTable(tester, size: const Size(900, 900));
-    expect(find.byType(Card), findsNothing);
+    expect(find.byType(AppCard), findsNothing);
+    expect(find.text('test.table.name'), findsOneWidget);
+    expect(find.text('test.table.status'), findsNothing);
     expect(find.text('Status: Alpha'), findsNothing);
 
+    // Desktop: the full table, including the secondary column header.
     await pumpTable(tester, size: const Size(1200, 900));
+    expect(find.byType(AppCard), findsNothing);
+    expect(find.text('test.table.status'), findsOneWidget);
     expect(find.text('Status: Alpha'), findsOneWidget);
   });
 
@@ -110,6 +126,8 @@ void main() {
         direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
         textScale: 2,
       );
+      // The long row must actually be on screen, not merely overflow-free.
+      expect(find.textContaining('A very long catalog item'), findsOneWidget);
       expect(tester.takeException(), isNull);
     }
   });
@@ -127,7 +145,7 @@ void main() {
       onPageSizeChanged: (value) => requestedSize = value,
     );
 
-    await tester.tap(find.text('Search').first);
+    await tester.tap(find.text('test.table.name').first);
     expect(requestedSort?.key, 'name');
     expect(requestedSort?.ascending, isTrue);
 
@@ -152,7 +170,7 @@ void main() {
     await tester.tap(find.text('Sort by'));
     await tester.pumpAndSettle();
     expect(find.byType(BottomSheet), findsOneWidget);
-    await tester.tap(find.text('Search').last);
+    await tester.tap(find.text('test.table.name').last);
     await tester.pumpAndSettle();
 
     expect(requestedSort?.key, 'name');
@@ -207,10 +225,15 @@ void main() {
     var retries = 0;
     await pumpTable(
       tester,
-      errorKey: CatalogUiKeys.retry,
+      errorKey: _loadFailed,
       onRetry: () => retries++,
     );
-    await tester.tap(find.text('Retry').last);
+    // The error replaces the rows; the banner text and the retry action
+    // are two distinct widgets.
+    expect(find.text('test.table.loadFailed'), findsOneWidget);
+    expect(find.text('Alpha'), findsNothing);
+    expect(find.text('Retry'), findsOneWidget);
+    await tester.tap(find.text('Retry'));
     expect(retries, 1);
   });
 

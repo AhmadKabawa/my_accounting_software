@@ -50,7 +50,8 @@ class FilterBar extends StatefulWidget {
   final VoidCallback onClearAll;
   final TextEditingController? searchController;
   final AppKey searchHintKey;
-  final Widget Function(BuildContext context, VoidCallback apply)? filterPanelBuilder;
+  final Widget Function(BuildContext context, VoidCallback apply)?
+  filterPanelBuilder;
   final List<Widget> filterControls;
   final VoidCallback? onApply;
   final Duration debounce;
@@ -83,6 +84,12 @@ class _FilterBarState extends State<FilterBar> {
   void _search(String value) {
     _debounce?.cancel();
     _debounce = Timer(widget.debounce, () => widget.onSearchChanged(value));
+  }
+
+  /// Enter / the keyboard's search key: search now, without the debounce.
+  void _submitSearch() {
+    _debounce?.cancel();
+    widget.onSearchChanged(_controller.text);
   }
 
   Future<void> _openFilters() async {
@@ -146,7 +153,9 @@ class _FilterBarState extends State<FilterBar> {
                 controller: _controller,
                 labelKey: CatalogUiKeys.search,
                 hintKey: widget.searchHintKey,
+                textInputAction: TextInputAction.search,
                 onChanged: _search,
+                onSubmitted: _submitSearch,
               ),
               context.ui.spacing.gap(AppSpacing.sm),
               AppButton(
@@ -167,7 +176,9 @@ class _FilterBarState extends State<FilterBar> {
                   controller: _controller,
                   labelKey: CatalogUiKeys.search,
                   hintKey: widget.searchHintKey,
+                  textInputAction: TextInputAction.search,
                   onChanged: _search,
+                  onSubmitted: _submitSearch,
                 ),
               ),
               if (widget.filterPanelBuilder != null) ...[

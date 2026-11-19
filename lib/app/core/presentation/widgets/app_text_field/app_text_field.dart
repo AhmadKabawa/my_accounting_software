@@ -21,11 +21,13 @@ class AppTextField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.enabled = true,
+    this.readOnly = false,
     this.autofocus = false,
     this.maxLines = 1,
     this.autofillHints,
     this.textInputAction = TextInputAction.next,
     this.onChanged,
+    this.onTap,
     this.focusNode,
     this.onSubmitted,
     this.density,
@@ -40,11 +42,16 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final bool enabled;
+
+  /// A read-only field keeps the normal (enabled) look, unlike [enabled]
+  /// false, which renders it greyed out as if unavailable.
+  final bool readOnly;
   final bool autofocus;
   final int? maxLines;
   final Iterable<String>? autofillHints;
   final TextInputAction textInputAction;
   final ValueChanged<String>? onChanged;
+  final VoidCallback? onTap;
   final FocusNode? focusNode;
   final VoidCallback? onSubmitted;
 
@@ -62,6 +69,8 @@ class AppTextField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       enabled: enabled,
+      readOnly: readOnly,
+      onTap: onTap,
       autofocus: autofocus,
       // A field that hides its text must be single line.
       maxLines: obscureText ? 1 : maxLines,

@@ -6,7 +6,7 @@ import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.d
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown_style.dart';
@@ -34,6 +34,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
     this.emptyKey = CatalogUiKeys.noOptions,
     this.enabled = true,
     this.readOnly = false,
+    this.clearable = true,
     this.onAddNew,
   });
 
@@ -50,6 +51,10 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   final AppKey emptyKey;
   final bool enabled;
   final bool readOnly;
+
+  /// Shows a clear button that calls [onChanged] with null. Set false for a
+  /// field that must always hold a value.
+  final bool clearable;
   final WidgetBuilder? onAddNew;
 
   @override
@@ -73,10 +78,47 @@ class _SearchableDropdownState<T extends Object>
       loading: widget.loading,
       errorKey: widget.errorKey,
     ));
-    _desktopController = TextEditingController(
-      text: widget.value == null ? '' : widget.optionLabel(widget.value as T),
+    _desktopController = TextEditingController(text: _selectedLabel);
+    _desktopFocusNode = FocusNode()..addListener(_onDesktopFocusChanged);
+  }
+
+  String get _selectedLabel {
+    final value = widget.value;
+    return value == null ? '' : widget.optionLabel(value);
+  }
+
+  void _setText(String text) {
+    if (_desktopController.text == text) return;
+    _desktopController.value = TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
     );
-    _desktopFocusNode = FocusNode();
+  }
+
+  /// The text the user typed is only a search query. When the field loses
+  /// focus it must show the selected value again, so the visible text and
+  /// [SearchableDropdown.value] can never disagree.
+  void _onDesktopFocusChanged() {
+    if (_desktopFocusNode.hasFocus) return;
+    _setText(_selectedLabel);
+    _resetQuery();
+    if (mounted) setState(() {});
+  }
+
+  void _clear() {
+    _setText('');
+    _resetQuery();
+    widget.onChanged(null);
+    setState(() {});
+  }
+
+  /// Drops the pending search so remote results are not left filtered by a
+  /// query the user can no longer see.
+  void _resetQuery() {
+    _debounce?.cancel();
+    if (_lastQuery.isEmpty) return;
+    _lastQuery = '';
+    widget.onQueryChanged?.call('');
   }
 
   @override
@@ -95,13 +137,7 @@ class _SearchableDropdownState<T extends Object>
     }
 
     if (oldWidget.value != widget.value && !_desktopFocusNode.hasFocus) {
-      final selectedLabel = widget.value == null
-          ? ''
-          : widget.optionLabel(widget.value as T);
-      _desktopController.value = TextEditingValue(
-        text: selectedLabel,
-        selection: TextSelection.collapsed(offset: selectedLabel.length),
-      );
+      _setText(_selectedLabel);
     }
   }
 
@@ -112,7 +148,9 @@ class _SearchableDropdownState<T extends Object>
     _debounce?.cancel();
     _pickerData.dispose();
     _desktopController.dispose();
-    _desktopFocusNode.dispose();
+    _desktopFocusNode
+      ..removeListener(_onDesktopFocusChanged)
+      ..dispose();
     super.dispose();
   }
 
@@ -145,24 +183,39 @@ class _SearchableDropdownState<T extends Object>
     final style = SearchableDropdownStyle(context);
     final isMobile = ScreenEngine.isMobile(context);
 
+    // Disabled looks unavailable; read-only keeps the normal look but cannot
+    // be edited, so the two states stay visually distinct.
     if (!widget.enabled || widget.readOnly) {
       return AppTextField(
         controller: _desktopController,
         labelKey: widget.labelKey,
-        enabled: false,
+        enabled: widget.enabled,
+        readOnly: widget.readOnly,
       );
     }
 
     if (isMobile) {
-      return InkWell(
+      // The field is only a trigger for the bottom sheet, so it is announced
+      // as one button (label + current value) instead of a text input.
+      return Semantics(
+        button: true,
+        enabled: true,
+        label: widget.labelKey.tr(context: context),
+        value: _selectedLabel,
+        excludeSemantics: true,
         onTap: () => _openMobilePicker(context),
-        borderRadius: style.radius,
-        child: IgnorePointer(
-          child: AppTextField(
-            controller: _desktopController,
-            labelKey: widget.labelKey,
-            enabled: false,
-            suffix: const AppIcon(AppIcons.expand),
+        child: InkWell(
+          onTap: () => _openMobilePicker(context),
+          borderRadius: style.radius,
+          child: ExcludeFocus(
+            child: IgnorePointer(
+              child: AppTextField(
+                controller: _desktopController,
+                labelKey: widget.labelKey,
+                readOnly: true,
+                suffix: const AppIcon(AppIcons.expand),
+              ),
+            ),
           ),
         ),
       );
@@ -188,8 +241,17 @@ class _SearchableDropdownState<T extends Object>
               focusNode: focusNode,
               labelKey: widget.labelKey,
               hintKey: CatalogUiKeys.search,
+              textInputAction: TextInputAction.search,
               onChanged: _query,
               onSubmitted: onFieldSubmitted,
+              suffix: !widget.clearable ||
+                      (widget.value == null && controller.text.isEmpty)
+                  ? null
+                  : AppIconButton(
+                      AppIcons.close,
+                      tooltipKey: CatalogUiKeys.clearSelection,
+                      onPressed: _clear,
+                    ),
             );
           },
           optionsViewBuilder: (context, onSelected, options) => _optionsPanel(
@@ -204,13 +266,29 @@ class _SearchableDropdownState<T extends Object>
             variant: InlineBannerVariant.error,
           ),
         if (widget.loading) const AppSkeleton.block(),
+        // RawAutocomplete never opens its panel for an empty option list, so
+        // loading, error and "no results" are shown here, under the field.
+        // The "add new" action lives here too, otherwise it would be
+        // unreachable exactly when the user needs it (nothing matched).
+        // TextFieldTapRegion: a tap here must not count as "outside" the
+        // field, or the field would lose focus (and reset this block) before
+        // the tap completes.
         if (!widget.loading &&
             widget.errorKey == null &&
             _lastQuery.isNotEmpty &&
             _options(_lastQuery).isEmpty)
-          Padding(
-            padding: context.ui.padding.all(AppSpacing.sm),
-            child: AppText(widget.emptyKey),
+          TextFieldTapRegion(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: context.ui.padding.all(AppSpacing.sm),
+                  child: AppText(widget.emptyKey),
+                ),
+                if (widget.onAddNew != null) widget.onAddNew!(context),
+              ],
+            ),
           ),
       ],
     );
@@ -222,57 +300,37 @@ class _SearchableDropdownState<T extends Object>
     AutocompleteOnSelected<T> onSelected,
   ) {
     final style = SearchableDropdownStyle(context);
-    return Align(
-      alignment: AlignmentDirectional.topStart,
-      child: Material(
-        elevation: context.ui.shadow.value(AppElevation.md),
-        color: style.colors.surface,
-        borderRadius: style.radius,
-        clipBehavior: Clip.antiAlias,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: style.maxOptionsHeight,
-            minWidth: context.ui.size.width(AppComponentSize.cardWidth),
-          ),
-          child: _optionsContent(
-            context,
-            options,
-            (option) => onSelected(option),
+    return TextFieldTapRegion(
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: Material(
+          elevation: context.ui.shadow.value(AppElevation.md),
+          color: style.colors.surface,
+          borderRadius: style.radius,
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: style.maxOptionsHeight,
+              minWidth: context.ui.size.width(AppComponentSize.cardWidth),
+            ),
+            child: _optionsContent(
+              context,
+              options,
+              (option) => onSelected(option),
+            ),
           ),
         ),
       ),
     );
   }
 
+  /// Only reached with a non-empty list (see [build]: loading, error and
+  /// empty results are rendered under the field, not in the panel).
   Widget _optionsContent(
     BuildContext context,
     List<T> options,
     ValueChanged<T> select,
   ) {
-    if (widget.errorKey != null) {
-      return Padding(
-        padding: context.ui.padding.all(AppSpacing.sm),
-        child: InlineBanner(
-          messageKey: widget.errorKey!,
-          variant: InlineBannerVariant.error,
-        ),
-      );
-    }
-    if (widget.loading) {
-      return Padding(
-        padding: context.ui.padding.all(AppSpacing.lg),
-        child: const AppSkeleton.block(),
-      );
-    }
-    if (options.isEmpty) {
-      return Padding(
-        padding: context.ui.padding.all(AppSpacing.md),
-        child: AppText(
-          widget.emptyKey,
-          color: context.ui.theme.colors.onSurfaceVariant,
-        ),
-      );
-    }
     return ListView(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
@@ -333,7 +391,11 @@ class _SearchableDropdownState<T extends Object>
         ),
       ),
     );
+    if (!mounted) return;
     if (result != null) widget.onChanged(result);
+    // The sheet's search box starts empty on every open, so do not leave the
+    // remote results filtered by the previous query.
+    _resetQuery();
   }
 }
 
@@ -413,6 +475,7 @@ class _MobileSearchPickerState<T extends Object>
                   labelKey: widget.labelKey,
                   prefixIcon: AppIcons.search,
                   autofocus: true,
+                  textInputAction: TextInputAction.search,
                   onChanged: (value) {
                     setState(() => _query = value);
                     widget.onQueryChanged?.call(value);

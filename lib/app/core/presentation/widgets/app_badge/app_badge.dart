@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -32,6 +33,11 @@ class AppBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final visual = AppBadgeStyle(context).resolve(tone, size);
+    // Touch-first layout: the remove control must reach the hit-area token.
+    // On tablet/desktop the pointer is precise, so the compact size is kept.
+    final removeTarget = ScreenEngine.isMobile(context)
+        ? context.ui.size.width(AppComponentSize.hitArea)
+        : 0.0;
     return Semantics(
       container: true,
       explicitChildNodes: true,
@@ -53,30 +59,47 @@ class AppBadge extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: visual.iconGap,
             children: [
+              // The container label above already names the badge; the
+              // visible text and icon must not be announced a second time.
               if (icon != null)
-                AppIcon.fixed(
-                  icon!,
-                  pixelSize: visual.iconSize,
+                ExcludeSemantics(
+                  child: AppIcon.fixed(
+                    icon!,
+                    pixelSize: visual.iconSize,
+                    color: visual.foreground,
+                  ),
+                ),
+              ExcludeSemantics(
+                child: AppText.raw(
+                  label.tr(context: context, namedArgs: labelArgs),
+                  type: visual.textType,
                   color: visual.foreground,
                 ),
-              AppText.raw(
-                label.tr(context: context, namedArgs: labelArgs),
-                type: visual.textType,
-                color: visual.foreground,
               ),
               if (onRemove != null)
                 Semantics(
                   button: true,
                   label: removeLabel?.tr(context: context),
+                  excludeSemantics: true,
                   child: InkWell(
                     onTap: onRemove,
                     borderRadius: visual.radius,
-                    child: Padding(
-                      padding: context.ui.padding.all(AppSpacing.xs),
-                      child: AppIcon(
-                        AppIcons.close,
-                        size: AppIconSize.sm,
-                        color: visual.foreground,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: removeTarget,
+                        minHeight: removeTarget,
+                      ),
+                      child: Center(
+                        widthFactor: 1,
+                        heightFactor: 1,
+                        child: Padding(
+                          padding: context.ui.padding.all(AppSpacing.xs),
+                          child: AppIcon(
+                            AppIcons.close,
+                            size: AppIconSize.sm,
+                            color: visual.foreground,
+                          ),
+                        ),
                       ),
                     ),
                   ),

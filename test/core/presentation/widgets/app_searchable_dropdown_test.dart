@@ -5,6 +5,9 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import '../../../helpers/localized_app.dart';
+import '../../../helpers/test_key.dart';
+
+const _loadFailed = TestKey('test.dropdown.loadFailed');
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
@@ -13,11 +16,15 @@ void main() {
     WidgetTester tester, {
     Size size = const Size(1200, 900),
     List<String> options = const ['Alpha', 'Beta'],
+    String? value,
     ValueChanged<String?>? onChanged,
     ValueChanged<String>? onQueryChanged,
     bool loading = false,
     AppKey? errorKey,
     bool enabled = true,
+    bool readOnly = false,
+    bool clearable = true,
+    WidgetBuilder? onAddNew,
     bool dark = false,
     double textScale = 1,
     TextDirection direction = TextDirection.rtl,
@@ -37,13 +44,16 @@ void main() {
               child: SearchableDropdown<String>(
                 options: options,
                 labelKey: CatalogUiKeys.chooseOption,
-                optionLabel: (value) => value,
-                value: null,
+                optionLabel: (option) => option,
+                value: value,
                 onChanged: onChanged ?? (_) {},
                 onQueryChanged: onQueryChanged,
                 loading: loading,
                 errorKey: errorKey,
                 enabled: enabled,
+                readOnly: readOnly,
+                clearable: clearable,
+                onAddNew: onAddNew,
               ),
             ),
           ),
@@ -242,8 +252,10 @@ void main() {
   });
 
   testWidgets('shows the supplied error state', (tester) async {
-    await pumpPicker(tester, errorKey: CatalogUiKeys.retry);
-    expect(find.text('Retry'), findsOneWidget);
+    await pumpPicker(tester, errorKey: _loadFailed);
+    expect(find.text('test.dropdown.loadFailed'), findsOneWidget);
+    // No options are offered while the error is shown.
+    expect(find.text('Alpha'), findsNothing);
   });
 
   testWidgets('disabled picker does not open the option sheet', (tester) async {
@@ -251,5 +263,141 @@ void main() {
     await tester.tap(find.byType(InputDecorator));
     await tester.pumpAndSettle();
     expect(find.byType(BottomSheet), findsNothing);
+  });
+
+  group('text and selected value stay in sync (desktop)', () {
+    testWidgets('typed text that is not chosen reverts on focus loss', (
+      tester,
+    ) async {
+      final queries = <String>[];
+      await pumpPicker(tester, value: 'Alpha', onQueryChanged: queries.add);
+      TextEditingController? controller() =>
+          tester.widget<TextField>(find.byType(TextField)).controller;
+
+      expect(controller()?.text, 'Alpha');
+      await tester.enterText(find.byType(TextField), 'zzz');
+      await tester.pump(const Duration(milliseconds: 301));
+      expect(controller()?.text, 'zzz');
+      expect(queries, ['zzz']);
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      expect(controller()?.text, 'Alpha');
+      // The remote query is released too, so results are not left filtered
+      // by text the user can no longer see.
+      expect(queries, ['zzz', '']);
+    });
+
+    testWidgets('clear button empties the field and reports null', (
+      tester,
+    ) async {
+      final changes = <String?>[];
+      await pumpPicker(tester, value: 'Alpha', onChanged: changes.add);
+
+      await tester.tap(find.byTooltip('Clear selection'));
+      await tester.pumpAndSettle();
+
+      expect(changes, [null]);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller?.text,
+        '',
+      );
+    });
+
+    testWidgets('clear button is absent with nothing to clear', (tester) async {
+      await pumpPicker(tester);
+      expect(find.byTooltip('Clear selection'), findsNothing);
+    });
+
+    testWidgets('clear button is absent when clearable is false', (
+      tester,
+    ) async {
+      await pumpPicker(tester, value: 'Alpha', clearable: false);
+      expect(find.byTooltip('Clear selection'), findsNothing);
+    });
+  });
+
+  testWidgets('"add new" stays reachable when nothing matches', (tester) async {
+    await pumpPicker(
+      tester,
+      onAddNew: (_) => const Text('Add new'),
+    );
+    expect(find.text('Add new'), findsNothing);
+
+    await tester.enterText(find.byType(TextField), 'no-match');
+    await tester.pumpAndSettle();
+
+    expect(find.text('No matching options'), findsOneWidget);
+    expect(find.text('Add new'), findsOneWidget);
+  });
+
+  group('read-only and disabled look different', () {
+    testWidgets('read-only stays enabled but not editable', (tester) async {
+      await pumpPicker(tester, value: 'Alpha', readOnly: true);
+      final field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.enabled, isTrue);
+      expect(field.readOnly, isTrue);
+      expect(field.controller?.text, 'Alpha');
+    });
+
+    testWidgets('disabled is rendered as disabled', (tester) async {
+      await pumpPicker(tester, value: 'Alpha', enabled: false);
+      final field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.enabled, isFalse);
+    });
+
+    testWidgets('read-only does not open the sheet on mobile', (tester) async {
+      await pumpPicker(
+        tester,
+        size: const Size(390, 844),
+        value: 'Alpha',
+        readOnly: true,
+      );
+      await tester.tap(find.byType(InputDecorator));
+      await tester.pumpAndSettle();
+      expect(find.byType(BottomSheet), findsNothing);
+    });
+  });
+
+  group('mobile trigger', () {
+    testWidgets('looks enabled and is announced once as a button', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      addTearDown(handle.dispose);
+      await pumpPicker(tester, size: const Size(390, 844), value: 'Alpha');
+
+      // Enabled look: the trigger is not rendered with enabled: false.
+      expect(tester.widget<TextField>(find.byType(TextField)).enabled, isTrue);
+
+      // One node carries the label, the current value and the tap action;
+      // the inner text field adds no second announcement.
+      final labelled = find.bySemanticsLabel('Choose an option');
+      expect(labelled, findsOneWidget);
+      final node = tester.getSemantics(labelled);
+      expect(node.value, 'Alpha');
+      expect(node.hasAction(SemanticsAction.tap), isTrue);
+    });
+
+    testWidgets('closing the sheet releases the remote query', (tester) async {
+      final queries = <String>[];
+      await pumpPicker(
+        tester,
+        size: const Size(390, 844),
+        onQueryChanged: queries.add,
+      );
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'be');
+      await tester.pump(const Duration(milliseconds: 301));
+      await tester.pumpAndSettle();
+      expect(queries, ['be']);
+
+      await tester.tap(find.text('Beta').last);
+      await tester.pumpAndSettle();
+
+      expect(queries, ['be', '']);
+    });
   });
 }

@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import '../../../helpers/localized_app.dart';
+import '../../../helpers/test_key.dart';
 
 double _contrast(Color foreground, Color background) {
   final a = foreground.computeLuminance();
@@ -100,5 +101,77 @@ void main() {
       );
       await tester.pumpAndSettle();
     }
+  });
+
+  group('removable badge', () {
+    const removeLabel = TestKey('test.badge.remove');
+
+    Future<void> pumpRemovable(
+      WidgetTester tester, {
+      required Size size,
+      required VoidCallback onRemove,
+    }) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        buildTestApp(
+          // InkWell needs a Material ancestor.
+          home: Scaffold(
+            body: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: AppBadge(
+                label: BadgeKeys.sample,
+                size: AppBadgeSize.small,
+                onRemove: onRemove,
+                removeLabel: removeLabel,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('remove control reports the tap', (tester) async {
+      var removed = 0;
+      await pumpRemovable(
+        tester,
+        size: const Size(360, 800),
+        onRemove: () => removed++,
+      );
+      await tester.tap(find.byType(InkWell));
+      expect(removed, 1);
+    });
+
+    testWidgets('badge text is announced once, remove is its own button', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      addTearDown(handle.dispose);
+      await pumpRemovable(
+        tester,
+        size: const Size(360, 800),
+        onRemove: () {},
+      );
+
+      expect(find.bySemanticsLabel('Document status'), findsOneWidget);
+      final remove = find.bySemanticsLabel('test.badge.remove');
+      expect(remove, findsOneWidget);
+      expect(
+        tester.getSemantics(remove).hasAction(SemanticsAction.tap),
+        isTrue,
+      );
+    });
+
+    testWidgets('remove target reaches the hit area on phones', (tester) async {
+      await pumpRemovable(
+        tester,
+        size: const Size(360, 800),
+        onRemove: () {},
+      );
+      final target = tester.getSize(find.byType(InkWell));
+      expect(target.width, greaterThanOrEqualTo(44));
+      expect(target.height, greaterThanOrEqualTo(44));
+    });
   });
 }
