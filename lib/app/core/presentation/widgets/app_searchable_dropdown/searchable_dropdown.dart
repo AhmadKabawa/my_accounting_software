@@ -58,6 +58,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
 class _SearchableDropdownState<T extends Object>
     extends State<SearchableDropdown<T>> {
   Timer? _debounce;
+  String _lastQuery = '';
 
   @override
   void dispose() {
@@ -66,6 +67,8 @@ class _SearchableDropdownState<T extends Object>
   }
 
   void _query(String value) {
+    _lastQuery = value;
+    setState(() {});
     _debounce?.cancel();
     final callback = widget.onQueryChanged;
     if (callback == null) return;
@@ -117,7 +120,10 @@ class _SearchableDropdownState<T extends Object>
       );
     }
 
-    return RawAutocomplete<T>(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RawAutocomplete<T>(
       displayStringForOption: widget.optionLabel,
       optionsBuilder: (value) => _options(value.text),
       onSelected: widget.onChanged,
@@ -142,7 +148,17 @@ class _SearchableDropdownState<T extends Object>
         context,
         options.toList(growable: false),
         onSelected,
-      ),
+        ),
+        if (widget.errorKey != null)
+          InlineBanner(messageKey: widget.errorKey!, variant: InlineBannerVariant.error),
+        if (widget.loading)
+          const Center(child: CircularProgressIndicator()),
+        if (!widget.loading && widget.errorKey == null && _lastQuery.isNotEmpty && _options(_lastQuery).isEmpty)
+          Padding(
+            padding: context.ui.padding.all(AppSpacing.sm),
+            child: AppText(widget.emptyKey),
+          ),
+      ],
     );
   }
 
@@ -245,7 +261,9 @@ class _SearchableDropdownState<T extends Object>
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (sheetContext) => _MobileSearchPicker<T>(
+      builder: (sheetContext) => FractionallySizedBox(
+        heightFactor: 0.9,
+        child: _MobileSearchPicker<T>(
         options: widget.options,
         labelKey: widget.labelKey,
         optionLabel: widget.optionLabel,
@@ -257,6 +275,7 @@ class _SearchableDropdownState<T extends Object>
         onQueryChanged: widget.onQueryChanged == null ? null : _query,
         onAddNew: widget.onAddNew,
         onSelect: (option) => Navigator.of(sheetContext).pop(option),
+        ),
       ),
     );
     if (result != null) widget.onChanged(result);
@@ -321,7 +340,7 @@ class _MobileSearchPickerState<T extends Object>
               ),
             ),
             context.ui.spacing.gap(AppSpacing.md),
-            Flexible(
+            Expanded(
               child: widget.errorKey != null
                   ? InlineBanner(messageKey: widget.errorKey!, variant: InlineBannerVariant.error)
                   : widget.loading
