@@ -31,6 +31,12 @@ class AppBadge extends StatelessWidget {
         decoration: BoxDecoration(
           color: visual.background,
           borderRadius: visual.radius,
+          border: visual.borderColor == null
+              ? null
+              : Border.all(
+                  color: visual.borderColor!,
+                  width: visual.borderWidth,
+                ),
         ),
         child: Padding(
           padding: visual.padding,

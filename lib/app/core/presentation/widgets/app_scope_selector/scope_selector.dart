@@ -11,6 +11,7 @@ import 'package:accounting_software/app/core/localization/keys/scope_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
 /// One thing the user can pick. [name] is data (a branch name), so it is shown
@@ -199,7 +200,11 @@ class _Trigger extends StatelessWidget {
                 ),
                 if (option?.viewOnly ?? false) ...[
                   ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-                  const _ViewOnlyBadge(),
+                  const AppBadge(
+                    label: ScopeKeys.viewOnly,
+                    tone: AppBadgeTone.neutral,
+                    size: AppBadgeSize.small,
+                  ),
                 ],
                 if (selectable) ...[
                   ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
@@ -208,40 +213,6 @@ class _Trigger extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// "View only", as text in a bordered pill.
-class _ViewOnlyBadge extends StatelessWidget {
-  const _ViewOnlyBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    final ui = context.ui;
-    final colors = ui.theme.colors;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerHighest,
-        borderRadius: AppRadius.full.circular(context),
-        border: Border.all(
-          color: colors.outlineVariant,
-          width: AppBorderWidth.thin.of(context),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: ui.spacing.sm,
-          vertical: ui.spacing.xs / 2,
-        ),
-        child: AppText(
-          ScopeKeys.viewOnly,
-          type: AppTextType.labelSmall,
-          color: colors.onSurfaceVariant,
-          maxLines: 1,
         ),
       ),
     );
@@ -305,7 +276,11 @@ class _OptionContent extends StatelessWidget {
           ),
           if (option.viewOnly) ...[
             ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-            const _ViewOnlyBadge(),
+            const AppBadge(
+              label: ScopeKeys.viewOnly,
+              tone: AppBadgeTone.neutral,
+              size: AppBadgeSize.small,
+            ),
           ],
           if (selected) ...[
             ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),

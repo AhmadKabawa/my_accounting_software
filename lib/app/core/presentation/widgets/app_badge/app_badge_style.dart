@@ -16,6 +16,8 @@ class BadgeVisual {
     required this.iconSize,
     required this.iconGap,
     required this.textType,
+    required this.borderWidth,
+    this.borderColor,
   });
 
   final Color background;
@@ -25,6 +27,8 @@ class BadgeVisual {
   final double iconSize;
   final double iconGap;
   final AppTextType textType;
+  final Color? borderColor;
+  final double borderWidth;
 }
 
 class AppBadgeStyle {
@@ -48,7 +52,11 @@ class AppBadgeStyle {
     final compact = AppDensityScope.of(context) == AppDensity.compact;
     final small = size == AppBadgeSize.small;
     final horizontal = small ? AppSpacing.sm : AppSpacing.md;
-    final vertical = compact ? AppSpacing.none : AppSpacing.xs;
+    final vertical = small
+        ? AppSpacing.xs / 2
+        : compact
+        ? AppSpacing.none
+        : AppSpacing.xs;
     return BadgeVisual(
       background: background,
       foreground: foreground,
@@ -60,6 +68,8 @@ class AppBadgeStyle {
       iconSize: context.ui.icon.size(small ? AppIconSize.sm : AppIconSize.md),
       iconGap: context.ui.spacing.value(AppSpacing.xs),
       textType: small ? AppTextType.labelSmall : AppTextType.labelMedium,
+      borderColor: tone == AppBadgeTone.neutral ? scheme.outlineVariant : null,
+      borderWidth: AppBorderWidth.thin.of(context),
     );
   }
 }

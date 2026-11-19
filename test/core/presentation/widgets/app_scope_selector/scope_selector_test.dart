@@ -1,5 +1,6 @@
 import 'package:accounting_software/app/core/localization/keys/scope_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_scope_selector/scope_selector.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -78,6 +79,7 @@ void main() {
       await _pump(tester, options: const [_north], selectedId: 'north');
 
       expect(find.text(ScopeKeys.viewOnly.ar), findsOneWidget);
+      expect(find.byType(AppBadge), findsOneWidget);
     });
   });
 
