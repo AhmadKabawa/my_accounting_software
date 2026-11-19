@@ -25,6 +25,7 @@ class AppTextField extends StatelessWidget {
     this.autofillHints,
     this.textInputAction = TextInputAction.next,
     this.onChanged,
+    this.focusNode,
     this.onSubmitted,
     this.density,
   });
@@ -42,6 +43,7 @@ class AppTextField extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final TextInputAction textInputAction;
   final ValueChanged<String>? onChanged;
+  final FocusNode? focusNode;
   final VoidCallback? onSubmitted;
 
   /// Optional per-field override; null inherits AppDensityScope.
@@ -54,6 +56,7 @@ class AppTextField extends StatelessWidget {
 
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: keyboardType,
       obscureText: obscureText,
       enabled: enabled,
