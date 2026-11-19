@@ -26,13 +26,21 @@ import 'package:accounting_software/app/shell/destinations.dart';
 import '../helpers/localized_app.dart';
 
 class _Repository implements AccessRepository {
-  _Repository({this.withBranches = false});
+  _Repository({
+    this.withBranches = false,
+    this.failOnSecondCall = false,
+  });
 
   final bool withBranches;
+  final bool failOnSecondCall;
+  int _calls = 0;
 
   @override
-  Future<Either<Failure, AccessSnapshot>> getMyAccess() async => Right(
-    AccessSnapshot(
+  Future<Either<Failure, AccessSnapshot>> getMyAccess() async {
+    _calls++;
+    if (failOnSecondCall && _calls > 1) return Left(NetworkFailure());
+    return Right(
+      AccessSnapshot(
       userId: 'guard-test',
       username: 'guard-test',
       email: null,
@@ -56,11 +64,20 @@ class _Repository implements AccessRepository {
                 canOperate: true,
               ),
             ]
-          : const [],
+          : const [
+              AccessBranch(
+                id: 1,
+                code: 'ONE',
+                name: 'First branch',
+                canView: true,
+                canOperate: true,
+              ),
+            ],
       warehouses: const [],
       posTerminals: const [],
-    ),
-  );
+      ),
+    );
+  }
 }
 
 const _icons = [
@@ -89,6 +106,7 @@ _pump(
   required Size size,
   required bool dirty,
   bool withBranches = false,
+  bool failOnSecondAccess = false,
   List<AppMenuEntry> userMenuEntries = const [],
   Future<bool> Function(ScopeOption)? beforeBranchChange,
   Future<bool> Function(int)? beforeDestinationChange,
@@ -99,7 +117,12 @@ _pump(
   addTearDown(tester.view.reset);
 
   final access = AccessCubit(
-    getMyAccess: GetMyAccessUseCase(_Repository(withBranches: withBranches)),
+    getMyAccess: GetMyAccessUseCase(
+      _Repository(
+        withBranches: withBranches,
+        failOnSecondCall: failOnSecondAccess,
+      ),
+    ),
   );
   await access.load();
   addTearDown(access.close);
@@ -398,6 +421,31 @@ void main() {
     await tester.pumpAndSettle();
     expect(env.access.state.selectedBranchId, 2);
     expect(discarded, 1);
+  });
+
+  testWidgets('failed branch refresh does not discard dirty forms', (
+    tester,
+  ) async {
+    var discarded = 0;
+    final env = await _pump(
+      tester,
+      size: const Size(1400, 900),
+      dirty: true,
+      withBranches: true,
+      failOnSecondAccess: true,
+      onDiscard: () => discarded++,
+      beforeBranchChange: (_) async => true,
+    );
+
+    await tester.tap(find.byTooltip('Branch'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Second branch'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+    await _confirm(tester);
+
+    expect(env.access.state.status, AccessStatus.failure);
+    expect(discarded, 0);
   });
 
   testWidgets('owner rejection blocks scope change without guard dialog', (
