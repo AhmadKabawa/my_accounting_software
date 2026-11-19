@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/presentation/access_status_gate.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
@@ -13,6 +15,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_navigation
 import 'package:accounting_software/app/core/presentation/widgets/app_scope_selector/scope_selector.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_shell/app_shell_top_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
 class AppShell extends StatelessWidget {
@@ -32,6 +35,31 @@ class AppShell extends StatelessWidget {
     this.beforeBranchChange,
     this.cashierSessionKey,
   });
+
+  Future<void> _showMore(
+    BuildContext context,
+    List<AppDestination> overflow,
+  ) async {
+    final selectedBranch = await showModalBottomSheet<int>(
+      context: context,
+      useSafeArea: true,
+      builder: (sheetContext) => ListView(
+        padding: EdgeInsets.all(AppSpacing.md.of(sheetContext)),
+        shrinkWrap: true,
+        children: [
+          for (final destination in overflow)
+            ListTile(
+              leading: AppIcon(destination.item.icon),
+              title: AppText(destination.item.label),
+              onTap: () => Navigator.of(sheetContext).pop(
+                destination.branchIndex,
+              ),
+            ),
+        ],
+      ),
+    );
+    if (selectedBranch != null) navigationShell.goBranch(selectedBranch);
+  }
 
   void _select(List<AppDestination> visible, int index) {
     final branch = visible[index].branchIndex;
@@ -102,18 +130,48 @@ class AppShell extends StatelessWidget {
       child: FlashMessageListener(
         child: Rh.builder(
           context: context,
-          mobile: (_) => Scaffold(
-            appBar: topBar,
-            body: navigationShell,
-            bottomNavigationBar: items.isEmpty
-                ? null
-                : AppNavigationBar(
-                    items: items,
-                    activeIndex: current < 0 ? 0 : current,
-                    onIndexChanged: onSelect,
-                    showLabelsAlways: false,
-                  ),
-          ),
+          mobile: (_) {
+            final hasOverflow = visible.length > 5;
+            final mobileDestinations = hasOverflow
+                ? visible.take(4).toList()
+                : visible;
+            final overflow = hasOverflow
+                ? visible.skip(4).toList()
+                : <AppDestination>[];
+            final mobileItems = [
+              for (final destination in mobileDestinations)
+                destination.item,
+              if (hasOverflow)
+                NavBarItem.icons(
+                  icon: AppIcons.more,
+                  label: ShellKeys.more,
+                ),
+            ];
+            final activeMobileIndex = hasOverflow && current >= 4
+                ? 4
+                : current < 0
+                ? 0
+                : current;
+
+            return Scaffold(
+              appBar: topBar,
+              body: navigationShell,
+              bottomNavigationBar: mobileItems.isEmpty
+                  ? null
+                  : AppNavigationBar(
+                      items: mobileItems,
+                      activeIndex: activeMobileIndex,
+                      onIndexChanged: (index) {
+                        if (index < mobileDestinations.length) {
+                          _select(mobileDestinations, index);
+                        } else {
+                          _showMore(context, overflow);
+                        }
+                      },
+                      showLabelsAlways: false,
+                    ),
+            );
+          },
           tablet: (_) => withSideNav(
             AppNavigationRail(
               items: items,
