@@ -49,7 +49,7 @@
 - `test/shell/app_shell_windows_sidebar_test.dart`: اختبار مكتوب لطي Sidebar واستعادة التفضيل من AppSettingsManager.
 - `test/shell/unsaved_changes_guard_test.dart`: اختبارات مكتوبة للسماح والرفض، الحالة النظيفة، النقر المزدوج، الشريط السفلي وRail وSidebar وورقة المزيد وقائمة المستخدم وتغيير الفرع المؤسسي.
 - أضيفت app_badge_test.dart (كل Tone × Size، مع/بدون أيقونة، RTL/LTR، فاتح/داكن، comfortable/compact، 360/600، نص طويل، وتباين 4.5) وdoc_status_badge_test.dart (كل الحالات الموثقة والحالة غير المعروفة). كما حُدّث unsaved_changes_guard_test.dart لتغطية التبويب غير النشط والنشط، رفض المالك، ترتيب تغيير الفرع، discard بعد النجاح، والنقر السريع على «المزيد».
-- نتيجة GitHub Actions لآخر commit برمجي: dart format --set-exit-if-changed . فشل؛ flutter analyze وflutter test تخطّاهما الـ workflow. لذلك اختبارات الحارس وAppBadge وDocStatusBadge واختبار stateful_shell_route_preservation_test.dart لم تُشغّل. لا يوجد تحقق بصري على المتصفح أو أجهزة فعلية.
+- نتيجة CI لهذا التحديث: لم يُتحقق من نتيجة GitHub Actions بعد. لذلك لا تُسجّل اختبارات الحارس وAppBadge وDocStatusBadge و`stateful_shell_route_preservation_test.dart` على أنها ناجحة؛ حالة اختبار route preservation: لم يُتحقق من تشغيله. لا يوجد تحقق بصري على المتصفح أو أجهزة فعلية.
 
 ## حالة التشغيل
 

@@ -639,7 +639,7 @@ source_documents:
 | C41 | CountBadge | CB1 | مراجعة | `feat/ui-step2-c41-c07-c12` | AUTH-04 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `core/presentation/widgets/app_count_badge/`؛ لم تُشغَّل `analyze` ولا الاختبارات |
 | C22 | TreeView | CB1 | لم يبدأ | | ORG-01 | | | | |
 | C01 | DataTable | CB1 | لم يبدأ | | CAT-07 | | | | |
-| C02 | AppBadge + DocStatusBadge | CB1 | مراجعة | feat/ui-c46-c48-shell-templates | CAT-07 | لم يُختبر بصرياً | لم يُختبر | لم يُختبر | AppBadge وDocStatusBadge مبنيان؛ اختبارات Widget مضافة ولم تُشغّل؛ ينتظر استخدام CAT-07 وفق R12 |
+| C02 | AppBadge + DocStatusBadge | CB1 | مراجعة | feat/ui-c46-c48-shell-templates | C12 وC46؛ CAT-07 (ماركات) | لم يُختبر بصرياً | اختبارات Widget موجودة؛ نتيجة التشغيل الحالية غير متحققة | لم يُختبر | L1؛ AppBadge عام وDocStatusBadge لحالات المستند والسداد. مستخدمان في C12 لوسم view-only ويصل إليهما C46 عبر ScopeSelector؛ CAT-07 لم يُبنَ بعد وفق R12. اختبارات app_badge_test وdoc_status_badge_test موجودة دون إثبات تشغيلها في CI الحالي. |
 | C03 | AmountField | CB1 | لم يبدأ | | CAT-03 | | | | |
 | C04 | SearchableDropdown | CB1 | لم يبدأ | | ADM-02 | | | | |
 | C10 | FilterBar | CB1 | لم يبدأ | | ADM-01 | | | | |
@@ -717,3 +717,12 @@ source_documents:
 - C49: AppMenu عام ومربوط بقائمة المستخدم؛ بقية المدخلات غير منفذة.
 - C02: AppBadge (L1) وDocStatusBadge مبنيان؛ شارة C12 تستعمل AppBadge. حالات السداد UNPAID/PARTIAL/PAID مضافة. لم يُستخدما في CAT-07 بعد، لذلك الحالة «مراجعة» وفق R12.
 - أضيفت اختبارات Responsive/RTL/LTR/Light/Dark للقشرة واختبارات حارس التغييرات وAppBadge/DocStatusBadge. آخر تشغيل Flutter CI على الفرع توقف عند dart format --set-exit-if-changed .؛ تخطّى analyze وtest. اختبار indexedStack لم يُشغّل. لا يوجد تحقق بصري على المتصفح أو اختبار فعلي على الجوال/Windows.
+
+
+## سجل C02 وفق قالب §9.6 — 2026-11-19
+
+- **الطبقة والاستخدام:** AppBadge وDocStatusBadge من L1 في `core/presentation/widgets/app_badge/`. يستخدم C12 AppBadge لوسم view-only، ويصل إليهما C46 عبر ScopeSelector. CAT-07 هو الاستخدام التالي المخطط لكنه لم يُبنَ بعد.
+- **Variants:** AppBadgeTone: neutral/success/warning/info/error؛ AppBadgeSize: small/medium؛ أيقونة اختيارية وAppKey إلزامي. DocStatusBadge يغطي DRAFT/POSTED/REVERSED/CANCELLED وUNPAID/PARTIAL/PAID، والمجهول محايد.
+- **البحث والنتائج:** لا يوجد بحث خادمي؛ الحالة قيمة محلية يمررها المستدعي.
+- **الاختبارات:** `app_badge_test.dart` و`doc_status_badge_test.dart` موجودان. وجودهما لا يثبت نجاح تشغيلهما.
+- **غير المتحقق:** تشغيل الاختبارات في CI الحالي والتحقق البصري داخل CAT-07؛ شاشة CAT-07 لم تُبنَ بعد.

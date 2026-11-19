@@ -214,3 +214,10 @@
 - C02: AppBadge وDocStatusBadge في core/presentation/widgets/app_badge/ (L1). DocStatusBadge يستعمل AppBadge؛ ScopeSelector (C12) يستعمل AppBadge لشارة «عرض فقط»، وAppShell (C46) يصل إليه عبر ScopeSelector.
 - AppBadge variants: AppBadgeTone (neutral/success/warning/info/error) وAppBadgeSize (small/medium)، ويحل AppBadgeStyle الألوان والحجم والمسافات من semantic colors وtokens.
 - اختبارات AppBadge وDocStatusBadge وحارس التنقل أُضيفت؛ تشغيل indexedStack واختبارات الحارس لم يُتحقق منهما بعد لأن CI توقف عند فحص format. لا يُدّعى اختبار ويب بصري أو جوال أو Windows.
+
+
+## توثيق C02 وC46 — 2026-11-19
+
+- AppBadge وDocStatusBadge مكوّنا L1 في `core/presentation/widgets/app_badge/`. AppBadge يدعم neutral/success/warning/info/error وsmall/medium وأيقونة اختيارية مع AppKey إلزامي؛ DocStatusBadge يجهّز حالات المستند والسداد والحالة غير المعروفة المحايدة.
+- الاستخدام الحالي: C12 ScopeSelector يعرض شارة view-only عبر AppBadge؛ C46 يصل إليه عبر C12. CAT-07 لم يُبنَ بعد.
+- سلوك C46: إعادة اختيار الفرع النشط تستدعي الحارس ثم تعيد initial location؛ الفرع غير النشط لا يستدعي الحارس ويحافظ على indexedStack. رفض المالك نهائي، وbeforeBranchChange للمالك يسبق الحارس. لا زر رجوع في Shell، ولا discard إلا بعد الانتقال الفعلي.
