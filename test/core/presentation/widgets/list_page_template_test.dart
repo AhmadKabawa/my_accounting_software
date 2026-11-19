@@ -46,8 +46,6 @@ void main() {
     expect(find.text('Filters'), findsWidgets);
     expect(find.text('Add item'), findsOneWidget);
     expect(find.text('Alpha'), findsOneWidget);
-    await tester.tap(find.text('Retry').last);
-    expect(retries, 1);
     expect(tester.takeException(), isNull);
   });
 
@@ -68,8 +66,10 @@ void main() {
         home: buildListPage(AppPageState.error, onRetry: () => retries++),
       ),
     );
-    expect(find.text(CatalogUiKeys.retry.en), findsNWidgets(2));
+    expect(find.text('Retry'), findsNWidgets(2));
     expect(find.text('Alpha'), findsOneWidget);
+    await tester.tap(find.text('Retry').last);
+    expect(retries, 1);
     expect(tester.takeException(), isNull);
   });
 }
