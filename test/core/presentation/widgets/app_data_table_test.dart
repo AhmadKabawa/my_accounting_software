@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
@@ -40,6 +41,7 @@ void main() {
     VoidCallback? onLoadMore,
     AppKey? errorKey,
     VoidCallback? onRetry,
+    ValueChanged<String>? onRowActivated,
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
@@ -56,6 +58,7 @@ void main() {
             loading: loading,
             errorKey: errorKey,
             onRetry: onRetry,
+            onRowActivated: onRowActivated,
             onSort: onSort,
             onPageChanged: onPageChanged,
             onPageSizeChanged: onPageSizeChanged,
@@ -108,6 +111,25 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('50').last);
     expect(requestedSize, 50);
+  });
+
+  testWidgets('desktop rows support Enter activation and Space selection', (
+    tester,
+  ) async {
+    String? activated;
+    Set<Object>? selected;
+    await pumpTable(
+      tester,
+      onRowActivated: (value) => activated = value,
+      onSelectionChanged: (value) => selected = value,
+    );
+    final rowFocus = find.byType(Focus).first;
+    Focus.of(tester.element(rowFocus)).requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    expect(activated, 'Alpha');
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    expect(selected, contains('Alpha'));
   });
 
   testWidgets('supports selection and loading skeletons', (tester) async {
