@@ -3,6 +3,7 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
+/// Standard page heading with an optional count, breadcrumb and primary action.
 class AppPageHeader extends StatelessWidget {
   const AppPageHeader({
     super.key,
@@ -26,30 +27,43 @@ class AppPageHeader extends StatelessWidget {
         Flexible(child: AppText(titleKey, type: AppTextType.headlineSmall)),
         if (count != null) ...[
           context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-          AppText.raw('($count)', type: AppTextType.titleSmall, color: context.ui.theme.colors.onSurfaceVariant),
+          AppText.raw(
+            '($count)',
+            type: AppTextType.titleSmall,
+            color: context.ui.theme.colors.onSurfaceVariant,
+          ),
         ],
       ],
     );
+
     return Padding(
       padding: context.ui.padding.symmetric(vertical: AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (breadcrumb != null) ...[breadcrumb!, context.ui.spacing.gap(AppSpacing.xs, axis: Axis.vertical)],
+          if (breadcrumb != null) ...[
+            breadcrumb!,
+            context.ui.spacing.gap(AppSpacing.xs, axis: Axis.vertical),
+          ],
           LayoutBuilder(
             builder: (context, constraints) {
               final action = primaryAction;
-              if (action == null) {
+              final heading = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [title, if (subtitle != null) subtitle!],
+              );
+              if (action == null) return heading;
+
+              if (constraints.maxWidth <
+                  context.ui.size.width(AppComponentSize.cardWidth)) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [title, if (subtitle != null) subtitle!],
+                  children: [heading, action],
                 );
               }
-              if (constraints.maxWidth < context.ui.size.width(AppComponentSize.cardWidth)) {\n                return Column(\n                  crossAxisAlignment: CrossAxisAlignment.stretch,\n                  children: [title, if (subtitle != null) subtitle!, action],\n                );\n              }\n              return Row(
-                children: [
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [title, if (subtitle != null) subtitle!])),
-                  action,
-                ],
+
+              return Row(
+                children: [Expanded(child: heading), action],
               );
             },
           ),

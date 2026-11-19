@@ -128,23 +128,17 @@ class DashboardTemplate extends StatelessWidget {
         Expanded(
           child: loading
               ? const AppSkeleton.card()
-              : LayoutBuilder(
-                  builder: (context, constraints) {
-                    final cardWidth = context.ui.size.width(
+              : GridView.builder(
+                  padding: context.ui.padding.all(AppSpacing.md),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: context.ui.size.width(
                       AppComponentSize.cardWidth,
-                    );
-                    return GridView.builder(
-                      padding: context.ui.padding.all(AppSpacing.md),
-                      gridDelegate:
-                          SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: cardWidth,
-                            crossAxisSpacing: context.ui.spacing.md,
-                            mainAxisSpacing: context.ui.spacing.md,
-                          ),
-                      itemCount: cards.length,
-                      itemBuilder: (_, index) => cards[index],
-                    );
-                  },
+                    ),
+                    crossAxisSpacing: context.ui.spacing.md,
+                    mainAxisSpacing: context.ui.spacing.md,
+                  ),
+                  itemCount: cards.length,
+                  itemBuilder: (_, index) => cards[index],
                 ),
         ),
       ],

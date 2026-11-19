@@ -64,7 +64,7 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         if (cashierSessionKey != null)
           Padding(
-            padding: context.ui.padding.only(start: AppSpacing.sm),
+            padding: context.ui.padding.directional(start: AppSpacing.sm),
             child: Center(child: AppText(cashierSessionKey!, type: AppTextType.labelMedium)),
           ),
         IconButton(
@@ -80,7 +80,7 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
           )
         else
           Padding(
-            padding: context.ui.padding.only(end: AppSpacing.md),
+            padding: context.ui.padding.directional(end: AppSpacing.md),
             child: Center(child: AppText.raw(snapshot.username, type: AppTextType.labelMedium)),
           ),
       ],
