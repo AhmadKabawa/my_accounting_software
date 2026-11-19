@@ -491,3 +491,11 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - `FilterBar(onSearchChanged: cubit.search, activeFilters: chips, onClearAll: cubit.clearFilters, filterPanelBuilder: (context, apply) => FilterEditor(onApply: apply))`؛ الشاشة تملك قيم الفلاتر والاستعلام.
 - `AppDataTable<Row>(columns: columns, rows: currentServerPage, rowId: (row) => row.id, onSort: cubit.sort, onPageChanged: cubit.goToPage, onPageSizeChanged: cubit.setPageSize)`؛ بطاقات الهاتف تستخدم AppCard، ويمكن تمرير `cardBuilder` للتخصيص.؛ على الهاتف مرّر `hasMore` و`onLoadMore`. لا تمرر كامل المجموعة ثم تطلب من الجدول فرزها محلياً.
 - `ListPageTemplate(titleKey: ..., filterBar: filterBar, dataTable: table, state: AppPageState.content)`؛ يُستعمل كـ body داخل مساحة ذات ارتفاع محدود (مثلاً Expanded في Scaffold/Column).
+
+
+## تحديث استخدام مكونات Catalog UI — مراجعة الجودة
+
+- AppTextField يقبل onChanged للبحث، وfocusNode عند دمجه مع RawAutocomplete، وautofocus لحقل البحث داخل BottomSheet. يظل controller مملوكاً للصفحة/المكوّن الذي أنشأه.
+- AppBadge يقبل labelArgs لمتغيرات AppKey، وonRemove مع removeLabel لإظهار شارة قابلة للإزالة. استخدم AppKey ذات placeholders متطابقة في ar/en.
+- AppDataTable على الهاتف يعرض زر «ترتيب حسب» عندما يوجد onSort وأعمدة قابلة للفرز؛ اختيار العمود يرسل DataTableSort إلى المالك ولا ينفذ فرزاً محلياً.
+- ListPageTemplate لا يملك بانر الخطأ أو Retry؛ عند state=error مرّر AppDataTable مع errorKey وonRetry، ليكون الجدول المصدر الوحيد للخطأ وإعادة المحاولة. عند loading/empty يتولى القالب حالة الصفحة ولا يعرض الجدول معها.
