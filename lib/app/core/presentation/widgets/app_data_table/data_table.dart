@@ -60,6 +60,7 @@ class AppDataTable<T> extends StatelessWidget {
     this.selectedIds = const {},
     this.onSelectionChanged,
     this.rowActionsBuilder,
+    this.onRowActivated,
     this.cardBuilder,
     this.summaryBuilder,
     this.page = 1,
@@ -83,6 +84,7 @@ class AppDataTable<T> extends StatelessWidget {
   final Set<Object> selectedIds;
   final ValueChanged<Set<Object>>? onSelectionChanged;
   final Widget Function(BuildContext context, T row)? rowActionsBuilder;
+  final ValueChanged<T>? onRowActivated;
   final Widget Function(BuildContext context, T row)? cardBuilder;
   final Widget? summaryBuilder;
   final int page;
@@ -256,10 +258,47 @@ class AppDataTable<T> extends StatelessWidget {
           child: ListView.separated(
             itemCount: rows.length,
             separatorBuilder: (_, __) => Divider(height: 1, color: style.divider),
-            itemBuilder: (context, index) => ConstrainedBox(
-              constraints: BoxConstraints(minHeight: style.rowHeight),
-              child: cells(rows[index], header: false),
-            ),
+            itemBuilder: (context, index) {
+              final row = rows[index];
+              return Focus(
+                canRequestFocus: true,
+                onKeyEvent: (node, event) {
+                  if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                  if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                    node.nextFocus();
+                    return KeyEventResult.handled;
+                  }
+                  if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+                    node.previousFocus();
+                    return KeyEventResult.handled;
+                  }
+                  if (event.logicalKey == LogicalKeyboardKey.enter) {
+                    onRowActivated?.call(row);
+                    return KeyEventResult.handled;
+                  }
+                  if (event.logicalKey == LogicalKeyboardKey.space) {
+                    if (onSelectionChanged != null) {
+                      _toggle(row, !selectedIds.contains(rowId(row)));
+                    }
+                    return KeyEventResult.handled;
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: Semantics(
+                  container: true,
+                  selected: selectedIds.contains(rowId(row)),
+                  child: InkWell(
+                    onTap: onRowActivated == null
+                        ? null
+                        : () => onRowActivated!(row),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: style.rowHeight),
+                      child: cells(row, header: false),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
         if (summaryBuilder != null) summaryBuilder!,
