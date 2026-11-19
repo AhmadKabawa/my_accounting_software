@@ -180,7 +180,10 @@ void main() {
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsNothing);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-1');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-1',
+    );
     expect(discarded, 0);
     await tester.tap(find.byIcon(_icons[0]));
     await tester.pumpAndSettle();
@@ -200,7 +203,10 @@ void main() {
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
     await _cancel(tester);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-0',
+    );
     expect(find.text('Dirty form'), findsOneWidget);
   });
 
@@ -216,7 +222,10 @@ void main() {
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsNothing);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-1');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-1',
+    );
   });
 
   testWidgets('rapid repeated navigation opens only one confirmation', (
@@ -236,7 +245,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsOneWidget);
     await _cancel(tester);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-0',
+    );
   });
 
   testWidgets('switching to an inactive rail destination keeps the form', (
@@ -253,7 +265,10 @@ void main() {
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsNothing);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-1');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-1',
+    );
     expect(discarded, 0);
     await tester.tap(find.byIcon(_icons[0]));
     await tester.pumpAndSettle();
@@ -275,7 +290,10 @@ void main() {
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsNothing);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-1');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-1',
+    );
     expect(discarded, 0);
     await tester.tap(find.byIcon(_icons[0]));
     await tester.pumpAndSettle();
@@ -313,7 +331,10 @@ void main() {
     await tester.tap(find.text(ShellKeys.branch.en));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsNothing);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-5');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-5',
+    );
     expect(discarded, 0);
   });
 
@@ -366,7 +387,10 @@ void main() {
     expect(ownerCallbackCalled, isTrue);
     expect(find.byType(Dialog), findsOneWidget);
     await _cancel(tester);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-0',
+    );
     expect(discarded, 0);
     expect(find.text('Dirty form'), findsOneWidget);
   });
@@ -404,7 +428,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsOneWidget);
     await _cancel(tester);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-0',
+    );
   });
 
   testWidgets('clicking the active rail destination asks the guard', (
@@ -419,7 +446,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsOneWidget);
     await _cancel(tester);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-0',
+    );
   });
 
   testWidgets('clicking the active sidebar destination asks the guard', (
@@ -434,7 +464,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsOneWidget);
     await _cancel(tester);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-0',
+    );
   });
 
   testWidgets('owner rejection blocks navigation without asking the guard', (
@@ -449,7 +482,10 @@ void main() {
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsNothing);
-    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(
+      env.router.routerDelegate.currentConfiguration.uri.path,
+      '/branch-0',
+    );
     expect(find.text('Dirty form'), findsOneWidget);
   });
 }

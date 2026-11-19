@@ -43,49 +43,49 @@ class AppMenu extends StatelessWidget {
     final hitArea = AppComponentSize.hitArea.of(context);
 
     return PopupMenuButton<int>(
-        tooltip: tooltip,
-        enabled: enabled && entries.isNotEmpty,
-        onSelected: (index) => entries[index].onSelected(),
-        itemBuilder: (context) => [
-          for (var i = 0; i < entries.length; i++)
-            PopupMenuItem<int>(
-              value: i,
-              enabled: entries[i].enabled,
-              child: Row(
-                children: [
-                  if (entries[i].icon != null) ...[
-                    AppIcon(entries[i].icon!, size: AppIconSize.md),
-                    context.ui.spacing.gap(
-                      AppSpacing.sm,
-                      axis: Axis.horizontal,
-                    ),
-                  ],
-                  AppText(entries[i].label, type: AppTextType.bodyMedium),
-                ],
-              ),
-            ),
-        ],
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minWidth: hitArea, minHeight: hitArea),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.ui.spacing.sm),
+      tooltip: tooltip,
+      enabled: enabled && entries.isNotEmpty,
+      onSelected: (index) => entries[index].onSelected(),
+      itemBuilder: (context) => [
+        for (var i = 0; i < entries.length; i++)
+          PopupMenuItem<int>(
+            value: i,
+            enabled: entries[i].enabled,
             child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (icon != null) AppIcon(icon!, size: AppIconSize.md),
-                if (labelKey != null) ...[
-                  if (icon != null)
-                    context.ui.spacing.gap(
-                      AppSpacing.xs,
-                      axis: Axis.horizontal,
-                    ),
-                  AppText(labelKey!, type: AppTextType.labelLarge),
+                if (entries[i].icon != null) ...[
+                  AppIcon(entries[i].icon!, size: AppIconSize.md),
+                  context.ui.spacing.gap(
+                    AppSpacing.sm,
+                    axis: Axis.horizontal,
+                  ),
                 ],
+                AppText(entries[i].label, type: AppTextType.bodyMedium),
               ],
             ),
           ),
+      ],
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: hitArea, minHeight: hitArea),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: context.ui.spacing.sm),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) AppIcon(icon!, size: AppIconSize.md),
+              if (labelKey != null) ...[
+                if (icon != null)
+                  context.ui.spacing.gap(
+                    AppSpacing.xs,
+                    axis: Axis.horizontal,
+                  ),
+                AppText(labelKey!, type: AppTextType.labelLarge),
+              ],
+            ],
+          ),
         ),
+      ),
     );
   }
 }

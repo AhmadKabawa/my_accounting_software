@@ -28,7 +28,8 @@ class AppShell extends StatelessWidget {
   final List<AppDestination> destinations;
   final List<AppMenuEntry> userMenuEntries;
   final List<AppBreadcrumbItem> breadcrumbs;
-  final List<AppBreadcrumbItem> Function(GoRouterState state)? breadcrumbBuilder;
+  final List<AppBreadcrumbItem> Function(GoRouterState state)?
+  breadcrumbBuilder;
   final Future<bool> Function(ScopeOption)? beforeBranchChange;
   final AppKey? cashierSessionKey;
   final bool supportsCollapsibleSidebar;
@@ -191,8 +192,9 @@ class AppShell extends StatelessWidget {
         ? visible.first.item.label
         : null;
 
-    final routeBreadcrumbs =
-        breadcrumbBuilder?.call(GoRouterState.of(context)) ?? breadcrumbs;
+    final routeBreadcrumbs = breadcrumbBuilder?.call(
+      GoRouterState.of(context),
+    ) ?? breadcrumbs;
 
     PreferredSizeWidget? topBar;
     if (snapshot != null && titleKey != null) {
@@ -287,7 +289,6 @@ class AppShell extends StatelessWidget {
   }
 }
 
-
 class _PersistedWindowsSidebar extends StatefulWidget {
   const _PersistedWindowsSidebar({
     required this.items,
@@ -340,7 +341,6 @@ class _PersistedWindowsSidebarState extends State<_PersistedWindowsSidebar> {
     onToggle: _restored ? _toggle : null,
   );
 }
-
 
 class _ShellMobileNavigation extends StatefulWidget {
   const _ShellMobileNavigation({
