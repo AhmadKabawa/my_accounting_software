@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +11,7 @@ import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/shell/app_shell.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 import '../helpers/localized_app.dart';
@@ -83,10 +84,8 @@ void main() {
       initialLocation: '/form',
       routes: [
         StatefulShellRoute.indexedStack(
-          builder: (context, state, shell) => AppShell(
-            navigationShell: shell,
-            destinations: destinations,
-          ),
+          builder: (context, state, shell) =>
+              AppShell(navigationShell: shell, destinations: destinations),
           branches: [
             StatefulShellBranch(
               routes: [

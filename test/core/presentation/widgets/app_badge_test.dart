@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/badge_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
@@ -25,50 +26,49 @@ void main() {
     for (final density in AppDensity.values) {
       for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
         for (final width in [360.0, 600.0]) {
-          testWidgets(
-            'renders tones and sizes with optional icon '
-            '(${theme.brightness}, $density, $direction, $width)',
-            (tester) async {
-              tester.view.physicalSize = Size(width, 900);
-              tester.view.devicePixelRatio = 1;
-              addTearDown(tester.view.reset);
-              await tester.pumpWidget(
-                buildTestApp(
-                  theme: theme,
-                  direction: direction,
-                  home: AppDensityScope(
-                    density: density,
-                    child: SizedBox(
-                      width: width,
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          for (final tone in AppBadgeTone.values)
-                            for (final size in AppBadgeSize.values)
-                              AppBadge(
-                                label: BadgeKeys.sample,
-                                tone: tone,
-                                size: size,
-                              ),
-                          for (final tone in AppBadgeTone.values)
+          testWidgets('renders tones and sizes with optional icon '
+              '(${theme.brightness}, $density, $direction, $width)', (
+            tester,
+          ) async {
+            tester.view.physicalSize = Size(width, 900);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            await tester.pumpWidget(
+              buildTestApp(
+                theme: theme,
+                direction: direction,
+                home: AppDensityScope(
+                  density: density,
+                  child: SizedBox(
+                    width: width,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final tone in AppBadgeTone.values)
+                          for (final size in AppBadgeSize.values)
                             AppBadge(
                               label: BadgeKeys.sample,
                               tone: tone,
-                              icon: AppIcons.check,
+                              size: size,
                             ),
-                          const AppBadge(label: BadgeKeys.longLabel),
-                        ],
-                      ),
+                        for (final tone in AppBadgeTone.values)
+                          AppBadge(
+                            label: BadgeKeys.sample,
+                            tone: tone,
+                            icon: AppIcons.check,
+                          ),
+                        const AppBadge(label: BadgeKeys.longLabel),
+                      ],
                     ),
                   ),
                 ),
-              );
-              await tester.pumpAndSettle();
-              expect(find.byType(AppBadge), findsNWidgets(16));
-              expect(tester.takeException(), isNull);
-            },
-          );
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(find.byType(AppBadge), findsNWidgets(16));
+            expect(tester.takeException(), isNull);
+          });
         }
       }
     }
@@ -84,10 +84,9 @@ void main() {
           home: Builder(
             builder: (context) {
               for (final tone in AppBadgeTone.values) {
-                final visual = AppBadgeStyle(context).resolve(
-                  tone,
-                  AppBadgeSize.medium,
-                );
+                final visual = AppBadgeStyle(
+                  context,
+                ).resolve(tone, AppBadgeSize.medium);
                 expect(
                   _contrast(visual.foreground, visual.background),
                   greaterThanOrEqualTo(4.5),
@@ -147,31 +146,29 @@ void main() {
       tester,
     ) async {
       final handle = tester.ensureSemantics();
-      addTearDown(handle.dispose);
-      await pumpRemovable(
-        tester,
-        size: const Size(360, 800),
-        onRemove: () {},
-      );
+      await pumpRemovable(tester, size: const Size(360, 800), onRemove: () {});
 
       expect(find.bySemanticsLabel('Document status'), findsOneWidget);
       final remove = find.bySemanticsLabel('test.badge.remove');
       expect(remove, findsOneWidget);
       expect(
-        tester.getSemantics(remove).hasAction(SemanticsAction.tap),
+        tester
+            .getSemantics(remove)
+            .getSemanticsData()
+            .hasAction(SemanticsAction.tap),
         isTrue,
       );
+      handle.dispose();
     });
 
     testWidgets('remove target reaches the hit area on phones', (tester) async {
-      await pumpRemovable(
-        tester,
-        size: const Size(360, 800),
-        onRemove: () {},
-      );
+      await pumpRemovable(tester, size: const Size(360, 800), onRemove: () {});
       final target = tester.getSize(find.byType(InkWell));
-      expect(target.width, greaterThanOrEqualTo(44));
-      expect(target.height, greaterThanOrEqualTo(44));
+      final minimum = AppComponentSize.hitArea.of(
+        tester.element(find.byType(InkWell)),
+      );
+      expect(target.width, greaterThanOrEqualTo(minimum));
+      expect(target.height, greaterThanOrEqualTo(minimum));
     });
   });
 }

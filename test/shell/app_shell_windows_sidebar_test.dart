@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/storage/storage_key.dart';
@@ -42,7 +43,7 @@ class _MemoryStorage implements StorageService {
 
   @override
   Future<void> write<T>(StorageKey key, T value) async {
-    values[key] = value;
+    values[key] = value as Object;
   }
 
   @override
@@ -60,10 +61,7 @@ class _MemoryStorage implements StorageService {
   Future<bool> containsKey(StorageKey key) async => values.containsKey(key);
 }
 
-Future<void> _pump(
-  WidgetTester tester,
-  AppSettingsManager settings,
-) async {
+Future<void> _pump(WidgetTester tester, AppSettingsManager settings) async {
   tester.view.physicalSize = const Size(1400, 900);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);

@@ -53,7 +53,10 @@ void main() {
     final root =
         tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
     final buttonSemantics = tester.getSemantics(find.byTooltip('User menu'));
-    expect(buttonSemantics.hasAction(SemanticsAction.tap), isTrue);
+    expect(
+      buttonSemantics.getSemanticsData().hasAction(SemanticsAction.tap),
+      isTrue,
+    );
     final occurrences = _labels(root).fold<int>(
       0,
       (total, label) => total + 'User menu'.allMatches(label).length,

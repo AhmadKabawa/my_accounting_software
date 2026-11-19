@@ -152,7 +152,8 @@ void main() {
       await _pump(tester, const Size(390, 844));
 
       final scaffold = tester.widget<Scaffold>(find.byType(Scaffold).first);
-      expect(scaffold.bottomNavigationBar, isA<AppNavigationBar>());
+      expect(scaffold.bottomNavigationBar, isNotNull);
+      expect(find.byType(AppNavigationBar), findsOneWidget);
       expect(scaffold.floatingActionButton, isNull);
     });
 
@@ -469,5 +470,4 @@ void main() {
     expect(_location(env.router), '/branch-1');
     expect(find.text(ShellKeys.branch.en), findsOneWidget);
   });
-
 }

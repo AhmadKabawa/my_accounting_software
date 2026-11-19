@@ -40,7 +40,7 @@ class AppBadgeStyle {
     final semantic = context.ui.theme.semanticColors;
     final (foreground, background) = switch (tone) {
       AppBadgeTone.neutral => (
-        scheme.onSurfaceVariant,
+        scheme.onSurface,
         scheme.surfaceContainerHighest,
       ),
       AppBadgeTone.success => (semantic.success, semantic.successContainer),

@@ -36,7 +36,7 @@ class AppBadge extends StatelessWidget {
     // Touch-first layout: the remove control must reach the hit-area token.
     // On tablet/desktop the pointer is precise, so the compact size is kept.
     final removeTarget = ScreenEngine.isMobile(context)
-        ? context.ui.size.width(AppComponentSize.hitArea)
+        ? AppComponentSize.hitArea.mobile
         : 0.0;
     return Semantics(
       container: true,
@@ -80,7 +80,6 @@ class AppBadge extends StatelessWidget {
                 Semantics(
                   button: true,
                   label: removeLabel?.tr(context: context),
-                  excludeSemantics: true,
                   child: InkWell(
                     onTap: onRemove,
                     borderRadius: visual.radius,

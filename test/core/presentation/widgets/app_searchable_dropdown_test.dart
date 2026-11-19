@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
@@ -62,30 +63,31 @@ void main() {
     );
   }
 
-  testWidgets('supports picker breakpoints, directions, themes and large text', (
-    tester,
-  ) async {
-    const sizes = [
-      Size(360, 800),
-      Size(600, 900),
-      Size(900, 900),
-      Size(1200, 900),
-    ];
-    for (var index = 0; index < sizes.length; index++) {
-      await pumpPicker(
-        tester,
-        size: sizes[index],
-        options: const [
-          'A very long option label that should wrap safely in the picker',
-          'Beta',
-        ],
-        dark: index.isOdd,
-        direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
-        textScale: 2,
-      );
-      expect(tester.takeException(), isNull);
-    }
-  });
+  testWidgets(
+    'supports picker breakpoints, directions, themes and large text',
+    (tester) async {
+      const sizes = [
+        Size(360, 800),
+        Size(600, 900),
+        Size(900, 900),
+        Size(1200, 900),
+      ];
+      for (var index = 0; index < sizes.length; index++) {
+        await pumpPicker(
+          tester,
+          size: sizes[index],
+          options: const [
+            'A very long option label that should wrap safely in the picker',
+            'Beta',
+          ],
+          dark: index.isOdd,
+          direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
+          textScale: 2,
+        );
+        expect(tester.takeException(), isNull);
+      }
+    },
+  );
 
   testWidgets('desktop search filters options and selects one', (tester) async {
     String? selected;
@@ -319,10 +321,7 @@ void main() {
   });
 
   testWidgets('"add new" stays reachable when nothing matches', (tester) async {
-    await pumpPicker(
-      tester,
-      onAddNew: (_) => const Text('Add new'),
-    );
+    await pumpPicker(tester, onAddNew: (_) => const Text('Add new'));
     expect(find.text('Add new'), findsNothing);
 
     await tester.enterText(find.byType(TextField), 'no-match');
@@ -365,7 +364,6 @@ void main() {
       tester,
     ) async {
       final handle = tester.ensureSemantics();
-      addTearDown(handle.dispose);
       await pumpPicker(tester, size: const Size(390, 844), value: 'Alpha');
 
       // Enabled look: the trigger is not rendered with enabled: false.
@@ -377,7 +375,8 @@ void main() {
       expect(labelled, findsOneWidget);
       final node = tester.getSemantics(labelled);
       expect(node.value, 'Alpha');
-      expect(node.hasAction(SemanticsAction.tap), isTrue);
+      expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+      handle.dispose();
     });
 
     testWidgets('closing the sheet releases the remote query', (tester) async {
