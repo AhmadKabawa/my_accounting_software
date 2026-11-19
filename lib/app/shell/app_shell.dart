@@ -51,9 +51,8 @@ class AppShell extends StatelessWidget {
             ListTile(
               leading: AppIcon(destination.item.icon),
               title: AppText(destination.item.label),
-              onTap: () => Navigator.of(sheetContext).pop(
-                destination.branchIndex,
-              ),
+              onTap: () =>
+                  Navigator.of(sheetContext).pop(destination.branchIndex),
             ),
         ],
       ),
@@ -85,8 +84,7 @@ class AppShell extends StatelessWidget {
           destination,
     ];
     final current = visible.indexWhere(
-      (destination) =>
-          destination.branchIndex == navigationShell.currentIndex,
+      (destination) => destination.branchIndex == navigationShell.currentIndex,
     );
 
     if (current == -1 && visible.isNotEmpty) {
@@ -122,7 +120,10 @@ class AppShell extends StatelessWidget {
     Widget withSideNav(Widget nav) => Scaffold(
       appBar: topBar,
       body: Row(
-        children: [nav, Expanded(child: navigationShell)],
+        children: [
+          nav,
+          Expanded(child: navigationShell),
+        ],
       ),
     );
 
@@ -139,13 +140,9 @@ class AppShell extends StatelessWidget {
                 ? visible.skip(4).toList()
                 : <AppDestination>[];
             final mobileItems = [
-              for (final destination in mobileDestinations)
-                destination.item,
+              for (final destination in mobileDestinations) destination.item,
               if (hasOverflow)
-                NavBarItem.icons(
-                  icon: AppIcons.more,
-                  label: ShellKeys.more,
-                ),
+                NavBarItem.icons(icon: AppIcons.more, label: ShellKeys.more),
             ];
             final activeMobileIndex = hasOverflow && current >= 4
                 ? 4

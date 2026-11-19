@@ -36,10 +36,7 @@ class AppBreadcrumb extends StatelessWidget {
           else
             TextButton(
               onPressed: items[i].onTap,
-              child: AppText(
-                items[i].label,
-                type: AppTextType.labelSmall,
-              ),
+              child: AppText(items[i].label, type: AppTextType.labelSmall),
             ),
         ],
       ],

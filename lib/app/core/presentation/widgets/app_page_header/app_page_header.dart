@@ -63,7 +63,10 @@ class AppPageHeader extends StatelessWidget {
               }
 
               return Row(
-                children: [Expanded(child: heading), action],
+                children: [
+                  Expanded(child: heading),
+                  action,
+                ],
               );
             },
           ),
