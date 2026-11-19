@@ -1,0 +1,29 @@
+name: Temporary test formatter commit
+on:
+  push:
+    branches:
+      - feat/ui-c46-c48-shell-templates
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/ui-c46-c48-shell-templates
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.1
+          channel: stable
+      - name: Format test source
+        run: dart format test/shell/app_shell_test.dart
+      - name: Commit formatting if needed
+        run: |
+          if ! git diff --quiet -- test/shell/app_shell_test.dart; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add test/shell/app_shell_test.dart
+            git commit -m "style(test): format shell widget tests"
+            git push origin HEAD:feat/ui-c46-c48-shell-templates
+          fi
