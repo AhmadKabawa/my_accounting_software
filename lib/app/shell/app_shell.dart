@@ -112,12 +112,6 @@ class AppShell extends StatelessWidget {
     if (isActiveBranch) unsavedChangesGuard?.discardBranch(branch);
   }
 
-  Future<bool> _confirmActiveBranch() async {
-    final guard = unsavedChangesGuard;
-    if (guard == null) return true;
-    return guard.confirmBranch(navigationShell.currentIndex);
-  }
-
   Future<bool> _confirmAllForms() async {
     final guard = unsavedChangesGuard;
     if (guard == null) return true;
