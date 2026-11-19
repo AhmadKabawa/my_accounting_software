@@ -68,6 +68,43 @@ void main() {
     expect(queries, ['vendor']);
   });
 
+  testWidgets('same-content options refresh without losing query or focus', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var options = <String>['Alpha', 'Beta'];
+    await tester.pumpWidget(
+      buildTestApp(
+        home: StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: SearchableDropdown<String>(
+              options: options,
+              labelKey: CatalogUiKeys.chooseOption,
+              optionLabel: (value) => value,
+              value: null,
+              filterLocally: false,
+              onChanged: (_) {},
+              onQueryChanged: (_) => setState(() {
+                options = List<String>.of(options);
+              }),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(find.byType(TextField), 'Al');
+    await tester.pump(const Duration(milliseconds: 301));
+    await tester.pumpAndSettle();
+
+    final field = tester.widget<TextField>(find.byType(TextField).first);
+    expect(field.controller?.text, 'Al');
+    expect(field.focusNode?.hasFocus, isTrue);
+    expect(find.text('Alpha'), findsOneWidget);
+  });
+
   testWidgets('mobile opens a bottom sheet and selects an option', (
     tester,
   ) async {
