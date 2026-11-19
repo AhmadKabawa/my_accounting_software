@@ -28,6 +28,7 @@ jobs:
         run: flutter --version
 
       - name: Get dependencies
+        id: dependencies
         timeout-minutes: 5
         run: flutter pub get
 
@@ -36,9 +37,11 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Analyze
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         timeout-minutes: 10
         run: flutter analyze --no-fatal-infos
 
       - name: Run tests
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         timeout-minutes: 20
         run: flutter test
