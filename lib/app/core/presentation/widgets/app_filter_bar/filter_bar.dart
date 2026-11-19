@@ -6,6 +6,7 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -198,9 +199,15 @@ class _FilterBarState extends State<FilterBar> {
             runSpacing: style.gap,
             children: [
               for (final filter in widget.activeFilters)
-                InputChip(
-                  label: AppText.raw('${filter.label.tr(context: context)}: ${filter.value}'),
-                  onDeleted: filter.onRemove,
+                AppBadge(
+                  label: CatalogUiKeys.activeFilterLabel,
+                  labelArgs: {
+                    'label': filter.label.tr(context: context),
+                    'value': filter.value,
+                  },
+                  size: AppBadgeSize.small,
+                  onRemove: filter.onRemove,
+                  removeLabel: CatalogUiKeys.removeFilter,
                 ),
             ],
           ),
