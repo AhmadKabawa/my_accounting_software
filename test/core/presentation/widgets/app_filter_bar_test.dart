@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import '../../../helpers/localized_app.dart';
 
@@ -42,6 +43,45 @@ void main() {
 
     await tester.tap(find.text('Clear all'));
     expect(cleared, 1);
+  });
+
+  testWidgets('supports breakpoints, directions, themes and large text', (
+    tester,
+  ) async {
+    const sizes = [
+      Size(360, 800),
+      Size(600, 900),
+      Size(900, 900),
+      Size(1200, 900),
+    ];
+    for (var index = 0; index < sizes.length; index++) {
+      tester.view.physicalSize = sizes[index];
+      tester.view.devicePixelRatio = 1;
+      await tester.pumpWidget(
+        buildTestApp(
+          direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
+          theme: index.isOdd ? AppTheme.dark() : AppTheme.light(),
+          textScale: 2,
+          home: Scaffold(
+            body: FilterBar(
+              onSearchChanged: (_) {},
+              activeFilters: [
+                FilterBarFilter(
+                  id: 'long',
+                  label: CatalogUiKeys.filters,
+                  value: 'A very long filter value that must wrap safely',
+                  onRemove: () {},
+                ),
+              ],
+              onClearAll: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    }
+    addTearDown(tester.view.reset);
   });
 
   testWidgets('wide layout reveals the caller filter editor inline', (
