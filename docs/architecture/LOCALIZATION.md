@@ -95,3 +95,12 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 ## مفاتيح Catalog UI — 2026-11-19
 
 أضيف enum `CatalogUiKeys` في `core/localization/keys/catalog_ui_keys.dart` وسُجّل ضمن `allKeys` في `key_registry.dart`. يشمل البحث والاختيار والمرشحات ومسحها وتطبيقها، حالات الفراغ والتحميل، وأزرار الترقيم والفرز، باللغتين العربية والإنجليزية.
+
+
+## تحديث مفاتيح Catalog UI — 2026-11-19
+
+أضيفت مفاتيح CatalogUiKeys التالية إلى enum المسجّل مسبقاً ضمن allKeys:
+- activeFilterLabel بقيمتي @label و@value لعرض اسم المرشح وقيمته عبر tr(namedArgs: …)، مع تطابق المتغيرات بين العربية والإنجليزية.
+- removeFilter لوصف إجراء إزالة شارة المرشح.
+- sortBy لفتح خيارات فرز الجدول على الهاتف.
+- paginationLabel لعرض الصفحة الحالية وآخر صفحة ضمن مفتاح واحد مع @page و@lastPage.
