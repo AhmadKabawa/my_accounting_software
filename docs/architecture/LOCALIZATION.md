@@ -80,3 +80,8 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 سُجلت في lib/app/localization/key_registry.dart:
 - ShellKeys: shell.branch وshell.notificationsUnavailable وshell.userMenu.
 - TemplateKeys: template.unsavedChanges وtemplate.save.
+
+
+## مفاتيح إضافية — 2026-11-19
+
+أضيفت إلى ShellKeys: shell.more. وأضيفت إلى TemplateKeys: template.emptyTitle وtemplate.emptyDescription. جميعها ضمن allKeys عبر key_registry.dart، باللغتين العربية والإنجليزية.

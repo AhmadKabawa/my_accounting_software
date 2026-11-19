@@ -462,3 +462,11 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - FormPageTemplate هو T3 وDashboardTemplate هو T5. الشاشة المالكة تمرر المحتوى والحالة والبطاقات؛ لا تضع الصلاحيات أو منطق الأعمال داخل القالب.
 - AppShell يقبل beforeBranchChange ليقرر صاحب الشاشة ما إذا كان تغيير الفرع مسموحاً بعد تأكيد C07. لا يعرف Shell شيئاً عن سلة البيع.
 - عناصر قائمة المستخدم وشارة جلسة الكاشير حالياً slots؛ لم يُربط تسجيل الخروج أو جلسة POS بعد.
+
+
+## متابعة الاستخدام — 2026-11-19
+
+- AppShell يستقبل الآن AppMenuEntry من AppRouter؛ العناصر الافتراضية تتيح الملف الشخصي وتسجيل الخروج.
+- قائمة الجوال تعرض أول أربع وجهات ثم «المزيد» عند وجود أكثر من خمس وجهات؛ اختيار وجهة إضافية ينقل إلى فرع GoRouter الصحيح.
+- ScopeSelector يعرض فقط الفروع التي تسمح canView بها، ويحدد viewOnly بحسب canOperate.
+- FormPageTemplate وDashboardTemplate يعرضان EmptyState افتراضياً عند غياب البيانات، ويمكن للشاشة تمرير EmptyState مخصص.

@@ -184,3 +184,12 @@ PermissionGate. حجم الصفحة من AppConfig.pageSizeOptions (قرار-75)
 - التنفيذ الموجود: AppShellTopBar، AppMenu، AppBreadcrumb، AppPageHeader، FormPageTemplate (T3)، DashboardTemplate (T5)، مفاتيح ترجمة عربية/إنجليزية.
 - لم يتم دمج القوالب في AUTH-01/AUTH-05/AUTH-04 بعد. لم يكتمل Sidebar القابل للطي وتذكّر الحالة، أو «المزيد» في قائمة الجوال، أو ربط جلسة POS الفعلية.
 - لم تُشغّل أدوات Dart/Flutter ولم تُضف اختبارات Widget لهذه العناصر. الحالة «مراجعة» وليست «منجز».
+
+
+## متابعة العمل — 2026-11-19
+
+- AppMenu العام موصول في AppRouter بخياري الملف الشخصي وتسجيل الخروج.
+- قائمة «المزيد» على الجوال متاحة عند تجاوز خمس وجهات.
+- قوالب T3 وT5 تعرض Loading/Empty/Error افتراضياً، مع إمكانية تمرير EmptyState مخصص.
+- أضيفت اختبارات Responsive على 360/600/900/1200 وRTL/LTR وLight/Dark. آخر GitHub CI اجتاز format/analyze/test.
+- ما زال Sidebar القابل للطي وحفظ حالته، وربط جلسة POS الفعلية، وربط القوالب بشاشات AUTH-01/AUTH-05/AUTH-04 غير مكتمل.
