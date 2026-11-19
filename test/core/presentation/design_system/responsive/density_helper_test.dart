@@ -63,6 +63,7 @@ void main() {
     late double buttonHeight;
     late bool fieldIsDense;
     late double iconTouchTarget;
+    late double minimumHitArea;
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),
@@ -83,6 +84,7 @@ void main() {
                   .height;
               fieldIsDense = field.isDense;
               iconTouchTarget = button.touchTarget;
+              minimumHitArea = AppComponentSize.hitArea.of(context);
               return const SizedBox.shrink();
             },
           ),
@@ -92,7 +94,7 @@ void main() {
 
     expect(buttonHeight, AppDensity.compact.field);
     expect(fieldIsDense, isTrue);
-    expect(iconTouchTarget, AppDensity.compact.field);
+    expect(iconTouchTarget, greaterThanOrEqualTo(minimumHitArea));
   });
 
   testWidgets('compact on a phone preserves the minimum touch target', (
