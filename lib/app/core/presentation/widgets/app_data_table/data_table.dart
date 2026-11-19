@@ -171,36 +171,52 @@ class AppDataTable<T> extends StatelessWidget {
             child: InkWell(
               onTap: onRowActivated == null ? null : () => onRowActivated!(row),
               child: Padding(
-              padding: style.cellPadding,
-              child: cardBuilder?.call(context, row) ?? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (onSelectionChanged != null)
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: Checkbox(
-                        value: selectedIds.contains(rowId(row)),
-                        onChanged: (checked) => _toggle(row, checked ?? false),
+                padding: style.cellPadding,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (onSelectionChanged != null)
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: Checkbox(
+                          value: selectedIds.contains(rowId(row)),
+                          onChanged: (checked) => _toggle(row, checked ?? false),
+                        ),
                       ),
-                    ),
-                  for (final column in primary.isEmpty ? visible.take(1) : primary)
-                    column.cellBuilder(context, row),
-                  for (final column in secondary)
-                    Padding(
-                      padding: EdgeInsets.only(top: style.gap),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(child: AppText(column.labelKey, type: AppTextType.labelSmall, color: style.colors.onSurfaceVariant)),
-                          Expanded(flex: 2, child: column.cellBuilder(context, row)),
-                        ],
+                    if (cardBuilder != null)
+                      cardBuilder!(context, row)
+                    else ...[
+                      for (final column in primary)
+                        column.cellBuilder(context, row),
+                      for (final column in secondary)
+                        Padding(
+                          padding: EdgeInsets.only(top: style.gap),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: AppText(
+                                  column.labelKey,
+                                  type: AppTextType.labelSmall,
+                                  color: style.colors.onSurfaceVariant,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: column.cellBuilder(context, row),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                    if (rowActionsBuilder != null)
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: rowActionsBuilder!(context, row),
                       ),
-                    ),
-                  if (rowActionsBuilder != null)
-                    Align(alignment: AlignmentDirectional.centerEnd, child: rowActionsBuilder!(context, row)),
-                ],
+                  ],
+                ),
               ),
-            ),
             ),
           ),
         if (summaryBuilder != null) summaryBuilder!,
