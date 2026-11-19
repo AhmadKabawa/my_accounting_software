@@ -36,9 +36,14 @@ void main() {
     await tester.pump(const Duration(milliseconds: 301));
     expect(query, 'brand');
 
-    final chip = tester.widget<AppBadge>(find.byType(AppBadge).first);
+    expect(find.byType(AppBadge), findsOneWidget);
     expect(removed, 0);
-    chip.onRemove!.call();
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppBadge).first,
+        matching: find.byType(InkWell),
+      ),
+    );
     expect(removed, 1);
 
     await tester.tap(find.text('Clear all'));
