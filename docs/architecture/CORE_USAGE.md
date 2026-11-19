@@ -487,7 +487,7 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 
 ## أمثلة استخدام Catalog UI — 2026-11-19
 
-- `SearchableDropdown<String>(options: options, labelKey: CatalogUiKeys.chooseOption, optionLabel: (x) => x, value: selected, onChanged: onSelected)`؛ للبحث البعيد مرّر `filterLocally: false` و`onQueryChanged`، وحدّث `options` من مالك الحالة.
+- `SearchableDropdown<String>(options: options, labelKey: CatalogUiKeys.chooseOption, optionLabel: (x) => x, value: selected, onChanged: onSelected)`؛ للبحث البعيد مرّر `filterLocally: false` و`onQueryChanged`، وحدّث `options` من مالك الحالة. استبدل قائمة الخيارات بقائمة immutable جديدة عند وصول النتيجة حتى تتحدث نتائج الويب والورقة السفلية.
 - `FilterBar(onSearchChanged: cubit.search, activeFilters: chips, onClearAll: cubit.clearFilters, filterPanelBuilder: (context, apply) => FilterEditor(onApply: apply))`؛ الشاشة تملك قيم الفلاتر والاستعلام.
-- `AppDataTable<Row>(columns: columns, rows: currentServerPage, rowId: (row) => row.id, onSort: cubit.sort, onPageChanged: cubit.goToPage, onPageSizeChanged: cubit.setPageSize)`؛ لا تمرر كامل المجموعة ثم تطلب من الجدول فرزها محلياً.
+- `AppDataTable<Row>(columns: columns, rows: currentServerPage, rowId: (row) => row.id, onSort: cubit.sort, onPageChanged: cubit.goToPage, onPageSizeChanged: cubit.setPageSize)`؛ على الهاتف مرّر `hasMore` و`onLoadMore`. لا تمرر كامل المجموعة ثم تطلب من الجدول فرزها محلياً.
 - `ListPageTemplate(titleKey: ..., filterBar: filterBar, dataTable: table, state: AppPageState.content)`؛ يُستعمل كـ body داخل مساحة ذات ارتفاع محدود (مثلاً Expanded في Scaffold/Column).

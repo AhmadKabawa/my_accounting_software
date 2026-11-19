@@ -89,3 +89,5 @@
 - C01 يقيس عرض الحاوية عبر `ScreenEngine.screenTypeForWidth` (600 و1200 من ScreenEngine)، ويستخدم AppDensityScope: compact لجدول desktop وcomfortable للعرض الأصغر، مع override من المستدعي.
 - الفرز والبحث والفلاتر والترقيم من callbacks ومصدر بيانات الشاشة؛ Core لا ينفذ استعلامات ولا يفرز مجموعة الخادم محلياً.
 - لم يُتحقق بعد من التباين/overflow بصرياً على Chrome عند 360/600/900/1200 أو من دعم المنصات الأخرى؛ الاختبارات المكتوبة لا تُعد ناجحة قبل تشغيلها.
+
+- C01 يختار mobile load more من `hasMore/onLoadMore`، بينما tablet/desktop يرسلان page/pageSize callbacks؛ لا تُحمّل المجموعة كاملة لفرزها محلياً.

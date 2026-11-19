@@ -60,9 +60,9 @@
 
 | المكوّن | الاختبار | التغطية المكتوبة | حالة التشغيل |
 |---|---|---|---|
-| C04 SearchableDropdown | `test/core/presentation/widgets/app_searchable_dropdown_test.dart` | بحث محلي واختيار، remote debounce، BottomSheet للجوال، disabled | لم يُتحقق؛ CI توقف قبل test |
+| C04 SearchableDropdown | `test/core/presentation/widgets/app_searchable_dropdown_test.dart` | بحث محلي واختيار، remote debounce وتحديث نتائج desktop/mobile، BottomSheet للجوال، error وdisabled | لم يُتحقق؛ CI توقف قبل test |
 | C10 FilterBar | `test/core/presentation/widgets/app_filter_bar_test.dart` | debounce، إزالة/مسح المرشحات، محرر desktop inline وmobile BottomSheet | لم يُتحقق؛ CI توقف قبل test |
-| C01 DataTable | `test/core/presentation/widgets/app_data_table_test.dart` | بطاقات/مضغوط/كامل، sort/page callbacks، selection، loading/empty، dark/LTR | لم يُتحقق؛ CI توقف قبل test |
+| C01 DataTable | `test/core/presentation/widgets/app_data_table_test.dart` | بطاقات/مضغوط/كامل، sort/page/pageSize callbacks، mobile load more، selection، retry/loading/empty، dark/LTR | لم يُتحقق؛ CI توقف قبل test |
 | T1 ListPageTemplate | `test/core/presentation/widgets/list_page_template_test.dart` | تكامل PageHeader/FilterBar/DataTable وحالات loading/empty/error | لم يُتحقق؛ CI توقف قبل test |
 
 نتيجة GitHub Actions للدفعة: `dart format --set-exit-if-changed .` فشل؛ Analyze وTest تم تخطيهما. لم يُشغّل Flutter محلياً. لا توجد نتيجة نجاح موثقة لهذه الاختبارات.
