@@ -731,13 +731,13 @@ source_documents:
 ## سجل تنفيذ C04/C10/C01/T1 — 2026-11-19
 
 ### C04 SearchableDropdown — L2
-- **يستعمل:** AppTextFieldStyle وAppText/AppIcon وInlineBanner وRawAutocomplete وBottomSheet؛ الخيارات ومصدرها يمررهما المستدعي.
+- **يستعمل:** AppTextField (المبني على AppTextFieldStyle) وAppText/AppIcon وAppSkeleton وInlineBanner وRawAutocomplete وBottomSheet؛ الخيارات ومصدرها يمررهما المستدعي.
 - **يُستعمل في:** غير مربوط بشاشة حتى الآن. الخطة تسمي ADM-02/ORG-03 طياراً، بينما خطوة 3 تقترح CAT-07؛ خريطة الشاشات تسمي CAT-02 ضمن الاستخدام. لم أفترض شاشة.
 - **Variants/slots:** generic `T`، اختيار واحد، `optionLabel` و`optionSubtitle`، `filterLocally` أو `onQueryChanged`، `onAddNew`، enabled/readOnly، loading/error/empty.
 - **الاختبارات:** `app_searchable_dropdown_test.dart` يغطي بحث/اختيار، debounce، BottomSheet، disabled. تشغيله غير متحقق.
 
 ### C10 FilterBar — L3
-- **يستعمل:** AppTextFieldStyle وAppButton وAppText؛ filter editor slot يمكن أن يحتوي SearchableDropdown C04، والشرائح من `FilterBarFilter`.
+- **يستعمل:** AppTextField وAppButton وAppText وAppBadge؛ filter editor slot يمكن أن يحتوي SearchableDropdown C04، والشرائح من `FilterBarFilter` وتُعرض كـ AppBadge قابل للإزالة مع namedArgs.
 - **يُستعمل في:** T1؛ شاشة CAT-07 لم تُبنَ بعد.
 - **Variants/slots:** `filterPanelBuilder`, `filterControls`, `activeFilters`, `onApply`, `onClearAll`, `onSearchChanged`; بحث 300ms افتراضياً، محرر inline على العرض الواسع وBottomSheet على الهاتف.
 - **الاختبارات:** `app_filter_bar_test.dart` يغطي debounce، إزالة/مسح، محرر desktop وmobile. تشغيله غير متحقق.
@@ -745,11 +745,11 @@ source_documents:
 ### C01 DataTable — L3
 - **يستعمل:** AppConfig.pageSizeOptions وC04 وAppDensityScope وC08/C09/C38 وAppButton وAppText/AppIcon؛ تعريف الأعمدة منفصل عن البيانات، و`cellBuilder` slot للقيم المتخصصة مثل MoneyText/AppBadge.
 - **يُستعمل في:** T1؛ لا شاشة طيّارة بعد.
-- **Variants/slots:** cards (<600)، compact (600–1199)، full (≥1200) وفق عرض الحاوية؛ `cellBuilder`, `cardBuilder`, `rowActionsBuilder`, `summaryBuilder`; server sort/page/pageSize callbacks؛ selection وrow activation.
+- **Variants/slots:** cards (<600)، compact (600–1199)، full (≥1200) وفق عرض الحاوية؛ `cellBuilder`, `cardBuilder`, `rowActionsBuilder`, `summaryBuilder`; server sort/page/pageSize callbacks؛ على الهاتف يختار المستخدم عمود الفرز من BottomSheet، ويستدعي ذلك onSort؛ selection وrow activation.
 - **الاختبارات:** `app_data_table_test.dart` يغطي تمثيلات responsive، callbacks الفرز/الصفحات، selection، loading/empty، dark/LTR. تشغيله غير متحقق.
 
 ### T1 ListPageTemplate — L4
-- **يستعمل:** AppPageHeader وC10 FilterBar وC01 DataTable وC08 EmptyState وC09 Skeleton وC38 InlineBanner.
+- **يستعمل:** AppPageHeader وC10 FilterBar وC01 DataTable وC08 EmptyState وC09 Skeleton؛ C38 InlineBanner يظهر عبر C01 في حالة الخطأ، ولا يكرر T1 بانر الخطأ أو Retry.
 - **يُستعمل في:** لا شاشة طيّارة بعد؛ CAT-07 هو الطيار المخطط في V1_SCOPE.
 - **Slots:** `filterBar`, `dataTable`, `primaryAction`, `actions`, `emptyState`; الحالة content/loading/empty/error.
 - **الاختبارات:** `list_page_template_test.dart` يغطي التركيب وحالات loading/empty/error. تشغيله غير متحقق.
