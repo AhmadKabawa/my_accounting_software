@@ -21,6 +21,7 @@
 | `Money` وAmountFormatter (C13) | **موجودان ولهما اختبارات آلية مباشرة** في `core/foundation/money/` | استعمالهما في CAT-03 والتحقق البصري؛ لا يُعدّان منجزين قبل الشاشة الطيّارة |
 | `AppSkeleton` (C09) | **موجود وله اختبار Widget مباشر** — أشكال line/block/card/tableRow | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
 | `AppEmptyState` (C08) | **موجود وله اختبار Widget مباشر** — `AppIcon` وعنوان ووصف `AppKey` وslot اختياري للإجراء، مع compact | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
+| `AppBadge` و`DocStatusBadge` (C02) | **مبنيان في `core/presentation/widgets/app_badge/`**؛ AppBadge عام وDocStatusBadge إعداد حالات المستند والسداد | اختبارا Widget أُضيفا؛ لم تُشغّل الاختبارات بعد، ولم يُستخدما في CAT-07 بعد، لذلك الحالة «مراجعة» وفق R12 |
 | بقية المكوّنات (C01..C49، عدا ما سُجّل أعلاه) | **غير موجودة** | جديدة، بالترتيب التالي |
 
 ## 2. الترتيب
@@ -32,7 +33,7 @@
 | **0** | — أساس (0-ب و0-ج لهما اختبارات آلية؛ C15 مؤجل إلى C24، وC14 ينتظر اعتماد حزمة الأيقونات) |
 | **1** | AUTH-01 ثم AUTH-02 | **1-أ (متوازية):** C09 Skeleton · C08 EmptyState · C38 InlineBanner (L1) — لها اختبارات Widget؛ الاستخدام في الشاشة ما زال مطلوباً. ثم **1-ب:** C47 AccessSnapshot + PermissionGate (L3) — توجد اختبارات access/snapshot/gate وShell | الخطوة 0 |
 | **2** | AUTH-03 ثم AUTH-04 | C41 CountBadge · C07 ConfirmDialog · C12 ScopeSelector (L1–L2)، ثم C46 AppShell (L3) + C48 PageHeader/T3؛ وبعدهما قالب T5 | 1 |
-| **3** | CAT-07 (ماركات: أول جدول) | **3-أ (متوازية):** C02 AppBadge (+DocStatusBadge) · C49 (AppDropdown وAppMenu وAppSwitch فقط عند الحاجة) ثم **3-ب:** C04 SearchableDropdown · C10 FilterBar ثم **3-ج:** C01 DataTable · قالب T1 | 0-ب، 1 |
+| **3** | CAT-07 (ماركات: أول جدول) | **3-أ (متوازية):** C02 AppBadge + DocStatusBadge (بُنيا في core؛ يبقى استخدامهما في CAT-07 والتحقق البصري) · C49 (AppDropdown وAppMenu وAppSwitch فقط عند الحاجة) ثم **3-ب:** C04 SearchableDropdown · C10 FilterBar ثم **3-ج:** C01 DataTable · قالب T1 | 0-ب، 1 |
 | **4** | CAT-07 (بقية التبويبات) | C26 ColorSwatch · C20 Tabs · C21 Stepper · C22 TreeView (إن كان التصنيف شجرياً: تحقق من S47) | 3 |
 | **5** | CAT-01 ثم CAT-02 | C24 DetailPane · C44 ChipSelect · C34 MoneyText · قالب T4 ثم C23 VariantMatrixGrid · C36 ImageUploader · C43 DynamicFormRenderer (`features/catalog`) | 0-أ، 4 |
 | **6** | CAT-03 ثم CAT-05 | C03 AmountField (الباقي من الخطوات السابقة) | 0-أ، 5 |
@@ -177,7 +178,7 @@ PermissionGate. حجم الصفحة من AppConfig.pageSizeOptions (قرار-75)
 
 ## حالة C46/C48 الحالية
 
-- قرارات المالك: جرس الإشعارات معطّل؛ AppMenu عام؛ Breadcrumb عام؛ موضع شارة جلسة الكاشير ضمن Shell مع تمرير الحالة من الميزة المالكة؛ C02 AppBadge مؤجل كدين تقني.
+- قرارات المالك: جرس الإشعارات معطّل؛ AppMenu عام؛ Breadcrumb عام؛ موضع شارة جلسة الكاشير ضمن Shell مع تمرير الحالة من الميزة المالكة. قرار تأجيل C02 السابق سُحب في 2026-11-19 بعد بناء AppBadge وDocStatusBadge.
 - AppShell يتضمن قائمة «المزيد» على الجوال عند تجاوز حد الوجهات، مع ثوابت مسماة تحدد حد الظهور وعدد الوجهات المعروضة.
 - AppShellTopBar يستعمل AppIconButton للجرس المعطّل. AppMenu وAppBreadcrumb مستقلان، وروابط Breadcrumb ذات مساحة لمس دلالية.
 - FormPageTemplate (T3) وDashboardTemplate (T5) يستعملان AppPageState الموحد. T3 يملك زر الحفظ السفلي فقط؛ `saving` يعطّل الزر ويعرض التحميل. جسم النموذج قابل للتمرير، ويستعمل ScrollView الممرر كما هو.
@@ -191,8 +192,10 @@ PermissionGate. حجم الصفحة من AppConfig.pageSizeOptions (قرار-75)
 ### بند D — آلية حارس التنقل فقط (دون ربط شاشة)
 
 - أُضيف `UnsavedChangesGuard` ويُحقن في AppShell. يسجل FormPageTemplate نفسه عند `dirty=true` مع رقم الفرع الذي كان فيه عند تركيبه؛ يحتفظ به عند تبديل الفرع لأن indexedStack يبقيه مركّباً.
-- قبل التنقل من BottomBar أو Rail أو Sidebar أو ورقة «المزيد»، وقبل إعادة ضبط الفرع عند النقر على التبويب النشط، يستشير AppShell الحارس. كما يركّب الحارس مع `beforeBranchChange` لتغيير فرع المؤسسة، ويمرر حراسة عناصر قائمة المستخدم المعلّمة بـ `requiresUnsavedChangesCheck` (تسجيل الخروج).
-- `beforeDestinationChange` اختياري للمالك كي يرفض تغيير وجهة قبل فحص النموذج. عند التأكيد يستعمل الحارس ConfirmDialog الخاص بـ T3؛ الإلغاء يمنع التنقل، والتأكيد يستدعي `onDiscard` ويسمح به. الطلب الثاني أثناء ظهور الحوار يُرفض لمنع إعادة الدخول.
-- اختبارات الحالة كُتبت ولم تُشغّل بناءً على طلب المالك. اختبار indexedStack لحفظ حالة النموذج كُتب أيضاً ولم يُشغّل؛ لذلك لم تُثبت نتيجته تنفيذياً بعد.
-- غير مغطى: `context.go` البرمجي، زر الرجوع في المتصفح، وتغيير الرابط يدوياً. هذه الآلية تخص التنقلات التي تمر عبر AppShell.
+- تبديل التبويب إلى فرع غير نشط عبر BottomBar أو Rail أو Sidebar أو «المزيد» لا يستدعي الحارس ويحافظ على نموذج الفرع داخل indexedStack. النقر على التبويب النشط مع initialLocation=true يستدعي الحارس قبل إعادة ضبطه.
+- تسجيل الخروج عبر عنصر معلّم بـ requiresUnsavedChangesCheck وتغيير فرع المؤسسة يستدعيان الحارس. في تغيير فرع المؤسسة يُستدعى beforeBranchChange الخاص بالمالك أولاً؛ رفضه يوقف التغيير بلا حوار. عند السماح يسأل الحارس.
+- beforeDestinationChange يسبق فحص الحارس؛ إذا أعاد false يُرفض التنقل نهائياً بلا حوار ولا تجاوز بالتأكيد. لا يوجد علم إضافي لطلب فحص الحارس عند رفض المالك.
+- confirmBranch يطلب التأكيد فقط ولا يتلف النموذج. لا يُستدعى discard/onDiscard إلا بعد نجاح الانتقال الفعلي؛ رفض الحارس أو فشل تحميل فرع المؤسسة يبقي النموذج مسجلاً. طلبات التأكيد المتزامنة تُرفض، وورقة «المزيد» لا تُفتح مرتين بالنقر السريع.
+- اختبار indexedStack لحفظ حالة النموذج موجود، لكن لم يُشغّل؛ تشغيل CI الأخير توقف عند فحص التنسيق، لذلك لم يصل إلى analyze أو test. لم تُثبت نتيجته تنفيذياً.
+- زر الرجوع الذي كان يضيفه AppShell أُزيل؛ الرجوع ملك الصفحة/المسار حتى لا يتجاوز PopScope. غير مغطى: context.go البرمجي، زر الرجوع في المتصفح، وتغيير الرابط يدوياً.
 - **لا توجد شاشة AUTH مربوطة بالقوالب في هذا التغيير.** يتوقف العمل هنا لحين عرض الشاشة المقترحة وتغييراتها وموافقة المالك.

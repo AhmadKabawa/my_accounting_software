@@ -48,7 +48,8 @@
 - `test/shell/stateful_shell_route_preservation_test.dart`: اختبار مكتوب للتحقق من بقاء حالة نموذج الفرع عند التبديل إلى فرع آخر والعودة ضمن indexedStack.
 - `test/shell/app_shell_windows_sidebar_test.dart`: اختبار مكتوب لطي Sidebar واستعادة التفضيل من AppSettingsManager.
 - `test/shell/unsaved_changes_guard_test.dart`: اختبارات مكتوبة للسماح والرفض، الحالة النظيفة، النقر المزدوج، الشريط السفلي وRail وSidebar وورقة المزيد وقائمة المستخدم وتغيير الفرع المؤسسي.
-- لم تُشغّل هذه الاختبارات في هذه الدفعة بناءً على طلب المالك؛ وجودها لا يثبت نجاحها. لا يوجد اختبار Widget مستقل لـ `AppShellTopBar` حتى الآن، ولا تحقق بصري على المتصفح أو أجهزة فعلية.
+- أضيفت app_badge_test.dart (كل Tone × Size، مع/بدون أيقونة، RTL/LTR، فاتح/داكن، comfortable/compact، 360/600، نص طويل، وتباين 4.5) وdoc_status_badge_test.dart (كل الحالات الموثقة والحالة غير المعروفة). كما حُدّث unsaved_changes_guard_test.dart لتغطية التبويب غير النشط والنشط، رفض المالك، ترتيب تغيير الفرع، discard بعد النجاح، والنقر السريع على «المزيد».
+- نتيجة GitHub Actions لآخر commit برمجي: dart format --set-exit-if-changed . فشل؛ flutter analyze وflutter test تخطّاهما الـ workflow. لذلك اختبارات الحارس وAppBadge وDocStatusBadge واختبار stateful_shell_route_preservation_test.dart لم تُشغّل. لا يوجد تحقق بصري على المتصفح أو أجهزة فعلية.
 
 ## حالة التشغيل
 

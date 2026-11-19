@@ -473,3 +473,13 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - قائمة الجوال تعرض أول أربع وجهات ثم «المزيد» عند وجود أكثر من خمس وجهات؛ اختيار وجهة إضافية ينقل إلى فرع GoRouter الصحيح.
 - ScopeSelector يعرض فقط الفروع التي تسمح canView بها، ويحدد viewOnly بحسب canOperate.
 - FormPageTemplate وDashboardTemplate يعرضان EmptyState افتراضياً عند غياب البيانات، ويمكن للشاشة تمرير EmptyState مخصص.
+
+
+## تحديث الاستخدام — AppBadge وحارس التنقل (2026-11-19)
+
+مثال الشارة: AppBadge(label: BadgeKeys.posted, tone: AppBadgeTone.success, size: AppBadgeSize.small).
+مثال حالة: DocStatusBadge(status: 'PARTIAL').
+- استخدم AppBadge مع AppKey إلزامي؛ النغمة لا تحمل المعنى وحدها. DocStatusBadge يترجم حالات المستند والسداد المعروفة، ويعرض BadgeKeys.unknown بنغمة محايدة للحالة غير المعروفة.
+- DocStatusBadge يستعمل AppBadge؛ C12 ScopeSelector يستعمل AppBadge لوسم view-only، وC46 AppShell يستعمل C12 في شريطه العلوي.
+- التنقل إلى فرع غير نشط لا يستدعي الحارس. إعادة اختيار الفرع النشط، وتسجيل الخروج، وتغيير فرع المؤسسة تستدعيه. رفض beforeDestinationChange يوقف التنقل مباشرة؛ رفض beforeBranchChange من المالك يسبق الحارس. لا يُستدعى discard إلا بعد اكتمال الانتقال.
+- إزالة leading الخاص بالقشرة تعني أن الصفحة/المسار مسؤول عن الرجوع؛ لا تستخدم context.pop() من AppShell لتجاوز PopScope.

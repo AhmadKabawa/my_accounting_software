@@ -28,7 +28,7 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 
 | القسم | المكان |
 |---|---|
-| `CommonKeys` `FieldKeys` `ValidationKeys` `ErrorKeys` `ServerErrorKeys` `ErpErrorKeys` `ThemeKeys` `NavKeys` `MessageKeys` | `core/localization/keys/` |
+| `CommonKeys` `FieldKeys` `ValidationKeys` `ErrorKeys` `ServerErrorKeys` `ErpErrorKeys` `ThemeKeys` `NavKeys` `MessageKeys` `BadgeKeys` | `core/localization/keys/` |
 | `AuthKeys` (بما فيها رسائل نجاح الدخول والتسجيل والخروج والاسترجاع) | `features/auth/presentation/localization/` |
 | `ProfileKeys` | `features/profile/presentation/localization/` |
 | `OnboardingKeys` | `features/on_boarding/presentation/localization/` |
@@ -85,3 +85,8 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 ## مفاتيح إضافية — 2026-11-19
 
 أضيفت إلى ShellKeys: shell.more. وأضيفت إلى TemplateKeys: template.emptyTitle وtemplate.emptyDescription. جميعها ضمن allKeys عبر key_registry.dart، باللغتين العربية والإنجليزية.
+
+
+## مفاتيح الشارات — 2026-11-19
+
+أُضيف BadgeKeys إلى core/localization/keys/badge_keys.dart وسُجل في lib/app/localization/key_registry.dart. يشمل النصوص العربية والإنجليزية لحالات المستند والسداد، والحالة الاحتياطية المحايدة، ونصاً طويلاً لاختبارات الالتفاف. كل نص ظاهر في AppBadge وDocStatusBadge يمر عبر AppKey.

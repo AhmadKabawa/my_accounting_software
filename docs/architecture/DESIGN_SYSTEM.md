@@ -56,6 +56,7 @@
 - `AppCard`: سطح `surface` وزاوية `lg`.
 - `AppNavigationRail`/`AppSidebar`: العنصر النشط `primaryContainer`/`onPrimaryContainer` (`nav-item-active`).
 - `AppNavigationBar`: نمطان فقط (`minimal` افتراضي، `pill`)؛ حُذف `blur` ومعامل `elevation`؛ حركته تحترم `AppMotion`.
+- AppBadge (C02): L1، نغمات neutral/success/warning/info/error وأحجام small/medium، أيقونة اختيارية ونص AppKey إلزامي. يستخدم أزواج الألوان الدلالية الموجودة وColorScheme مع تباين نص مستهدف >= 4.5؛ AppBadgeStyle يحل التوكنز. DocStatusBadge يجهز حالات DRAFT/POSTED/REVERSED/CANCELLED وUNPAID/PARTIAL/PAID فوقه.
 - نوافذ الرسائل (Dialog) زاوية `xl`. `AppTextField` يستخدم `focusRing`.
 - `home_overview_section`: لم تعد تستعمل `secondary/tertiary/error` لأرقام الملخص بل ألوان الرسوم.
 
@@ -70,7 +71,7 @@
 1. **ملفات الخط:** لم يُضمَّن `IBM Plex Sans Arabic` ولا `IBM Plex Mono` (لا شبكة في بيئة التنفيذ). نزّل الملفات (ترخيص OFL) إلى `assets/fonts/` وصرّح بها في `pubspec.yaml` بأوزان 400/500/600/700 (والـ Mono 400). حتى ذلك يستخدم التطبيق خط النظام. تصريح الخط دون الملفات يكسر البناء، لذلك لم يُضف.
 2. **التحقق الآلي:** يُتحقق بـ CI في `flutter-ci.yml` بالأوامر: `pub get`, `dart format --set-exit-if-changed .`, `analyze --no-fatal-infos`, `test`. بقي التحقق البصري اليدوي على Chrome عند 360 و1200، بالعربية والإنجليزية، والفاتح والداكن.
 3. **تباين قيم radius لـ tablet/desktop:** نص التصميم يذكر «xs 4/6/8 · sm 8/10/12 · md 12/14/16 …» وهذا يتعارض مع قيم الهاتف (sm=6, md=8). طُبّقت قيم الهاتف المنصوص عليها وقيم التابلت/المكتب بزيادة تدريجية (xs 4/6/8، sm 6/8/10، md 8/10/12، lg 12/14/16، xl 16/20/24). **يحتاج اعتماد صاحب التصميم.**
-4. **مكوّنات ذات أولوية لم تُبنَ:** جدول بيانات (3 تمثيلات)، شارة حالة المستند، حقل مبلغ مع عملة، قائمة منسدلة مع بحث، منتقي تاريخ/فترة، بطاقة KPI، نافذة تأكيد، شريط فلاتر، شاشة POS، اختيار فرع/مستودع/عملة. نُفِّذ `AppSkeleton` (C09) و`AppEmptyState` (C08) في `core/presentation/widgets/`، واجتازت اختباراتهما الآلية في CI؛ لكنهما **لم يُستخدما في شاشة طيّارة بعد** (AUTH-04 وCAT-07). التوكنز اللازمة للبقية جاهزة (`status*`، `amount*`، `AppDensity`، `AppGrid`).
+4. **مكوّنات ذات أولوية لم تُبنَ:** جدول بيانات (3 تمثيلات)، حقل مبلغ مع عملة، قائمة منسدلة مع بحث، منتقي تاريخ/فترة، بطاقة KPI، نافذة تأكيد، شريط فلاتر، شاشة POS، اختيار فرع/مستودع/عملة. بُني AppBadge وDocStatusBadge (C02) لكنهما لم يُستخدما في CAT-07 بعد؛ لذلك يظلان «مراجعة» وفق R12. نُفِّذ AppSkeleton (C09) وAppEmptyState (C08) في core/presentation/widgets/، لكنهما لم يُستخدما في شاشة طيّارة بعد. التوكنز اللازمة للبقية جاهزة (status*، amount*، AppDensity، AppGrid).
 5. **حالات الاتصال والمزامنة** (غير متصل، بانتظار المزامنة، فشل، تعارض…): غير منفذة.
 6. **تنسيق المبالغ:** نُفِّذ (`AmountFormatter` في `core/foundation/money/`، انظر «تنسيق المبالغ» في §2). المتبقي: استعماله في شاشة طيّار (CAT-03) والتحقق البصري من موضع `−` داخل نص عربي؛ اجتازت اختبارات الوحدة الآلية في CI.
 7. **الأيقونات:** Material Symbols Outlined (وزن 400) وانعكاس الاتجاهية وأيقونات مخصصة (مستودع، جلسة صندوق…): غير منفذة. ما زالت أيقونات Material الحالية.

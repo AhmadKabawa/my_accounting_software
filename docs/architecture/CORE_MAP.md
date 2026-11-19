@@ -195,7 +195,7 @@
 - أضيفت قائمة «المزيد» للجوال عندما تتجاوز الوجهات خمساً؛ تعرض الوجهات الإضافية في BottomSheet.
 - أضيفت حالات Empty افتراضية إلى FormPageTemplate وDashboardTemplate باستخدام AppEmptyState، مع إمكانية تمرير حالة فارغة مخصصة.
 - على Windows فقط، يتيح AppSidebar الطي إلى شريط أيقونات ويحفظ التفضيل عبر AppSettingsManager؛ الويب يبقي Sidebar الموسع. يُقرأ دعم الطي من PlatformCapabilities عبر تنفيذ شرطي داخل core/platform، لا من Widget.
-- زر الرجوع الداخلي في Windows يظهر عند وجود مسار داخلي قابل للرجوع. لم تُبنَ أو تُختبر منصة Windows في هذه الدفعة.
+- زر الرجوع الذي كان يضيفه AppShell أُزيل؛ الرجوع مسؤولية الصفحة/المسار، وتُترك معالجة PopScope للصفحة المالكة.
 - `UnsavedChangesGuard` يُحقن في AppShell؛ يسجل FormPageTemplate حالة dirty لكل فرع، ويُستشار قبل التنقل من BottomBar وRail وSidebar وورقة المزيد، وعند تغيير الفرع المؤسسي أو إجراء قائمة مستخدم معلّم بالحارس. يمنع طلب تنقل ثانياً أثناء الحوار.
 
 
@@ -204,3 +204,13 @@
 - `AppPageHeader`: عند ضيق العرض يُكدَّس الإجراء الأساسي تحت العنوان. شريط الإجراء السفلي ليس مسؤولية الرأس؛ يتولاه قالب الصفحة.
 - `FormPageTemplate` (T3) و`DashboardTemplate` (T5) يستعملان `AppPageState` الموحد لحالات المحتوى والتحميل والفراغ والخطأ. عند غياب `errorKey` يظهر `TemplateKeys.defaultError`.
 - جسم T3 العادي يلتف في تمرير رأسي؛ إذا مررت الشاشة `ScrollView` مثل `ListView` فيُستخدم كما هو لتجنب تمرير متداخل. زر الحفظ السفلي هو إجراء T3 الأساسي، ويعطله `saving` ويعرض التحميل.
+
+
+## تحديث القشرة والشارات — 2026-11-19
+
+- حارس AppShell: تبديل الفرع غير النشط لا يفتح حواراً ويحافظ على حالة FormPageTemplate داخل indexedStack؛ إعادة اختيار التبويب النشط تستدعي الحارس. تسجيل الخروج وتغيير فرع المؤسسة محروسان.
+- beforeDestinationChange == false يرفض التنقل نهائياً بلا حوار. في تغيير فرع المؤسسة يُستدعى beforeBranchChange للمالك أولاً ثم الحارس. confirmBranch لا يتلف النموذج؛ discardBranch لا يعمل إلا بعد نجاح الانتقال الفعلي.
+- أزيل زر الرجوع الذي كان يمرر context.pop() من AppShell؛ الصفحة/المسار يملك زر الرجوع حتى لا يتجاوز PopScope.
+- C02: AppBadge وDocStatusBadge في core/presentation/widgets/app_badge/ (L1). DocStatusBadge يستعمل AppBadge؛ ScopeSelector (C12) يستعمل AppBadge لشارة «عرض فقط»، وAppShell (C46) يصل إليه عبر ScopeSelector.
+- AppBadge variants: AppBadgeTone (neutral/success/warning/info/error) وAppBadgeSize (small/medium)، ويحل AppBadgeStyle الألوان والحجم والمسافات من semantic colors وtokens.
+- اختبارات AppBadge وDocStatusBadge وحارس التنقل أُضيفت؛ تشغيل indexedStack واختبارات الحارس لم يُتحقق منهما بعد لأن CI توقف عند فحص format. لا يُدّعى اختبار ويب بصري أو جوال أو Windows.
