@@ -39,13 +39,12 @@ class AccessCubit extends Cubit<AccessState> {
       ),
       (snapshot) {
         final viewableBranches = snapshot.viewableBranches;
-        final selected = viewableBranches.any(
-          (branch) => branch.id == branchToKeep,
-        )
-            ? branchToKeep
-            : viewableBranches.length == 1
-            ? viewableBranches.single.id
-            : null;
+        int? selected;
+        if (viewableBranches.any((branch) => branch.id == branchToKeep)) {
+          selected = branchToKeep;
+        } else if (viewableBranches.length == 1) {
+          selected = viewableBranches.single.id;
+        }
         emit(
           AccessState(
             status: AccessStatus.ready,

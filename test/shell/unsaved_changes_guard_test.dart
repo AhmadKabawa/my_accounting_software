@@ -484,61 +484,62 @@ void main() {
   test(
     'confirmAll checks dirty forms in every branch and discardAll clears them',
     () async {
-    final guard = UnsavedChangesGuard();
-    addTearDown(guard.dispose);
-    final confirmed = <int>[];
-    final discarded = <int>[];
+      final guard = UnsavedChangesGuard();
+      addTearDown(guard.dispose);
+      final confirmed = <int>[];
+      final discarded = <int>[];
 
-    for (final branch in [0, 1]) {
-      guard.updateForm(
-        key: 'form-$branch',
-        branchIndex: branch,
-        dirty: true,
-        confirm: () async {
-          confirmed.add(branch);
-          return true;
-        },
-        discard: () {
-          discarded.add(branch);
-          guard.unregister('form-$branch');
-        },
-      );
-    }
+      for (final branch in [0, 1]) {
+        guard.updateForm(
+          key: 'form-$branch',
+          branchIndex: branch,
+          dirty: true,
+          confirm: () async {
+            confirmed.add(branch);
+            return true;
+          },
+          discard: () {
+            discarded.add(branch);
+            guard.unregister('form-$branch');
+          },
+        );
+      }
 
-    expect(await guard.confirmAll(), isTrue);
-    expect(confirmed, [0, 1]);
-    expect(discarded, isEmpty);
+      expect(await guard.confirmAll(), isTrue);
+      expect(confirmed, [0, 1]);
+      expect(discarded, isEmpty);
 
-    guard.discardAll();
-    expect(discarded, [0, 1]);
-    expect(await guard.confirmAll(), isTrue);
-    expect(confirmed, [0, 1]);
-  });
+      guard.discardAll();
+      expect(discarded, [0, 1]);
+      expect(await guard.confirmAll(), isTrue);
+      expect(confirmed, [0, 1]);
+    },
+  );
 
   test(
     'confirmAll stops on rejection and does not discard any form',
     () async {
-    final guard = UnsavedChangesGuard();
-    addTearDown(guard.dispose);
-    final confirmed = <int>[];
-    final discarded = <int>[];
+      final guard = UnsavedChangesGuard();
+      addTearDown(guard.dispose);
+      final confirmed = <int>[];
+      final discarded = <int>[];
 
-    for (final branch in [0, 1]) {
-      guard.updateForm(
-        key: 'form-$branch',
-        branchIndex: branch,
-        dirty: true,
-        confirm: () async {
-          confirmed.add(branch);
-          return branch == 0;
-        },
-        discard: () => discarded.add(branch),
-      );
-    }
+      for (final branch in [0, 1]) {
+        guard.updateForm(
+          key: 'form-$branch',
+          branchIndex: branch,
+          dirty: true,
+          confirm: () async {
+            confirmed.add(branch);
+            return branch == 0;
+          },
+          discard: () => discarded.add(branch),
+        );
+      }
 
-    expect(await guard.confirmAll(), isFalse);
-    expect(confirmed, [0]);
-    expect(discarded, isEmpty);
-  });
-
+      expect(await guard.confirmAll(), isFalse);
+      expect(confirmed, [0]);
+      expect(discarded, isEmpty);
+    },
+  );
 }

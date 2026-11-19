@@ -166,77 +166,85 @@ void main() {
     expect(cubit.state.snapshot, isNull);
     expect(cubit.can(const Permission('sales.view')), isFalse);
   });
-  test('selects the only viewable branch when other branches are hidden', () async {
-    repository.result = Right(
-      snapshot(
-        branches: const [
-          AccessBranch(
-            id: 1,
-            code: 'MAIN',
-            name: 'Main',
-            canView: true,
-            canOperate: true,
-          ),
-          AccessBranch(
-            id: 2,
-            code: 'HIDDEN',
-            name: 'Hidden',
-            canView: false,
-            canOperate: false,
-          ),
-        ],
-      ),
-    );
-    await cubit.load();
-    expect(cubit.state.selectedBranchId, 1);
-    expect(cubit.state.needsBranchSelection, isFalse);
-  });
+  test(
+    'selects the only viewable branch when other branches are hidden',
+    () async {
+      repository.result = Right(
+        snapshot(
+          branches: const [
+            AccessBranch(
+              id: 1,
+              code: 'MAIN',
+              name: 'Main',
+              canView: true,
+              canOperate: true,
+            ),
+            AccessBranch(
+              id: 2,
+              code: 'HIDDEN',
+              name: 'Hidden',
+              canView: false,
+              canOperate: false,
+            ),
+          ],
+        ),
+      );
+      await cubit.load();
+      expect(cubit.state.selectedBranchId, 1);
+      expect(cubit.state.needsBranchSelection, isFalse);
+    },
+  );
 
-  test('does not retain a preferred branch that is no longer viewable', () async {
-    repository.result = Right(
-      snapshot(
-        branches: const [
-          AccessBranch(
-            id: 1,
-            code: 'MAIN',
-            name: 'Main',
-            canView: true,
-            canOperate: true,
-          ),
-          AccessBranch(
-            id: 2,
-            code: 'HIDDEN',
-            name: 'Hidden',
-            canView: false,
-            canOperate: false,
-          ),
-        ],
-      ),
-    );
-    await cubit.load(preferredBranchId: 2);
-    expect(cubit.state.selectedBranchId, 1);
-  });
+  test(
+    'does not retain a preferred branch that is no longer viewable',
+    () async {
+      repository.result = Right(
+        snapshot(
+          branches: const [
+            AccessBranch(
+              id: 1,
+              code: 'MAIN',
+              name: 'Main',
+              canView: true,
+              canOperate: true,
+            ),
+            AccessBranch(
+              id: 2,
+              code: 'HIDDEN',
+              name: 'Hidden',
+              canView: false,
+              canOperate: false,
+            ),
+          ],
+        ),
+      );
+      await cubit.load(preferredBranchId: 2);
+      expect(cubit.state.selectedBranchId, 1);
+    },
+  );
 
-  test('zero viewable branches is a ready no-branch state, not a failure', () async {
-    repository.result = Right(
-      snapshot(
-        branches: const [
-          AccessBranch(
-            id: 1,
-            code: 'HIDDEN',
-            name: 'Hidden',
-            canView: false,
-            canOperate: true,
-          ),
-        ],
-      ),
-    );
-    await cubit.load();
-    expect(cubit.state.status, AccessStatus.ready);
-    expect(cubit.state.selectedBranchId, isNull);
-    expect(cubit.state.needsBranchSelection, isFalse);
-    expect(cubit.state.hasNoAvailableBranches, isTrue);
-    expect(cubit.canOperateInSelectedBranch, isFalse);
-  });
-
+  test(
+    'zero viewable branches is a ready no-branch state, not a failure',
+    () async {
+      repository.result = Right(
+        snapshot(
+          branches: const [
+            AccessBranch(
+              id: 1,
+              code: 'HIDDEN',
+              name: 'Hidden',
+              canView: false,
+              canOperate: true,
+            ),
+          ],
+        ),
+      );
+      await cubit.load();
+      expect(cubit.state.status, AccessStatus.ready);
+      expect(cubit.state.selectedBranchId, isNull);
+      expect(cubit.state.needsBranchSelection, isFalse);
+      expect(cubit.state.hasNoAvailableBranches, isTrue);
+      expect(cubit.canOperateInSelectedBranch, isFalse);
+    },
+  );
 }

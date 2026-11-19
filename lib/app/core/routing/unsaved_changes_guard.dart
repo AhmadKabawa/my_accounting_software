@@ -88,7 +88,7 @@ class UnsavedChangesGuard extends ChangeNotifier {
         .where((form) => form.branchIndex == branchIndex)
         .toList(growable: false);
     for (final form in forms) {
-      if (identical(_forms[form.key], form)) form.discard();
+      if (_forms.containsKey(form.key)) form.discard();
     }
   }
 }
