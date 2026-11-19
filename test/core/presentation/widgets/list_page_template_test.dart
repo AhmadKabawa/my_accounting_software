@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_table
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import '../../../helpers/localized_app.dart';
 
 void main() {
@@ -47,6 +48,31 @@ void main() {
     expect(find.text('Add item'), findsOneWidget);
     expect(find.text('Alpha'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('supports responsive widths, RTL/LTR, themes and large text', (
+    tester,
+  ) async {
+    const sizes = [
+      Size(360, 800),
+      Size(600, 900),
+      Size(900, 900),
+      Size(1200, 900),
+    ];
+    for (var index = 0; index < sizes.length; index++) {
+      tester.view.physicalSize = sizes[index];
+      tester.view.devicePixelRatio = 1;
+      await tester.pumpWidget(
+        buildTestApp(
+          direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
+          theme: index.isOdd ? AppTheme.dark() : AppTheme.light(),
+          textScale: 2,
+          home: buildListPage(AppPageState.content),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    }
+    addTearDown(tester.view.reset);
   });
 
   testWidgets('uses skeleton, empty and error page states', (tester) async {
