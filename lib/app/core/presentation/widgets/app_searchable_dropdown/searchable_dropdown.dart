@@ -139,7 +139,6 @@ class _SearchableDropdownState<T extends Object>
   Widget build(BuildContext context) {
     final style = SearchableDropdownStyle(context);
     final selected = widget.value;
-    final label = selected == null ? '' : widget.optionLabel(selected);
     final isMobile = ScreenEngine.isMobile(context);
 
     if (!widget.enabled || widget.readOnly) {
@@ -177,6 +176,7 @@ class _SearchableDropdownState<T extends Object>
           fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
             return AppTextField(
               controller: controller,
+              focusNode: focusNode,
               labelKey: widget.labelKey,
               hintKey: CatalogUiKeys.search,
               onChanged: _query,
