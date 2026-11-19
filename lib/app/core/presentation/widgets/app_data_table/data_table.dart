@@ -294,7 +294,7 @@ class AppDataTable<T> extends StatelessWidget {
         Expanded(
           child: ListView.separated(
             itemCount: rows.length,
-            separatorBuilder: (_, __) => Divider(height: 1, color: style.divider),
+            separatorBuilder: (_, __) => Divider(height: AppBorderWidth.thin.of(context), color: style.divider),
             itemBuilder: (context, index) {
               final row = rows[index];
               return Focus(
