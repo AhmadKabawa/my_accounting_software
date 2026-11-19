@@ -322,7 +322,7 @@ class _PickerData<T extends Object> {
 
 class _MobileSearchPicker<T extends Object> extends StatefulWidget {
   const _MobileSearchPicker({
-    required this.options,
+    required this.data,
     required this.labelKey,
     required this.optionLabel,
     required this.emptyKey,
@@ -332,12 +332,10 @@ class _MobileSearchPicker<T extends Object> extends StatefulWidget {
     this.onQueryChanged,
     this.onAddNew,
   });
-  final List<T> options;
+  final ValueListenable<_PickerData<T>> data;
   final AppKey labelKey;
   final String Function(T) optionLabel;
   final String? Function(T)? optionSubtitle;
-  final bool loading;
-  final AppKey? errorKey;
   final AppKey emptyKey;
   final bool filterLocally;
   final ValueChanged<String>? onQueryChanged;
