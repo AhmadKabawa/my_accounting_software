@@ -6,6 +6,8 @@ import 'package:accounting_software/app/core/localization/keys/common_keys.dart'
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 
 /// Keeps the authenticated shell hidden until the server access snapshot is
 /// ready. A failed request exposes a localized retry action, never stale access.
@@ -71,9 +73,21 @@ class _AccessStatusGateState extends State<AccessStatusGate> {
     body: Center(
       child: Padding(
         padding: context.ui.padding.all(AppSpacing.lg),
-        child: AppText(
-          AccessKeys.noAvailableBranches,
-          textAlign: TextAlign.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppText(
+              AccessKeys.noAvailableBranches,
+              textAlign: TextAlign.center,
+            ),
+            context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+            AppButton(
+              AuthKeys.signOut,
+              onPressed: () async {
+                await context.read<SessionCubit>().signOut();
+              },
+            ),
+          ],
         ),
       ),
     ),
