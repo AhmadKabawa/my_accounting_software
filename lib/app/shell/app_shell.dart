@@ -89,6 +89,9 @@ class AppShell extends StatelessWidget {
       final allowed = await beforeChange(destinationBranch);
       if (!allowed || !context.mounted) return false;
     }
+    // Switching to another indexedStack branch preserves the current form.
+    // Only reselecting the active destination resets its initial location.
+    if (destinationBranch != navigationShell.currentIndex) return true;
     final guard = unsavedChangesGuard;
     if (guard == null) return true;
     final allowed = await guard.confirmBranch(navigationShell.currentIndex);

@@ -166,7 +166,7 @@ Future<void> _cancel(WidgetTester tester) async {
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets('dirty form allows a bottom navigation change after confirm', (
+  testWidgets('switching to an inactive bottom tab keeps the dirty form', (
     tester,
   ) async {
     var discarded = 0;
@@ -179,10 +179,13 @@ void main() {
 
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
-    expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
-    await _confirm(tester);
+    expect(find.byType(Dialog), findsNothing);
     expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-1');
-    expect(discarded, 1);
+    expect(discarded, 0);
+    await tester.tap(find.byIcon(_icons[0]));
+    await tester.pumpAndSettle();
+    expect(find.text('Dirty form'), findsOneWidget);
+    expect(discarded, 0);
   });
 
   testWidgets('rejecting confirmation keeps the current branch', (
@@ -236,47 +239,67 @@ void main() {
     expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
   });
 
-  testWidgets('tablet rail navigation is guarded', (tester) async {
+  testWidgets('switching to an inactive rail destination keeps the form', (
+    tester,
+  ) async {
+    var discarded = 0;
     final env = await _pump(
       tester,
       size: const Size(900, 1000),
       dirty: true,
+      onDiscard: () => discarded++,
     );
     expect(find.byType(AppNavigationRail), findsOneWidget);
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
-    expect(find.byType(Dialog), findsOneWidget);
-    await _confirm(tester);
+    expect(find.byType(Dialog), findsNothing);
     expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-1');
+    expect(discarded, 0);
+    await tester.tap(find.byIcon(_icons[0]));
+    await tester.pumpAndSettle();
+    expect(find.text('Dirty form'), findsOneWidget);
+    expect(discarded, 0);
   });
 
-  testWidgets('desktop sidebar navigation is guarded', (tester) async {
+  testWidgets('switching to an inactive sidebar destination keeps the form', (
+    tester,
+  ) async {
+    var discarded = 0;
     final env = await _pump(
       tester,
       size: const Size(1400, 900),
       dirty: true,
+      onDiscard: () => discarded++,
     );
     expect(find.byType(AppSidebar), findsOneWidget);
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
-    expect(find.byType(Dialog), findsOneWidget);
-    await _confirm(tester);
+    expect(find.byType(Dialog), findsNothing);
     expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-1');
+    expect(discarded, 0);
+    await tester.tap(find.byIcon(_icons[0]));
+    await tester.pumpAndSettle();
+    expect(find.text('Dirty form'), findsOneWidget);
+    expect(discarded, 0);
   });
 
-  testWidgets('More sheet navigation is guarded', (tester) async {
+  testWidgets('More sheet inactive destination does not ask the guard', (
+    tester,
+  ) async {
+    var discarded = 0;
     final env = await _pump(
       tester,
       size: const Size(390, 844),
       dirty: true,
+      onDiscard: () => discarded++,
     );
     await tester.tap(find.byIcon(Icons.more_vert));
     await tester.pumpAndSettle();
     await tester.tap(find.text(ShellKeys.branch.en));
     await tester.pumpAndSettle();
-    expect(find.byType(Dialog), findsOneWidget);
-    await _confirm(tester);
+    expect(find.byType(Dialog), findsNothing);
     expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-5');
+    expect(discarded, 0);
   });
 
   testWidgets('guarded user-menu action runs only after confirmation', (
@@ -330,7 +353,7 @@ void main() {
     expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
   });
 
-  testWidgets('clicking the active destination guards initialLocation reset', (
+  testWidgets('clicking the active bottom destination asks the guard', (
     tester,
   ) async {
     final env = await _pump(
@@ -343,5 +366,51 @@ void main() {
     expect(find.byType(Dialog), findsOneWidget);
     await _cancel(tester);
     expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+  });
+
+  testWidgets('clicking the active rail destination asks the guard', (
+    tester,
+  ) async {
+    final env = await _pump(
+      tester,
+      size: const Size(900, 1000),
+      dirty: true,
+    );
+    await tester.tap(find.byIcon(_icons[0]));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+    await _cancel(tester);
+    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+  });
+
+  testWidgets('clicking the active sidebar destination asks the guard', (
+    tester,
+  ) async {
+    final env = await _pump(
+      tester,
+      size: const Size(1400, 900),
+      dirty: true,
+    );
+    await tester.tap(find.byIcon(_icons[0]));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+    await _cancel(tester);
+    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+  });
+
+  testWidgets('owner rejection blocks navigation without asking the guard', (
+    tester,
+  ) async {
+    final env = await _pump(
+      tester,
+      size: const Size(390, 844),
+      dirty: true,
+      beforeDestinationChange: (_) async => false,
+    );
+    await tester.tap(find.byIcon(_icons[1]));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsNothing);
+    expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(find.text('Dirty form'), findsOneWidget);
   });
 }
