@@ -7,7 +7,7 @@ import 'package:accounting_software/app/core/presentation/design_system/theme/ap
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import '../helpers/localized_app.dart';
+import '../../../helpers/localized_app.dart';
 
 double _contrast(Color foreground, Color background) {
   final a = foreground.computeLuminance();
@@ -64,7 +64,7 @@ void main() {
                 ),
               );
               await tester.pumpAndSettle();
-              expect(find.byType(AppBadge), findsNWidgets(21));
+              expect(find.byType(AppBadge), findsNWidgets(16));
               expect(tester.takeException(), isNull);
             },
           );

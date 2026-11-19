@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 
 enum AppBadgeTone { neutral, success, warning, info, error }
@@ -53,7 +52,7 @@ class AppBadgeStyle {
     final small = size == AppBadgeSize.small;
     final horizontal = small ? AppSpacing.sm : AppSpacing.md;
     final vertical = small
-        ? AppSpacing.xs / 2
+        ? context.ui.spacing.xs / 2
         : compact
         ? AppSpacing.none
         : AppSpacing.xs;

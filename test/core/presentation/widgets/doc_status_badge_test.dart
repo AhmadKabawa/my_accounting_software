@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/badge_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/doc_status_badge.dart';
-import '../helpers/localized_app.dart';
+import '../../../helpers/localized_app.dart';
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
