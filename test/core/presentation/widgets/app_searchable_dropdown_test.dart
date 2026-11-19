@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import '../../../helpers/localized_app.dart';
 
@@ -17,12 +18,18 @@ void main() {
     bool loading = false,
     AppKey? errorKey,
     bool enabled = true,
+    bool dark = false,
+    double textScale = 1,
+    TextDirection direction = TextDirection.rtl,
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
       buildTestApp(
+        direction: direction,
+        textScale: textScale,
+        theme: dark ? AppTheme.dark() : AppTheme.light(),
         home: Scaffold(
           body: Center(
             child: SizedBox(
@@ -44,6 +51,27 @@ void main() {
       ),
     );
   }
+
+  testWidgets('supports picker breakpoints, directions, themes and large text', (
+    tester,
+  ) async {
+    const sizes = [
+      Size(360, 800),
+      Size(600, 900),
+      Size(900, 900),
+      Size(1200, 900),
+    ];
+    for (var index = 0; index < sizes.length; index++) {
+      await pumpPicker(
+        tester,
+        size: sizes[index],
+        dark: index.isOdd,
+        direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
+        textScale: 2,
+      );
+      expect(tester.takeException(), isNull);
+    }
+  });
 
   testWidgets('desktop search filters options and selects one', (tester) async {
     String? selected;
