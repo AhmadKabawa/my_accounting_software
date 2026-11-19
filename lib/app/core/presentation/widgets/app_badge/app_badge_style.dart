@@ -39,10 +39,7 @@ class AppBadgeStyle {
     final scheme = Theme.of(context).colorScheme;
     final semantic = context.ui.theme.semanticColors;
     final (foreground, background) = switch (tone) {
-      AppBadgeTone.neutral => (
-        scheme.onSurface,
-        scheme.surfaceContainerLow,
-      ),
+      AppBadgeTone.neutral => (scheme.onSurface, scheme.surfaceContainerLow),
       AppBadgeTone.success => (semantic.success, semantic.successContainer),
       AppBadgeTone.warning => (semantic.warning, semantic.warningContainer),
       AppBadgeTone.info => (semantic.info, semantic.infoContainer),

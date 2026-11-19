@@ -26,10 +26,7 @@ import 'package:accounting_software/app/shell/destinations.dart';
 import '../helpers/localized_app.dart';
 
 class _Repository implements AccessRepository {
-  _Repository({
-    this.withBranches = false,
-    this.failOnSecondCall = false,
-  });
+  _Repository({this.withBranches = false, this.failOnSecondCall = false});
 
   final bool withBranches;
   final bool failOnSecondCall;
@@ -575,30 +572,27 @@ void main() {
     },
   );
 
-  test(
-    'confirmAll stops on rejection and does not discard any form',
-    () async {
-      final guard = UnsavedChangesGuard();
-      addTearDown(guard.dispose);
-      final confirmed = <int>[];
-      final discarded = <int>[];
+  test('confirmAll stops on rejection and does not discard any form', () async {
+    final guard = UnsavedChangesGuard();
+    addTearDown(guard.dispose);
+    final confirmed = <int>[];
+    final discarded = <int>[];
 
-      for (final branch in [0, 1]) {
-        guard.updateForm(
-          key: 'form-$branch',
-          branchIndex: branch,
-          dirty: true,
-          confirm: () async {
-            confirmed.add(branch);
-            return branch == 0;
-          },
-          discard: () => discarded.add(branch),
-        );
-      }
+    for (final branch in [0, 1]) {
+      guard.updateForm(
+        key: 'form-$branch',
+        branchIndex: branch,
+        dirty: true,
+        confirm: () async {
+          confirmed.add(branch);
+          return branch == 0;
+        },
+        discard: () => discarded.add(branch),
+      );
+    }
 
-      expect(await guard.confirmAll(), isFalse);
-      expect(confirmed, [0]);
-      expect(discarded, isEmpty);
-    },
-  );
+    expect(await guard.confirmAll(), isFalse);
+    expect(confirmed, [0]);
+    expect(discarded, isEmpty);
+  });
 }
