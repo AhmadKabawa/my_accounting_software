@@ -35,6 +35,8 @@ void main() {
     ValueChanged<int>? onPageChanged,
     ValueChanged<int>? onPageSizeChanged,
     ValueChanged<Set<Object>>? onSelectionChanged,
+    bool hasMore = false,
+    VoidCallback? onLoadMore,
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
@@ -53,6 +55,8 @@ void main() {
             onPageChanged: onPageChanged,
             onPageSizeChanged: onPageSizeChanged,
             totalCount: 75,
+            hasMore: hasMore,
+            onLoadMore: onLoadMore,
             onSelectionChanged: onSelectionChanged,
           ),
         ),
@@ -94,6 +98,11 @@ void main() {
     await tester.tap(find.text('Next').first);
     expect(requestedPage, 2);
     expect(requestedSize, 0);
+
+    await tester.enterText(find.byType(TextField).first, '50');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('50').last);
+    expect(requestedSize, 50);
   });
 
   testWidgets('supports selection and loading skeletons', (tester) async {
@@ -107,6 +116,18 @@ void main() {
 
     await pumpTable(tester, loading: true);
     expect(find.byType(AppSkeleton), findsWidgets);
+  });
+
+  testWidgets('mobile cards expose a load-more callback', (tester) async {
+    var loaded = false;
+    await pumpTable(
+      tester,
+      size: const Size(360, 800),
+      hasMore: true,
+      onLoadMore: () => loaded = true,
+    );
+    await tester.tap(find.text('Load more'));
+    expect(loaded, isTrue);
   });
 
   testWidgets('renders empty data safely in dark LTR at tablet width', (
