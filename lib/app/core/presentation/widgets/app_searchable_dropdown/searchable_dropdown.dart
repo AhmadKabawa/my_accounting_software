@@ -132,15 +132,21 @@ class _SearchableDropdownState<T extends Object>
         oldWidget.loading != widget.loading ||
         oldWidget.errorKey != widget.errorKey;
     if (optionsChanged || stateChanged) {
-      // Recreate RawAutocomplete's options state while retaining the external
-      // controller and focus node, so remote results refresh for the current
-      // query without losing the user's text or focus.
-      _optionsRevision++;
-
-      // A modal sheet may still be listening to this notifier. Notify it
-      // after the current widget build, never from didUpdateWidget itself.
+      // RawAutocomplete recalculates its options when its controller notifies.
+      // Nudge the selection after this build instead of replacing the
+      // RawAutocomplete subtree: replacing it closes the overlay while the
+      // externally-owned FocusNode remains focused, so the panel never reopens.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
+        if (_desktopFocusNode.hasFocus) {
+          final selection = _desktopController.selection;
+          _desktopController.selection = const TextSelection.collapsed(
+            offset: 0,
+          );
+          _desktopController.selection = selection;
+        }
+        // A modal sheet may still be listening to this notifier. Notify it
+        // after the current widget build, never from didUpdateWidget itself.
         _pickerData.value = _PickerData<T>(
           options: widget.options,
           loading: widget.loading,
@@ -155,8 +161,6 @@ class _SearchableDropdownState<T extends Object>
   }
 
   String _lastQuery = '';
-  int _optionsRevision = 0;
-
   @override
   void dispose() {
     _debounce?.cancel();
@@ -239,7 +243,6 @@ class _SearchableDropdownState<T extends Object>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RawAutocomplete<T>(
-          key: ValueKey(_optionsRevision),
           textEditingController: _desktopController,
           focusNode: _desktopFocusNode,
           displayStringForOption: widget.optionLabel,
