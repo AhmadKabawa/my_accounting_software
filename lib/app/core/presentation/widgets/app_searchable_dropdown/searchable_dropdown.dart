@@ -18,7 +18,7 @@ export 'searchable_dropdown_style.dart';
 class SearchableDropdown<T extends Object> extends StatefulWidget {
   const SearchableDropdown({
     super.key,
-    required this.options,
+    required this.data,
     required this.labelKey,
     required this.optionLabel,
     required this.value,
@@ -35,7 +35,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
     this.addNewLabelKey,
   });
 
-  final List<T> options;
+  final ValueListenable<_PickerData<T>> data;
   final AppKey labelKey;
   final String Function(T option) optionLabel;
   final String? Function(T option)? optionSubtitle;
@@ -43,8 +43,6 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   final ValueChanged<T?> onChanged;
   final ValueChanged<String>? onQueryChanged;
   final bool filterLocally;
-  final bool loading;
-  final AppKey? errorKey;
   final AppKey emptyKey;
   final bool enabled;
   final bool readOnly;
@@ -58,11 +56,37 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
 class _SearchableDropdownState<T extends Object>
     extends State<SearchableDropdown<T>> {
   Timer? _debounce;
+  late final ValueNotifier<_PickerData<T>> _pickerData;
+
+  @override
+  void initState() {
+    super.initState();
+    _pickerData = ValueNotifier(_PickerData<T>(
+      options: widget.options,
+      loading: widget.loading,
+      errorKey: widget.errorKey,
+    ));
+  }
+
+  @override
+  void didUpdateWidget(covariant SearchableDropdown<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.options, widget.options) ||
+        oldWidget.loading != widget.loading ||
+        oldWidget.errorKey != widget.errorKey) {
+      _pickerData.value = _PickerData<T>(
+        options: widget.options,
+        loading: widget.loading,
+        errorKey: widget.errorKey,
+      );
+    }
+  }
   String _lastQuery = '';
 
   @override
   void dispose() {
     _debounce?.cancel();
+    _pickerData.dispose();
     super.dispose();
   }
 
@@ -273,12 +297,10 @@ class _SearchableDropdownState<T extends Object>
       builder: (sheetContext) => FractionallySizedBox(
         heightFactor: 0.9,
         child: _MobileSearchPicker<T>(
-        options: widget.options,
+        data: _pickerData,
         labelKey: widget.labelKey,
         optionLabel: widget.optionLabel,
         optionSubtitle: widget.optionSubtitle,
-        loading: widget.loading,
-        errorKey: widget.errorKey,
         emptyKey: widget.emptyKey,
         filterLocally: widget.filterLocally,
         onQueryChanged: widget.onQueryChanged == null ? null : _query,
@@ -291,13 +313,18 @@ class _SearchableDropdownState<T extends Object>
   }
 }
 
+class _PickerData<T extends Object> {
+  const _PickerData({required this.options, required this.loading, required this.errorKey});
+  final List<T> options;
+  final bool loading;
+  final AppKey? errorKey;
+}
+
 class _MobileSearchPicker<T extends Object> extends StatefulWidget {
   const _MobileSearchPicker({
     required this.options,
     required this.labelKey,
     required this.optionLabel,
-    required this.loading,
-    required this.errorKey,
     required this.emptyKey,
     required this.filterLocally,
     required this.onSelect,
@@ -327,54 +354,80 @@ class _MobileSearchPickerState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final options = widget.filterLocally && _query.trim().isNotEmpty
-        ? widget.options.where((option) =>
-            widget.optionLabel(option).toLowerCase().contains(_query.trim().toLowerCase()) ||
-            (widget.optionSubtitle?.call(option)?.toLowerCase().contains(_query.trim().toLowerCase()) ?? false))
-        : widget.options;
-    return SafeArea(
-      child: Padding(
-        padding: context.ui.padding.all(AppSpacing.md),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              autofocus: true,
-              onChanged: (value) {
-                setState(() => _query = value);
-                widget.onQueryChanged?.call(value);
-              },
-              decoration: InputDecoration(
-                labelText: widget.labelKey.tr(context: context),
-                prefixIcon: const AppIcon(AppIcons.search),
-              ),
+    return ValueListenableBuilder<_PickerData<T>>(
+      valueListenable: widget.data,
+      builder: (context, data, _) {
+        final options = widget.filterLocally && _query.trim().isNotEmpty
+            ? data.options.where(
+                (option) =>
+                    widget.optionLabel(option).toLowerCase().contains(
+                      _query.trim().toLowerCase(),
+                    ) ||
+                    (widget.optionSubtitle
+                            ?.call(option)
+                            ?.toLowerCase()
+                            .contains(_query.trim().toLowerCase()) ??
+                        false),
+              )
+            : data.options;
+        return SafeArea(
+          child: Padding(
+            padding: context.ui.padding.all(AppSpacing.md),
+            child: Column(
+              children: [
+                TextField(
+                  autofocus: true,
+                  onChanged: (value) {
+                    setState(() => _query = value);
+                    widget.onQueryChanged?.call(value);
+                  },
+                  decoration: InputDecoration(
+                    labelText: widget.labelKey.tr(context: context),
+                    prefixIcon: const AppIcon(AppIcons.search),
+                  ),
+                ),
+                context.ui.spacing.gap(AppSpacing.md),
+                Expanded(
+                  child: data.errorKey != null
+                      ? InlineBanner(
+                          messageKey: data.errorKey!,
+                          variant: InlineBannerVariant.error,
+                        )
+                      : data.loading
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : options.isEmpty
+                              ? Center(child: AppText(widget.emptyKey))
+                              : ListView(
+                                  children: [
+                                    for (final option in options)
+                                      ListTile(
+                                        title: AppText.raw(
+                                          widget.optionLabel(option),
+                                          maxLines: 2,
+                                        ),
+                                        subtitle:
+                                            widget.optionSubtitle?.call(option) ==
+                                                    null
+                                                ? null
+                                                : AppText.raw(
+                                                    widget.optionSubtitle!(
+                                                      option,
+                                                    )!,
+                                                  ),
+                                        onTap: () => widget.onSelect(option),
+                                      ),
+                                    if (widget.onAddNew != null)
+                                      widget.onAddNew!(context),
+                                  ],
+                                ),
+                ),
+              ],
             ),
-            context.ui.spacing.gap(AppSpacing.md),
-            Expanded(
-              child: widget.errorKey != null
-                  ? InlineBanner(messageKey: widget.errorKey!, variant: InlineBannerVariant.error)
-                  : widget.loading
-                      ? const Center(child: CircularProgressIndicator())
-                      : options.isEmpty
-                          ? Center(child: AppText(widget.emptyKey))
-                          : ListView(
-                              shrinkWrap: true,
-                              children: [
-                                for (final option in options)
-                                  ListTile(
-                                    title: AppText.raw(widget.optionLabel(option), maxLines: 2),
-                                    subtitle: widget.optionSubtitle?.call(option) == null
-                                        ? null
-                                        : AppText.raw(widget.optionSubtitle!(option)!),
-                                    onTap: () => widget.onSelect(option),
-                                  ),
-                                if (widget.onAddNew != null) widget.onAddNew!(context),
-                              ],
-                            ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
-}
+}}
