@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
@@ -82,6 +82,7 @@ class _SearchableDropdownState<T extends Object>
   @override
   void didUpdateWidget(covariant SearchableDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     final optionsChanged = !identical(oldWidget.options, widget.options);
     final stateChanged = oldWidget.loading != widget.loading ||
         oldWidget.errorKey != widget.errorKey;
@@ -94,13 +95,12 @@ class _SearchableDropdownState<T extends Object>
     }
 
     if (oldWidget.value != widget.value && !_desktopFocusNode.hasFocus) {
+      final selectedLabel = widget.value == null
+          ? ''
+          : widget.optionLabel(widget.value as T);
       _desktopController.value = TextEditingValue(
-        text: widget.value == null ? '' : widget.optionLabel(widget.value as T),
-        selection: TextSelection.collapsed(
-          offset: widget.value == null
-              ? 0
-              : widget.optionLabel(widget.value as T).length,
-        ),
+        text: selectedLabel,
+        selection: TextSelection.collapsed(offset: selectedLabel.length),
       );
     }
   }
@@ -130,8 +130,13 @@ class _SearchableDropdownState<T extends Object>
     final normalized = query.trim().toLowerCase();
     if (normalized.isEmpty) return widget.options;
     return widget.options.where(
-      (option) => widget.optionLabel(option).toLowerCase().contains(normalized) ||
-          (widget.optionSubtitle?.call(option)?.toLowerCase().contains(normalized) ?? false),
+      (option) =>
+          widget.optionLabel(option).toLowerCase().contains(normalized) ||
+          (widget.optionSubtitle
+                  ?.call(option)
+                  ?.toLowerCase()
+                  .contains(normalized) ??
+              false),
     );
   }
 
@@ -311,15 +316,15 @@ class _SearchableDropdownState<T extends Object>
       builder: (sheetContext) => FractionallySizedBox(
         heightFactor: _mobileSheetHeightFactor,
         child: _MobileSearchPicker<T>(
-        data: _pickerData,
-        labelKey: widget.labelKey,
-        optionLabel: widget.optionLabel,
-        optionSubtitle: widget.optionSubtitle,
-        emptyKey: widget.emptyKey,
-        filterLocally: widget.filterLocally,
-        onQueryChanged: widget.onQueryChanged == null ? null : _query,
-        onAddNew: widget.onAddNew,
-        onSelect: (option) => Navigator.of(sheetContext).pop(option),
+          data: _pickerData,
+          labelKey: widget.labelKey,
+          optionLabel: widget.optionLabel,
+          optionSubtitle: widget.optionSubtitle,
+          emptyKey: widget.emptyKey,
+          filterLocally: widget.filterLocally,
+          onQueryChanged: widget.onQueryChanged == null ? null : _query,
+          onAddNew: widget.onAddNew,
+          onSelect: (option) => Navigator.of(sheetContext).pop(option),
         ),
       ),
     );
@@ -328,7 +333,11 @@ class _SearchableDropdownState<T extends Object>
 }
 
 class _PickerData<T extends Object> {
-  const _PickerData({required this.options, required this.loading, required this.errorKey});
+  const _PickerData({
+    required this.options,
+    required this.loading,
+    required this.errorKey,
+  });
   final List<T> options;
   final bool loading;
   final AppKey? errorKey;
