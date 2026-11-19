@@ -329,7 +329,8 @@ class _MobileSearchPickerState<T extends Object>
   Widget build(BuildContext context) {
     final options = widget.filterLocally && _query.trim().isNotEmpty
         ? widget.options.where((option) =>
-            widget.optionLabel(option).toLowerCase().contains(_query.trim().toLowerCase()))
+            widget.optionLabel(option).toLowerCase().contains(_query.trim().toLowerCase()) ||
+            (widget.optionSubtitle?.call(option)?.toLowerCase().contains(_query.trim().toLowerCase()) ?? false))
         : widget.options;
     return SafeArea(
       child: Padding(
@@ -345,7 +346,7 @@ class _MobileSearchPickerState<T extends Object>
               },
               decoration: InputDecoration(
                 labelText: widget.labelKey.tr(context: context),
-                prefixIcon: const AppIcon(AppIcons.expand),
+                prefixIcon: const AppIcon(AppIcons.search),
               ),
             ),
             context.ui.spacing.gap(AppSpacing.md),

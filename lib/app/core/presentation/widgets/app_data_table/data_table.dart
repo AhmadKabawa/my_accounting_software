@@ -239,7 +239,12 @@ class AppDataTable<T> extends StatelessWidget {
                         ),
                       ),
                     )
-                  : column.cellBuilder(context, row as T),
+                  : Align(
+                      alignment: column.numeric
+                          ? AlignmentDirectional.centerEnd
+                          : AlignmentDirectional.centerStart,
+                      child: column.cellBuilder(context, row as T),
+                    ),
             ),
           ),
         if (rowActionsBuilder != null)
