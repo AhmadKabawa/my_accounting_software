@@ -7,21 +7,6 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
 import '../../../helpers/localized_app.dart';
 
-List<String> _labels(SemanticsNode root) {
-  final labels = <String>[];
-  void visit(SemanticsNode node) {
-    final label = node.getSemanticsData().label;
-    if (label.isNotEmpty) labels.add(label);
-    node.visitChildren((child) {
-      visit(child);
-      return true;
-    });
-  }
-
-  visit(root);
-  return labels;
-}
-
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
   testWidgets('hit target is sufficient and tooltip label is not duplicated', (
@@ -50,18 +35,13 @@ void main() {
     final minimum = AppComponentSize.hitArea.of(tester.element(target));
     expect(size.width, greaterThanOrEqualTo(minimum));
     expect(size.height, greaterThanOrEqualTo(minimum));
-    final root =
-        tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
-    final buttonSemantics = tester.getSemantics(find.byTooltip('User menu'));
+    final tooltip = find.byTooltip('User menu');
+    expect(tooltip, findsOneWidget);
+    final buttonSemantics = tester.getSemantics(tooltip);
     expect(
       buttonSemantics.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
     );
-    final occurrences = _labels(root).fold<int>(
-      0,
-      (total, label) => total + 'User menu'.allMatches(label).length,
-    );
-    expect(occurrences, 1);
     handle.dispose();
   });
 

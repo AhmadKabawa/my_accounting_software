@@ -127,7 +127,12 @@ void main() {
         textScale: 2,
       );
       // The long row must actually be on screen, not merely overflow-free.
-      expect(find.textContaining('A very long catalog item'), findsOneWidget);
+      expect(
+        find.text(
+          'A very long catalog item description that must wrap without overflow',
+        ),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     }
   });
@@ -189,8 +194,8 @@ void main() {
       onRowActivated: (value) => activated = value,
       onSelectionChanged: (value) => selected = value,
     );
-    final rowFocus = find.byType(Focus).first;
-    Focus.of(tester.element(rowFocus)).requestFocus();
+    final alphaCell = find.text('Alpha');
+    Focus.of(tester.element(alphaCell)).requestFocus();
     await tester.pump();
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     expect(activated, 'Alpha');

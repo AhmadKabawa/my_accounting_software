@@ -37,7 +37,12 @@ void main() {
     expect(query, 'brand');
 
     expect(find.byType(AppBadge), findsOneWidget);
-    expect(find.text('Filters: Active'), findsOneWidget);
+    final activeBadge = tester.widget<AppBadge>(find.byType(AppBadge));
+    expect(activeBadge.label, CatalogUiKeys.activeFilterLabel);
+    expect(
+      activeBadge.labelArgs,
+      {'label': CatalogUiKeys.filters.en, 'value': 'Active'},
+    );
     expect(removed, 0);
     await tester.tap(
       find.descendant(
