@@ -428,4 +428,4 @@ class _MobileSearchPickerState<T extends Object>
       },
     );
   }
-}}
+}
