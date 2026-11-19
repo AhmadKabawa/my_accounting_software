@@ -200,7 +200,7 @@ void main() {
       dirty: true,
     );
 
-    await tester.tap(find.byIcon(_icons[1]));
+    await tester.tap(find.byIcon(_icons[0]));
     await tester.pumpAndSettle();
     await _cancel(tester);
     expect(
@@ -240,8 +240,8 @@ void main() {
       find.byType(AppNavigationBar),
     );
 
-    navigation.onIndexChanged(1);
-    navigation.onIndexChanged(1);
+    navigation.onIndexChanged(0);
+    navigation.onIndexChanged(0);
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsOneWidget);
     await _cancel(tester);
@@ -422,7 +422,7 @@ void main() {
     tester,
   ) async {
     var discarded = 0;
-    final env = await _pump(
+    await _pump(
       tester,
       size: const Size(1400, 900),
       dirty: true,
