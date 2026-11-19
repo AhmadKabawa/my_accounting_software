@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -63,7 +64,7 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         if (cashierSessionKey != null)
           Padding(
-            padding: const EdgeInsetsDirectional.only(start: 8),
+            padding: context.ui.padding.only(start: AppSpacing.sm),
             child: Center(child: AppText(cashierSessionKey!, type: AppTextType.labelMedium)),
           ),
         IconButton(
@@ -79,7 +80,7 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
           )
         else
           Padding(
-            padding: const EdgeInsetsDirectional.only(end: 12),
+            padding: context.ui.padding.only(end: AppSpacing.md),
             child: Center(child: AppText.raw(snapshot.username, type: AppTextType.labelMedium)),
           ),
       ],

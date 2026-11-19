@@ -26,7 +26,7 @@ class AppPageHeader extends StatelessWidget {
         Flexible(child: AppText(titleKey, type: AppTextType.headlineSmall)),
         if (count != null) ...[
           context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-          AppText.raw('($count)', type: AppTextType.titleSmall, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          AppText.raw('($count)', type: AppTextType.titleSmall, color: context.ui.theme.colors.onSurfaceVariant),
         ],
       ],
     );
@@ -39,13 +39,13 @@ class AppPageHeader extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final action = primaryAction;
-              if (action == null || constraints.maxWidth < context.ui.size.width(AppComponentSize.cardWidth)) {
+              if (action == null) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [title, if (subtitle != null) subtitle!],
                 );
               }
-              return Row(
+              if (constraints.maxWidth < context.ui.size.width(AppComponentSize.cardWidth)) {\n                return Column(\n                  crossAxisAlignment: CrossAxisAlignment.stretch,\n                  children: [title, if (subtitle != null) subtitle!, action],\n                );\n              }\n              return Row(
                 children: [
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [title, if (subtitle != null) subtitle!])),
                   action,

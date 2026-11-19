@@ -6,7 +6,9 @@ import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/message_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
-import 'package:accounting_software/app/core/localization/keys/scope_keys.dart';\nimport 'package:accounting_software/app/core/localization/keys/shell_keys.dart';\nimport 'package:accounting_software/app/core/localization/keys/template_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/scope_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/server_error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/theme_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/validation_keys.dart';
@@ -19,7 +21,9 @@ import 'package:accounting_software/app/features/profile/presentation/localizati
 final List<AppKey> allKeys = <AppKey>[
   ...CommonKeys.values,
   ...DialogKeys.values,
-  ...ScopeKeys.values,\n  ...ShellKeys.values,\n  ...TemplateKeys.values,
+  ...ScopeKeys.values,
+  ...ShellKeys.values,
+  ...TemplateKeys.values,
   ...FieldKeys.values,
   ...ValidationKeys.values,
   ...ErrorKeys.values,

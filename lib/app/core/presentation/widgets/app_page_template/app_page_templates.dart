@@ -10,8 +10,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/a
 
 enum AppPageState { content, loading, empty, error }
 
-/// T3 form page frame. The owning screen supplies fields and business state.
-class FormPageTemplate extends StatelessWidget {
+/// T3 form frame. The screen owns fields, validation and business state.
+class FormPageTemplate extends StatefulWidget {
   const FormPageTemplate({
     super.key,
     required this.titleKey,
@@ -35,49 +35,71 @@ class FormPageTemplate extends StatelessWidget {
   final VoidCallback? onDiscard;
   final VoidCallback? onSave;
 
-  Future<bool> _confirmLeave(BuildContext context) async {
-    if (!dirty) return true;
+  @override
+  State<FormPageTemplate> createState() => _FormPageTemplateState();
+}
+
+class _FormPageTemplateState extends State<FormPageTemplate> {
+  bool _allowPop = false;
+
+  Future<bool> _confirmLeave() async {
+    if (!widget.dirty) return true;
     final confirmed = await showConfirmDialog(
       context,
-      titleKey: titleKey,
+      titleKey: widget.titleKey,
       messageKey: TemplateKeys.unsavedChanges,
       severity: ConfirmDialogSeverity.warning,
     );
-    if (confirmed) onDiscard?.call();
+    if (confirmed) widget.onDiscard?.call();
     return confirmed;
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: !dirty,
+      canPop: !widget.dirty || _allowPop,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop || !dirty) return;
-        final leave = await _confirmLeave(context);
-        if (leave && context.mounted) Navigator.of(context).maybePop();
+        if (didPop || !widget.dirty) return;
+        final leave = await _confirmLeave();
+        if (leave && mounted) {
+          setState(() => _allowPop = true);
+          Navigator.of(context).maybePop();
+        }
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AppPageHeader(titleKey: titleKey, primaryAction: primaryAction),
-          if (state == AppPageState.error && errorKey != null)
-            InlineBanner(messageKey: errorKey!, variant: InlineBannerVariant.error),
+          AppPageHeader(
+            titleKey: widget.titleKey,
+            primaryAction: widget.primaryAction,
+          ),
+          if (widget.state == AppPageState.error && widget.errorKey != null)
+            InlineBanner(
+              messageKey: widget.errorKey!,
+              variant: InlineBannerVariant.error,
+            ),
           Expanded(child: _stateBody()),
-          if (onSave != null)
-            AppButton(TemplateKeys.save, onPressed: onSave, expand: true),
+          if (widget.onSave != null)
+            AppButton(
+              TemplateKeys.save,
+              onPressed: widget.onSave,
+              expand: true,
+            ),
         ],
       ),
     );
   }
 
-  Widget _stateBody() => switch (state) {
-    AppPageState.loading => const Column(children: [AppSkeleton.line(), AppSkeleton.block()]),
-    AppPageState.empty => emptyState ?? const SizedBox.shrink(),
-    AppPageState.error || AppPageState.content => child,
+  Widget _stateBody() => switch (widget.state) {
+    AppPageState.loading => const Column(
+      children: [AppSkeleton.line(), AppSkeleton.block()],
+    ),
+    AppPageState.empty => widget.emptyState ?? const SizedBox.shrink(),
+    AppPageState.error || AppPageState.content => widget.child,
   };
 }
 
-/// T5 dashboard frame. The screen supplies cards after applying role rules.
+/// T5 dashboard frame. The screen supplies role-filtered cards.
 class DashboardTemplate extends StatelessWidget {
   const DashboardTemplate({
     super.key,
@@ -99,20 +121,28 @@ class DashboardTemplate extends StatelessWidget {
       children: [
         AppPageHeader(titleKey: titleKey),
         if (errorKey != null)
-          InlineBanner(messageKey: errorKey!, variant: InlineBannerVariant.error),
+          InlineBanner(
+            messageKey: errorKey!,
+            variant: InlineBannerVariant.error,
+          ),
         Expanded(
           child: loading
               ? const AppSkeleton.card()
               : LayoutBuilder(
                   builder: (context, constraints) {
-                    final cardWidth = context.ui.size.width(AppComponentSize.cardWidth);
-                    final columns = constraints.maxWidth >= cardWidth * 2 ? 3 : 2;
-                    return GridView.count(
+                    final cardWidth = context.ui.size.width(
+                      AppComponentSize.cardWidth,
+                    );
+                    return GridView.builder(
                       padding: context.ui.padding.all(AppSpacing.md),
-                      crossAxisCount: columns,
-                      crossAxisSpacing: context.ui.spacing.md,
-                      mainAxisSpacing: context.ui.spacing.md,
-                      children: cards,
+                      gridDelegate:
+                          SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: cardWidth,
+                            crossAxisSpacing: context.ui.spacing.md,
+                            mainAxisSpacing: context.ui.spacing.md,
+                          ),
+                      itemCount: cards.length,
+                      itemBuilder: (_, index) => cards[index],
                     );
                   },
                 ),
