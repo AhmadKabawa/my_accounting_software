@@ -21,6 +21,7 @@ class AppTextField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.enabled = true,
+    this.autofocus = false,
     this.maxLines = 1,
     this.autofillHints,
     this.textInputAction = TextInputAction.next,
@@ -39,6 +40,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final bool enabled;
+  final bool autofocus;
   final int? maxLines;
   final Iterable<String>? autofillHints;
   final TextInputAction textInputAction;
@@ -60,6 +62,7 @@ class AppTextField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       enabled: enabled,
+      autofocus: autofocus,
       // A field that hides its text must be single line.
       maxLines: obscureText ? 1 : maxLines,
       autofillHints: autofillHints,
