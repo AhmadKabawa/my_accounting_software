@@ -28,6 +28,7 @@ class _AccessStatusGateState extends State<AccessStatusGate> {
   Widget build(BuildContext context) {
     return BlocBuilder<AccessCubit, AccessState>(
       builder: (context, state) {
+        if (state.status == AccessStatus.initial) _hasRenderedChild = false;
         final hasNoBranches = state.hasNoAvailableBranches;
         final isReady = state.isReady && !hasNoBranches;
         if (isReady) _hasRenderedChild = true;

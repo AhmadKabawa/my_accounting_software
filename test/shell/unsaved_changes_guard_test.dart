@@ -38,7 +38,7 @@ class _Repository implements AccessRepository {
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async {
     _calls++;
-    if (failOnSecondCall && _calls > 1) return Left(NetworkFailure());
+    if (failOnSecondCall && _calls == 2) return Left(NetworkFailure());
     return Right(
       AccessSnapshot(
       userId: 'guard-test',
@@ -446,6 +446,16 @@ void main() {
 
     expect(env.access.state.status, AccessStatus.failure);
     expect(discarded, 0);
+    expect(find.text('Dirty form'), findsNothing);
+
+    await env.access.retry();
+    await tester.pumpAndSettle();
+    expect(find.text('Dirty form'), findsOneWidget);
+
+    await tester.tap(find.byIcon(_icons[0]));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+    await _cancel(tester);
   });
 
   testWidgets('owner rejection blocks scope change without guard dialog', (
