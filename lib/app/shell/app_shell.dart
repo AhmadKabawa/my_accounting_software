@@ -28,6 +28,7 @@ class AppShell extends StatelessWidget {
   final List<AppDestination> destinations;
   final List<AppMenuEntry> userMenuEntries;
   final List<AppBreadcrumbItem> breadcrumbs;
+  final List<AppBreadcrumbItem> Function(GoRouterState state)? breadcrumbBuilder;
   final Future<bool> Function(ScopeOption)? beforeBranchChange;
   final AppKey? cashierSessionKey;
   final bool supportsCollapsibleSidebar;
@@ -39,6 +40,7 @@ class AppShell extends StatelessWidget {
     this.destinations = appDestinations,
     this.userMenuEntries = const [],
     this.breadcrumbs = const [],
+    this.breadcrumbBuilder,
     this.beforeBranchChange,
     this.cashierSessionKey,
     this.supportsCollapsibleSidebar = false,
@@ -107,6 +109,9 @@ class AppShell extends StatelessWidget {
         ? visible.first.item.label
         : null;
 
+    final routeBreadcrumbs =
+        breadcrumbBuilder?.call(GoRouterState.of(context)) ?? breadcrumbs;
+
     PreferredSizeWidget? topBar;
     if (snapshot != null && titleKey != null) {
       topBar = AppShellTopBar(
@@ -115,7 +120,7 @@ class AppShell extends StatelessWidget {
         selectedBranchId: access.state.selectedBranchId,
         onBranchChanged: access.selectBranch,
         beforeBranchChange: beforeBranchChange,
-        breadcrumbs: breadcrumbs,
+        breadcrumbs: routeBreadcrumbs,
         cashierSessionKey: cashierSessionKey,
         userMenuEntries: userMenuEntries,
         leading: supportsCollapsibleSidebar && GoRouter.of(context).canPop()

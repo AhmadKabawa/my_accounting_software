@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/scope_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_scope_selector/scope_selector.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
@@ -78,6 +79,7 @@ _pump(
   List<AccessBranch> branches = const [],
   List<AppMenuEntry> userMenuEntries = const [],
   Future<bool> Function(ScopeOption)? beforeBranchChange,
+  List<AppBreadcrumbItem> Function(GoRouterState state)? breadcrumbBuilder,
   ThemeData? theme,
   TextDirection direction = TextDirection.rtl,
 }) async {
@@ -102,6 +104,7 @@ _pump(
           destinations: selectedDestinations,
           userMenuEntries: userMenuEntries,
           beforeBranchChange: beforeBranchChange,
+          breadcrumbBuilder: breadcrumbBuilder,
         ),
         branches: [
           for (final path in paths)
@@ -444,4 +447,27 @@ void main() {
       );
     });
   });
+
+  testWidgets('breadcrumb builder receives the active GoRouterState', (
+    tester,
+  ) async {
+    final env = await _pump(
+      tester,
+      const Size(1400, 900),
+      breadcrumbBuilder: (state) => [
+        AppBreadcrumbItem(
+          label: state.uri.path == '/branch-0'
+              ? NavKeys.home
+              : ShellKeys.branch,
+        ),
+      ],
+    );
+
+    expect(find.text(NavKeys.home.en), findsWidgets);
+    await tester.tap(find.byIcon(Icons.looks_two_outlined));
+    await tester.pumpAndSettle();
+    expect(_location(env.router), '/branch-1');
+    expect(find.text(ShellKeys.branch.en), findsOneWidget);
+  });
+
 }

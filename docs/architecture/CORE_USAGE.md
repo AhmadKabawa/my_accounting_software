@@ -457,7 +457,7 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 ## تحديث — استخدام القشرة والقوالب (2026-11-18)
 
 - AppMenu: مرّر List<AppMenuEntry> مع AppKey لكل عنصر، واستعمله لقوائم المستخدم وإجراءات الصفوف.
-- AppBreadcrumb: مرّر قائمة AppBreadcrumbItem؛ آخر عنصر هو موضع الصفحة الحالي.
+- AppBreadcrumb: مرّر قائمة AppBreadcrumbItem؛ آخر عنصر هو موضع الصفحة الحالي. داخل AppShell يمكن تمرير breadcrumbBuilder الذي يستقبل GoRouterState ويعيد القائمة؛ عند غيابه تستعمل القشرة breadcrumbs الثابتة القديمة.
 - AppPageHeader: عنوان AppKey، وعدد اختياري، وslot للإجراء الأساسي والفتات.
 - FormPageTemplate هو T3 وDashboardTemplate هو T5. الشاشة المالكة تمرر المحتوى والحالة والبطاقات؛ لا تضع الصلاحيات أو منطق الأعمال داخل القالب.
 - AppShell يقبل beforeBranchChange ليقرر صاحب الشاشة ما إذا كان تغيير الفرع مسموحاً بعد تأكيد C07. لا يعرف Shell شيئاً عن سلة البيع.
