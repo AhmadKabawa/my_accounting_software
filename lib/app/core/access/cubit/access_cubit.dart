@@ -64,7 +64,7 @@ class AccessCubit extends Cubit<AccessState> {
     final snapshot = state.snapshot;
     if (!state.isReady ||
         snapshot == null ||
-        !snapshot.branches.any((item) => item.id == branchId && item.canView)) {
+        !snapshot.viewableBranches.any((item) => item.id == branchId)) {
       return;
     }
     await load(preferredBranchId: branchId);
