@@ -40,12 +40,7 @@ class AppMenu extends StatelessWidget {
     final tooltip = tooltipKey.tr(context: context);
     final hitArea = AppComponentSize.hitArea.of(context);
 
-    return Semantics(
-      label: tooltip,
-      button: true,
-      enabled: enabled && entries.isNotEmpty,
-      excludeSemantics: true,
-      child: PopupMenuButton<int>(
+    return PopupMenuButton<int>(
         tooltip: tooltip,
         enabled: enabled && entries.isNotEmpty,
         onSelected: (index) => entries[index].onSelected(),
@@ -89,7 +84,6 @@ class AppMenu extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
