@@ -84,7 +84,7 @@ class _FilterBarState extends State<FilterBar> {
 
   Future<void> _openFilters() async {
     final builder = widget.filterPanelBuilder;
-    if (builder == null) return;
+    if (builder == null && widget.filterControls.isEmpty) return;
     if (!ScreenEngine.isMobile(context)) {
       setState(() => _showEditor = !_showEditor);
       return;
@@ -101,10 +101,13 @@ class _FilterBarState extends State<FilterBar> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppText(CatalogUiKeys.filters, type: AppTextType.titleMedium),
-            builder(sheetContext, () {
-              widget.onApply?.call();
-              Navigator.of(sheetContext).pop();
-            }),
+            if (builder != null)
+              builder(sheetContext, () {
+                widget.onApply?.call();
+                Navigator.of(sheetContext).pop();
+              })
+            else
+              Wrap(spacing: context.ui.spacing.sm, runSpacing: context.ui.spacing.sm, children: widget.filterControls),
             AppButton(CatalogUiKeys.apply, onPressed: () {
               widget.onApply?.call();
               Navigator.of(sheetContext).pop();
@@ -143,7 +146,7 @@ class _FilterBarState extends State<FilterBar> {
                   AppButton(
                     CatalogUiKeys.filters,
                     variant: AppButtonVariant.outlined,
-                    onPressed: widget.filterPanelBuilder == null ? null : _openFilters,
+                    onPressed: widget.filterPanelBuilder == null && widget.filterControls.isEmpty ? null : _openFilters,
                   ),
                 ],
               );
@@ -151,7 +154,7 @@ class _FilterBarState extends State<FilterBar> {
             return Row(
               children: [
                 Expanded(child: search),
-                if (widget.filterPanelBuilder != null || widget.filterControls.isNotEmpty) ...[
+                if (widget.filterPanelBuilder != null) ...[
                   context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
                   AppButton(
                     CatalogUiKeys.filters,

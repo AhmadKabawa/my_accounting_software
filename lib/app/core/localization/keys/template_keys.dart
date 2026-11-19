@@ -6,6 +6,7 @@ enum TemplateKeys implements AppKey {
     en: 'You have unsaved changes. Leave this page?',
   ),
   save(ar: 'حفظ', en: 'Save'),
+  retry(ar: 'إعادة المحاولة', en: 'Retry'),
   defaultError(
     ar: 'حدث خطأ أثناء تحميل المحتوى',
     en: 'Something went wrong while loading this content',
