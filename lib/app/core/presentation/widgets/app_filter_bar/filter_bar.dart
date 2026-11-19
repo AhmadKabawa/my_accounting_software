@@ -5,8 +5,8 @@ import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.d
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -88,35 +88,44 @@ class _FilterBarState extends State<FilterBar> {
   Future<void> _openFilters() async {
     final builder = widget.filterPanelBuilder;
     if (builder == null && widget.filterControls.isEmpty) return;
+
     if (!ScreenEngine.isMobile(context)) {
       setState(() => _showEditor = !_showEditor);
       return;
     }
+
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (sheetContext) => SingleChildScrollView(
         child: Padding(
-        padding: sheetContext.ui.padding.all(AppSpacing.md),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AppText(CatalogUiKeys.filters, type: AppTextType.titleMedium),
-            if (builder != null)
-              builder(sheetContext, () {
-                widget.onApply?.call();
-                Navigator.of(sheetContext).pop();
-              })
-            else
-              Wrap(spacing: context.ui.spacing.sm, runSpacing: context.ui.spacing.sm, children: widget.filterControls),
-            AppButton(CatalogUiKeys.apply, onPressed: () {
-              widget.onApply?.call();
-              Navigator.of(sheetContext).pop();
-            }),
-          ],
-        ),
+          padding: sheetContext.ui.padding.all(AppSpacing.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppText(CatalogUiKeys.filters, type: AppTextType.titleMedium),
+              if (builder != null)
+                builder(sheetContext, () {
+                  widget.onApply?.call();
+                  Navigator.of(sheetContext).pop();
+                })
+              else
+                Wrap(
+                  spacing: sheetContext.ui.spacing.sm,
+                  runSpacing: sheetContext.ui.spacing.sm,
+                  children: widget.filterControls,
+                ),
+              AppButton(
+                CatalogUiKeys.apply,
+                onPressed: () {
+                  widget.onApply?.call();
+                  Navigator.of(sheetContext).pop();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -146,7 +155,10 @@ class _FilterBarState extends State<FilterBar> {
                   AppButton(
                     CatalogUiKeys.filters,
                     variant: AppButtonVariant.outlined,
-                    onPressed: widget.filterPanelBuilder == null && widget.filterControls.isEmpty ? null : _openFilters,
+                    onPressed: widget.filterPanelBuilder == null &&
+                            widget.filterControls.isEmpty
+                        ? null
+                        : _openFilters,
                   ),
                 ],
               );
@@ -159,7 +171,7 @@ class _FilterBarState extends State<FilterBar> {
                   AppButton(
                     CatalogUiKeys.filters,
                     variant: AppButtonVariant.outlined,
-                    onPressed: widget.filterPanelBuilder == null ? null : _openFilters,
+                    onPressed: _openFilters,
                   ),
                 ],
               ],
@@ -179,7 +191,11 @@ class _FilterBarState extends State<FilterBar> {
         ],
         if (!mobile && widget.filterControls.isNotEmpty) ...[
           context.ui.spacing.gap(AppSpacing.sm),
-          Wrap(spacing: style.gap, runSpacing: style.gap, children: widget.filterControls),
+          Wrap(
+            spacing: style.gap,
+            runSpacing: style.gap,
+            children: widget.filterControls,
+          ),
         ],
         if (widget.activeFilters.isNotEmpty) ...[
           context.ui.spacing.gap(AppSpacing.sm),
