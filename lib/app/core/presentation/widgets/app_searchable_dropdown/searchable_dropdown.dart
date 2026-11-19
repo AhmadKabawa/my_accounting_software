@@ -412,9 +412,7 @@ class _MobileSearchPickerState<T extends Object>
                           variant: InlineBannerVariant.error,
                         )
                       : data.loading
-                          ? const Center(
-                              child: CircularProgressIndicator(),
-                            )
+                          ? const AppSkeleton.block()
                           : options.isEmpty
                               ? Center(child: AppText(widget.emptyKey))
                               : ListView(
