@@ -9,58 +9,99 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text/app_t
 
 /// Keeps the authenticated shell hidden until the server access snapshot is
 /// ready. A failed request exposes a localized retry action, never stale access.
-class AccessStatusGate extends StatelessWidget {
+///
+/// Once the shell has been shown, it remains mounted but inaccessible while
+/// access is refreshed. This preserves dirty forms if a branch refresh fails.
+class AccessStatusGate extends StatefulWidget {
   const AccessStatusGate({super.key, required this.child});
 
   final Widget child;
 
   @override
+  State<AccessStatusGate> createState() => _AccessStatusGateState();
+}
+
+class _AccessStatusGateState extends State<AccessStatusGate> {
+  bool _hasRenderedChild = false;
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AccessCubit, AccessState>(
       builder: (context, state) {
-        if (state.hasNoAvailableBranches) {
-          return Scaffold(
-            body: Center(
-              child: Padding(
-                padding: context.ui.padding.all(AppSpacing.lg),
-                child: AppText(
-                  AccessKeys.noAvailableBranches,
-                  textAlign: TextAlign.center,
+        final hasNoBranches = state.hasNoAvailableBranches;
+        final isReady = state.isReady && !hasNoBranches;
+        if (isReady) _hasRenderedChild = true;
+
+        final Widget? statusView = hasNoBranches
+            ? _buildNoBranches(context)
+            : isReady
+            ? null
+            : _buildLoadingOrFailure(context, state);
+
+        if (!_hasRenderedChild) return statusView!;
+
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Offstage(
+              offstage: statusView != null,
+              child: TickerMode(
+                enabled: statusView == null,
+                child: IgnorePointer(
+                  ignoring: statusView != null,
+                  child: ExcludeSemantics(
+                    excluding: statusView != null,
+                    child: widget.child,
+                  ),
                 ),
               ),
             ),
-          );
-        }
-        if (state.isReady) return child;
-
-        final isFailure = state.status == AccessStatus.failure;
-        return Scaffold(
-          body: Center(
-            child: Padding(
-              padding: context.ui.padding.all(AppSpacing.lg),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (isFailure)
-                    AppText(AccessKeys.loadFailed, textAlign: TextAlign.center)
-                  else ...[
-                    const CircularProgressIndicator(),
-                    context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
-                    AppText(AccessKeys.loading, textAlign: TextAlign.center),
-                  ],
-                  if (isFailure) ...[
-                    context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
-                    AppButton(
-                      CommonKeys.retry,
-                      onPressed: context.read<AccessCubit>().retry,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
+            if (statusView != null) statusView,
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildNoBranches(BuildContext context) => Scaffold(
+    body: Center(
+      child: Padding(
+        padding: context.ui.padding.all(AppSpacing.lg),
+        child: AppText(
+          AccessKeys.noAvailableBranches,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ),
+  );
+
+  Widget _buildLoadingOrFailure(BuildContext context, AccessState state) {
+    final isFailure = state.status == AccessStatus.failure;
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: context.ui.padding.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isFailure)
+                AppText(AccessKeys.loadFailed, textAlign: TextAlign.center)
+              else ...[
+                const CircularProgressIndicator(),
+                context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+                AppText(AccessKeys.loading, textAlign: TextAlign.center),
+              ],
+              if (isFailure) ...[
+                context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+                AppButton(
+                  CommonKeys.retry,
+                  onPressed: context.read<AccessCubit>().retry,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
