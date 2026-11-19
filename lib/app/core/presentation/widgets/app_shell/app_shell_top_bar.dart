@@ -21,6 +21,7 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.beforeBranchChange,
     this.breadcrumbs = const [],
     this.cashierSessionKey,
+    this.leading,
   });
 
   final AppKey titleKey;
@@ -31,6 +32,7 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
   final Future<bool> Function(ScopeOption)? beforeBranchChange;
   final List<AppBreadcrumbItem> breadcrumbs;
   final AppKey? cashierSessionKey;
+  final Widget? leading;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -48,6 +50,8 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
     ];
 
     return AppBar(
+      leading: leading,
+      automaticallyImplyLeading: leading == null,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,

@@ -7,6 +7,8 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
+import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
@@ -28,6 +30,8 @@ class AppShell extends StatelessWidget {
   final List<AppBreadcrumbItem> breadcrumbs;
   final Future<bool> Function(ScopeOption)? beforeBranchChange;
   final AppKey? cashierSessionKey;
+  final bool supportsCollapsibleSidebar;
+  final AppSettingsManager? settingsManager;
 
   const AppShell({
     super.key,
@@ -37,6 +41,8 @@ class AppShell extends StatelessWidget {
     this.breadcrumbs = const [],
     this.beforeBranchChange,
     this.cashierSessionKey,
+    this.supportsCollapsibleSidebar = false,
+    this.settingsManager,
   });
 
   Future<void> _showMore(
@@ -112,6 +118,13 @@ class AppShell extends StatelessWidget {
         breadcrumbs: breadcrumbs,
         cashierSessionKey: cashierSessionKey,
         userMenuEntries: userMenuEntries,
+        leading: supportsCollapsibleSidebar && GoRouter.of(context).canPop()
+            ? AppIconButton(
+                AppIcons.back,
+                tooltipKey: ShellKeys.back,
+                onPressed: () => context.pop(),
+              )
+            : null,
       );
     }
 
@@ -177,14 +190,75 @@ class AppShell extends StatelessWidget {
             ),
           ),
           desktop: (_) => withSideNav(
-            AppSidebar(
-              items: items,
-              activeIndex: current < 0 ? 0 : current,
-              onIndexChanged: onSelect,
-            ),
+            supportsCollapsibleSidebar && settingsManager != null
+                ? _PersistedWindowsSidebar(
+                    items: items,
+                    activeIndex: current < 0 ? 0 : current,
+                    onIndexChanged: onSelect,
+                    settingsManager: settingsManager!,
+                  )
+                : AppSidebar(
+                    items: items,
+                    activeIndex: current < 0 ? 0 : current,
+                    onIndexChanged: onSelect,
+                  ),
           ),
         ),
       ),
     );
   }
+}
+
+
+class _PersistedWindowsSidebar extends StatefulWidget {
+  const _PersistedWindowsSidebar({
+    required this.items,
+    required this.activeIndex,
+    required this.onIndexChanged,
+    required this.settingsManager,
+  });
+
+  final List<NavBarItem> items;
+  final int activeIndex;
+  final ValueChanged<int> onIndexChanged;
+  final AppSettingsManager settingsManager;
+
+  @override
+  State<_PersistedWindowsSidebar> createState() =>
+      _PersistedWindowsSidebarState();
+}
+
+class _PersistedWindowsSidebarState extends State<_PersistedWindowsSidebar> {
+  bool _collapsed = false;
+  bool _restored = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _restore();
+  }
+
+  Future<void> _restore() async {
+    final collapsed = await widget.settingsManager.getSidebarCollapsed();
+    if (!mounted) return;
+    setState(() {
+      _collapsed = collapsed;
+      _restored = true;
+    });
+  }
+
+  Future<void> _toggle() async {
+    final collapsed = !_collapsed;
+    setState(() => _collapsed = collapsed);
+    await widget.settingsManager.setSidebarCollapsed(collapsed);
+  }
+
+  @override
+  Widget build(BuildContext context) => AppSidebar(
+    items: widget.items,
+    activeIndex: widget.activeIndex,
+    onIndexChanged: widget.onIndexChanged,
+    collapsed: _collapsed,
+    onToggle: _restored ? _toggle : null,
+  );
 }

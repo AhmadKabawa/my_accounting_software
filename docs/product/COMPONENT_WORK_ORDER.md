@@ -182,7 +182,8 @@ PermissionGate. حجم الصفحة من AppConfig.pageSizeOptions (قرار-75)
 - AppShellTopBar يستعمل AppIconButton للجرس المعطّل. AppMenu وAppBreadcrumb مستقلان، وروابط Breadcrumb ذات مساحة لمس دلالية.
 - FormPageTemplate (T3) وDashboardTemplate (T5) يستعملان AppPageState الموحد. T3 يملك زر الحفظ السفلي فقط؛ `saving` يعطّل الزر ويعرض التحميل. جسم النموذج قابل للتمرير، ويستعمل ScrollView الممرر كما هو.
 - أضيف اختبار انحدار لحارس الخروج في T3، واختبارات لرسالة الخطأ الافتراضية ودعم ListView وحالة الحفظ. راجع CORE_TEST_COVERAGE للفجوات المتبقية.
-- ما زال Sidebar القابل للطي وحفظ حالته، وربط جلسة POS الفعلية، وربط القوالب بشاشات AUTH-01/AUTH-05/AUTH-04 غير مكتمل.
+- Sidebar Windows القابل للطي وحفظ حالته أُضيفا عبر AppSettingsManager؛ اختبارات Widget أُضيفت ولم تُشغَّل في هذه الدفعة. لم يُبنَ Windows فعلياً.
+- ربط جلسة POS الفعلية وربط القوالب بشاشات AUTH-01/AUTH-05/AUTH-04 ما زال غير مكتمل.
 - شريط الإجراء السفلي مسؤولية قالب الصفحة؛ AppPageHeader يكدّس الإجراء تحت العنوان عند ضيق العرض.
 
 

@@ -461,6 +461,7 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - AppPageHeader: عنوان AppKey، وعدد اختياري، وslot للإجراء الأساسي والفتات.
 - FormPageTemplate هو T3 وDashboardTemplate هو T5. الشاشة المالكة تمرر المحتوى والحالة والبطاقات؛ لا تضع الصلاحيات أو منطق الأعمال داخل القالب.
 - AppShell يقبل beforeBranchChange ليقرر صاحب الشاشة ما إذا كان تغيير الفرع مسموحاً بعد تأكيد C07. لا يعرف Shell شيئاً عن سلة البيع.
+- على Windows يمرر AppRouter قدرة supportsCollapsibleSidebar من PlatformCapabilities وAppSettingsManager؛ لا يستعمل الويب هذه القدرة، ويبقى Sidebar موسعاً. زر الرجوع الداخلي يستخدم go_router.
 - عناصر قائمة المستخدم وشارة جلسة الكاشير حالياً slots؛ لم يُربط تسجيل الخروج أو جلسة POS بعد.
 
 

@@ -45,6 +45,10 @@ class AppComponentSize extends ResponsiveToken {
   /// Mobile: 56px | Tablet: 60px | Desktop: 64px
   static const xLarge = AppComponentSize(56, 60, 64);
 
+  /// Collapsed desktop navigation sidebar.
+  /// Mobile: 72px | Tablet: 80px | Desktop: 88px
+  static const sidebarCollapsed = AppComponentSize(72, 80, 88);
+
   /// Card width — standard card container width
   /// Mobile: 280px | Tablet: 320px | Desktop: 360px
   static const cardWidth = AppComponentSize(280, 320, 360);

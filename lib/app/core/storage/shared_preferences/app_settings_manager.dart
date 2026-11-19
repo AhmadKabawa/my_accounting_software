@@ -33,6 +33,14 @@ class AppSettingsManager {
     return AppLanguage.fromCode(code);
   }
 
+  // ─── Desktop navigation ───────────────────────────────────────────────────
+  Future<void> setSidebarCollapsed(bool collapsed) async {
+    await storage.write<bool>(StorageKeys.sidebarCollapsed, collapsed);
+  }
+
+  Future<bool> getSidebarCollapsed() async =>
+      await storage.read<bool>(StorageKeys.sidebarCollapsed) ?? false;
+
   // ─── Onboarding ────────────────────────────────────────────────────────────
   Future<void> setOnboarded() async {
     await storage.write<bool>(StorageKeys.onboardingKey, true);

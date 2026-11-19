@@ -46,6 +46,9 @@ abstract final class AppIcons {
     Icons.notifications_outlined,
   );
   static const more = AppIconData.material(Icons.more_vert);
+  static const back = AppIconData.material(Icons.arrow_back);
+  static const sidebarCollapse = AppIconData.material(Icons.menu_open);
+  static const sidebarExpand = AppIconData.material(Icons.menu);
 
   // Pickers (ScopeSelector).
   static const expand = AppIconData.material(Icons.expand_more);

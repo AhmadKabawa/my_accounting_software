@@ -7,7 +7,10 @@ enum ShellKeys implements AppKey {
     en: 'Notifications are unavailable',
   ),
   userMenu(ar: 'قائمة المستخدم', en: 'User menu'),
-  more(ar: 'المزيد', en: 'More');
+  more(ar: 'المزيد', en: 'More'),
+  collapseSidebar(ar: 'طي الشريط الجانبي', en: 'Collapse sidebar'),
+  expandSidebar(ar: 'توسيع الشريط الجانبي', en: 'Expand sidebar'),
+  back(ar: 'رجوع', en: 'Back');
 
   const ShellKeys({required this.ar, required this.en});
 
