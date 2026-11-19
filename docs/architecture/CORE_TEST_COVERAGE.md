@@ -62,7 +62,7 @@
 |---|---|---|---|
 | C04 SearchableDropdown | `test/core/presentation/widgets/app_searchable_dropdown_test.dart` | بحث محلي واختيار، remote debounce وتحديث نتائج desktop/mobile، BottomSheet للجوال، error وdisabled، رسالة no-results مرة واحدة، تحديث قائمة جديدة بالمحتوى نفسه مع الحفاظ على query/focus، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
 | C10 FilterBar | `test/core/presentation/widgets/app_filter_bar_test.dart` | debounce، إزالة/مسح المرشحات عبر AppBadge قابل للإزالة، namedArgs لاسم/قيمة المرشح، محرر desktop inline وmobile BottomSheet، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
-| C01 DataTable | `test/core/presentation/widgets/app_data_table_test.dart` | بطاقات/مضغوط/كامل، sort/page/pageSize callbacks، فرز الهاتف عبر BottomSheet، mobile load more، selection، retry/loading/empty، فرز الهاتف، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
+| C01 DataTable | `test/core/presentation/widgets/app_data_table_test.dart` | بطاقات/مضغوط/كامل، sort/page/pageSize callbacks، فرز الهاتف عبر BottomSheet، mobile load more، selection، retry/loading/empty، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
 | T1 ListPageTemplate | `test/core/presentation/widgets/list_page_template_test.dart` | تكامل PageHeader/FilterBar/DataTable وحالات loading/empty/error؛ مصدر واحد لرسالة الخطأ وRetry، عروض 360/600/900/1200 وRTL/LTR وLight/Dark وTextScaler=2 | مكتوب؛ لم يُشغّل في هذه المراجعة |
 
 نتيجة GitHub Actions للدفعة: `dart format --set-exit-if-changed .` فشل؛ Analyze وTest تم تخطيهما. لم يُشغّل Flutter محلياً. لا توجد نتيجة نجاح موثقة لهذه الاختبارات.
