@@ -118,6 +118,12 @@ class AppShell extends StatelessWidget {
     return guard.confirmBranch(navigationShell.currentIndex);
   }
 
+  Future<bool> _confirmAllForms() async {
+    final guard = unsavedChangesGuard;
+    if (guard == null) return true;
+    return guard.confirmAll();
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(
@@ -144,7 +150,7 @@ class AppShell extends StatelessWidget {
     Future<bool> confirmBranchChange(ScopeOption option) async {
       final ownerAllows = await beforeBranchChange?.call(option) ?? true;
       if (!ownerAllows || !context.mounted) return false;
-      return await _confirmActiveBranch() && context.mounted;
+      return await _confirmAllForms() && context.mounted;
     }
 
     Future<void> selectBranch(int branchId) async {
@@ -153,7 +159,7 @@ class AppShell extends StatelessWidget {
       if (previousBranchId != branchId &&
           access.state.isReady &&
           access.state.selectedBranchId == branchId) {
-        unsavedChangesGuard?.discardBranch(navigationShell.currentIndex);
+        unsavedChangesGuard?.discardAll();
       }
     }
 
@@ -167,7 +173,7 @@ class AppShell extends StatelessWidget {
           onSelected: () {},
           onSelectedAsync: () async {
             if (entry.requiresUnsavedChangesCheck) {
-              if (!await _confirmActiveBranch() || !context.mounted) return;
+              if (!await _confirmAllForms() || !context.mounted) return;
             }
             if (entry.onSelectedAsync != null) {
               await entry.onSelectedAsync!();
@@ -175,7 +181,7 @@ class AppShell extends StatelessWidget {
               entry.onSelected();
             }
             if (entry.requiresUnsavedChangesCheck) {
-              unsavedChangesGuard?.discardBranch(navigationShell.currentIndex);
+              unsavedChangesGuard?.discardAll();
             }
           },
         ),
