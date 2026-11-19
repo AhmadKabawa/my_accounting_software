@@ -37,6 +37,7 @@ void main() {
     expect(query, 'brand');
 
     expect(find.byType(AppBadge), findsOneWidget);
+    expect(find.text('Filters: Active'), findsOneWidget);
     expect(removed, 0);
     await tester.tap(
       find.descendant(
