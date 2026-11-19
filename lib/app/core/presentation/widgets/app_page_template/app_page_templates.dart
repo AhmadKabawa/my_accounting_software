@@ -257,9 +257,7 @@ class ListPageTemplate extends StatelessWidget {
     this.count,
     this.primaryAction,
     this.actions,
-    this.errorKey,
     this.emptyState,
-    this.onRetry,
   });
 
   final AppKey titleKey;
@@ -269,9 +267,7 @@ class ListPageTemplate extends StatelessWidget {
   final int? count;
   final Widget? primaryAction;
   final Widget? actions;
-  final AppKey? errorKey;
   final Widget? emptyState;
-  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
