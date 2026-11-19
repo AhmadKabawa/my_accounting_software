@@ -16,10 +16,15 @@ abstract final class AuthRoutes {
     'resetPassword',
   );
 
+  // AUTH-03: signed in, but the user must pick a branch first (decision 67
+  // skips it when there is a single branch).
+  static const selectBranch = RouteItem('/select-branch', 'selectBranch');
+
   /// Every route above. `route_registry.dart` collects this list, and
   /// `route_guards_test.dart` fails if a route is missing from it.
   static const List<RouteItem> all = [
     login,
+    selectBranch,
     if (AppConfig.signupEnabled) register,
     if (AppConfig.forgotPasswordEnabled) ...[forgotPassword, resetPassword],
   ];

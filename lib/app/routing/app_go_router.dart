@@ -37,6 +37,7 @@ import 'package:accounting_software/app/shell/app_shell.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
+import 'package:accounting_software/app/features/auth/presentation/pages/select_branch/select_branch_screen.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 
 class AppRouter {
@@ -115,6 +116,22 @@ class AppRouter {
           context,
           state,
           _withAuthFlow(const LoginScreen()),
+        ),
+      ),
+
+      /// ─────────────────────────────────────────
+      /// Select branch (AUTH-03)
+      /// ─────────────────────────────────────────
+      GoRoute(
+        path: AuthRoutes.selectBranch.path,
+        name: AuthRoutes.selectBranch.name,
+        pageBuilder: (context, state) => RouteTransitions.fade(
+          context,
+          state,
+          BlocProvider<AccessCubit>.value(
+            value: accessCubit,
+            child: const SelectBranchScreen(),
+          ),
         ),
       ),
 
@@ -257,5 +274,6 @@ class AppRouter {
     splashDone: splashCubit.state is SplashDone,
     onboarded: await settings.isOnboarded(),
     session: session.current,
+    branchSelectionRequired: accessCubit.state.needsBranchSelection,
   );
 }

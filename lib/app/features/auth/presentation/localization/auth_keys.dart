@@ -51,6 +51,12 @@ enum AuthKeys implements AppKey {
     en: 'Enter the code we emailed you and choose a new password',
   ),
   resetPassword(ar: 'إعادة تعيين كلمة المرور', en: 'Reset password'),
+  selectBranchTitle(ar: 'اختر الفرع', en: 'Choose a branch'),
+  selectBranchSubtitle(
+    ar: 'اختر الفرع الذي ستعمل عليه الآن',
+    en: 'Choose the branch you will work on',
+  ),
+  continueAction(ar: 'متابعة', en: 'Continue'),
   signOut(ar: 'تسجيل الخروج', en: 'Sign out'),
   showPassword(ar: 'إظهار كلمة المرور', en: 'Show password'),
   hidePassword(ar: 'إخفاء كلمة المرور', en: 'Hide password'),

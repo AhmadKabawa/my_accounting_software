@@ -17,6 +17,14 @@ class AccessState extends Equatable {
 
   bool get isReady => status == AccessStatus.ready && snapshot != null;
 
+  /// Ready, no branch chosen yet, and more than one branch to choose from
+  /// (a single viewable branch is selected automatically, decision 67).
+  bool get needsBranchSelection {
+    final data = snapshot;
+    if (!isReady || data == null || selectedBranchId != null) return false;
+    return data.branches.where((branch) => branch.canView).length > 1;
+  }
+
   @override
   List<Object?> get props => [status, snapshot, failure, selectedBranchId];
 }

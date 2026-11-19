@@ -28,11 +28,13 @@ void main() {
     bool forgotPasswordEnabled = false,
     bool onboardingEnabled = false,
     SessionStatus auth = unauth,
+    bool branchRequired = false,
   }) => resolveRedirect(
     location: location,
     splashDone: splashDone,
     onboarded: onboarded,
     session: auth,
+    branchSelectionRequired: branchRequired,
     signupEnabled: signupEnabled,
     forgotPasswordEnabled: forgotPasswordEnabled,
     onboardingEnabled: onboardingEnabled,
@@ -65,6 +67,30 @@ void main() {
       const checking = SessionChecking();
       expect(run('/profile', auth: checking), isNull);
       expect(run('/reports', auth: checking), isNull);
+    });
+  });
+
+  group('branch selection (AUTH-03)', () {
+    test('sends a signed-in user without a branch to the picker', () {
+      const picker = '/select-branch';
+      expect(run('/home', auth: authed, branchRequired: true), picker);
+      expect(run('/login', auth: authed, branchRequired: true), picker);
+    });
+
+    test('stays on the picker while a branch is required', () {
+      expect(
+        run('/select-branch', auth: authed, branchRequired: true),
+        isNull,
+      );
+    });
+
+    test('leaves the picker once no branch is required', () {
+      expect(run('/select-branch', auth: authed), '/home');
+    });
+
+    test('never applies to signed-out users', () {
+      expect(run('/select-branch'), '/login');
+      expect(run('/home', branchRequired: true), '/login');
     });
   });
 

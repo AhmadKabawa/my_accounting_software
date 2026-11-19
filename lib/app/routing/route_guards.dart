@@ -30,6 +30,7 @@ final Set<String> publicRoutes = buildPublicRoutes();
 
 /// المسارات المحمية، مذكورة صراحةً.
 final Set<String> protectedRoutes = {
+  AuthRoutes.selectBranch.path,
   HomeRoutes.home.path,
   ProfileRoutes.profile.path,
 };
@@ -41,6 +42,7 @@ String? resolveRedirect({
   required bool splashDone,
   required bool onboarded,
   required SessionStatus session,
+  bool branchSelectionRequired = false,
   bool onboardingEnabled = AppConfig.onboardingEnabled,
   bool signupEnabled = AppConfig.signupEnabled,
   bool forgotPasswordEnabled = AppConfig.forgotPasswordEnabled,
@@ -77,6 +79,11 @@ String? resolveRedirect({
   }
 
   if (authenticated) {
+    final selectBranch = AuthRoutes.selectBranch.path;
+    if (branchSelectionRequired) {
+      return location == selectBranch ? null : selectBranch;
+    }
+    if (location == selectBranch) return home;
     final authEntryRoutes = {
       AuthRoutes.login.path,
       if (signupEnabled) AuthRoutes.register.path,
