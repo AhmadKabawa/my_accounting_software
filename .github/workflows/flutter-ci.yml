@@ -45,3 +45,13 @@ jobs:
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         timeout-minutes: 20
         run: flutter test
+
+      - name: Run catalog UI widget tests
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        timeout-minutes: 10
+        run: >-
+          flutter test
+          test/core/presentation/widgets/app_searchable_dropdown_test.dart
+          test/core/presentation/widgets/app_filter_bar_test.dart
+          test/core/presentation/widgets/app_data_table_test.dart
+          test/core/presentation/widgets/list_page_template_test.dart
