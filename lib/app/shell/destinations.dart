@@ -44,3 +44,13 @@ const appDestinations = [
     branchIndex: 1,
   ),
 ];
+
+/// Filters shell destinations using the server-authoritative permission check.
+List<AppDestination> filterDestinations(
+  List<AppDestination> destinations,
+  bool Function(Permission permission) can,
+) => [
+  for (final destination in destinations)
+    if (destination.permission == null || can(destination.permission!))
+      destination,
+];

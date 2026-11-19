@@ -58,15 +58,20 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         if (branches.isNotEmpty)
-          ScopeSelector(
-            labelKey: ShellKeys.branch,
-            options: branches,
-            selectedId: selectedBranchId?.toString(),
-            beforeChange: beforeBranchChange,
-            onChanged: (option) {
-              final id = int.tryParse(option.id);
-              if (id != null) onBranchChanged(id);
-            },
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: context.ui.size.width(AppComponentSize.cardWidth),
+            ),
+            child: ScopeSelector(
+              labelKey: ShellKeys.branch,
+              options: branches,
+              selectedId: selectedBranchId?.toString(),
+              beforeChange: beforeBranchChange,
+              onChanged: (option) {
+                final id = int.tryParse(option.id);
+                if (id != null) onBranchChanged(id);
+              },
+            ),
           ),
         if (cashierSessionKey != null)
           Padding(

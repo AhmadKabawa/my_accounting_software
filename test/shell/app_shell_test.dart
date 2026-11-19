@@ -8,6 +8,12 @@ import '../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/access/domain/access_repository.dart';
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
+import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/scope_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_scope_selector/scope_selector.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
@@ -20,21 +26,26 @@ import 'package:accounting_software/app/shell/destinations.dart';
 
 const _secret = Permission('sales.view');
 
-AccessSnapshot _snapshot(Set<Permission> permissions) => AccessSnapshot(
+AccessSnapshot _snapshot(
+  Set<Permission> permissions, {
+  List<AccessBranch> branches = const [],
+}) => AccessSnapshot(
   userId: 'u1',
   username: 'shell-test',
   email: null,
   isSuperAdmin: false,
   roles: const [],
   permissions: permissions,
-  branches: const [],
+  branches: branches,
   warehouses: const [],
   posTerminals: const [],
 );
 
 class _FakeAccessRepository implements AccessRepository {
-  _FakeAccessRepository(Set<Permission> permissions)
-    : result = Right(_snapshot(permissions));
+  _FakeAccessRepository(
+    Set<Permission> permissions, {
+    List<AccessBranch> branches = const [],
+  }) : result = Right(_snapshot(permissions, branches: branches));
 
   Either<Failure, AccessSnapshot> result;
 
@@ -55,22 +66,6 @@ final _destinations = [
   _dest(Icons.looks_3_outlined, 2),
 ];
 
-GoRouter _router() => GoRouter(
-  initialLocation: '/a',
-  routes: [
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, shell) =>
-          AppShell(navigationShell: shell, destinations: _destinations),
-      branches: [
-        for (final path in ['/a', '/b', '/c'])
-          StatefulShellBranch(
-            routes: [GoRoute(path: path, builder: (_, _) => Text(path))],
-          ),
-      ],
-    ),
-  ],
-);
-
 Future<
   ({GoRouter router, AccessCubit access, _FakeAccessRepository repository})
 >
@@ -79,6 +74,10 @@ _pump(
   Size size, {
   Set<Permission> permissions = const {Permission('sales.view')},
   List<AppDestination>? destinations,
+  int? routeBranchCount,
+  List<AccessBranch> branches = const [],
+  List<AppMenuEntry> userMenuEntries = const [],
+  Future<bool> Function(ScopeOption)? beforeBranchChange,
   ThemeData? theme,
   TextDirection direction = TextDirection.rtl,
 }) async {
@@ -86,30 +85,33 @@ _pump(
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  final repository = _FakeAccessRepository(permissions);
+  final repository = _FakeAccessRepository(permissions, branches: branches);
   final access = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
   await access.load();
   addTearDown(access.close);
 
-  final router = destinations == null
-      ? _router()
-      : GoRouter(
-          initialLocation: '/a',
-          routes: [
-            StatefulShellRoute.indexedStack(
-              builder: (context, state, shell) =>
-                  AppShell(navigationShell: shell, destinations: destinations),
-              branches: [
-                for (final path in ['/a', '/b', '/c'])
-                  StatefulShellBranch(
-                    routes: [
-                      GoRoute(path: path, builder: (_, _) => const SizedBox()),
-                    ],
-                  ),
-              ],
+  final selectedDestinations = destinations ?? _destinations;
+  final branchCount = routeBranchCount ?? selectedDestinations.length;
+  final paths = List.generate(branchCount, (index) => '/branch-$index');
+  final router = GoRouter(
+    initialLocation: paths.first,
+    routes: [
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, shell) => AppShell(
+          navigationShell: shell,
+          destinations: selectedDestinations,
+          userMenuEntries: userMenuEntries,
+          beforeBranchChange: beforeBranchChange,
+        ),
+        branches: [
+          for (final path in paths)
+            StatefulShellBranch(
+              routes: [GoRoute(path: path, builder: (_, _) => Text(path))],
             ),
-          ],
-        );
+        ],
+      ),
+    ],
+  );
   addTearDown(router.dispose);
 
   await tester.pumpWidget(
@@ -194,12 +196,12 @@ void main() {
       tester,
     ) async {
       final env = await _pump(tester, const Size(1400, 900));
-      expect(_location(env.router), '/a');
+      expect(_location(env.router), '/branch-0');
 
       await tester.tap(find.byIcon(Icons.looks_3_outlined));
       await tester.pumpAndSettle();
 
-      expect(_location(env.router), '/c');
+      expect(_location(env.router), '/branch-2');
     });
   });
 
@@ -228,22 +230,22 @@ void main() {
       await tester.tap(find.byIcon(Icons.looks_3_outlined));
       await tester.pumpAndSettle();
 
-      expect(_location(env.router), '/c');
+      expect(_location(env.router), '/branch-2');
     });
 
     testWidgets('losing the permission of the selected tab moves away', (
       tester,
     ) async {
       final env = await _pump(tester, const Size(1400, 900));
-      env.router.go('/b');
+      env.router.go('/branch-1');
       await tester.pumpAndSettle();
-      expect(_location(env.router), '/b');
+      expect(_location(env.router), '/branch-1');
 
       env.repository.result = Right(_snapshot(const <Permission>{}));
       await env.access.load();
       await tester.pumpAndSettle();
 
-      expect(_location(env.router), '/a');
+      expect(_location(env.router), '/branch-0');
       expect(find.byIcon(Icons.looks_two_outlined), findsNothing);
     });
   });
@@ -254,6 +256,7 @@ void main() {
         tester,
         const Size(390, 844),
         destinations: [_dest(Icons.looks_one_outlined, 0)],
+        routeBranchCount: 3,
       );
 
       expect(tester.takeException(), isA<AssertionError>());
@@ -311,5 +314,134 @@ void main() {
         );
       }
     }
+  });
+  group('shell access context and actions', () {
+    final branches = [
+      const AccessBranch(
+        id: 1,
+        code: 'BRANCH-NORTH',
+        name: 'North Regional Distribution and Administration Branch',
+        canView: true,
+        canOperate: true,
+      ),
+      const AccessBranch(
+        id: 2,
+        code: 'BRANCH-SOUTH',
+        name: 'South Regional Distribution and Customer Operations Branch',
+        canView: true,
+        canOperate: false,
+      ),
+    ];
+
+    testWidgets('all required widths build with long branch names', (
+      tester,
+    ) async {
+      for (final size in [
+        const Size(360, 800),
+        const Size(600, 900),
+        const Size(900, 1200),
+        const Size(1200, 900),
+      ]) {
+        await _pump(tester, size, branches: branches);
+        expect(tester.takeException(), isNull, reason: 'width $size');
+      }
+    });
+
+    testWidgets('does not show ScopeSelector without accessible branches', (
+      tester,
+    ) async {
+      await _pump(tester, const Size(1200, 900));
+      expect(find.byType(ScopeSelector), findsNothing);
+    });
+
+    testWidgets('shows view-only badge for a non-operable branch', (
+      tester,
+    ) async {
+      await _pump(tester, const Size(1200, 900), branches: [branches.last]);
+      expect(find.text(ScopeKeys.viewOnly.en), findsOneWidget);
+    });
+
+    testWidgets('beforeBranchChange is called before selecting a branch', (
+      tester,
+    ) async {
+      ScopeOption? requested;
+      final env = await _pump(
+        tester,
+        const Size(1200, 900),
+        branches: branches,
+        beforeBranchChange: (next) async {
+          requested = next;
+          return false;
+        },
+      );
+      await tester.tap(find.byTooltip('Branch'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(branches.last.name));
+      await tester.pumpAndSettle();
+      expect(requested?.id, '2');
+      expect(_location(env.router), '/branch-0');
+    });
+
+    testWidgets('notification icon remains disabled', (tester) async {
+      await _pump(tester, const Size(1200, 900));
+      final notification = tester.widget<AppIconButton>(
+        find.byType(AppIconButton),
+      );
+      expect(notification.onPressed, isNull);
+    });
+
+    testWidgets('user menu entries invoke their action', (tester) async {
+      var selected = false;
+      await _pump(
+        tester,
+        const Size(1200, 900),
+        userMenuEntries: [
+          AppMenuEntry(
+            label: TemplateKeys.save,
+            onSelected: () => selected = true,
+          ),
+        ],
+      );
+      await tester.tap(find.byTooltip('User menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(TemplateKeys.save.en));
+      await tester.pumpAndSettle();
+      expect(selected, isTrue);
+    });
+
+    testWidgets('six mobile destinations become four plus More', (
+      tester,
+    ) async {
+      final destinations = [
+        _dest(Icons.looks_one_outlined, 0),
+        _dest(Icons.looks_two_outlined, 1),
+        _dest(Icons.looks_3_outlined, 2),
+        _dest(Icons.looks_4_outlined, 3),
+        _dest(Icons.looks_5_outlined, 4),
+        _dest(Icons.looks_6_outlined, 5),
+      ];
+      final env = await _pump(
+        tester,
+        const Size(360, 800),
+        destinations: destinations,
+      );
+      final nav = tester.widget<AppNavigationBar>(
+        find.byType(AppNavigationBar),
+      );
+      expect(nav.items, hasLength(5));
+      expect(nav.items.last.label, ShellKeys.more);
+      expect(tester.takeException(), isNull);
+      nav.onIndexChanged(4);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.looks_6_outlined));
+      await tester.pumpAndSettle();
+      expect(_location(env.router), '/branch-5');
+      expect(
+        tester
+            .widget<AppNavigationBar>(find.byType(AppNavigationBar))
+            .activeIndex,
+        4,
+      );
+    });
   });
 }

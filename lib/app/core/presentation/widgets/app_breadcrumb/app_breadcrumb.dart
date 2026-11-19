@@ -36,7 +36,9 @@ class AppBreadcrumb extends StatelessWidget {
             Semantics(
               label: items[i].label.tr(context: context),
               selected: true,
-              child: AppText(items[i].label, type: AppTextType.labelSmall),
+              child: ExcludeSemantics(
+                child: AppText(items[i].label, type: AppTextType.labelSmall),
+              ),
             )
           else if (items[i].onTap == null)
             AppText(items[i].label, type: AppTextType.labelSmall, color: muted)

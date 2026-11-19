@@ -111,7 +111,14 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
   Widget _scrollableBody() {
     final body = _stateBody();
     if (body is ScrollView) return body;
-    return SingleChildScrollView(child: body);
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: body,
+        ),
+      ),
+    );
   }
 }
 

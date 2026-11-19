@@ -80,12 +80,7 @@ class AppShell extends StatelessWidget {
     );
 
     final access = context.watch<AccessCubit>();
-    final visible = [
-      for (final destination in destinations)
-        if (destination.permission == null ||
-            access.can(destination.permission!))
-          destination,
-    ];
+    final visible = filterDestinations(destinations, access.can);
     final current = visible.indexWhere(
       (destination) => destination.branchIndex == navigationShell.currentIndex,
     );

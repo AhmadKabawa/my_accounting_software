@@ -38,12 +38,13 @@ class AppMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tooltip = tooltipKey.tr(context: context);
-    final hitArea = context.ui.size.width(AppComponentSize.hitArea);
+    final hitArea = AppComponentSize.hitArea.of(context);
 
     return Semantics(
       label: tooltip,
       button: true,
       enabled: enabled && entries.isNotEmpty,
+      excludeSemantics: true,
       child: PopupMenuButton<int>(
         tooltip: tooltip,
         enabled: enabled && entries.isNotEmpty,

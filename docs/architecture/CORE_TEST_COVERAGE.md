@@ -37,11 +37,15 @@
 
 ## تغطية القشرة وقوالب الصفحات C46/C48
 
-- `test/shell/app_shell_test.dart`: تخطيط التنقل responsive، اختيار الوجهات، وفحص إظهار الوجهات بحسب الصلاحيات.
-- `test/shell/app_page_templates_test.dart`: تأكيد الخروج بعد حارس التغييرات دون تكرار الحوار، رسالة الخطأ الافتراضية، دعم `ListView` دون تمرير متداخل، وتعطيل الحفظ أثناء `saving`.
+- `test/shell/app_shell_test.dart`: التنقل responsive، وعدم وجود استثناءات عند العروض 360/600/900/1200 مع أسماء فروع طويلة، إخفاء ScopeSelector عند غياب الفروع، شارة العرض فقط، استدعاء `beforeBranchChange`، تعطيل الجرس، تنفيذ عناصر قائمة المستخدم، وقائمة «المزيد» لست وجهات مع اختبار الانتقال ومؤشر النشاط.
+- `test/shell/destinations_test.dart`: اختبار وحدة لفلترة الوجهات وفق مصفوفة الأدوار السبعة المعرّفة في `ERP_Screen_Navigation_Map.md` وبأكواد الصلاحيات الموثقة في `A3_permissions_views.md`.
+- `test/core/presentation/widgets/app_breadcrumb_test.dart`: الفاصل في RTL/LTR، مساحة لمس الرابط، وعدم تكرار اسم العنصر الحالي في شجرة semantics.
+- `test/core/presentation/widgets/app_menu_test.dart`: مساحة اللمس، عدم تكرار اسم القائمة في شجرة semantics، واستدعاء الإجراء المختار.
+- `test/core/presentation/widgets/app_page_header_test.dart`: تكديس الإجراء في العرض الضيق، بقاؤه بجانب العنوان في العرض الواسع، والعداد الاختياري المعزول اتجاهياً.
+- `test/shell/app_page_templates_test.dart`: FormPageTemplate في Loading/Empty/Error/Content، عدم وجود Expanded داخل ScrollView، تمركز EmptyState في مساحة التمرير، تأكيد الخروج مرة واحدة، الإلغاء يبقي الصفحة، والتأكيد يخرج ويستدعي `onDiscard`.
+- `test/shell/dashboard_template_test.dart`: DashboardTemplate في Loading/Empty/Error/Grid.
 - `test/core/presentation/widgets/app_icon_button_test.dart`: مساحة اللمس وسلوك التفعيل والتعطيل لـ `AppIconButton`.
-- لا يوجد حتى الآن اختبار مباشر مستقل لـ `AppBreadcrumb` أو `AppMenu` أو `AppPageHeader` أو `AppShellTopBar`. لا تغطي اختبارات AppShell وحدها كل خصائص هذه المكونات.
-- لا تزال اختبارات جميع الأدوار السبعة وحارس النماذج في كل الحالات، والتحقق البصري على المتصفح، فجوات معروفة.
+- لا يوجد اختبار Widget مستقل لـ `AppShellTopBar` حتى الآن، ولا تحقق بصري على المتصفح أو أجهزة فعلية. اختبارات الودجت لا تثبت وحدها سلوكاً على المنصات الفعلية.
 
 ## حالة التشغيل
 
