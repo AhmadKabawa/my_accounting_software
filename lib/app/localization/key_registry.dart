@@ -1,5 +1,6 @@
 import 'package:accounting_software/app/core/access/keys/access_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/badge_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/dialog_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/erp_error_keys.dart';
@@ -21,6 +22,7 @@ import 'package:accounting_software/app/features/profile/presentation/localizati
 
 final List<AppKey> allKeys = <AppKey>[
   ...CommonKeys.values,
+  ...CatalogUiKeys.values,
   ...BadgeKeys.values,
   ...DialogKeys.values,
   ...ScopeKeys.values,
