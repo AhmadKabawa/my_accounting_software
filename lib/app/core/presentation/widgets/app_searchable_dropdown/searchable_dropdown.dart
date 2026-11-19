@@ -179,6 +179,7 @@ class _SearchableDropdownState<T extends Object>
               labelKey: widget.labelKey,
               hintKey: CatalogUiKeys.search,
               onChanged: _query,
+              onSubmitted: onFieldSubmitted,
             );
           },
           optionsViewBuilder: (context, onSelected, options) => _optionsPanel(
