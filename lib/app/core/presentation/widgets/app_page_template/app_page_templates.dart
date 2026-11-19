@@ -205,17 +205,11 @@ class DashboardTemplate extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AppPageHeader(titleKey: titleKey),
-        if (state == AppPageState.error) ...[
+        if (state == AppPageState.error)
           InlineBanner(
             messageKey: errorKey ?? TemplateKeys.defaultError,
             variant: InlineBannerVariant.error,
           ),
-          if (onRetry != null)
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: AppButton(TemplateKeys.retry, onPressed: onRetry),
-            ),
-        ],
         Expanded(
           child: switch (state) {
             AppPageState.loading => const AppSkeleton.card(),
@@ -296,11 +290,17 @@ class ListPageTemplate extends StatelessWidget {
           ),
         filterBar,
         context.ui.spacing.gap(AppSpacing.md),
-        if (state == AppPageState.error)
+        if (state == AppPageState.error) ...[
           InlineBanner(
             messageKey: errorKey ?? TemplateKeys.defaultError,
             variant: InlineBannerVariant.error,
           ),
+          if (onRetry != null)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: AppButton(TemplateKeys.retry, onPressed: onRetry),
+            ),
+        ],
         Expanded(
           child: switch (state) {
             AppPageState.loading => ListView(

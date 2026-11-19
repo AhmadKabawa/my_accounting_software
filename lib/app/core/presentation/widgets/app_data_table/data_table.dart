@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
@@ -243,7 +244,7 @@ class AppDataTable<T> extends StatelessWidget {
                   )
                 : Checkbox(
                     value: selectedIds.contains(rowId(row!)),
-                    onChanged: (value) => _toggle(row!, value ?? false),
+                    onChanged: (value) => _toggle(row as T, value ?? false),
                   ),
           ),
         for (final column in visible)
@@ -254,7 +255,6 @@ class AppDataTable<T> extends StatelessWidget {
               child: header
                   ? Semantics(
                       button: column.sortable,
-                      sortKey: column.sortable ? OrdinalSortKey(visible.indexOf(column).toDouble()) : null,
                       child: InkWell(
                         onTap: column.sortable && onSort != null
                             ? () => onSort!(DataTableSort(column.sortKey!, sortKey == column.sortKey ? !sortAscending : true))

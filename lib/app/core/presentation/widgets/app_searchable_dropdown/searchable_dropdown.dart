@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -18,7 +20,7 @@ export 'searchable_dropdown_style.dart';
 class SearchableDropdown<T extends Object> extends StatefulWidget {
   const SearchableDropdown({
     super.key,
-    required this.data,
+    required this.options,
     required this.labelKey,
     required this.optionLabel,
     required this.value,
@@ -34,7 +36,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
     this.onAddNew,
   });
 
-  final ValueListenable<_PickerData<T>> data;
+  final List<T> options;
   final AppKey labelKey;
   final String Function(T option) optionLabel;
   final String? Function(T option)? optionSubtitle;
@@ -42,6 +44,8 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   final ValueChanged<T?> onChanged;
   final ValueChanged<String>? onQueryChanged;
   final bool filterLocally;
+  final bool loading;
+  final AppKey? errorKey;
   final AppKey emptyKey;
   final bool enabled;
   final bool readOnly;
