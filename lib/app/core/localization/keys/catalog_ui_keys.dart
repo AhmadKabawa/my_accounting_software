@@ -18,6 +18,8 @@ enum CatalogUiKeys implements AppKey {
   of(ar: 'من', en: 'of'),
   selectAll(ar: 'تحديد الكل', en: 'Select all'),
   selected(ar: 'محدد', en: 'selected'),
+  sortBy(ar: 'ترتيب حسب', en: 'Sort by'),
+  paginationLabel(ar: 'صفحة @page من @lastPage', en: 'Page @page of @lastPage'),
   sortAscending(ar: 'ترتيب تصاعدي', en: 'Sort ascending'),
   sortDescending(ar: 'ترتيب تنازلي', en: 'Sort descending'),
   loading(ar: 'جارٍ التحميل', en: 'Loading'),
