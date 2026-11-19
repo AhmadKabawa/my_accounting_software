@@ -15,8 +15,7 @@ typedef _DensityValues = ({
 });
 
 /// Resolves button and field values for [density] at the given window [size].
-Future<_DensityValues>
-_resolve(WidgetTester tester, Size size, {AppDensity? density}) async {
+Future<_DensityValues> _resolve(WidgetTester tester, Size size, {AppDensity? density}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
