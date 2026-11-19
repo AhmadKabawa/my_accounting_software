@@ -31,5 +31,5 @@ enum CatalogUiKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'catalogUi.$name';
+  String get key => 'catalogui.$name';
 }
