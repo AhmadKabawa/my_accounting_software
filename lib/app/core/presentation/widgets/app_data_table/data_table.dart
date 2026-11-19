@@ -155,8 +155,14 @@ class AppDataTable<T> extends StatelessWidget {
 
   Widget _cards(BuildContext context, DataTableStyle style) {
     final visible = columns.where((c) => c.priority != DataTableColumnPriority.hiddenOnMobile).toList();
-    final primary = visible.where((c) => c.priority == DataTableColumnPriority.primary).toList();
-    final secondary = visible.where((c) => c.priority == DataTableColumnPriority.secondary).take(3).toList();
+    final declaredPrimary = visible.where((c) => c.priority == DataTableColumnPriority.primary).toList();
+    final primary = declaredPrimary.isEmpty && visible.isNotEmpty
+        ? [visible.first]
+        : declaredPrimary;
+    final secondary = visible
+        .where((c) => c.priority == DataTableColumnPriority.secondary && !primary.contains(c))
+        .take(3)
+        .toList();
     return ListView(
       children: [
         for (final row in rows)
@@ -205,6 +211,7 @@ class AppDataTable<T> extends StatelessWidget {
 
   Widget _table(BuildContext context, DataTableStyle style, {required bool full}) {
     final visible = columns.where((c) => full || c.priority != DataTableColumnPriority.secondary).toList();
+    if (!full && visible.isEmpty && columns.isNotEmpty) visible.add(columns.first);
     Widget cells(T? row, {required bool header}) => Row(
       children: [
         if (onSelectionChanged != null)
