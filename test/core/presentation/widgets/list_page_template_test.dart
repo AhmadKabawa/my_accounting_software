@@ -29,7 +29,10 @@ void main() {
               cellBuilder: (_, value) => Text(value),
             ),
           ],
-          rows: const ['Alpha', 'Beta'],
+          rows: const [
+            'Alpha',
+            'A very long catalog item description that must wrap safely',
+          ],
           rowId: (value) => value,
           errorKey: state == AppPageState.error ? CatalogUiKeys.emptyDescription : null,
           onRetry: onRetry,
