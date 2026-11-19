@@ -175,7 +175,12 @@ class _SearchableDropdownState<T extends Object>
           textEditingController: _desktopController,
           focusNode: _desktopFocusNode,
           displayStringForOption: widget.optionLabel,
-          optionsBuilder: (value) => _options(value.text),
+          optionsBuilder: (value) {
+            if (widget.loading || widget.errorKey != null) {
+              return Iterable<T>.empty();
+            }
+            return _options(value.text);
+          },
           onSelected: widget.onChanged,
           fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
             return AppTextField(
