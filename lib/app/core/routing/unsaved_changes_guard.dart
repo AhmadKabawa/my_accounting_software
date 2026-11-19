@@ -7,6 +7,10 @@ class UnsavedChangesGuard extends ChangeNotifier {
   final Map<Object, _UnsavedFormRegistration> _forms = {};
   bool _confirming = false;
 
+  /// Updates a form registration and synchronously notifies listeners.
+  ///
+  /// When called from a widget lifecycle hook during the build frame,
+  /// listeners are invoked in that same frame.
   void updateForm({
     required Object key,
     required int branchIndex,

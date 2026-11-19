@@ -283,6 +283,21 @@ void main() {
     expect(discarded, 0);
   });
 
+  testWidgets('rapid More taps open only one sheet', (tester) async {
+    await _pump(
+      tester,
+      size: const Size(390, 844),
+      dirty: true,
+    );
+    final navigation = tester.widget<AppNavigationBar>(
+      find.byType(AppNavigationBar),
+    );
+    navigation.onIndexChanged(4);
+    navigation.onIndexChanged(4);
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsOneWidget);
+  });
+
   testWidgets('More sheet inactive destination does not ask the guard', (
     tester,
   ) async {

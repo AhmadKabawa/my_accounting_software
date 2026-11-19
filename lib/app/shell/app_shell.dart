@@ -250,17 +250,12 @@ class AppShell extends StatelessWidget {
               body: shellContent,
               bottomNavigationBar: mobileItems.isEmpty
                   ? null
-                  : AppNavigationBar(
+                  : _ShellMobileNavigation(
                       items: mobileItems,
                       activeIndex: activeMobileIndex,
-                      onIndexChanged: (index) {
-                        if (index < mobileDestinations.length) {
-                          _select(context, mobileDestinations, index);
-                        } else {
-                          _showMore(context, overflow);
-                        }
-                      },
-                      showLabelsAlways: false,
+                      onDestinationSelected: (index) =>
+                          _select(context, mobileDestinations, index),
+                      onMoreSelected: () => _showMore(context, overflow),
                     ),
             );
           },
@@ -342,5 +337,50 @@ class _PersistedWindowsSidebarState extends State<_PersistedWindowsSidebar> {
     onIndexChanged: widget.onIndexChanged,
     collapsed: _collapsed,
     onToggle: _restored ? _toggle : null,
+  );
+}
+
+
+class _ShellMobileNavigation extends StatefulWidget {
+  const _ShellMobileNavigation({
+    required this.items,
+    required this.activeIndex,
+    required this.onDestinationSelected,
+    required this.onMoreSelected,
+  });
+
+  final List<NavBarItem> items;
+  final int activeIndex;
+  final ValueChanged<int> onDestinationSelected;
+  final Future<void> Function() onMoreSelected;
+
+  @override
+  State<_ShellMobileNavigation> createState() =>
+      _ShellMobileNavigationState();
+}
+
+class _ShellMobileNavigationState extends State<_ShellMobileNavigation> {
+  bool _moreSheetOpen = false;
+
+  Future<void> _select(int index) async {
+    if (index < widget.items.length - 1) {
+      widget.onDestinationSelected(index);
+      return;
+    }
+    if (_moreSheetOpen) return;
+    setState(() => _moreSheetOpen = true);
+    try {
+      await widget.onMoreSelected();
+    } finally {
+      if (mounted) setState(() => _moreSheetOpen = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => AppNavigationBar(
+    items: widget.items,
+    activeIndex: widget.activeIndex,
+    onIndexChanged: _select,
+    showLabelsAlways: false,
   );
 }
