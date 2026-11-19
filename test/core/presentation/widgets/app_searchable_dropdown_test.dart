@@ -90,6 +90,14 @@ void main() {
     expect(selected, 'Alpha');
   });
 
+  testWidgets('shows the no-results message once', (tester) async {
+    await pumpPicker(tester);
+    await tester.enterText(find.byType(TextField), 'no-match');
+    await tester.pumpAndSettle();
+
+    expect(find.text('No matching options'), findsOneWidget);
+  });
+
   testWidgets('remote search callback is debounced', (tester) async {
     final queries = <String>[];
     await pumpPicker(tester, onQueryChanged: queries.add);
