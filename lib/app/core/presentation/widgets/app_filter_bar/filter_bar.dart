@@ -138,56 +138,61 @@ class _FilterBarState extends State<FilterBar> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final search = AppTextField(
-              controller: _controller,
-              labelKey: CatalogUiKeys.search,
-              hintKey: widget.searchHintKey,
-              onChanged: _search,
-            );
-            if (mobile) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  search,
-                  context.ui.spacing.gap(AppSpacing.sm),
-                  AppButton(
-                    CatalogUiKeys.filters,
-                    variant: AppButtonVariant.outlined,
-                    onPressed: widget.filterPanelBuilder == null &&
-                            widget.filterControls.isEmpty
-                        ? null
-                        : _openFilters,
-                  ),
-                ],
-              );
-            }
-            return Row(
-              children: [
-                Expanded(child: search),
-                if (widget.filterPanelBuilder != null) ...[
-                  context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-                  AppButton(
-                    CatalogUiKeys.filters,
-                    variant: AppButtonVariant.outlined,
-                    onPressed: _openFilters,
-                  ),
-                ],
+        if (mobile)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppTextField(
+                controller: _controller,
+                labelKey: CatalogUiKeys.search,
+                hintKey: widget.searchHintKey,
+                onChanged: _search,
+              ),
+              context.ui.spacing.gap(AppSpacing.sm),
+              AppButton(
+                CatalogUiKeys.filters,
+                variant: AppButtonVariant.outlined,
+                onPressed: widget.filterPanelBuilder == null &&
+                        widget.filterControls.isEmpty
+                    ? null
+                    : _openFilters,
+              ),
+            ],
+          )
+        else
+          Row(
+            children: [
+              Expanded(
+                child: AppTextField(
+                  controller: _controller,
+                  labelKey: CatalogUiKeys.search,
+                  hintKey: widget.searchHintKey,
+                  onChanged: _search,
+                ),
+              ),
+              if (widget.filterPanelBuilder != null) ...[
+                context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
+                AppButton(
+                  CatalogUiKeys.filters,
+                  variant: AppButtonVariant.outlined,
+                  onPressed: _openFilters,
+                ),
               ],
-            );
-          },
-        ),
+            ],
+          ),
         if (!mobile && _showEditor && widget.filterPanelBuilder != null) ...[
           context.ui.spacing.gap(AppSpacing.sm),
           widget.filterPanelBuilder!(context, () {
             widget.onApply?.call();
             setState(() => _showEditor = false);
           }),
-          AppButton(CatalogUiKeys.apply, onPressed: () {
-            widget.onApply?.call();
-            setState(() => _showEditor = false);
-          }),
+          AppButton(
+            CatalogUiKeys.apply,
+            onPressed: () {
+              widget.onApply?.call();
+              setState(() => _showEditor = false);
+            },
+          ),
         ],
         if (!mobile && widget.filterControls.isNotEmpty) ...[
           context.ui.spacing.gap(AppSpacing.sm),
@@ -201,7 +206,12 @@ class _FilterBarState extends State<FilterBar> {
           context.ui.spacing.gap(AppSpacing.sm),
           Row(
             children: [
-              Expanded(child: AppText(CatalogUiKeys.activeFilters, type: AppTextType.labelMedium)),
+              Expanded(
+                child: AppText(
+                  CatalogUiKeys.activeFilters,
+                  type: AppTextType.labelMedium,
+                ),
+              ),
               AppButton(
                 CatalogUiKeys.clearAll,
                 variant: AppButtonVariant.text,
