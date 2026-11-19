@@ -261,7 +261,7 @@ class AppDataTable<T> extends StatelessWidget {
                             : null,
                         child: Row(
                           children: [
-                            Expanded(child: AppText(column.labelKey, type: AppTextType.labelMedium, weight: FontWeight.w600)),
+                            Expanded(child: AppText(column.labelKey, type: AppTextType.tableHeader, weight: FontWeight.w600)),
                             if (column.sortable && sortKey == column.sortKey)
                               AppIcon(sortAscending ? AppIcons.sortAscending : AppIcons.sortDescending, size: AppIconSize.sm),
                           ],
