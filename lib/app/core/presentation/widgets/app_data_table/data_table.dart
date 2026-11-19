@@ -159,16 +159,27 @@ class AppDataTable<T> extends StatelessWidget {
   );
 
   Widget _cards(BuildContext context, DataTableStyle style) {
-    final visible = columns.where((c) => c.priority != DataTableColumnPriority.hiddenOnMobile).toList();
-    final declaredPrimary = visible.where((c) => c.priority == DataTableColumnPriority.primary).toList();
+    final visible = columns
+        .where((column) => column.priority != DataTableColumnPriority.hiddenOnMobile)
+        .toList();
+    final declaredPrimary = visible
+        .where((column) => column.priority == DataTableColumnPriority.primary)
+        .toList();
     final primary = declaredPrimary.isEmpty && visible.isNotEmpty
         ? [visible.first]
         : declaredPrimary;
     final secondary = visible
-        .where((c) => c.priority == DataTableColumnPriority.secondary && !primary.contains(c))
+        .where(
+          (column) =>
+              column.priority == DataTableColumnPriority.secondary &&
+              !primary.contains(column),
+        )
         .take(_maxSecondaryCardFields)
         .toList();
-    final sortableColumns = visible.where((column) => column.sortable).toList();
+    final sortableColumns = visible
+        .where((column) => column.sortable)
+        .toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -185,60 +196,64 @@ class AppDataTable<T> extends StatelessWidget {
         Expanded(
           child: ListView(
             children: [
-        for (final row in rows)
-          Padding(
-            padding: EdgeInsetsDirectional.only(bottom: style.gap),
-            child: AppCard(
-              padding: AppSpacing.md,
-              onTap: onRowActivated == null ? null : () => onRowActivated!(row),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (onSelectionChanged != null)
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: Checkbox(
-                          value: selectedIds.contains(rowId(row)),
-                          onChanged: (checked) => _toggle(row, checked ?? false),
-                        ),
-                      ),
-                    if (cardBuilder != null)
-                      cardBuilder!(context, row)
-                    else ...[
-                      for (final column in primary)
-                        column.cellBuilder(context, row),
-                      for (final column in secondary)
-                        Padding(
-                          padding: EdgeInsets.only(top: style.gap),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: AppText(
-                                  column.labelKey,
-                                  type: AppTextType.labelSmall,
-                                  color: style.colors.onSurfaceVariant,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: column.cellBuilder(context, row),
-                              ),
-                            ],
+              for (final row in rows)
+                Padding(
+                  padding: EdgeInsetsDirectional.only(bottom: style.gap),
+                  child: AppCard(
+                    padding: AppSpacing.md,
+                    onTap: onRowActivated == null
+                        ? null
+                        : () => onRowActivated!(row),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (onSelectionChanged != null)
+                          Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: Checkbox(
+                              value: selectedIds.contains(rowId(row)),
+                              onChanged: (checked) =>
+                                  _toggle(row, checked ?? false),
+                            ),
                           ),
-                        ),
-                    ],
-                    if (rowActionsBuilder != null)
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: rowActionsBuilder!(context, row),
-                      ),
-                  ],
+                        if (cardBuilder != null)
+                          cardBuilder!(context, row)
+                        else ...[
+                          for (final column in primary)
+                            column.cellBuilder(context, row),
+                          for (final column in secondary)
+                            Padding(
+                              padding: EdgeInsets.only(top: style.gap),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: AppText(
+                                      column.labelKey,
+                                      type: AppTextType.labelSmall,
+                                      color: style.colors.onSurfaceVariant,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: column.cellBuilder(context, row),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                        if (rowActionsBuilder != null)
+                          Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: rowActionsBuilder!(context, row),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-        if (summaryBuilder != null) summaryBuilder!,
-        _pagination(context, mobile: true),
+              if (summaryBuilder != null) summaryBuilder!,
+              _pagination(context, mobile: true),
             ],
           ),
         ),
