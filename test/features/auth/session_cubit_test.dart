@@ -130,14 +130,28 @@ void main() {
     },
   );
 
+  test('a failed sign-out preserves the authenticated session', () async {
+    repo.unitResult = Left(NetworkFailure());
+    cubit.onAuthenticated(testUser);
+
+    final succeeded = await cubit.signOut();
+
+    expect(succeeded, isFalse);
+    expect(cubit.state, const SessionAuthenticated(testUser));
+    expect(shown.single.type, MessageType.error);
+  });
+
   blocTest<SessionCubit, SessionStatus>(
-    'a throwing sign-out still ends signed out with an error',
+    'a throwing sign-out preserves the authenticated session and reports an error',
     seed: () => const SessionAuthenticated(testUser),
     setUp: () => repo.logoutError = StateError('boom'),
     build: () => cubit,
     act: (c) => c.signOut(),
-    expect: () => [isA<SessionUnauthenticated>()],
-    verify: (_) => expect(shown.single.type, MessageType.error),
+    expect: () => <Matcher>[],
+    verify: (_) {
+      expect(cubit.state, const SessionAuthenticated(testUser));
+      expect(shown.single.type, MessageType.error);
+    },
   );
 
   test(
