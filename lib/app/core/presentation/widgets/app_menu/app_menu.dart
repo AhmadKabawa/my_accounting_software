@@ -11,6 +11,7 @@ class AppMenuEntry {
     this.icon,
     this.enabled = true,
   });
+
   final AppKey label;
   final AppIconData? icon;
   final VoidCallback onSelected;
@@ -49,7 +50,10 @@ class AppMenu extends StatelessWidget {
               children: [
                 if (entries[i].icon != null) ...[
                   AppIcon(entries[i].icon!, size: AppIconSize.md),
-                  context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
+                  context.ui.spacing.gap(
+                    AppSpacing.sm,
+                    axis: Axis.horizontal,
+                  ),
                 ],
                 AppText(entries[i].label, type: AppTextType.bodyMedium),
               ],
@@ -57,13 +61,19 @@ class AppMenu extends StatelessWidget {
           ),
       ],
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: context.ui.spacing.sm),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.ui.spacing.sm,
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) AppIcon(icon!, size: AppIconSize.md),
             if (labelKey != null) ...[
-              if (icon != null) context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
+              if (icon != null)
+                context.ui.spacing.gap(
+                  AppSpacing.xs,
+                  axis: Axis.horizontal,
+                ),
               AppText(labelKey!, type: AppTextType.labelLarge),
             ],
           ],

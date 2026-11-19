@@ -52,11 +52,13 @@ class AppShell extends StatelessWidget {
     final access = context.watch<AccessCubit>();
     final visible = [
       for (final destination in destinations)
-        if (destination.permission == null || access.can(destination.permission!))
+        if (destination.permission == null ||
+            access.can(destination.permission!))
           destination,
     ];
     final current = visible.indexWhere(
-      (destination) => destination.branchIndex == navigationShell.currentIndex,
+      (destination) =>
+          destination.branchIndex == navigationShell.currentIndex,
     );
 
     if (current == -1 && visible.isNotEmpty) {
@@ -69,7 +71,11 @@ class AppShell extends StatelessWidget {
     final items = [for (final destination in visible) destination.item];
     void onSelect(int index) => _select(visible, index);
     final snapshot = access.state.snapshot;
-    final titleKey = current >= 0 ? visible[current].item.label : visible.isNotEmpty ? visible.first.item.label : null;
+    final titleKey = current >= 0
+        ? visible[current].item.label
+        : visible.isNotEmpty
+        ? visible.first.item.label
+        : null;
 
     PreferredSizeWidget? topBar;
     if (snapshot != null && titleKey != null) {
@@ -87,7 +93,9 @@ class AppShell extends StatelessWidget {
 
     Widget withSideNav(Widget nav) => Scaffold(
       appBar: topBar,
-      body: Row(children: [nav, Expanded(child: navigationShell)]),
+      body: Row(
+        children: [nav, Expanded(child: navigationShell)],
+      ),
     );
 
     return AccessStatusGate(

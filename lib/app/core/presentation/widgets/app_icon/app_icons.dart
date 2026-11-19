@@ -42,7 +42,7 @@ abstract final class AppIcons {
   static const error = AppIconData.material(Icons.error_outline);
   static const warning = AppIconData.material(Icons.warning_amber_outlined);
   static const close = AppIconData.material(Icons.close);
-  static const notifications = AppIconData.material(Icons.notifications_outlined);
+  static const notifications = AppIconData.material(\n    Icons.notifications_outlined,\n  );
   static const more = AppIconData.material(Icons.more_vert);
 
   // Pickers (ScopeSelector).

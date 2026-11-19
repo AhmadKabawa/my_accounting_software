@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
@@ -38,8 +38,13 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final branches = [
       for (final branch in snapshot.branches)
-        ScopeOption(id: branch.id.toString(), name: branch.name, viewOnly: !branch.canOperate),
+        ScopeOption(
+          id: branch.id.toString(),
+          name: branch.name,
+          viewOnly: !branch.canOperate,
+        ),
     ];
+
     return AppBar(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,8 +69,15 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         if (cashierSessionKey != null)
           Padding(
-            padding: context.ui.padding.directional(start: AppSpacing.sm),
-            child: Center(child: AppText(cashierSessionKey!, type: AppTextType.labelMedium)),
+            padding: context.ui.padding.directional(
+              start: AppSpacing.sm,
+            ),
+            child: Center(
+              child: AppText(
+                cashierSessionKey!,
+                type: AppTextType.labelMedium,
+              ),
+            ),
           ),
         IconButton(
           tooltip: ShellKeys.notificationsUnavailable.tr(context: context),
@@ -80,8 +92,15 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
           )
         else
           Padding(
-            padding: context.ui.padding.directional(end: AppSpacing.md),
-            child: Center(child: AppText.raw(snapshot.username, type: AppTextType.labelMedium)),
+            padding: context.ui.padding.directional(
+              end: AppSpacing.md,
+            ),
+            child: Center(
+              child: AppText.raw(
+                snapshot.username,
+                type: AppTextType.labelMedium,
+              ),
+            ),
           ),
       ],
     );
