@@ -5,7 +5,12 @@ enum TemplateKeys implements AppKey {
     ar: 'لديك تغييرات غير محفوظة. هل تريد المغادرة؟',
     en: 'You have unsaved changes. Leave this page?',
   ),
-  save(ar: 'حفظ', en: 'Save');
+  save(ar: 'حفظ', en: 'Save'),
+  emptyTitle(ar: 'لا توجد بيانات', en: 'Nothing here yet'),
+  emptyDescription(
+    ar: 'لا يوجد محتوى لعرضه حالياً',
+    en: 'There is no content to display yet',
+  );
 
   const TemplateKeys({required this.ar, required this.en});
 

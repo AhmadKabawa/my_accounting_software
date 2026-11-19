@@ -3,6 +3,8 @@ import 'package:accounting_software/app/core/localization/keys/template_keys.dar
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_header/app_page_header.dart';
@@ -90,11 +92,17 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
     );
   }
 
+  Widget _emptyState() => AppEmptyState(
+    icon: AppIcons.info,
+    titleKey: TemplateKeys.emptyTitle,
+    descriptionKey: TemplateKeys.emptyDescription,
+  );
+
   Widget _stateBody() => switch (widget.state) {
     AppPageState.loading => const Column(
       children: [AppSkeleton.line(), AppSkeleton.block()],
     ),
-    AppPageState.empty => widget.emptyState ?? const SizedBox.shrink(),
+    AppPageState.empty => widget.emptyState ?? _emptyState(),
     AppPageState.error || AppPageState.content => widget.child,
   };
 }
@@ -107,12 +115,14 @@ class DashboardTemplate extends StatelessWidget {
     required this.cards,
     this.loading = false,
     this.errorKey,
+    this.emptyState,
   });
 
   final AppKey titleKey;
   final List<Widget> cards;
   final bool loading;
   final AppKey? errorKey;
+  final Widget? emptyState;
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +138,13 @@ class DashboardTemplate extends StatelessWidget {
         Expanded(
           child: loading
               ? const AppSkeleton.card()
+              : cards.isEmpty
+              ? emptyState ??
+                    AppEmptyState(
+                      icon: AppIcons.info,
+                      titleKey: TemplateKeys.emptyTitle,
+                      descriptionKey: TemplateKeys.emptyDescription,
+                    )
               : GridView.builder(
                   padding: context.ui.padding.all(AppSpacing.md),
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
