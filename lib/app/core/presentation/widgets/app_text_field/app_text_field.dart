@@ -24,6 +24,7 @@ class AppTextField extends StatelessWidget {
     this.maxLines = 1,
     this.autofillHints,
     this.textInputAction = TextInputAction.next,
+    this.onChanged,
     this.onSubmitted,
     this.density,
   });
@@ -40,6 +41,7 @@ class AppTextField extends StatelessWidget {
   final int? maxLines;
   final Iterable<String>? autofillHints;
   final TextInputAction textInputAction;
+  final ValueChanged<String>? onChanged;
   final VoidCallback? onSubmitted;
 
   /// Optional per-field override; null inherits AppDensityScope.
@@ -60,6 +62,7 @@ class AppTextField extends StatelessWidget {
       autofillHints: autofillHints,
       textInputAction: textInputAction,
       validator: validator,
+      onChanged: onChanged,
       style: style.textStyle,
       onFieldSubmitted: onSubmitted == null ? null : (_) => onSubmitted!(),
       // `tr(context:)` depends on Localizations, so the label follows the
