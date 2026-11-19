@@ -67,7 +67,7 @@ class FakeAuthRepository implements AuthRepository {
   Future<Either<Failure, Unit>> logout() async {
     onLogout?.call();
     if (logoutError != null) throw logoutError!;
-    return const Right(unit);
+    return unitResult;
   }
 
   @override
