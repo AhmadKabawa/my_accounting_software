@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
@@ -11,6 +13,7 @@ class AppMenuEntry {
     this.icon,
     this.enabled = true,
     this.requiresUnsavedChangesCheck = false,
+    this.onSelectedAsync,
   });
 
   final AppKey label;
@@ -18,6 +21,7 @@ class AppMenuEntry {
   final VoidCallback onSelected;
   final bool enabled;
   final bool requiresUnsavedChangesCheck;
+  final Future<void> Function()? onSelectedAsync;
 }
 
 /// General anchored menu for page, account and row actions.
@@ -45,7 +49,14 @@ class AppMenu extends StatelessWidget {
     return PopupMenuButton<int>(
       tooltip: tooltip,
       enabled: enabled && entries.isNotEmpty,
-      onSelected: (index) => entries[index].onSelected(),
+      onSelected: (index) async {
+        final entry = entries[index];
+        if (entry.onSelectedAsync != null) {
+          await entry.onSelectedAsync!();
+        } else {
+          entry.onSelected();
+        }
+      },
       itemBuilder: (context) => [
         for (var i = 0; i < entries.length; i++)
           PopupMenuItem<int>(

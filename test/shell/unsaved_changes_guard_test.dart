@@ -395,6 +395,29 @@ void main() {
     expect(find.text('Dirty form'), findsOneWidget);
   });
 
+  testWidgets('owner and guard approval changes scope and discards once', (
+    tester,
+  ) async {
+    var discarded = 0;
+    final env = await _pump(
+      tester,
+      size: const Size(1400, 900),
+      dirty: true,
+      withBranches: true,
+      onDiscard: () => discarded++,
+      beforeBranchChange: (_) async => true,
+    );
+    await tester.tap(find.byTooltip('Branch'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Second branch'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+    await _confirm(tester);
+    await tester.pumpAndSettle();
+    expect(env.access.state.selectedBranchId, 2);
+    expect(discarded, 1);
+  });
+
   testWidgets('owner rejection blocks scope change without guard dialog', (
     tester,
   ) async {

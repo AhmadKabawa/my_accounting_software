@@ -184,7 +184,8 @@ class AppRouter {
                 label: AuthKeys.signOut,
                 icon: AppIcons.logout,
                 requiresUnsavedChangesCheck: true,
-                onSelected: () => sl<SessionCubit>().signOut(),
+                onSelected: () {},
+                onSelectedAsync: () => sl<SessionCubit>().signOut(),
               ),
             ],
           );

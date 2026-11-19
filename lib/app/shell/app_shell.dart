@@ -151,10 +151,11 @@ class AppShell extends StatelessWidget {
       return await _confirmActiveBranch() && context.mounted;
     }
 
-    void selectBranch(int branchId) {
+    Future<void> selectBranch(int branchId) async {
       final previousBranchId = access.state.selectedBranchId;
-      access.selectBranch(branchId);
+      await access.selectBranch(branchId);
       if (previousBranchId != branchId &&
+          access.state.isReady &&
           access.state.selectedBranchId == branchId) {
         unsavedChangesGuard?.discardBranch(navigationShell.currentIndex);
       }
@@ -167,11 +168,16 @@ class AppShell extends StatelessWidget {
           icon: entry.icon,
           enabled: entry.enabled,
           requiresUnsavedChangesCheck: entry.requiresUnsavedChangesCheck,
-          onSelected: () async {
+          onSelected: () {},
+          onSelectedAsync: () async {
             if (entry.requiresUnsavedChangesCheck) {
               if (!await _confirmActiveBranch() || !context.mounted) return;
             }
-            entry.onSelected();
+            if (entry.onSelectedAsync != null) {
+              await entry.onSelectedAsync!();
+            } else {
+              entry.onSelected();
+            }
             if (entry.requiresUnsavedChangesCheck) {
               unsavedChangesGuard?.discardBranch(navigationShell.currentIndex);
             }
