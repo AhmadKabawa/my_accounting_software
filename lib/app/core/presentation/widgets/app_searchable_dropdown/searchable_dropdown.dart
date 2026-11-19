@@ -124,36 +124,45 @@ class _SearchableDropdownState<T extends Object>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RawAutocomplete<T>(
-      displayStringForOption: widget.optionLabel,
-      optionsBuilder: (value) => _options(value.text),
-      onSelected: widget.onChanged,
-      fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-        if (selected != null && controller.text != label && !focusNode.hasFocus) {
-          controller.text = label;
-        }
-        return TextField(
-          controller: controller,
-          focusNode: focusNode,
-          enabled: widget.enabled,
-          readOnly: widget.readOnly,
-          onChanged: _query,
-          style: AppTextFieldStyle(context).textStyle,
-          decoration: AppTextFieldStyle(context).decoration(
-            label: widget.labelKey.tr(context: context),
-            hint: CatalogUiKeys.search.tr(context: context),
+          displayStringForOption: widget.optionLabel,
+          optionsBuilder: (value) => _options(value.text),
+          onSelected: widget.onChanged,
+          fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+            if (selected != null &&
+                controller.text != label &&
+                !focusNode.hasFocus) {
+              controller.text = label;
+            }
+            return TextField(
+              controller: controller,
+              focusNode: focusNode,
+              enabled: widget.enabled,
+              readOnly: widget.readOnly,
+              onChanged: _query,
+              style: AppTextFieldStyle(context).textStyle,
+              decoration: AppTextFieldStyle(context).decoration(
+                label: widget.labelKey.tr(context: context),
+                hint: CatalogUiKeys.search.tr(context: context),
+              ),
+            );
+          },
+          optionsViewBuilder: (context, onSelected, options) => _optionsPanel(
+            context,
+            options.toList(growable: false),
+            onSelected,
           ),
-        );
-      },
-      optionsViewBuilder: (context, onSelected, options) => _optionsPanel(
-        context,
-        options.toList(growable: false),
-        onSelected,
         ),
         if (widget.errorKey != null)
-          InlineBanner(messageKey: widget.errorKey!, variant: InlineBannerVariant.error),
+          InlineBanner(
+            messageKey: widget.errorKey!,
+            variant: InlineBannerVariant.error,
+          ),
         if (widget.loading)
           const Center(child: CircularProgressIndicator()),
-        if (!widget.loading && widget.errorKey == null && _lastQuery.isNotEmpty && _options(_lastQuery).isEmpty)
+        if (!widget.loading &&
+            widget.errorKey == null &&
+            _lastQuery.isNotEmpty &&
+            _options(_lastQuery).isEmpty)
           Padding(
             padding: context.ui.padding.all(AppSpacing.sm),
             child: AppText(widget.emptyKey),
