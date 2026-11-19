@@ -481,7 +481,9 @@ void main() {
     );
     expect(find.text('Dirty form'), findsOneWidget);
   });
-  test('confirmAll checks dirty forms in every branch and discardAll clears them', () async {
+  test(
+    'confirmAll checks dirty forms in every branch and discardAll clears them',
+    () async {
     final guard = UnsavedChangesGuard();
     addTearDown(guard.dispose);
     final confirmed = <int>[];
@@ -496,7 +498,10 @@ void main() {
           confirmed.add(branch);
           return true;
         },
-        discard: () => discarded.add(branch),
+        discard: () {
+          discarded.add(branch);
+          guard.unregister('form-$branch');
+        },
       );
     }
 
@@ -510,7 +515,9 @@ void main() {
     expect(confirmed, [0, 1]);
   });
 
-  test('confirmAll stops on rejection and does not discard any form', () async {
+  test(
+    'confirmAll stops on rejection and does not discard any form',
+    () async {
     final guard = UnsavedChangesGuard();
     addTearDown(guard.dispose);
     final confirmed = <int>[];
