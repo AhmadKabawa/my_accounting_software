@@ -6,14 +6,22 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text_field
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+typedef _DensityValues = ({
+  double button,
+  double iconTouchTarget,
+  double hitArea,
+  EdgeInsets padding,
+  bool dense,
+});
+
 /// Resolves button and field values for [density] at the given window [size].
-Future<({double button, double iconTouchTarget, double hitArea, EdgeInsets padding, bool dense})>
+Future<_DensityValues>
 _resolve(WidgetTester tester, Size size, {AppDensity? density}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  late ({double button, double iconTouchTarget, double hitArea, EdgeInsets padding, bool dense}) out;
+  late _DensityValues out;
   Widget probe = Builder(
     builder: (context) {
       final button = AppButtonStyle(context);
@@ -65,7 +73,7 @@ void main() {
     expect(comfortable.dense, isFalse);
   });
 
-  testWidgets('compact on desktop keeps visual height compact and icon target accessible', (
+  testWidgets('compact desktop keeps button and icon target contracts', (
     tester,
   ) async {
     final plain = await _resolve(tester, desktop);
