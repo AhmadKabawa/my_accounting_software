@@ -225,17 +225,25 @@
 
 ## Catalog list UI — 2026-11-19
 
-- `core/presentation/widgets/app_searchable_dropdown/`: `SearchableDropdown<T>` (L2) يوفّر اختياراً مفرداً عاماً، بحثاً محلياً أو callback remote debounce، subtitle/add-new slots، حالات loading/error/empty/disabled/readOnly، وواجهة desktop keyboard/mobile BottomSheet.
-- `core/presentation/widgets/app_filter_bar/`: `FilterBar` (L3) يعرض البحث والمرشحات النشطة، ويدعم إزالة الشرائح ومسح الكل؛ محرر الفلاتر يحقن من الشاشة عبر slot. لا يملك استعلامات.
-- `core/presentation/widgets/app_data_table/`: `AppDataTable<T>` (L3) ثلاث تمثيلات حسب عرض الحاوية: cards أقل من 600، compact 600–1199، full من 1200؛ الفرز والترقيم callbacks للمالك/server، مع selection وrow actions وsummary slots. حجم الصفحة من `AppConfig.pageSizeOptions`.
-- `ListPageTemplate` أضيف إلى `app_page_template/app_page_templates.dart` (L4) ويجمع `AppPageHeader`, `FilterBar`, `AppDataTable`, `AppSkeleton`, `AppEmptyState`, `InlineBanner`.
+- `core/presentation/widgets/app_searchable_dropdown/`: `SearchableDropdown<T>` (L2) يوفّر اختياراً مفرداً عاماً، بحثاً محلياً أو callback remote debounce، subtitle/add-new slots، حالات loading/error/empty/disabled/readOnly، وواجهة desktop keyboard/mobile BottomSheet. تحديث options لا يغيّر نص البحث أو التركيز ولا يفرض إعادة تركيب RawAutocomplete.
+- `core/presentation/widgets/app_filter_bar/`: `FilterBar` (L3) يعرض البحث عبر AppTextField والمرشحات النشطة كـ AppBadge قابل للإزالة مع namedArgs للترجمة، ويدعم مسح الكل؛ محرر الفلاتر يحقن من الشاشة عبر slot. لا يملك استعلامات.
+- `core/presentation/widgets/app_data_table/`: `AppDataTable<T>` (L3) ثلاث تمثيلات حسب عرض الحاوية: cards أقل من 600، compact 600–1199، full من 1200؛ الفرز والترقيم callbacks للمالك/server، مع قائمة فرز BottomSheet للهاتف، selection وrow actions وsummary slots. حجم الصفحة من `AppConfig.pageSizeOptions`.
+- `ListPageTemplate` أضيف إلى `app_page_template/app_page_templates.dart` (L4) ويجمع `AppPageHeader`, `FilterBar`, `AppDataTable`, `AppSkeleton`, `AppEmptyState`. في حالة الخطأ يترك عرض البانر وRetry لـ AppDataTable حتى لا يتكرر المصدر.
 - لا مكوّن متصل بـ Supabase أو منطق أعمال. لا شاشة CAT-07 أو ADM-01/02 أُنشئت في هذا التحديث.
 
 
 ### استجابة C04/C10/C01/T1 — توضيح 2026-11-19
 
-- C04 يبقي TextEditingController وFocusNode على سطح المكتب ويعيد تهيئة RawAutocomplete عند استبدال مجموعة الخيارات، مع الاحتفاظ بنص البحث؛ وعلى الهاتف يستهلك BottomSheet ValueListenable لحالة options/loading/error حتى تظهر نتائج البحث البعيد أثناء بقاء الورقة مفتوحة.
+- C04 يبقي TextEditingController وFocusNode على سطح المكتب ويحدّث خيارات RawAutocomplete دون تعديل controller داخل fieldViewBuilder أو إعادة تركيب المنتقي؛ وعلى الهاتف يستهلك BottomSheet ValueListenable لحالة options/loading/error حتى تظهر نتائج البحث البعيد أثناء بقاء الورقة مفتوحة.
 - C10 يقبل `filterControls` كعناصر يمررها مالك الصفحة (ومنها SearchableDropdown C04) أو `filterPanelBuilder`؛ على الهاتف يفتح أياً منهما داخل ورقة سفلية قابلة للتمرير.
 - C01 في الهاتف يعرض Load more عبر callback `onLoadMore/hasMore`؛ التابلت/سطح المكتب يعرضان page/pageSize callbacks. صفوف الجدول قابلة للتنقل بلوحة المفاتيح، وEnter ينفذ `onRowActivated` وSpace يبدل التحديد.
 
 - C01 يستخدم AppCard الموجود لبطاقات الهاتف بدلاً من إنشاء Card style موازٍ؛ `cardBuilder` يخصص المحتوى مع بقاء selection/actions slots مستقلة.
+
+
+### تحديث جودة Catalog UI — 2026-11-19
+
+- AppTextField أضيفت له callbacks وواجهات focusNode/autofocus ليستعمله البحث وRawAutocomplete مع بقاء إدارة التركيز واضحة.
+- AppBadge يدعم namedArgs وإجراء إزالة اختياري؛ استعملته FilterBar لشارات الفلاتر النشطة.
+- AppDataTable يوفّر فرز الهاتف عبر BottomSheet، ويستخدم مفتاح paginationLabel واحداً مع page/lastPage.
+- ListPageTemplate لا يكرر بانر الخطأ أو Retry؛ AppDataTable هو مالك حالة الخطأ في صفحات القوائم.
