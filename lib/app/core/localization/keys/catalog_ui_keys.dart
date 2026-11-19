@@ -7,6 +7,8 @@ enum CatalogUiKeys implements AppKey {
   noOptions(ar: 'لا توجد خيارات مطابقة', en: 'No matching options'),
   filters(ar: 'الفلاتر', en: 'Filters'),
   activeFilters(ar: 'الفلاتر النشطة', en: 'Active filters'),
+  activeFilterLabel(ar: '@label: @value', en: '@label: @value'),
+  removeFilter(ar: 'إزالة الفلتر', en: 'Remove filter'),
   clearAll(ar: 'مسح الكل', en: 'Clear all'),
   apply(ar: 'تطبيق', en: 'Apply'),
   cancel(ar: 'إلغاء', en: 'Cancel'),
