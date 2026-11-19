@@ -30,7 +30,7 @@ void main() {
           ],
           rows: const ['Alpha', 'Beta'],
           rowId: (value) => value,
-          errorKey: state == AppPageState.error ? CatalogUiKeys.retry : null,
+          errorKey: state == AppPageState.error ? CatalogUiKeys.emptyDescription : null,
           onRetry: onRetry,
         ),
         state: state,
