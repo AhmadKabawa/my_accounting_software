@@ -114,7 +114,17 @@ class AppDataTable<T> extends StatelessWidget {
     AppDensity density,
   ) {
     if (errorKey != null) {
-      return InlineBanner(messageKey: errorKey!, variant: InlineBannerVariant.error);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InlineBanner(messageKey: errorKey!, variant: InlineBannerVariant.error),
+          if (onRetry != null)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: AppButton(CatalogUiKeys.retry, onPressed: onRetry),
+            ),
+        ],
+      );
     }
     if (loading) return _loading(context);
     if (rows.isEmpty) {
@@ -187,9 +197,6 @@ class AppDataTable<T> extends StatelessWidget {
 
   Widget _table(BuildContext context, DataTableStyle style, {required bool full}) {
     final visible = columns.where((c) => full || c.priority != DataTableColumnPriority.secondary).toList();
-    final flexTotal = visible.fold<int>(0, (sum, column) => sum + column.flex) +
-        (onSelectionChanged == null ? 0 : 1) +
-        (rowActionsBuilder == null ? 0 : 1);
     Widget cells(T? row, {required bool header}) => Row(
       children: [
         if (onSelectionChanged != null)

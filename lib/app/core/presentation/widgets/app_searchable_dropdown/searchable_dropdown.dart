@@ -106,7 +106,7 @@ class _SearchableDropdownState<T extends Object>
         child: InputDecorator(
           decoration: InputDecoration(
             labelText: widget.labelKey.tr(context: context),
-            suffixIcon: const Icon(Icons.expand_more),
+            suffixIcon: const AppIcon(AppIcons.expand),
           ),
           child: AppText.raw(
             label.isEmpty ? CatalogUiKeys.chooseOption.tr(context: context) : label,
@@ -317,7 +317,7 @@ class _MobileSearchPickerState<T extends Object>
               },
               decoration: InputDecoration(
                 labelText: widget.labelKey.tr(context: context),
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const AppIcon(AppIcons.expand),
               ),
             ),
             context.ui.spacing.gap(AppSpacing.md),

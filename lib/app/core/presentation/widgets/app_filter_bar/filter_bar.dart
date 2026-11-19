@@ -58,6 +58,7 @@ class FilterBar extends StatefulWidget {
 
 class _FilterBarState extends State<FilterBar> {
   late final TextEditingController _ownedController;
+  bool _showEditor = false;
   Timer? _debounce;
 
   TextEditingController get _controller =>
@@ -89,6 +90,10 @@ class _FilterBarState extends State<FilterBar> {
   Future<void> _openFilters() async {
     final builder = widget.filterPanelBuilder;
     if (builder == null) return;
+    if (!ScreenEngine.isMobile(context)) {
+      setState(() => _showEditor = !_showEditor);
+      return;
+    }
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -161,6 +166,17 @@ class _FilterBarState extends State<FilterBar> {
             );
           },
         ),
+        if (!mobile && _showEditor && widget.filterPanelBuilder != null) ...[
+          context.ui.spacing.gap(AppSpacing.sm),
+          widget.filterPanelBuilder!(context, () {
+            widget.onApply?.call();
+            setState(() => _showEditor = false);
+          }),
+          AppButton(CatalogUiKeys.apply, onPressed: () {
+            widget.onApply?.call();
+            setState(() => _showEditor = false);
+          }),
+        ],
         if (!mobile && widget.filterControls.isNotEmpty) ...[
           context.ui.spacing.gap(AppSpacing.sm),
           Wrap(spacing: style.gap, runSpacing: style.gap, children: widget.filterControls),
