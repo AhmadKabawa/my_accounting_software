@@ -90,3 +90,8 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 ## مفاتيح الشارات — 2026-11-19
 
 أُضيف BadgeKeys إلى core/localization/keys/badge_keys.dart وسُجل في lib/app/localization/key_registry.dart. يشمل النصوص العربية والإنجليزية لحالات المستند والسداد، والحالة الاحتياطية المحايدة، ونصاً طويلاً لاختبارات الالتفاف. كل نص ظاهر في AppBadge وDocStatusBadge يمر عبر AppKey.
+
+
+## مفاتيح Catalog UI — 2026-11-19
+
+أضيف enum `CatalogUiKeys` في `core/localization/keys/catalog_ui_keys.dart` وسُجّل ضمن `allKeys` في `key_registry.dart`. يشمل البحث والاختيار والمرشحات ومسحها وتطبيقها، حالات الفراغ والتحميل، وأزرار الترقيم والفرز، باللغتين العربية والإنجليزية.

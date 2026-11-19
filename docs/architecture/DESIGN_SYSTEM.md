@@ -81,3 +81,11 @@
 11. **`AppDensity` على `AppTextField` و`AppButton` و`AppIconButton`:** نُفِّذ بـ `AppDensityScope` (بلا نطاق = comfortable بمظهر مطابق للسابق). compact على غير الهاتف يقصّر الارتفاع المرئي لـ `AppButton` و`AppTextField` إلى `AppDensity.field` (36)، بينما يحافظ `AppIconButton` على هدف لا يقل عن `AppComponentSize.hitArea` حتى في compact. على الهاتف لا يغيّر compact ارتفاع عناصر التحكم ويحافظ زر الأيقونة على هدفه الطبيعي. اختبارات `app_density_scope_test.dart` و`density_helper_test.dart` تتحقق من الفصل بين ارتفاع الزر المرئي وهدف الأيقونة. لم يُطبَّق بعد على الجدول (C01). **تعارض مفتوح (قرارك):** هذا الملف يذكر الزر الصغير 36 والمتوسط 44 بينما الكود يتدرج حسب الجهاز (44/52 على المكتب في comfortable)؛ لم يُغيَّر comfortable.
 12. **افتراضات تنتظر صاحب المشروع:** اسم العلامة والشعار، الأرقام الغربية في الواجهة العربية، ومتى تُستعمل الأزرار الحبّية (`button-primary-pill` غير مضاف كنوع).
 13. **Figma بمتغيرات تطابق الأسماء** وملفات الشعار: خارج نطاق الكود.
+
+
+### مكونات القوائم C04/C10/C01/T1 — 2026-11-19
+
+- SearchableDropdown وFilterBar وAppDataTable وListPageTemplate تستخدم `context.ui`, AppText/AppIcon/AppButton وtokens الموجودة؛ لا نظام ألوان أو قياسات موازٍ ولا حزمة جديدة.
+- C01 يقيس عرض الحاوية عبر `ScreenEngine.screenTypeForWidth` (600 و1200 من ScreenEngine)، ويستخدم AppDensityScope: compact لجدول desktop وcomfortable للعرض الأصغر، مع override من المستدعي.
+- الفرز والبحث والفلاتر والترقيم من callbacks ومصدر بيانات الشاشة؛ Core لا ينفذ استعلامات ولا يفرز مجموعة الخادم محلياً.
+- لم يُتحقق بعد من التباين/overflow بصرياً على Chrome عند 360/600/900/1200 أو من دعم المنصات الأخرى؛ الاختبارات المكتوبة لا تُعد ناجحة قبل تشغيلها.

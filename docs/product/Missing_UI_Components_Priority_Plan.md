@@ -631,18 +631,18 @@ source_documents:
 | C09 | Skeleton | CB0 | لم يبدأ | | CAT-07 | | | | |
 | C46 | AppShell | CB0 | مراجعة | feat/ui-c46-c48-shell-templates | AUTH-03/04 | لم يُختبر بصرياً | لم يُختبر كتطبيق جوال | لم يُختبر | حارس التنقل يطلب التأكيد عند إعادة اختيار التبويب النشط وتسجيل الخروج وتغيير الفرع؛ التبويب غير النشط لا يسأل؛ رفض المالك نهائي؛ discard بعد الانتقال الفعلي. اختبار indexedStack لم يُشغّل لأن CI توقف عند format. Sidebar وحالة POS وربط الشاشات الطيّارة ما زالت غير مكتملة |
 | C47 | PermissionGate | CB0 | مراجعة | موجود في الأساس | AUTH-04 | سابقاً | سابقاً | سابقاً | المكوّن موجود ويعتمد AccessCubit ويفشل مغلقاً؛ لم يُعد بناؤه ضمن هذا الفرع |
-| C48 | قوالب T1..T7 | CB0..3 | مراجعة | feat/ui-c46-c48-shell-templates | T3 AUTH-01/05 وT5 AUTH-04 | لم يُختبر بصرياً | لم يُختبر | لم يُختبر | PageHeader وT3 وT5 موجودة مع حالات Loading/Empty/Error؛ لم تُربط بالشاشات الطيّارة بعد؛ بقية T1/T2/T4/T6/T7 مؤجلة. CI توقف عند format ولم يصل إلى analyze/test |
+| C48 | قوالب T1..T7 | CB0..3 | مراجعة | feat/ui-c46-c48-shell-templates + `feat/catalog-ui-foundation-c04-c10-c01-t1` | T3/T5 موجودان؛ T1 بانتظار CAT-07 الطيّار | لم يُختبر بصرياً | اختبارات T1 مضافة؛ CI توقف عند format | ويب: لم يُتحقق | أضيف T1 ListPageTemplate ويجمع PageHeader/C10/C01/C08/C09/C38؛ لا شاشة طيّارة بعد وفق R12. بقية T2/T4/T6/T7 مؤجلة. |
 | C49 | مدخلات أساسية | CB0/1 | مراجعة | feat/ui-c46-c48-shell-templates | AppShell user menu | لم يُختبر بصرياً | لم يُختبر | لم يُختبر | AppMenu عام ومربوط بخياري الملف الشخصي وتسجيل الخروج؛ بقية المدخلات غير منفذة |
 | C12 | ScopeSelector | CB1 | مراجعة | `feat/ui-step2-c41-c07-c12` | AUTH-03 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `core/presentation/widgets/app_scope_selector/`؛ `format` و`analyze` واختبارات الودجت الخاصة بالمكوّن نجحت على CI (تشغيل مستهدف للمكوّنات وحرّاس المعمارية والترجمة، لا الحزمة كاملة)؛ قائمة على ويب/Windows وورقة سفلية على الجوال؛ حارس السلة عبر `beforeChange` والشاشة تفتح C07 |
 | C07 | ConfirmDialog | CB1 | مراجعة | `feat/ui-step2-c41-c07-c12` | AUTH-03 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `core/presentation/widgets/app_confirm_dialog/`؛ `format` و`analyze` واختبارات الودجت الخاصة بالمكوّن نجحت على CI (تشغيل مستهدف للمكوّنات وحرّاس المعمارية والترجمة، لا الحزمة كاملة)؛ أُضيف `AppButton.autofocus`؛ الدرجة التحذيرية حوار مركزي على الجوال (القرار: المواصفة تذكر العادية والحرجة فقط) |
 | C06 | KpiCard | CB1 | لم يبدأ | | AUTH-04 | | | | |
 | C41 | CountBadge | CB1 | مراجعة | `feat/ui-step2-c41-c07-c12` | AUTH-04 | غير مُشغَّل | غير مُشغَّل | لم يُختبر | `core/presentation/widgets/app_count_badge/`؛ لم تُشغَّل `analyze` ولا الاختبارات |
 | C22 | TreeView | CB1 | لم يبدأ | | ORG-01 | | | | |
-| C01 | DataTable | CB1 | لم يبدأ | | CAT-07 | | | | |
+| C01 | DataTable | CB1 | مراجعة | `feat/catalog-ui-foundation-c04-c10-c01-t1` | CAT-07 (مخطط؛ لم يُربط) | لم يُختبر بصرياً | اختبار Widget مضاف؛ CI توقف قبل analyze/test | ويب: لم يُتحقق | ثلاث تمثيلات responsive، فرز/ترقيم server callbacks، اختيار، إجراءات، حالات. يعتمد على AppConfig.pageSizeOptions وC04 لحجم الصفحة وC08/C09/C38؛ لم يُربط بطيّار CAT-07 وفق R12. |
 | C02 | AppBadge + DocStatusBadge | CB1 | مراجعة | feat/ui-c46-c48-shell-templates | C12 وC46؛ CAT-07 (ماركات) | لم يُختبر بصرياً | اختبارات Widget موجودة؛ نتيجة التشغيل الحالية غير متحققة | لم يُختبر | L1؛ AppBadge عام وDocStatusBadge لحالات المستند والسداد. مستخدمان في C12 لوسم view-only ويصل إليهما C46 عبر ScopeSelector؛ CAT-07 لم يُبنَ بعد وفق R12. اختبارات app_badge_test وdoc_status_badge_test موجودة دون إثبات تشغيلها في CI الحالي. |
 | C03 | AmountField | CB1 | لم يبدأ | | CAT-03 | | | | |
-| C04 | SearchableDropdown | CB1 | لم يبدأ | | ADM-02 | | | | |
-| C10 | FilterBar | CB1 | لم يبدأ | | ADM-01 | | | | |
+| C04 | SearchableDropdown | CB1 | مراجعة | `feat/catalog-ui-foundation-c04-c10-c01-t1` | عام؛ الطيار الموثق ADM-02/ORG-03 لم يُنفّذ | لم يُختبر بصرياً | اختبار Widget مضاف؛ CI توقف قبل analyze/test | ويب: لم يُتحقق | بحث محلي أو callback remote debounce 300ms، اختيار واحد، subtitle وadd-new slot، loading/error/empty/disabled/readOnly؛ RawAutocomplete للويب وBottomSheet للهاتف. لا شاشة طيّارة وفق R12. |
+| C10 | FilterBar | CB1 | مراجعة | `feat/catalog-ui-foundation-c04-c10-c01-t1` | CAT-07 مخطط؛ ADM-01 غير مربوط | لم يُختبر بصرياً | اختبار Widget مضاف؛ CI توقف قبل analyze/test | ويب: لم يُتحقق | بحث مؤخر 300ms، active chips وإزالة ومسح، filter editor slot inline على العرض الواسع وBottomSheet على الهاتف. لا استعلامات بيانات داخلية؛ لا شاشة طيّارة وفق R12. |
 | C20 | Tabs | CB1 | لم يبدأ | | ORG-02 | | | | |
 | C21 | Stepper/Wizard | CB1 | لم يبدأ | | ORG-02 | | | | |
 | C40 | SecretReveal | CB1 | لم يبدأ | | ADM-01 | | | | |
@@ -726,3 +726,32 @@ source_documents:
 - **البحث والنتائج:** لا يوجد بحث خادمي؛ الحالة قيمة محلية يمررها المستدعي.
 - **الاختبارات:** `app_badge_test.dart` و`doc_status_badge_test.dart` موجودان. وجودهما لا يثبت نجاح تشغيلهما.
 - **غير المتحقق:** تشغيل الاختبارات في CI الحالي والتحقق البصري داخل CAT-07؛ شاشة CAT-07 لم تُبنَ بعد.
+
+
+## سجل تنفيذ C04/C10/C01/T1 — 2026-11-19
+
+### C04 SearchableDropdown — L2
+- **يستعمل:** AppTextFieldStyle وAppText/AppIcon وInlineBanner وRawAutocomplete وBottomSheet؛ الخيارات ومصدرها يمررهما المستدعي.
+- **يُستعمل في:** غير مربوط بشاشة حتى الآن. الخطة تسمي ADM-02/ORG-03 طياراً، بينما خطوة 3 تقترح CAT-07؛ خريطة الشاشات تسمي CAT-02 ضمن الاستخدام. لم أفترض شاشة.
+- **Variants/slots:** generic `T`، اختيار واحد، `optionLabel` و`optionSubtitle`، `filterLocally` أو `onQueryChanged`، `onAddNew`، enabled/readOnly، loading/error/empty.
+- **الاختبارات:** `app_searchable_dropdown_test.dart` يغطي بحث/اختيار، debounce، BottomSheet، disabled. تشغيله غير متحقق.
+
+### C10 FilterBar — L3
+- **يستعمل:** AppTextFieldStyle وAppButton وAppText؛ filter editor slot يمكن أن يحتوي SearchableDropdown C04، والشرائح من `FilterBarFilter`.
+- **يُستعمل في:** T1؛ شاشة CAT-07 لم تُبنَ بعد.
+- **Variants/slots:** `filterPanelBuilder`, `filterControls`, `activeFilters`, `onApply`, `onClearAll`, `onSearchChanged`; بحث 300ms افتراضياً، محرر inline على العرض الواسع وBottomSheet على الهاتف.
+- **الاختبارات:** `app_filter_bar_test.dart` يغطي debounce، إزالة/مسح، محرر desktop وmobile. تشغيله غير متحقق.
+
+### C01 DataTable — L3
+- **يستعمل:** AppConfig.pageSizeOptions وC04 وAppDensityScope وC08/C09/C38 وAppButton وAppText/AppIcon؛ تعريف الأعمدة منفصل عن البيانات، و`cellBuilder` slot للقيم المتخصصة مثل MoneyText/AppBadge.
+- **يُستعمل في:** T1؛ لا شاشة طيّارة بعد.
+- **Variants/slots:** cards (<600)، compact (600–1199)، full (≥1200) وفق عرض الحاوية؛ `cellBuilder`, `cardBuilder`, `rowActionsBuilder`, `summaryBuilder`; server sort/page/pageSize callbacks؛ selection وrow activation.
+- **الاختبارات:** `app_data_table_test.dart` يغطي تمثيلات responsive، callbacks الفرز/الصفحات، selection، loading/empty، dark/LTR. تشغيله غير متحقق.
+
+### T1 ListPageTemplate — L4
+- **يستعمل:** AppPageHeader وC10 FilterBar وC01 DataTable وC08 EmptyState وC09 Skeleton وC38 InlineBanner.
+- **يُستعمل في:** لا شاشة طيّارة بعد؛ CAT-07 هو الطيار المخطط في V1_SCOPE.
+- **Slots:** `filterBar`, `dataTable`, `primaryAction`, `actions`, `emptyState`; الحالة content/loading/empty/error.
+- **الاختبارات:** `list_page_template_test.dart` يغطي التركيب وحالات loading/empty/error. تشغيله غير متحقق.
+
+**حالة الفحوص لكل المكونات:** GitHub Actions فشل عند خطوة Format؛ Analyze وTest skipped. لا تدّعِ نجاح أي اختبار حتى يعاد تشغيل CI بعد تصحيح التنسيق. لا يوجد تحقق Chrome/ويب بصري أو Android/iOS/Windows.

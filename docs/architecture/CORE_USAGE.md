@@ -483,3 +483,11 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - DocStatusBadge يستعمل AppBadge؛ C12 ScopeSelector يستعمل AppBadge لوسم view-only، وC46 AppShell يستعمل C12 في شريطه العلوي.
 - التنقل إلى فرع غير نشط لا يستدعي الحارس. إعادة اختيار الفرع النشط، وتسجيل الخروج، وتغيير فرع المؤسسة تستدعيه. رفض beforeDestinationChange يوقف التنقل مباشرة؛ رفض beforeBranchChange من المالك يسبق الحارس. لا يُستدعى discard إلا بعد اكتمال الانتقال.
 - إزالة leading الخاص بالقشرة تعني أن الصفحة/المسار مسؤول عن الرجوع؛ لا تستخدم context.pop() من AppShell لتجاوز PopScope.
+
+
+## أمثلة استخدام Catalog UI — 2026-11-19
+
+- `SearchableDropdown<String>(options: options, labelKey: FieldKeys.brand, optionLabel: (x) => x, value: selected, onChanged: onSelected)`؛ للبحث البعيد مرّر `filterLocally: false` و`onQueryChanged`، وحدّث `options` من مالك الحالة.
+- `FilterBar(onSearchChanged: cubit.search, activeFilters: chips, onClearAll: cubit.clearFilters, filterPanelBuilder: (context, apply) => FilterEditor(onApply: apply))`؛ الشاشة تملك قيم الفلاتر والاستعلام.
+- `AppDataTable<Row>(columns: columns, rows: currentServerPage, rowId: (row) => row.id, onSort: cubit.sort, onPageChanged: cubit.goToPage, onPageSizeChanged: cubit.setPageSize)`؛ لا تمرر كامل المجموعة ثم تطلب من الجدول فرزها محلياً.
+- `ListPageTemplate(titleKey: ..., filterBar: filterBar, dataTable: table, state: AppPageState.content)`؛ يُستعمل كـ body داخل مساحة ذات ارتفاع محدود (مثلاً Expanded في Scaffold/Column).

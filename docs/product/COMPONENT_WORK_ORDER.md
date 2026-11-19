@@ -11,7 +11,7 @@
 |---|---|---|
 | `AppButton` وAppIconButton | موجودان، وAppButton مرجع النمط (ملف widget + ملف `_style` بـ enums) | `AppDensity` مطبق على AppButton؛ يراجع AppIconButton عند استعماله في شاشة فعلية |
 | `AppTextField` | موجود (70 سطراً) | `AppDensity` مطبق؛ حالات الخطأ/القراءة فقط/الكلمة السرية تُراجع مع الشاشة الطيّارة |
-| `AppDensity` (توكن) | موجود ويستعمله `AppButton` و`AppTextField` | يُطبَّق على الجدول عند بنائه |
+| `AppDensity` (توكن) | موجود ويستعمله `AppButton` و`AppTextField` و`AppDataTable` | الجدول يختار compact على الحاوية المكتبية وcomfortable على الهاتف/التابلت مع override صريح |
 | `MessageViewWidgets` | موجود؛ أُصلح `hideMessage` وأضيف `failureBanner` المرتبط بـ C38 | تبقى مراجعة استخدام `AppIcon` والنصوص الحرة وفق الخطة §10 |
 | `AppIcon` | موجود، والأيقونات `Icons.*` ما زالت مستعملة داخل `core` (app_image والتنقل والرسائل) | C14: توحيد خلف `AppIcon` (حزمة الرموز بحاجة موافقتك) |
 | `AppImage` (347 سطراً) | موجود | أساس C36؛ يُقيَّم `cached_network_image` على الويب قبل C36 |
@@ -22,7 +22,7 @@
 | `AppSkeleton` (C09) | **موجود وله اختبار Widget مباشر** — أشكال line/block/card/tableRow | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
 | `AppEmptyState` (C08) | **موجود وله اختبار Widget مباشر** — `AppIcon` وعنوان ووصف `AppKey` وslot اختياري للإجراء، مع compact | لم يُستخدم في شاشة طيّارة بعد؛ يُراجع استعماله عند AUTH-04 وCAT-07 |
 | `AppBadge` و`DocStatusBadge` (C02) | **مبنيان في `core/presentation/widgets/app_badge/`**؛ AppBadge عام وDocStatusBadge إعداد حالات المستند والسداد | L1؛ مستخدمان في C12 (شارة عرض فقط) ويصل إليهما C46 عبر ScopeSelector؛ CAT-07 لم يُبنَ بعد. الاختبارات موجودة ونتيجة تشغيلها في CI الحالي غير متحققة، لذا الحالة «مراجعة» وفق R12 |
-| بقية المكوّنات (C01..C49، عدا ما سُجّل أعلاه) | **غير موجودة** | جديدة، بالترتيب التالي |
+| بقية المكوّنات (C01..C49، عدا ما سُجّل أعلاه وC01/C04/C10) | **غير موجودة** | جديدة، بالترتيب التالي |
 
 ## 2. الترتيب
 
@@ -33,7 +33,7 @@
 | **0** | — أساس (0-ب و0-ج لهما اختبارات آلية؛ C15 مؤجل إلى C24، وC14 ينتظر اعتماد حزمة الأيقونات) |
 | **1** | AUTH-01 ثم AUTH-02 | **1-أ (متوازية):** C09 Skeleton · C08 EmptyState · C38 InlineBanner (L1) — لها اختبارات Widget؛ الاستخدام في الشاشة ما زال مطلوباً. ثم **1-ب:** C47 AccessSnapshot + PermissionGate (L3) — توجد اختبارات access/snapshot/gate وShell | الخطوة 0 |
 | **2** | AUTH-03 ثم AUTH-04 | C41 CountBadge · C07 ConfirmDialog · C12 ScopeSelector (L1–L2)، ثم C46 AppShell (L3) + C48 PageHeader/T3؛ وبعدهما قالب T5 | 1 |
-| **3** | CAT-07 (ماركات: أول جدول) | **3-أ (متوازية):** C02 AppBadge + DocStatusBadge (بُنيا في core؛ يبقى استخدامهما في CAT-07 والتحقق البصري) · C49 (AppDropdown وAppMenu وAppSwitch فقط عند الحاجة) ثم **3-ب:** C04 SearchableDropdown · C10 FilterBar ثم **3-ج:** C01 DataTable · قالب T1 | 0-ب، 1 |
+| **3** | CAT-07 (ماركات: أول جدول) | **3-أ:** C02 AppBadge + DocStatusBadge (مبنيان؛ يبقى تحقق CAT-07) · C49 عند الحاجة. **3-ب:** C04 SearchableDropdown وC10 FilterBar (نُفّذا في فرع `feat/catalog-ui-foundation-c04-c10-c01-t1`؛ الاختبارات مكتوبة وCI غير متحقق). **3-ج:** C01 DataTable وT1 ListPageTemplate (نُفّذا في الفرع نفسه؛ الاختبارات مكتوبة وCI غير متحقق). لا تُعد هذه العناصر منجزة وفق R12 قبل شاشة طيّارة. | 0-ب، 1 |
 | **4** | CAT-07 (بقية التبويبات) | C26 ColorSwatch · C20 Tabs · C21 Stepper · C22 TreeView (إن كان التصنيف شجرياً: تحقق من S47) | 3 |
 | **5** | CAT-01 ثم CAT-02 | C24 DetailPane · C44 ChipSelect · C34 MoneyText · قالب T4 ثم C23 VariantMatrixGrid · C36 ImageUploader · C43 DynamicFormRenderer (`features/catalog`) | 0-أ، 4 |
 | **6** | CAT-03 ثم CAT-05 | C03 AmountField (الباقي من الخطوات السابقة) | 0-أ، 5 |
@@ -199,3 +199,15 @@ PermissionGate. حجم الصفحة من AppConfig.pageSizeOptions (قرار-75)
 - اختبار indexedStack لحفظ حالة النموذج موجود، لكن لم يُشغّل؛ تشغيل CI الأخير توقف عند فحص التنسيق، لذلك لم يصل إلى analyze أو test. لم تُثبت نتيجته تنفيذياً.
 - لا يوجد زر رجوع في AppShell؛ الرجوع ملك الصفحة/المسار حتى لا يتجاوز PopScope. غير مغطى: context.go البرمجي، زر الرجوع في المتصفح، وتغيير الرابط يدوياً.
 - **لا توجد شاشة AUTH مربوطة بالقوالب في هذا التغيير.** يتوقف العمل هنا لحين عرض الشاشة المقترحة وتغييراتها وموافقة المالك.
+
+
+## تنفيذ أساس القوائم — 2026-11-19
+
+- **الفرع:** `feat/catalog-ui-foundation-c04-c10-c01-t1`، مشتق من `feat/ui-c46-c48-shell-templates` عند `9314166618c68ab878c344e624825537a6ad9a27`؛ لم يُدمج.
+- **C04:** `SearchableDropdown<T>` عام، بحث محلي أو callback بحث خارجي مؤخر 300ms، اختيار واحد، subtitle، add-new slot، حالات تحميل/خطأ/لا نتائج، disabled/readOnly. سطح المكتب يستخدم `RawAutocomplete` بلوحة المفاتيح، والهاتف BottomSheet. لا مصدر بيانات داخلي ولا اعتماد جديد.
+- **C10:** `FilterBar` يملك debounce للبحث فقط، ويعرض الشرائح النشطة وإزالتها ومسح الكل؛ محرر الفلاتر slot من الشاشة المالكة، يظهر inline على العرض الواسع وفي BottomSheet على الهاتف. لا SQL ولا Supabase ولا حالة استعلام داخل Core.
+- **C01:** `AppDataTable<T>` يعرض بطاقات تحت 600، مضغوطاً من 600 إلى 1199، وكاملاً من 1200 فأكثر وفق `ScreenEngine.screenTypeForWidth` على عرض الحاوية. الفرز والترقيم وتغيير حجم الصفحة callbacks يرسلها المالك للخادم؛ لا فرز أو ترقيم محلي للمجموعة الكاملة. حجم الصفحة من `AppConfig.pageSizeOptions`. يشمل اختيار الصفوف، إجراءات الصف، ملخصاً اختيارياً، وحالات Skeleton/Empty/Error.
+- **T1:** `ListPageTemplate` يجمع `AppPageHeader` وFilterBar وDataTable وAppSkeleton وAppEmptyState وInlineBanner، مع slots للإجراءات والحالة؛ لا صلاحيات ولا منطق أعمال ولا اتصال بيانات.
+- **تعارض توثيقي يجب عدم إخفائه:** خطوة 3 في هذا الملف تضع C04 ضمن دفعة CAT-07، لكن كتلة C04 في الخطة تسمي ADM-02 أو ORG-03 طياراً، وخريطة الشاشات تذكر C04 في CAT-02 ولا تذكره ضمن المكونات الخاصة بـ CAT-07. لم يُنفّذ أي ربط لشاشة CAT-07 أو ADM-02/ORG-03؛ C04 مكوّن عام بانتظار حسم/تنفيذ شاشة طيّارة. C10 وC01 وT1 أيضاً لم تُربط بشاشة CAT-07 بعد.
+- **قرار تنفيذ لا قرار مالك:** بقي D-UI-03 فارغاً في سجل الخطة؛ اتبع هذا التكليف اختيار Flutter widgets الداخلية بلا حزمة DataTable خارجية، مع callbacks للفرز والترقيم من الخادم. لم أغيّر السجل إلى «قرار معتمد».
+- **الفحوص:** اختبارات Widget أُضيفت لـ C04/C10/C01/T1. GitHub Actions يتوقف عند `dart format --set-exit-if-changed .`، ولذلك لم ينفذ Analyze أو Test. لا يوجد تشغيل محلي لعدم توفر Flutter SDK في بيئة التنفيذ. التحقق البصري على Chrome لم يُنفذ.

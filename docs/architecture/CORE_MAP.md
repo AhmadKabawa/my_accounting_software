@@ -221,3 +221,12 @@
 - AppBadge وDocStatusBadge مكوّنا L1 في `core/presentation/widgets/app_badge/`. AppBadge يدعم neutral/success/warning/info/error وsmall/medium وأيقونة اختيارية مع AppKey إلزامي؛ DocStatusBadge يجهّز حالات المستند والسداد والحالة غير المعروفة المحايدة.
 - الاستخدام الحالي: C12 ScopeSelector يعرض شارة view-only عبر AppBadge؛ C46 يصل إليه عبر C12. CAT-07 لم يُبنَ بعد.
 - سلوك C46: إعادة اختيار الفرع النشط تستدعي الحارس ثم تعيد initial location؛ الفرع غير النشط لا يستدعي الحارس ويحافظ على indexedStack. رفض المالك نهائي، وbeforeBranchChange للمالك يسبق الحارس. لا زر رجوع في Shell، ولا discard إلا بعد الانتقال الفعلي.
+
+
+## Catalog list UI — 2026-11-19
+
+- `core/presentation/widgets/app_searchable_dropdown/`: `SearchableDropdown<T>` (L2) يوفّر اختياراً مفرداً عاماً، بحثاً محلياً أو callback remote debounce، subtitle/add-new slots، حالات loading/error/empty/disabled/readOnly، وواجهة desktop keyboard/mobile BottomSheet.
+- `core/presentation/widgets/app_filter_bar/`: `FilterBar` (L3) يعرض البحث والمرشحات النشطة، ويدعم إزالة الشرائح ومسح الكل؛ محرر الفلاتر يحقن من الشاشة عبر slot. لا يملك استعلامات.
+- `core/presentation/widgets/app_data_table/`: `AppDataTable<T>` (L3) ثلاث تمثيلات حسب عرض الحاوية: cards أقل من 600، compact 600–1199، full من 1200؛ الفرز والترقيم callbacks للمالك/server، مع selection وrow actions وsummary slots. حجم الصفحة من `AppConfig.pageSizeOptions`.
+- `ListPageTemplate` أضيف إلى `app_page_template/app_page_templates.dart` (L4) ويجمع `AppPageHeader`, `FilterBar`, `AppDataTable`, `AppSkeleton`, `AppEmptyState`, `InlineBanner`.
+- لا مكوّن متصل بـ Supabase أو منطق أعمال. لا شاشة CAT-07 أو ADM-01/02 أُنشئت في هذا التحديث.
