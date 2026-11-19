@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import '../../../helpers/localized_app.dart';
 
@@ -14,6 +15,7 @@ void main() {
     ValueChanged<String?>? onChanged,
     ValueChanged<String>? onQueryChanged,
     bool loading = false,
+    AppKey? errorKey,
     bool enabled = true,
   }) async {
     tester.view.physicalSize = size;
@@ -33,6 +35,7 @@ void main() {
                 onChanged: onChanged ?? (_) {},
                 onQueryChanged: onQueryChanged,
                 loading: loading,
+                errorKey: errorKey,
                 enabled: enabled,
               ),
             ),
@@ -81,6 +84,50 @@ void main() {
     await tester.tap(find.text('Beta').last);
     await tester.pumpAndSettle();
     expect(selected, 'Beta');
+  });
+
+  testWidgets('mobile picker receives updated remote results while open', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var options = <String>['Initial'];
+    String? selected;
+    await tester.pumpWidget(
+      buildTestApp(
+        home: StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: SearchableDropdown<String>(
+              options: options,
+              labelKey: CatalogUiKeys.chooseOption,
+              optionLabel: (value) => value,
+              value: null,
+              onChanged: (value) => selected = value,
+              filterLocally: false,
+              onQueryChanged: (_) => setState(() {
+                options = ['Remote result'];
+              }),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(InkWell).first);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, 'remote');
+    await tester.pump(const Duration(milliseconds: 301));
+    await tester.pumpAndSettle();
+    expect(find.text('Remote result'), findsOneWidget);
+    await tester.tap(find.text('Remote result'));
+    await tester.pumpAndSettle();
+    expect(selected, 'Remote result');
+  });
+
+  testWidgets('shows the supplied error state', (tester) async {
+    await pumpPicker(tester, errorKey: CatalogUiKeys.retry);
+    expect(find.text('Retry'), findsOneWidget);
   });
 
   testWidgets('disabled picker does not open the option sheet', (tester) async {
