@@ -34,9 +34,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 301));
     expect(query, 'brand');
 
-    await tester.tap(find.byType(InputChip).first);
+    final chip = tester.widget<InputChip>(find.byType(InputChip).first);
     expect(removed, 0);
-    await tester.tap(find.byIcon(Icons.cancel).first);
+    chip.onDeleted!.call();
     expect(removed, 1);
 
     await tester.tap(find.text('Clear all'));

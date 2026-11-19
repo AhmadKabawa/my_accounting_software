@@ -222,7 +222,6 @@ class AppDataTable<T> extends StatelessWidget {
                 ),
               ),
             ),
-          ),
         if (summaryBuilder != null) summaryBuilder!,
         _pagination(context, mobile: true),
       ],

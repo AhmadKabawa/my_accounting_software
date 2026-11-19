@@ -79,14 +79,28 @@ class _SearchableDropdownState<T extends Object>
   @override
   void didUpdateWidget(covariant SearchableDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.options, widget.options) ||
-        oldWidget.loading != widget.loading ||
-        oldWidget.errorKey != widget.errorKey) {
-      _pickerData.value = _PickerData<T>(
+    final optionsChanged = !identical(oldWidget.options, widget.options);
+    final stateChanged = oldWidget.loading != widget.loading ||
+        oldWidget.errorKey != widget.errorKey;
+    if (optionsChanged || stateChanged) {
+      final nextData = _PickerData<T>(
         options: widget.options,
         loading: widget.loading,
         errorKey: widget.errorKey,
       );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _pickerData.value = nextData;
+        if (optionsChanged && _desktopFocusNode.hasFocus) {
+          final current = _desktopController.value;
+          final query = current.text;
+          _desktopController.value = TextEditingValue(
+            text: '$query ',
+            selection: TextSelection.collapsed(offset: query.length + 1),
+          );
+          _desktopController.value = current;
+        }
+      });
     }
   }
   String _lastQuery = '';
@@ -158,7 +172,6 @@ class _SearchableDropdownState<T extends Object>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RawAutocomplete<T>(
-          key: ValueKey(identityHashCode(widget.options)),
           textEditingController: _desktopController,
           focusNode: _desktopFocusNode,
           displayStringForOption: widget.optionLabel,
