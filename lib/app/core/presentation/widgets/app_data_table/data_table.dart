@@ -159,7 +159,9 @@ class AppDataTable<T> extends StatelessWidget {
         for (final row in rows)
           Card(
             margin: EdgeInsetsDirectional.only(bottom: style.gap),
-            child: Padding(
+            child: InkWell(
+              onTap: onRowActivated == null ? null : () => onRowActivated!(row),
+              child: Padding(
               padding: style.cellPadding,
               child: cardBuilder?.call(context, row) ?? Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -189,6 +191,7 @@ class AppDataTable<T> extends StatelessWidget {
                     Align(alignment: AlignmentDirectional.centerEnd, child: rowActionsBuilder!(context, row)),
                 ],
               ),
+            ),
             ),
           ),
         if (summaryBuilder != null) summaryBuilder!,
@@ -230,8 +233,8 @@ class AppDataTable<T> extends StatelessWidget {
                         child: Row(
                           children: [
                             Expanded(child: AppText(column.labelKey, type: AppTextType.labelMedium, weight: FontWeight.w600)),
-                            if (sortKey == column.sortKey)
-                              AppIcon(sortAscending ? AppIcons.expand : AppIcons.check, size: AppIconSize.sm),
+                            if (column.sortable && sortKey == column.sortKey)
+                              AppIcon(sortAscending ? AppIcons.sortAscending : AppIcons.sortDescending, size: AppIconSize.sm),
                           ],
                         ),
                       ),

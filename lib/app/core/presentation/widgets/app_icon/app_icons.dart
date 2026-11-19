@@ -52,6 +52,8 @@ abstract final class AppIcons {
 
   // Pickers (ScopeSelector).
   static const expand = AppIconData.material(Icons.expand_more);
+  static const sortAscending = AppIconData.material(Icons.arrow_upward);
+  static const sortDescending = AppIconData.material(Icons.arrow_downward);
   static const check = AppIconData.material(Icons.check);
 
   /// Placeholder until a brand SVG asset (`AppIconData.svg(...)`) is added.
