@@ -86,6 +86,45 @@ void main() {
     expect(selected, 'Beta');
   });
 
+  testWidgets('desktop picker refreshes remote results without losing query', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var options = <String>['Initial'];
+    String? selected;
+    await tester.pumpWidget(
+      buildTestApp(
+        home: StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: SizedBox(
+              width: 900,
+              child: SearchableDropdown<String>(
+                options: options,
+                labelKey: CatalogUiKeys.chooseOption,
+                optionLabel: (value) => value,
+                value: null,
+                filterLocally: false,
+                onChanged: (value) => selected = value,
+                onQueryChanged: (_) => setState(() {
+                  options = ['Remote result'];
+                }),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.enterText(find.byType(TextField), 'remote');
+    await tester.pump(const Duration(milliseconds: 301));
+    await tester.pumpAndSettle();
+    expect(find.text('Remote result'), findsOneWidget);
+    await tester.tap(find.text('Remote result'));
+    await tester.pumpAndSettle();
+    expect(selected, 'Remote result');
+  });
+
   testWidgets('mobile picker receives updated remote results while open', (
     tester,
   ) async {
