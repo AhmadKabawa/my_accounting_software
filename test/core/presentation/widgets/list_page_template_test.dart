@@ -30,10 +30,10 @@ void main() {
           ],
           rows: const ['Alpha', 'Beta'],
           rowId: (value) => value,
+          errorKey: state == AppPageState.error ? CatalogUiKeys.retry : null,
+          onRetry: onRetry,
         ),
         state: state,
-        errorKey: CatalogUiKeys.retry,
-        onRetry: onRetry,
         primaryAction: const Text('Add item'),
       ),
     );
@@ -66,9 +66,9 @@ void main() {
         home: buildListPage(AppPageState.error, onRetry: () => retries++),
       ),
     );
-    expect(find.text('Retry'), findsNWidgets(2));
-    expect(find.text('Alpha'), findsOneWidget);
-    await tester.tap(find.text('Retry').last);
+    expect(find.text('Retry'), findsOneWidget);
+    expect(find.text('Alpha'), findsNothing);
+    await tester.tap(find.text('Retry').first);
     expect(retries, 1);
     expect(tester.takeException(), isNull);
   });
