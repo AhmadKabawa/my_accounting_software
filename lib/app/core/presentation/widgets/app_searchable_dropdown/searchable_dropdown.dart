@@ -57,6 +57,8 @@ class _SearchableDropdownState<T extends Object>
     extends State<SearchableDropdown<T>> {
   Timer? _debounce;
   late final ValueNotifier<_PickerData<T>> _pickerData;
+  late final TextEditingController _desktopController;
+  late final FocusNode _desktopFocusNode;
 
   @override
   void initState() {
@@ -66,6 +68,8 @@ class _SearchableDropdownState<T extends Object>
       loading: widget.loading,
       errorKey: widget.errorKey,
     ));
+    _desktopController = TextEditingController();
+    _desktopFocusNode = FocusNode();
   }
 
   @override
@@ -87,6 +91,8 @@ class _SearchableDropdownState<T extends Object>
   void dispose() {
     _debounce?.cancel();
     _pickerData.dispose();
+    _desktopController.dispose();
+    _desktopFocusNode.dispose();
     super.dispose();
   }
 
@@ -148,6 +154,9 @@ class _SearchableDropdownState<T extends Object>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RawAutocomplete<T>(
+          key: ValueKey(identityHashCode(widget.options)),
+          textEditingController: _desktopController,
+          focusNode: _desktopFocusNode,
           displayStringForOption: widget.optionLabel,
           optionsBuilder: (value) => _options(value.text),
           onSelected: widget.onChanged,
