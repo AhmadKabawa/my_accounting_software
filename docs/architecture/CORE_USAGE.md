@@ -452,3 +452,13 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - مجموعات `Permissions` تطابق الأكواد الفعلية: `customers`/`suppliers` ↔ `parties.*`، و`purchases` ↔ `purchasing.*`، و`journal` ↔ `accounting.*`. لا تُنشئ `module.action` غير موجود في `KnownPermissionCodes`.
 - `AccessStatusGate` يغلّف محتوى `AppShell` ويمنع عرضه حتى تصبح اللقطة جاهزة؛ عند الفشل يعرض رسالة مترجمة وزر `retry`.
 - لا تخزن الصلاحيات محلياً؛ راجع ADR-0006.
+
+
+## تحديث — استخدام القشرة والقوالب (2026-11-18)
+
+- AppMenu: مرّر List<AppMenuEntry> مع AppKey لكل عنصر، واستعمله لقوائم المستخدم وإجراءات الصفوف.
+- AppBreadcrumb: مرّر قائمة AppBreadcrumbItem؛ آخر عنصر هو موضع الصفحة الحالي.
+- AppPageHeader: عنوان AppKey، وعدد اختياري، وslot للإجراء الأساسي والفتات.
+- FormPageTemplate هو T3 وDashboardTemplate هو T5. الشاشة المالكة تمرر المحتوى والحالة والبطاقات؛ لا تضع الصلاحيات أو منطق الأعمال داخل القالب.
+- AppShell يقبل beforeBranchChange ليقرر صاحب الشاشة ما إذا كان تغيير الفرع مسموحاً بعد تأكيد C07. لا يعرف Shell شيئاً عن سلة البيع.
+- عناصر قائمة المستخدم وشارة جلسة الكاشير حالياً slots؛ لم يُربط تسجيل الخروج أو جلسة POS بعد.

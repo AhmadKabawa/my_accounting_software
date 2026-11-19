@@ -73,3 +73,10 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 ## المقايضة
 
 العربية كلها لم تعد في ملف واحد. للمراجعة اللغوية يمكن تصدير `key|ar|en` من `allKeys` إلى CSV بسكربت.
+
+
+## مفاتيح أضيفت في 2026-11-18
+
+سُجلت في lib/app/localization/key_registry.dart:
+- ShellKeys: shell.branch وshell.notificationsUnavailable وshell.userMenu.
+- TemplateKeys: template.unsavedChanges وtemplate.save.

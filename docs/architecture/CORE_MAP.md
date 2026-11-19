@@ -177,3 +177,13 @@
 - `FlashMessages` + `FlashMessageListener` (`widgets/app_message/flash_messages.dart`): رسائل تعيش بعد انتقال الصفحة.
 - `RepositoryExecutor` (`foundation/base/repository_executor.dart`): mixin لنمط try/catch + `ExceptionMapper`.
 - `HiveStorageService` و`CacheManager` تُسجَّلان في core DI.
+
+
+## تحديث 2026-11-18 — قشرة التطبيق وقوالب الصفحات
+
+- AppShell في lib/app/shell/app_shell.dart يبقى مالك التنقل المفلتر عبر AccessCubit وAccessStatusGate. أضيفت له واجهة شريط علوي اختيارية تدعم الفرع الحالي عبر ScopeSelector، فتات الخبز، قائمة المستخدم، وشارة جلسة كاشير تُمررها الميزة المالكة.
+- AppShellTopBar في presentation/widgets/app_shell يعرض الفرع وشارة القراءة فقط عند can_operate=false، ويعرض جرس إشعارات معطلاً بلا فتح في v1.
+- AppMenu في presentation/widgets/app_menu قائمة عامة مبنية على AppKey، وأيقونة اختيارية وعناصر قابلة للتعطيل.
+- AppBreadcrumb وAppPageHeader مكوّنان عامان مستقلان.
+- FormPageTemplate (T3) وDashboardTemplate (T5) في presentation/widgets/app_page_template؛ القوالب لا تقرأ الصلاحيات. الاستخدام في شاشات AUTH الطيّارة لم يُدمج بعد، لذلك لا تعد القوالب منجزة وفق R12.
+- شارة جلسة الكاشير حالياً slot من AppKey وليست اتصالاً بمصدر جلسة POS. لا توجد في AccessSnapshot حالة جلسة مفتوحة؛ مصدرها يجب أن يأتي من ميزة POS عند بنائها.

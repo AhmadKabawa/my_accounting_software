@@ -37,3 +37,11 @@
 ## حالة التشغيل
 
 لم تُشغّل `flutter test` أو `flutter analyze` ضمن الفحص النصي؛ وجود الملفات لا يثبت نجاحها. اتبع قاعدة توثيق نتائج الفحوصات في [قواعد المعمارية §9](ARCHITECTURE_RULES.md).
+
+
+## تحديث تغطية C46/C48 — 2026-11-18
+
+- أضيفت ملفات Widgets لـ AppMenu وAppBreadcrumb وAppPageHeader وAppShellTopBar وFormPageTemplate وDashboardTemplate.
+- لم تُضف بعد اختبارات Widget لهذه المكونات على عروض 360/600/900/1200 أو RTL/LTR أو الفاتح/الداكن.
+- لم يُشغّل dart format أو flutter analyze أو flutter test في هذه الجلسة؛ لا توجد نتيجة نجاح محلية مؤكدة. تحقق CI ما زال مطلوباً.
+- اختبارات فلترة القائمة لكل الأدوار السبعة وحارس تغييرات النماذج لم تُضف بعد.
