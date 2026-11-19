@@ -138,7 +138,6 @@ class _SearchableDropdownState<T extends Object>
   @override
   Widget build(BuildContext context) {
     final style = SearchableDropdownStyle(context);
-    final selected = widget.value;
     final isMobile = ScreenEngine.isMobile(context);
 
     if (!widget.enabled || widget.readOnly) {
@@ -398,6 +397,7 @@ class _MobileSearchPickerState<T extends Object>
                   controller: _searchController,
                   labelKey: widget.labelKey,
                   prefixIcon: AppIcons.search,
+                  autofocus: true,
                   onChanged: (value) {
                     setState(() => _query = value);
                     widget.onQueryChanged?.call(value);
