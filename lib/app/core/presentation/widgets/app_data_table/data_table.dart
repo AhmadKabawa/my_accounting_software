@@ -168,8 +168,23 @@ class AppDataTable<T> extends StatelessWidget {
         .where((c) => c.priority == DataTableColumnPriority.secondary && !primary.contains(c))
         .take(_maxSecondaryCardFields)
         .toList();
-    return ListView(
+    final sortableColumns = visible.where((column) => column.sortable).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (sortableColumns.isNotEmpty && onSort != null)
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: AppButton(
+              CatalogUiKeys.sortBy,
+              variant: AppButtonVariant.outlined,
+              size: AppButtonSize.small,
+              onPressed: () => _showMobileSort(context, sortableColumns),
+            ),
+          ),
+        Expanded(
+          child: ListView(
+            children: [
         for (final row in rows)
           Padding(
             padding: EdgeInsetsDirectional.only(bottom: style.gap),
@@ -224,7 +239,44 @@ class AppDataTable<T> extends StatelessWidget {
             ),
         if (summaryBuilder != null) summaryBuilder!,
         _pagination(context, mobile: true),
+            ],
+          ),
+        ),
       ],
+    );
+  }
+
+  Future<void> _showMobileSort(
+    BuildContext context,
+    List<DataTableColumn<T>> sortableColumns,
+  ) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      useSafeArea: true,
+      builder: (sheetContext) => Padding(
+        padding: sheetContext.ui.padding.all(AppSpacing.md),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final column in sortableColumns)
+              AppButton(
+                column.labelKey,
+                variant: AppButtonVariant.text,
+                onPressed: () {
+                  final key = column.sortKey!;
+                  onSort?.call(
+                    DataTableSort(
+                      key,
+                      sortKey == key ? !sortAscending : true,
+                    ),
+                  );
+                  Navigator.of(sheetContext).pop();
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -260,7 +312,7 @@ class AppDataTable<T> extends StatelessWidget {
                             : null,
                         child: Row(
                           children: [
-                            Expanded(child: AppText(column.labelKey, type: AppTextType.tableHeader, weight: FontWeight.w600)),
+                            Expanded(child: AppText(column.labelKey, type: AppTextType.tableHeader, maxLines: 2)),
                             if (column.sortable && sortKey == column.sortKey)
                               AppIcon(sortAscending ? AppIcons.sortAscending : AppIcons.sortDescending, size: AppIconSize.sm),
                           ],
@@ -383,7 +435,7 @@ class AppDataTable<T> extends StatelessWidget {
               ),
               Padding(
                 padding: context.ui.padding.symmetric(horizontal: AppSpacing.sm),
-                child: AppText.raw('${CatalogUiKeys.page.tr(context: context)} $page ${CatalogUiKeys.of.tr(context: context)} $lastPage'),
+                child: AppText.raw(CatalogUiKeys.paginationLabel.tr(context: context, namedArgs: {'page': page.toString(), 'lastPage': lastPage.toString()}), maxLines: 2),
               ),
               AppButton(
                 CatalogUiKeys.nextPage,
