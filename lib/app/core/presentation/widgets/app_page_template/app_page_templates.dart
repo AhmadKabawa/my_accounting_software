@@ -241,3 +241,75 @@ class DashboardTemplate extends StatelessWidget {
     itemBuilder: (_, index) => cards[index],
   );
 }
+
+
+/// T1 list frame. The feature supplies the page state and the already-wired
+/// FilterBar/DataTable; neither data access nor business rules live here.
+class ListPageTemplate extends StatelessWidget {
+  const ListPageTemplate({
+    super.key,
+    required this.titleKey,
+    required this.filterBar,
+    required this.dataTable,
+    this.state = AppPageState.content,
+    this.count,
+    this.primaryAction,
+    this.actions,
+    this.errorKey,
+    this.emptyState,
+    this.onRetry,
+  });
+
+  final AppKey titleKey;
+  final Widget filterBar;
+  final Widget dataTable;
+  final AppPageState state;
+  final int? count;
+  final Widget? primaryAction;
+  final Widget? actions;
+  final AppKey? errorKey;
+  final Widget? emptyState;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppPageHeader(
+          titleKey: titleKey,
+          count: count,
+          primaryAction: primaryAction,
+        ),
+        if (actions != null)
+          Padding(
+            padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
+            child: actions!,
+          ),
+        filterBar,
+        context.ui.spacing.gap(AppSpacing.md),
+        if (state == AppPageState.error)
+          InlineBanner(
+            messageKey: errorKey ?? TemplateKeys.defaultError,
+            variant: InlineBannerVariant.error,
+          ),
+        Expanded(
+          child: switch (state) {
+            AppPageState.loading => ListView(
+              children: [
+                for (var index = 0; index < 5; index++)
+                  const AppSkeleton.tableRow(),
+              ],
+            ),
+            AppPageState.empty => emptyState ?? AppEmptyState(
+              icon: AppIcons.info,
+              titleKey: TemplateKeys.emptyTitle,
+              descriptionKey: TemplateKeys.emptyDescription,
+            ),
+            AppPageState.content || AppPageState.error => dataTable,
+          },
+        ),
+      ],
+    );
+  }
+}
