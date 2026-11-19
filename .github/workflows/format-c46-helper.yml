@@ -1,0 +1,28 @@
+name: Temporary Dart format output
+on:
+  push:
+    branches:
+      - feat/ui-c46-c48-shell-templates
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.1
+          channel: stable
+      - name: Format source
+        run: dart format lib/app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: c46-formatted-source
+          path: |
+            lib/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart
+            lib/app/core/presentation/widgets/app_menu/app_menu.dart
+            lib/app/core/presentation/widgets/app_page_header/app_page_header.dart
+            lib/app/core/presentation/widgets/app_shell/app_shell_top_bar.dart
+            lib/app/shell/app_shell.dart
+            lib/app/core/presentation/widgets/app_icon/app_icons.dart
+            lib/app/routing/app_go_router.dart
+          if-no-files-found: error
