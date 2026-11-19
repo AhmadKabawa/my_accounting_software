@@ -33,6 +33,7 @@ void main() {
     List<String> rows = const ['Alpha', 'Beta'],
     bool loading = false,
     bool dark = false,
+    double textScale = 1,
     TextDirection direction = TextDirection.rtl,
     ValueChanged<DataTableSort>? onSort,
     ValueChanged<int>? onPageChanged,
@@ -50,6 +51,7 @@ void main() {
     await tester.pumpWidget(
       buildTestApp(
         direction: direction,
+        textScale: textScale,
         theme: dark ? AppTheme.dark() : AppTheme.light(),
         home: Scaffold(
           body: AppDataTable<String>(
@@ -85,6 +87,27 @@ void main() {
 
     await pumpTable(tester, size: const Size(1200, 900));
     expect(find.text('Status: Alpha'), findsOneWidget);
+  });
+
+  testWidgets('supports breakpoints, both directions, themes and large text', (
+    tester,
+  ) async {
+    const sizes = [
+      Size(360, 800),
+      Size(600, 900),
+      Size(900, 900),
+      Size(1200, 900),
+    ];
+    for (var index = 0; index < sizes.length; index++) {
+      await pumpTable(
+        tester,
+        size: sizes[index],
+        dark: index.isOdd,
+        direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
+        textScale: 2,
+      );
+      expect(tester.takeException(), isNull);
+    }
   });
 
   testWidgets('sorting and pagination are delegated to the data source', (
