@@ -65,6 +65,10 @@ void main() {
       await pumpPicker(
         tester,
         size: sizes[index],
+        options: const [
+          'A very long option label that should wrap safely in the picker',
+          'Beta',
+        ],
         dark: index.isOdd,
         direction: index.isOdd ? TextDirection.ltr : TextDirection.rtl,
         textScale: 2,
