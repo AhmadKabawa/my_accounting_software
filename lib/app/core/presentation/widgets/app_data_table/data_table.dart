@@ -296,7 +296,12 @@ class AppDataTable<T> extends StatelessWidget {
   }
 
   Widget _table(BuildContext context, DataTableStyle style, {required bool full}) {
-    final visible = columns.where((c) => full || c.priority != DataTableColumnPriority.secondary).toList();
+    final visible = columns
+        .where(
+          (column) =>
+              full || column.priority != DataTableColumnPriority.secondary,
+        )
+        .toList();
     if (!full && visible.isEmpty && columns.isNotEmpty) visible.add(columns.first);
     Widget cells(T? row, {required bool header}) => Row(
       children: [
@@ -418,7 +423,9 @@ class AppDataTable<T> extends StatelessWidget {
         child: AppButton(CatalogUiKeys.loadMore, onPressed: onLoadMore),
       );
     }
-    if (onPageChanged == null && onPageSizeChanged == null) return const SizedBox.shrink();
+    if (onPageChanged == null && onPageSizeChanged == null) {
+      return const SizedBox.shrink();
+    }
     final lastPage = totalCount == 0 ? 1 : (totalCount / pageSize).ceil();
     return Padding(
       padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
@@ -450,7 +457,16 @@ class AppDataTable<T> extends StatelessWidget {
               ),
               Padding(
                 padding: context.ui.padding.symmetric(horizontal: AppSpacing.sm),
-                child: AppText.raw(CatalogUiKeys.paginationLabel.tr(context: context, namedArgs: {'page': page.toString(), 'lastPage': lastPage.toString()}), maxLines: 2),
+                child: AppText.raw(
+                  CatalogUiKeys.paginationLabel.tr(
+                    context: context,
+                    namedArgs: {
+                      'page': page.toString(),
+                      'lastPage': lastPage.toString(),
+                    },
+                  ),
+                  maxLines: 2,
+                ),
               ),
               AppButton(
                 CatalogUiKeys.nextPage,
