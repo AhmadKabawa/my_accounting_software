@@ -110,8 +110,7 @@ class SessionCubit extends Cubit<SessionStatus>
     if (state is SessionAuthenticated) emit(SessionAuthenticated(user));
   }
 
-  Future<void> signOut() async {
-    _access?.clear();
+  Future<bool> signOut() async {
     _signingOut = true;
     Either<Failure, Unit>? result;
     try {
@@ -127,14 +126,22 @@ class SessionCubit extends Cubit<SessionStatus>
       _signingOut = false;
     }
 
-    emit(const SessionUnauthenticated());
     if (result == null) {
       _error(UnexpectedFailure());
-      return;
+      return false;
     }
-    result.fold(
-      _error,
-      (_) => _flash.post(AuthKeys.signOutSuccess, MessageType.success),
+
+    return result.fold(
+      (failure) {
+        _error(failure);
+        return false;
+      },
+      (_) {
+        _access?.clear();
+        emit(const SessionUnauthenticated());
+        _flash.post(AuthKeys.signOutSuccess, MessageType.success);
+        return true;
+      },
     );
   }
 }
