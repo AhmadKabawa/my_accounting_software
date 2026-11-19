@@ -91,6 +91,7 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
       branchIndex: branchIndex,
       dirty: _isDirty,
       confirm: _confirmLeave,
+      discard: _discardForm,
     );
   }
 
@@ -102,12 +103,14 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
       messageKey: TemplateKeys.unsavedChanges,
       severity: ConfirmDialogSeverity.warning,
     );
-    if (confirmed && mounted) {
-      setState(() => _discarded = true);
-      _syncGuardRegistration();
-      widget.onDiscard?.call();
-    }
     return confirmed;
+  }
+
+  void _discardForm() {
+    if (!_isDirty || !mounted) return;
+    setState(() => _discarded = true);
+    _syncGuardRegistration();
+    widget.onDiscard?.call();
   }
 
   @override
@@ -125,6 +128,7 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
         final leave = await _confirmLeave();
         if (leave && mounted) {
           // Navigator.pop bypasses this PopScope's canPop check.
+          _discardForm();
           Navigator.of(context).pop();
         }
       },

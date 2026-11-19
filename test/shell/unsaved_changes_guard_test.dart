@@ -328,15 +328,17 @@ void main() {
     expect(selected, isTrue);
   });
 
-  testWidgets('scope change runs unsaved guard before owner callback', (
+  testWidgets('scope change runs owner callback before unsaved guard', (
     tester,
   ) async {
     var ownerCallbackCalled = false;
+    var discarded = 0;
     final env = await _pump(
       tester,
       size: const Size(1400, 900),
       dirty: true,
       withBranches: true,
+      onDiscard: () => discarded++,
       beforeBranchChange: (_) async {
         ownerCallbackCalled = true;
         return true;
@@ -346,11 +348,33 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Second branch'));
     await tester.pumpAndSettle();
-    expect(find.byType(Dialog), findsOneWidget);
-    expect(ownerCallbackCalled, isFalse);
-    await _confirm(tester);
     expect(ownerCallbackCalled, isTrue);
+    expect(find.byType(Dialog), findsOneWidget);
+    await _cancel(tester);
     expect(env.router.routerDelegate.currentConfiguration.uri.path, '/branch-0');
+    expect(discarded, 0);
+    expect(find.text('Dirty form'), findsOneWidget);
+  });
+
+  testWidgets('owner rejection blocks scope change without guard dialog', (
+    tester,
+  ) async {
+    var discarded = 0;
+    final env = await _pump(
+      tester,
+      size: const Size(1400, 900),
+      dirty: true,
+      withBranches: true,
+      onDiscard: () => discarded++,
+      beforeBranchChange: (_) async => false,
+    );
+    await tester.tap(find.byTooltip('Branch'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Second branch'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsNothing);
+    expect(discarded, 0);
+    expect(find.text('Dirty form'), findsOneWidget);
   });
 
   testWidgets('clicking the active bottom destination asks the guard', (

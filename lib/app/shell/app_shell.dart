@@ -78,6 +78,9 @@ class AppShell extends StatelessWidget {
       return;
     }
     navigationShell.goBranch(selectedBranch);
+    if (selectedBranch == navigationShell.currentIndex) {
+      unsavedChangesGuard?.discardBranch(selectedBranch);
+    }
   }
 
   Future<bool> _canNavigateTo(
@@ -105,10 +108,12 @@ class AppShell extends StatelessWidget {
   ) async {
     final branch = visible[index].branchIndex;
     if (!await _canNavigateTo(context, branch) || !context.mounted) return;
+    final isActiveBranch = branch == navigationShell.currentIndex;
     navigationShell.goBranch(
       branch,
-      initialLocation: branch == navigationShell.currentIndex,
+      initialLocation: isActiveBranch,
     );
+    if (isActiveBranch) unsavedChangesGuard?.discardBranch(branch);
   }
 
   Future<bool> _confirmActiveBranch() async {
@@ -141,9 +146,18 @@ class AppShell extends StatelessWidget {
     final items = [for (final destination in visible) destination.item];
     Future<void> onSelect(int index) => _select(context, visible, index);
     Future<bool> confirmBranchChange(ScopeOption option) async {
-      if (!await _confirmActiveBranch() || !context.mounted) return false;
-      final allowed = await beforeBranchChange?.call(option) ?? true;
-      return allowed && context.mounted;
+      final ownerAllows = await beforeBranchChange?.call(option) ?? true;
+      if (!ownerAllows || !context.mounted) return false;
+      return _confirmActiveBranch() && context.mounted;
+    }
+
+    void selectBranch(int branchId) {
+      final previousBranchId = access.state.selectedBranchId;
+      access.selectBranch(branchId);
+      if (previousBranchId != branchId &&
+          access.state.selectedBranchId == branchId) {
+        unsavedChangesGuard?.discardBranch(navigationShell.currentIndex);
+      }
     }
 
     final guardedUserMenuEntries = [
@@ -158,6 +172,9 @@ class AppShell extends StatelessWidget {
               if (!await _confirmActiveBranch() || !context.mounted) return;
             }
             entry.onSelected();
+            if (entry.requiresUnsavedChangesCheck) {
+              unsavedChangesGuard?.discardBranch(navigationShell.currentIndex);
+            }
           },
         ),
     ];
@@ -184,7 +201,7 @@ class AppShell extends StatelessWidget {
         titleKey: titleKey,
         snapshot: snapshot,
         selectedBranchId: access.state.selectedBranchId,
-        onBranchChanged: access.selectBranch,
+        onBranchChanged: selectBranch,
         beforeBranchChange: unsavedChangesGuard == null
             ? beforeBranchChange
             : confirmBranchChange,
