@@ -19,7 +19,7 @@ class AppBadge extends StatelessWidget {
     this.labelArgs,
     this.onRemove,
     this.removeLabel,
-  });
+  }) : assert(onRemove == null || removeLabel != null);
 
   final AppKey label;
   final AppBadgeTone tone;
@@ -33,6 +33,8 @@ class AppBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final visual = AppBadgeStyle(context).resolve(tone, size);
     return Semantics(
+      container: true,
+      explicitChildNodes: true,
       label: label.tr(context: context, namedArgs: labelArgs),
       child: DecoratedBox(
         decoration: BoxDecoration(
