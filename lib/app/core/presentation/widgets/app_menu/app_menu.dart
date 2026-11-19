@@ -19,7 +19,7 @@ class AppMenuEntry {
   final VoidCallback onSelected;
   final bool enabled;
   final bool requiresUnsavedChangesCheck;
-  final Future<void> Function()? onSelectedAsync;
+  final Future<bool> Function()? onSelectedAsync;
 }
 
 /// General anchored menu for page, account and row actions.
