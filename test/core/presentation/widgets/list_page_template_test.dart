@@ -10,7 +10,7 @@ import '../../../helpers/localized_app.dart';
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  Widget buildListPage(AppPageState state) {
+  Widget buildListPage(AppPageState state, {VoidCallback? onRetry}) {
     return Scaffold(
       body: ListPageTemplate(
         titleKey: CatalogUiKeys.filters,
@@ -33,6 +33,7 @@ void main() {
         ),
         state: state,
         errorKey: CatalogUiKeys.retry,
+        onRetry: onRetry,
         primaryAction: const Text('Add item'),
       ),
     );
@@ -45,6 +46,8 @@ void main() {
     expect(find.text('Filters'), findsWidgets);
     expect(find.text('Add item'), findsOneWidget);
     expect(find.text('Alpha'), findsOneWidget);
+    await tester.tap(find.text('Retry').last);
+    expect(retries, 1);
     expect(tester.takeException(), isNull);
   });
 
@@ -59,8 +62,11 @@ void main() {
     );
     expect(find.text('No data'), findsOneWidget);
 
+    var retries = 0;
     await tester.pumpWidget(
-      buildTestApp(home: buildListPage(AppPageState.error)),
+      buildTestApp(
+        home: buildListPage(AppPageState.error, onRetry: () => retries++),
+      ),
     );
     expect(find.text(CatalogUiKeys.retry.en), findsOneWidget);
     expect(find.text('Alpha'), findsOneWidget);
