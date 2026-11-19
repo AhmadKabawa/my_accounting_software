@@ -132,11 +132,21 @@ class _SearchableDropdownState<T extends Object>
         oldWidget.loading != widget.loading ||
         oldWidget.errorKey != widget.errorKey;
     if (optionsChanged || stateChanged) {
-      _pickerData.value = _PickerData<T>(
-        options: widget.options,
-        loading: widget.loading,
-        errorKey: widget.errorKey,
-      );
+      // Recreate RawAutocomplete's options state while retaining the external
+      // controller and focus node, so remote results refresh for the current
+      // query without losing the user's text or focus.
+      _optionsRevision++;
+
+      // A modal sheet may still be listening to this notifier. Notify it
+      // after the current widget build, never from didUpdateWidget itself.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _pickerData.value = _PickerData<T>(
+          options: widget.options,
+          loading: widget.loading,
+          errorKey: widget.errorKey,
+        );
+      });
     }
 
     if (oldWidget.value != widget.value && !_desktopFocusNode.hasFocus) {
@@ -145,6 +155,7 @@ class _SearchableDropdownState<T extends Object>
   }
 
   String _lastQuery = '';
+  int _optionsRevision = 0;
 
   @override
   void dispose() {
@@ -228,6 +239,7 @@ class _SearchableDropdownState<T extends Object>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RawAutocomplete<T>(
+          key: ValueKey(_optionsRevision),
           textEditingController: _desktopController,
           focusNode: _desktopFocusNode,
           displayStringForOption: widget.optionLabel,

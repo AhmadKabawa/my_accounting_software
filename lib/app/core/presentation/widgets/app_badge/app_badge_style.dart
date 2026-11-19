@@ -41,7 +41,7 @@ class AppBadgeStyle {
     final (foreground, background) = switch (tone) {
       AppBadgeTone.neutral => (
         scheme.onSurface,
-        scheme.surfaceContainerHighest,
+        scheme.surfaceContainerLow,
       ),
       AppBadgeTone.success => (semantic.success, semantic.successContainer),
       AppBadgeTone.warning => (semantic.warning, semantic.warningContainer),

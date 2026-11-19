@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/routing/unsaved_changes_guard.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
@@ -305,8 +306,8 @@ class ListPageTemplate extends StatelessWidget {
               emptyState ??
                   AppEmptyState(
                     icon: AppIcons.info,
-                    titleKey: TemplateKeys.emptyTitle,
-                    descriptionKey: TemplateKeys.emptyDescription,
+                    titleKey: CatalogUiKeys.emptyTitle,
+                    descriptionKey: CatalogUiKeys.emptyDescription,
                   ),
             // AppDataTable owns its error banner and retry action. Do not
             // render a second page-level error/retry pair here.
