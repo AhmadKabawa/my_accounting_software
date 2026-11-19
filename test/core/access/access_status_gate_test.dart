@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/access/keys/access_keys.dart';
+import 'package:accounting_software/app/core/access/permission.dart';
 import '../../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/access/domain/access_repository.dart';
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
@@ -24,7 +26,15 @@ AccessSnapshot _snapshot() => const AccessSnapshot(
   isSuperAdmin: false,
   roles: [],
   permissions: {},
-  branches: [],
+  branches: [
+    AccessBranch(
+      id: 1,
+      code: 'MAIN',
+      name: 'Main',
+      canView: true,
+      canOperate: true,
+    ),
+  ],
   warehouses: [],
   posTerminals: [],
 );
@@ -59,4 +69,47 @@ void main() {
       expect(find.text('protected shell'), findsOneWidget);
     },
   );
+  testWidgets('shows a dedicated no-branches state without retry or shell', (
+    tester,
+  ) async {
+    final repository = _Repository()
+      ..result = Right(
+        const AccessSnapshot(
+          userId: 'u1',
+          username: 'admin',
+          email: null,
+          isSuperAdmin: false,
+          roles: [],
+          permissions: {Permission('sales.view')},
+          branches: [
+            AccessBranch(
+              id: 1,
+              code: 'HIDDEN',
+              name: 'Hidden',
+              canView: false,
+              canOperate: false,
+            ),
+          ],
+          warehouses: [],
+          posTerminals: [],
+        ),
+      );
+    final access = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
+    addTearDown(access.close);
+    await access.load();
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: access,
+        child: buildTestApp(
+          home: const AccessStatusGate(child: Text('protected shell')),
+        ),
+      ),
+    );
+
+    expect(find.text(AccessKeys.noAvailableBranches.en), findsOneWidget);
+    expect(find.text('protected shell'), findsNothing);
+    expect(find.text('Retry'), findsNothing);
+  });
+
 }

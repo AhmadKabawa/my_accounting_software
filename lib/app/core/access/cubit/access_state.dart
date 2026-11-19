@@ -17,12 +17,15 @@ class AccessState extends Equatable {
 
   bool get isReady => status == AccessStatus.ready && snapshot != null;
 
+  /// Access loaded successfully, but the account cannot view any branch.
+  bool get hasNoAvailableBranches =>
+      isReady && snapshot!.viewableBranches.isEmpty;
+
   /// Ready, no branch chosen yet, and more than one branch to choose from
   /// (a single viewable branch is selected automatically, decision 67).
   bool get needsBranchSelection {
-    final data = snapshot;
-    if (!isReady || data == null || selectedBranchId != null) return false;
-    return data.branches.where((branch) => branch.canView).length > 1;
+    if (!isReady || selectedBranchId != null) return false;
+    return snapshot!.viewableBranches.length > 1;
   }
 
   @override

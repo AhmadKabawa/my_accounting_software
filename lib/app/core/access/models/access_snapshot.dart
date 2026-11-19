@@ -23,6 +23,11 @@ class AccessSnapshot extends Equatable {
   final List<AccessRole> roles;
   final Set<Permission> permissions;
   final List<AccessBranch> branches;
+
+  /// Branches the server allows this account to view.
+  List<AccessBranch> get viewableBranches =>
+      branches.where((branch) => branch.canView).toList(growable: false);
+
   final List<AccessWarehouse> warehouses;
   final List<AccessPosTerminal> posTerminals;
 

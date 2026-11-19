@@ -18,6 +18,19 @@ class AccessStatusGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AccessCubit, AccessState>(
       builder: (context, state) {
+        if (state.hasNoAvailableBranches) {
+          return Scaffold(
+            body: Center(
+              child: Padding(
+                padding: context.ui.padding.all(AppSpacing.lg),
+                child: AppText(
+                  AccessKeys.noAvailableBranches,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          );
+        }
         if (state.isReady) return child;
 
         final isFailure = state.status == AccessStatus.failure;
