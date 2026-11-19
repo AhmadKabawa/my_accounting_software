@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_scope_selector/scope_selector.dart';
@@ -74,10 +75,10 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
               child: AppText(cashierSessionKey!, type: AppTextType.labelMedium),
             ),
           ),
-        IconButton(
-          tooltip: ShellKeys.notificationsUnavailable.tr(context: context),
+        AppIconButton(
+          AppIcons.notifications,
+          tooltipKey: ShellKeys.notificationsUnavailable,
           onPressed: null,
-          icon: const AppIcon(AppIcons.notifications),
         ),
         if (userMenuEntries.isNotEmpty)
           AppMenu(

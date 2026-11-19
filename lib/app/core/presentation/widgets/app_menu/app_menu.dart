@@ -37,38 +37,56 @@ class AppMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<int>(
-      tooltip: tooltipKey.tr(context: context),
+    final tooltip = tooltipKey.tr(context: context);
+    final hitArea = context.ui.size.width(AppComponentSize.hitArea);
+
+    return Semantics(
+      label: tooltip,
+      button: true,
       enabled: enabled && entries.isNotEmpty,
-      onSelected: (index) => entries[index].onSelected(),
-      itemBuilder: (context) => [
-        for (var i = 0; i < entries.length; i++)
-          PopupMenuItem<int>(
-            value: i,
-            enabled: entries[i].enabled,
-            child: Row(
-              children: [
-                if (entries[i].icon != null) ...[
-                  AppIcon(entries[i].icon!, size: AppIconSize.md),
-                  context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
+      child: PopupMenuButton<int>(
+        tooltip: tooltip,
+        enabled: enabled && entries.isNotEmpty,
+        onSelected: (index) => entries[index].onSelected(),
+        itemBuilder: (context) => [
+          for (var i = 0; i < entries.length; i++)
+            PopupMenuItem<int>(
+              value: i,
+              enabled: entries[i].enabled,
+              child: Row(
+                children: [
+                  if (entries[i].icon != null) ...[
+                    AppIcon(entries[i].icon!, size: AppIconSize.md),
+                    context.ui.spacing.gap(
+                      AppSpacing.sm,
+                      axis: Axis.horizontal,
+                    ),
+                  ],
+                  AppText(entries[i].label, type: AppTextType.bodyMedium),
                 ],
-                AppText(entries[i].label, type: AppTextType.bodyMedium),
+              ),
+            ),
+        ],
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: hitArea, minHeight: hitArea),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: context.ui.spacing.sm),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) AppIcon(icon!, size: AppIconSize.md),
+                if (labelKey != null) ...[
+                  if (icon != null)
+                    context.ui.spacing.gap(
+                      AppSpacing.xs,
+                      axis: Axis.horizontal,
+                    ),
+                  AppText(labelKey!, type: AppTextType.labelLarge),
+                ],
               ],
             ),
           ),
-      ],
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: context.ui.spacing.sm),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) AppIcon(icon!, size: AppIconSize.md),
-            if (labelKey != null) ...[
-              if (icon != null)
-                context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
-              AppText(labelKey!, type: AppTextType.labelLarge),
-            ],
-          ],
         ),
       ),
     );

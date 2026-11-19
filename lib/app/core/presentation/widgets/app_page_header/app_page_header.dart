@@ -4,6 +4,8 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
 /// Standard page heading with an optional count, breadcrumb and primary action.
+/// On narrow widths the action is stacked below the heading; a bottom action
+/// bar is owned by the page template, not by this header.
 class AppPageHeader extends StatelessWidget {
   const AppPageHeader({
     super.key,
@@ -28,7 +30,7 @@ class AppPageHeader extends StatelessWidget {
         if (count != null) ...[
           context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
           AppText.raw(
-            '($count)',
+            '\u2068($count)\u2069',
             type: AppTextType.titleSmall,
             color: context.ui.theme.colors.onSurfaceVariant,
           ),

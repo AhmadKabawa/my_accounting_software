@@ -3,9 +3,9 @@ import 'package:accounting_software/app/core/localization/keys/template_keys.dar
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_header/app_page_header.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
@@ -13,6 +13,10 @@ import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/a
 enum AppPageState { content, loading, empty, error }
 
 /// T3 form frame. The screen owns fields, validation and business state.
+///
+/// [child] may be an ordinary form widget, which this template makes
+/// scrollable, or a [ScrollView] such as [ListView], which is used directly
+/// to avoid nesting scroll views.
 class FormPageTemplate extends StatefulWidget {
   const FormPageTemplate({
     super.key,
@@ -21,10 +25,10 @@ class FormPageTemplate extends StatefulWidget {
     this.state = AppPageState.content,
     this.errorKey,
     this.emptyState,
-    this.primaryAction,
     this.dirty = false,
     this.onDiscard,
     this.onSave,
+    this.saving = false,
   });
 
   final AppKey titleKey;
@@ -32,18 +36,16 @@ class FormPageTemplate extends StatefulWidget {
   final AppPageState state;
   final AppKey? errorKey;
   final Widget? emptyState;
-  final Widget? primaryAction;
   final bool dirty;
   final VoidCallback? onDiscard;
   final VoidCallback? onSave;
+  final bool saving;
 
   @override
   State<FormPageTemplate> createState() => _FormPageTemplateState();
 }
 
 class _FormPageTemplateState extends State<FormPageTemplate> {
-  bool _allowPop = false;
-
   Future<bool> _confirmLeave() async {
     if (!widget.dirty) return true;
     final confirmed = await showConfirmDialog(
@@ -59,32 +61,32 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: !widget.dirty || _allowPop,
+      canPop: !widget.dirty,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop || !widget.dirty) return;
         final leave = await _confirmLeave();
         if (leave && mounted) {
-          setState(() => _allowPop = true);
-          Navigator.of(context).maybePop();
+          // Navigator.pop bypasses this PopScope's canPop check. Calling
+          // maybePop here would re-check the stale canPop value and reopen
+          // the confirmation dialog before the next frame rebuilds.
+          Navigator.of(context).pop();
         }
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AppPageHeader(
-            titleKey: widget.titleKey,
-            primaryAction: widget.primaryAction,
-          ),
-          if (widget.state == AppPageState.error && widget.errorKey != null)
+          AppPageHeader(titleKey: widget.titleKey),
+          if (widget.state == AppPageState.error)
             InlineBanner(
-              messageKey: widget.errorKey!,
+              messageKey: widget.errorKey ?? TemplateKeys.defaultError,
               variant: InlineBannerVariant.error,
             ),
-          Expanded(child: _stateBody()),
+          Expanded(child: _scrollableBody()),
           if (widget.onSave != null)
             AppButton(
               TemplateKeys.save,
-              onPressed: widget.onSave,
+              onPressed: widget.saving ? null : widget.onSave,
+              isLoading: widget.saving,
               expand: true,
             ),
         ],
@@ -105,6 +107,12 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
     AppPageState.empty => widget.emptyState ?? _emptyState(),
     AppPageState.error || AppPageState.content => widget.child,
   };
+
+  Widget _scrollableBody() {
+    final body = _stateBody();
+    if (body is ScrollView) return body;
+    return SingleChildScrollView(child: body);
+  }
 }
 
 /// T5 dashboard frame. The screen supplies role-filtered cards.
@@ -113,14 +121,14 @@ class DashboardTemplate extends StatelessWidget {
     super.key,
     required this.titleKey,
     required this.cards,
-    this.loading = false,
+    this.state = AppPageState.content,
     this.errorKey,
     this.emptyState,
   });
 
   final AppKey titleKey;
   final List<Widget> cards;
-  final bool loading;
+  final AppPageState state;
   final AppKey? errorKey;
   final Widget? emptyState;
 
@@ -130,35 +138,39 @@ class DashboardTemplate extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AppPageHeader(titleKey: titleKey),
-        if (errorKey != null)
+        if (state == AppPageState.error)
           InlineBanner(
-            messageKey: errorKey!,
+            messageKey: errorKey ?? TemplateKeys.defaultError,
             variant: InlineBannerVariant.error,
           ),
         Expanded(
-          child: loading
-              ? const AppSkeleton.card()
-              : cards.isEmpty
-              ? emptyState ??
-                    AppEmptyState(
-                      icon: AppIcons.info,
-                      titleKey: TemplateKeys.emptyTitle,
-                      descriptionKey: TemplateKeys.emptyDescription,
-                    )
-              : GridView.builder(
-                  padding: context.ui.padding.all(AppSpacing.md),
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: context.ui.size.width(
-                      AppComponentSize.cardWidth,
-                    ),
-                    crossAxisSpacing: context.ui.spacing.md,
-                    mainAxisSpacing: context.ui.spacing.md,
-                  ),
-                  itemCount: cards.length,
-                  itemBuilder: (_, index) => cards[index],
-                ),
+          child: switch (state) {
+            AppPageState.loading => const AppSkeleton.card(),
+            AppPageState.empty => _emptyState(),
+            AppPageState.content || AppPageState.error =>
+              cards.isEmpty ? _emptyState() : _cardsGrid(context),
+          },
         ),
       ],
     );
   }
+
+  Widget _emptyState() =>
+      emptyState ??
+      AppEmptyState(
+        icon: AppIcons.info,
+        titleKey: TemplateKeys.emptyTitle,
+        descriptionKey: TemplateKeys.emptyDescription,
+      );
+
+  Widget _cardsGrid(BuildContext context) => GridView.builder(
+    padding: context.ui.padding.all(AppSpacing.md),
+    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+      maxCrossAxisExtent: context.ui.size.width(AppComponentSize.cardWidth),
+      crossAxisSpacing: context.ui.spacing.md,
+      mainAxisSpacing: context.ui.spacing.md,
+    ),
+    itemCount: cards.length,
+    itemBuilder: (_, index) => cards[index],
+  );
 }

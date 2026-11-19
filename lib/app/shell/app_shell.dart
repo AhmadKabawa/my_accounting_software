@@ -18,6 +18,9 @@ import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/ap
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
+const _mobileDestinationOverflowThreshold = 5;
+const _mobileVisibleDestinationsWhenOverflow = 4;
+
 class AppShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
   final List<AppDestination> destinations;
@@ -132,20 +135,22 @@ class AppShell extends StatelessWidget {
         child: Rh.builder(
           context: context,
           mobile: (_) {
-            final hasOverflow = visible.length > 5;
+            final hasOverflow =
+                visible.length > _mobileDestinationOverflowThreshold;
             final mobileDestinations = hasOverflow
-                ? visible.take(4).toList()
+                ? visible.take(_mobileVisibleDestinationsWhenOverflow).toList()
                 : visible;
             final overflow = hasOverflow
-                ? visible.skip(4).toList()
+                ? visible.skip(_mobileVisibleDestinationsWhenOverflow).toList()
                 : <AppDestination>[];
             final mobileItems = [
               for (final destination in mobileDestinations) destination.item,
               if (hasOverflow)
                 NavBarItem.icons(icon: AppIcons.more, label: ShellKeys.more),
             ];
-            final activeMobileIndex = hasOverflow && current >= 4
-                ? 4
+            final activeMobileIndex =
+                hasOverflow && current >= _mobileVisibleDestinationsWhenOverflow
+                ? _mobileVisibleDestinationsWhenOverflow
                 : current < 0
                 ? 0
                 : current;

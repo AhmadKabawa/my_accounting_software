@@ -34,22 +34,15 @@
 - **أخرى بلا ملف اختبار مباشر:** `AuthInterceptor` و`ConnectivityInterceptor` و`CancelTokenRegistry` و`AppIcon` و`AppImage` و`BlocEffectListener` و`AppBlocObserver` و`ThemeCubit`. وبالنسبة إلى `BlocEffectListener` تحديداً، تبقى سلامة التحليل وlifecycle `NOT_VERIFIED`؛ يلزم اختبار Widget مخصص.
 
 
+
+## تغطية القشرة وقوالب الصفحات C46/C48
+
+- `test/shell/app_shell_test.dart`: تخطيط التنقل responsive، اختيار الوجهات، وفحص إظهار الوجهات بحسب الصلاحيات.
+- `test/shell/app_page_templates_test.dart`: تأكيد الخروج بعد حارس التغييرات دون تكرار الحوار، رسالة الخطأ الافتراضية، دعم `ListView` دون تمرير متداخل، وتعطيل الحفظ أثناء `saving`.
+- `test/core/presentation/widgets/app_icon_button_test.dart`: مساحة اللمس وسلوك التفعيل والتعطيل لـ `AppIconButton`.
+- لا يوجد حتى الآن اختبار مباشر مستقل لـ `AppBreadcrumb` أو `AppMenu` أو `AppPageHeader` أو `AppShellTopBar`. لا تغطي اختبارات AppShell وحدها كل خصائص هذه المكونات.
+- لا تزال اختبارات جميع الأدوار السبعة وحارس النماذج في كل الحالات، والتحقق البصري على المتصفح، فجوات معروفة.
+
 ## حالة التشغيل
 
-لم تُشغّل `flutter test` أو `flutter analyze` ضمن الفحص النصي؛ وجود الملفات لا يثبت نجاحها. اتبع قاعدة توثيق نتائج الفحوصات في [قواعد المعمارية §9](ARCHITECTURE_RULES.md).
-
-
-## تحديث تغطية C46/C48 — 2026-11-18
-
-- أضيفت ملفات Widgets لـ AppMenu وAppBreadcrumb وAppPageHeader وAppShellTopBar وFormPageTemplate وDashboardTemplate.
-- لم تُضف بعد اختبارات Widget لهذه المكونات على عروض 360/600/900/1200 أو RTL/LTR أو الفاتح/الداكن.
-- لم يُشغّل dart format أو flutter analyze أو flutter test في هذه الجلسة؛ لا توجد نتيجة نجاح محلية مؤكدة. تحقق CI ما زال مطلوباً.
-- اختبارات فلترة القائمة لكل الأدوار السبعة وحارس تغييرات النماذج لم تُضف بعد.
-
-
-## تحديث تغطية C46/C48 — 2026-11-19
-
-- أضيفت اختبارات AppShell في test/shell/app_shell_test.dart لأحجام 360 و600 و900 و1200، ولـ RTL/LTR والوضعين الفاتح والداكن. الاختبارات السابقة لفلترة الوجهات والصلاحيات ما زالت ضمن الملف.
-- آخر تشغيل GitHub CI على الفرع اجتاز dart format --set-exit-if-changed وflutter analyze وflutter test.
-- لم تُضف بعد اختبارات Widget مخصصة مستقلة لـ AppMenu وAppBreadcrumb وAppPageHeader وFormPageTemplate وDashboardTemplate. كما لم تُغطَّ بعد كل الأدوار السبعة وحارس تغييرات النموذج باختبارات مخصصة.
-- لا يزال التحقق البصري اليدوي على المتصفح وربط AUTH-01/AUTH-05/AUTH-04 بالقوالب مطلوباً.
+تُسجّل نتيجة كل أمر فقط بعد تشغيله فعلياً في بيئة Dart/Flutter أو في GitHub Actions. وجود الاختبار في المستودع لا يعني نجاح تشغيله.
