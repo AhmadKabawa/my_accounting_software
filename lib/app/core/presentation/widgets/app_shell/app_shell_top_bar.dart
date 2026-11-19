@@ -51,7 +51,7 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       leading: leading,
-      automaticallyImplyLeading: leading == null,
+      automaticallyImplyLeading: false,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,

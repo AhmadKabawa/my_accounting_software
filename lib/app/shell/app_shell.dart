@@ -8,7 +8,6 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
@@ -208,13 +207,6 @@ class AppShell extends StatelessWidget {
         breadcrumbs: routeBreadcrumbs,
         cashierSessionKey: cashierSessionKey,
         userMenuEntries: guardedUserMenuEntries,
-        leading: supportsCollapsibleSidebar && GoRouter.of(context).canPop()
-            ? AppIconButton(
-                AppIcons.back,
-                tooltipKey: ShellKeys.back,
-                onPressed: () => context.pop(),
-              )
-            : null,
       );
     }
 
