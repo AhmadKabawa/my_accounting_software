@@ -114,6 +114,24 @@ void main() {
     expect(requestedSize, 50);
   });
 
+  testWidgets('mobile sorting is available from a bottom sheet', (tester) async {
+    DataTableSort? requestedSort;
+    await pumpTable(
+      tester,
+      size: const Size(360, 800),
+      onSort: (value) => requestedSort = value,
+    );
+
+    await tester.tap(find.text('Sort by'));
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsOneWidget);
+    await tester.tap(find.text('Search').last);
+    await tester.pumpAndSettle();
+
+    expect(requestedSort?.key, 'name');
+    expect(requestedSort?.ascending, isTrue);
+  });
+
   testWidgets('desktop rows support Enter activation and Space selection', (
     tester,
   ) async {
