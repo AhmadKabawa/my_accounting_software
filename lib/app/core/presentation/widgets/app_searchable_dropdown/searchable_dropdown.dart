@@ -32,7 +32,6 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
     this.enabled = true,
     this.readOnly = false,
     this.onAddNew,
-    this.addNewLabelKey,
   });
 
   final ValueListenable<_PickerData<T>> data;
@@ -47,7 +46,6 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   final bool enabled;
   final bool readOnly;
   final WidgetBuilder? onAddNew;
-  final AppKey? addNewLabelKey;
 
   @override
   State<SearchableDropdown<T>> createState() => _SearchableDropdownState<T>();
@@ -55,6 +53,8 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
 
 class _SearchableDropdownState<T extends Object>
     extends State<SearchableDropdown<T>> {
+  static const _mobileSheetHeightFactor = 0.9;
+  static const _queryDebounce = Duration(milliseconds: 300);
   Timer? _debounce;
   late final ValueNotifier<_PickerData<T>> _pickerData;
   late final TextEditingController _desktopController;
@@ -102,7 +102,7 @@ class _SearchableDropdownState<T extends Object>
     _debounce?.cancel();
     final callback = widget.onQueryChanged;
     if (callback == null) return;
-    _debounce = Timer(const Duration(milliseconds: 300), () => callback(value));
+    _debounce = Timer(_queryDebounce, () => callback(value));
   }
 
   Iterable<T> _options(String query) {
@@ -302,7 +302,7 @@ class _SearchableDropdownState<T extends Object>
       isScrollControlled: true,
       useSafeArea: true,
       builder: (sheetContext) => FractionallySizedBox(
-        heightFactor: 0.9,
+        heightFactor: _mobileSheetHeightFactor,
         child: _MobileSearchPicker<T>(
         data: _pickerData,
         labelKey: widget.labelKey,

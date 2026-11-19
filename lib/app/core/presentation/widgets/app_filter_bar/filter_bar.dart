@@ -29,6 +29,8 @@ class FilterBarFilter {
 
 /// Search + active filter summary + a caller-owned filter editor.
 class FilterBar extends StatefulWidget {
+  static const defaultSearchDebounce = Duration(milliseconds: 300);
+
   const FilterBar({
     super.key,
     required this.onSearchChanged,
@@ -39,7 +41,7 @@ class FilterBar extends StatefulWidget {
     this.filterPanelBuilder,
     this.filterControls = const [],
     this.onApply,
-    this.debounce = const Duration(milliseconds: 300),
+    this.debounce = defaultSearchDebounce,
   });
 
   final ValueChanged<String> onSearchChanged;

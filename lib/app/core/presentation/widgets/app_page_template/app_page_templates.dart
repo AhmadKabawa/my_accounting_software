@@ -252,6 +252,8 @@ class DashboardTemplate extends StatelessWidget {
 /// T1 list frame. The feature supplies the page state and the already-wired
 /// FilterBar/DataTable; neither data access nor business rules live here.
 class ListPageTemplate extends StatelessWidget {
+  static const _loadingPlaceholderCount = 5;
+
   const ListPageTemplate({
     super.key,
     required this.titleKey,
@@ -303,7 +305,7 @@ class ListPageTemplate extends StatelessWidget {
           child: switch (state) {
             AppPageState.loading => ListView(
               children: [
-                for (var index = 0; index < 5; index++)
+                for (var index = 0; index < _loadingPlaceholderCount; index++)
                   const AppSkeleton.tableRow(),
               ],
             ),

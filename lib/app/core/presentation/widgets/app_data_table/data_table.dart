@@ -45,6 +45,9 @@ class DataTableColumn<T> {
 /// The supplied [rows] are only the current server page. This widget never
 /// sorts, filters, or paginates the complete collection locally.
 class AppDataTable<T> extends StatelessWidget {
+  static const _loadingPlaceholderCount = 5;
+  static const _maxSecondaryCardFields = 3;
+
   const AppDataTable({
     super.key,
     required this.columns,
@@ -148,7 +151,7 @@ class AppDataTable<T> extends StatelessWidget {
   Widget _loading(BuildContext context) => ListView(
     shrinkWrap: true,
     children: [
-      for (var i = 0; i < AppConfig.defaultPageSize.clamp(1, 5); i++)
+      for (var i = 0; i < _loadingPlaceholderCount; i++)
         const AppSkeleton.tableRow(),
     ],
   );
@@ -161,7 +164,7 @@ class AppDataTable<T> extends StatelessWidget {
         : declaredPrimary;
     final secondary = visible
         .where((c) => c.priority == DataTableColumnPriority.secondary && !primary.contains(c))
-        .take(3)
+        .take(_maxSecondaryCardFields)
         .toList();
     return ListView(
       children: [
