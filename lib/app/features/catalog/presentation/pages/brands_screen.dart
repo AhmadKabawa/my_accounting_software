@@ -196,11 +196,11 @@ class _BrandEditorState extends State<_BrandEditor> {
       'is_active': _active,
     };
     final result = widget.brand == null
-      ? await widget.api.post<dynamic>(BrandsEndpoint.collection, data: body, options: Options(headers: {'Prefer': 'return=minimal'}))
+      ? await widget.api.post<dynamic>(BrandsEndpoint.collection, data: body, options: Options(headers: {'Prefer': 'return=representation'}))
       : await widget.api.patch<dynamic>(
-          AppEndpoint('${BrandsEndpoint.collection.path}?id=eq.${encodePathSegment(widget.brand!.id)}'),
+          AppEndpoint('${BrandsEndpoint.collection.toStringPath()}?id=eq.${encodePathSegment(widget.brand!.id)}'),
           data: body,
-          options: Options(headers: {'Prefer': 'return=minimal'}),
+          options: Options(headers: {'Prefer': 'return=representation'}),
         );
     if (!mounted) return;
     result.when(
