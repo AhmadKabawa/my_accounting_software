@@ -22,7 +22,16 @@ void main() {
     () async {
       final repository = FakeBrandsRepository();
       final requests = <Completer<Either<Failure, PaginatedResult<Brand>>>>[];
-      repository.onGetBrands = (_) {
+      repository.onGetBrands = (query) {
+        if (query.pageSize == 1) {
+          final count = query.status == BrandStatusFilter.active ? 1 : 2;
+          return Future.value(Right(PaginatedResult<Brand>(
+            items: const [],
+            totalCount: count,
+            currentPage: 1,
+            totalPages: count,
+          )));
+        }
         final completer = Completer<Either<Failure, PaginatedResult<Brand>>>();
         requests.add(completer);
         return completer.future;
