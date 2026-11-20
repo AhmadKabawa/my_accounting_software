@@ -30,7 +30,15 @@ const _secret = Permission('sales.view');
 
 AccessSnapshot _snapshot(
   Set<Permission> permissions, {
-  List<AccessBranch> branches = const [],
+  List<AccessBranch> branches = const [
+    AccessBranch(
+      id: 1,
+      code: 'MAIN',
+      name: 'Main',
+      canView: true,
+      canOperate: true,
+    ),
+  ],
 }) => AccessSnapshot(
   userId: 'u1',
   username: 'shell-test',
@@ -357,7 +365,11 @@ void main() {
     testWidgets('does not show ScopeSelector without accessible branches', (
       tester,
     ) async {
-      await _pump(tester, const Size(1200, 900));
+      await _pump(
+        tester,
+        const Size(1200, 900),
+        branches: const [],
+      );
       expect(find.byType(ScopeSelector), findsNothing);
     });
 
