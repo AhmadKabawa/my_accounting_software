@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
@@ -125,7 +126,10 @@ void main() {
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
     expect(find.byType(InlineBanner), findsOneWidget);
-    expect(find.textContaining('Network'), findsNothing);
+    expect(
+      tester.widget<InlineBanner>(find.byType(InlineBanner)).messageKey,
+      NetworkFailure().messageKey,
+    );
   });
 
   testWidgets('fits phone and desktop widths in both text directions', (tester) async {
