@@ -51,6 +51,8 @@ enum AuthKeys implements AppKey {
     en: 'Enter the code we emailed you and choose a new password',
   ),
   resetPassword(ar: 'إعادة تعيين كلمة المرور', en: 'Reset password'),
+  forceChangePasswordTitle(ar: 'تغيير كلمة المرور مطلوب', en: 'Password change required'),
+  forceChangePasswordSubtitle(ar: 'يجب تعيين كلمة مرور جديدة قبل متابعة استخدام النظام', en: 'Set a new password before continuing to the system'),
   selectBranchTitle(ar: 'اختر الفرع', en: 'Choose a branch'),
   selectBranchSubtitle(
     ar: 'اختر الفرع الذي ستعمل عليه الآن',
