@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/keys/access_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
-import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 
 /// Keeps the authenticated shell hidden until the server access snapshot is
 /// ready. A failed request exposes a localized retry action, never stale access.
@@ -15,9 +13,15 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 /// Once the shell has been shown, it remains mounted but inaccessible while
 /// access is refreshed. This preserves dirty forms if a branch refresh fails.
 class AccessStatusGate extends StatefulWidget {
-  const AccessStatusGate({super.key, required this.child, this.onSignOut});
+  const AccessStatusGate({
+    super.key,
+    required this.child,
+    required this.signOutLabel,
+    this.onSignOut,
+  });
 
   final Widget child;
+  final AppKey signOutLabel;
   final Future<bool> Function()? onSignOut;
 
   @override
@@ -82,17 +86,11 @@ class _AccessStatusGateState extends State<AccessStatusGate> {
               textAlign: TextAlign.center,
             ),
             context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
-            AppButton(
-              AuthKeys.signOut,
-              onPressed: () async {
-                final action = widget.onSignOut;
-                if (action != null) {
-                  await action();
-                } else {
-                  await context.read<SessionCubit>().signOut();
-                }
-              },
-            ),
+            if (widget.onSignOut != null)
+              AppButton(
+                widget.signOutLabel,
+                onPressed: widget.onSignOut,
+              ),
           ],
         ),
       ),
