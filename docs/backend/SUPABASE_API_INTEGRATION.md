@@ -879,7 +879,7 @@ Content-Type: image/webp
 expense-receipts/1/expense-123-receipt.webp
 ```
 
-**\[استخدام حالي\]** شعارات الماركات (CAT-07) تُرفع إلى `product-images/brands/<طابع>-<عشوائي>.<ext>` ويُخزَّن الرابط العام في `brands.logo`. **\[تحقق مطلوب\]** سياسة الكتابة تشترط `catalog.manage` بينما كتابة `brands` تشترط `masterdata.manage`؛ جرّب الرفع بدور يملك الثانية دون الأولى، وإن فشل فأضف سياسة مخصصة أو bucket للماركات من جهة الباك إند.
+**\[استخدام حالي\]** شعارات الماركات (CAT-07) تُرفع إلى `product-images/brands/<طابع>-<عشوائي>.<ext>` ويُخزَّن الرابط العام في `brands.logo`. **\[تحقق مطلوب\]** سياسة الكتابة تشترط `catalog.manage` بينما كتابة `brands` تشترط `masterdata.manage`؛ جرّب الرفع بدور يملك الثانية دون الأولى؛ التفاصيل والاقتراحات في [BACKEND_REQUESTS](BACKEND_REQUESTS.md) (B-01، B-02).
 
 **\[قرار مطلوب\]** اعتماد naming convention موحد لصور المنتجات والألوان،
 بما في ذلك هل المسار يتضمن product_id أو color_id أو variant_id، وكيفية
