@@ -60,8 +60,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       _apiClient.get<bool>(AuthEndpoints.users,
         queryParameters: {'select': 'must_change_password', 'id': 'eq.$userId'},
         fromJsonList: (rows) {
-          if (rows.length != 1 || rows.single is! Map) throw const FormatException('public.users password flag missing');
-          final value = (rows.single as Map)['must_change_password'];
+          if (rows.length != 1 || rows.single is! Map<String, dynamic>) {
+            throw const FormatException('public.users password flag missing');
+          }
+          final value = (rows.single as Map<String, dynamic>)['must_change_password'];
           if (value is! bool) throw const FormatException('public.users password flag invalid');
           return value;
         }, requiresAuth: true);
