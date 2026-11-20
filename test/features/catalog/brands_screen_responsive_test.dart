@@ -33,7 +33,6 @@ void main() {
         testWidgets('brands page renders at $width, $direction, dark=$dark', (
           tester,
         ) async {
-          setScreenSize(tester, Size(width, 900));
           final repository = FakeBrandsRepository();
           sl.registerFactory<BrandStatsCubit>(
             () => BrandStatsCubit(getBrands: GetBrandsUseCase(repository)),
