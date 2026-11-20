@@ -74,7 +74,10 @@ class _BrandsView extends StatelessWidget {
           return result.fold((f) => f.messageKey, (_) => null);
         },
       );
-      if (changed && context.mounted) _toast(context, BrandsKeys.statusUpdated);
+      if (changed && context.mounted) {
+        await context.read<BrandStatsCubit>().refresh();
+        _toast(context, BrandsKeys.statusUpdated);
+      }
     } else {
       final result = await cubit.setActive(id: brand.id, isActive: true);
       if (!context.mounted) return;
@@ -84,7 +87,10 @@ class _BrandsView extends StatelessWidget {
           messageKey: f.messageKey,
           type: MessageType.error,
         ),
-        (_) => _toast(context, BrandsKeys.statusUpdated),
+        (_) {
+          context.read<BrandStatsCubit>().refresh();
+          _toast(context, BrandsKeys.statusUpdated);
+        },
       );
     }
   }
@@ -105,7 +111,10 @@ class _BrandsView extends StatelessWidget {
         );
       },
     );
-    if (deleted && context.mounted) _toast(context, BrandsKeys.deleted);
+    if (deleted && context.mounted) {
+      await context.read<BrandStatsCubit>().refresh();
+      _toast(context, BrandsKeys.deleted);
+    }
   }
 
   @override
