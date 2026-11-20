@@ -196,7 +196,9 @@ PermissionGate. حجم الصفحة من AppConfig.pageSizeOptions (قرار-75)
 - لا توجد حالياً وجهات من بطاقات §6.5 مسجلة في GoRouter؛ لذلك تعرض AUTH-04 `AppEmptyState` مترجمة. عند بناء شاشة هدف، أضف تعريف البطاقة مع تسجيل مسارها وصلاحيتها.
 - لا يُعرض loading أو error لعدم وجود مصدر بيانات؛ AccessStatusGate يحجب الشاشة أثناء حالة الوصول غير الجاهزة. لم يُنشأ C06 KpiCard ولم يُفتح NTF-01.
 - عنوان AppShellTopBar «الرئيسية» عنوان القسم، وعنوان AppPageHeader «لوحة التحكم» عنوان الشاشة؛ لا تكرار للنص نفسه ولا تعديل على DashboardTemplate.
-- وفق R12: T5 وC08 في «مراجعة» حتى تشغيل الاختبارات والتحقق البصري من المالك. `dart format` و`flutter analyze` و`flutter test` وChrome visual check: غير منفذة في هذه المهمة؛ حالة CI غير مفحوصة.
+- متابعة إغلاق AUTH-04 في `feat/ui-auth-02-force-password`: جرى تصحيح عقد اختبار `AccessStatusGate`، واستيراد واستخدام Semantics API الصحيح في اختبار البطاقة، وتصحيح callback اختبار Shell إلى `onSelectedGuardedAsync`. أضيفت حالة البطاقة الفعلية إلى مصفوفة 360/600/900/1200 × RTL/LTR × فاتح/داكن.
+- `DashboardCardDefinition.descriptionKey` اختياري؛ إذا غاب الوصف تعرض البطاقة عنوانها فقط، ويكون وصف Semantics هو العنوان دون فاصل أو نص فارغ. توثيق `AccessCubit.canAny` أضيف إلى `CORE_USAGE.md`. اختبارات ScopeSelector وShell الحالية تتحقق من ظهور شارة «عرض فقط» مرة واحدة في سياق العرض المغلق أو قائمة الاختيار.
+- وفق R12: T5 وC08 في «مراجعة» حتى نجاح فحوص CI والتحقق البصري من المالك. فحوص CI بعد إصلاحات AUTH-04 قيد التشغيل عند هذا التحديث؛ لا تُسجّل نتائجها نجاحاً قبل ظهورها. Chrome visual check لم يُنفّذ بعد.
 
 ### بند D — آلية حارس التنقل فقط (دون ربط شاشة)
 
