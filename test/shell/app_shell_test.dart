@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/routing/unsaved_changes_guard.dart';
 import '../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/access/domain/access_repository.dart';
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
@@ -82,6 +83,7 @@ _pump(
   List<AppBreadcrumbItem> Function(GoRouterState state)? breadcrumbBuilder,
   ThemeData? theme,
   TextDirection direction = TextDirection.rtl,
+  UnsavedChangesGuard? guard,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -105,6 +107,7 @@ _pump(
           userMenuEntries: userMenuEntries,
           beforeBranchChange: beforeBranchChange,
           breadcrumbBuilder: breadcrumbBuilder,
+          unsavedChangesGuard: guard,
         ),
         branches: [
           for (final path in paths)
@@ -393,6 +396,91 @@ void main() {
       );
       expect(notification.onPressed, isNull);
     });
+
+    testWidgets(
+      'logout confirms a dirty form in an inactive indexedStack branch',
+      (tester) async {
+        var confirmations = 0;
+        var discards = 0;
+        var actionRan = false;
+        final guard = UnsavedChangesGuard()
+          ..updateForm(
+            key: Object(),
+            branchIndex: 0,
+            dirty: true,
+            confirm: () async {
+              confirmations++;
+              return true;
+            },
+            discard: () => discards++,
+          );
+        final env = await _pump(
+          tester,
+          const Size(1200, 900),
+          guard: guard,
+          userMenuEntries: [
+            AppMenuEntry(
+              label: TemplateKeys.save,
+              requiresUnsavedChangesCheck: true,
+              onSelected: () {},
+              onSelectedAsync: () async {
+                actionRan = true;
+                return true;
+              },
+            ),
+          ],
+        );
+        env.router.go('/branch-1');
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byTooltip('User menu'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(TemplateKeys.save.en));
+        await tester.pumpAndSettle();
+
+        expect(confirmations, 1);
+        expect(actionRan, isTrue);
+        expect(discards, 1);
+        guard.dispose();
+      },
+    );
+
+    testWidgets(
+      'changing organization confirms a dirty form in an inactive branch',
+      (tester) async {
+        var confirmations = 0;
+        var discards = 0;
+        final guard = UnsavedChangesGuard()
+          ..updateForm(
+            key: Object(),
+            branchIndex: 0,
+            dirty: true,
+            confirm: () async {
+              confirmations++;
+              return true;
+            },
+            discard: () => discards++,
+          );
+        final env = await _pump(
+          tester,
+          const Size(1200, 900),
+          branches: branches,
+          guard: guard,
+        );
+        env.router.go('/branch-1');
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byTooltip('Branch'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(branches.last.name));
+        await tester.pumpAndSettle();
+
+        expect(confirmations, 1);
+        expect(discards, 1);
+        expect(env.access.state.selectedBranchId, 2);
+        guard.dispose();
+      },
+    );
 
     testWidgets('user menu entries invoke their action', (tester) async {
       var selected = false;
