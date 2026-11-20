@@ -73,7 +73,7 @@ class BrandsListCubit extends Cubit<BrandsListState> {
   Future<void> load() async {
     _searchTimer?.cancel();
     final requestVersion = ++_requestVersion;
-    emit(const BrandsListLoading());
+    if (state is! BrandsListReady) emit(const BrandsListLoading());
     final result = await _getBrands(_query);
     if (isClosed || requestVersion != _requestVersion) return;
     result.fold(
