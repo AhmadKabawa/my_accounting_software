@@ -398,7 +398,7 @@ class _BrandEditorState extends State<_BrandEditor> {
                 validator: (v) {
                   final s = v?.trim() ?? '';
                   if (s.isEmpty) return BrandsKeys.required.tr(context: context);
-                  if (s.length > 150) return BrandsKeys.brandNameTooLong.tr(context: context);
+                  if (s.length > 150) return BrandsKeys.brandName.tr(context: context);
                   return null;
                 },
                 onChanged: (v) {
