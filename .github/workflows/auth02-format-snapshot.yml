@@ -1,0 +1,48 @@
+name: AUTH-02 format snapshot
+
+on:
+  push:
+    branches:
+      - feat/ui-auth-02-force-password
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.1
+      - name: Format AUTH-02 Dart files and print formatted sources
+        shell: bash
+        run: |
+          files=(
+            lib/app/features/auth/data/auth_endpoints.dart
+            lib/app/features/auth/data/datasources/remote_data_source/auth_remote_data_source.dart
+            lib/app/features/auth/data/datasources/remote_data_source/auth_remote_data_source_impl.dart
+            lib/app/features/auth/data/repositories/auth_repository_impl.dart
+            lib/app/features/auth/domain/repositories/auth_repository.dart
+            lib/app/features/auth/domain/usecase/force_change_password_usecase.dart
+            lib/app/features/auth/domain/usecase/get_must_change_password_usecase.dart
+            lib/app/features/auth/presentation/cubit/force_password/force_password_change_cubit.dart
+            lib/app/features/auth/presentation/cubit/session/session_cubit.dart
+            lib/app/features/auth/presentation/localization/auth_keys.dart
+            lib/app/features/auth/presentation/pages/change_password/force_password_change_screen.dart
+            lib/app/routing/app_go_router.dart
+            lib/app/routing/route_guards.dart
+            lib/app/routing/route_registry.dart
+            test/features/auth/auth_endpoints_test.dart
+            test/features/auth/auth_repository_get_current_user_test.dart
+            test/features/auth/force_password_change_screen_test.dart
+            test/features/auth/profile_cubit_test.dart
+            test/features/auth/session_access_integration_test.dart
+            test/features/auth/session_cubit_test.dart
+            test/features/auth/support/fake_auth_repository.dart
+            test/routing/route_guards_test.dart
+          )
+          dart format "${files[@]}"
+          for file in "${files[@]}"; do
+            echo "<<<AUTH02_FILE:$file>>>"
+            cat "$file"
+            echo "<<<AUTH02_END>>>"
+          done
