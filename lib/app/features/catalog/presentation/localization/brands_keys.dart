@@ -75,7 +75,14 @@ enum BrandsKeys implements AppKey {
   editorSubtitle(
     ar: 'أدخل بيانات الماركة التي ستظهر عند ربطها بالمنتجات.',
     en: 'Enter the brand details used when assigning it to products.',
-  );
+  ),
+  productCount(ar: 'عدد المنتجات', en: 'Products'),
+  activate(ar: 'إعادة تفعيل', en: 'Reactivate'),
+  deactivate(ar: 'إيقاف', en: 'Deactivate'),
+  deactivateTitle(ar: 'إيقاف الماركة', en: 'Deactivate brand'),
+  deactivateMessage(ar: 'سيتم إيقاف الماركة مع الاحتفاظ بها وسجلاتها.', en: 'This brand will be deactivated while keeping its record and references.'),
+  statusUpdated(ar: 'تم تحديث حالة الماركة.', en: 'Brand status updated.'),
+  brandInUse(ar: 'لا يمكن حذف الماركة لأنها مرتبطة بمنتجات.', en: 'This brand cannot be deleted because products reference it.');
 
   const BrandsKeys({required this.ar, required this.en});
   @override
