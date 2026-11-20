@@ -7,6 +7,10 @@ import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -40,6 +44,8 @@ class _BrandsScreenState extends State<BrandsScreen> {
   int _page = AppConfig.defaultPage;
   int _total = 0;
   String _status = 'all';
+  String _sortKey = 'name';
+  bool _sortAscending = true;
   int _requestVersion = 0;
 
   @override
@@ -72,7 +78,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
       limit: AppConfig.defaultPageSize,
       queryParameters: {
         'select': BrandsEndpoint.select,
-        'order': 'name.asc',
+        'order': '$_sortKey.${_sortAscending ? 'asc' : 'desc'}',
         if (_search.text.trim().isNotEmpty)
           'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
         if (_status == 'active') 'is_active': 'eq.true',
@@ -105,7 +111,16 @@ class _BrandsScreenState extends State<BrandsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        content: AppText(BrandsKeys.confirmDelete),
+        title: AppText(BrandsKeys.delete),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppText(BrandsKeys.confirmDelete),
+            const SizedBox(height: 8),
+            AppText.raw(brand.name, type: AppTextType.titleSmall),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -147,6 +162,85 @@ class _BrandsScreenState extends State<BrandsScreen> {
     _load();
   }
 
+  Widget _brandIdentity(BuildContext context, Brand brand) {
+    final logo = brand.logo;
+    final hasLogo = logo != null && logo.isNotEmpty;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: hasLogo
+                ? AppImage.network(
+                    logo!,
+                    width: 44,
+                    height: 44,
+                    shape: AppImageShape.rounded,
+                    borderRadius: 10,
+                    semanticsLabel: brand.name,
+                  )
+                : DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surfaceContainerHighest,
+                    ),
+                    child: const Center(child: AppIcon(AppIcons.brands)),
+                  ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText.raw(brand.name, type: AppTextType.titleSmall),
+              const SizedBox(height: 3),
+              AppText.raw(
+                brand.slug,
+                type: AppTextType.bodySmall,
+                color: muted,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _brandStatus(Brand brand) => AppBadge(
+    label: brand.isActive ? BrandsKeys.active : BrandsKeys.inactive,
+    tone: brand.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
+    size: AppBadgeSize.small,
+  );
+
+  Widget _brandCard(BuildContext context, Brand brand) {
+    final description = brand.description?.trim() ?? '';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _brandIdentity(context, brand),
+        if (description.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          AppText.raw(
+            description,
+            type: AppTextType.bodySmall,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            maxLines: 2,
+          ),
+        ],
+        const SizedBox(height: 12),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: _brandStatus(brand),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final activeFilters = <FilterBarFilter>[
@@ -174,6 +268,12 @@ class _BrandsScreenState extends State<BrandsScreen> {
 
     return ListPageTemplate(
       titleKey: BrandsKeys.title,
+      breadcrumb: AppBreadcrumb(
+        items: [
+          const AppBreadcrumbItem(label: NavKeys.catalog),
+          const AppBreadcrumbItem(label: BrandsKeys.title),
+        ],
+      ),
       count: _total,
       primaryAction: PermissionGate(
         permission: Permissions.masterData.manage,
@@ -261,37 +361,41 @@ class _BrandsScreenState extends State<BrandsScreen> {
         ),
         columns: [
           DataTableColumn(
-            labelKey: BrandsKeys.logo,
-            priority: DataTableColumnPriority.secondary,
-            cellBuilder: (_, brand) => brand.logo == null || brand.logo!.isEmpty
-                ? const AppIcon(AppIcons.brokenImage)
-                : AppImage.network(
-                    brand.logo!,
-                    width: 40,
-                    height: 40,
-                    shape: AppImageShape.rounded,
-                    borderRadius: 8,
-                    semanticsLabel: brand.name,
-                  ),
-          ),
-          DataTableColumn(
             labelKey: BrandsKeys.name,
             sortKey: 'name',
             priority: DataTableColumnPriority.primary,
-            cellBuilder: (_, brand) => AppText.raw(brand.name),
+            flex: 3,
+            cellBuilder: _brandIdentity,
           ),
           DataTableColumn(
-            labelKey: BrandsKeys.slug,
-            sortKey: 'slug',
-            cellBuilder: (_, brand) => AppText.raw(brand.slug),
+            labelKey: BrandsKeys.description,
+            priority: DataTableColumnPriority.secondary,
+            flex: 3,
+            cellBuilder: (context, brand) => AppText.raw(
+              brand.description?.trim().isNotEmpty == true
+                  ? brand.description!.trim()
+                  : '—',
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              maxLines: 2,
+            ),
           ),
           DataTableColumn(
             labelKey: BrandsKeys.status,
-            cellBuilder: (_, brand) => AppText(
-              brand.isActive ? BrandsKeys.active : BrandsKeys.inactive,
-            ),
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (_, brand) => _brandStatus(brand),
           ),
         ],
+        cardBuilder: _brandCard,
+        sortKey: _sortKey,
+        sortAscending: _sortAscending,
+        onSort: (sort) {
+          setState(() {
+            _sortKey = sort.key;
+            _sortAscending = sort.ascending;
+            _page = 1;
+          });
+          _load();
+        },
         rows: _brands,
         rowId: (brand) => brand.id,
         loading: _loading,
@@ -435,9 +539,31 @@ class _BrandEditorState extends State<_BrandEditor> {
         ['http', 'https'].contains(logoUri.scheme) &&
         logoUri.host.isNotEmpty;
     return AlertDialog(
-      title: AppText(widget.brand == null ? BrandsKeys.add : BrandsKeys.edit),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const AppIcon(AppIcons.brands),
+              const SizedBox(width: 10),
+              Expanded(
+                child: AppText(
+                  widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
+                  type: AppTextType.titleLarge,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          AppText(
+            BrandsKeys.editorSubtitle,
+            type: AppTextType.bodySmall,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
       content: SizedBox(
-        width: 480,
+        width: 560,
         child: Form(
           key: _form,
           child: SingleChildScrollView(
@@ -445,6 +571,11 @@ class _BrandEditorState extends State<_BrandEditor> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                AppText(
+                  BrandsKeys.identitySection,
+                  type: AppTextType.titleSmall,
+                ),
+                context.ui.spacing.gap(AppSpacing.sm),
                 if (_saveFailed) ...[
                   InlineBanner(
                     messageKey: _saveErrorKey,
@@ -499,6 +630,11 @@ class _BrandEditorState extends State<_BrandEditor> {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ],
+                context.ui.spacing.gap(AppSpacing.md),
+                AppText(
+                  BrandsKeys.logoSection,
+                  type: AppTextType.titleSmall,
+                ),
                 context.ui.spacing.gap(AppSpacing.sm),
                 AppTextField(
                   controller: _logo,
@@ -535,17 +671,30 @@ class _BrandEditorState extends State<_BrandEditor> {
                     ),
                   ),
                 ],
+                context.ui.spacing.gap(AppSpacing.md),
+                AppText(
+                  BrandsKeys.detailsSection,
+                  type: AppTextType.titleSmall,
+                ),
                 context.ui.spacing.gap(AppSpacing.sm),
                 AppTextField(
                   controller: _description,
                   labelKey: BrandsKeys.description,
                   maxLines: 3,
                 ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: AppText(BrandsKeys.active),
-                  value: _active,
-                  onChanged: (value) => setState(() => _active = value),
+                AppCard(
+                  padding: AppSpacing.sm,
+                  child: SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: AppText(BrandsKeys.status),
+                    subtitle: AppText(
+                      _active ? BrandsKeys.active : BrandsKeys.inactive,
+                      type: AppTextType.bodySmall,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    value: _active,
+                    onChanged: (value) => setState(() => _active = value),
+                  ),
                 ),
               ],
             ),

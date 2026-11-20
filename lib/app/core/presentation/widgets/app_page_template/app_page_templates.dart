@@ -267,9 +267,11 @@ class ListPageTemplate extends StatelessWidget {
     this.primaryAction,
     this.actions,
     this.emptyState,
+    this.breadcrumb,
   });
 
   final AppKey titleKey;
+  final Widget? breadcrumb;
   final Widget filterBar;
   final Widget dataTable;
 
@@ -289,6 +291,7 @@ class ListPageTemplate extends StatelessWidget {
           titleKey: titleKey,
           count: count,
           primaryAction: primaryAction,
+          breadcrumb: breadcrumb,
         ),
         if (actions != null)
           Padding(

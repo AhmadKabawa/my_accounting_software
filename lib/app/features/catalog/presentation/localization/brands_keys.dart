@@ -32,7 +32,11 @@ enum BrandsKeys implements AppKey {
   allStatuses(ar: 'كل الحالات', en: 'All statuses'),
   required(ar: 'هذا الحقل مطلوب', en: 'This field is required'),
   confirmDelete(ar: 'هل تريد حذف هذه الماركة؟', en: 'Delete this brand?'),
-  status(ar: 'الحالة', en: 'Status');
+  status(ar: 'الحالة', en: 'Status'),
+  identitySection(ar: 'هوية الماركة', en: 'Brand identity'),
+  logoSection(ar: 'الشعار', en: 'Brand logo'),
+  detailsSection(ar: 'تفاصيل إضافية', en: 'Additional details'),
+  editorSubtitle(ar: 'أدخل بيانات الماركة التي ستظهر عند ربطها بالمنتجات.', en: 'Enter the brand details used when assigning it to products.');
 
   const BrandsKeys({required this.ar, required this.en});
   @override final String ar;

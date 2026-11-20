@@ -37,9 +37,9 @@ const appDestinations = [
   ),
   AppDestination(
     item: NavBarItem.icons(
-      icon: AppIcons.brands,
-      activeIcon: AppIcons.brands,
-      label: NavKeys.brands,
+      icon: AppIcons.catalog,
+      activeIcon: AppIcons.catalog,
+      label: NavKeys.catalog,
     ),
     branchIndex: 1,
   ),
