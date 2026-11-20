@@ -13,6 +13,7 @@ import 'package:accounting_software/app/features/catalog/domain/usecase/upload_b
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_stats_cubit.dart';
 
 void initCatalogDI() {
   sl.registerLazySingleton<BrandsRemoteDataSource>(
@@ -29,6 +30,7 @@ void initCatalogDI() {
   sl.registerLazySingleton(() => DeleteBrandUseCase(sl()));
   sl.registerLazySingleton(() => UploadBrandLogoUseCase(sl()));
 
+  sl.registerFactory(() => BrandStatsCubit(getBrands: sl()));
   sl.registerFactory(
     () => BrandsListCubit(
       getBrands: sl(),
