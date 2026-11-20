@@ -380,7 +380,8 @@ class _BrandEditorState extends State<_BrandEditor> {
       failure: (exception) => setState(() {
         _saving = false;
         _saveFailed = true;
-        _saveErrorKey = exception.statusCode == 409
+        _saveErrorKey = exception.statusCode == 409 ||
+                exception.message.contains('23505')
             ? BrandsKeys.duplicateError
             : BrandsKeys.saveError;
       }),
@@ -428,7 +429,9 @@ class _BrandEditorState extends State<_BrandEditor> {
                       final generated = _makeSlug(value);
                       if (generated.isNotEmpty) _slug.text = generated;
                     }
-                    if (_saveFailed) setState(() => _saveFailed = false);
+                    setState(() {
+                      if (_saveFailed) _saveFailed = false;
+                    });
                   },
                 ),
                 context.ui.spacing.gap(AppSpacing.sm),
@@ -483,75 +486,6 @@ class _BrandEditorState extends State<_BrandEditor> {
                   onChanged: (_) => setState(() {}),
                 ),
                 if (showLogoPreview) ...[
-                  context.ui.spacing.gap(AppSpacing.sm),
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: AppImage.network(
-                      _logo.text.trim(),
-                      width: 76,
-                      height: 76,
-                      shape: AppImageShape.rounded,
-                      borderRadius: 10,
-                      semanticsLabel: BrandsKeys.logo.tr(context: context),
-                    ),
-                  ),
-                ],
-                context.ui.spacing.gap(AppSpacing.sm),
-                AppTextField(
-                  controller: _description,
-                  labelKey: BrandsKeys.description,
-                  maxLines: 3,
-                ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: AppText(BrandsKeys.active),
-                  value: _active,
-                  onChanged: (value) => setState(() => _active = value),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: _saving ? null : () => Navigator.pop(context, false),
-          child: AppText(BrandsKeys.cancel),
-        ),
-        AppButton(
-          BrandsKeys.save,
-          onPressed: _saving ? null : _save,
-          isLoading: _saving,
-        ),
-      ],
-    );
-  }
-}
-).hasMatch(slug)) {
-                      return BrandsKeys.slugFormat.tr(context: context);
-                    }
-                    return null;
-                  },
-                  onChanged: (_) {
-                    if (_saveFailed) setState(() => _saveFailed = false);
-                  },
-                ),
-                if (slugIsEmpty) ...[
-                  context.ui.spacing.gap(AppSpacing.xs),
-                  AppText(
-                    BrandsKeys.slugHelp,
-                    type: AppTextType.bodySmall,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ],
-                context.ui.spacing.gap(AppSpacing.sm),
-                AppTextField(
-                  controller: _logo,
-                  labelKey: BrandsKeys.logo,
-                  keyboardType: TextInputType.url,
-                  onChanged: (_) => setState(() {}),
-                ),
-                if (_logo.text.trim().isNotEmpty) ...[
                   context.ui.spacing.gap(AppSpacing.sm),
                   Align(
                     alignment: AlignmentDirectional.centerStart,
