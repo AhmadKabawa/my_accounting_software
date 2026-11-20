@@ -9,6 +9,7 @@ import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
@@ -95,7 +96,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
     );
     if (yes != true) return;
     final result = await _api.delete(
-      AppEndpoint('${BrandsEndpoint.collection.path}?id=eq.${encodePathSegment(brand.id)}'),
+      AppEndpoint('${BrandsEndpoint.collection.toStringPath()}?id=eq.${encodePathSegment(brand.id)}'),
       options: Options(headers: {'Prefer': 'return=minimal'}),
     );
     if (!mounted) return;
@@ -108,7 +109,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
     child: ListPageTemplate(
       titleKey: BrandsKeys.title,
       count: _total,
-      primaryAction: AppButton(BrandsKeys.add, icon: Icons.add, onPressed: () => _edit()),
+      primaryAction: AppButton(BrandsKeys.add, icon: AppIcons.info, onPressed: () => _edit()),
       filterBar: FilterBar(
         searchController: _search,
         searchHintKey: BrandsKeys.searchHint,
