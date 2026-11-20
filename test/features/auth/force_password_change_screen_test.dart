@@ -115,7 +115,7 @@ void main() {
     pending.complete(const Right(unit));
     await tester.pumpAndSettle();
     expect(cubit.state.status, ForcePasswordChangeStatus.completed);
-    expect((session.current as dynamic).mustChangePassword, isFalse);
+    expect((session.current as SessionAuthenticated).mustChangePassword, isFalse);
   });
 
   testWidgets('shows a translated inline error when the server rejects the save', (tester) async {
