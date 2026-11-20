@@ -86,7 +86,7 @@ class BrandLogoSection extends StatelessWidget {
               labelKey: BrandsKeys.logo,
               hintKey: BrandsKeys.logoHint,
               keyboardType: TextInputType.url,
-              validator: (v) => BrandFieldValidators.logo(context, v),
+              validator: (v) => BrandFieldValidators.logo(v),
             ),
           ],
         );

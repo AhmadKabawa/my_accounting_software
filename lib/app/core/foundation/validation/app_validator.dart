@@ -12,6 +12,8 @@ enum ValidationRule {
   hasSpecialChar,
   phone,
   match,
+  pattern, // params[pattern] is a RegExp the whole value must match
+  httpUrl, // absolute http/https URL with a host
   password, // composite
   async, // NOT IMPLEMENTED: reserved; validate() ignores it (no async path yet)
 }
@@ -104,6 +106,22 @@ class AppValidator {
           }
           break;
 
+        case ValidationRule.pattern:
+          final pattern = params?[ValidationRule.pattern] as RegExp?;
+          if (value == null || pattern == null || !pattern.hasMatch(value.trim())) {
+            return _translate(ValidationRule.pattern, customKeys);
+          }
+          break;
+
+        case ValidationRule.httpUrl:
+          final uri = Uri.tryParse(value?.trim() ?? '');
+          final valid = uri != null &&
+              uri.hasScheme &&
+              (uri.scheme == 'http' || uri.scheme == 'https') &&
+              uri.host.isNotEmpty;
+          if (!valid) return _translate(ValidationRule.httpUrl, customKeys);
+          break;
+
         case ValidationRule.password:
           final result = validate(
             value,
@@ -160,6 +178,10 @@ class AppValidator {
         return ValidationKeys.phoneInvalid;
       case ValidationRule.match:
         return ValidationKeys.passwordsNotMatch;
+      case ValidationRule.pattern:
+        return ValidationKeys.formatInvalid;
+      case ValidationRule.httpUrl:
+        return ValidationKeys.urlInvalid;
       case ValidationRule.password:
       case ValidationRule.async:
         return ValidationKeys.required;

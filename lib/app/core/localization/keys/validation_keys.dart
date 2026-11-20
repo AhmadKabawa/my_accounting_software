@@ -7,6 +7,11 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 enum ValidationKeys implements AppKey {
   required(ar: 'هذا الحقل مطلوب', en: 'This field is required'),
   emailRequired(ar: 'البريد الإلكتروني مطلوب', en: 'Email is required'),
+  formatInvalid(ar: 'الصيغة غير صحيحة', en: 'Invalid format'),
+  urlInvalid(
+    ar: 'رابط غير صالح (http أو https)',
+    en: 'Invalid link (http or https)',
+  ),
   emailInvalid(ar: 'بريد إلكتروني غير صالح', en: 'Invalid email address'),
   passwordRequired(ar: 'كلمة المرور مطلوبة', en: 'Password is required'),
   passwordMinLength(

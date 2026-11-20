@@ -97,4 +97,19 @@ void main() {
     );
     expect(result, 'CUSTOM');
   });
+
+  test('pattern needs the whole value to match the given RegExp', () {
+    final p = {ValidationRule.pattern: RegExp(r'^[a-z]+$')};
+    expect(check('abc', [ValidationRule.pattern], p: p), isNull);
+    expect(check('ab1', [ValidationRule.pattern], p: p), isNotNull);
+    expect(check('', [ValidationRule.pattern], p: p), isNotNull);
+  });
+
+  test('httpUrl accepts only absolute http/https URLs with a host', () {
+    expect(check('https://a.com/x.png', [ValidationRule.httpUrl]), isNull);
+    expect(check('http://a.com', [ValidationRule.httpUrl]), isNull);
+    expect(check('ftp://a.com', [ValidationRule.httpUrl]), isNotNull);
+    expect(check('a.com/x', [ValidationRule.httpUrl]), isNotNull);
+    expect(check('https://', [ValidationRule.httpUrl]), isNotNull);
+  });
 }

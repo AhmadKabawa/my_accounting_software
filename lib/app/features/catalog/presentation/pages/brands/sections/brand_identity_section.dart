@@ -27,14 +27,14 @@ class BrandIdentitySection extends StatelessWidget {
       AppTextField(
         controller: name,
         labelKey: BrandsKeys.brandName,
-        validator: (v) => BrandFieldValidators.name(context, v),
+        validator: (v) => BrandFieldValidators.name(v),
         onChanged: onNameChanged,
       ),
       context.ui.spacing.gap(AppSpacing.smMd),
       AppTextField(
         controller: slug,
         labelKey: BrandsKeys.slug,
-        validator: (v) => BrandFieldValidators.slug(context, v),
+        validator: (v) => BrandFieldValidators.slug(v),
       ),
     ],
   );

@@ -528,3 +528,9 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - المسار `AuthRoutes.selectBranch` (`/select-branch`) محمي. القاعدة في `resolveRedirect(branchSelectionRequired: ...)`، والمدخل من `AccessState.needsBranchSelection` (جاهز + لا فرع محدد + أكثر من فرع قابل للعرض). فرع واحد يُختار تلقائياً في `AccessCubit` فلا تظهر الشاشة.
 - الشاشة `SelectBranchScreen` تعرض الفروع القابلة للعرض فقط، وشارة «عرض فقط» حيث `canOperate=false`، ثم `AccessCubit.selectBranch`. الخروج من الشاشة يتم بقاعدة التوجيه لا بتنقل يدوي.
 - الاختبارات كُتبت ولم تُشغَّل (لا SDK في بيئة الكتابة): `route_guards_test`, `access_cubit_test`, `select_branch_screen_test`.
+
+## AppValidator: pattern وhttpUrl
+
+- `ValidationRule.pattern` مع `params: {ValidationRule.pattern: RegExp(...)}` (يجب أن يطابق النص كله).
+- `ValidationRule.httpUrl`: رابط مطلق http/https له host.
+- رسائل الميزة تُمرَّر بـ `customKeys` (مثال: `features/catalog/.../brand_field_validators.dart`). لا تكتب مدققاً موازياً.
