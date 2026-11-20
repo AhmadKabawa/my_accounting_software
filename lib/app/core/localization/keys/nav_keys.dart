@@ -6,7 +6,8 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 /// so it cannot be mistyped or duplicated inside the section.
 enum NavKeys implements AppKey {
   home(ar: 'الرئيسية', en: 'home'),
-  person(ar: 'ملف شخصي', en: 'person');
+  person(ar: 'ملف شخصي', en: 'person'),
+  brands(ar: 'الماركات', en: 'Brands');
 
   const NavKeys({required this.ar, required this.en});
 
