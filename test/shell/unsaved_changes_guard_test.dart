@@ -592,7 +592,7 @@ void main() {
     }
 
     expect(await guard.confirmAll(), isFalse);
-    expect(confirmed, [0]);
+    expect(confirmed, [0, 1]);
     expect(discarded, isEmpty);
   });
 }
