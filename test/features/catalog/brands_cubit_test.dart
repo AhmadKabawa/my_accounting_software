@@ -61,6 +61,28 @@ void main() {
     await cubit.close();
   });
 
+  test('does not issue a delete when the known product count is positive', () async {
+    final repository = FakeBrandsRepository();
+    final cubit = BrandsListCubit(
+      getBrands: GetBrandsUseCase(repository),
+      setBrandActive: SetBrandActiveUseCase(repository),
+      deleteBrand: DeleteBrandUseCase(repository),
+    );
+    const brand = Brand(
+      id: 12,
+      name: 'Northwind',
+      slug: 'northwind',
+      isActive: true,
+      productCount: 3,
+    );
+
+    final result = await cubit.delete(brand);
+
+    expect(result.isLeft(), isTrue);
+    expect(repository.queries, isEmpty);
+    await cubit.close();
+  });
+
   test('form cubit saves through repository use cases without page dependency', () async {
     final repository = FakeBrandsRepository();
     final cubit = BrandFormCubit(
