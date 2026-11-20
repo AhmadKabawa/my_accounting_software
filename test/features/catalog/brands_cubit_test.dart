@@ -5,7 +5,6 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/domain/entities/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entities/brand_draft.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecases/create_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecases/delete_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecases/get_brands_use_case.dart';
@@ -22,7 +21,7 @@ void main() {
     final repository = FakeBrandsRepository();
     final requests = <Completer<Either<Failure, PaginatedResult<Brand>>>>[];
     repository.onGetBrands = (_) {
-      final completer = Completer<Either<dynamic, PaginatedResult<Brand>>>();
+      final completer = Completer<Either<Failure, PaginatedResult<Brand>>>();
       requests.add(completer);
       return completer.future;
     };
@@ -79,7 +78,7 @@ void main() {
     final result = await cubit.delete(brand);
 
     expect(result.isLeft(), isTrue);
-    expect(repository.queries, isEmpty);
+    expect(repository.deletedIds, isEmpty);
     await cubit.close();
   });
 
