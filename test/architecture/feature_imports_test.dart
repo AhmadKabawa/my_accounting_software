@@ -11,8 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 /// test, and so does an entry that no longer exists (remove it).
 const _knownDebt = <String>{
   'lib/app/features/auth/presentation/cubit/profile/profile_cubit.dart -> lib/app/features/profile/presentation/localization/profile_keys.dart',
-  'lib/app/features/home/presentation/sections/home_greeting_section.dart -> lib/app/features/auth/domain/session/session_gate.dart',
-  'lib/app/features/home/presentation/sections/home_greeting_section.dart -> lib/app/features/auth/presentation/cubit/session/session_cubit.dart',
   'lib/app/features/profile/presentation/sections/profile_actions_section.dart -> lib/app/features/auth/presentation/localization/auth_keys.dart',
   'lib/app/features/profile/presentation/sections/profile_actions_section.dart -> lib/app/features/auth/presentation/cubit/session/session_cubit.dart',
   'lib/app/features/profile/presentation/sections/profile_header_section.dart -> lib/app/features/auth/domain/entity/user/user_entity.dart',
