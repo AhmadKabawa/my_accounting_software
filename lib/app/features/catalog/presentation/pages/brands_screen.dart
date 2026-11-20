@@ -53,12 +53,17 @@ class _BrandsScreenState extends State<BrandsScreen> {
     super.dispose();
   }
 
+  String _escapePostgrestValue(String value) => value
+      .replaceAll(r'\\', r'\\\\')
+      .replaceAll(r'"', r'\\"');
+
   Future<void> _load() async {
     final requestVersion = ++_requestVersion;
     setState(() {
       _loading = true;
       _error = null;
     });
+    final searchTerm = _escapePostgrestValue(_search.text.trim());
     final result = await _api.getPaginated<Brand>(
       BrandsEndpoint.collection,
       fromJson: Brand.fromJson,
@@ -68,7 +73,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
         'select': BrandsEndpoint.select,
         'order': 'name.asc',
         if (_search.text.trim().isNotEmpty)
-          'or': '(name.ilike.%${_search.text.trim()}%,slug.ilike.%${_search.text.trim()}%)',
+          'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
         if (_status == 'active') 'is_active': 'eq.true',
         if (_status == 'inactive') 'is_active': 'eq.false',
       },
@@ -212,7 +217,6 @@ class _BrandsScreenState extends State<BrandsScreen> {
           });
           _load();
         },
-        onApply: _load,
         onSearchChanged: (_) {
           _page = 1;
           _load();
