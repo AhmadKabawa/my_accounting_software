@@ -18,6 +18,48 @@ import 'package:flutter_test/flutter_test.dart';
 import 'support/fake_brands_repository.dart';
 
 void main() {
+  test('keeps the current page visible while a refresh is in flight', () async {
+    final repository = FakeBrandsRepository();
+    repository.onGetBrands = (_) async => const Right(
+      PaginatedResult<Brand>(
+        items: [Brand(id: 1, name: 'Existing', slug: 'existing', isActive: true)],
+        totalCount: 1,
+        currentPage: 1,
+        totalPages: 1,
+      ),
+    );
+    final cubit = BrandsListCubit(
+      getBrands: GetBrandsUseCase(repository),
+      setBrandActive: SetBrandActiveUseCase(repository),
+      deleteBrand: DeleteBrandUseCase(repository),
+    );
+    await cubit.load();
+    final emitted = <BrandsListState>[];
+    final subscription = cubit.stream.listen(emitted.add);
+    final refreshResult = Completer<Either<Failure, PaginatedResult<Brand>>>();
+    repository.onGetBrands = (_) => refreshResult.future;
+
+    final refresh = cubit.refresh();
+    await Future<void>.delayed(Duration.zero);
+
+    expect(cubit.state, isA<BrandsListReady>());
+    expect((cubit.state as BrandsListReady).result.items.single.name, 'Existing');
+    expect(emitted, isEmpty);
+
+    refreshResult.complete(const Right(
+      PaginatedResult<Brand>(
+        items: [Brand(id: 2, name: 'Updated', slug: 'updated', isActive: true)],
+        totalCount: 1,
+        currentPage: 1,
+        totalPages: 1,
+      ),
+    ));
+    await refresh;
+    expect((cubit.state as BrandsListReady).result.items.single.name, 'Updated');
+    await subscription.cancel();
+    await cubit.close();
+  });
+
   test(
     'latest debounced search wins over an older in-flight request',
     () async {
