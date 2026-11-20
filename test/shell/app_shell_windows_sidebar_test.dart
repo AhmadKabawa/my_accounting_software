@@ -31,7 +31,15 @@ class _Repository implements AccessRepository {
       isSuperAdmin: false,
       roles: const [],
       permissions: const {Permission('sales.view')},
-      branches: const [],
+      branches: const [
+        AccessBranch(
+          id: 1,
+          code: 'MAIN',
+          name: 'Main',
+          canView: true,
+          canOperate: true,
+        ),
+      ],
       warehouses: const [],
       posTerminals: const [],
     ),
