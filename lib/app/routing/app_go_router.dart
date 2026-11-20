@@ -42,6 +42,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/select_branch/select_branch_screen.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
+import 'package:accounting_software/app/features/catalog/presentation/pages/brands_screen.dart';
+import 'package:accounting_software/app/features/catalog/presentation/routing/brands_routes.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -244,6 +246,19 @@ class AppRouter {
                 name: HomeRoutes.home.name,
                 pageBuilder: (context, state) => NoTransitionPage(
                   child: HomeScreen(registeredRoutes: allRoutes),
+                ),
+              ),
+            ],
+          ),
+
+          /// ───────── BRANDS ─────────
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: BrandsRoutes.brands.path,
+                name: BrandsRoutes.brands.name,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: BrandsScreen(),
                 ),
               ),
             ],
