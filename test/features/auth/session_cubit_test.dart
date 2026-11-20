@@ -63,6 +63,32 @@ void main() {
   );
 
   blocTest<SessionCubit, SessionStatus>(
+    'loads must_change_password from the current public.users row',
+    setUp: () {
+      repo.currentUser = const Right(testUser);
+      repo.mustChangePassword = true;
+    },
+    build: () => cubit,
+    act: (c) => c.checkAuthentication(),
+    expect: () => [
+      isA<SessionChecking>(),
+      const SessionAuthenticated(testUser, mustChangePassword: true),
+    ],
+  );
+
+  blocTest<SessionCubit, SessionStatus>(
+    'fails closed when the password policy cannot be read',
+    setUp: () {
+      repo.currentUser = const Right(testUser);
+      repo.passwordFlagError = StateError('policy unavailable');
+    },
+    build: () => cubit,
+    act: (c) => c.checkAuthentication(),
+    expect: () => [isA<SessionChecking>(), isA<SessionUnauthenticated>()],
+    verify: (_) => expect(shown.single.type, MessageType.error),
+  );
+
+  blocTest<SessionCubit, SessionStatus>(
     'no stored user ends unauthenticated without a message',
     build: () => cubit,
     act: (c) => c.checkAuthentication(),
