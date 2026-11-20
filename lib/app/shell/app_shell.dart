@@ -23,7 +23,7 @@ import 'package:accounting_software/app/shell/destinations.dart';
 const _mobileDestinationOverflowThreshold = 5;
 const _mobileVisibleDestinationsWhenOverflow = 4;
 
-bool _runSyncMenuAction(AppMenuEntry entry) {\n  entry.onSelected();\n  return true;\n}\n\nclass AppShell extends StatelessWidget {
+Future<bool> _runAsyncMenuAction(AppMenuEntry entry) async {\n  await entry.onSelectedAsync!();\n  return true;\n}\n\nbool _runSyncMenuAction(AppMenuEntry entry) {\n  entry.onSelected();\n  return true;\n}\n\nclass AppShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
   final List<AppDestination> destinations;
   final List<AppMenuEntry> userMenuEntries;
@@ -165,7 +165,7 @@ bool _runSyncMenuAction(AppMenuEntry entry) {\n  entry.onSelected();\n  return t
           enabled: entry.enabled,
           requiresUnsavedChangesCheck: entry.requiresUnsavedChangesCheck,
           onSelected: () {},
-          onSelectedAsync: () async {
+          onSelectedAsync: entry.onSelectedAsync,\n          onSelectedGuardedAsync: () async {
             if (entry.requiresUnsavedChangesCheck) {
               if (!await _confirmAllForms() || !context.mounted) return false;
             }
