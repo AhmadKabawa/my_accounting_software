@@ -174,7 +174,9 @@ class _BrandsScreenState extends State<BrandsScreen> {
                   )
                 : DecoratedBox(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surfaceContainerHighest,
                     ),
                     child: const Center(child: AppIcon(AppIcons.brands)),
                   ),
@@ -527,19 +529,29 @@ class _BrandEditorState extends State<_BrandEditor> {
         ['http', 'https'].contains(logoUri.scheme) &&
         logoUri.host.isNotEmpty;
     return AlertDialog(
-      title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          const AppIcon(AppIcons.brands),
-          const SizedBox(width: 10),
-          Expanded(child: AppText(
-            widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
-            type: AppTextType.titleLarge,
-          )),
-        ]),
-        const SizedBox(height: 6),
-        AppText(BrandsKeys.editorSubtitle, type: AppTextType.bodySmall,
-          color: Theme.of(context).colorScheme.onSurfaceVariant),
-      ]),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const AppIcon(AppIcons.brands),
+              const SizedBox(width: 10),
+              Expanded(
+                child: AppText(
+                  widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
+                  type: AppTextType.titleLarge,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          AppText(
+            BrandsKeys.editorSubtitle,
+            type: AppTextType.bodySmall,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
       content: SizedBox(
         width: 560,
         child: Form(
@@ -549,7 +561,10 @@ class _BrandEditorState extends State<_BrandEditor> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AppText(BrandsKeys.identitySection, type: AppTextType.titleSmall),
+                AppText(
+                  BrandsKeys.identitySection,
+                  type: AppTextType.titleSmall,
+                ),
                 context.ui.spacing.gap(AppSpacing.sm),
                 if (_saveFailed) ...[
                   InlineBanner(
@@ -606,7 +621,10 @@ class _BrandEditorState extends State<_BrandEditor> {
                   ),
                 ],
                 context.ui.spacing.gap(AppSpacing.md),
-                AppText(BrandsKeys.logoSection, type: AppTextType.titleSmall),
+                AppText(
+                  BrandsKeys.logoSection,
+                  type: AppTextType.titleSmall,
+                ),
                 context.ui.spacing.gap(AppSpacing.sm),
                 AppTextField(
                   controller: _logo,
@@ -644,7 +662,10 @@ class _BrandEditorState extends State<_BrandEditor> {
                   ),
                 ],
                 context.ui.spacing.gap(AppSpacing.md),
-                AppText(BrandsKeys.detailsSection, type: AppTextType.titleSmall),
+                AppText(
+                  BrandsKeys.detailsSection,
+                  type: AppTextType.titleSmall,
+                ),
                 context.ui.spacing.gap(AppSpacing.sm),
                 AppTextField(
                   controller: _description,
