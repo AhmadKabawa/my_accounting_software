@@ -19,6 +19,7 @@ import 'package:accounting_software/app/features/home/presentation/widgets/dashb
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import '../../helpers/localized_app.dart';
 
 class _AccessRepository implements AccessRepository {
@@ -91,6 +92,11 @@ void main() {
     );
 
     expect(find.byType(DashboardCard), findsOneWidget);
+    final cardContext = tester.element(find.byType(DashboardCard));
+    expect(
+      tester.getSize(find.byType(DashboardCard)).height,
+      greaterThanOrEqualTo(AppComponentSize.hitArea.of(cardContext)),
+    );
     expect(find.byType(AppEmptyState), findsNothing);
   });
 
@@ -150,7 +156,7 @@ void main() {
         GoRoute(
           path: HomeRoutes.home.path,
           name: HomeRoutes.home.name,
-          builder: (_, _) => HomeScreen(
+          builder: (context, state) => HomeScreen(
             registeredRoutes: [HomeRoutes.home, _target],
             definitions: [_definition()],
           ),
