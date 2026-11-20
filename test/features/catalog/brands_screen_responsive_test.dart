@@ -63,6 +63,11 @@ void main() {
 
             expect(tester.takeException(), isNull);
             expect(find.byType(BrandsScreen), findsOneWidget);
+            expect(find.text('Brands'), findsOneWidget);
+            expect(find.text('Total brands'), findsOneWidget);
+            expect(find.text('Active brands'), findsOneWidget);
+            expect(find.text('Inactive brands'), findsOneWidget);
+            expect(find.text('Brand deleted'), findsNothing);
           },
         );
       }
