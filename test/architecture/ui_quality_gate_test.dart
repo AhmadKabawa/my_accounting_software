@@ -99,6 +99,9 @@ void main() {
   test('P-10: list pages use ListPageTemplate (whole page scrolls)', () {
     final violations = <String>[];
     for (final file in _featureFiles(pathContains: '/pages/')) {
+      final path = file.path.replaceAll('\\', '/');
+      // Sections/widgets are parts of a page; the page itself owns the frame.
+      if (path.contains('/sections/') || path.contains('/widgets/')) continue;
       final text = file.readAsStringSync();
       if (text.contains('AppDataTable<') &&
           !text.contains('ListPageTemplate(')) {

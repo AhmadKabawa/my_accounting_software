@@ -1,4 +1,3 @@
-import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,24 +10,18 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
-import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
-import 'package:accounting_software/app/features/catalog/presentation/pages/brands/widgets/brand_card.dart';
+import 'package:accounting_software/app/features/catalog/presentation/pages/brands/sections/brands_table_section.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/brands/widgets/brand_editor_dialog.dart';
-import 'package:accounting_software/app/features/catalog/presentation/pages/brands/widgets/brand_logo.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/brands/widgets/brand_stats_bar.dart';
-import 'package:accounting_software/app/features/catalog/presentation/pages/brands/widgets/brand_status_badge.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/brands/widgets/brands_filter_bar.dart';
 
 class BrandsScreen extends StatelessWidget {
@@ -132,76 +125,19 @@ class _BrandsView extends StatelessWidget {
         filterBar: BrandsFilterBar(query: query, cubit: cubit),
         state: loading ? AppPageState.loading
             : failure != null ? AppPageState.error : AppPageState.content,
-        dataTable: AppDataTable<Brand>(
-          columns: [
-            DataTableColumn(labelKey: BrandsKeys.brandName, sortKey: 'name',
-              priority: DataTableColumnPriority.primary, flex: 3,
-              cellBuilder: (_, b) => BrandIdentity(b)),
-            DataTableColumn(labelKey: BrandsKeys.description,
-              priority: DataTableColumnPriority.secondary, flex: 2,
-              cellBuilder: (c, b) {
-                final description = b.description?.trim() ?? '';
-                return AppText.raw(
-                  description,
-                  color: c.ui.theme.colors.onSurfaceVariant,
-                  maxLines: 2,
-                );
-              }),
-            DataTableColumn(labelKey: BrandsKeys.productCount,
-              priority: DataTableColumnPriority.secondary, numeric: true,
-              cellBuilder: (_, b) => BrandProductsBadge(b)),
-            DataTableColumn(labelKey: BrandsKeys.status,
-              priority: DataTableColumnPriority.secondary,
-              cellBuilder: (_, b) => BrandStatusBadge(b)),
-          ],
-          rows: rows, rowId: (b) => b.id, loading: loading,
-          errorKey: failure?.messageKey, onRetry: cubit.refresh,
-          emptyState: AppEmptyState(
-            icon: AppIcons.brands,
-            titleKey: query.search.isEmpty && query.status == BrandStatusFilter.all
-                ? BrandsKeys.empty : BrandsKeys.noResults,
-            descriptionKey: query.search.isEmpty && query.status == BrandStatusFilter.all
-                ? BrandsKeys.emptyDescription : BrandsKeys.noResultsDescription,
-            action: query.search.isEmpty && query.status == BrandStatusFilter.all
-                ? PermissionGate(permission: Permissions.masterData.manage,
-                    child: AppButton(BrandsKeys.add, icon: AppIcons.add,
-                      onPressed: () => _edit(context))) : null,
-          ),
-          cardBuilder: (_, b) => BrandCard(b),
-          rowActionsBuilder: (c, b) => PermissionGate(
-            permission: Permissions.masterData.manage,
-            child: AppRowActions(
-              primary: [
-                AppRowAction(
-                  icon: AppIcons.edit,
-                  labelKey: BrandsKeys.edit,
-                  onPressed: () => _edit(context, b),
-                ),
-                if (b.productCount == 0)
-                  AppRowAction(
-                    icon: AppIcons.delete,
-                    labelKey: BrandsKeys.delete,
-                    destructive: true,
-                    onPressed: () => _delete(context, b),
-                  ),
-              ],
-              overflow: [
-                AppRowAction(
-                  icon: b.isActive ? AppIcons.block : AppIcons.restore,
-                  labelKey: b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
-                  onPressed: () => _status(context, b),
-                ),
-              ],
-            ),
-          ),
-          sortKey: 'name', sortAscending: query.sortAscending,
-          onSort: (s) => cubit.setSort(ascending: s.ascending),
-          page: query.page, pageSize: query.pageSize, totalCount: total,
-          hasMore: query.page * query.pageSize < total,
-          onPageChanged: cubit.setPage,
+        dataTable: BrandsTableSection(
+          cubit: cubit,
+          query: query,
+          rows: rows,
+          total: total,
+          loading: loading,
+          failure: failure,
+          onAdd: () => _edit(context),
+          onEdit: (brand) => _edit(context, brand),
+          onDelete: (brand) => _delete(context, brand),
+          onToggleStatus: (brand) => _status(context, brand),
         ),
       );
     },
   );
-
 }
