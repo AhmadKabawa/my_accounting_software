@@ -39,7 +39,7 @@ const appDestinations = [
     item: NavBarItem.icons(
       icon: AppIcons.brands,
       activeIcon: AppIcons.brands,
-      label: NavKeys.brands,
+      label: NavKeys.catalog,
     ),
     branchIndex: 1,
   ),
