@@ -423,7 +423,7 @@ void main() {
               label: TemplateKeys.save,
               requiresUnsavedChangesCheck: true,
               onSelected: () {},
-              onSelectedAsync: () async {
+              onSelectedGuardedAsync: () async {
                 actionRan = true;
                 return true;
               },
