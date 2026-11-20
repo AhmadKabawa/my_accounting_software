@@ -149,6 +149,17 @@ class _BrandsScreenState extends State<BrandsScreen> {
   @override
   Widget build(BuildContext context) {
     final activeFilters = <FilterBarFilter>[
+      if (_search.text.trim().isNotEmpty)
+        FilterBarFilter(
+          id: 'search',
+          label: BrandsKeys.searchHint,
+          value: _search.text.trim(),
+          onRemove: () {
+            _search.clear();
+            _page = 1;
+            _load();
+          },
+        ),
       if (_status != 'all')
         FilterBarFilter(
           id: 'status',
