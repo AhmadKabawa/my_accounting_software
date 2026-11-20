@@ -172,9 +172,14 @@ class _BrandsView extends StatelessWidget {
               cellBuilder: _identity),
             DataTableColumn(labelKey: BrandsKeys.description,
               priority: DataTableColumnPriority.secondary, flex: 2,
-              cellBuilder: (c, b) => AppText.raw(
-                b.description?.trim().isNotEmpty == true ? b.description!.trim() : '—',
-                color: c.ui.theme.colors.onSurfaceVariant, maxLines: 2)),
+              cellBuilder: (c, b) {
+                final description = b.description?.trim() ?? '';
+                return AppText.raw(
+                  description.isNotEmpty ? description : '—',
+                  color: c.ui.theme.colors.onSurfaceVariant,
+                  maxLines: 2,
+                );
+              }),
             DataTableColumn(labelKey: BrandsKeys.productCount,
               priority: DataTableColumnPriority.secondary, numeric: true,
               cellBuilder: (_, b) => AppText.raw(b.productCount?.toString() ?? '—')),
@@ -289,13 +294,15 @@ class _BrandsView extends StatelessWidget {
     size: AppBadgeSize.small,
   );
 
-  Widget _card(BuildContext context, Brand b) => Column(
+  Widget _card(BuildContext context, Brand b) {
+    final description = b.description?.trim() ?? '';
+    return Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       _identity(context, b),
-      if (b.description?.trim().isNotEmpty == true) ...[
+      if (description.isNotEmpty) ...[
         context.ui.spacing.gap(AppSpacing.sm),
-        AppText.raw(b.description!.trim(), type: AppTextType.bodySmall,
+        AppText.raw(description, type: AppTextType.bodySmall,
           color: context.ui.theme.colors.onSurfaceVariant, maxLines: 2),
       ],
       context.ui.spacing.gap(AppSpacing.sm),
@@ -306,6 +313,7 @@ class _BrandsView extends StatelessWidget {
       ]),
     ],
   );
+  }
 }
 
 class _BrandEditor extends StatefulWidget {
