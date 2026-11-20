@@ -18,7 +18,9 @@ class DashboardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = '${definition.titleKey.tr(context: context)}. ${definition.descriptionKey.tr(context: context)}';
+    final label =
+        '${definition.titleKey.tr(context: context)}. '
+        '${definition.descriptionKey.tr(context: context)}';
 
     return Semantics(
       button: true,

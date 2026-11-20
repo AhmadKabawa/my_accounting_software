@@ -76,7 +76,9 @@ void main() {
   testWidgets('shows a destination only when its permission is granted', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({const Permission('reports.view')});
+    final cubit = await _createAccessCubit({
+      const Permission('reports.view'),
+    });
     addTearDown(cubit.close);
 
     await tester.pumpWidget(
@@ -126,7 +128,9 @@ void main() {
   testWidgets('hides a destination whose route is not registered', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({const Permission('reports.view')});
+    final cubit = await _createAccessCubit({
+      const Permission('reports.view'),
+    });
     addTearDown(cubit.close);
 
     await tester.pumpWidget(
@@ -148,7 +152,9 @@ void main() {
   testWidgets('opens the registered destination when a card is tapped', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({const Permission('reports.view')});
+    final cubit = await _createAccessCubit({
+      const Permission('reports.view'),
+    });
     addTearDown(cubit.close);
     final router = GoRouter(
       initialLocation: HomeRoutes.home.path,
@@ -186,7 +192,9 @@ void main() {
   testWidgets('dashboard cards expose button semantics and keyboard activation', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({const Permission('reports.view')});
+    final cubit = await _createAccessCubit({
+      const Permission('reports.view'),
+    });
     addTearDown(cubit.close);
     final router = GoRouter(
       initialLocation: HomeRoutes.home.path,
