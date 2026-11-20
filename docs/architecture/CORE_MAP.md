@@ -227,7 +227,7 @@
 
 ## Catalog list UI — 2026-11-19
 
-- `core/presentation/widgets/app_searchable_dropdown/`: `SearchableDropdown<T>` (L2) يوفّر اختياراً مفرداً عاماً، بحثاً محلياً أو callback remote debounce، subtitle/add-new slots، حالات loading/error/empty/disabled/readOnly، وواجهة desktop keyboard/mobile BottomSheet. تحديث options لا يغيّر نص البحث أو التركيز ولا يفرض إعادة تركيب RawAutocomplete.
+- `core/presentation/widgets/app_searchable_dropdown/`: `SearchableDropdown<T>` (L2) يوفّر اختياراً مفرداً عاماً، بحثاً محلياً أو callback remote debounce، subtitle/add-new slots، حالات loading/error/empty/disabled/readOnly، وواجهة desktop keyboard/mobile BottomSheet. تحديث options يحدّث أيضاً النتائج المفتوحة على desktop مع الحفاظ على نص البحث والتركيز ودون إعادة تركيب RawAutocomplete.
 - `core/presentation/widgets/app_filter_bar/`: `FilterBar` (L3) يعرض البحث عبر AppTextField والمرشحات النشطة كـ AppBadge قابل للإزالة مع namedArgs للترجمة، ويدعم مسح الكل؛ محرر الفلاتر يحقن من الشاشة عبر slot. لا يملك استعلامات.
 - `core/presentation/widgets/app_data_table/`: `AppDataTable<T>` (L3) ثلاث تمثيلات حسب عرض الحاوية: cards أقل من 600، compact 600–1199، full من 1200؛ الفرز والترقيم callbacks للمالك/server، مع قائمة فرز BottomSheet للهاتف، selection وrow actions وsummary slots. حجم الصفحة من `AppConfig.pageSizeOptions`.
 - `ListPageTemplate` أضيف إلى `app_page_template/app_page_templates.dart` (L4) ويجمع `AppPageHeader`, `FilterBar`, `AppDataTable`, `AppSkeleton`, `AppEmptyState`. في حالة الخطأ يترك عرض البانر وRetry لـ AppDataTable حتى لا يتكرر المصدر.

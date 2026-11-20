@@ -15,7 +15,9 @@ const _legacy = {'on_boarding'};
 const _maxPresentationLines = 250;
 
 Iterable<File> _featureFiles({String pathContains = ''}) sync* {
-  final features = Directory('lib/app/features').listSync().whereType<Directory>();
+  final features = Directory(
+    'lib/app/features',
+  ).listSync().whereType<Directory>();
   for (final feature in features) {
     final name = feature.path.split(Platform.pathSeparator).last;
     if (_legacy.contains(name)) continue;
@@ -29,11 +31,7 @@ Iterable<File> _featureFiles({String pathContains = ''}) sync* {
   }
 }
 
-List<String> _scan(
-  Iterable<File> files,
-  RegExp pattern,
-  String message,
-) {
+List<String> _scan(Iterable<File> files, RegExp pattern, String message) {
   final found = <String>[];
   for (final file in files) {
     final lines = file.readAsLinesSync();
@@ -51,7 +49,8 @@ void main() {
     final tooLong = <String>[];
     for (final file in _featureFiles(pathContains: '/presentation/')) {
       final path = file.path.replaceAll('\\', '/');
-      final isUi = path.contains('/pages/') ||
+      final isUi =
+          path.contains('/pages/') ||
           path.contains('/widgets/') ||
           path.contains('/sections/');
       if (!isUi) continue;
@@ -72,11 +71,16 @@ void main() {
 
   test('P-08: no hard-coded placeholder text or string concatenation', () {
     final violations = [
-      ..._scan(_featureFiles(pathContains: '/presentation/'), RegExp("['\"]—['\"]"),
-          "hard-coded '—' (use a localized key)"),
-      ..._scan(_featureFiles(pathContains: '/presentation/'),
-          RegExp(r"\.tr\(context: context\)\s*\+|\+\s*['\"]:\s?['\"]"),
-          'builds a sentence by concatenation (use a key with {variables})'),
+      ..._scan(
+        _featureFiles(pathContains: '/presentation/'),
+        RegExp(r"""['"]—['"]"""),
+        "hard-coded '—' (use a localized key)",
+      ),
+      ..._scan(
+        _featureFiles(pathContains: '/presentation/'),
+        RegExp(r"""\.tr\(context: context\)\s*\+|\+\s*['"]:\s?['"]"""),
+        'builds a sentence by concatenation (use a key with {variables})',
+      ),
     ];
     expect(violations, isEmpty, reason: violations.join('\n'));
   });
@@ -89,7 +93,9 @@ void main() {
         if (!lines[i].contains('rowActionsBuilder')) continue;
         final window = lines.skip(i).take(25).join('\n');
         if (window.contains('AppButton(')) {
-          violations.add('${file.path}:${i + 1} rowActionsBuilder uses AppButton');
+          violations.add(
+            '${file.path}:${i + 1} rowActionsBuilder uses AppButton',
+          );
         }
       }
     }
@@ -105,7 +111,9 @@ void main() {
       final text = file.readAsStringSync();
       if (text.contains('AppDataTable<') &&
           !text.contains('ListPageTemplate(')) {
-        violations.add('${file.path} uses AppDataTable without ListPageTemplate');
+        violations.add(
+          '${file.path} uses AppDataTable without ListPageTemplate',
+        );
       }
     }
     expect(violations, isEmpty, reason: violations.join('\n'));

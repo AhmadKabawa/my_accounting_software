@@ -112,9 +112,6 @@ enum BrandsKeys implements AppKey {
     ar: 'ارفع صورة أو الصق رابطاً عاماً (HTTP/HTTPS).',
     en: 'Upload an image or paste a public HTTP/HTTPS link.',
   ),
-  identitySection(ar: 'الهوية', en: 'Identity'),
-  logoSection(ar: 'الشعار', en: 'Logo'),
-  detailsSection(ar: 'تفاصيل إضافية', en: 'Additional details'),
   statLabel(ar: '{label}: {value}', en: '{label}: {value}');
 
   const BrandsKeys({required this.ar, required this.en});

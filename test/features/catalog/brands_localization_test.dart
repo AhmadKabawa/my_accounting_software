@@ -20,13 +20,13 @@ void main() {
       );
       expect(english['brands.title'], 'Brands');
       expect(english['brands.name'], 'Brand name');
-      expect(english['brands.deleted'], 'Brand deleted');
+      expect(english['brands.deleted'], 'Brand deleted.');
       expect(arabic['brands.title'], 'الماركات');
       expect(arabic['brands.name'], 'اسم الماركة');
-      expect(arabic['brands.deleted'], 'تم حذف الماركة');
+      expect(arabic['brands.deleted'], 'تم حذف الماركة.');
       expect(
         english.entries
-            .where((entry) => entry.value == 'Brand deleted')
+            .where((entry) => entry.value == 'Brand deleted.')
             .map((entry) => entry.key),
         ['brands.deleted'],
       );

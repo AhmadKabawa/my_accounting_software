@@ -81,24 +81,21 @@ void main() {
       await tester.pumpWidget(
         buildTestApp(
           theme: theme,
-          home: Builder(
-            builder: (context) {
-              for (final tone in AppBadgeTone.values) {
-                final visual = AppBadgeStyle(
-                  context,
-                ).resolve(tone, AppBadgeSize.medium);
-                expect(
-                  _contrast(visual.foreground, visual.background),
-                  greaterThanOrEqualTo(4.5),
-                  reason: '$tone on ${theme.brightness}',
-                );
-              }
-              return const AppBadge(label: BadgeKeys.sample);
-            },
-          ),
+          home: const AppBadge(label: BadgeKeys.sample),
         ),
       );
       await tester.pumpAndSettle();
+      final context = tester.element(find.byType(AppBadge));
+      for (final tone in AppBadgeTone.values) {
+        final visual = AppBadgeStyle(
+          context,
+        ).resolve(tone, AppBadgeSize.medium);
+        expect(
+          _contrast(visual.foreground, visual.background),
+          greaterThanOrEqualTo(4.5),
+          reason: '$tone on ${theme.brightness}',
+        );
+      }
     }
   });
 

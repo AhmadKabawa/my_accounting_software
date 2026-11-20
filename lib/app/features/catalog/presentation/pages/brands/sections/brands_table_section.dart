@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
@@ -45,71 +46,98 @@ class BrandsTableSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppDataTable<Brand>(
-          columns: [
-            DataTableColumn(labelKey: BrandsKeys.brandName, sortKey: 'name',
-              priority: DataTableColumnPriority.primary, flex: 3,
-              cellBuilder: (_, b) => BrandIdentity(b)),
-            DataTableColumn(labelKey: BrandsKeys.description,
-              priority: DataTableColumnPriority.secondary, flex: 2,
-              cellBuilder: (c, b) {
-                final description = b.description?.trim() ?? '';
-                return AppText.raw(
-                  description,
-                  color: c.ui.theme.colors.onSurfaceVariant,
-                  maxLines: 2,
-                );
-              }),
-            DataTableColumn(labelKey: BrandsKeys.productCount,
-              priority: DataTableColumnPriority.secondary, numeric: true,
-              cellBuilder: (_, b) => BrandProductsBadge(b)),
-            DataTableColumn(labelKey: BrandsKeys.status,
-              priority: DataTableColumnPriority.secondary,
-              cellBuilder: (_, b) => BrandStatusBadge(b)),
-          ],
-          rows: rows, rowId: (b) => b.id, loading: loading,
-          errorKey: failure?.messageKey, onRetry: cubit.refresh,
-          emptyState: AppEmptyState(
-            icon: AppIcons.brands,
-            titleKey: query.search.isEmpty && query.status == BrandStatusFilter.all
-                ? BrandsKeys.empty : BrandsKeys.noResults,
-            descriptionKey: query.search.isEmpty && query.status == BrandStatusFilter.all
-                ? BrandsKeys.emptyDescription : BrandsKeys.noResultsDescription,
-            action: query.search.isEmpty && query.status == BrandStatusFilter.all
-                ? PermissionGate(permission: Permissions.masterData.manage,
-                    child: AppButton(BrandsKeys.add, icon: AppIcons.add,
-                      onPressed: () => onAdd())) : null,
+    columns: [
+      DataTableColumn(
+        labelKey: BrandsKeys.brandName,
+        sortKey: 'name',
+        priority: DataTableColumnPriority.primary,
+        flex: 3,
+        cellBuilder: (_, b) => BrandIdentity(b),
+      ),
+      DataTableColumn(
+        labelKey: BrandsKeys.description,
+        priority: DataTableColumnPriority.secondary,
+        flex: 2,
+        cellBuilder: (c, b) {
+          final description = b.description?.trim() ?? '';
+          return AppText.raw(
+            description,
+            color: c.ui.theme.colors.onSurfaceVariant,
+            maxLines: 2,
+          );
+        },
+      ),
+      DataTableColumn(
+        labelKey: BrandsKeys.productCount,
+        priority: DataTableColumnPriority.secondary,
+        numeric: true,
+        cellBuilder: (_, b) => BrandProductsBadge(b),
+      ),
+      DataTableColumn(
+        labelKey: BrandsKeys.status,
+        priority: DataTableColumnPriority.secondary,
+        cellBuilder: (_, b) => BrandStatusBadge(b),
+      ),
+    ],
+    rows: rows,
+    rowId: (b) => b.id,
+    loading: loading,
+    errorKey: failure?.messageKey,
+    onRetry: cubit.refresh,
+    emptyState: AppEmptyState(
+      icon: AppIcons.brands,
+      titleKey: query.search.isEmpty && query.status == BrandStatusFilter.all
+          ? BrandsKeys.empty
+          : BrandsKeys.noResults,
+      descriptionKey:
+          query.search.isEmpty && query.status == BrandStatusFilter.all
+          ? BrandsKeys.emptyDescription
+          : BrandsKeys.noResultsDescription,
+      action: query.search.isEmpty && query.status == BrandStatusFilter.all
+          ? PermissionGate(
+              permission: Permissions.masterData.manage,
+              child: AppButton(
+                BrandsKeys.add,
+                icon: AppIcons.add,
+                onPressed: () => onAdd(),
+              ),
+            )
+          : null,
+    ),
+    cardBuilder: (_, b) => BrandCard(b),
+    rowActionsBuilder: (c, b) => PermissionGate(
+      permission: Permissions.masterData.manage,
+      child: AppRowActions(
+        primary: [
+          AppRowAction(
+            icon: AppIcons.edit,
+            labelKey: BrandsKeys.edit,
+            onPressed: () => onEdit(b),
           ),
-          cardBuilder: (_, b) => BrandCard(b),
-          rowActionsBuilder: (c, b) => PermissionGate(
-            permission: Permissions.masterData.manage,
-            child: AppRowActions(
-              primary: [
-                AppRowAction(
-                  icon: AppIcons.edit,
-                  labelKey: BrandsKeys.edit,
-                  onPressed: () => onEdit(b),
-                ),
-                if (b.productCount == 0)
-                  AppRowAction(
-                    icon: AppIcons.delete,
-                    labelKey: BrandsKeys.delete,
-                    destructive: true,
-                    onPressed: () => onDelete(b),
-                  ),
-              ],
-              overflow: [
-                AppRowAction(
-                  icon: b.isActive ? AppIcons.block : AppIcons.restore,
-                  labelKey: b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
-                  onPressed: () => onToggleStatus(b),
-                ),
-              ],
+          if (b.productCount == 0)
+            AppRowAction(
+              icon: AppIcons.delete,
+              labelKey: BrandsKeys.delete,
+              destructive: true,
+              onPressed: () => onDelete(b),
             ),
+        ],
+        overflow: [
+          AppRowAction(
+            icon: b.isActive ? AppIcons.block : AppIcons.restore,
+            labelKey: b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
+            onPressed: () => onToggleStatus(b),
           ),
-          sortKey: 'name', sortAscending: query.sortAscending,
-          onSort: (s) => cubit.setSort(ascending: s.ascending),
-          page: query.page, pageSize: query.pageSize, totalCount: total,
-          hasMore: query.page * query.pageSize < total,
-          onPageChanged: cubit.setPage,
-        );
+        ],
+      ),
+    ),
+    sortKey: 'name',
+    sortAscending: query.sortAscending,
+    onSort: (s) => cubit.setSort(ascending: s.ascending),
+    page: query.page,
+    pageSize: query.pageSize,
+    totalCount: total,
+    hasMore: query.page * query.pageSize < total,
+    onPageChanged: cubit.setPage,
+  );
 }

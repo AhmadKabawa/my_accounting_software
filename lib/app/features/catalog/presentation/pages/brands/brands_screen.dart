@@ -12,7 +12,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
@@ -50,7 +49,11 @@ class _BrandsView extends StatelessWidget {
   }
 
   void _toast(BuildContext context, AppKey key) =>
-      MessageViewWidgets.showMessage(context, messageKey: key, type: MessageType.success);
+      MessageViewWidgets.showMessage(
+        context,
+        messageKey: key,
+        type: MessageType.success,
+      );
 
   Future<void> _status(BuildContext context, Brand brand) async {
     final cubit = context.read<BrandsListCubit>();
@@ -70,8 +73,14 @@ class _BrandsView extends StatelessWidget {
     } else {
       final result = await cubit.setActive(id: brand.id, isActive: true);
       if (!context.mounted) return;
-      result.fold((f) => MessageViewWidgets.showMessage(context, messageKey: f.messageKey, type: MessageType.error),
-          (_) => _toast(context, BrandsKeys.statusUpdated));
+      result.fold(
+        (f) => MessageViewWidgets.showMessage(
+          context,
+          messageKey: f.messageKey,
+          type: MessageType.error,
+        ),
+        (_) => _toast(context, BrandsKeys.statusUpdated),
+      );
     }
   }
 
@@ -95,49 +104,59 @@ class _BrandsView extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<BrandsListCubit, BrandsListState>(
-    builder: (context, state) {
-      final cubit = context.read<BrandsListCubit>();
-      final page = state is BrandsListReady ? state : null;
-      final query = page?.query ?? cubit.query;
-      final stats = page?.stats ?? cubit.stats;
-      final rows = page?.result.items ?? const <Brand>[];
-      final total = page?.result.totalCount ?? 0;
-      final failure = state is BrandsListFailed ? state.failure : null;
-      final loading = state is BrandsListInitial || state is BrandsListLoading;
+  Widget build(BuildContext context) =>
+      BlocBuilder<BrandsListCubit, BrandsListState>(
+        builder: (context, state) {
+          final cubit = context.read<BrandsListCubit>();
+          final page = state is BrandsListReady ? state : null;
+          final query = page?.query ?? cubit.query;
+          final stats = page?.stats ?? cubit.stats;
+          final rows = page?.result.items ?? const <Brand>[];
+          final total = page?.result.totalCount ?? 0;
+          final failure = state is BrandsListFailed ? state.failure : null;
+          final loading =
+              state is BrandsListInitial || state is BrandsListLoading;
 
-      return ListPageTemplate(
-        titleKey: BrandsKeys.title,
-        breadcrumb: AppBreadcrumb(items: [
-          AppBreadcrumbItem(
-            label: NavKeys.catalog,
-            onTap: () => context.go(CatalogRoutes.hub.path),
-          ),
-          const AppBreadcrumbItem(label: BrandsKeys.title),
-        ]),
-        count: total,
-        actions: stats == null ? null : BrandStatsBar(stats),
-        primaryAction: PermissionGate(
-          permission: Permissions.masterData.manage,
-          child: AppButton(BrandsKeys.add, icon: AppIcons.add,
-              onPressed: () => _edit(context)),
-        ),
-        filterBar: BrandsFilterBar(query: query, cubit: cubit),
-        state: loading ? AppPageState.loading
-            : failure != null ? AppPageState.error : AppPageState.content,
-        dataTable: BrandsTableSection(
-          cubit: cubit,
-          query: query,
-          rows: rows,
-          total: total,
-          loading: loading,
-          failure: failure,
-          onAdd: () => _edit(context),
-          onEdit: (brand) => _edit(context, brand),
-          onDelete: (brand) => _delete(context, brand),
-          onToggleStatus: (brand) => _status(context, brand),
-        ),
+          return ListPageTemplate(
+            titleKey: BrandsKeys.title,
+            breadcrumb: AppBreadcrumb(
+              items: [
+                AppBreadcrumbItem(
+                  label: NavKeys.catalog,
+                  onTap: () => context.go(CatalogRoutes.hub.path),
+                ),
+                const AppBreadcrumbItem(label: BrandsKeys.title),
+              ],
+            ),
+            count: total,
+            actions: stats == null ? null : BrandStatsBar(stats),
+            primaryAction: PermissionGate(
+              permission: Permissions.masterData.manage,
+              child: AppButton(
+                BrandsKeys.add,
+                icon: AppIcons.add,
+                onPressed: () => _edit(context),
+              ),
+            ),
+            filterBar: BrandsFilterBar(query: query, cubit: cubit),
+            state: loading
+                ? AppPageState.loading
+                : failure != null
+                ? AppPageState.error
+                : AppPageState.content,
+            dataTable: BrandsTableSection(
+              cubit: cubit,
+              query: query,
+              rows: rows,
+              total: total,
+              loading: loading,
+              failure: failure,
+              onAdd: () => _edit(context),
+              onEdit: (brand) => _edit(context, brand),
+              onDelete: (brand) => _delete(context, brand),
+              onToggleStatus: (brand) => _status(context, brand),
+            ),
+          );
+        },
       );
-    },
-  );
 }

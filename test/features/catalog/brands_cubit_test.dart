@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/create_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/delete_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/get_brands_use_case.dart';

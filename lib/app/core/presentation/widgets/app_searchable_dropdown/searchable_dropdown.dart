@@ -158,17 +158,19 @@ class _SearchableDropdownState<T extends Object>
         oldWidget.errorKey != widget.errorKey;
     if (optionsChanged || stateChanged) {
       // RawAutocomplete recalculates its options when its controller notifies.
-      // Nudge the selection after this build instead of replacing the
+      // Refresh its field value after this build instead of replacing the
       // RawAutocomplete subtree: replacing it closes the overlay while the
       // externally-owned FocusNode remains focused, so the panel never reopens.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         if (_desktopFocusNode.hasFocus) {
-          final selection = _desktopController.selection;
-          _desktopController.selection = const TextSelection.collapsed(
-            offset: 0,
+          final value = _desktopController.value;
+          _desktopController.value = value.copyWith(
+            text: '${value.text} ',
+            selection: TextSelection.collapsed(offset: value.text.length + 1),
+            composing: TextRange.empty,
           );
-          _desktopController.selection = selection;
+          _desktopController.value = value;
         }
         // A modal sheet may still be listening to this notifier. Notify it
         // after the current widget build, never from didUpdateWidget itself.
