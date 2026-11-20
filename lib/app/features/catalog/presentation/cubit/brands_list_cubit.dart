@@ -6,12 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/delete_brand_use_case.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/get_brands_use_case.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/set_brand_active_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/delete_brand_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/get_brands_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/set_brand_active_use_case.dart';
 
 sealed class BrandsListState extends Equatable {
   const BrandsListState();
