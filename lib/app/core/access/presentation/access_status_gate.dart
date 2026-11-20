@@ -17,7 +17,8 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 class AccessStatusGate extends StatefulWidget {
   const AccessStatusGate({super.key, required this.child, this.onSignOut});
 
-  final Widget child;\n  final Future<bool> Function()? onSignOut;
+  final Widget child;
+  final Future<bool> Function()? onSignOut;
 
   @override
   State<AccessStatusGate> createState() => _AccessStatusGateState();
@@ -84,7 +85,12 @@ class _AccessStatusGateState extends State<AccessStatusGate> {
             AppButton(
               AuthKeys.signOut,
               onPressed: () async {
-                final action = widget.onSignOut;\n                if (action != null) {\n                  await action();\n                } else {\n                  await context.read<SessionCubit>().signOut();\n                }
+                final action = widget.onSignOut;
+                if (action != null) {
+                  await action();
+                } else {
+                  await context.read<SessionCubit>().signOut();
+                }
               },
             ),
           ],
