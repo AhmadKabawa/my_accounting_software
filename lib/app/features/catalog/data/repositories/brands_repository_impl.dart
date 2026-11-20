@@ -4,7 +4,6 @@ import 'package:accounting_software/app/core/error/exceptions/app_exception.dart
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
 import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
-import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/data/datasources/brands_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/domain/entities/brand.dart';
