@@ -14,8 +14,8 @@ import 'package:accounting_software/app/features/catalog/domain/usecase/set_bran
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/brands/brands_screen.dart';
-import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import '../../helpers/localized_app.dart';
+import '../../helpers/screen_matrix.dart';
 import 'support/fake_brands_repository.dart';
 
 class _NoopAccessRepository implements AccessRepository {
@@ -47,25 +47,14 @@ void main() {
           );
           addTearDown(() async => sl.reset());
 
-          await tester.pumpWidget(
-            MultiBlocProvider(
-              providers: [
-                BlocProvider<AccessCubit>(
-                  create: (_) => AccessCubit(
-                    getMyAccess: GetMyAccessUseCase(_NoopAccessRepository()),
-                  ),
-                ),
-              ],
-              child: buildTestApp(
-                direction: direction,
-                theme: dark ? AppTheme.dark() : AppTheme.light(),
-                home: const Scaffold(body: BrandsScreen()),
-              ),
-            ),
+          await pumpScreenMatrix(
+            tester,
+            width: width,
+            direction: direction,
+            dark: dark,
+            home: const Scaffold(body: BrandsScreen()),
           );
-          await tester.pumpAndSettle();
 
-            expect(tester.takeException(), isNull);
             expect(find.byType(BrandsScreen), findsOneWidget);
             // Breadcrumb + page title both show "Brands".
             expect(find.text('Brands'), findsWidgets);
