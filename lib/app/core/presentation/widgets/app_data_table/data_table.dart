@@ -409,13 +409,13 @@ class AppDataTable<T> extends StatelessWidget {
       ],
     );
 
-    return Column(
+    final surface = Column(
       mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
       children: [
         Container(
           constraints: BoxConstraints(minHeight: style.headerHeight),
           decoration: BoxDecoration(
-            color: style.colors.surfaceContainerHighest,
+            color: style.headerBackground,
             border: Border(bottom: BorderSide(color: style.divider)),
           ),
           child: cells(null, header: true),
@@ -460,6 +460,7 @@ class AppDataTable<T> extends StatelessWidget {
                   container: true,
                   selected: selectedIds.contains(rowId(row)),
                   child: InkWell(
+                    hoverColor: style.rowHover,
                     onTap: onRowActivated == null
                         ? null
                         : () => onRowActivated!(row),
@@ -471,6 +472,23 @@ class AppDataTable<T> extends StatelessWidget {
                 ),
               );
             },
+          ),
+        ),
+      ],
+    );
+
+    return Column(
+      mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
+      children: [
+        _fill(
+          bounded,
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: style.surface,
+              borderRadius: style.radius,
+              border: style.border,
+            ),
+            child: ClipRRect(borderRadius: style.radius, child: surface),
           ),
         ),
         if (summaryBuilder != null) summaryBuilder!,

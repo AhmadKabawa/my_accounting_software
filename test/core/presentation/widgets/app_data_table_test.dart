@@ -164,6 +164,15 @@ void main() {
     expect(requestedSize, 50);
   });
 
+  testWidgets('the table sits in a rounded, bordered surface', (tester) async {
+    await pumpTable(tester);
+    final clip = find.ancestor(
+      of: find.byType(ListView).first,
+      matching: find.byType(ClipRRect),
+    );
+    expect(clip, findsWidgets);
+  });
+
   testWidgets('pagination label shows real numbers, not placeholders', (
     tester,
   ) async {

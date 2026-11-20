@@ -540,3 +540,7 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 ## الشريط الجانبي: عناصر فرعية
 
 `NavBarItem.icons(..., children: [NavBarChild(label:, icon:, path:)])` في `shell/destinations.dart`. تظهر في `AppSidebar` فقط تحت العنصر المحدد (يمرَّر `activePath` و`onChildSelected` من الشل، ويستخدم `context.go(path)`). لا يتأثر شريط الهاتف ولا الـ rail. المسار الفرعي يجب أن يكون داخل فرع العنصر نفسه.
+
+## AppDataTable: الشكل
+
+يُعرض الجدول داخل سطح بحواف مدوّرة وإطار رفيع (`DataTableStyle.radius/border`)، بترويسة هادئة (`surfaceContainerLow`) وإبراز عند المرور على الصف (`rowHover`)، والترقيم خارج الإطار. كل القيم من `DataTableStyle`؛ لا تلوّن الجدول من الميزة.

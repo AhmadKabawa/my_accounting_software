@@ -16,4 +16,12 @@ class DataTableStyle {
     vertical: AppSpacing.sm,
   );
   Color get divider => colors.outlineVariant;
+
+  /// Modern look: the table sits in a rounded, bordered surface, with a
+  /// quiet header and a hover highlight on rows.
+  BorderRadius get radius => context.ui.radius.md;
+  Border get border => Border.all(color: divider);
+  Color get headerBackground => colors.surfaceContainerLow;
+  Color get rowHover => colors.surfaceContainerHighest;
+  Color get surface => colors.surface;
 }
