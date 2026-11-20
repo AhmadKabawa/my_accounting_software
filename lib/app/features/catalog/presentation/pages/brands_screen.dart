@@ -97,19 +97,20 @@ class _BrandsScreenState extends State<BrandsScreen> {
     if (yes != true) return;
     final result = await _api.delete(
       AppEndpoint('${BrandsEndpoint.collection.toStringPath()}?id=eq.${encodePathSegment(brand.id)}'),
-      options: Options(headers: {'Prefer': 'return=minimal'}),
+      options: Options(headers: {'Prefer': 'return=representation'}),
     );
     if (!mounted) return;
     result.when(success: (_) => _load(), failure: (_) => setState(() => _error = 'load'));
   }
 
   @override
-  Widget build(BuildContext context) => PermissionGate(
-    permission: Permissions.masterData.manage,
-    child: ListPageTemplate(
+  Widget build(BuildContext context) => ListPageTemplate(
       titleKey: BrandsKeys.title,
       count: _total,
-      primaryAction: AppButton(BrandsKeys.add, icon: AppIcons.info, onPressed: () => _edit()),
+      primaryAction: PermissionGate(
+        permission: Permissions.masterData.manage,
+        child: AppButton(BrandsKeys.add, icon: AppIcons.info, onPressed: () => _edit()),
+      ),
       filterBar: FilterBar(
         searchController: _search,
         searchHintKey: BrandsKeys.searchHint,
@@ -134,16 +135,18 @@ class _BrandsScreenState extends State<BrandsScreen> {
         pageSize: AppConfig.defaultPageSize,
         hasMore: _page * AppConfig.defaultPageSize < _total,
         onPageChanged: (page) { setState(() => _page = page); _load(); },
-        rowActionsBuilder: (_, b) => Wrap(
+        rowActionsBuilder: (_, b) => PermissionGate(
+          permission: Permissions.masterData.manage,
+          child: Wrap(
           spacing: 4,
           children: [
             IconButton(tooltip: BrandsKeys.edit.ar, onPressed: () => _edit(b), icon: const Icon(Icons.edit_outlined)),
             IconButton(tooltip: BrandsKeys.delete.ar, onPressed: () => _delete(b), icon: const Icon(Icons.delete_outline)),
           ],
         ),
+        ),
       ),
-    ),
-  );
+    );
 }
 
 class _BrandEditor extends StatefulWidget {
