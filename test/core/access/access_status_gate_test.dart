@@ -106,7 +106,7 @@ void main() {
       BlocProvider.value(
         value: access,
         child: buildTestApp(
-          home: const AccessStatusGate(
+          home: AccessStatusGate(
             signOutLabel: AuthKeys.signOut,
             onSignOut: () async => true,
             child: Text('protected shell'),
