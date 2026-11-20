@@ -21,11 +21,22 @@ Only the Brands tab of CAT-07. Do not implement categories, colors, sizes, produ
 - Read-only users can view but cannot create; write actions gated by `masterdata.manage`.
 - Responsive web, RTL/LTR, light/dark.
 
-## Integration findings / blocker before safe code integration
-The repository is reachable through GitHub API editing tools, but this execution environment has no local checkout or Flutter SDK. Remote file creation/editing is possible; compiling and checking cross-file Flutter integration is not. The reviewed route composition and service-locator structure require further inspection before safely registering a new screen. The Supabase initialization line in `main.dart` is currently commented, so a brands datasource must not assume a ready Supabase singleton.
+## Implemented on `feat/cat07-brands-phase1`
+- Added a Brands list screen using `ListPageTemplate`, `FilterBar`, `AppDataTable`, `AppTextField`, and `AppButton`.
+- Added the Brand model and feature-owned REST endpoint contract for the existing Supabase/PostgREST API client.
+- Added create, edit, and delete requests; server-side pagination and search by name/slug.
+- Added Arabic/English feature keys and registered them in the app localization key registry.
+- Added the Brands route as a shell branch and a navigation destination. Read access remains available; mutation controls use `masterdata.manage` and database RLS remains authoritative.
+- The screen uses the shared `IApiClient` from GetIt. It does not depend on the commented Supabase singleton initialization.
+
+## Known gaps for the maintainer review
+- Status filtering and logo preview are not yet implemented; the current list shows name, slug, and active state.
+- The edit dialog currently uses Arabic literal text for a few dialog-only labels; feature field labels use the bilingual key system.
+- API error feedback is currently represented through the shared list error/retry state; mutation failures remain in the dialog without a detailed server message.
+- No Flutter compile, formatter, analyzer, test, or manual run was performed, as explicitly requested.
 
 ## Verification requested from maintainer
-After implementation, run:
+When ready, run:
 - `dart format --set-exit-if-changed .`
 - `flutter analyze --no-fatal-infos`
 - `flutter test`
