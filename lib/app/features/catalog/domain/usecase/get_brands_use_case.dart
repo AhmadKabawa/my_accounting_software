@@ -7,7 +7,7 @@ import 'package:accounting_software/app/features/catalog/domain/entity/brand_lis
 import 'package:accounting_software/app/features/catalog/domain/repositories/brands_repository.dart';
 
 class GetBrandsUseCase extends UseCase<PaginatedResult<Brand>, BrandListQuery> {
-  const GetBrandsUseCase(this._repository);
+  GetBrandsUseCase(this._repository);
   final BrandsRepository _repository;
 
   @override
