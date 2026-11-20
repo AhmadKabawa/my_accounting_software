@@ -97,7 +97,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
     if (yes != true) return;
     final result = await _api.delete(
       AppEndpoint('${BrandsEndpoint.collection.toStringPath()}?id=eq.${encodePathSegment(brand.id)}'),
-      options: Options(headers: {'Prefer': 'return=representation'}),
+      options: Options(headers: {'Prefer': 'return=minimal'}),
     );
     if (!mounted) return;
     result.when(success: (_) => _load(), failure: (_) => setState(() => _error = 'load'));
