@@ -204,7 +204,7 @@ PermissionGate. حجم الصفحة من AppConfig.pageSizeOptions (قرار-75)
 - لا يوجد زر رجوع في AppShell؛ الرجوع ملك الصفحة/المسار حتى لا يتجاوز PopScope. غير مغطى: context.go البرمجي، زر الرجوع في المتصفح، وتغيير الرابط يدوياً.
 - **لا توجد شاشة AUTH مربوطة بالقوالب في هذا التغيير.** يتوقف العمل هنا لحين عرض الشاشة المقترحة وتغييراتها وموافقة المالك.
 - تحديث لاحق لحارس الإجراءات العامة: يعيد callback الذي يبنيه AppShell نتيجة `bool` في جميع المسارات؛ رفض التأكيد يعيد `false`، ونتيجة الإجراء هي التي تحدد النجاح، ولا يحدث `discardAll()` إلا عند `true`. بُني عنصر تسجيل الخروج في الراوتر عبر `buildSignOutMenuEntry` ويربط `SessionCubit.signOutWithResult` مباشرةً.
-- أزيل اعتماد `AccessStatusGate` على `SessionCubit` و`AuthKeys`: يستقبل `signOutLabel` و`onSignOut` من AppShell، ولا يعرض زر الخروج عندما لا يُمرّر callback. أضيف فحص معماري آلي يمنع استيراد Core لأي ملف من Features، مع self-check للقاعدة.
+- أزيل اعتماد `AccessStatusGate` على `SessionCubit` و`AuthKeys`: يستقبل `signOutLabel` و`onSignOut` من AppShell، ولا يعرض زر الخروج عندما لا يُمرّر callback. أضيف فحص معماري آلي يمنع استيراد Core لأي ملف من Features، مع self-check للقاعدة، واختبار عقدي يتحقق من أن AccessStatusGate يستقبل مفتاح الخروج والإجراء من الخارج ويخفي الزر عند غياب الإجراء.
 - أضيف اختبار `test/app/shell/guarded_menu_action_test.dart` لاختبار عنصر تسجيل الخروج الفعلي الذي يبنيه الراوتر مع حارس النماذج: فشل الخروج ورفض التأكيد لا يتلفان النماذج، والنجاح وحده يسمح بالإتلاف. أضيف الاختبار لكنه لم يُشغّل بعد؛ نتائج format/analyze/test غير متحققة.
 
 
