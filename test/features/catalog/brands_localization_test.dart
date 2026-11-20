@@ -12,6 +12,8 @@ void main() {
         .toList();
 
     expect(registeredBrandKeys, hasLength(BrandsKeys.values.length));
+    expect(registeredBrandKeys.map((key) => key.key).toSet(),
+        hasLength(BrandsKeys.values.length));
     expect(english['brands.title'], 'Brands');
     expect(english['brands.name'], 'Brand name');
     expect(english['brands.deleted'], 'Brand deleted');
