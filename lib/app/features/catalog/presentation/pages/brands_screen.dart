@@ -122,7 +122,11 @@ class _BrandsScreenState extends State<BrandsScreen> {
     if (!mounted) return;
     result.when(
       success: (_) => _load(),
-      failure: (_) => setState(() => _error = 'delete'),
+      failure: (_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: AppText(BrandsKeys.deleteError)),
+        );
+      },
     );
   }
 
@@ -255,11 +259,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
         rows: _brands,
         rowId: (brand) => brand.id,
         loading: _loading,
-        errorKey: _error == null
-            ? null
-            : _error == 'delete'
-                ? BrandsKeys.deleteError
-                : BrandsKeys.loadError,
+        errorKey: _error == null ? null : BrandsKeys.loadError,
         onRetry: _load,
         totalCount: _total,
         page: _page,
@@ -390,6 +390,13 @@ class _BrandEditorState extends State<_BrandEditor> {
   @override
   Widget build(BuildContext context) {
     final slugIsEmpty = _slug.text.trim().isEmpty;
+    final logoText = _logo.text.trim();
+    final logoUri = Uri.tryParse(logoText);
+    final showLogoPreview = logoText.isNotEmpty &&
+        logoUri != null &&
+        logoUri.hasScheme &&
+        ['http', 'https'].contains(logoUri.scheme) &&
+        logoUri.host.isNotEmpty;
     return AlertDialog(
       title: AppText(widget.brand == null ? BrandsKeys.add : BrandsKeys.edit),
       content: SizedBox(
@@ -434,9 +441,9 @@ class _BrandEditorState extends State<_BrandEditor> {
                       return BrandsKeys.slugRequired.tr(context: context);
                     }
                     if (!RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*
-                  onChanged: (_) {
-                    if (_saveFailed) setState(() => _saveFailed = false);
-                  },
+                  onChanged: (_) => setState(() {
+                    if (_saveFailed) _saveFailed = false;
+                  }),
                 ),
                 if (slugIsEmpty) ...[
                   context.ui.spacing.gap(AppSpacing.xs),
@@ -463,9 +470,24 @@ class _BrandEditorState extends State<_BrandEditor> {
                     }
                     return null;
                   },
+                  validator: (value) {
+                    final url = value?.trim() ?? '';
+                    if (url.length > 500) {
+                      return BrandsKeys.logoTooLong.tr(context: context);
+                    }
+                    if (url.isEmpty) return null;
+                    final uri = Uri.tryParse(url);
+                    if (uri == null ||
+                        !uri.hasScheme ||
+                        !['http', 'https'].contains(uri.scheme) ||
+                        uri.host.isEmpty) {
+                      return BrandsKeys.invalidLogoUrl.tr(context: context);
+                    }
+                    return null;
+                  },
                   onChanged: (_) => setState(() {}),
                 ),
-                if (_logo.text.trim().isNotEmpty) ...[
+                if (showLogoPreview) ...[
                   context.ui.spacing.gap(AppSpacing.sm),
                   Align(
                     alignment: AlignmentDirectional.centerStart,
