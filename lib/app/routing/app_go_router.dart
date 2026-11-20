@@ -257,8 +257,8 @@ class AppRouter {
               GoRoute(
                 path: BrandsRoutes.brands.path,
                 name: BrandsRoutes.brands.name,
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: BrandsScreen(),
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: const BrandsScreen(),
                 ),
               ),
             ],
