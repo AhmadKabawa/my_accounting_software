@@ -251,7 +251,7 @@ class AppRouter {
             ],
           ),
 
-          /// ───────── BRANDS ─────────
+          /// ───────── CATALOG ─────────
           StatefulShellBranch(
             routes: [
               GoRoute(
