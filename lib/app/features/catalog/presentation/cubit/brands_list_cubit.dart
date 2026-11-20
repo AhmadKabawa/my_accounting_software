@@ -131,7 +131,6 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     final result = await _deleteBrand(brand.id);
     if (isClosed) return result;
     if (result.isRight()) {
-      _stats = null;
       await load();
       final current = state;
       if (!isClosed &&
