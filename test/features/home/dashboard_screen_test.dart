@@ -217,9 +217,8 @@ void main() {
     );
     addTearDown(router.dispose);
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
-
-    await tester.pumpWidget(
+    try {
+      await tester.pumpWidget(
       BlocProvider.value(
         value: cubit,
         child: buildTestApp(router: router),
@@ -228,7 +227,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final node = tester.getSemantics(find.byType(DashboardCard));
-    expect(node.hasFlag(SemanticsFlag.isButton), isTrue);
+    expect(node.getSemanticsData().flagsCollection.isButton, isTrue);
     expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -241,6 +240,9 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.space);
     await tester.pumpAndSettle();
     expect(find.text('keyboard target'), findsOneWidget);
+    } finally {
+      semantics.dispose();
+    }
   });
 
   testWidgets('dashboard cards adapt to widths, directions and themes', (
