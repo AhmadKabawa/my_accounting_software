@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/domain/entities/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entities/brand_draft.dart';
@@ -19,7 +20,7 @@ import 'support/fake_brands_repository.dart';
 void main() {
   test('latest debounced search wins over an older in-flight request', () async {
     final repository = FakeBrandsRepository();
-    final requests = <Completer<Either<dynamic, PaginatedResult<Brand>>>>[];
+    final requests = <Completer<Either<Failure, PaginatedResult<Brand>>>>[];
     repository.onGetBrands = (_) {
       final completer = Completer<Either<dynamic, PaginatedResult<Brand>>>();
       requests.add(completer);
