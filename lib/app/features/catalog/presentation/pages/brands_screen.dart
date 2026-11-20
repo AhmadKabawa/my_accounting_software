@@ -109,7 +109,7 @@ class _BrandsView extends StatelessWidget {
       final cubit = context.read<BrandsListCubit>();
       final page = state is BrandsListReady ? state : null;
       final query = page?.query ?? cubit.query;
-      final stats = page?.stats;
+      final stats = page?.stats ?? cubit.stats;
       final rows = page?.result.items ?? const <Brand>[];
       final total = page?.result.totalCount ?? 0;
       final failure = state is BrandsListFailed ? state.failure : null;
