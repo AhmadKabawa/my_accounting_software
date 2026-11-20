@@ -180,8 +180,10 @@ class AppShell extends StatelessWidget {
             if (entry.requiresUnsavedChangesCheck) {
               if (!await _confirmAllForms() || !context.mounted) return false;
             }
-            final succeeded = entry.onSelectedAsync != null
-                ? await entry.onSelectedAsync!()
+            final succeeded = entry.onSelectedGuardedAsync != null
+                ? await entry.onSelectedGuardedAsync!()
+                : entry.onSelectedAsync != null
+                ? await _runAsyncMenuAction(entry)
                 : _runSyncMenuAction(entry);
             if (entry.requiresUnsavedChangesCheck && succeeded) {
               unsavedChangesGuard?.discardAll();
