@@ -174,7 +174,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
             height: 44,
             child: hasLogo
                 ? AppImage.network(
-                    logo,
+                    logo!,
                     width: 44,
                     height: 44,
                     shape: AppImageShape.rounded,
