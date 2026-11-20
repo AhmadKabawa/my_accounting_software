@@ -250,7 +250,7 @@ PermissionGate. حجم الصفحة من AppConfig.pageSizeOptions (قرار-75)
 
 - أُضيف المسار المحمي `/change-password`، وتسبق حراسته اختيار الفرع: عند `must_change_password=true` لا يسمح Router بأي وجهة أخرى، مع بقاء زر تسجيل الخروج ظاهراً على الشاشة.
 - مصدر العلامة المثبت هو `public.users.must_change_password`. يقرأه التطبيق من صف المستخدم الحالي عبر REST/RLS؛ لا يضيفه إلى عقد `get_my_access()` ولا يقرأه من `user_metadata`.
-- شاشة T3 تستخدم `FormPageTemplate` وحقلي كلمة جديدة وتأكيدها، عبر `PasswordField` (إخفاء افتراضي وإظهار اختياري)، والتحقق الموحد `AppValidator`، وC38/InlineBanner للأخطاء.
+- شاشة T3 تستخدم `FormPageTemplate` وحقلي كلمة جديدة وتأكيدها، عبر `PasswordField` (إخفاء افتراضي وإظهار اختياري)، والتحقق الموحد `AppValidator` (8 أحرف على الأقل مع حرف كبير ورقم ورمز خاص)، وC38/InlineBanner للأخطاء.
 - يبقى `ChangePasswordUseCase` الخاص بالملف الشخصي دون تغيير. AUTH-02 يستخدم `ForceChangePasswordUseCase`: تحديث Auth بلا كلمة قديمة، ثم RPC `complete_password_change()` لمسح العلامة من جهة الخادم. بعد نجاح RPC يعاد تحميل الصلاحيات قبل تحرير الحارس والتوجيه إلى AUTH-03 أو AUTH-04.
 - الاختبارات المكتوبة: `test/routing/route_guards_test.dart`، `test/features/auth/session_cubit_test.dart`، `test/features/auth/force_password_change_screen_test.dart`، وتحديثات Fake Auth واختبار endpoints. تشمل الشاشة التحقق من الحد الأدنى والتطابق والحفظ والخطأ والخروج، وأحجام 360 و1200 وRTL/LTR.
 - **حالة R12: مراجعة**؛ الاختبارات مكتوبة لكن لم تُشغّل. `dart format --set-exit-if-changed .` و`flutter analyze --no-fatal-infos` و`flutter test` غير منفذة لعدم توفر Flutter/Dart SDK في بيئة التنفيذ. التحقق البصري على Chrome غير منفذ، وCI غير مفحوص. لا تسجل الميزة «منجزة» قبل التحقق الفعلي.
