@@ -122,7 +122,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
     if (!mounted) return;
     result.when(
       success: (_) => _load(),
-      failure: (_) => setState(() => _error = 'load'),
+      failure: (_) => setState(() => _error = 'delete'),
     );
   }
 
@@ -255,7 +255,11 @@ class _BrandsScreenState extends State<BrandsScreen> {
         rows: _brands,
         rowId: (brand) => brand.id,
         loading: _loading,
-        errorKey: _error == null ? null : BrandsKeys.loadError,
+        errorKey: _error == null
+            ? null
+            : _error == 'delete'
+                ? BrandsKeys.deleteError
+                : BrandsKeys.loadError,
         onRetry: _load,
         totalCount: _total,
         page: _page,
@@ -307,6 +311,7 @@ class _BrandEditorState extends State<_BrandEditor> {
   bool _active = true;
   bool _saving = false;
   bool _saveFailed = false;
+  AppKey _saveErrorKey = BrandsKeys.saveError;
 
   @override
   void initState() {
@@ -372,9 +377,12 @@ class _BrandEditorState extends State<_BrandEditor> {
     if (!mounted) return;
     result.when(
       success: (_) => Navigator.of(context).pop(true),
-      failure: (_) => setState(() {
+      failure: (exception) => setState(() {
         _saving = false;
         _saveFailed = true;
+        _saveErrorKey = exception.statusCode == 409
+            ? BrandsKeys.duplicateError
+            : BrandsKeys.saveError;
       }),
     );
   }
@@ -394,8 +402,8 @@ class _BrandEditorState extends State<_BrandEditor> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (_saveFailed) ...[
-                  const InlineBanner(
-                    messageKey: BrandsKeys.saveError,
+                  InlineBanner(
+                    messageKey: _saveErrorKey,
                     variant: InlineBannerVariant.error,
                   ),
                   context.ui.spacing.gap(AppSpacing.sm),
@@ -405,7 +413,9 @@ class _BrandEditorState extends State<_BrandEditor> {
                   labelKey: BrandsKeys.name,
                   validator: (value) => value == null || value.trim().isEmpty
                       ? BrandsKeys.required.tr(context: context)
-                      : null,
+                      : value.trim().length > 150
+                          ? BrandsKeys.nameTooLong.tr(context: context)
+                          : null,
                   onChanged: (value) {
                     if (_slug.text.isEmpty) {
                       final generated = _makeSlug(value);
@@ -418,9 +428,93 @@ class _BrandEditorState extends State<_BrandEditor> {
                 AppTextField(
                   controller: _slug,
                   labelKey: BrandsKeys.slug,
-                  validator: (value) => value == null || value.trim().isEmpty
-                      ? BrandsKeys.slugRequired.tr(context: context)
-                      : null,
+                  validator: (value) {
+                    final slug = value?.trim() ?? '';
+                    if (slug.isEmpty) {
+                      return BrandsKeys.slugRequired.tr(context: context);
+                    }
+                    if (!RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*
+                  onChanged: (_) {
+                    if (_saveFailed) setState(() => _saveFailed = false);
+                  },
+                ),
+                if (slugIsEmpty) ...[
+                  context.ui.spacing.gap(AppSpacing.xs),
+                  AppText(
+                    BrandsKeys.slugHelp,
+                    type: AppTextType.bodySmall,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ],
+                context.ui.spacing.gap(AppSpacing.sm),
+                AppTextField(
+                  controller: _logo,
+                  labelKey: BrandsKeys.logo,
+                  keyboardType: TextInputType.url,
+                  validator: (value) {
+                    final url = value?.trim() ?? '';
+                    if (url.isEmpty) return null;
+                    final uri = Uri.tryParse(url);
+                    if (uri == null ||
+                        !uri.hasScheme ||
+                        !['http', 'https'].contains(uri.scheme) ||
+                        uri.host.isEmpty) {
+                      return BrandsKeys.invalidLogoUrl.tr(context: context);
+                    }
+                    return null;
+                  },
+                  onChanged: (_) => setState(() {}),
+                ),
+                if (_logo.text.trim().isNotEmpty) ...[
+                  context.ui.spacing.gap(AppSpacing.sm),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: AppImage.network(
+                      _logo.text.trim(),
+                      width: 76,
+                      height: 76,
+                      shape: AppImageShape.rounded,
+                      borderRadius: 10,
+                      semanticsLabel: BrandsKeys.logo.tr(context: context),
+                    ),
+                  ),
+                ],
+                context.ui.spacing.gap(AppSpacing.sm),
+                AppTextField(
+                  controller: _description,
+                  labelKey: BrandsKeys.description,
+                  maxLines: 3,
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: AppText(BrandsKeys.active),
+                  value: _active,
+                  onChanged: (value) => setState(() => _active = value),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context, false),
+          child: AppText(BrandsKeys.cancel),
+        ),
+        AppButton(
+          BrandsKeys.save,
+          onPressed: _saving ? null : _save,
+          isLoading: _saving,
+        ),
+      ],
+    );
+  }
+}
+).hasMatch(slug)) {
+                      return BrandsKeys.slugFormat.tr(context: context);
+                    }
+                    return null;
+                  },
                   onChanged: (_) {
                     if (_saveFailed) setState(() => _saveFailed = false);
                   },
