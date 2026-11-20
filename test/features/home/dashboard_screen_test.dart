@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -228,7 +229,7 @@ void main() {
 
     final node = tester.getSemantics(find.byType(DashboardCard));
     expect(node.hasFlag(SemanticsFlag.isButton), isTrue);
-    expect(node.hasAction(SemanticsAction.tap), isTrue);
+    expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
@@ -242,10 +243,12 @@ void main() {
     expect(find.text('keyboard target'), findsOneWidget);
   });
 
-  testWidgets('empty dashboard adapts to widths, directions and themes', (
+  testWidgets('dashboard cards adapt to widths, directions and themes', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({});
+    final cubit = await _createAccessCubit({
+      const Permission('reports.view'),
+    });
     addTearDown(cubit.close);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -265,11 +268,15 @@ void main() {
               child: buildTestApp(
                 theme: theme,
                 direction: direction,
-                home: const HomeScreen(registeredRoutes: [HomeRoutes.home]),
+                home: HomeScreen(
+                  registeredRoutes: [HomeRoutes.home, _target],
+                  definitions: [_definition()],
+                ),
               ),
             ),
           );
-          expect(find.byType(AppEmptyState), findsOneWidget);
+          expect(find.byType(DashboardCard), findsOneWidget);
+          expect(find.byType(AppEmptyState), findsNothing);
           expect(tester.takeException(), isNull);
         }
       }
