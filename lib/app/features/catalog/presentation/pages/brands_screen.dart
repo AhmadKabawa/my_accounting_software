@@ -167,7 +167,7 @@ class _BrandsView extends StatelessWidget {
             : failure != null ? AppPageState.error : AppPageState.content,
         dataTable: AppDataTable<Brand>(
           columns: [
-            DataTableColumn(labelKey: BrandsKeys.name, sortKey: 'name',
+            DataTableColumn(labelKey: BrandsKeys.brandName, sortKey: 'name',
               priority: DataTableColumnPriority.primary, flex: 3,
               cellBuilder: _identity),
             DataTableColumn(labelKey: BrandsKeys.description,
@@ -386,11 +386,11 @@ class _BrandEditorState extends State<_BrandEditor> {
                 InlineBanner(messageKey: _failure!, variant: InlineBannerVariant.error),
                 context.ui.spacing.gap(AppSpacing.smMd),
               ],
-              AppTextField(controller: _name, labelKey: BrandsKeys.name,
+              AppTextField(controller: _name, labelKey: BrandsKeys.brandName,
                 validator: (v) {
                   final s = v?.trim() ?? '';
                   if (s.isEmpty) return BrandsKeys.required.tr(context: context);
-                  if (s.length > 150) return BrandsKeys.nameTooLong.tr(context: context);
+                  if (s.length > 150) return BrandsKeys.brandNameTooLong.tr(context: context);
                   return null;
                 },
                 onChanged: (v) {
