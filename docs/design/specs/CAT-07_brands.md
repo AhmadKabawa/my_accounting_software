@@ -251,7 +251,7 @@ CAT-07 نطاق بيانات مرجعية يحتاجها إنشاء المنتج
 
 | العملية | endpoint / query | التفاصيل |
 |---|---|---|
-| GET | /rest/v1/brands | select للحقول المطلوبة + products(count)، order=name.asc/desc، بحث الاسم/slug، فلتر is_active، Range للترقيم |
+| GET | /rest/v1/brands | select للحقول المطلوبة + products(count)، order=name.asc/desc، بحث الاسم/slug، فلتر is_active، Range للترقيم. استعلاما count إضافيان مستقلان عن البحث: كل الماركات والنشطة بـ `pageSize=1` لحساب بطاقات الإحصاء |
 | POST | /rest/v1/brands | name, slug, logo, description؛ لا ترسل is_active |
 | PATCH | /rest/v1/brands?id=eq.<id> | تعديل بيانات الماركة؛ تحديث الحالة في طلب مستقل بجسم is_active فقط |
 | DELETE | /rest/v1/brands?id=eq.<id> | بعد التأكيد، وقيد FK هو الحَكَم |
