@@ -47,6 +47,18 @@ class _FakeRemote implements AuthRemoteDataSource {
   }) => throw UnimplementedError('changePassword');
 
   @override
+  Future<ApiResult<bool>> getMustChangePassword({required String userId}) =>
+      throw UnimplementedError('getMustChangePassword');
+
+  @override
+  Future<ApiResult<Unit>> setPasswordWithoutCurrent({required String newPassword}) =>
+      throw UnimplementedError('setPasswordWithoutCurrent');
+
+  @override
+  Future<ApiResult<Unit>> completePasswordChange() =>
+      throw UnimplementedError('completePasswordChange');
+
+  @override
   Future<ApiResult<UserModel>> updateProfile({
     String? fullName,
     String? avatarUrl,
