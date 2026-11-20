@@ -12,6 +12,7 @@ import 'package:accounting_software/app/features/catalog/domain/usecase/delete_b
 import 'package:accounting_software/app/features/catalog/domain/usecase/get_brands_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/brands/brands_screen.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import '../../helpers/localized_app.dart';
@@ -34,6 +35,9 @@ void main() {
         ) async {
           setScreenSize(tester, Size(width, 900));
           final repository = FakeBrandsRepository();
+          sl.registerFactory<BrandStatsCubit>(
+            () => BrandStatsCubit(getBrands: GetBrandsUseCase(repository)),
+          );
           sl.registerFactory<BrandsListCubit>(
             () => BrandsListCubit(
               getBrands: GetBrandsUseCase(repository),
