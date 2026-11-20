@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:accounting_software/app/core/error/failures/failure.dart';
@@ -101,13 +102,17 @@ class FakeAuthRepository implements AuthRepository {
   }) => _unit('confirmNewPassword');
 
   @override
-  Future<Either<Failure, bool>> getMustChangePassword({required String userId}) async {
+  Future<Either<Failure, bool>> getMustChangePassword({
+    required String userId,
+  }) async {
     if (passwordFlagError != null) throw passwordFlagError!;
     return Right(mustChangePassword);
   }
 
   @override
-  Future<Either<Failure, Unit>> forceChangePassword({required String newPassword}) {
+  Future<Either<Failure, Unit>> forceChangePassword({
+    required String newPassword,
+  }) {
     calls.add('forceChangePassword');
     return forcedPassword?.future ?? Future.value(unitResult);
   }

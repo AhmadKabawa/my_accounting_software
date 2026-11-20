@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:dartz/dartz.dart' show Either, Unit;
@@ -16,7 +17,8 @@ import 'package:accounting_software/app/features/auth/domain/usecase/get_must_ch
 import 'package:accounting_software/app/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 
-class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionAuthenticator {
+class SessionCubit extends Cubit<SessionStatus>
+    implements SessionGate, SessionAuthenticator {
   SessionCubit({
     required GetCurrentUserUseCase getCurrentUser,
     required GetMustChangePasswordUseCase getMustChangePassword,
@@ -53,7 +55,8 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionA
     return super.close();
   }
 
-  void _error(Failure failure) => _flash.post(failure.messageKey, MessageType.error);
+  void _error(Failure failure) =>
+      _flash.post(failure.messageKey, MessageType.error);
 
   void _onSessionCleared(void _) {
     if (_signingOut) return;
@@ -72,7 +75,12 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionA
     try {
       result = await _getCurrentUser(NoParams());
     } catch (error, stackTrace) {
-      Logger.error('SessionCubit: session check threw', error: error, stackTrace: stackTrace, name: 'SessionCubit');
+      Logger.error(
+        'SessionCubit: session check threw',
+        error: error,
+        stackTrace: stackTrace,
+        name: 'SessionCubit',
+      );
       if (!isClosed && request == _sessionRequest) {
         _access?.clear();
         emit(const SessionUnauthenticated());
@@ -108,9 +116,16 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionA
   Future<void> _publishAuthenticated(UserEntity user, int request) async {
     final Either<Failure, bool> result;
     try {
-      result = await _getMustChangePassword(GetMustChangePasswordParams(userId: user.id));
+      result = await _getMustChangePassword(
+        GetMustChangePasswordParams(userId: user.id),
+      );
     } catch (error, stackTrace) {
-      Logger.error('SessionCubit: password policy check threw', error: error, stackTrace: stackTrace, name: 'SessionCubit');
+      Logger.error(
+        'SessionCubit: password policy check threw',
+        error: error,
+        stackTrace: stackTrace,
+        name: 'SessionCubit',
+      );
       if (!isClosed && request == _sessionRequest) {
         _access?.clear();
         emit(const SessionUnauthenticated());
@@ -149,11 +164,18 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionA
   void updateUser(UserEntity user) {
     final authenticated = state;
     if (authenticated is SessionAuthenticated) {
-      emit(SessionAuthenticated(user, mustChangePassword: authenticated.mustChangePassword));
+      emit(
+        SessionAuthenticated(
+          user,
+          mustChangePassword: authenticated.mustChangePassword,
+        ),
+      );
     }
   }
 
-  Future<void> signOut() async { await signOutWithResult(); }
+  Future<void> signOut() async {
+    await signOutWithResult();
+  }
 
   Future<bool> signOutWithResult() async {
     _signingOut = true;
@@ -161,7 +183,12 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionA
     try {
       result = await _logout(NoParams());
     } catch (e, st) {
-      Logger.error('SessionCubit: sign-out threw', error: e, stackTrace: st, name: 'SessionCubit');
+      Logger.error(
+        'SessionCubit: sign-out threw',
+        error: e,
+        stackTrace: st,
+        name: 'SessionCubit',
+      );
     } finally {
       _signingOut = false;
     }
@@ -170,7 +197,10 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionA
       return false;
     }
     return result.fold(
-      (failure) { _error(failure); return false; },
+      (failure) {
+        _error(failure);
+        return false;
+      },
       (_) {
         _sessionRequest++;
         _access?.clear();

@@ -1,10 +1,12 @@
+
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
 import 'package:accounting_software/app/features/auth/domain/repositories/auth_repository.dart';
 
-class ForceChangePasswordUseCase extends UseCase<Unit, ForceChangePasswordParams> {
+class ForceChangePasswordUseCase
+    extends UseCase<Unit, ForceChangePasswordParams> {
   ForceChangePasswordUseCase(this._repository);
   final AuthRepository _repository;
 

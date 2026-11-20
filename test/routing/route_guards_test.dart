@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
@@ -74,18 +75,41 @@ void main() {
 
   group('forced password change (AUTH-02)', () {
     test('blocks all authenticated destinations until password change', () {
-      expect(run('/home', auth: authed, mustChangePassword: true), '/change-password');
-      expect(run('/select-branch', auth: authed, mustChangePassword: true, branchRequired: true), '/change-password');
-      expect(run('/login', auth: authed, mustChangePassword: true), '/change-password');
-      expect(run('/profile', auth: authed, mustChangePassword: true), '/change-password');
+      expect(
+        run('/home', auth: authed, mustChangePassword: true),
+        '/change-password',
+      );
+      expect(
+        run(
+          '/select-branch',
+          auth: authed,
+          mustChangePassword: true,
+          branchRequired: true,
+        ),
+        '/change-password',
+      );
+      expect(
+        run('/login', auth: authed, mustChangePassword: true),
+        '/change-password',
+      );
+      expect(
+        run('/profile', auth: authed, mustChangePassword: true),
+        '/change-password',
+      );
     });
 
     test('allows only the change-password route while the flag is set', () {
-      expect(run('/change-password', auth: authed, mustChangePassword: true), isNull);
+      expect(
+        run('/change-password', auth: authed, mustChangePassword: true),
+        isNull,
+      );
     });
 
     test('after completion, sends the user to branch selection or home', () {
-      expect(run('/change-password', auth: authed, branchRequired: true), '/select-branch');
+      expect(
+        run('/change-password', auth: authed, branchRequired: true),
+        '/select-branch',
+      );
       expect(run('/change-password', auth: authed), '/home');
     });
 

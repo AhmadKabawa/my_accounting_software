@@ -1,3 +1,4 @@
+
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/features/auth/data/datasources/local_data_source/auth_local_data_source.dart';
@@ -51,8 +52,9 @@ class _FakeRemote implements AuthRemoteDataSource {
       throw UnimplementedError('getMustChangePassword');
 
   @override
-  Future<ApiResult<Unit>> setPasswordWithoutCurrent({required String newPassword}) =>
-      throw UnimplementedError('setPasswordWithoutCurrent');
+  Future<ApiResult<Unit>> setPasswordWithoutCurrent({
+    required String newPassword,
+  }) => throw UnimplementedError('setPasswordWithoutCurrent');
 
   @override
   Future<ApiResult<Unit>> completePasswordChange() =>

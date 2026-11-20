@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:accounting_software/app/core/error/failures/failure.dart';
@@ -72,16 +73,27 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> enterValidPassword(WidgetTester tester, {String confirm = 'Password1!'}) async {
+  Future<void> enterValidPassword(
+    WidgetTester tester, {
+    String confirm = 'Password1!',
+  }) async {
     await tester.enterText(find.byType(TextField).at(0), 'Password1!');
     await tester.enterText(find.byType(TextField).at(1), confirm);
   }
 
-  testWidgets('renders two obscured fields and a visible sign-out action', (tester) async {
+  testWidgets('renders two obscured fields and a visible sign-out action', (
+    tester,
+  ) async {
     await pumpScreen(tester);
     expect(find.byType(TextField), findsNWidgets(2));
-    expect(tester.widget<TextField>(find.byType(TextField).at(0)).obscureText, isTrue);
-    expect(tester.widget<TextField>(find.byType(TextField).at(1)).obscureText, isTrue);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).at(0)).obscureText,
+      isTrue,
+    );
+    expect(
+      tester.widget<TextField>(find.byType(TextField).at(1)).obscureText,
+      isTrue,
+    );
     expect(find.text('Sign out'), findsOneWidget);
   });
 
@@ -102,7 +114,9 @@ void main() {
     expect(repository.calls, isEmpty);
   });
 
-  testWidgets('shows saving state until the server operation completes', (tester) async {
+  testWidgets('shows saving state until the server operation completes', (
+    tester,
+  ) async {
     final pending = Completer<Either<Failure, Unit>>();
     repository.forcedPassword = pending;
     await pumpScreen(tester);
@@ -110,28 +124,39 @@ void main() {
     await tester.tap(find.text('Save'));
     await tester.pump();
     expect(cubit.state.status, ForcePasswordChangeStatus.saving);
-    expect(tester.widget<AppButton>(find.byType(AppButton).last).isLoading, isTrue);
+    expect(
+      tester.widget<AppButton>(find.byType(AppButton).last).isLoading,
+      isTrue,
+    );
 
     pending.complete(const Right(unit));
     await tester.pumpAndSettle();
     expect(cubit.state.status, ForcePasswordChangeStatus.completed);
-    expect((session.current as SessionAuthenticated).mustChangePassword, isFalse);
-  });
-
-  testWidgets('shows a translated inline error when the server rejects the save', (tester) async {
-    repository.unitResult = Left(NetworkFailure());
-    await pumpScreen(tester);
-    await enterValidPassword(tester);
-    await tester.tap(find.text('Save'));
-    await tester.pumpAndSettle();
-    expect(find.byType(InlineBanner), findsOneWidget);
     expect(
-      tester.widget<InlineBanner>(find.byType(InlineBanner)).messageKey,
-      NetworkFailure().messageKey,
+      (session.current as SessionAuthenticated).mustChangePassword,
+      isFalse,
     );
   });
 
-  testWidgets('fits phone and desktop widths in both text directions', (tester) async {
+  testWidgets(
+    'shows a translated inline error when the server rejects the save',
+    (tester) async {
+      repository.unitResult = Left(NetworkFailure());
+      await pumpScreen(tester);
+      await enterValidPassword(tester);
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+      expect(find.byType(InlineBanner), findsOneWidget);
+      expect(
+        tester.widget<InlineBanner>(find.byType(InlineBanner)).messageKey,
+        NetworkFailure().messageKey,
+      );
+    },
+  );
+
+  testWidgets('fits phone and desktop widths in both text directions', (
+    tester,
+  ) async {
     for (final size in [const Size(360, 800), const Size(1200, 900)]) {
       for (final direction in [TextDirection.rtl, TextDirection.ltr]) {
         await pumpScreen(tester, size: size, direction: direction);
@@ -141,7 +166,9 @@ void main() {
     }
   });
 
-  testWidgets('sign-out remains available while password change is required', (tester) async {
+  testWidgets('sign-out remains available while password change is required', (
+    tester,
+  ) async {
     await pumpScreen(tester);
     await tester.tap(find.text('Sign out'));
     await tester.pumpAndSettle();

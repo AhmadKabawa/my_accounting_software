@@ -1,3 +1,4 @@
+
 import 'package:accounting_software/app/core/network/api_end_points.dart';
 
 abstract final class AuthEndpoints {
@@ -9,5 +10,7 @@ abstract final class AuthEndpoints {
   static const recover = AppEndpoint('$base/recover');
   static const verify = AppEndpoint('$base/verify');
   static const users = AppEndpoint('/rest/v1/users');
-  static const completePasswordChange = AppEndpoint('/rest/v1/rpc/complete_password_change');
+  static const completePasswordChange = AppEndpoint(
+    '/rest/v1/rpc/complete_password_change',
+  );
 }

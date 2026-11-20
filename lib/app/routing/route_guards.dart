@@ -1,3 +1,4 @@
+
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
@@ -19,7 +20,10 @@ Set<String> buildPublicRoutes({
   if (onboardingEnabled) OnBoardingRoutes.onboarding.path,
   AuthRoutes.login.path,
   if (signupEnabled) AuthRoutes.register.path,
-  if (forgotPasswordEnabled) ...[AuthRoutes.forgotPassword.path, AuthRoutes.resetPassword.path],
+  if (forgotPasswordEnabled) ...[
+    AuthRoutes.forgotPassword.path,
+    AuthRoutes.resetPassword.path,
+  ],
 };
 
 final Set<String> publicRoutes = buildPublicRoutes();
@@ -53,7 +57,10 @@ String? resolveRedirect({
 
   final disabledRoutes = {
     if (!signupEnabled) AuthRoutes.register.path,
-    if (!forgotPasswordEnabled) ...[AuthRoutes.forgotPassword.path, AuthRoutes.resetPassword.path],
+    if (!forgotPasswordEnabled) ...[
+      AuthRoutes.forgotPassword.path,
+      AuthRoutes.resetPassword.path,
+    ],
     if (!onboardingEnabled) OnBoardingRoutes.onboarding.path,
   };
   if (disabledRoutes.contains(location)) return null;
@@ -100,6 +107,10 @@ String? resolveRedirect({
 
 /// UX-only permission routing. The database remains the security boundary.
 abstract class AccessRoutingLogic {
-  static GoRouterRedirect require(Permission permission, {RouteItem fallback = HomeRoutes.home}) =>
-      (context, state) => AppRouter.accessCubit.can(permission) ? null : fallback.path;
+  static GoRouterRedirect require(
+    Permission permission, {
+    RouteItem fallback = HomeRoutes.home,
+  }) =>
+      (context, state) =>
+          AppRouter.accessCubit.can(permission) ? null : fallback.path;
 }

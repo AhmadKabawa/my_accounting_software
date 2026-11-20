@@ -1,3 +1,4 @@
+
 import 'package:accounting_software/app/features/auth/data/auth_endpoints.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,6 +13,9 @@ void main() {
     expect(AuthEndpoints.recover.path, '/auth/v1/recover');
     expect(AuthEndpoints.verify.path, '/auth/v1/verify');
     expect(AuthEndpoints.users.path, '/rest/v1/users');
-    expect(AuthEndpoints.completePasswordChange.path, '/rest/v1/rpc/complete_password_change');
+    expect(
+      AuthEndpoints.completePasswordChange.path,
+      '/rest/v1/rpc/complete_password_change',
+    );
   });
 }

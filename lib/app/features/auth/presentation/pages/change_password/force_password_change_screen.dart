@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
@@ -16,7 +17,8 @@ class ForcePasswordChangeScreen extends StatefulWidget {
   const ForcePasswordChangeScreen({super.key});
 
   @override
-  State<ForcePasswordChangeScreen> createState() => _ForcePasswordChangeScreenState();
+  State<ForcePasswordChangeScreen> createState() =>
+      _ForcePasswordChangeScreenState();
 }
 
 class _ForcePasswordChangeScreenState extends State<ForcePasswordChangeScreen> {
@@ -53,11 +55,17 @@ class _ForcePasswordChangeScreenState extends State<ForcePasswordChangeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const AppText(AuthKeys.forceChangePasswordSubtitle, type: AppTextType.bodyMedium),
+                    const AppText(
+                      AuthKeys.forceChangePasswordSubtitle,
+                      type: AppTextType.bodyMedium,
+                    ),
                     context.ui.spacing.gap(AppSpacing.lg, axis: Axis.vertical),
                     if (state.failure != null) ...[
                       MessageViewWidgets.failureBanner(state.failure!),
-                      context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
+                      context.ui.spacing.gap(
+                        AppSpacing.md,
+                        axis: Axis.vertical,
+                      ),
                     ],
                     PasswordField(
                       controller: _password,
@@ -84,7 +92,8 @@ class _ForcePasswordChangeScreenState extends State<ForcePasswordChangeScreen> {
                       AuthKeys.signOut,
                       variant: AppButtonVariant.danger,
                       expand: true,
-                      onPressed: () => context.read<SessionCubit>().signOutWithResult(),
+                      onPressed: () =>
+                          context.read<SessionCubit>().signOutWithResult(),
                     ),
                   ],
                 ),

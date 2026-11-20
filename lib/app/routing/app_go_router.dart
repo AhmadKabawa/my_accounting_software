@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -290,7 +291,8 @@ class AppRouter {
     splashDone: splashCubit.state is SplashDone,
     onboarded: await settings.isOnboarded(),
     session: session.current,
-    mustChangePassword: session.current is SessionAuthenticated &&
+    mustChangePassword:
+        session.current is SessionAuthenticated &&
         (session.current as SessionAuthenticated).mustChangePassword,
     branchSelectionRequired: accessCubit.state.needsBranchSelection,
   );
