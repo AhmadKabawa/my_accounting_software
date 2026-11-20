@@ -16,24 +16,24 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
   @override
   Future<ApiResult<PaginatedResult<BrandModel>>> getBrands(
     BrandListQuery query,
-  ) => _apiClient.getPaginated<BrandModel>(
-    BrandsEndpoint.collection,
-    fromJson: BrandModel.fromJson,
-    page: query.page,
-    limit: query.pageSize,
-    parser: PaginatedParserPresets.supabase,
-    queryParameters: {
-      'select': BrandsEndpoint.selectWithProductCount,
-      'order': 'name.' + (query.sortAscending ? 'asc' : 'desc'),
-      if (query.search.trim().isNotEmpty)
-        'or': '(name.ilike."' +
-            '*' + _escapeFilterValue(query.search.trim()) +
-            '*",slug.ilike."' +
-            '*' + _escapeFilterValue(query.search.trim()) + '*' + '")',
-      if (query.status == BrandStatusFilter.active) 'is_active': 'eq.true',
-      if (query.status == BrandStatusFilter.inactive) 'is_active': 'eq.false',
-    },
-  );
+  ) {
+    final searchTerm = _escapeFilterValue(query.search.trim());
+    return _apiClient.getPaginated<BrandModel>(
+      BrandsEndpoint.collection,
+      fromJson: BrandModel.fromJson,
+      page: query.page,
+      limit: query.pageSize,
+      parser: PaginatedParserPresets.supabase,
+      queryParameters: {
+        'select': BrandsEndpoint.selectWithProductCount,
+        'order': 'name.' + (query.sortAscending ? 'asc' : 'desc'),
+        if (searchTerm.isNotEmpty)
+          'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
+        if (query.status == BrandStatusFilter.active) 'is_active': 'eq.true',
+        if (query.status == BrandStatusFilter.inactive) 'is_active': 'eq.false',
+      },
+    );
+  }
 
   @override
   Future<ApiResult<BrandModel>> createBrand(BrandDraft draft) =>
