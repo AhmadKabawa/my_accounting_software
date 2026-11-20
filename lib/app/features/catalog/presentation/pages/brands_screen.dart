@@ -109,7 +109,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
       count: _total,
       primaryAction: PermissionGate(
         permission: Permissions.masterData.manage,
-        child: AppButton(BrandsKeys.add, icon: AppIcons.info, onPressed: () => _edit()),
+        child: AppButton(BrandsKeys.add, icon: AppIcons.add, onPressed: () => _edit()),
       ),
       filterBar: FilterBar(
         searchController: _search,
