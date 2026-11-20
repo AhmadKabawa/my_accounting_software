@@ -16,7 +16,12 @@ enum BrandsKeys implements AppKey {
   searchHint(ar: 'ابحث باسم الماركة أو المعرّف', en: 'Search by brand or slug'),
   empty(ar: 'لا توجد ماركات بعد', en: 'No brands yet'),
   loadError(ar: 'تعذر تحميل الماركات', en: 'Could not load brands'),
-  saveError(ar: 'تعذر حفظ الماركة', en: 'Could not save brand'),
+  saveError(ar: 'تعذر حفظ الماركة. تحقق من الاتصال والصلاحيات ثم حاول مجدداً.', en: 'Could not save the brand. Check your connection and permissions, then try again.'),
+  duplicateError(ar: 'اسم الماركة أو المعرّف المختصر مستخدم مسبقاً. اختر قيمة مختلفة.', en: 'The brand name or slug is already in use. Choose a different value.'),
+  deleteError(ar: 'تعذر حذف الماركة. قد تكون مرتبطة بسجلات أخرى أو لا تملك الصلاحية.', en: 'Could not delete the brand. It may be referenced by other records or you may lack permission.'),
+  slugRequired(ar: 'أدخل معرّفاً مختصراً باللغة الإنجليزية والأرقام.', en: 'Enter a slug using English letters and numbers.'),
+  slugHelp(ar: 'المعرّف المختصر مطلوب. إذا كان الاسم عربياً، أدخل slug إنجليزياً يدوياً.', en: 'A slug is required. For an Arabic brand name, enter an English slug manually.'),
+  allStatuses(ar: 'كل الحالات', en: 'All statuses'),
   required(ar: 'هذا الحقل مطلوب', en: 'This field is required'),
   confirmDelete(ar: 'هل تريد حذف هذه الماركة؟', en: 'Delete this brand?'),
   status(ar: 'الحالة', en: 'Status');
