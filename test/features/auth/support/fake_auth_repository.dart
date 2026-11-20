@@ -100,7 +100,6 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<Either<Failure, bool>> getMustChangePassword({required String userId}) async {
-    calls.add('getMustChangePassword');
     return Right(mustChangePassword);
   }
 
