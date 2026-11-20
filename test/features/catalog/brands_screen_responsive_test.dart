@@ -54,18 +54,18 @@ void main() {
             home: const Scaffold(body: BrandsScreen()),
           );
 
-            expect(find.byType(BrandsScreen), findsOneWidget);
-            // Breadcrumb + page title both show "Brands".
-            expect(find.text('Brands'), findsWidgets);
-            expect(find.textContaining('Total brands'), findsOneWidget);
-            expect(find.textContaining('Active brands'), findsOneWidget);
-            expect(find.textContaining('Inactive brands'), findsOneWidget);
-            // No unresolved placeholders anywhere on the page.
-            expect(find.textContaining('{'), findsNothing);
-            expect(find.textContaining('@'), findsNothing);
-            // Record actions are icons (AppRowActions), never text buttons.
-            expect(find.text('Edit brand'), findsNothing);
-            expect(find.text('Brand deleted'), findsNothing);
+          expect(find.byType(BrandsScreen), findsOneWidget);
+          // Breadcrumb + page title both show "Brands".
+          expect(find.text('Brands'), findsWidgets);
+          expect(find.textContaining('Total brands'), findsOneWidget);
+          expect(find.textContaining('Active brands'), findsOneWidget);
+          expect(find.textContaining('Inactive brands'), findsOneWidget);
+          // No unresolved placeholders anywhere on the page.
+          expect(find.textContaining('{'), findsNothing);
+          expect(find.textContaining('@'), findsNothing);
+          // Record actions are icons (AppRowActions), never text buttons.
+          expect(find.text('Edit brand'), findsNothing);
+          expect(find.text('Brand deleted'), findsNothing);
           },
         );
       }
