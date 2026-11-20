@@ -125,7 +125,7 @@ class _BrandsView extends StatelessWidget {
         builder: (context, state) {
           final cubit = context.read<BrandsListCubit>();
           final page = state is BrandsListReady ? state : null;
-          final query = page?.query ?? cubit.query;
+          final query = cubit.query;
           final stats = statsState is BrandStatsLoaded ? statsState.stats : null;
           final rows = page?.result.items ?? const <Brand>[];
           final total = page?.result.totalCount ?? 0;
