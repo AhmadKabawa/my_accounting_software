@@ -4,6 +4,7 @@ enum BrandsKeys implements AppKey {
   title(ar: 'الماركات', en: 'Brands'),
   add(ar: 'إضافة ماركة', en: 'Add brand'),
   edit(ar: 'تعديل الماركة', en: 'Edit brand'),
+  // `name` would shadow the enum value-name lookup used by the key getter.
   brandName(ar: 'اسم الماركة', en: 'Brand name'),
   slug(ar: 'المعرّف المختصر', en: 'Slug'),
   logo(ar: 'رابط الشعار', en: 'Logo URL'),
@@ -94,5 +95,7 @@ enum BrandsKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => this == BrandsKeys.brandName ? 'brands.name' : 'brands.${this.name}';
+  String get key => this == BrandsKeys.brandName
+      ? 'brands.name'
+      : 'brands.${this.name}';
 }
