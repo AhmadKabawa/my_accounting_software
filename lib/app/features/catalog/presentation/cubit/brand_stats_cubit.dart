@@ -7,6 +7,7 @@ import 'package:accounting_software/app/features/catalog/domain/usecase/get_bran
 
 sealed class BrandStatsState extends Equatable {
   const BrandStatsState();
+
   @override
   List<Object?> get props => [];
 }
@@ -21,14 +22,18 @@ final class BrandStatsLoading extends BrandStatsState {
 
 final class BrandStatsLoaded extends BrandStatsState {
   const BrandStatsLoaded(this.stats);
+
   final BrandStats stats;
+
   @override
   List<Object?> get props => [stats];
 }
 
 final class BrandStatsFailed extends BrandStatsState {
   const BrandStatsFailed(this.failure);
+
   final Failure failure;
+
   @override
   List<Object?> get props => [failure];
 }
@@ -44,33 +49,50 @@ class BrandStatsCubit extends Cubit<BrandStatsState> {
 
   Future<void> load() async {
     final version = ++_requestVersion;
-    emit(const BrandStatsLoading());
+    if (state is! BrandStatsLoaded) {
+      emit(const BrandStatsLoading());
+    }
+
     final results = await Future.wait([
       _getBrands(const BrandListQuery(page: 1, pageSize: 1)),
-      _getBrands(const BrandListQuery(
-        status: BrandStatusFilter.active,
-        page: 1,
-        pageSize: 1,
-      )),
+      _getBrands(
+        const BrandListQuery(
+          status: BrandStatusFilter.active,
+          page: 1,
+          pageSize: 1,
+        ),
+      ),
     ]);
     if (isClosed || version != _requestVersion) return;
 
     Failure? failure;
     int? total;
     int? active;
-    results[0].fold((value) => failure = value, (page) => total = page.totalCount);
-    results[1].fold((value) => failure ??= value, (page) => active = page.totalCount);
+    results[0].fold(
+      (value) => failure = value,
+      (page) => total = page.totalCount,
+    );
+    results[1].fold(
+      (value) => failure ??= value,
+      (page) => active = page.totalCount,
+    );
+
     if (failure != null) {
       emit(BrandStatsFailed(failure!));
       return;
     }
+
     final totalCount = total!;
     final activeCount = active!;
-    emit(BrandStatsLoaded(BrandStats(
-      total: totalCount,
-      active: activeCount,
-      inactive: totalCount - activeCount,
-    )));
+    emit(
+      BrandStatsLoaded(
+        BrandStats(
+          total: totalCount,
+          active: activeCount,
+          inactive: totalCount - activeCount,
+        ),
+      ),
+    );
   }
 
   Future<void> refresh() => load();
