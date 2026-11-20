@@ -85,7 +85,7 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     final extension = upload.fileName.split('.').last.toLowerCase();
     final stamp = DateTime.now().microsecondsSinceEpoch;
     final path =
-        '${BrandsEndpoint.logoFolder}/$stamp-${Random().nextInt(1 << 32)}.$extension';
+        '${BrandsEndpoint.logoFolder}/$stamp-${Random().nextInt(0x7fffffff)}.$extension';
     return _apiClient.post<String>(
       BrandsEndpoint.logoUpload(path),
       data: upload.bytes,
