@@ -6,9 +6,9 @@ import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart
 import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/data/datasources/brands_remote_data_source.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_draft.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/domain/repositories/brands_repository.dart';
 
