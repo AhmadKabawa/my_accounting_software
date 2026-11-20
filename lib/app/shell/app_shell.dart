@@ -25,9 +25,24 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 const _mobileDestinationOverflowThreshold = 5;
 const _mobileVisibleDestinationsWhenOverflow = 4;
 
-Future<bool> _runAsyncMenuAction(AppMenuEntry entry) async {
-  await entry.onSelectedAsync!();
-  return true;
+Future<bool> runGuardedUserMenuAction({
+  required AppMenuEntry entry,
+  required Future<bool> Function() confirmAllForms,
+  required bool Function() isMounted,
+  required void Function() discardAll,
+}) async {
+  if (entry.requiresUnsavedChangesCheck) {
+    if (!await confirmAllForms() || !isMounted()) return false;
+  }
+
+  final succeeded = entry.onSelectedGuardedAsync != null
+      ? await entry.onSelectedGuardedAsync!()
+      : entry.onSelectedAsync != null
+      ? await entry.onSelectedAsync().then((_) => true)
+      : _runSyncMenuAction(entry);
+
+  if (entry.requiresUnsavedChangesCheck && succeeded) discardAll();
+  return succeeded;
 }
 
 bool _runSyncMenuAction(AppMenuEntry entry) {
@@ -178,20 +193,12 @@ class AppShell extends StatelessWidget {
           requiresUnsavedChangesCheck: entry.requiresUnsavedChangesCheck,
           onSelected: () {},
           onSelectedAsync: entry.onSelectedAsync,
-          onSelectedGuardedAsync: () async {
-            if (entry.requiresUnsavedChangesCheck) {
-              if (!await _confirmAllForms() || !context.mounted) return false;
-            }
-            final succeeded = entry.onSelectedGuardedAsync != null
-                ? await entry.onSelectedGuardedAsync!()
-                : entry.onSelectedAsync != null
-                ? await _runAsyncMenuAction(entry)
-                : _runSyncMenuAction(entry);
-            if (entry.requiresUnsavedChangesCheck && succeeded) {
-              unsavedChangesGuard?.discardAll();
-            }
-            return succeeded;
-          },
+          onSelectedGuardedAsync: () => runGuardedUserMenuAction(
+            entry: entry,
+            confirmAllForms: _confirmAllForms,
+            isMounted: () => context.mounted,
+            discardAll: () => unsavedChangesGuard?.discardAll(),
+          ),
         ),
     ];
     final shellContent = unsavedChangesGuard == null
