@@ -165,7 +165,7 @@ void main() {
     cubit.onAuthenticated(testUser);
     await Future<void>.delayed(Duration.zero);
 
-    final succeeded = await cubit.signOut();
+    final succeeded = await cubit.signOutWithResult();
 
     expect(succeeded, isFalse);
     expect(cubit.state, const SessionAuthenticated(testUser));
