@@ -200,7 +200,7 @@ class _BrandsView extends StatelessWidget {
               AppButton(b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
                 size: AppButtonSize.small, variant: AppButtonVariant.text,
                 onPressed: () => _status(context, b)),
-              if ((b.productCount ?? 0) == 0)
+              if (b.productCount == 0)
                 AppButton(BrandsKeys.delete, size: AppButtonSize.small,
                   variant: AppButtonVariant.danger, onPressed: () => _delete(context, b)),
             ]),
