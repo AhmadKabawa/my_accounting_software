@@ -16,6 +16,7 @@ import 'package:accounting_software/app/features/catalog/domain/entity/brand.dar
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/brands/sections/brands_table_section.dart';
@@ -26,8 +27,11 @@ import 'package:accounting_software/app/features/catalog/presentation/pages/bran
 class BrandsScreen extends StatelessWidget {
   const BrandsScreen({super.key});
   @override
-  Widget build(BuildContext context) => BlocProvider(
-    create: (_) => sl<BrandsListCubit>()..load(),
+  Widget build(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => sl<BrandsListCubit>()..load()),
+      BlocProvider(create: (_) => sl<BrandStatsCubit>()..load()),
+    ],
     child: const _BrandsView(),
   );
 }
@@ -44,7 +48,8 @@ class _BrandsView extends StatelessWidget {
       ),
     );
     if (saved == true && context.mounted) {
-      await context.read<BrandsListCubit>().refresh(refreshStats: true);
+      await context.read<BrandsListCubit>().refresh();
+      await context.read<BrandStatsCubit>().refresh();
     }
   }
 
@@ -105,12 +110,14 @@ class _BrandsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<BrandsListCubit, BrandsListState>(
+      BlocBuilder<BrandStatsCubit, BrandStatsState>(
+        builder: (context, statsState) =>
+          BlocBuilder<BrandsListCubit, BrandsListState>(
         builder: (context, state) {
           final cubit = context.read<BrandsListCubit>();
           final page = state is BrandsListReady ? state : null;
           final query = page?.query ?? cubit.query;
-          final stats = page?.stats ?? cubit.stats;
+          final stats = statsState is BrandStatsLoaded ? statsState.stats : null;
           final rows = page?.result.items ?? const <Brand>[];
           final total = page?.result.totalCount ?? 0;
           final failure = state is BrandsListFailed ? state.failure : null;
@@ -158,5 +165,6 @@ class _BrandsView extends StatelessWidget {
             ),
           );
         },
-      );
+      ),
+    );
 }
