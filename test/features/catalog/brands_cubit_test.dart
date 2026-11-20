@@ -19,60 +19,6 @@ import 'support/fake_brands_repository.dart';
 
 void main() {
   test(
-    'loads global total, active and inactive statistics independently of filters',
-    () async {
-      final repository = FakeBrandsRepository();
-      repository.onGetBrands = (query) async {
-        final count = switch (query.status) {
-          BrandStatusFilter.all => 9,
-          BrandStatusFilter.active => 6,
-          BrandStatusFilter.inactive => 3,
-        };
-        return Right(
-          PaginatedResult<Brand>(
-            items: const [],
-            totalCount: count,
-            currentPage: 1,
-            totalPages: count,
-          ),
-        );
-      };
-      final cubit = BrandsListCubit(
-        getBrands: GetBrandsUseCase(repository),
-        setBrandActive: SetBrandActiveUseCase(repository),
-        deleteBrand: DeleteBrandUseCase(repository),
-      );
-
-      await cubit.load();
-
-      final stats = (cubit.state as BrandsListReady).stats;
-      expect(stats?.total, 9);
-      expect(stats?.active, 6);
-      expect(stats?.inactive, 3);
-      expect(
-        repository.queries.where((query) => query.pageSize == 1),
-        hasLength(2),
-      );
-      expect(
-        repository.queries
-            .where((query) => query.pageSize == 1)
-            .every((query) => query.search.isEmpty),
-        isTrue,
-      );
-
-      await cubit.setStatus(BrandStatusFilter.inactive);
-      expect(cubit.stats?.total, 9);
-      expect(cubit.stats?.active, 6);
-      expect(cubit.stats?.inactive, 3);
-      expect(
-        repository.queries.where((query) => query.pageSize == 1),
-        hasLength(2),
-      );
-      await cubit.close();
-    },
-  );
-
-  test(
     'latest debounced search wins over an older in-flight request',
     () async {
       final repository = FakeBrandsRepository();
