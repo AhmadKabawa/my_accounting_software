@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_draft.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
 
 abstract interface class BrandsRepository {
   Future<Either<Failure, PaginatedResult<Brand>>> getBrands(
