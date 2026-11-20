@@ -120,60 +120,63 @@ class _BrandsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<BrandStatsCubit, BrandStatsState>(
-        builder: (context, statsState) =>
-          BlocBuilder<BrandsListCubit, BrandsListState>(
-        builder: (context, state) {
-          final cubit = context.read<BrandsListCubit>();
-          final page = state is BrandsListReady ? state : null;
-          final query = cubit.query;
-          final stats = statsState is BrandStatsLoaded ? statsState.stats : null;
-          final rows = page?.result.items ?? const <Brand>[];
-          final total = page?.result.totalCount ?? 0;
-          final failure = state is BrandsListFailed ? state.failure : null;
-          final loading =
-              state is BrandsListInitial || state is BrandsListLoading;
+        builder: (context, statsState) {
+          return BlocBuilder<BrandsListCubit, BrandsListState>(
+            builder: (context, state) {
+              final cubit = context.read<BrandsListCubit>();
+              final page = state is BrandsListReady ? state : null;
+              final query = cubit.query;
+              final stats = statsState is BrandStatsLoaded
+                  ? statsState.stats
+                  : null;
+              final rows = page?.result.items ?? const <Brand>[];
+              final total = page?.result.totalCount ?? 0;
+              final failure = state is BrandsListFailed ? state.failure : null;
+              final loading =
+                  state is BrandsListInitial || state is BrandsListLoading;
 
-          return ListPageTemplate(
-            titleKey: BrandsKeys.title,
-            breadcrumb: AppBreadcrumb(
-              items: [
-                AppBreadcrumbItem(
-                  label: NavKeys.catalog,
-                  onTap: () => context.go(CatalogRoutes.hub.path),
+              return ListPageTemplate(
+                titleKey: BrandsKeys.title,
+                breadcrumb: AppBreadcrumb(
+                  items: [
+                    AppBreadcrumbItem(
+                      label: NavKeys.catalog,
+                      onTap: () => context.go(CatalogRoutes.hub.path),
+                    ),
+                    const AppBreadcrumbItem(label: BrandsKeys.title),
+                  ],
                 ),
-                const AppBreadcrumbItem(label: BrandsKeys.title),
-              ],
-            ),
-            count: total,
-            actions: stats == null ? null : BrandStatsBar(stats),
-            primaryAction: PermissionGate(
-              permission: Permissions.masterData.manage,
-              child: AppButton(
-                BrandsKeys.add,
-                icon: AppIcons.add,
-                onPressed: () => _edit(context),
-              ),
-            ),
-            filterBar: BrandsFilterBar(query: query, cubit: cubit),
-            state: loading
-                ? AppPageState.loading
-                : failure != null
-                ? AppPageState.error
-                : AppPageState.content,
-            dataTable: BrandsTableSection(
-              cubit: cubit,
-              query: query,
-              rows: rows,
-              total: total,
-              loading: loading,
-              failure: failure,
-              onAdd: () => _edit(context),
-              onEdit: (brand) => _edit(context, brand),
-              onDelete: (brand) => _delete(context, brand),
-              onToggleStatus: (brand) => _status(context, brand),
-            ),
+                count: total,
+                actions: stats == null ? null : BrandStatsBar(stats),
+                primaryAction: PermissionGate(
+                  permission: Permissions.masterData.manage,
+                  child: AppButton(
+                    BrandsKeys.add,
+                    icon: AppIcons.add,
+                    onPressed: () => _edit(context),
+                  ),
+                ),
+                filterBar: BrandsFilterBar(query: query, cubit: cubit),
+                state: loading
+                    ? AppPageState.loading
+                    : failure != null
+                    ? AppPageState.error
+                    : AppPageState.content,
+                dataTable: BrandsTableSection(
+                  cubit: cubit,
+                  query: query,
+                  rows: rows,
+                  total: total,
+                  loading: loading,
+                  failure: failure,
+                  onAdd: () => _edit(context),
+                  onEdit: (brand) => _edit(context, brand),
+                  onDelete: (brand) => _delete(context, brand),
+                  onToggleStatus: (brand) => _status(context, brand),
+                ),
+              );
+            },
           );
         },
-      ),
-    );
+      );
 }
