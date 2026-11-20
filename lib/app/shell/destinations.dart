@@ -49,7 +49,7 @@ const appDestinations = [
       activeIcon: AppIcons.profileActive,
       label: NavKeys.person,
     ),
-    branchIndex: 1,
+    branchIndex: 2,
   ),
 ];
 
