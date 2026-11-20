@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
+import 'package:accounting_software/app/features/catalog/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/routing/route_registry.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -253,6 +255,36 @@ void main() {
           run(route.path, forgotPasswordEnabled: true),
           isNull,
           reason: route.path,
+        );
+      }
+    });
+  });
+
+  group('CAT-07 master-data route alias', () {
+    test('redirects to the real Brands page', () {
+      expect(CatalogRoutes.masterData.path, '/catalog/master-data');
+      expect(catalogMasterDataRedirect(), BrandsRoutes.brands.path);
+      expect(BrandsRoutes.brands.path, '/catalog/brands');
+    });
+
+    test('alias and Brands use the same protected session guards', () {
+      for (final path in [
+        CatalogRoutes.masterData.path,
+        BrandsRoutes.brands.path,
+      ]) {
+        expect(protectedRoutes.contains(path), isTrue, reason: path);
+        expect(publicRoutes.contains(path), isFalse, reason: path);
+        expect(run(path), '/login', reason: '$path requires a session');
+        expect(run(path, auth: authed), isNull, reason: '$path allows signed-in read access');
+        expect(
+          run(path, auth: authed, branchRequired: true),
+          '/select-branch',
+          reason: '$path obeys branch selection',
+        );
+        expect(
+          run(path, auth: authed, mustChangePassword: true),
+          '/change-password',
+          reason: '$path obeys forced password change',
         );
       }
     });
