@@ -167,7 +167,7 @@ bool _runSyncMenuAction(AppMenuEntry entry) {\n  entry.onSelected();\n  return t
           onSelected: () {},
           onSelectedAsync: () async {
             if (entry.requiresUnsavedChangesCheck) {
-              if (!await _confirmAllForms() || !context.mounted) return;
+              if (!await _confirmAllForms() || !context.mounted) return false;
             }
             final succeeded = entry.onSelectedAsync != null
                 ? await entry.onSelectedAsync!()
