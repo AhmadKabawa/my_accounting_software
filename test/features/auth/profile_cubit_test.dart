@@ -7,6 +7,7 @@ import 'package:accounting_software/app/features/auth/domain/entity/user/user_en
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/change_password_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/get_cached_usecase.dart';
+import 'package:accounting_software/app/features/auth/domain/usecase/get_must_change_password_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/update_profile_usecase.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/profile/profile_cubit.dart';
@@ -34,6 +35,7 @@ void main() {
     flash.listen(shown.add);
     session = SessionCubit(
       getCurrentUser: GetCurrentUserUseCase(repository: repo),
+      getMustChangePassword: GetMustChangePasswordUseCase(repo),
       logout: LogoutUseCase(repository: repo),
       sessionCleared: cleared.stream,
       flash: flash,
