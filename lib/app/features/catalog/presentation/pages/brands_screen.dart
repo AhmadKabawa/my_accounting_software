@@ -43,6 +43,8 @@ class _BrandsScreenState extends State<BrandsScreen> {
   int _page = AppConfig.defaultPage;
   int _total = 0;
   String _status = 'all';
+  String _sortKey = 'name';
+  bool _sortAscending = true;
   int _requestVersion = 0;
 
   @override
@@ -75,7 +77,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
       limit: AppConfig.defaultPageSize,
       queryParameters: {
         'select': BrandsEndpoint.select,
-        'order': 'name.asc',
+        'order': '$_sortKey.${_sortAscending ? 'asc' : 'desc'}',
         if (_search.text.trim().isNotEmpty)
           'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
         if (_status == 'active') 'is_active': 'eq.true',
@@ -372,6 +374,16 @@ class _BrandsScreenState extends State<BrandsScreen> {
           ),
         ],
         cardBuilder: _brandCard,
+        sortKey: _sortKey,
+        sortAscending: _sortAscending,
+        onSort: (sort) {
+          setState(() {
+            _sortKey = sort.key;
+            _sortAscending = sort.ascending;
+            _page = 1;
+          });
+          _load();
+        },
         rows: _brands,
         rowId: (brand) => brand.id,
         loading: _loading,
