@@ -22,6 +22,8 @@ void main() {
       expect(model.isActive, isFalse);
       expect(model.productCount, 7);
       expect(model.toEntity().productCount, 7);
+      expect(model.toJson()['id'], 42);
+      expect(model.toJson()['is_active'], isFalse);
     });
 
     test('treats an empty embedded relation as zero products', () {
