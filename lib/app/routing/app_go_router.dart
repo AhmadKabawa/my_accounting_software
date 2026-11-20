@@ -19,6 +19,8 @@ import 'package:accounting_software/app/features/auth/presentation/cubit/session
 import 'package:accounting_software/app/features/auth/presentation/pages/forgot_password/forgot_password_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/forgot_password/reset_password_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/login/login_screen.dart';
+import 'package:accounting_software/app/features/auth/presentation/pages/change_password/force_password_change_screen.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/force_password/force_password_change_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/signup/signup_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/pages/home_screen.dart';
@@ -129,6 +131,20 @@ class AppRouter {
       ),
 
       /// ─────────────────────────────────────────
+      /// Forced password change (AUTH-02)
+      GoRoute(
+        path: AuthRoutes.changePassword.path,
+        name: AuthRoutes.changePassword.name,
+        pageBuilder: (context, state) => RouteTransitions.fade(
+          context,
+          state,
+          BlocProvider(
+            create: (_) => sl<ForcePasswordChangeCubit>(),
+            child: const ForcePasswordChangeScreen(),
+          ),
+        ),
+      ),
+
       /// Select branch (AUTH-03)
       /// ─────────────────────────────────────────
       GoRoute(
@@ -269,6 +285,8 @@ class AppRouter {
     splashDone: splashCubit.state is SplashDone,
     onboarded: await settings.isOnboarded(),
     session: session.current,
+    mustChangePassword: session.current is SessionAuthenticated &&
+        (session.current as SessionAuthenticated).mustChangePassword,
     branchSelectionRequired: accessCubit.state.needsBranchSelection,
   );
 }
