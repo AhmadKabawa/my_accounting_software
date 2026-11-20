@@ -1,710 +1,403 @@
-import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
-import 'package:accounting_software/app/core/foundation/config/app_config.dart';
-import 'package:accounting_software/app/core/network/api_client_interface.dart';
-import 'package:accounting_software/app/core/network/api_end_points.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_image/app_image.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
-import 'package:accounting_software/app/features/catalog/data/brands_endpoint.dart';
-import 'package:accounting_software/app/features/catalog/domain/brand.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
+import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
+import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/brands_keys.dart';
-import 'package:dio/dio.dart';
 
-class BrandsScreen extends StatefulWidget {
+class BrandsScreen extends StatelessWidget {
   const BrandsScreen({super.key});
-
   @override
-  State<BrandsScreen> createState() => _BrandsScreenState();
+  Widget build(BuildContext context) => BlocProvider(
+    create: (_) => sl<BrandsListCubit>()..load(),
+    child: const _BrandsView(),
+  );
 }
 
-class _BrandsScreenState extends State<BrandsScreen> {
-  final _api = sl<IApiClient>();
-  final _search = TextEditingController();
-  List<Brand> _brands = [];
-  bool _loading = true;
-  String? _error;
-  int _page = AppConfig.defaultPage;
-  int _total = 0;
-  String _status = 'all';
-  String _sortKey = 'name';
-  bool _sortAscending = true;
-  int _requestVersion = 0;
+class _BrandsView extends StatelessWidget {
+  const _BrandsView();
 
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  @override
-  void dispose() {
-    _search.dispose();
-    super.dispose();
-  }
-
-  String _escapePostgrestValue(String value) =>
-      value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
-
-  Future<void> _load() async {
-    final requestVersion = ++_requestVersion;
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    final searchTerm = _escapePostgrestValue(_search.text.trim());
-    final result = await _api.getPaginated<Brand>(
-      BrandsEndpoint.collection,
-      fromJson: Brand.fromJson,
-      page: _page,
-      limit: AppConfig.defaultPageSize,
-      queryParameters: {
-        'select': BrandsEndpoint.select,
-        'order': '$_sortKey.${_sortAscending ? 'asc' : 'desc'}',
-        if (_search.text.trim().isNotEmpty)
-          'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
-        if (_status == 'active') 'is_active': 'eq.true',
-        if (_status == 'inactive') 'is_active': 'eq.false',
-      },
-    );
-    if (!mounted || requestVersion != _requestVersion) return;
-    result.when(
-      success: (data) => setState(() {
-        _brands = data.items;
-        _total = data.totalCount;
-        _loading = false;
-      }),
-      failure: (_) => setState(() {
-        _error = 'load';
-        _loading = false;
-      }),
-    );
-  }
-
-  Future<void> _edit([Brand? brand]) async {
+  Future<void> _edit(BuildContext context, [Brand? brand]) async {
     final saved = await showDialog<bool>(
       context: context,
-      builder: (_) => _BrandEditor(brand: brand, api: _api),
+      builder: (_) => BlocProvider(
+        create: (_) => sl<BrandFormCubit>(),
+        child: _BrandEditor(brand: brand),
+      ),
     );
-    if (saved == true && mounted) _load();
+    if (saved == true && context.mounted) {
+      await context.read<BrandsListCubit>().refresh();
+    }
   }
 
-  Future<void> _delete(Brand brand) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: AppText(BrandsKeys.delete),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppText(BrandsKeys.confirmDelete),
-            const SizedBox(height: 8),
-            AppText.raw(brand.name, type: AppTextType.titleSmall),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: AppText(BrandsKeys.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: AppText(BrandsKeys.delete),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return;
+  void _toast(BuildContext context, AppKey key) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: AppText(key)));
+  }
 
-    final result = await _api.delete(
-      AppEndpoint(
-        '${BrandsEndpoint.collection.toStringPath()}?id=eq.${encodePathSegment(brand.id)}',
-      ),
-      options: Options(headers: {'Prefer': 'return=minimal'}),
-    );
-    if (!mounted) return;
-    result.when(
-      success: (_) => _load(),
-      failure: (_) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: AppText(BrandsKeys.deleteError)));
+  Future<void> _status(BuildContext context, Brand brand) async {
+    final cubit = context.read<BrandsListCubit>();
+    if (brand.isActive) {
+      await showConfirmDialog(
+        context,
+        titleKey: BrandsKeys.deactivateTitle,
+        messageKey: BrandsKeys.deactivateMessage,
+        severity: ConfirmDialogSeverity.warning,
+        targetName: brand.name,
+        onConfirm: () async {
+          final result = await cubit.setActive(id: brand.id, isActive: false);
+          return result.fold((f) => f.messageKey, (_) => null);
+        },
+      );
+    } else {
+      final result = await cubit.setActive(id: brand.id, isActive: true);
+      if (!context.mounted) return;
+      result.fold((f) => _toast(context, f.messageKey),
+          (_) => _toast(context, BrandsKeys.statusUpdated));
+    }
+  }
+
+  Future<void> _delete(BuildContext context, Brand brand) async {
+    await showConfirmDialog(
+      context,
+      titleKey: BrandsKeys.delete,
+      messageKey: BrandsKeys.confirmDelete,
+      severity: ConfirmDialogSeverity.critical,
+      targetName: brand.name,
+      onConfirm: () async {
+        final result = await context.read<BrandsListCubit>().delete(brand);
+        return result.fold(
+          (f) => f is BrandInUseFailure ? BrandsKeys.brandInUse : f.messageKey,
+          (_) => null,
+        );
       },
     );
   }
 
-  void _changeStatus(String? value) {
-    final next = value ?? 'all';
-    if (_status == next) return;
-    setState(() {
-      _status = next;
-      _page = 1;
-    });
-    _load();
-  }
+  @override
+  Widget build(BuildContext context) => BlocBuilder<BrandsListCubit, BrandsListState>(
+    builder: (context, state) {
+      final cubit = context.read<BrandsListCubit>();
+      final page = state is BrandsListReady ? state : null;
+      final query = page?.query ?? cubit.query;
+      final rows = page?.result.items ?? const <Brand>[];
+      final total = page?.result.totalCount ?? 0;
+      final failure = state is BrandsListFailed ? state.failure : null;
+      final loading = state is BrandsListInitial || state is BrandsListLoading;
 
-  Widget _brandIdentity(BuildContext context, Brand brand) {
-    final logo = brand.logo;
-    final hasLogo = logo != null && logo.isNotEmpty;
-    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    return Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: SizedBox(
-            width: 44,
-            height: 44,
-            child: hasLogo
-                ? AppImage.network(
-                    logo!,
-                    width: 44,
-                    height: 44,
-                    shape: AppImageShape.rounded,
-                    borderRadius: 10,
-                    semanticsLabel: brand.name,
-                  )
-                : DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest,
-                    ),
-                    child: const Center(child: AppIcon(AppIcons.brands)),
-                  ),
-          ),
+      return ListPageTemplate(
+        titleKey: BrandsKeys.title,
+        breadcrumb: const AppBreadcrumb(items: [
+          AppBreadcrumbItem(label: NavKeys.catalog),
+          AppBreadcrumbItem(label: BrandsKeys.title),
+        ]),
+        count: total,
+        primaryAction: PermissionGate(
+          permission: Permissions.masterData.manage,
+          child: AppButton(BrandsKeys.add, icon: AppIcons.add,
+              onPressed: () => _edit(context)),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText.raw(brand.name, type: AppTextType.titleSmall),
-              const SizedBox(height: 3),
-              AppText.raw(
-                brand.slug,
-                type: AppTextType.bodySmall,
-                color: muted,
+        filterBar: FilterBar(
+          searchHintKey: BrandsKeys.searchHint,
+          onSearchChanged: cubit.searchChanged,
+          onClearAll: () {
+            cubit.searchChanged('');
+            cubit.setStatus(BrandStatusFilter.all);
+          },
+          activeFilters: [
+            if (query.search.isNotEmpty)
+              FilterBarFilter(id: 'search', label: BrandsKeys.searchHint,
+                value: query.search, onRemove: () => cubit.searchChanged('')),
+            if (query.status != BrandStatusFilter.all)
+              FilterBarFilter(id: 'status', label: BrandsKeys.status,
+                value: (query.status == BrandStatusFilter.active
+                    ? BrandsKeys.active : BrandsKeys.inactive).tr(context: context),
+                onRemove: () => cubit.setStatus(BrandStatusFilter.all)),
+          ],
+          filterControls: [
+            SizedBox(
+              width: 190,
+              child: DropdownButtonFormField<BrandStatusFilter>(
+                value: query.status,
+                decoration: InputDecoration(
+                  label: AppText(BrandsKeys.status),
+                  isDense: true,
+                  border: const OutlineInputBorder(),
+                ),
+                items: [
+                  DropdownMenuItem(value: BrandStatusFilter.all,
+                      child: AppText(BrandsKeys.allStatuses)),
+                  DropdownMenuItem(value: BrandStatusFilter.active,
+                      child: AppText(BrandsKeys.active)),
+                  DropdownMenuItem(value: BrandStatusFilter.inactive,
+                      child: AppText(BrandsKeys.inactive)),
+                ],
+                onChanged: (v) { if (v != null) cubit.setStatus(v); },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+        state: loading ? AppPageState.loading
+            : failure != null ? AppPageState.error : AppPageState.content,
+        dataTable: AppDataTable<Brand>(
+          columns: [
+            DataTableColumn(labelKey: BrandsKeys.name, sortKey: 'name',
+              priority: DataTableColumnPriority.primary, flex: 3,
+              cellBuilder: _identity),
+            DataTableColumn(labelKey: BrandsKeys.description,
+              priority: DataTableColumnPriority.secondary, flex: 2,
+              cellBuilder: (c, b) => AppText.raw(
+                b.description?.trim().isNotEmpty == true ? b.description!.trim() : '—',
+                color: Theme.of(c).colorScheme.onSurfaceVariant, maxLines: 2)),
+            DataTableColumn(labelKey: BrandsKeys.productCount,
+              priority: DataTableColumnPriority.secondary, numeric: true,
+              cellBuilder: (_, b) => AppText.raw(b.productCount?.toString() ?? '—')),
+            DataTableColumn(labelKey: BrandsKeys.status,
+              priority: DataTableColumnPriority.secondary,
+              cellBuilder: (_, b) => _statusBadge(b)),
+          ],
+          rows: rows, rowId: (b) => b.id, loading: loading,
+          errorKey: failure?.messageKey, onRetry: cubit.refresh,
+          emptyState: AppEmptyState(
+            icon: AppIcons.brands,
+            titleKey: query.search.isEmpty && query.status == BrandStatusFilter.all
+                ? BrandsKeys.empty : BrandsKeys.noResults,
+            descriptionKey: query.search.isEmpty && query.status == BrandStatusFilter.all
+                ? BrandsKeys.emptyDescription : BrandsKeys.noResultsDescription,
+            action: query.search.isEmpty && query.status == BrandStatusFilter.all
+                ? PermissionGate(permission: Permissions.masterData.manage,
+                    child: AppButton(BrandsKeys.add, icon: AppIcons.add,
+                      onPressed: () => _edit(context))) : null,
+          ),
+          cardBuilder: _card,
+          rowActionsBuilder: (c, b) => PermissionGate(
+            permission: Permissions.masterData.manage,
+            child: Wrap(spacing: 4, runSpacing: 4, children: [
+              AppButton(BrandsKeys.edit, size: AppButtonSize.small,
+                variant: AppButtonVariant.outlined, onPressed: () => _edit(context, b)),
+              AppButton(b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
+                size: AppButtonSize.small, variant: AppButtonVariant.text,
+                onPressed: () => _status(context, b)),
+              if ((b.productCount ?? 0) == 0)
+                AppButton(BrandsKeys.delete, size: AppButtonSize.small,
+                  variant: AppButtonVariant.danger, onPressed: () => _delete(context, b)),
+            ]),
+          ),
+          sortKey: 'name', sortAscending: query.sortAscending,
+          onSort: (s) => cubit.setSort(ascending: s.ascending),
+          page: query.page, pageSize: query.pageSize, totalCount: total,
+          hasMore: query.page * query.pageSize < total,
+          onPageChanged: cubit.setPage,
+        ),
+      );
+    },
+  );
+
+  Widget _identity(BuildContext context, Brand brand) => Row(
+    children: [
+      _logo(context, brand),
+      const SizedBox(width: 12),
+      Expanded(child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppText.raw(brand.name, type: AppTextType.titleSmall),
+          AppText.raw(brand.slug, type: AppTextType.bodySmall,
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
+        ],
+      )),
+    ],
+  );
+
+  Widget _logo(BuildContext context, Brand brand) {
+    final raw = brand.logo?.trim() ?? '';
+    final uri = Uri.tryParse(raw);
+    final valid = uri != null && uri.hasScheme &&
+        (uri.scheme == 'http' || uri.scheme == 'https') && uri.host.isNotEmpty;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: SizedBox(width: 44, height: 44,
+        child: valid
+            ? AppImage.network(raw, width: 44, height: 44,
+                shape: AppImageShape.rounded, borderRadius: 10,
+                semanticsLabel: brand.name,
+                errorWidget: const Center(child: AppIcon(AppIcons.brokenImage)))
+            : ColoredBox(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: const Center(child: AppIcon(AppIcons.brands)))),
     );
   }
 
-  Widget _brandStatus(Brand brand) => AppBadge(
-    label: brand.isActive ? BrandsKeys.active : BrandsKeys.inactive,
-    tone: brand.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
+  Widget _statusBadge(Brand b) => AppBadge(
+    label: b.isActive ? BrandsKeys.active : BrandsKeys.inactive,
+    tone: b.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
     size: AppBadgeSize.small,
   );
 
-  Widget _brandCard(BuildContext context, Brand brand) {
-    final description = brand.description?.trim() ?? '';
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _brandIdentity(context, brand),
-        if (description.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          AppText.raw(
-            description,
-            type: AppTextType.bodySmall,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            maxLines: 2,
-          ),
-        ],
-        const SizedBox(height: 12),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: _brandStatus(brand),
-        ),
+  Widget _card(BuildContext context, Brand b) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      _identity(context, b),
+      if (b.description?.trim().isNotEmpty == true) ...[
+        const SizedBox(height: 10),
+        AppText.raw(b.description!.trim(), type: AppTextType.bodySmall,
+          color: Theme.of(context).colorScheme.onSurfaceVariant, maxLines: 2),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final activeFilters = <FilterBarFilter>[
-      if (_search.text.trim().isNotEmpty)
-        FilterBarFilter(
-          id: 'search',
-          label: BrandsKeys.searchHint,
-          value: _search.text.trim(),
-          onRemove: () {
-            _search.clear();
-            _page = 1;
-            _load();
-          },
-        ),
-      if (_status != 'all')
-        FilterBarFilter(
-          id: 'status',
-          label: BrandsKeys.status,
-          value: _status == 'active'
-              ? BrandsKeys.active.tr(context: context)
-              : BrandsKeys.inactive.tr(context: context),
-          onRemove: () => _changeStatus('all'),
-        ),
-    ];
-
-    return ListPageTemplate(
-      titleKey: BrandsKeys.title,
-      breadcrumb: AppBreadcrumb(
-        items: [
-          const AppBreadcrumbItem(label: NavKeys.catalog),
-          const AppBreadcrumbItem(label: BrandsKeys.title),
-        ],
-      ),
-      count: _total,
-      primaryAction: PermissionGate(
-        permission: Permissions.masterData.manage,
-        child: AppButton(
-          BrandsKeys.add,
-          icon: AppIcons.add,
-          onPressed: () => _edit(),
-        ),
-      ),
-      filterBar: FilterBar(
-        searchController: _search,
-        searchHintKey: BrandsKeys.searchHint,
-        activeFilters: activeFilters,
-        filterControls: [
-          SizedBox(
-            width: 190,
-            child: InputDecorator(
-              decoration: InputDecoration(
-                label: AppText(BrandsKeys.status),
-                isDense: true,
-                border: const OutlineInputBorder(),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _status,
-                  isExpanded: true,
-                  isDense: true,
-                  items: [
-                    DropdownMenuItem(
-                      value: 'all',
-                      child: AppText(BrandsKeys.allStatuses),
-                    ),
-                    DropdownMenuItem(
-                      value: 'active',
-                      child: AppText(BrandsKeys.active),
-                    ),
-                    DropdownMenuItem(
-                      value: 'inactive',
-                      child: AppText(BrandsKeys.inactive),
-                    ),
-                  ],
-                  onChanged: _changeStatus,
-                ),
-              ),
-            ),
-          ),
-        ],
-        onClearAll: () {
-          _search.clear();
-          setState(() {
-            _status = 'all';
-            _page = 1;
-          });
-          _load();
-        },
-        onSearchChanged: (_) {
-          _page = 1;
-          _load();
-        },
-      ),
-      state: _loading
-          ? AppPageState.loading
-          : _error != null
-          ? AppPageState.error
-          : AppPageState.content,
-      dataTable: AppDataTable<Brand>(
-        emptyState: AppEmptyState(
-          icon: AppIcons.brands,
-          titleKey: _search.text.trim().isEmpty && _status == 'all'
-              ? BrandsKeys.empty
-              : BrandsKeys.noResults,
-          descriptionKey: _search.text.trim().isEmpty && _status == 'all'
-              ? BrandsKeys.emptyDescription
-              : BrandsKeys.noResultsDescription,
-          action: _search.text.trim().isEmpty && _status == 'all'
-              ? PermissionGate(
-                  permission: Permissions.masterData.manage,
-                  child: AppButton(
-                    BrandsKeys.add,
-                    icon: AppIcons.add,
-                    onPressed: () => _edit(),
-                  ),
-                )
-              : null,
-        ),
-        columns: [
-          DataTableColumn(
-            labelKey: BrandsKeys.name,
-            sortKey: 'name',
-            priority: DataTableColumnPriority.primary,
-            flex: 3,
-            cellBuilder: _brandIdentity,
-          ),
-          DataTableColumn(
-            labelKey: BrandsKeys.description,
-            priority: DataTableColumnPriority.secondary,
-            flex: 3,
-            cellBuilder: (context, brand) => AppText.raw(
-              brand.description?.trim().isNotEmpty == true
-                  ? brand.description!.trim()
-                  : '—',
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              maxLines: 2,
-            ),
-          ),
-          DataTableColumn(
-            labelKey: BrandsKeys.status,
-            priority: DataTableColumnPriority.secondary,
-            cellBuilder: (_, brand) => _brandStatus(brand),
-          ),
-        ],
-        cardBuilder: _brandCard,
-        sortKey: _sortKey,
-        sortAscending: _sortAscending,
-        onSort: (sort) {
-          setState(() {
-            _sortKey = sort.key;
-            _sortAscending = sort.ascending;
-            _page = 1;
-          });
-          _load();
-        },
-        rows: _brands,
-        rowId: (brand) => brand.id,
-        loading: _loading,
-        errorKey: _error == null ? null : BrandsKeys.loadError,
-        onRetry: _load,
-        totalCount: _total,
-        page: _page,
-        pageSize: AppConfig.defaultPageSize,
-        hasMore: _page * AppConfig.defaultPageSize < _total,
-        onPageChanged: (page) {
-          setState(() => _page = page);
-          _load();
-        },
-        rowActionsBuilder: (_, brand) => PermissionGate(
-          permission: Permissions.masterData.manage,
-          child: Wrap(
-            spacing: 4,
-            children: [
-              IconButton(
-                tooltip: BrandsKeys.edit.tr(context: context),
-                onPressed: () => _edit(brand),
-                icon: const Icon(Icons.edit_outlined),
-              ),
-              IconButton(
-                tooltip: BrandsKeys.delete.tr(context: context),
-                onPressed: () => _delete(brand),
-                icon: const Icon(Icons.delete_outline),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+      const SizedBox(height: 10),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        _statusBadge(b),
+        AppText.raw(BrandsKeys.productCount.tr(context: context) + ': ' +
+          (b.productCount?.toString() ?? '—'), type: AppTextType.bodySmall),
+      ]),
+    ],
+  );
 }
 
 class _BrandEditor extends StatefulWidget {
-  const _BrandEditor({required this.api, this.brand});
-
-  final IApiClient api;
+  const _BrandEditor({this.brand});
   final Brand? brand;
-
   @override
   State<_BrandEditor> createState() => _BrandEditorState();
 }
 
 class _BrandEditorState extends State<_BrandEditor> {
-  final _form = GlobalKey<FormState>();
-  late final TextEditingController _name;
-  late final TextEditingController _slug;
-  late final TextEditingController _logo;
-  late final TextEditingController _description;
-  bool _active = true;
+  final _key = GlobalKey<FormState>();
+  late final TextEditingController _name, _slug, _logo, _description;
   bool _saving = false;
-  bool _saveFailed = false;
-  AppKey _saveErrorKey = BrandsKeys.saveError;
+  AppKey? _failure;
 
   @override
   void initState() {
     super.initState();
-    final brand = widget.brand;
-    _name = TextEditingController(text: brand?.name ?? '');
-    _slug = TextEditingController(text: brand?.slug ?? '');
-    _logo = TextEditingController(text: brand?.logo ?? '');
-    _description = TextEditingController(text: brand?.description ?? '');
-    _active = brand?.isActive ?? true;
+    final b = widget.brand;
+    _name = TextEditingController(text: b?.name ?? '');
+    _slug = TextEditingController(text: b?.slug ?? '');
+    _logo = TextEditingController(text: b?.logo ?? '');
+    _description = TextEditingController(text: b?.description ?? '');
   }
 
   @override
   void dispose() {
-    _name.dispose();
-    _slug.dispose();
-    _logo.dispose();
-    _description.dispose();
+    _name.dispose(); _slug.dispose(); _logo.dispose(); _description.dispose();
     super.dispose();
   }
 
-  String _makeSlug(String value) => value
-      .trim()
-      .toLowerCase()
+  String _slugify(String s) => s.trim().toLowerCase()
       .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
       .replaceAll(RegExp(r'^-|-$'), '');
 
   Future<void> _save() async {
-    if (!_form.currentState!.validate()) return;
-    setState(() {
-      _saving = true;
-      _saveFailed = false;
-    });
-
-    final body = {
-      'name': _name.text.trim(),
-      'slug': _slug.text.trim(),
-      'logo': _logo.text.trim().isEmpty ? null : _logo.text.trim(),
-      'description': _description.text.trim().isEmpty
-          ? null
-          : _description.text.trim(),
-      'is_active': _active,
-    };
-
-    final result = widget.brand == null
-        ? await widget.api.post<dynamic>(
-            BrandsEndpoint.collection,
-            data: body,
-            options: Options(headers: {'Prefer': 'return=representation'}),
-          )
-        : await widget.api.patch<dynamic>(
-            AppEndpoint(
-              '${BrandsEndpoint.collection.toStringPath()}?id=eq.${encodePathSegment(widget.brand!.id)}',
-            ),
-            data: body,
-            options: Options(headers: {'Prefer': 'return=representation'}),
-          );
-
+    if (_saving || !_key.currentState!.validate()) return;
+    setState(() { _saving = true; _failure = null; });
+    final result = await context.read<BrandFormCubit>().save(
+      id: widget.brand?.id,
+      draft: BrandDraft(
+        name: _name.text.trim(), slug: _slug.text.trim(),
+        logo: _logo.text.trim().isEmpty ? null : _logo.text.trim(),
+        description: _description.text.trim().isEmpty ? null : _description.text.trim(),
+      ),
+    );
     if (!mounted) return;
-    result.when(
-      success: (_) => Navigator.of(context).pop(true),
-      failure: (exception) => setState(() {
+    result.fold(
+      (f) => setState(() {
         _saving = false;
-        _saveFailed = true;
-        _saveErrorKey =
-            exception.statusCode == 409 || exception.message.contains('23505')
-            ? BrandsKeys.duplicateError
-            : BrandsKeys.saveError;
+        _failure = f is BrandDuplicateFailure ? BrandsKeys.duplicateError : f.messageKey;
       }),
+      (_) => Navigator.of(context).pop(true),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    final slugIsEmpty = _slug.text.trim().isEmpty;
-    final logoText = _logo.text.trim();
-    final logoUri = Uri.tryParse(logoText);
-    final showLogoPreview =
-        logoText.isNotEmpty &&
-        logoUri != null &&
-        logoUri.hasScheme &&
-        ['http', 'https'].contains(logoUri.scheme) &&
-        logoUri.host.isNotEmpty;
-    return AlertDialog(
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const AppIcon(AppIcons.brands),
-              const SizedBox(width: 10),
-              Expanded(
-                child: AppText(
-                  widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
-                  type: AppTextType.titleLarge,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          AppText(
-            BrandsKeys.editorSubtitle,
-            type: AppTextType.bodySmall,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ],
-      ),
-      content: SizedBox(
-        width: 560,
+  Widget build(BuildContext context) => Dialog(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 560, maxHeight: 720),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
         child: Form(
-          key: _form,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppText(
-                  BrandsKeys.identitySection,
-                  type: AppTextType.titleSmall,
-                ),
-                context.ui.spacing.gap(AppSpacing.sm),
-                if (_saveFailed) ...[
-                  InlineBanner(
-                    messageKey: _saveErrorKey,
-                    variant: InlineBannerVariant.error,
-                  ),
-                  context.ui.spacing.gap(AppSpacing.sm),
-                ],
-                AppTextField(
-                  controller: _name,
-                  labelKey: BrandsKeys.name,
-                  validator: (value) => value == null || value.trim().isEmpty
-                      ? BrandsKeys.required.tr(context: context)
-                      : value.trim().length > 150
-                      ? BrandsKeys.nameTooLong.tr(context: context)
-                      : null,
-                  onChanged: (value) {
-                    if (_slug.text.isEmpty) {
-                      final generated = _makeSlug(value);
-                      if (generated.isNotEmpty) _slug.text = generated;
-                    }
-                    setState(() {
-                      if (_saveFailed) _saveFailed = false;
-                    });
-                  },
-                ),
-                context.ui.spacing.gap(AppSpacing.sm),
-                AppTextField(
-                  controller: _slug,
-                  labelKey: BrandsKeys.slug,
-                  validator: (value) {
-                    final slug = value?.trim() ?? '';
-                    if (slug.isEmpty) {
-                      return BrandsKeys.slugRequired.tr(context: context);
-                    }
-                    if (slug.length > 150) {
-                      return BrandsKeys.slugTooLong.tr(context: context);
-                    }
-                    if (!RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*$').hasMatch(slug)) {
-                      return BrandsKeys.slugFormat.tr(context: context);
-                    }
-                    return null;
-                  },
-                  onChanged: (_) => setState(() {
-                    if (_saveFailed) _saveFailed = false;
-                  }),
-                ),
-                if (slugIsEmpty) ...[
-                  context.ui.spacing.gap(AppSpacing.xs),
-                  AppText(
-                    BrandsKeys.slugHelp,
-                    type: AppTextType.bodySmall,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ],
-                context.ui.spacing.gap(AppSpacing.md),
-                AppText(BrandsKeys.logoSection, type: AppTextType.titleSmall),
-                context.ui.spacing.gap(AppSpacing.sm),
-                AppTextField(
-                  controller: _logo,
-                  labelKey: BrandsKeys.logo,
-                  keyboardType: TextInputType.url,
-                  validator: (value) {
-                    final url = value?.trim() ?? '';
-                    if (url.length > 500) {
-                      return BrandsKeys.logoTooLong.tr(context: context);
-                    }
-                    if (url.isEmpty) return null;
-                    final uri = Uri.tryParse(url);
-                    if (uri == null ||
-                        !uri.hasScheme ||
-                        !['http', 'https'].contains(uri.scheme) ||
-                        uri.host.isEmpty) {
-                      return BrandsKeys.invalidLogoUrl.tr(context: context);
-                    }
-                    return null;
-                  },
-                  onChanged: (_) => setState(() {}),
-                ),
-                if (showLogoPreview) ...[
-                  context.ui.spacing.gap(AppSpacing.sm),
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: AppImage.network(
-                      _logo.text.trim(),
-                      width: 76,
-                      height: 76,
-                      shape: AppImageShape.rounded,
-                      borderRadius: 10,
-                      semanticsLabel: BrandsKeys.logo.tr(context: context),
-                    ),
-                  ),
-                ],
-                context.ui.spacing.gap(AppSpacing.md),
-                AppText(
-                  BrandsKeys.detailsSection,
-                  type: AppTextType.titleSmall,
-                ),
-                context.ui.spacing.gap(AppSpacing.sm),
-                AppTextField(
-                  controller: _description,
-                  labelKey: BrandsKeys.description,
-                  maxLines: 3,
-                ),
-                AppCard(
-                  padding: AppSpacing.sm,
-                  child: SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: AppText(BrandsKeys.status),
-                    subtitle: AppText(
-                      _active ? BrandsKeys.active : BrandsKeys.inactive,
-                      type: AppTextType.bodySmall,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                    value: _active,
-                    onChanged: (value) => setState(() => _active = value),
-                  ),
-                ),
+          key: _key,
+          child: SingleChildScrollView(child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppText(widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
+                type: AppTextType.titleLarge),
+              const SizedBox(height: 8),
+              AppText(BrandsKeys.editorSubtitle, type: AppTextType.bodySmall),
+              const SizedBox(height: 20),
+              if (_failure != null) ...[
+                InlineBanner(messageKey: _failure!, variant: InlineBannerVariant.error),
+                const SizedBox(height: 12),
               ],
-            ),
-          ),
+              AppTextField(controller: _name, labelKey: BrandsKeys.name,
+                validator: (v) {
+                  final s = v?.trim() ?? '';
+                  if (s.isEmpty) return BrandsKeys.required.tr(context: context);
+                  if (s.length > 150) return BrandsKeys.nameTooLong.tr(context: context);
+                  return null;
+                },
+                onChanged: (v) {
+                  if (_slug.text.isEmpty) _slug.text = _slugify(v);
+                  if (_failure != null) setState(() => _failure = null);
+                }),
+              const SizedBox(height: 12),
+              AppTextField(controller: _slug, labelKey: BrandsKeys.slug,
+                validator: (v) {
+                  final s = v?.trim() ?? '';
+                  if (s.isEmpty) return BrandsKeys.slugRequired.tr(context: context);
+                  if (s.length > 150) return BrandsKeys.slugTooLong.tr(context: context);
+                  if (!RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*$').hasMatch(s)) {
+                    return BrandsKeys.slugFormat.tr(context: context);
+                  }
+                  return null;
+                }),
+              const SizedBox(height: 12),
+              AppTextField(controller: _logo, labelKey: BrandsKeys.logo,
+                keyboardType: TextInputType.url,
+                validator: (v) {
+                  final s = v?.trim() ?? '';
+                  if (s.isEmpty) return null;
+                  if (s.length > 500) return BrandsKeys.logoTooLong.tr(context: context);
+                  final u = Uri.tryParse(s);
+                  if (u == null || !u.hasScheme ||
+                      (u.scheme != 'http' && u.scheme != 'https') || u.host.isEmpty) {
+                    return BrandsKeys.invalidLogoUrl.tr(context: context);
+                  }
+                  return null;
+                }),
+              const SizedBox(height: 12),
+              AppTextField(controller: _description, labelKey: BrandsKeys.description, maxLines: 3),
+              const SizedBox(height: 20),
+              Wrap(alignment: WrapAlignment.end, spacing: 8, children: [
+                AppButton(BrandsKeys.cancel, variant: AppButtonVariant.text,
+                  onPressed: _saving ? null : () => Navigator.of(context).pop(false)),
+                AppButton(BrandsKeys.save, isLoading: _saving,
+                  onPressed: _saving ? null : _save),
+              ]),
+            ],
+          )),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _saving ? null : () => Navigator.pop(context, false),
-          child: AppText(BrandsKeys.cancel),
-        ),
-        AppButton(
-          BrandsKeys.save,
-          onPressed: _saving ? null : _save,
-          isLoading: _saving,
-        ),
-      ],
-    );
-  }
+    ),
+  );
 }
