@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
@@ -34,20 +37,41 @@ void main() {
     await cubit.close();
   });
 
-  test('does not publish stale statistics after a newer refresh', () async {
+  test('ignores stale statistics when a newer refresh finishes first', () async {
     final repository = FakeBrandsRepository();
-    repository.onGetBrands = (query) async => Right(PaginatedResult<Brand>(
-      items: const [],
-      totalCount: query.status == BrandStatusFilter.active ? 4 : 8,
-      currentPage: 1,
-      totalPages: 1,
-    ));
+    final pending = <Completer<Either<Failure, PaginatedResult<Brand>>>>[];
+    repository.onGetBrands = (_) {
+      final request = Completer<Either<Failure, PaginatedResult<Brand>>>();
+      pending.add(request);
+      return request.future;
+    };
     final cubit = BrandStatsCubit(getBrands: GetBrandsUseCase(repository));
 
-    await cubit.load();
-    expect((cubit.state as BrandStatsLoaded).stats.active, 4);
-    await cubit.refresh();
-    expect((cubit.state as BrandStatsLoaded).stats.total, 8);
+    final firstLoad = cubit.load();
+    await Future<void>.delayed(Duration.zero);
+    final secondLoad = cubit.refresh();
+    await Future<void>.delayed(Duration.zero);
+    expect(pending, hasLength(4));
+
+    pending[2].complete(Right(_page(total: 10)));
+    pending[3].complete(Right(_page(total: 7)));
+    await Future<void>.delayed(Duration.zero);
+    expect((cubit.state as BrandStatsLoaded).stats.total, 10);
+    expect((cubit.state as BrandStatsLoaded).stats.active, 7);
+
+    pending[0].complete(Right(_page(total: 3)));
+    pending[1].complete(Right(_page(total: 2)));
+    await Future.wait([firstLoad, secondLoad]);
+
+    expect((cubit.state as BrandStatsLoaded).stats.total, 10);
+    expect((cubit.state as BrandStatsLoaded).stats.active, 7);
     await cubit.close();
   });
 }
+
+PaginatedResult<Brand> _page({required int total}) => PaginatedResult<Brand>(
+  items: const [],
+  totalCount: total,
+  currentPage: 1,
+  totalPages: total,
+);
