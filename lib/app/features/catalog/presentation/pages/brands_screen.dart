@@ -460,18 +460,6 @@ class _BrandEditorState extends State<_BrandEditor> {
                   keyboardType: TextInputType.url,
                   validator: (value) {
                     final url = value?.trim() ?? '';
-                    if (url.isEmpty) return null;
-                    final uri = Uri.tryParse(url);
-                    if (uri == null ||
-                        !uri.hasScheme ||
-                        !['http', 'https'].contains(uri.scheme) ||
-                        uri.host.isEmpty) {
-                      return BrandsKeys.invalidLogoUrl.tr(context: context);
-                    }
-                    return null;
-                  },
-                  validator: (value) {
-                    final url = value?.trim() ?? '';
                     if (url.length > 500) {
                       return BrandsKeys.logoTooLong.tr(context: context);
                     }
