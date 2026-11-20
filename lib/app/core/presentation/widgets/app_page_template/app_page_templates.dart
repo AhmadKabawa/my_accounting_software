@@ -235,6 +235,7 @@ class DashboardTemplate extends StatelessWidget {
     padding: context.ui.padding.all(AppSpacing.md),
     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
       maxCrossAxisExtent: context.ui.size.width(AppComponentSize.cardWidth),
+      mainAxisExtent: context.ui.size.height(AppComponentSize.cardHeight),
       crossAxisSpacing: context.ui.spacing.md,
       mainAxisSpacing: context.ui.spacing.md,
     ),
