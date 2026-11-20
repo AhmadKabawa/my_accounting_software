@@ -68,7 +68,18 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionA
     if (state is SessionAuthenticated) return;
     final request = ++_sessionRequest;
     emit(const SessionChecking());
-    final result = await _getCurrentUser(NoParams());
+    final Either<Failure, UserEntity?> result;
+    try {
+      result = await _getCurrentUser(NoParams());
+    } catch (error, stackTrace) {
+      Logger.error('SessionCubit: session check threw', error: error, stackTrace: stackTrace, name: 'SessionCubit');
+      if (!isClosed && request == _sessionRequest) {
+        _access?.clear();
+        emit(const SessionUnauthenticated());
+        _error(UnexpectedFailure());
+      }
+      return;
+    }
     if (isClosed || request != _sessionRequest) return;
     await result.fold<Future<void>>(
       (failure) async {
@@ -95,7 +106,18 @@ class SessionCubit extends Cubit<SessionStatus> implements SessionGate, SessionA
   }
 
   Future<void> _publishAuthenticated(UserEntity user, int request) async {
-    final result = await _getMustChangePassword(GetMustChangePasswordParams(userId: user.id));
+    final Either<Failure, bool> result;
+    try {
+      result = await _getMustChangePassword(GetMustChangePasswordParams(userId: user.id));
+    } catch (error, stackTrace) {
+      Logger.error('SessionCubit: password policy check threw', error: error, stackTrace: stackTrace, name: 'SessionCubit');
+      if (!isClosed && request == _sessionRequest) {
+        _access?.clear();
+        emit(const SessionUnauthenticated());
+        _error(UnexpectedFailure());
+      }
+      return;
+    }
     if (isClosed || request != _sessionRequest) return;
     result.fold(
       (failure) {
