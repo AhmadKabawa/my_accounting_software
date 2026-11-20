@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/keys/access_keys.dart';
+import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import '../../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/access/domain/access_repository.dart';
@@ -52,7 +53,10 @@ void main() {
         BlocProvider.value(
           value: access,
           child: buildTestApp(
-            home: const AccessStatusGate(child: Text('protected shell')),
+            home: const AccessStatusGate(
+              signOutLabel: AuthKeys.signOut,
+              child: Text('protected shell'),
+            ),
           ),
         ),
       );
@@ -102,7 +106,10 @@ void main() {
       BlocProvider.value(
         value: access,
         child: buildTestApp(
-          home: const AccessStatusGate(child: Text('protected shell')),
+          home: const AccessStatusGate(
+            signOutLabel: AuthKeys.signOut,
+            child: Text('protected shell'),
+          ),
         ),
       ),
     );
