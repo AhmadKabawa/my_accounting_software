@@ -121,7 +121,7 @@ class BrandsListCubit extends Cubit<BrandsListState> {
   }
 
   Future<Either<Failure, Unit>> delete(Brand brand) async {
-    if (brand.productCount != null && brand.productCount! > 0) {
+    if (brand.productCount != 0) {
       return const Left(BrandInUseFailure());
     }
     final result = await _deleteBrand(brand.id);
