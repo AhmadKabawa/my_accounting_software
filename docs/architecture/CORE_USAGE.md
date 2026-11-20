@@ -143,7 +143,7 @@ AppButton(CommonKeys.cancel, variant: AppButtonVariant.outlined, onPressed: onCa
 AppButton(CommonKeys.save, isLoading: state.isBusy, onPressed: onSave);
 ```
 
-**حالة فارغة وهيكل تحميل:** مرّر `AppKey` للنصين و`AppIcons.*` للأيقونة إلى `AppEmptyState`؛ لا تستخدم نصوصاً خاماً. مرّر `AppButton(AppKey, ...)` في slot الإجراء. استخدم `AppSkeleton` بالشكل الذي يحافظ على أبعاد المحتوى المتوقع. كلا المكوّنين قيد المراجعة حتى ربطهما بالشاشات الطيّارة AUTH-04 وCAT-07.
+**حالة فارغة وهيكل تحميل:** مرّر `AppKey` للنصين و`AppIcons.*` للأيقونة إلى `AppEmptyState`؛ لا تستخدم نصوصاً خاماً. مرّر `AppButton(AppKey, ...)` في slot الإجراء. استخدم `AppSkeleton` بالشكل الذي يحافظ على أبعاد المحتوى المتوقع. استُخدم AppEmptyState في AUTH-04 لحالة عدم وجود وجهات؛ لا يزال C08 قيد المراجعة وفق R12 حتى تشغيل اختبار الشاشة والتحقق البصري. AppSkeleton لم يُربط بعد بشاشة طيّارة.
 
 **متى Core Widget ومتى Flutter Widget؟**
 - Core Widget عندما يغطي الحاجة: `AppText` للنص، `AppButton` للأزرار، `AppIcon` و`AppImage` للأيقونات والصور، `AppPageAppBar` و`AppCard` للتجميع، و`AppNavigationBar`/`AppNavigationRail`/`AppSidebar` للتنقل. أبعاد وسُمك الحدود دائماً من التوكنز (`AppSpacing` و`AppRadius` و`AppBorderWidth`...) لا بأرقام حرفية.
@@ -459,13 +459,20 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - AppMenu: مرّر List<AppMenuEntry> مع AppKey لكل عنصر، واستعمله لقوائم المستخدم وإجراءات الصفوف.
 - AppBreadcrumb: مرّر قائمة AppBreadcrumbItem؛ آخر عنصر هو موضع الصفحة الحالي. داخل AppShell يمكن تمرير breadcrumbBuilder الذي يستقبل GoRouterState ويعيد القائمة؛ عند غيابه تستعمل القشرة breadcrumbs الثابتة القديمة.
 - AppPageHeader: عنوان AppKey، وعدد اختياري، وslot للإجراء الأساسي والفتات.
-- FormPageTemplate هو T3 وDashboardTemplate هو T5. الشاشة المالكة تمرر المحتوى والحالة والبطاقات؛ لا تضع الصلاحيات أو منطق الأعمال داخل القالب.
+- FormPageTemplate هو T3 وDashboardTemplate هو T5. الشاشة المالكة تمرر المحتوى والحالة والبطاقات؛ لا تضع الصلاحيات أو منطق الأعمال داخل القالب. AUTH-04 يفلتر DashboardCardDefinition باستخدام AccessCubit وصلاحية البطاقة وسجل allRoutes قبل تمرير البطاقات إلى T5.
 - AppShell يقبل beforeBranchChange ليقرر صاحب الشاشة ما إذا كان تغيير الفرع مسموحاً بعد تأكيد C07. لا يعرف Shell شيئاً عن سلة البيع.
 - على Windows يمرر AppRouter قدرة supportsCollapsibleSidebar من PlatformCapabilities وAppSettingsManager؛ لا يستعمل الويب هذه القدرة، ويبقى Sidebar موسعاً. زر الرجوع الداخلي يستخدم go_router.
 - `UnsavedChangesGuard` يمرر من AppRouter إلى AppShell. FormPageTemplate يسجل نفسه تلقائياً عندما `dirty=true` داخل نطاق القشرة، ويستعمل ConfirmDialog نفسه لحارس PopScope ولتغيير الفرع/الوجهة.
 - علّم عنصر قائمة المستخدم الذي يجب أن يطلب تأكيد التغييرات بـ `requiresUnsavedChangesCheck: true` (يُستخدم لتسجيل الخروج). يمكن للمالك تمرير `beforeDestinationChange` لتقرير السماح بتغيير الوجهة قبل سؤال الحارس.
 - الحراسة تغطي التنقلات التي تمر عبر AppShell فقط. `context.go` البرمجي، وزر الرجوع في المتصفح، وتغيير الرابط يدوياً غير مغطاة في هذه الآلية.
 
+
+## استخدام AUTH-04 — 2026-11-20
+
+- استخدم `DashboardTemplate` (T5) مع `AppEmptyState` عند عدم وجود بطاقة مسموحة ذات `RouteItem` مسجل في `allRoutes`.
+- الشاشة تملك فلترة الصلاحيات والتحقق من تسجيل الوجهة؛ القالب لا يعرف AccessCubit أو GoRouter أو الأدوار.
+- بطاقة الوجهة تستخدم `AppCard` و`AppIcon` و`AppText`، وتعلن دلالة زر واحدة مع اسم مترجم، وهدف لمس لا يقل عن token `AppComponentSize.hitArea`، وتفعيل InkWell بلوحة المفاتيح.
+- لا تضف تعريف بطاقة حتى تكون الشاشة المستهدفة مبنية ومسجلة في GoRouter.
 
 ## متابعة الاستخدام — 2026-11-19
 

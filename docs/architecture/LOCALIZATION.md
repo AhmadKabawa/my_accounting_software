@@ -109,3 +109,8 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 ## تعديل مفاتيح Catalog UI — إصلاحات المراجعة 2026-11-19
 
 أضيف `CatalogUiKeys.clearSelection` (زر مسح اختيار SearchableDropdown). وحُذفت مفاتيح لم يستعملها أي كود أو اختبار: `page` و`of` و`selectAll` و`selected` و`cancel` و`loading` و`sortAscending` و`sortDescending`؛ ترقيم الصفحات يستعمل `paginationLabel` وحده. أعد إضافة أي منها عند وجود شاشة تستهلكه فعلاً.
+
+
+## مفاتيح لوحة التحكم AUTH-04 — 2026-11-20
+
+أُبقي `HomeKeys` في قسم home وسُجّلت قيمه مسبقاً ضمن `allKeys` في `key_registry.dart`. أصبحت مفاتيحه `dashboardTitle` و`noAvailableCardsTitle` و`noAvailableCardsDescription`؛ لكل منها نص عربي وإنجليزي. استُخدمت مفاتيح الحالة الفارغة في AUTH-04، ولا توجد نصوص واجهة ثابتة خارج AppKey.

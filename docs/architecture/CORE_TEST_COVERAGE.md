@@ -22,7 +22,7 @@
 | Widgets | `app_empty_state_test` (C08: AppIcon وAppKey للنصين وslot الإجراء والتخطيط المضغوط)؛ `app_skeleton_test` (C09: الأنواع الأربعة، تأخير الظهور، وتقليل الحركة)؛ `app_button_style_test` و`app_density_scope_test` و`nav_bar_item_test` و`app_navigation_bar_style_test` و`app_navigation_rail_style_test` و`app_sidebar_style_test` و`app_text_test` و`message_view_widgets_test` و`inline_banner_test` و`failure_banner_test` و`flash_messages_test` | أنماط وسلوك الأزرار والتنقل والنص، وألوان وسلوك رسائل SnackBar/Dialog/Loading، و`hideMessage` (لا يغلق الصفحة، يعمل داخل ShellRoute)، وبانر C38 (الأنواع الأربعة، Light/Dark، RTL/LTR، الإغلاق)، وفصل أخطاء التحقق عن النظام وعدم تسرب نص الخادم؛ لم تُشغَّل |
 | Storage | `token_manager_test` | `TokenManager` فقط (الكتابة، التراجع، `sessionCleared`) |
 
-- **ودجتات جديدة:** `AppCard` (`app_card_test`) و`AppIconButton` (`app_icon_button_test`، منطقة لمس >= 48) لهما اختبارات مباشرة. حارس الأرقام: `test/architecture/no_magic_numbers_test.dart`. ميزة الهوم: `test/features/home/home_cubit_test.dart`. اختبارات cubits الـ auth والهوم (`session` و`auth_flow` و`profile` و`home`) مكتوبة بـ `blocTest`.
+- **ودجتات جديدة:** `AppCard` (`app_card_test`) و`AppIconButton` (`app_icon_button_test`، منطقة لمس >= 48) لهما اختبارات مباشرة. حارس الأرقام: `test/architecture/no_magic_numbers_test.dart`. أُزيل اختبار `home_cubit_test.dart` مع إزالة HomeCubit التجريبي؛ AUTH-04 لها اختبار شاشة مستقل أدناه.
 
 - **Money وAmountFormatter:** `test/core/foundation/money/` (`money_test` و`money_rounding_test` و`amount_formatter_test`): دقة الجمع (`0.1 + 0.2`)، العمليات واختلاف العملات، قراءة PostgREST (نص/رقم/تدوين علمي/قيم مرفوضة)، طرق التقريب والخطوة، تنسيق المبالغ (فواصل، كسور العملة، `−`، عزل Bidi، رمز العملة). **لم تُشغَّل**؛ قيمها المتوقعة فُحصت بنسخة Python من الخوارزمية فقط. لا اختبار عرض بصري لاتجاه `−` داخل نص عربي (يتحقق منه الطيّار CAT-03).
 
@@ -34,6 +34,11 @@
 - **أخرى بلا ملف اختبار مباشر:** `AuthInterceptor` و`ConnectivityInterceptor` و`CancelTokenRegistry` و`AppIcon` و`AppImage` و`BlocEffectListener` و`AppBlocObserver` و`ThemeCubit`. وبالنسبة إلى `BlocEffectListener` تحديداً، تبقى سلامة التحليل وlifecycle `NOT_VERIFIED`؛ يلزم اختبار Widget مخصص.
 
 
+
+## تغطية AUTH-04 — 2026-11-20
+
+- `test/features/home/dashboard_screen_test.dart`: فلترة البطاقة حسب صلاحية AccessCubit، EmptyState عند غياب الصلاحية، إخفاء الوجهة غير المسجلة، التنقل للمسار المتوقع، semantics كزر، تفعيل Enter وSpace، وعروض 360/600/900/1200 مع RTL/LTR وLight/Dark.
+- الاختبارات مكتوبة ولم تُشغّل في هذه المهمة. `dart format --set-exit-if-changed .` و`flutter analyze --no-fatal-infos` و`flutter test`: غير منفذة؛ حالة CI غير مفحوصة. لم يُنفذ تحقق بصري على Chrome. T5 وC08 يظلان «مراجعة» وفق R12.
 
 ## تغطية القشرة وقوالب الصفحات C46/C48
 
