@@ -4,11 +4,11 @@ import 'package:accounting_software/app/features/catalog/data/datasources/brands
 import 'package:accounting_software/app/features/catalog/data/datasources/brands_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/data/repositories/brands_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/domain/repositories/brands_repository.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/create_brand_use_case.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/delete_brand_use_case.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/get_brands_use_case.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/set_brand_active_use_case.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/update_brand_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/create_brand_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/delete_brand_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/get_brands_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/set_brand_active_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/update_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
 
