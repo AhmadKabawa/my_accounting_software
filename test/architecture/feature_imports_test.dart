@@ -139,6 +139,17 @@ void main() {
     );
   });
 
+  test('AccessStatusGate receives an optional sign-out action from outside', () {
+    final source = File(
+      'lib/app/core/access/presentation/access_status_gate.dart',
+    ).readAsStringSync();
+
+    expect(source, isNot(contains('features/auth/')));
+    expect(source, contains('required this.signOutLabel'));
+    expect(source, contains('if (widget.onSignOut != null)'));
+    expect(source, contains('onPressed: widget.onSignOut'));
+  });
+
   test('the core rule detects feature imports (self-check)', () {
     expect(
       coreFeatureImportViolations({
