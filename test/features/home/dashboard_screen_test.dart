@@ -218,7 +218,13 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
+    expect(find.text('keyboard target'), findsOneWidget);
 
+    router.go(HomeRoutes.home.path);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pumpAndSettle();
     expect(find.text('keyboard target'), findsOneWidget);
   });
 

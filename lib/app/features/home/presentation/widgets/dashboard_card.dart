@@ -23,7 +23,6 @@ class DashboardCard extends StatelessWidget {
     return Semantics(
       button: true,
       label: label,
-      excludeSemantics: true,
       child: AppCard(
         onTap: onTap,
         child: ConstrainedBox(
