@@ -6,6 +6,7 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
@@ -23,6 +24,7 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
@@ -49,7 +51,7 @@ class _BrandsView extends StatelessWidget {
       ),
     );
     if (saved == true && context.mounted) {
-      await context.read<BrandsListCubit>().refresh();
+      await context.read<BrandsListCubit>().refresh(refreshStats: true);
     }
   }
 
@@ -107,6 +109,7 @@ class _BrandsView extends StatelessWidget {
       final cubit = context.read<BrandsListCubit>();
       final page = state is BrandsListReady ? state : null;
       final query = page?.query ?? cubit.query;
+      final stats = page?.stats;
       final rows = page?.result.items ?? const <Brand>[];
       final total = page?.result.totalCount ?? 0;
       final failure = state is BrandsListFailed ? state.failure : null;
@@ -119,6 +122,7 @@ class _BrandsView extends StatelessWidget {
           AppBreadcrumbItem(label: BrandsKeys.title),
         ]),
         count: total,
+        actions: stats == null ? null : _statsCards(context, stats),
         primaryAction: PermissionGate(
           permission: Permissions.masterData.manage,
           child: AppButton(BrandsKeys.add, icon: AppIcons.add,
@@ -213,6 +217,31 @@ class _BrandsView extends StatelessWidget {
         ),
       );
     },
+  );
+
+  Widget _statsCards(BuildContext context, BrandStats stats) => Wrap(
+    spacing: context.ui.spacing.sm,
+    runSpacing: context.ui.spacing.sm,
+    children: [
+      _statCard(context, BrandsKeys.totalBrands, stats.total),
+      _statCard(context, BrandsKeys.activeBrands, stats.active),
+      _statCard(context, BrandsKeys.inactiveBrands, stats.inactive),
+    ],
+  );
+
+  Widget _statCard(BuildContext context, AppKey label, int value) => SizedBox(
+    width: context.ui.size.width(AppComponentSize.cardWidth),
+    child: AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppText(label, type: AppTextType.labelMedium,
+            color: context.ui.theme.colors.onSurfaceVariant),
+          context.ui.spacing.gap(AppSpacing.xs),
+          AppText.raw(value.toString(), type: AppTextType.headlineSmall),
+        ],
+      ),
+    ),
   );
 
   Widget _identity(BuildContext context, Brand brand) => Row(
