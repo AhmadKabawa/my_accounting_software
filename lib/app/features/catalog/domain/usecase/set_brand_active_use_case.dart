@@ -14,7 +14,7 @@ class SetBrandActiveParams extends Equatable {
 }
 
 class SetBrandActiveUseCase extends UseCase<Unit, SetBrandActiveParams> {
-  const SetBrandActiveUseCase(this._repository);
+  SetBrandActiveUseCase(this._repository);
   final BrandsRepository _repository;
 
   @override
