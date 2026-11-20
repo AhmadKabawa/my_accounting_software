@@ -201,7 +201,7 @@ class AppRouter {
                 icon: AppIcons.logout,
                 requiresUnsavedChangesCheck: true,
                 onSelected: () {},
-                onSelectedAsync: () => sl<SessionCubit>().signOut(),
+                onSelectedGuardedAsync: sl<SessionCubit>().signOutWithResult,
               ),
             ],
           );
