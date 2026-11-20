@@ -84,3 +84,12 @@
 - app_badge_test.dart: أضيفت مجموعة «removable badge» (استدعاء الإزالة، قراءة النص مرة واحدة وزر الإزالة عقدة مستقلة، مساحة اللمس >= 44 على الهاتف).
 - app_data_table_test.dart وapp_searchable_dropdown_test.dart: أُزيل استعمال مفاتيح غير مرتبطة (search/filters/retry) لأسماء الأعمدة ورسائل الخطأ، واستُبدل `find.byType(Card), findsNothing` بتحقق من AppCard وعناوين الأعمدة.
 - جميعها مكتوبة ولم تُشغّل (لا Flutter SDK في بيئة التنفيذ)؛ لا تُعد ناجحة قبل `flutter test`.
+
+
+## تغطية AUTH-02 — 2026-11-20
+
+- `test/routing/route_guards_test.dart`: يختبر أولوية علامة فرض كلمة المرور على اختيار الفرع، حصر المسارات في `/change-password`، والسماح بالانتقال بعد مسح العلامة إلى AUTH-03 أو AUTH-04، ورفض الوصول غير المصادق.
+- `test/features/auth/session_cubit_test.dart`: قراءة العلامة من مصدرها، وإغلاق الجلسة عند فشل قراءة سياسة كلمة المرور.
+- `test/features/auth/force_password_change_screen_test.dart`: إخفاء الحقلين افتراضياً، ظهور تسجيل الخروج، رفض كلمة دون الحد الأدنى، رفض عدم التطابق، حالة الحفظ، خطأ InlineBanner، ومقاسات 360/1200 في RTL/LTR.
+- `test/features/auth/auth_endpoints_test.dart`: مسارا REST users وRPC complete_password_change.
+- الاختبارات مكتوبة ولم تُشغّل. `dart format --set-exit-if-changed .` و`flutter analyze --no-fatal-infos` و`flutter test` غير منفذة لعدم توفر Flutter/Dart SDK؛ التحقق البصري على Chrome غير منفذ، وCI غير مفحوص. الحالة «مراجعة» وفق R12.
