@@ -105,7 +105,7 @@ class AuthRepositoryImpl with RepositoryExecutor implements AuthRepository {
     return Right(user.toEntity());
   }
 
-  Future<Either<Failure, UserEntity?>> _onUserFetchFailed(ApiException exception) async {
+  Future<Either<Failure, UserEntity?>> _onUserFetchFailed(AppException exception) async {
     if (exception.statusCode == 401 || exception.statusCode == 403) {
       await _local.clearAll();
       return const Right(null);
