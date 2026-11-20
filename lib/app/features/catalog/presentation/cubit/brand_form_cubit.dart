@@ -2,10 +2,10 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_draft.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/create_brand_use_case.dart';
-import 'package:accounting_software/app/features/catalog/domain/usecases/update_brand_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/create_brand_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/update_brand_use_case.dart';
 
 sealed class BrandFormState extends Equatable {
   const BrandFormState();
