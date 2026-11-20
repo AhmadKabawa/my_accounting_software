@@ -1,4 +1,4 @@
-import 'package:accounting_software/app/features/catalog/domain/entities/brand.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 
 class BrandModel {
   const BrandModel({
