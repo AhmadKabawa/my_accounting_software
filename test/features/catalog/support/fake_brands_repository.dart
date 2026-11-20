@@ -8,6 +8,7 @@ import 'package:accounting_software/app/features/catalog/domain/repositories/bra
 
 class FakeBrandsRepository implements BrandsRepository {
   final List<BrandListQuery> queries = [];
+  final List<int> deletedIds = [];
   Future<Either<Failure, PaginatedResult<Brand>>> Function(BrandListQuery)?
   onGetBrands;
 
@@ -38,8 +39,10 @@ class FakeBrandsRepository implements BrandsRepository {
   }) => Future.value(const Right(unit));
 
   @override
-  Future<Either<Failure, Unit>> deleteBrand(int id) =>
-      Future.value(const Right(unit));
+  Future<Either<Failure, Unit>> deleteBrand(int id) {
+    deletedIds.add(id);
+    return Future.value(const Right(unit));
+  }
 
   static const _brand = Brand(
     id: 12,
