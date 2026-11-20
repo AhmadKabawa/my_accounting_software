@@ -11,5 +11,7 @@ void main() {
     expect(AuthEndpoints.user.path, '/auth/v1/user');
     expect(AuthEndpoints.recover.path, '/auth/v1/recover');
     expect(AuthEndpoints.verify.path, '/auth/v1/verify');
+    expect(AuthEndpoints.users.path, '/rest/v1/users');
+    expect(AuthEndpoints.completePasswordChange.path, '/rest/v1/rpc/complete_password_change');
   });
 }
