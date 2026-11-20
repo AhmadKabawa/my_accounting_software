@@ -303,16 +303,17 @@ CAT-07 نطاق بيانات مرجعية يحتاجها إنشاء المنتج
 1. Core: لا توسعة إلا إذا أثبت الفحص حاجة غير مغطاة، مع اختبار وتحديث CORE_MAP/CORE_USAGE/CORE_TEST_COVERAGE.
 2. Domain/Data/DI: Brand entity نقي؛ BrandModel للـ JSON؛ Repository contract/implementation؛ RemoteDataSource يستخدم IApiClient وBrandsEndpoint فقط؛ DI داخل catalog_di.dart يستدعيه app_di.dart.
 3. UseCases: Auth يستخدم UseCase لكل فعل، لذا اتبع النمط نفسه للأفعال الفعلية دون UseCase فارغ.
-4. الحالة: Cubit للقائمة وآخر للنموذج/العمليات؛ states sealed + Equatable؛ Effects لمرة واحدة. debounce 300ms Timer داخل Cubit مع حارس آخر طلب يفوز.
+4. الحالة: Cubit للقائمة وآخر للنموذج/العمليات؛ states sealed + Equatable؛ Effects لمرة واحدة. debounce 300ms Timer داخل Cubit مع حارس آخر طلب يفوز. تُخزّن BrandStats مستقلة عن query، وتُحدّث بعد الإنشاء/تغيير الحالة/الحذف.
 5. الصفحة: BrandsPage رقيقة، ومكونات الهوية والبطاقة وإجراءات الصف وحوار التحرير وفلتر الحالة داخل pages/brands/widgets.
-6. Localization: enum للميزة ar/en وتسجيله في key_registry؛ لا نصوص ثابتة ولا SnackBar.
+6. Localization: enum للميزة ar/en وتسجيله في key_registry؛ تجنّب اسم enum member `name` لتعارضه مع `Enum.name`، واختبر فرادة مفاتيح الترجمة؛ لا نصوص ثابتة ولا SnackBar.
 7. حذف التنفيذ القديم الذي حل محله بعد انتقال الاستخدامات واختبارات الرجوع.
 
 ### الاختبارات
 - Model JSON: fromJson/toJson/toEntity.
 - Repository: mapping، query، pagination، error mapping بـ fake/mock IApiClient.
 - Cubits: loading/success/empty/error، debounce وآخر طلب يفوز، Processing، Effects.
-- Widget tests: 360/600/900/1200 × LTR/RTL × Light/Dark، مع tester.takeException() لفحص overflow.
+- Widget tests: 360/600/900/1200 × LTR/RTL × Light/Dark، مع tester.takeException() لفحص overflow؛ والتحقق من ظهور تسميات الإحصاء دون رسالة الحذف.
+- Brand stats: اختبار الإجمالي/النشطة/الموقوفة، واستقلالها عن البحث وفلتر الحالة.
 - اختبارات المعمارية الموجودة لا تُعطّل ولا تُستثنى: no_magic_numbers_test وno_raw_ui_in_features_test وfeature_imports_test.
 - لا golden tests؛ ملفات IBM Plex غير مضمّنة.
 - تحقق بصري يدوي على Chrome عند 360 و1200 بالعربية والإنجليزية والفاتح والداكن، ويبقى معلقاً حتى ينفذه صاحب المشروع.
