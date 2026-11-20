@@ -82,6 +82,29 @@ Map<String, String> _readFeatureSources() => {
     _posix(file.path): file.readAsStringSync(),
 };
 
+Set<String> coreFeatureImportViolations(Map<String, String> sources) {
+  final violations = <String>{};
+  sources.forEach((importer, content) {
+    if (!importer.startsWith('lib/app/core/')) return;
+    for (final match in _directive.allMatches(content)) {
+      final target = _resolve(importer, match.group(1)!);
+      if (target != null && _featureOf.hasMatch(target)) {
+        violations.add('$importer -> $target');
+      }
+    }
+  });
+  return violations;
+}
+
+Map<String, String> _readCoreSources() => {
+  for (final file
+      in Directory('lib/app/core')
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.dart')))
+    _posix(file.path): file.readAsStringSync(),
+};
+
 void main() {
   test('features import each other only through routes files', () {
     final sources = _readFeatureSources();
@@ -102,6 +125,30 @@ void main() {
       _knownDebt.difference(found),
       isEmpty,
       reason: 'These imports no longer exist: remove them from _knownDebt.',
+    );
+  });
+
+  test('core does not import features', () {
+    final sources = _readCoreSources();
+    expect(sources, isNotEmpty, reason: 'no core source was found');
+
+    expect(
+      coreFeatureImportViolations(sources),
+      isEmpty,
+      reason: 'Core must not import code from app/features.',
+    );
+  });
+
+  test('the core rule detects feature imports (self-check)', () {
+    expect(
+      coreFeatureImportViolations({
+        'lib/app/core/example.dart': '''
+import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
+''',
+      }),
+      {
+        'lib/app/core/example.dart -> lib/app/features/auth/presentation/cubit/session/session_cubit.dart',
+      },
     );
   });
 
