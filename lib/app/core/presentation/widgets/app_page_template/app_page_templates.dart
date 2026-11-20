@@ -9,6 +9,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_confirm_di
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_body/app_page_body.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_header/app_page_header.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 
@@ -282,45 +283,53 @@ class ListPageTemplate extends StatelessWidget {
   final Widget? actions;
   final Widget? emptyState;
 
+  /// The whole page is one scroll (header, filters and table together) inside
+  /// [AppPageBody], which also owns the page padding and maximum width. The
+  /// body is laid out with unbounded height, so nothing below uses `Expanded`.
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AppPageHeader(
-          titleKey: titleKey,
-          count: count,
-          primaryAction: primaryAction,
-          breadcrumb: breadcrumb,
-        ),
-        if (actions != null)
-          Padding(
-            padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
-            child: actions!,
+    return AppPageBody(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppPageHeader(
+            titleKey: titleKey,
+            count: count,
+            primaryAction: primaryAction,
+            breadcrumb: breadcrumb,
           ),
-        filterBar,
-        context.ui.spacing.gap(AppSpacing.md),
-        Expanded(
-          child: switch (state) {
-            AppPageState.loading => ListView(
+          if (actions != null)
+            Padding(
+              padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
+              child: actions!,
+            ),
+          filterBar,
+          context.ui.spacing.gap(AppSpacing.md),
+          switch (state) {
+            AppPageState.loading => Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 for (var index = 0; index < _loadingPlaceholderCount; index++)
                   const AppSkeleton.tableRow(),
               ],
             ),
-            AppPageState.empty =>
-              emptyState ??
+            AppPageState.empty => Padding(
+              padding: context.ui.padding.symmetric(vertical: AppSpacing.xl),
+              child:
+                  emptyState ??
                   AppEmptyState(
                     icon: AppIcons.info,
                     titleKey: CatalogUiKeys.emptyTitle,
                     descriptionKey: CatalogUiKeys.emptyDescription,
                   ),
+            ),
             // AppDataTable owns its error banner and retry action. Do not
             // render a second page-level error/retry pair here.
             AppPageState.content || AppPageState.error => dataTable,
           },
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

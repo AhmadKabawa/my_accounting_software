@@ -229,6 +229,8 @@
 - `core/presentation/widgets/app_filter_bar/`: `FilterBar` (L3) يعرض البحث عبر AppTextField والمرشحات النشطة كـ AppBadge قابل للإزالة مع namedArgs للترجمة، ويدعم مسح الكل؛ محرر الفلاتر يحقن من الشاشة عبر slot. لا يملك استعلامات.
 - `core/presentation/widgets/app_data_table/`: `AppDataTable<T>` (L3) ثلاث تمثيلات حسب عرض الحاوية: cards أقل من 600، compact 600–1199، full من 1200؛ الفرز والترقيم callbacks للمالك/server، مع قائمة فرز BottomSheet للهاتف، selection وrow actions وsummary slots. حجم الصفحة من `AppConfig.pageSizeOptions`.
 - `ListPageTemplate` أضيف إلى `app_page_template/app_page_templates.dart` (L4) ويجمع `AppPageHeader`, `FilterBar`, `AppDataTable`, `AppSkeleton`, `AppEmptyState`. في حالة الخطأ يترك عرض البانر وRetry لـ AppDataTable حتى لا يتكرر المصدر.
+- `AppPageBody` (`app_page_body/app_page_body.dart`): إطار الصفحة الموحد؛ حشوة متجاوبة، وعرض أقصى مركزي، وتمرير عمودي واحد. `ListPageTemplate` يعتمد عليه، وتنتقل إليه بقية القوالب في مراحل لاحقة من [خريطة الإصلاح](../design/UI_REMEDIATION_ROADMAP.md). المحتوى بارتفاع غير محدود: لا `Expanded` مباشرة داخله.
+- `AppDataTable` يدعم ارتفاعاً غير محدود (داخل `AppPageBody`) بلا تغيير في سلوكه عند ارتفاع محدود.
 - لا مكوّن متصل بـ Supabase أو منطق أعمال. لا شاشة CAT-07 أو ADM-01/02 أُنشئت في هذا التحديث.
 
 

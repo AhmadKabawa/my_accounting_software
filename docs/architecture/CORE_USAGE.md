@@ -498,7 +498,7 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - `SearchableDropdown<String>(options: options, labelKey: CatalogUiKeys.chooseOption, optionLabel: (x) => x, value: selected, onChanged: onSelected)`؛ للبحث البعيد مرّر `filterLocally: false` و`onQueryChanged`، وحدّث `options` من مالك الحالة. استبدل قائمة الخيارات بقائمة immutable جديدة عند وصول النتيجة حتى تتحدث نتائج الويب والورقة السفلية.
 - `FilterBar(onSearchChanged: cubit.search, activeFilters: chips, onClearAll: cubit.clearFilters, filterPanelBuilder: (context, apply) => FilterEditor(onApply: apply))`؛ الشاشة تملك قيم الفلاتر والاستعلام.
 - `AppDataTable<Row>(columns: columns, rows: currentServerPage, rowId: (row) => row.id, onSort: cubit.sort, onPageChanged: cubit.goToPage, onPageSizeChanged: cubit.setPageSize)`؛ بطاقات الهاتف تستخدم AppCard، ويمكن تمرير `cardBuilder` للتخصيص.؛ على الهاتف مرّر `hasMore` و`onLoadMore`. لا تمرر كامل المجموعة ثم تطلب من الجدول فرزها محلياً.
-- `ListPageTemplate(titleKey: ..., filterBar: filterBar, dataTable: table, state: AppPageState.content)`؛ يُستعمل كـ body داخل مساحة ذات ارتفاع محدود (مثلاً Expanded في Scaffold/Column).
+- `ListPageTemplate(titleKey: ..., filterBar: filterBar, dataTable: table, state: AppPageState.content)`؛ يُستعمل كـ body صفحة كاملة. يمر عبر `AppPageBody` فيتولى حشوة الصفحة (من `AppGrid.margin`)، وأقصى عرض للمحتوى (`ScreenEngine.maxContentWidth`)، وتمريراً **واحداً للصفحة كلها** (الرأس والفلاتر والجدول معاً). لا تضعه داخل `Expanded` ولا تضف حشوة أو تمريراً حوله. `AppDataTable` يكتشف الارتفاع غير المحدود تلقائياً فيعرض صفوفه بارتفاعها الطبيعي؛ ومع ارتفاع محدود (استخدامه خارج القالب) يبقى بتمريره الداخلي كما كان.
 
 
 ## تحديث استخدام مكونات Catalog UI — مراجعة الجودة

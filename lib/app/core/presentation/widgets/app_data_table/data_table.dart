@@ -113,9 +113,13 @@ class AppDataTable<T> extends StatelessWidget {
             (type == ScreenType.desktop
                 ? AppDensity.compact
                 : AppDensity.comfortable);
+        // Inside a page scroll (AppPageBody) the height is unbounded: render at
+        // natural height and let the page scroll. With a bounded height the
+        // table keeps its own scroll area.
+        final bounded = constraints.hasBoundedHeight;
         return AppDensityScope(
           density: effectiveDensity,
-          child: _buildForWidth(context, type, effectiveDensity),
+          child: _buildForWidth(context, type, effectiveDensity, bounded),
         );
       },
     );
@@ -125,6 +129,7 @@ class AppDataTable<T> extends StatelessWidget {
     BuildContext context,
     ScreenType type,
     AppDensity density,
+    bool bounded,
   ) {
     if (errorKey != null) {
       return Column(
@@ -142,7 +147,7 @@ class AppDataTable<T> extends StatelessWidget {
         ],
       );
     }
-    if (loading) return _loading(context);
+    if (loading) return _loading(context, bounded);
     if (rows.isEmpty) {
       return emptyState ??
           AppEmptyState(
@@ -153,19 +158,25 @@ class AppDataTable<T> extends StatelessWidget {
           );
     }
     final style = DataTableStyle(context, density: density);
-    if (type == ScreenType.mobile) return _cards(context, style);
-    return _table(context, style, full: type == ScreenType.desktop);
+    if (type == ScreenType.mobile) return _cards(context, style, bounded);
+    return _table(
+      context,
+      style,
+      full: type == ScreenType.desktop,
+      bounded: bounded,
+    );
   }
 
-  Widget _loading(BuildContext context) => ListView(
+  Widget _loading(BuildContext context, bool bounded) => ListView(
     shrinkWrap: true,
+    physics: bounded ? null : const NeverScrollableScrollPhysics(),
     children: [
       for (var i = 0; i < _loadingPlaceholderCount; i++)
         const AppSkeleton.tableRow(),
     ],
   );
 
-  Widget _cards(BuildContext context, DataTableStyle style) {
+  Widget _cards(BuildContext context, DataTableStyle style, bool bounded) {
     final visible = columns
         .where(
           (column) => column.priority != DataTableColumnPriority.hiddenOnMobile,
@@ -187,7 +198,17 @@ class AppDataTable<T> extends StatelessWidget {
         .toList();
     final sortableColumns = visible.where((column) => column.sortable).toList();
 
+    Widget scrollArea(List<Widget> children) {
+      final list = ListView(
+        shrinkWrap: !bounded,
+        physics: bounded ? null : const NeverScrollableScrollPhysics(),
+        children: children,
+      );
+      return bounded ? Expanded(child: list) : list;
+    }
+
     return Column(
+      mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (sortableColumns.isNotEmpty && onSort != null)
@@ -200,9 +221,8 @@ class AppDataTable<T> extends StatelessWidget {
               onPressed: () => _showMobileSort(context, sortableColumns),
             ),
           ),
-        Expanded(
-          child: ListView(
-            children: [
+        scrollArea(
+          [
               for (final row in rows)
                 Padding(
                   padding: EdgeInsetsDirectional.only(bottom: style.gap),
@@ -262,7 +282,6 @@ class AppDataTable<T> extends StatelessWidget {
               if (summaryBuilder != null) summaryBuilder!,
               _pagination(context, mobile: true),
             ],
-          ),
         ),
       ],
     );
@@ -299,10 +318,16 @@ class AppDataTable<T> extends StatelessWidget {
     );
   }
 
+  /// Bounded height: the rows fill the remaining space and scroll inside the
+  /// table. Unbounded height (inside a page scroll): natural height.
+  Widget _fill(bool bounded, Widget child) =>
+      bounded ? Expanded(child: child) : child;
+
   Widget _table(
     BuildContext context,
     DataTableStyle style, {
     required bool full,
+    required bool bounded,
   }) {
     final visible = columns
         .where(
@@ -387,6 +412,7 @@ class AppDataTable<T> extends StatelessWidget {
     );
 
     return Column(
+      mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
       children: [
         Container(
           constraints: BoxConstraints(minHeight: style.headerHeight),
@@ -396,8 +422,11 @@ class AppDataTable<T> extends StatelessWidget {
           ),
           child: cells(null, header: true),
         ),
-        Expanded(
-          child: ListView.separated(
+        _fill(
+          bounded,
+          ListView.separated(
+            shrinkWrap: !bounded,
+            physics: bounded ? null : const NeverScrollableScrollPhysics(),
             itemCount: rows.length,
             separatorBuilder: (_, __) => Divider(
               height: AppBorderWidth.thin.of(context),
