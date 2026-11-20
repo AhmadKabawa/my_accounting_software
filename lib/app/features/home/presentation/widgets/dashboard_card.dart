@@ -18,9 +18,10 @@ class DashboardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label =
-        '${definition.titleKey.tr(context: context)}. '
-        '${definition.descriptionKey.tr(context: context)}';
+    final description = definition.descriptionKey?.tr(context: context);
+    final label = description == null || description.isEmpty
+        ? definition.titleKey.tr(context: context)
+        : '${definition.titleKey.tr(context: context)}. $description';
 
     return Semantics(
       button: true,
@@ -42,12 +43,14 @@ class DashboardCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText(definition.titleKey, type: AppTextType.titleSmall),
-                    context.ui.spacing.gap(AppSpacing.xs),
-                    AppText(
-                      definition.descriptionKey,
-                      type: AppTextType.bodySmall,
-                      color: context.ui.theme.colors.onSurfaceVariant,
-                    ),
+                    if (definition.descriptionKey != null) ...[
+                      context.ui.spacing.gap(AppSpacing.xs),
+                      AppText(
+                        definition.descriptionKey!,
+                        type: AppTextType.bodySmall,
+                        color: context.ui.theme.colors.onSurfaceVariant,
+                      ),
+                    ],
                   ],
                 ),
               ),
