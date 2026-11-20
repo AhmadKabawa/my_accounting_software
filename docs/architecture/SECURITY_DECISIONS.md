@@ -20,3 +20,18 @@
 ## السجلات
 
 لا يُعرض نص استثناء داخلي للمستخدم أبداً؛ الواجهة تعرض `messageKey` فقط. `RepositoryExecutor` يسجّل الأخطاء غير المتوقعة مع stack trace ولا يضع نصها في `Failure`. لا تُسجَّل توكنات ولا بيانات شخصية.
+
+
+## 4) فرض تغيير كلمة المرور (AUTH-02)
+
+المصدر المعتمد للعلامة هو `public.users.must_change_password`، لا `user_metadata` ولا عقد `get_my_access()`. العمود موثق في `DATA_MODEL.md` كـ boolean افتراضه `false`، وRLS يسمح للمستخدم بقراءة صفه فقط بينما الكتابة المباشرة محصورة بصلاحيات الإدارة.
+
+تسلسل العميل:
+
+1. بعد نجاح Auth، يقرأ `GET /rest/v1/users?select=must_change_password&id=eq.<auth.uid>` باستخدام JWT المستخدم. يجب أن يرجع صفاً واحداً وحقل boolean؛ غياب الصف أو الحقل أو فشل القراءة لا يُعامل كـ `false`، بل يمنع نشر جلسة مصادق عليها (fail-closed).
+2. عند `true`، يحصر Router كل وجهات المستخدم في `/change-password`. إجراء تسجيل الخروج يبقى متاحاً من الشاشة.
+3. تغيير كلمة المرور يتم عبر `PUT /auth/v1/user` مع `password` فقط، دون `current_password`. لا يُعاد استخدام `ChangePasswordUseCase` الخاص بالملف الشخصي؛ يبقى توقيعه وسلوكه كما هما.
+4. بعد قبول Auth لكلمة المرور، يستدعي العميل `POST /rest/v1/rpc/complete_password_change` بلا معاملات. فُحص تعريف الدالة في قاعدة Supabase: تتحقق من `auth.uid()` ثم تضبط `public.users.must_change_password = false` لصف المستخدم الحالي. لا يحدّث Flutter العمود مباشرة.
+5. بعد نجاح RPC فقط، يعيد العميل تحميل `get_my_access()` ثم يحرر حارس AUTH-02، فينتقل إلى AUTH-03 عند الحاجة أو AUTH-04 خلاف ذلك.
+
+أخطاء الخادم تظهر عبر `Failure.messageKey` وC38/InlineBanner؛ لا يُعرض نص الخادم الخام (قرار-76). كلمة المرور المؤقتة لا تُحفظ محلياً ولا تُسجّل في logs.
