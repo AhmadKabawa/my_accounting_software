@@ -40,6 +40,16 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 import 'package:accounting_software/app/features/auth/presentation/pages/select_branch/select_branch_screen.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 
+AppMenuEntry buildSignOutMenuEntry({
+  required Future<bool> Function() signOut,
+}) => AppMenuEntry(
+  label: AuthKeys.signOut,
+  icon: AppIcons.logout,
+  requiresUnsavedChangesCheck: true,
+  onSelected: () {},
+  onSelectedGuardedAsync: signOut,
+);
+
 class AppRouter {
   /// The router sees the session only through its contract.
   static final SessionGate session = sl<SessionGate>();
@@ -196,12 +206,8 @@ class AppRouter {
                 icon: AppIcons.person,
                 onSelected: () => context.go(ProfileRoutes.profile.path),
               ),
-              AppMenuEntry(
-                label: AuthKeys.signOut,
-                icon: AppIcons.logout,
-                requiresUnsavedChangesCheck: true,
-                onSelected: () {},
-                onSelectedGuardedAsync: sl<SessionCubit>().signOutWithResult,
+              buildSignOutMenuEntry(
+                signOut: sl<SessionCubit>().signOutWithResult,
               ),
             ],
           );
