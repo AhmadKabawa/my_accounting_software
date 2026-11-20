@@ -15,9 +15,9 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 /// Once the shell has been shown, it remains mounted but inaccessible while
 /// access is refreshed. This preserves dirty forms if a branch refresh fails.
 class AccessStatusGate extends StatefulWidget {
-  const AccessStatusGate({super.key, required this.child});
+  const AccessStatusGate({super.key, required this.child, this.onSignOut});
 
-  final Widget child;
+  final Widget child;\n  final Future<bool> Function()? onSignOut;
 
   @override
   State<AccessStatusGate> createState() => _AccessStatusGateState();
@@ -84,7 +84,7 @@ class _AccessStatusGateState extends State<AccessStatusGate> {
             AppButton(
               AuthKeys.signOut,
               onPressed: () async {
-                await context.read<SessionCubit>().signOut();
+                final action = widget.onSignOut;\n                if (action != null) {\n                  await action();\n                } else {\n                  await context.read<SessionCubit>().signOut();\n                }
               },
             ),
           ],
