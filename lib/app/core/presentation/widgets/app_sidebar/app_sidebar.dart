@@ -15,6 +15,12 @@ class AppSidebar extends StatelessWidget {
   final bool collapsed;
   final VoidCallback? onToggle;
 
+  /// Current route path; highlights the matching [NavBarChild].
+  final String? activePath;
+
+  /// Called with a child's path; the owner navigates.
+  final ValueChanged<String>? onChildSelected;
+
   const AppSidebar({
     super.key,
     required this.items,
@@ -22,6 +28,8 @@ class AppSidebar extends StatelessWidget {
     required this.onIndexChanged,
     this.collapsed = false,
     this.onToggle,
+    this.activePath,
+    this.onChildSelected,
   });
 
   @override
@@ -58,13 +66,36 @@ class AppSidebar extends StatelessWidget {
                   padding: style.padding,
                   itemCount: items.length,
                   separatorBuilder: (_, _) => SizedBox(height: style.itemGap),
-                  itemBuilder: (context, index) => _SidebarItem(
-                    item: items[index],
-                    selected: index == activeIndex,
-                    style: style,
-                    collapsed: collapsed,
-                    onTap: () => onIndexChanged(index),
-                  ),
+                  itemBuilder: (context, index) {
+                    final selected = index == activeIndex;
+                    final children = items[index].children;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _SidebarItem(
+                          item: items[index],
+                          selected: selected,
+                          style: style,
+                          collapsed: collapsed,
+                          onTap: () => onIndexChanged(index),
+                        ),
+                        if (selected && !collapsed)
+                          for (final child in children)
+                            Padding(
+                              padding: EdgeInsetsDirectional.only(
+                                top: style.itemGap,
+                                start: style.childIndent,
+                              ),
+                              child: _SidebarChild(
+                                child: child,
+                                selected: activePath == child.path,
+                                style: style,
+                                onTap: () => onChildSelected?.call(child.path),
+                              ),
+                            ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ],
@@ -136,6 +167,63 @@ class _SidebarItem extends StatelessWidget {
                           ),
                         ],
                       ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SidebarChild extends StatelessWidget {
+  const _SidebarChild({
+    required this.child,
+    required this.selected,
+    required this.style,
+    required this.onTap,
+  });
+
+  final NavBarChild child;
+  final bool selected;
+  final AppSidebarStyle style;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = style.itemForeground(selected: selected);
+    return Semantics(
+      label: child.label.tr(context: context),
+      button: true,
+      selected: selected,
+      onTap: onTap,
+      child: ExcludeSemantics(
+        child: Material(
+          color: style.itemBackground(selected: selected),
+          borderRadius: style.itemRadius,
+          child: InkWell(
+            borderRadius: style.itemRadius,
+            onTap: onTap,
+            child: Padding(
+              padding: style.itemPadding,
+              child: Row(
+                children: [
+                  AppIcon.fixed(
+                    child.icon,
+                    pixelSize: style.childIconSize,
+                    color: color,
+                  ),
+                  SizedBox(width: style.iconLabelGap),
+                  Expanded(
+                    child: AppText(
+                      child.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      type: AppTextType.labelMedium,
+                      color: color,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

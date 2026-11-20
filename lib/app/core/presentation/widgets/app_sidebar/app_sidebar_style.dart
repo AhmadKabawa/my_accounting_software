@@ -20,6 +20,8 @@ class AppSidebarStyle {
 
   double get iconSize => Rh.iconSize(context, AppIconSize.lg);
   EdgeInsets get padding => Rh.allPadding(context, AppSpacing.sm);
+  double get childIconSize => Rh.iconSize(context, AppIconSize.md);
+  double get childIndent => Rh.spacing(context, AppSpacing.md);
   double get itemGap => Rh.spacing(context, AppSpacing.xs);
   double get iconLabelGap => Rh.spacing(context, AppSpacing.smMd);
   double get itemMinHeight => Rh.width(context, AppComponentSize.large);

@@ -536,3 +536,7 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - `ValidationRule.pattern` مع `params: {ValidationRule.pattern: RegExp(...)}` (يجب أن يطابق النص كله).
 - `ValidationRule.httpUrl`: رابط مطلق http/https له host.
 - رسائل الميزة تُمرَّر بـ `customKeys` (مثال: `features/catalog/.../brand_field_validators.dart`). لا تكتب مدققاً موازياً.
+
+## الشريط الجانبي: عناصر فرعية
+
+`NavBarItem.icons(..., children: [NavBarChild(label:, icon:, path:)])` في `shell/destinations.dart`. تظهر في `AppSidebar` فقط تحت العنصر المحدد (يمرَّر `activePath` و`onChildSelected` من الشل، ويستخدم `context.go(path)`). لا يتأثر شريط الهاتف ولا الـ rail. المسار الفرعي يجب أن يكون داخل فرع العنصر نفسه.

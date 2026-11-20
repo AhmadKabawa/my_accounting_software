@@ -150,6 +150,10 @@ class AppShell extends StatelessWidget {
     return guard.confirmAll();
   }
 
+  /// Current location, to highlight a sidebar child. Null outside a router.
+  String? _activePath(BuildContext context) =>
+      GoRouter.maybeOf(context)?.routeInformationProvider.value.uri.path;
+
   @override
   Widget build(BuildContext context) {
     assert(
@@ -312,11 +316,15 @@ class AppShell extends StatelessWidget {
                     activeIndex: current < 0 ? 0 : current,
                     onIndexChanged: onSelect,
                     settingsManager: settingsManager!,
+                    activePath: _activePath(context),
+                    onChildSelected: (path) => context.go(path),
                   )
                 : AppSidebar(
                     items: items,
                     activeIndex: current < 0 ? 0 : current,
                     onIndexChanged: onSelect,
+                    activePath: _activePath(context),
+                    onChildSelected: (path) => context.go(path),
                   ),
           ),
         ),
@@ -331,8 +339,12 @@ class _PersistedWindowsSidebar extends StatefulWidget {
     required this.activeIndex,
     required this.onIndexChanged,
     required this.settingsManager,
+    this.activePath,
+    this.onChildSelected,
   });
 
+  final String? activePath;
+  final ValueChanged<String>? onChildSelected;
   final List<NavBarItem> items;
   final int activeIndex;
   final ValueChanged<int> onIndexChanged;
@@ -375,6 +387,8 @@ class _PersistedWindowsSidebarState extends State<_PersistedWindowsSidebar> {
     onIndexChanged: widget.onIndexChanged,
     collapsed: _collapsed,
     onToggle: _restored ? _toggle : null,
+    activePath: widget.activePath,
+    onChildSelected: widget.onChildSelected,
   );
 }
 

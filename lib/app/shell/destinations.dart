@@ -2,6 +2,7 @@ import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
+import 'package:accounting_software/app/features/catalog/presentation/localization/brands_keys.dart';
 
 /// One place the shell can go to: what to show ([item], the model shared by
 /// the bottom bar, the rail and the sidebar), which `StatefulShellBranch` it
@@ -40,6 +41,14 @@ const appDestinations = [
       icon: AppIcons.catalog,
       activeIcon: AppIcons.catalog,
       label: NavKeys.catalog,
+      // Sidebar-only sub-entries; the hub itself is the parent item.
+      children: [
+        NavBarChild(
+          label: BrandsKeys.title,
+          icon: AppIcons.brands,
+          path: '/catalog/brands',
+        ),
+      ],
     ),
     branchIndex: 1,
   ),

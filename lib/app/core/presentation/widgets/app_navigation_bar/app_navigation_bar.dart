@@ -21,7 +21,23 @@ export 'package:accounting_software/app/core/presentation/widgets/app_navigation
     show NavBarStyle;
 
 /// نموذج بيانات للـ navigation item
+/// A second-level entry shown under a [NavBarItem] in the sidebar only
+/// (the bottom bar and rail ignore it). It opens [path] in the same branch.
+class NavBarChild {
+  const NavBarChild({
+    required this.label,
+    required this.icon,
+    required this.path,
+  });
+
+  final AppKey label;
+  final AppIconData icon;
+  final String path;
+}
+
 class NavBarItem {
+  /// Sidebar-only sub-entries; the item is "expanded" while it is selected.
+  final List<NavBarChild> children;
   final AppIconData icon;
   final AppIconData? activeIcon;
   final AppKey label;
@@ -33,6 +49,7 @@ class NavBarItem {
     this.activeIcon,
     required this.label,
     this.onTap,
+    this.children = const [],
   });
 
   /// Kept so existing call sites keep working; prefer [NavBarItem.icons].
@@ -41,6 +58,7 @@ class NavBarItem {
     IconData? activeIcon,
     required this.label,
     this.onTap,
+    this.children = const [],
   }) : icon = MaterialIconData(icon),
        activeIcon = activeIcon == null ? null : MaterialIconData(activeIcon);
 }
