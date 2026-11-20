@@ -194,7 +194,7 @@ class _BrandsView extends StatelessWidget {
           cardBuilder: _card,
           rowActionsBuilder: (c, b) => PermissionGate(
             permission: Permissions.masterData.manage,
-            child: Wrap(spacing: 4, runSpacing: 4, children: [
+            child: Wrap(spacing: context.ui.spacing.xs, runSpacing: context.ui.spacing.xs, children: [
               AppButton(BrandsKeys.edit, size: AppButtonSize.small,
                 variant: AppButtonVariant.outlined, onPressed: () => _edit(context, b)),
               AppButton(b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
@@ -245,7 +245,7 @@ class _BrandsView extends StatelessWidget {
                 raw,
                 width: context.ui.size.width(AppComponentSize.avatarSmall),
                 height: context.ui.size.height(AppComponentSize.avatarSmall),
-                shape: AppImageShape.rounded, borderRadius: 10,
+                shape: AppImageShape.rounded, borderRadius: AppRadius.sm.of(context),
                 semanticsLabel: brand.name,
                 errorWidget: const Center(child: AppIcon(AppIcons.brokenImage)))
             : ColoredBox(
@@ -270,7 +270,7 @@ class _BrandsView extends StatelessWidget {
           color: context.ui.theme.colors.onSurfaceVariant, maxLines: 2),
       ],
       context.ui.spacing.gap(AppSpacing.sm),
-      Wrap(spacing: 8, runSpacing: 8, children: [
+      Wrap(spacing: context.ui.spacing.sm, runSpacing: context.ui.spacing.sm, children: [
         _statusBadge(b),
         AppText.raw(BrandsKeys.productCount.tr(context: context) + ': ' +
           (b.productCount?.toString() ?? '—'), type: AppTextType.bodySmall),
@@ -396,7 +396,7 @@ class _BrandEditorState extends State<_BrandEditor> {
               context.ui.spacing.gap(AppSpacing.smMd),
               AppTextField(controller: _description, labelKey: BrandsKeys.description, maxLines: 3),
               context.ui.spacing.gap(AppSpacing.md),
-              Wrap(alignment: WrapAlignment.end, spacing: 8, children: [
+              Wrap(alignment: WrapAlignment.end, spacing: context.ui.spacing.sm, children: [
                 AppButton(BrandsKeys.cancel, variant: AppButtonVariant.text,
                   onPressed: _saving ? null : () => Navigator.of(context).pop(false)),
                 AppButton(BrandsKeys.save, isLoading: _saving,
