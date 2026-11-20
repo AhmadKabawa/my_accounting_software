@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/data/datasources/brands_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/data/repositories/brands_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
@@ -59,6 +60,34 @@ void main() {
     });
     expect(api.lastBody!.containsKey('is_active'), isFalse);
     expect(result.isRight(), isTrue);
+  });
+
+  test('updates only editable fields and scopes the patch by id', () async {
+    final result = await repository.updateBrand(
+      id: 12,
+      draft: const BrandDraft(
+        name: 'Northwind Trading',
+        slug: 'northwind-trading',
+      ),
+    );
+
+    expect(api.lastQueryParameters, {'id': 'eq.12'});
+    expect(api.lastBody!.containsKey('is_active'), isFalse);
+    expect(api.lastBody!['name'], 'Northwind Trading');
+    expect(result.isRight(), isTrue);
+  });
+
+  test('maps forbidden writes to a permission failure', () async {
+    api.postFailure = ApiException.forbidden();
+
+    final result = await repository.createBrand(
+      const BrandDraft(name: 'Northwind', slug: 'northwind'),
+    );
+
+    result.fold(
+      (failure) => expect(failure, isA<PermissionFailure>()),
+      (_) => fail('Expected permission failure'),
+    );
   });
 
   test('status update sends only is_active', () async {
