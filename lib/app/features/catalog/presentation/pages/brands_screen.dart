@@ -54,8 +54,8 @@ class _BrandsScreenState extends State<BrandsScreen> {
   }
 
   String _escapePostgrestValue(String value) => value
-      .replaceAll(r'\\', r'\\\\')
-      .replaceAll(r'"', r'\\"');
+      .replaceAll(r'\', r'\\')
+      .replaceAll('"', r'\"');
 
   Future<void> _load() async {
     final requestVersion = ++_requestVersion;
