@@ -25,6 +25,7 @@ class FakeAuthRepository implements AuthRepository {
   Object? logoutError;
   Either<Failure, Unit> unitResult = const Right(unit);
   bool mustChangePassword = false;
+  Object? passwordFlagError;
   Completer<Either<Failure, UserEntity>>? profile;
   Completer<Either<Failure, Unit>>? forcedPassword;
   Either<Failure, UserEntity>? profileResult;
@@ -101,6 +102,7 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<Either<Failure, bool>> getMustChangePassword({required String userId}) async {
+    if (passwordFlagError != null) throw passwordFlagError!;
     return Right(mustChangePassword);
   }
 
