@@ -8,7 +8,6 @@ import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
-import 'package:accounting_software/app/features/catalog/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/delete_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/get_brands_use_case.dart';
@@ -34,14 +33,12 @@ final class BrandsListReady extends BrandsListState {
   const BrandsListReady({
     required this.result,
     required this.query,
-    this.stats,
   });
   final PaginatedResult<Brand> result;
   final BrandListQuery query;
-  final BrandStats? stats;
 
   @override
-  List<Object?> get props => [result, query, stats];
+  List<Object?> get props => [result, query];
 }
 
 final class BrandsListFailed extends BrandsListState {
@@ -72,23 +69,17 @@ class BrandsListCubit extends Cubit<BrandsListState> {
   );
   Timer? _searchTimer;
   int _requestVersion = 0;
-  BrandStats? _stats;
-
   BrandListQuery get query => _query;
-  BrandStats? get stats => _stats;
-
   Future<void> load() async {
     _searchTimer?.cancel();
     final requestVersion = ++_requestVersion;
     emit(const BrandsListLoading());
     final result = await _getBrands(_query);
     if (isClosed || requestVersion != _requestVersion) return;
-    if (_stats == null) _stats = await _fetchStats();
-    if (isClosed || requestVersion != _requestVersion) return;
     result.fold(
       (failure) => emit(BrandsListFailed(failure)),
       (page) =>
-          emit(BrandsListReady(result: page, query: _query, stats: _stats)),
+          emit(BrandsListReady(result: page, query: _query)),
     );
   }
 
@@ -117,39 +108,7 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     return load();
   }
 
-  Future<void> refresh({bool refreshStats = false}) {
-    if (refreshStats) _stats = null;
-    return load();
-  }
-
-  Future<BrandStats?> _fetchStats() async {
-    final results = await Future.wait([
-      _getBrands(const BrandListQuery(page: 1, pageSize: 1)),
-      _getBrands(
-        const BrandListQuery(
-          status: BrandStatusFilter.active,
-          page: 1,
-          pageSize: 1,
-        ),
-      ),
-    ]);
-    int? total;
-    int? active;
-    results[0].fold((_) {}, (page) {
-      total = page.totalCount;
-    });
-    results[1].fold((_) {}, (page) {
-      active = page.totalCount;
-    });
-    final totalCount = total;
-    final activeCount = active;
-    if (totalCount == null || activeCount == null) return null;
-    return BrandStats(
-      total: totalCount,
-      active: activeCount,
-      inactive: totalCount - activeCount,
-    );
-  }
+  Future<void> refresh() => load();
 
   Future<Either<Failure, Unit>> setActive({
     required int id,
@@ -160,7 +119,6 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     );
     if (isClosed) return result;
     if (result.isRight()) {
-      _stats = null;
       await load();
     }
     return result;
