@@ -190,7 +190,7 @@ class _BrandEditorState extends State<_BrandEditor> {
     setState(() => _saving = true);
     final body = {
       'name': _name.text.trim(),
-      'slug': _slug.text.trim().isEmpty ? _makeSlug(_name.text) : _slug.text.trim(),
+      'slug': _slug.text.trim(),
       'logo': _logo.text.trim().isEmpty ? null : _logo.text.trim(),
       'description': _description.text.trim().isEmpty ? null : _description.text.trim(),
       'is_active': _active,
@@ -222,7 +222,7 @@ class _BrandEditorState extends State<_BrandEditor> {
             children: [
               AppTextField(controller: _name, labelKey: BrandsKeys.name, validator: (v) => (v == null || v.trim().isEmpty) ? BrandsKeys.required.ar : null, onChanged: (v) { if (_slug.text.isEmpty) _slug.text = _makeSlug(v); }),
               context.ui.spacing.gap(AppSpacing.sm),
-              AppTextField(controller: _slug, labelKey: BrandsKeys.slug),
+              AppTextField(controller: _slug, labelKey: BrandsKeys.slug, validator: (v) => (v == null || v.trim().isEmpty) ? BrandsKeys.required.ar : null),
               context.ui.spacing.gap(AppSpacing.sm),
               AppTextField(controller: _logo, labelKey: BrandsKeys.logo, keyboardType: TextInputType.url),
               context.ui.spacing.gap(AppSpacing.sm),
