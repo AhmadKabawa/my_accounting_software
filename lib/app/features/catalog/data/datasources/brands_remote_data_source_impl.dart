@@ -6,8 +6,8 @@ import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/features/catalog/data/brands_endpoint.dart';
 import 'package:accounting_software/app/features/catalog/data/datasources/brands_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/data/models/brand_model.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_draft.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
 
 class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
   const BrandsRemoteDataSourceImpl(this._apiClient);
