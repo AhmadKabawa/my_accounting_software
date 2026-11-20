@@ -20,8 +20,26 @@ Only the Brands tab of CAT-07. Categories, colors, sizes, product types, units, 
 - Slug assistance: Latin names can populate a suggested slug; Arabic names receive a localized instruction to enter an English slug manually.
 - Localized save errors, duplicate name/slug feedback, delete failure feedback, load/retry state, and distinct empty/no-results states.
 - Arabic/English feature keys registered in the app localization key registry. Dialog copy is localized; no hard-coded Arabic UI labels remain in the feature screen.
-- Brands route registered in the shell and route catalogue; read-only users can open the list while create/edit/delete controls are gated by `masterdata.manage`.
+- Brands route is nested at `/catalog/brands`; the shell exposes the parent Catalog module, and the page shows a Catalog → Brands breadcrumb. Read-only users can open the list while create/edit/delete controls are gated by `masterdata.manage`.
 - The screen uses the existing GetIt `IApiClient`, not the commented Supabase singleton initialization.
+- The list presents brand identity as a single visual unit (logo, name, slug), uses status badges, responsive mobile cards, and server-side sorting. The editor groups identity, logo, and additional details; the list template now supports an optional breadcrumb.
+
+
+## Brand data model — current scope and future decisions
+
+The current database contract exposes only the fields listed above. The UI intentionally does not invent or send extra columns.
+
+Useful candidates to evaluate in a later schema decision (not part of this implementation):
+- Official website URL: useful only if staff need a canonical brand reference.
+- Country of origin: useful only if the store maintains verified origin data; it must not be inferred from the brand name.
+- Localized display names: consider separate Arabic/English names if the same brand must be searched and displayed in both languages.
+- External reference/code: useful only if a supplier feed, marketplace, or integration needs a stable external identifier.
+
+Do not turn the brand record into a supplier/manufacturer profile. Supplier data belongs to the supplier domain. Product/model assignment and a usage count on the brand list should be added only after the actual foreign-key relationship and its query cost are confirmed. No database migration is included here.
+
+## Navigation and UX direction
+
+Catalog is a shell-level module. Brands is a child route at `/catalog/brands`, not a top-level shell destination. The route is ready to host sibling catalog features (products, models, colors, sizes, pricing) as they are implemented; this phase does not expose non-existent screens as disabled or fake menu entries.
 
 ## Deliberate boundaries
 - The logo field accepts a public HTTP(S) image URL; uploading image files/storage integration is not part of this phase.
