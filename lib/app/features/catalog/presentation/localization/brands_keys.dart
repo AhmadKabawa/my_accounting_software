@@ -83,7 +83,10 @@ enum BrandsKeys implements AppKey {
   deactivateMessage(ar: 'سيتم إيقاف الماركة مع الاحتفاظ بها وسجلاتها.', en: 'This brand will be deactivated while keeping its record and references.'),
   statusUpdated(ar: 'تم تحديث حالة الماركة.', en: 'Brand status updated.'),
   brandInUse(ar: 'لا يمكن حذف الماركة لأنها مرتبطة بمنتجات. يمكنك إيقافها بدلاً من ذلك.', en: 'This brand cannot be deleted because products reference it. Deactivate it instead.'),
-  deleted(ar: 'تم حذف الماركة.', en: 'Brand deleted.');
+  deleted(ar: 'تم حذف الماركة.', en: 'Brand deleted.'),
+  totalBrands(ar: 'إجمالي الماركات', en: 'Total brands'),
+  activeBrands(ar: 'الماركات النشطة', en: 'Active brands'),
+  inactiveBrands(ar: 'الماركات الموقوفة', en: 'Inactive brands');
 
   const BrandsKeys({required this.ar, required this.en});
   @override
