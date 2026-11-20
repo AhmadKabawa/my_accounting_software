@@ -41,8 +41,7 @@ const appDestinations = [
       activeIcon: AppIcons.brands,
       label: NavKeys.brands,
     ),
-    branchIndex: 2,
-    permission: Permission('masterdata.manage'),
+    branchIndex: 1,
   ),
   AppDestination(
     item: NavBarItem.icons(
