@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_image/app_image.dart';
@@ -223,6 +224,25 @@ class _BrandsScreenState extends State<BrandsScreen> {
               ? AppPageState.error
               : AppPageState.content,
       dataTable: AppDataTable<Brand>(
+        emptyState: AppEmptyState(
+          icon: AppIcons.brands,
+          titleKey: _search.text.trim().isEmpty && _status == 'all'
+              ? BrandsKeys.empty
+              : BrandsKeys.noResults,
+          descriptionKey: _search.text.trim().isEmpty && _status == 'all'
+              ? BrandsKeys.emptyDescription
+              : BrandsKeys.noResultsDescription,
+          action: _search.text.trim().isEmpty && _status == 'all'
+              ? PermissionGate(
+                  permission: Permissions.masterData.manage,
+                  child: AppButton(
+                    BrandsKeys.add,
+                    icon: AppIcons.add,
+                    onPressed: () => _edit(),
+                  ),
+                )
+              : null,
+        ),
         columns: [
           DataTableColumn(
             labelKey: BrandsKeys.logo,
