@@ -128,8 +128,12 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     ]);
     int? total;
     int? active;
-    results[0].fold((_) {}, (page) => total = page.totalCount);
-    results[1].fold((_) {}, (page) => active = page.totalCount);
+    results[0].fold((_) {}, (page) {
+      total = page.totalCount;
+    });
+    results[1].fold((_) {}, (page) {
+      active = page.totalCount;
+    });
     final totalCount = total;
     final activeCount = active;
     if (totalCount == null || activeCount == null) return null;
