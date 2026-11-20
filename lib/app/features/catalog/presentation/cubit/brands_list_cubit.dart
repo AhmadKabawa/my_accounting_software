@@ -126,7 +126,17 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     }
     final result = await _deleteBrand(brand.id);
     if (isClosed) return result;
-    if (result.isRight()) await load();
+    if (result.isRight()) {
+      await load();
+      final current = state;
+      if (!isClosed &&
+          _query.page > 1 &&
+          current is BrandsListReady &&
+          current.result.items.isEmpty) {
+        _query = _query.copyWith(page: _query.page - 1);
+        await load();
+      }
+    }
     return result;
   }
 
