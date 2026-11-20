@@ -270,7 +270,7 @@ class _BrandsView extends StatelessWidget {
         AppText.raw(b.description!.trim(), type: AppTextType.bodySmall,
           color: Theme.of(context).colorScheme.onSurfaceVariant, maxLines: 2),
       ],
-      const SizedBox(height: 10),
+      context.ui.spacing.gap(AppSpacing.sm),
       Wrap(spacing: 8, runSpacing: 8, children: [
         _statusBadge(b),
         AppText.raw(BrandsKeys.productCount.tr(context: context) + ': ' +
@@ -380,7 +380,7 @@ class _BrandEditorState extends State<_BrandEditor> {
                   }
                   return null;
                 }),
-              const SizedBox(height: 12),
+              context.ui.spacing.gap(AppSpacing.smMd),
               AppTextField(controller: _logo, labelKey: BrandsKeys.logo,
                 keyboardType: TextInputType.url,
                 validator: (v) {
@@ -394,7 +394,7 @@ class _BrandEditorState extends State<_BrandEditor> {
                   }
                   return null;
                 }),
-              const SizedBox(height: 12),
+              context.ui.spacing.gap(AppSpacing.smMd),
               AppTextField(controller: _description, labelKey: BrandsKeys.description, maxLines: 3),
               context.ui.spacing.gap(AppSpacing.md),
               Wrap(alignment: WrapAlignment.end, spacing: 8, children: [
