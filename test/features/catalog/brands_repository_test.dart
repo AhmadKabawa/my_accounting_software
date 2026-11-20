@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/features/catalog/data/datasources/brands_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/data/repositories/brands_repository_impl.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_draft.dart';
-import 'package:accounting_software/app/features/catalog/domain/entities/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:flutter_test/flutter_test.dart';
 
