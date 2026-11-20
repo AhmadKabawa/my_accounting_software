@@ -254,6 +254,7 @@ class AppRouter {
 
           /// ───────── CATALOG ─────────
           StatefulShellBranch(
+            initialLocation: CatalogRoutes.masterData.path,
             routes: [
               GoRoute(
                 path: CatalogRoutes.masterData.path,
