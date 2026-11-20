@@ -6,7 +6,7 @@ import 'package:accounting_software/app/features/catalog/domain/entity/brand_dra
 import 'package:accounting_software/app/features/catalog/domain/repositories/brands_repository.dart';
 
 class CreateBrandUseCase extends UseCase<Brand, BrandDraft> {
-  const CreateBrandUseCase(this._repository);
+  CreateBrandUseCase(this._repository);
   final BrandsRepository _repository;
 
   @override
