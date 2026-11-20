@@ -16,12 +16,14 @@ void main() {
     final repository = FakeBrandsRepository();
     repository.onGetBrands = (query) async {
       final count = query.status == BrandStatusFilter.active ? 6 : 9;
-      return Right(PaginatedResult<Brand>(
-        items: const [],
-        totalCount: count,
-        currentPage: 1,
-        totalPages: count,
-      ));
+      return Right(
+        PaginatedResult<Brand>(
+          items: const [],
+          totalCount: count,
+          currentPage: 1,
+          totalPages: count,
+        ),
+      );
     };
     final cubit = BrandStatsCubit(getBrands: GetBrandsUseCase(repository));
 
@@ -69,9 +71,10 @@ void main() {
   });
 }
 
-PaginatedResult<Brand> _page({required int total}) => PaginatedResult<Brand>(
-  items: const [],
-  totalCount: total,
-  currentPage: 1,
-  totalPages: total,
-);
+PaginatedResult<Brand> _page({required int total}) =>
+    PaginatedResult<Brand>(
+      items: const [],
+      totalCount: total,
+      currentPage: 1,
+      totalPages: total,
+    );
