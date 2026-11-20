@@ -30,10 +30,7 @@ final class BrandsListLoading extends BrandsListState {
 }
 
 final class BrandsListReady extends BrandsListState {
-  const BrandsListReady({
-    required this.result,
-    required this.query,
-  });
+  const BrandsListReady({required this.result, required this.query});
   final PaginatedResult<Brand> result;
   final BrandListQuery query;
 

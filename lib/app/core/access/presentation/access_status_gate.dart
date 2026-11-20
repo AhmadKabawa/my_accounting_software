@@ -88,10 +88,7 @@ class _AccessStatusGateState extends State<AccessStatusGate> {
             ),
             context.ui.spacing.gap(AppSpacing.md, axis: Axis.vertical),
             if (widget.onSignOut != null)
-              AppButton(
-                widget.signOutLabel,
-                onPressed: widget.onSignOut,
-              ),
+              AppButton(widget.signOutLabel, onPressed: widget.onSignOut),
           ],
         ),
       ),

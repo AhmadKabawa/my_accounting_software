@@ -1,4 +1,3 @@
-
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 /// Texts of the `auth` section: one entry = key + Arabic + English.

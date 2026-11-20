@@ -77,9 +77,7 @@ void main() {
   testWidgets('shows a destination only when its permission is granted', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({
-      const Permission('reports.view'),
-    });
+    final cubit = await _createAccessCubit({const Permission('reports.view')});
     addTearDown(cubit.close);
 
     await tester.pumpWidget(
@@ -129,9 +127,7 @@ void main() {
   testWidgets('hides a destination whose route is not registered', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({
-      const Permission('reports.view'),
-    });
+    final cubit = await _createAccessCubit({const Permission('reports.view')});
     addTearDown(cubit.close);
 
     await tester.pumpWidget(
@@ -153,9 +149,7 @@ void main() {
   testWidgets('opens the registered destination when a card is tapped', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({
-      const Permission('reports.view'),
-    });
+    final cubit = await _createAccessCubit({const Permission('reports.view')});
     addTearDown(cubit.close);
     final router = GoRouter(
       initialLocation: HomeRoutes.home.path,
@@ -190,67 +184,66 @@ void main() {
     expect(find.text('target reached'), findsOneWidget);
   });
 
-  testWidgets('dashboard cards expose button semantics and keyboard activation', (
-    tester,
-  ) async {
-    final cubit = await _createAccessCubit({
-      const Permission('reports.view'),
-    });
-    addTearDown(cubit.close);
-    final router = GoRouter(
-      initialLocation: HomeRoutes.home.path,
-      routes: [
-        GoRoute(
-          path: HomeRoutes.home.path,
-          name: HomeRoutes.home.name,
-          builder: (_, _) => HomeScreen(
-            registeredRoutes: [HomeRoutes.home, _target],
-            definitions: [_definition()],
+  testWidgets(
+    'dashboard cards expose button semantics and keyboard activation',
+    (tester) async {
+      final cubit = await _createAccessCubit({
+        const Permission('reports.view'),
+      });
+      addTearDown(cubit.close);
+      final router = GoRouter(
+        initialLocation: HomeRoutes.home.path,
+        routes: [
+          GoRoute(
+            path: HomeRoutes.home.path,
+            name: HomeRoutes.home.name,
+            builder: (_, _) => HomeScreen(
+              registeredRoutes: [HomeRoutes.home, _target],
+              definitions: [_definition()],
+            ),
           ),
-        ),
-        GoRoute(
-          path: _target.path,
-          name: _target.name,
-          builder: (_, _) => const Text('keyboard target'),
-        ),
-      ],
-    );
-    addTearDown(router.dispose);
-    final semantics = tester.ensureSemantics();
-    try {
-      await tester.pumpWidget(
-      BlocProvider.value(
-        value: cubit,
-        child: buildTestApp(router: router),
-      ),
-    );
-    await tester.pumpAndSettle();
+          GoRoute(
+            path: _target.path,
+            name: _target.name,
+            builder: (_, _) => const Text('keyboard target'),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      final semantics = tester.ensureSemantics();
+      try {
+        await tester.pumpWidget(
+          BlocProvider.value(
+            value: cubit,
+            child: buildTestApp(router: router),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-    final node = tester.getSemantics(find.byType(DashboardCard));
-    expect(node.getSemanticsData().flagsCollection.isButton, isTrue);
-    expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
-    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(find.text('keyboard target'), findsOneWidget);
+        final node = tester.getSemantics(find.byType(DashboardCard));
+        expect(node.getSemanticsData().flagsCollection.isButton, isTrue);
+        expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+        expect(find.text('keyboard target'), findsOneWidget);
 
-    router.go(HomeRoutes.home.path);
-    await tester.pumpAndSettle();
-    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-    await tester.sendKeyEvent(LogicalKeyboardKey.space);
-    await tester.pumpAndSettle();
-    expect(find.text('keyboard target'), findsOneWidget);
-    } finally {
-      semantics.dispose();
-    }
-  });
+        router.go(HomeRoutes.home.path);
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.sendKeyEvent(LogicalKeyboardKey.space);
+        await tester.pumpAndSettle();
+        expect(find.text('keyboard target'), findsOneWidget);
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
 
   testWidgets('dashboard cards adapt to widths, directions and themes', (
     tester,
   ) async {
-    final cubit = await _createAccessCubit({
-      const Permission('reports.view'),
-    });
+    final cubit = await _createAccessCubit({const Permission('reports.view')});
     addTearDown(cubit.close);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

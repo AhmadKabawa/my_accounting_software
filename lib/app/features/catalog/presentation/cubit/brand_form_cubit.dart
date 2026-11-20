@@ -53,9 +53,7 @@ class BrandFormCubit extends Cubit<BrandFormState> {
     required BrandDraft draft,
     int? id,
   }) async {
-    if (state is BrandFormSaving) return const Left(
-      ValidationFailure(),
-    );
+    if (state is BrandFormSaving) return const Left(ValidationFailure());
     emit(const BrandFormSaving());
     final result = id == null
         ? await _createBrand(draft)

@@ -1,4 +1,3 @@
- 
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';

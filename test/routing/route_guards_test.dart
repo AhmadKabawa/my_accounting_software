@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
@@ -275,7 +274,11 @@ void main() {
         expect(protectedRoutes.contains(path), isTrue, reason: path);
         expect(publicRoutes.contains(path), isFalse, reason: path);
         expect(run(path), '/login', reason: '$path requires a session');
-        expect(run(path, auth: authed), isNull, reason: '$path allows signed-in read access');
+        expect(
+          run(path, auth: authed),
+          isNull,
+          reason: '$path allows signed-in read access',
+        );
         expect(
           run(path, auth: authed, branchRequired: true),
           '/select-branch',

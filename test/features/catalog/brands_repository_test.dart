@@ -19,33 +19,33 @@ void main() {
     repository = BrandsRepositoryImpl(BrandsRemoteDataSourceImpl(api));
   });
 
-  test('builds server-side search, status, sort and pagination query', () async {
-    final result = await repository.getBrands(
-      const BrandListQuery(
-        search: 'North "Wind"',
-        status: BrandStatusFilter.active,
-        sortAscending: false,
-        page: 2,
-        pageSize: 50,
-      ),
-    );
+  test(
+    'builds server-side search, status, sort and pagination query',
+    () async {
+      final result = await repository.getBrands(
+        const BrandListQuery(
+          search: 'North "Wind"',
+          status: BrandStatusFilter.active,
+          sortAscending: false,
+          page: 2,
+          pageSize: 50,
+        ),
+      );
 
-    expect(api.lastPath, '/rest/v1/brands');
-    expect(api.lastQueryParameters['select'], contains('products(count)'));
-    expect(api.lastQueryParameters['order'], 'name.desc');
-    expect(api.lastQueryParameters['is_active'], 'eq.true');
-    expect(api.lastQueryParameters['or'], contains(r'North \"Wind\"'));
-    expect(api.lastPage, 2);
-    expect(api.lastLimit, 50);
-    expect(result.isRight(), isTrue);
-    result.fold(
-      (_) => fail('Expected brands page'),
-      (page) {
+      expect(api.lastPath, '/rest/v1/brands');
+      expect(api.lastQueryParameters['select'], contains('products(count)'));
+      expect(api.lastQueryParameters['order'], 'name.desc');
+      expect(api.lastQueryParameters['is_active'], 'eq.true');
+      expect(api.lastQueryParameters['or'], contains(r'North \"Wind\"'));
+      expect(api.lastPage, 2);
+      expect(api.lastLimit, 50);
+      expect(result.isRight(), isTrue);
+      result.fold((_) => fail('Expected brands page'), (page) {
         expect(page.items.single.id, 12);
         expect(page.items.single.productCount, 2);
-      },
-    );
-  });
+      });
+    },
+  );
 
   test('creates a brand without sending the status column', () async {
     final result = await repository.createBrand(

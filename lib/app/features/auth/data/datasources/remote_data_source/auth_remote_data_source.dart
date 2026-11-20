@@ -1,4 +1,3 @@
-
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/features/auth/data/models/auth_result/auth_result_model.dart';

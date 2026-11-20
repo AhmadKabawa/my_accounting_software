@@ -60,9 +60,8 @@ class _BrandsScreenState extends State<BrandsScreen> {
     super.dispose();
   }
 
-  String _escapePostgrestValue(String value) => value
-      .replaceAll(r'\', r'\\')
-      .replaceAll('"', r'\"');
+  String _escapePostgrestValue(String value) =>
+      value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
 
   Future<void> _load() async {
     final requestVersion = ++_requestVersion;
@@ -145,9 +144,9 @@ class _BrandsScreenState extends State<BrandsScreen> {
     result.when(
       success: (_) => _load(),
       failure: (_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: AppText(BrandsKeys.deleteError)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: AppText(BrandsKeys.deleteError)));
       },
     );
   }
@@ -184,9 +183,9 @@ class _BrandsScreenState extends State<BrandsScreen> {
                   )
                 : DecoratedBox(
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surfaceContainerHighest,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                     ),
                     child: const Center(child: AppIcon(AppIcons.brands)),
                   ),
@@ -337,8 +336,8 @@ class _BrandsScreenState extends State<BrandsScreen> {
       state: _loading
           ? AppPageState.loading
           : _error != null
-              ? AppPageState.error
-              : AppPageState.content,
+          ? AppPageState.error
+          : AppPageState.content,
       dataTable: AppDataTable<Brand>(
         emptyState: AppEmptyState(
           icon: AppIcons.brands,
@@ -500,18 +499,14 @@ class _BrandEditorState extends State<_BrandEditor> {
         ? await widget.api.post<dynamic>(
             BrandsEndpoint.collection,
             data: body,
-            options: Options(
-              headers: {'Prefer': 'return=representation'},
-            ),
+            options: Options(headers: {'Prefer': 'return=representation'}),
           )
         : await widget.api.patch<dynamic>(
             AppEndpoint(
               '${BrandsEndpoint.collection.toStringPath()}?id=eq.${encodePathSegment(widget.brand!.id)}',
             ),
             data: body,
-            options: Options(
-              headers: {'Prefer': 'return=representation'},
-            ),
+            options: Options(headers: {'Prefer': 'return=representation'}),
           );
 
     if (!mounted) return;
@@ -520,8 +515,8 @@ class _BrandEditorState extends State<_BrandEditor> {
       failure: (exception) => setState(() {
         _saving = false;
         _saveFailed = true;
-        _saveErrorKey = exception.statusCode == 409 ||
-                exception.message.contains('23505')
+        _saveErrorKey =
+            exception.statusCode == 409 || exception.message.contains('23505')
             ? BrandsKeys.duplicateError
             : BrandsKeys.saveError;
       }),
@@ -533,7 +528,8 @@ class _BrandEditorState extends State<_BrandEditor> {
     final slugIsEmpty = _slug.text.trim().isEmpty;
     final logoText = _logo.text.trim();
     final logoUri = Uri.tryParse(logoText);
-    final showLogoPreview = logoText.isNotEmpty &&
+    final showLogoPreview =
+        logoText.isNotEmpty &&
         logoUri != null &&
         logoUri.hasScheme &&
         ['http', 'https'].contains(logoUri.scheme) &&
@@ -589,8 +585,8 @@ class _BrandEditorState extends State<_BrandEditor> {
                   validator: (value) => value == null || value.trim().isEmpty
                       ? BrandsKeys.required.tr(context: context)
                       : value.trim().length > 150
-                          ? BrandsKeys.nameTooLong.tr(context: context)
-                          : null,
+                      ? BrandsKeys.nameTooLong.tr(context: context)
+                      : null,
                   onChanged: (value) {
                     if (_slug.text.isEmpty) {
                       final generated = _makeSlug(value);
@@ -631,10 +627,7 @@ class _BrandEditorState extends State<_BrandEditor> {
                   ),
                 ],
                 context.ui.spacing.gap(AppSpacing.md),
-                AppText(
-                  BrandsKeys.logoSection,
-                  type: AppTextType.titleSmall,
-                ),
+                AppText(BrandsKeys.logoSection, type: AppTextType.titleSmall),
                 context.ui.spacing.gap(AppSpacing.sm),
                 AppTextField(
                   controller: _logo,

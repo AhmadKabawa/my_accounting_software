@@ -94,7 +94,6 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     return trimmed.isEmpty ? null : trimmed;
   }
 
-  String _escapeFilterValue(String value) => value
-      .replaceAll(r'\', r'\\')
-      .replaceAll('"', r'\"');
+  String _escapeFilterValue(String value) =>
+      value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
 }

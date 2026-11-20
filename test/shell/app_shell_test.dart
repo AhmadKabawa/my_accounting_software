@@ -365,11 +365,7 @@ void main() {
     testWidgets('does not show ScopeSelector without accessible branches', (
       tester,
     ) async {
-      await _pump(
-        tester,
-        const Size(1200, 900),
-        branches: const [],
-      );
+      await _pump(tester, const Size(1200, 900), branches: const []);
       expect(find.byType(ScopeSelector), findsNothing);
     });
 

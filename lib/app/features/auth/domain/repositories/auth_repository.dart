@@ -1,4 +1,3 @@
-
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/auth_result/auth_result.dart';
