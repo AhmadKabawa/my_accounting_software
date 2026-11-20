@@ -16,6 +16,7 @@ List<RouteItem> buildRouteRegistry({
   ...SplashRoutes.all,
   ...OnBoardingRoutes.all(enabled: onboardingEnabled),
   AuthRoutes.login,
+  AuthRoutes.changePassword,
   AuthRoutes.selectBranch,
   if (signupEnabled) AuthRoutes.register,
   if (forgotPasswordEnabled) ...[
