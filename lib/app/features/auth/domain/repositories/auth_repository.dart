@@ -3,69 +3,22 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/auth_result/auth_result.dart';
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 
-/// Authentication repository interface
-/// This is implemented in the data layer
 abstract class AuthRepository {
-  // ============ المصادقة الأساسية ============
-
-  /// تسجيل الدخول بالإيميل وكلمة المرور
-  Future<Either<Failure, AuthResultEntity>> login({
-    required String email,
-    required String password,
-  });
-
-  /// إنشاء حساب جديد
-  Future<Either<Failure, AuthResultEntity>> register({
-    required String email,
-    required String password,
-    required String name,
-    String? phone,
-  });
-
-  /// تسجيل الدخول بـ Google
+  Future<Either<Failure, AuthResultEntity>> login({required String email, required String password});
+  Future<Either<Failure, AuthResultEntity>> register({required String email, required String password, required String name, String? phone});
   Future<Either<Failure, AuthResultEntity>> signInWithGoogle();
-
-  /// تسجيل الخروج
   Future<Either<Failure, Unit>> logout();
-
-  // ============ إدارة كلمة المرور ============
-
-  /// إرسال كود إعادة تعيين كلمة المرور
   Future<Either<Failure, Unit>> sendResetCode({required String email});
+  Future<Either<Failure, Unit>> confirmNewPassword({required String email, required String code, required String newPassword});
+  Future<Either<Failure, Unit>> changePassword({required String currentPassword, required String newPassword});
 
-  /// تأكيد الكود وتعيين كلمة المرور الجديدة في خطوة واحدة (Supabase يتحقق
-  /// من الرمز مع كلمة المرور الجديدة)
-  Future<Either<Failure, Unit>> confirmNewPassword({
-    required String email,
-    required String code,
-    required String newPassword,
-  });
+  /// Reads the user's server-owned force-change flag from public.users.
+  Future<Either<Failure, bool>> getMustChangePassword({required String userId});
 
-  /// تغيير كلمة المرور (للمستخدم المسجل)
-  Future<Either<Failure, Unit>> changePassword({
-    required String currentPassword,
-    required String newPassword,
-  });
+  /// Sets the Auth password, then clears public.users.must_change_password
+  /// through the server-owned complete_password_change() RPC.
+  Future<Either<Failure, Unit>> forceChangePassword({required String newPassword});
 
-  // ============ إدارة الملف الشخصي ============
-
-  //   ممكن تكو لال UserRepository اذا عملناه feature
-
-  /// تحديث الملف الشخصي
-  Future<Either<Failure, UserEntity>> updateProfile({
-    String? fullName,
-    String? avatarUrl,
-    String? phone,
-  });
-
-  // ============ إدارة الجلسة والتخزين المؤقت ============
-
-  /// جلب المستخدم المحفوظ محلياً
+  Future<Either<Failure, UserEntity>> updateProfile({String? fullName, String? avatarUrl, String? phone});
   Future<Either<Failure, UserEntity?>> getCurrentUser();
-
-  // /// حفظ التوكنات
-  // Future<void> saveTokens(AuthTokens tokens);
-
-  // /// التحقق من حالة المصادقة
-  // Future<bool> isAuthenticated();
 }
