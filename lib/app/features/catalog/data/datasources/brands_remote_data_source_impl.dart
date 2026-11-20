@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
+import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/features/catalog/data/brands_endpoint.dart';
 import 'package:accounting_software/app/features/catalog/data/datasources/brands_remote_data_source.dart';
@@ -26,7 +27,7 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
       parser: PaginatedParserPresets.supabase,
       queryParameters: {
         'select': BrandsEndpoint.selectWithProductCount,
-        'order': 'name.' + (query.sortAscending ? 'asc' : 'desc'),
+        'order': 'name.${query.sortAscending ? 'asc' : 'desc'}',
         if (searchTerm.isNotEmpty)
           'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
         if (query.status == BrandStatusFilter.active) 'is_active': 'eq.true',
