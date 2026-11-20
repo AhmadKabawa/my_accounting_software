@@ -1,4 +1,4 @@
-
+ 
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
@@ -10,6 +10,8 @@ import 'package:accounting_software/app/features/home/presentation/routing/home_
 import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
+import 'package:accounting_software/app/features/catalog/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 Set<String> buildPublicRoutes({
   bool signupEnabled = AppConfig.signupEnabled,
@@ -33,6 +35,8 @@ final Set<String> protectedRoutes = {
   AuthRoutes.changePassword.path,
   HomeRoutes.home.path,
   ProfileRoutes.profile.path,
+  BrandsRoutes.brands.path,
+  CatalogRoutes.masterData.path,
 };
 
 /// Pure navigation policy. A forced password change is evaluated before
