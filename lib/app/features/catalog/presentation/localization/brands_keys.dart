@@ -94,5 +94,5 @@ enum BrandsKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'brands.${this == BrandsKeys.brandName ? 'name' : name}';
+  String get key => this == BrandsKeys.brandName ? 'brands.name' : 'brands.$name';
 }
