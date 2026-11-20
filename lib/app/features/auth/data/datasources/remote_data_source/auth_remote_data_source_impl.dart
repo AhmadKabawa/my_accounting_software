@@ -73,7 +73,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<ApiResult<Unit>> completePasswordChange() =>
       _apiClient.post<Unit>(AuthEndpoints.completePasswordChange, data: const <String, dynamic>{},
-        fromJson: (_) => unit);
+        requiresAuth: true, fromJson: (_) => unit);
 
   @override
   Future<ApiResult<Unit>> sendResetCode({required String email}) =>
