@@ -24,6 +24,8 @@ enum BrandsKeys implements AppKey {
   slugFormat(ar: 'استخدم أحرفاً إنجليزية صغيرة وأرقاماً، ويمكن الفصل بينها بشرطة (-).', en: 'Use lowercase English letters and numbers, separated by hyphens.'),
   nameTooLong(ar: 'يجب ألا يتجاوز الاسم 150 حرفاً.', en: 'The name must be 150 characters or fewer.'),
   invalidLogoUrl(ar: 'أدخل رابط صورة صحيحاً يبدأ بـ http أو https.', en: 'Enter a valid image URL beginning with http or https.'),
+  slugTooLong(ar: 'يجب ألا يتجاوز المعرّف المختصر 150 حرفاً.', en: 'The slug must be 150 characters or fewer.'),
+  logoTooLong(ar: 'يجب ألا يتجاوز رابط الشعار 500 حرف.', en: 'The logo URL must be 500 characters or fewer.'),
   allStatuses(ar: 'كل الحالات', en: 'All statuses'),
   required(ar: 'هذا الحقل مطلوب', en: 'This field is required'),
   confirmDelete(ar: 'هل تريد حذف هذه الماركة؟', en: 'Delete this brand?'),
