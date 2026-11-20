@@ -16,6 +16,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_image/app_image.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
@@ -122,6 +123,7 @@ class _BrandsView extends StatelessWidget {
         ),
         filterBar: FilterBar(
           searchHintKey: BrandsKeys.searchHint,
+          debounce: Duration.zero,
           onSearchChanged: cubit.searchChanged,
           onClearAll: () {
             cubit.searchChanged('');
@@ -138,25 +140,19 @@ class _BrandsView extends StatelessWidget {
                 onRemove: () => cubit.setStatus(BrandStatusFilter.all)),
           ],
           filterControls: [
-            SizedBox(
-              width: context.ui.size.width(AppComponentSize.cardWidth) * 0.5,
-              child: DropdownButtonFormField<BrandStatusFilter>(
-                value: query.status,
-                decoration: InputDecoration(
-                  label: AppText(BrandsKeys.status),
-                  isDense: true,
-                  border: const OutlineInputBorder(),
-                ),
-                items: [
-                  DropdownMenuItem(value: BrandStatusFilter.all,
-                      child: AppText(BrandsKeys.allStatuses)),
-                  DropdownMenuItem(value: BrandStatusFilter.active,
-                      child: AppText(BrandsKeys.active)),
-                  DropdownMenuItem(value: BrandStatusFilter.inactive,
-                      child: AppText(BrandsKeys.inactive)),
-                ],
-                onChanged: (v) { if (v != null) cubit.setStatus(v); },
-              ),
+            SearchableDropdown<BrandStatusFilter>(
+              options: BrandStatusFilter.values,
+              labelKey: BrandsKeys.status,
+              optionLabel: (value) => (switch (value) {
+                BrandStatusFilter.all => BrandsKeys.allStatuses,
+                BrandStatusFilter.active => BrandsKeys.active,
+                BrandStatusFilter.inactive => BrandsKeys.inactive,
+              }).tr(context: context),
+              value: query.status,
+              clearable: false,
+              onChanged: (value) {
+                if (value != null) cubit.setStatus(value);
+              },
             ),
           ],
         ),
