@@ -13,6 +13,9 @@ import 'package:accounting_software/app/features/auth/data/datasources/remote_da
 import 'package:accounting_software/app/features/auth/data/models/user/user_model.dart';
 import 'package:accounting_software/app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/change_password_usecase.dart';
+import 'package:accounting_software/app/features/auth/domain/usecase/get_must_change_password_usecase.dart';
+import 'package:accounting_software/app/features/auth/domain/usecase/force_change_password_usecase.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/force_password/force_password_change_cubit.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/confirm_new_password_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/get_cached_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/login_usecase.dart';
@@ -42,6 +45,7 @@ void initAuthDI() {
   sl.registerLazySingleton(
     () => SessionCubit(
       getCurrentUser: sl(),
+      getMustChangePassword: sl(),
       logout: sl(),
       sessionCleared: sl<TokenManager>().sessionCleared,
       flash: sl<FlashMessages>(),
@@ -62,6 +66,9 @@ void initAuthDI() {
     ),
   );
   sl.registerFactory(
+    () => ForcePasswordChangeCubit(changePassword: sl(), session: sl()),
+  );
+  sl.registerFactory(
     () => ProfileCubit(
       updateProfile: sl(),
       changePassword: sl(),
@@ -80,6 +87,8 @@ void initAuthDI() {
   sl.registerLazySingleton(() => SendResetCodeUseCase(repository: sl()));
   sl.registerLazySingleton(() => ConfirmNewPasswordUseCase(repository: sl()));
   sl.registerLazySingleton(() => ChangePasswordUseCase(repository: sl()));
+  sl.registerLazySingleton(() => GetMustChangePasswordUseCase(sl()));
+  sl.registerLazySingleton(() => ForceChangePasswordUseCase(sl()));
   sl.registerLazySingleton(() => UpdateProfileUseCase(repository: sl()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(repository: sl()));
 
