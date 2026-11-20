@@ -110,7 +110,7 @@ void main() {
     await tester.tap(find.text('Save'));
     await tester.pump();
     expect(cubit.state.status, ForcePasswordChangeStatus.saving);
-    expect(tester.widget<AppButton>(find.byType(AppButton).first).isLoading, isTrue);
+    expect(tester.widget<AppButton>(find.byType(AppButton).last).isLoading, isTrue);
 
     pending.complete(const Right(unit));
     await tester.pumpAndSettle();
