@@ -110,7 +110,16 @@ class _BrandsScreenState extends State<BrandsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        content: AppText(BrandsKeys.confirmDelete),
+        title: AppText(BrandsKeys.delete),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppText(BrandsKeys.confirmDelete),
+            const SizedBox(height: 8),
+            AppText.raw(brand.name, type: AppTextType.titleSmall),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
