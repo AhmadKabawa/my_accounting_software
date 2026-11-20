@@ -21,9 +21,9 @@ import 'package:accounting_software/app/features/auth/presentation/pages/forgot_
 import 'package:accounting_software/app/features/auth/presentation/pages/login/login_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/signup/signup_screen.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
-import 'package:accounting_software/app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:accounting_software/app/features/home/presentation/pages/home_screen.dart';
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
+import 'package:accounting_software/app/routing/route_registry.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/pages/on_boarding_screen.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
@@ -221,17 +221,7 @@ class AppRouter {
                 path: HomeRoutes.home.path,
                 name: HomeRoutes.home.name,
                 pageBuilder: (context, state) => NoTransitionPage(
-                  child: MultiBlocProvider(
-                    providers: [
-                      BlocProvider<SessionCubit>.value(
-                        value: sl<SessionCubit>(),
-                      ),
-                      BlocProvider<HomeCubit>(
-                        create: (_) => sl<HomeCubit>()..load(),
-                      ),
-                    ],
-                    child: const HomeScreen(),
-                  ),
+                  child: const HomeScreen(registeredRoutes: allRoutes),
                 ),
               ),
             ],
