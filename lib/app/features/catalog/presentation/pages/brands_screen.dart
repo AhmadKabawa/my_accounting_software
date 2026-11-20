@@ -62,7 +62,7 @@ class _BrandsView extends StatelessWidget {
   Future<void> _status(BuildContext context, Brand brand) async {
     final cubit = context.read<BrandsListCubit>();
     if (brand.isActive) {
-      await showConfirmDialog(
+      final changed = await showConfirmDialog(
         context,
         titleKey: BrandsKeys.deactivateTitle,
         messageKey: BrandsKeys.deactivateMessage,
@@ -73,6 +73,7 @@ class _BrandsView extends StatelessWidget {
           return result.fold((f) => f.messageKey, (_) => null);
         },
       );
+      if (changed && context.mounted) _toast(context, BrandsKeys.statusUpdated);
     } else {
       final result = await cubit.setActive(id: brand.id, isActive: true);
       if (!context.mounted) return;
@@ -82,12 +83,13 @@ class _BrandsView extends StatelessWidget {
   }
 
   Future<void> _delete(BuildContext context, Brand brand) async {
-    await showConfirmDialog(
+    final deleted = await showConfirmDialog(
       context,
       titleKey: BrandsKeys.delete,
       messageKey: BrandsKeys.confirmDelete,
       severity: ConfirmDialogSeverity.critical,
       targetName: brand.name,
+      requireTypedName: true,
       onConfirm: () async {
         final result = await context.read<BrandsListCubit>().delete(brand);
         return result.fold(
@@ -96,6 +98,7 @@ class _BrandsView extends StatelessWidget {
         );
       },
     );
+    if (deleted && context.mounted) _toast(context, BrandsKeys.deleted);
   }
 
   @override
