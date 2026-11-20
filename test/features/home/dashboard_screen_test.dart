@@ -279,7 +279,11 @@ void main() {
           );
           expect(find.byType(DashboardCard), findsOneWidget);
           expect(find.byType(AppEmptyState), findsNothing);
-          expect(tester.takeException(), isNull);
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: 'size=$size direction=$direction theme=${theme.brightness}',
+          );
         }
       }
     }
