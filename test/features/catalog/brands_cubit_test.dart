@@ -44,7 +44,8 @@ void main() {
 
     expect(cubit.state, isA<BrandsListReady>());
     expect((cubit.state as BrandsListReady).result.items.single.name, 'Existing');
-    expect(emitted, isEmpty);
+    expect(emitted, hasLength(1));
+    expect(emitted.single, isA<BrandsListReady>());
 
     refreshResult.complete(const Right(
       PaginatedResult<Brand>(
