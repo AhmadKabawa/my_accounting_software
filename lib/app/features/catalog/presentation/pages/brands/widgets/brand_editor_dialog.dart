@@ -4,12 +4,14 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/brands_keys.dart';
+import 'package:accounting_software/app/features/catalog/presentation/pages/brands/sections/brand_details_section.dart';
+import 'package:accounting_software/app/features/catalog/presentation/pages/brands/sections/brand_identity_section.dart';
+import 'package:accounting_software/app/features/catalog/presentation/pages/brands/sections/brand_logo_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -93,44 +95,18 @@ class BrandEditorDialogState extends State<BrandEditorDialog> {
                 InlineBanner(messageKey: _failure!, variant: InlineBannerVariant.error),
                 context.ui.spacing.gap(AppSpacing.smMd),
               ],
-              AppTextField(controller: _name, labelKey: BrandsKeys.brandName,
-                validator: (v) {
-                  final s = v?.trim() ?? '';
-                  if (s.isEmpty) return BrandsKeys.required.tr(context: context);
-                  if (s.length > 150) return BrandsKeys.nameTooLong.tr(context: context);
-                  return null;
-                },
-                onChanged: (v) {
+              BrandIdentitySection(
+                name: _name,
+                slug: _slug,
+                onNameChanged: (v) {
                   if (_slug.text.isEmpty) _slug.text = _slugify(v);
                   if (_failure != null) setState(() => _failure = null);
-                }),
-              context.ui.spacing.gap(AppSpacing.smMd),
-              AppTextField(controller: _slug, labelKey: BrandsKeys.slug,
-                validator: (v) {
-                  final s = v?.trim() ?? '';
-                  if (s.isEmpty) return BrandsKeys.slugRequired.tr(context: context);
-                  if (s.length > 150) return BrandsKeys.slugTooLong.tr(context: context);
-                  if (!RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*$').hasMatch(s)) {
-                    return BrandsKeys.slugFormat.tr(context: context);
-                  }
-                  return null;
-                }),
-              context.ui.spacing.gap(AppSpacing.smMd),
-              AppTextField(controller: _logo, labelKey: BrandsKeys.logo,
-                keyboardType: TextInputType.url,
-                validator: (v) {
-                  final s = v?.trim() ?? '';
-                  if (s.isEmpty) return null;
-                  if (s.length > 500) return BrandsKeys.logoTooLong.tr(context: context);
-                  final u = Uri.tryParse(s);
-                  if (u == null || !u.hasScheme ||
-                      (u.scheme != 'http' && u.scheme != 'https') || u.host.isEmpty) {
-                    return BrandsKeys.invalidLogoUrl.tr(context: context);
-                  }
-                  return null;
-                }),
-              context.ui.spacing.gap(AppSpacing.smMd),
-              AppTextField(controller: _description, labelKey: BrandsKeys.description, maxLines: 3),
+                },
+              ),
+              context.ui.spacing.gap(AppSpacing.md),
+              BrandLogoSection(logo: _logo, brandName: _name),
+              context.ui.spacing.gap(AppSpacing.md),
+              BrandDetailsSection(description: _description),
               context.ui.spacing.gap(AppSpacing.md),
               Wrap(alignment: WrapAlignment.end, spacing: context.ui.spacing.sm, children: [
                 AppButton(BrandsKeys.cancel, variant: AppButtonVariant.text,

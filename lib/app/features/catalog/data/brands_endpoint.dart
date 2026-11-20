@@ -6,4 +6,16 @@ abstract final class BrandsEndpoint {
       'id,name,slug,logo,description,is_active,created_at,updated_at';
   static const selectWithProductCount =
       'id,name,slug,logo,description,is_active,products(count)';
+
+  /// Storage bucket used for logos (docs/backend §7: public, 5 MB,
+  /// JPEG/PNG/WebP; writes need `catalog.manage`).
+  static const logoBucket = 'product-images';
+  static const logoFolder = 'brands';
+
+  static AppEndpoint logoUpload(String path) =>
+      AppEndpoint('/storage/v1/object/$logoBucket/$path');
+
+  /// Public URL stored in `brands.logo`.
+  static String logoPublicUrl(String baseUrl, String path) =>
+      '$baseUrl/storage/v1/object/public/$logoBucket/$path';
 }

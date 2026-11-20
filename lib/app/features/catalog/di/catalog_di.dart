@@ -9,7 +9,9 @@ import 'package:accounting_software/app/features/catalog/domain/usecase/delete_b
 import 'package:accounting_software/app/features/catalog/domain/usecase/get_brands_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/update_brand_use_case.dart';
+import 'package:accounting_software/app/features/catalog/domain/usecase/upload_brand_logo_use_case.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_form_cubit.dart';
+import 'package:accounting_software/app/features/catalog/presentation/cubit/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
 
 void initCatalogDI() {
@@ -25,6 +27,7 @@ void initCatalogDI() {
   sl.registerLazySingleton(() => UpdateBrandUseCase(sl()));
   sl.registerLazySingleton(() => SetBrandActiveUseCase(sl()));
   sl.registerLazySingleton(() => DeleteBrandUseCase(sl()));
+  sl.registerLazySingleton(() => UploadBrandLogoUseCase(sl()));
 
   sl.registerFactory(
     () => BrandsListCubit(
@@ -32,6 +35,9 @@ void initCatalogDI() {
       setBrandActive: sl(),
       deleteBrand: sl(),
     ),
+  );
+  sl.registerFactory(
+    () => BrandLogoUploadCubit(uploadLogo: sl(), picker: sl()),
   );
   sl.registerFactory(
     () => BrandFormCubit(createBrand: sl(), updateBrand: sl()),

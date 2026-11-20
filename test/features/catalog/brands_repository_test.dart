@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
@@ -5,6 +7,7 @@ import 'package:accounting_software/app/features/catalog/data/datasources/brands
 import 'package:accounting_software/app/features/catalog/data/repositories/brands_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_logo_upload.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -119,6 +122,28 @@ void main() {
     result.fold(
       (failure) => expect(failure, isA<BrandInUseFailure>()),
       (_) => fail('Expected in-use failure'),
+    );
+  });
+
+  test('uploads a logo to the product-images bucket and returns its URL', () async {
+    final bytes = Uint8List.fromList([1, 2, 3]);
+    final result = await repository.uploadLogo(
+      BrandLogoUpload(bytes: bytes, fileName: 'Logo.PNG', mimeType: 'image/png'),
+    );
+
+    expect(
+      api.lastPath,
+      startsWith('/storage/v1/object/product-images/brands/'),
+    );
+    expect(api.lastPath, endsWith('.png'));
+    expect(api.lastRawBody, bytes);
+    expect(api.lastOptions?.headers?['Content-Type'], 'image/png');
+    result.fold(
+      (_) => fail('Expected a public URL'),
+      (url) => expect(
+        url,
+        contains('/storage/v1/object/public/product-images/brands/'),
+      ),
     );
   });
 }

@@ -1,5 +1,7 @@
 import 'package:accounting_software/app/core/access/di/access_di.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
+import 'package:accounting_software/app/core/platform/image_picker/file_picker_image_picker.dart';
+import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/features/auth/data/auth_endpoints.dart';
 import 'package:accounting_software/app/features/auth/di/auth_di.dart';
 import 'package:accounting_software/app/features/catalog/di/catalog_di.dart';
@@ -13,6 +15,7 @@ Future<void> initServiceLocator() async {
   initAccessDI();
   await initAuthStorage();
   initAuthDI();
+  sl.registerLazySingleton<ImagePickerPort>(() => const FilePickerImagePicker());
   initCatalogDI();
   initOnBoardingDI();
   initSplashDI(checkSession: sl<SessionCubit>().checkAuthentication);

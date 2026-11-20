@@ -96,6 +96,25 @@ enum BrandsKeys implements AppKey {
   totalBrands(ar: 'إجمالي الماركات', en: 'Total brands'),
   activeBrands(ar: 'الماركات النشطة', en: 'Active brands'),
   inactiveBrands(ar: 'الماركات الموقوفة', en: 'Inactive brands'),
+  uploadLogo(ar: 'رفع صورة', en: 'Upload image'),
+  replaceLogo(ar: 'استبدال الصورة', en: 'Replace image'),
+  removeLogo(ar: 'إزالة الشعار', en: 'Remove logo'),
+  logoUploading(ar: 'جارٍ رفع الصورة…', en: 'Uploading image…'),
+  logoFileType(
+    ar: 'نوع الملف غير مدعوم. استخدم JPEG أو PNG أو WebP.',
+    en: 'Unsupported file type. Use JPEG, PNG or WebP.',
+  ),
+  logoFileTooLarge(
+    ar: 'حجم الصورة يتجاوز 5 ميغابايت.',
+    en: 'The image is larger than 5 MB.',
+  ),
+  logoHint(
+    ar: 'ارفع صورة أو الصق رابطاً عاماً (HTTP/HTTPS).',
+    en: 'Upload an image or paste a public HTTP/HTTPS link.',
+  ),
+  identitySection(ar: 'الهوية', en: 'Identity'),
+  logoSection(ar: 'الشعار', en: 'Logo'),
+  detailsSection(ar: 'تفاصيل إضافية', en: 'Additional details'),
   statLabel(ar: '{label}: {value}', en: '{label}: {value}');
 
   const BrandsKeys({required this.ar, required this.en});

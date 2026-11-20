@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_result.d
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_logo_upload.dart';
 import 'package:accounting_software/app/features/catalog/domain/repositories/brands_repository.dart';
 
 class FakeBrandsRepository implements BrandsRepository {
@@ -42,6 +43,15 @@ class FakeBrandsRepository implements BrandsRepository {
   Future<Either<Failure, Unit>> deleteBrand(int id) {
     deletedIds.add(id);
     return Future.value(const Right(unit));
+  }
+
+  BrandLogoUpload? lastUpload;
+  Either<Failure, String> uploadResult = const Right('https://cdn.test/logo.png');
+
+  @override
+  Future<Either<Failure, String>> uploadLogo(BrandLogoUpload upload) {
+    lastUpload = upload;
+    return Future.value(uploadResult);
   }
 
   static const _brand = Brand(

@@ -184,6 +184,7 @@
 - AppShell في lib/app/shell/app_shell.dart يبقى مالك التنقل المفلتر عبر AccessCubit وAccessStatusGate. أضيفت له واجهة شريط علوي اختيارية تدعم الفرع الحالي عبر ScopeSelector، فتات الخبز، قائمة المستخدم، وشارة جلسة كاشير تُمررها الميزة المالكة.
 - AppShellTopBar في presentation/widgets/app_shell يعرض الفرع وشارة القراءة فقط عند can_operate=false، ويعرض جرس إشعارات معطلاً بلا فتح في v1.
 - `AppRowActions` / `AppRowAction` (`widgets/app_row_actions/app_row_actions.dart`): إجراءات السجل كأزرار أيقونات فقط (`primary` سطرية بحد أقصى 2، و`overflow` في قائمة «المزيد»). ممنوع أزرار نصية للتعديل/الحذف في الجداول. أيقوناتها `AppIcons.edit/delete/block/restore`.
+- `ImagePickerPort` (`core/platform/image_picker/`): اختيار صورة واحدة مستقلاً عن المنصة (`PickedImage`)؛ التنفيذ `FilePickerImagePicker` الملف الوحيد الذي يستورد `file_picker`، ومسجَّل في `app_di.dart`.
 - AppMenu في presentation/widgets/app_menu قائمة عامة مبنية على AppKey، وأيقونة اختيارية وعناصر قابلة للتعطيل.
 - AppBreadcrumb وAppPageHeader مكوّنان عامان مستقلان. يقبل AppShell breadcrumbBuilder اختيارياً لتوليد المسار من GoRouterState؛ تبقى قائمة breadcrumbs الثابتة متاحة للتوافق.
 - FormPageTemplate (T3) وDashboardTemplate (T5) في presentation/widgets/app_page_template؛ القوالب لا تقرأ الصلاحيات. الاستخدام في شاشات AUTH الطيّارة لم يُدمج بعد، لذلك لا تعد القوالب منجزة وفق R12.

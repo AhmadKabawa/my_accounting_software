@@ -14,6 +14,8 @@ class FakeBrandsApiClient extends Fake implements IApiClient {
   String? lastPath;
   int? lastPage;
   int? lastLimit;
+  dynamic lastRawBody;
+  Options? lastOptions;
   AppException? postFailure;
   AppException? patchFailure;
   AppException? deleteFailure;
@@ -68,7 +70,9 @@ class FakeBrandsApiClient extends Fake implements IApiClient {
     bool requiresAuth = true,
   }) async {
     lastPath = path.toStringPath();
-    lastBody = data as Map<String, dynamic>?;
+    lastRawBody = data;
+    lastOptions = options;
+    lastBody = data is Map<String, dynamic> ? data : null;
     if (postFailure case final failure?) return ApiFailure<T>(failure);
     if (fromJsonList != null) {
       return ApiSuccess<T>(fromJsonList([_brandJson]));

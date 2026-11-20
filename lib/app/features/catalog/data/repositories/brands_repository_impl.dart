@@ -11,6 +11,7 @@ import 'package:accounting_software/app/features/catalog/data/models/brand_model
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_logo_upload.dart';
 import 'package:accounting_software/app/features/catalog/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/domain/repositories/brands_repository.dart';
 
@@ -87,6 +88,18 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
       ApiFailure<Unit>(:final exception) => Left(_mapDeleteFailure(exception)),
     };
   });
+
+  @override
+  Future<Either<Failure, String>> uploadLogo(BrandLogoUpload upload) =>
+      execute(() async {
+        final result = await _remote.uploadLogo(upload);
+        return switch (result) {
+          ApiSuccess<String>(:final data) => Right(data),
+          ApiFailure<String>(:final exception) => Left(
+            ExceptionMapper.map(exception),
+          ),
+        };
+      });
 
   Failure _mapWriteFailure(AppException exception) {
     if (_isDuplicate(exception)) return const BrandDuplicateFailure();

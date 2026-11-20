@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_result.d
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_logo_upload.dart';
 
 abstract interface class BrandsRepository {
   Future<Either<Failure, PaginatedResult<Brand>>> getBrands(
@@ -23,4 +24,7 @@ abstract interface class BrandsRepository {
   });
 
   Future<Either<Failure, Unit>> deleteBrand(int id);
+
+  /// Uploads a logo and returns its public URL.
+  Future<Either<Failure, String>> uploadLogo(BrandLogoUpload upload);
 }

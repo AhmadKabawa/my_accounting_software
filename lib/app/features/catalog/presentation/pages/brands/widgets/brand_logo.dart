@@ -11,8 +11,19 @@ class BrandLogo extends StatelessWidget {
   final Brand brand;
 
   @override
+  Widget build(BuildContext context) =>
+      BrandLogoImage(url: brand.logo, label: brand.name);
+}
+
+/// Logo thumbnail from a raw URL (also used for the live preview in the editor).
+class BrandLogoImage extends StatelessWidget {
+  const BrandLogoImage({super.key, required this.url, required this.label});
+  final String? url;
+  final String label;
+
+  @override
   Widget build(BuildContext context) {
-    final raw = brand.logo?.trim() ?? '';
+    final raw = url?.trim() ?? '';
     final uri = Uri.tryParse(raw);
     final valid =
         uri != null &&
@@ -33,7 +44,7 @@ class BrandLogo extends StatelessWidget {
                 height: height,
                 shape: AppImageShape.rounded,
                 borderRadius: AppRadius.sm.of(context),
-                semanticsLabel: brand.name,
+                semanticsLabel: label,
                 errorWidget: const Center(child: AppIcon(AppIcons.brokenImage)),
               )
             : ColoredBox(

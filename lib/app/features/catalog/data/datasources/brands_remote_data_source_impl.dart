@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
@@ -9,6 +12,7 @@ import 'package:accounting_software/app/features/catalog/data/datasources/brands
 import 'package:accounting_software/app/features/catalog/data/models/brand_model.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
+import 'package:accounting_software/app/features/catalog/domain/entity/brand_logo_upload.dart';
 
 class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
   const BrandsRemoteDataSourceImpl(this._apiClient);
@@ -75,6 +79,22 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     queryParameters: {'id': 'eq.$id'},
     options: Options(headers: {'Prefer': 'return=minimal'}),
   );
+
+  @override
+  Future<ApiResult<String>> uploadLogo(BrandLogoUpload upload) {
+    final extension = upload.fileName.split('.').last.toLowerCase();
+    final stamp = DateTime.now().microsecondsSinceEpoch;
+    final path =
+        '${BrandsEndpoint.logoFolder}/$stamp-${Random().nextInt(1 << 32)}.$extension';
+    return _apiClient.post<String>(
+      BrandsEndpoint.logoUpload(path),
+      data: upload.bytes,
+      options: Options(
+        headers: {'Content-Type': upload.mimeType, 'x-upsert': 'false'},
+      ),
+      fromJson: (_) => BrandsEndpoint.logoPublicUrl(AppConfig.baseUrl, path),
+    );
+  }
 
   BrandModel _singleBrandFromList(List<dynamic> rows) {
     if (rows.length != 1 || rows.single is! Map<String, dynamic>) {

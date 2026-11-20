@@ -42,7 +42,7 @@ Do not turn the brand record into a supplier/manufacturer profile. Supplier data
 The owner selected the CAT-07 hub-and-tabs direction, overriding the earlier Brands-only navigation proposal. The existing `/catalog/brands` path must remain a working deep link to the Brands tab. The hub path and sibling route registration are to be finalized after checking the current route registry. S49 defines the initial logical tabs (Brands, Categories, Product Types); the wider CAT-07 domains in the navigation map are future extensions. Do not expose inert tabs or fake menu entries: a tab becomes visible when its page has an explicit, implemented state and scope.
 
 ## Deliberate boundaries
-- The logo field accepts a public HTTP(S) image URL; uploading image files/storage integration is not part of this phase.
+- The logo field accepts a public HTTP(S) image URL. Update: file upload to Storage (`product-images/brands/`, via `ImagePickerPort`) was added in the UI remediation branch; the stored value is still a URL.
 - Arabic-to-Latin transliteration is not guessed. Users enter the slug manually for Arabic brand names.
 - Delete is a hard delete request; referential constraints and RLS on the database remain authoritative. A failed delete is surfaced without retrying the write automatically.
 - Duplicate detection uses the PostgREST unique-conflict HTTP status and PostgreSQL unique-violation code when exposed by the shared exception.
