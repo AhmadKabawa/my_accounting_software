@@ -11,6 +11,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_message/fl
 import 'package:accounting_software/app/features/auth/domain/usecase/get_cached_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/get_must_change_password_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/logout_usecase.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
 
 import 'support/fake_auth_repository.dart';
