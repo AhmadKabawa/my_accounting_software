@@ -101,6 +101,50 @@ void main() {
     },
   );
 
+  test('returns to the previous page when deleting its final row', () async {
+    final repository = FakeBrandsRepository();
+    const brand = Brand(
+      id: 21,
+      name: 'Contoso',
+      slug: 'contoso',
+      isActive: true,
+      productCount: 0,
+    );
+    repository.onGetBrands = (query) async {
+      if (repository.deletedIds.isNotEmpty) {
+        return const Right(
+          PaginatedResult<Brand>(
+            items: [],
+            totalCount: 0,
+            currentPage: 1,
+            totalPages: 0,
+          ),
+        );
+      }
+      return Right(
+        PaginatedResult<Brand>(
+          items: [brand],
+          totalCount: 26,
+          currentPage: query.page,
+          totalPages: 2,
+        ),
+      );
+    };
+    final cubit = BrandsListCubit(
+      getBrands: GetBrandsUseCase(repository),
+      setBrandActive: SetBrandActiveUseCase(repository),
+      deleteBrand: DeleteBrandUseCase(repository),
+    );
+
+    await cubit.setPage(2);
+    await cubit.delete(brand);
+
+    expect(cubit.query.page, 1);
+    expect(cubit.state, isA<BrandsListReady>());
+    expect((cubit.state as BrandsListReady).result.items, isEmpty);
+    await cubit.close();
+  });
+
   test(
     'form cubit saves through repository use cases without page dependency',
     () async {
