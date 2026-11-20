@@ -9,7 +9,7 @@ class DashboardCardDefinition {
   const DashboardCardDefinition({
     required this.id,
     required this.titleKey,
-    required this.descriptionKey,
+    this.descriptionKey,
     required this.icon,
     required this.permission,
     required this.destination,
@@ -17,7 +17,7 @@ class DashboardCardDefinition {
 
   final String id;
   final AppKey titleKey;
-  final AppKey descriptionKey;
+  final AppKey? descriptionKey;
   final AppIconData icon;
   final Permission permission;
   final RouteItem destination;
