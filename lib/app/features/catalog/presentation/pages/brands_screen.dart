@@ -18,6 +18,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_inline_ban
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
@@ -236,8 +237,10 @@ class _BrandsView extends StatelessWidget {
     final valid = uri != null && uri.hasScheme &&
         (uri.scheme == 'http' || uri.scheme == 'https') && uri.host.isNotEmpty;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: SizedBox(width: 44, height: 44,
+      borderRadius: AppRadius.sm.circular(context),
+      child: SizedBox(
+        width: context.ui.size.width(AppComponentSize.avatarSmall),
+        height: context.ui.size.height(AppComponentSize.avatarSmall),
         child: valid
             ? AppImage.network(raw, width: 44, height: 44,
                 shape: AppImageShape.rounded, borderRadius: 10,
@@ -331,9 +334,12 @@ class _BrandEditorState extends State<_BrandEditor> {
   @override
   Widget build(BuildContext context) => Dialog(
     child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 560, maxHeight: 720),
+      constraints: BoxConstraints(
+        maxWidth: context.ui.size.width(AppComponentSize.cardWidth) * 2,
+        maxHeight: context.ui.size.height(AppComponentSize.cardHeight) * 3,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: context.ui.padding.all(AppSpacing.md),
         child: Form(
           key: _key,
           child: SingleChildScrollView(child: Column(
@@ -342,12 +348,12 @@ class _BrandEditorState extends State<_BrandEditor> {
             children: [
               AppText(widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
                 type: AppTextType.titleLarge),
-              const SizedBox(height: 8),
+              context.ui.spacing.gap(AppSpacing.xs),
               AppText(BrandsKeys.editorSubtitle, type: AppTextType.bodySmall),
-              const SizedBox(height: 20),
+              context.ui.spacing.gap(AppSpacing.md),
               if (_failure != null) ...[
                 InlineBanner(messageKey: _failure!, variant: InlineBannerVariant.error),
-                const SizedBox(height: 12),
+                context.ui.spacing.gap(AppSpacing.smMd),
               ],
               AppTextField(controller: _name, labelKey: BrandsKeys.name,
                 validator: (v) {
