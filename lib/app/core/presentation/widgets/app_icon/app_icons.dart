@@ -16,6 +16,7 @@ abstract final class AppIcons {
   static const logout = AppIconData.material(Icons.logout);
 
   static const brands = AppIconData.material(Icons.sell_outlined);
+  static const add = AppIconData.material(Icons.add);
 
   static const sale = AppIconData.material(Icons.receipt_long_outlined);
   static const purchase = AppIconData.material(Icons.shopping_cart_outlined);
