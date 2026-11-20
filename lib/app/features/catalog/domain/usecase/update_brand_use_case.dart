@@ -16,7 +16,7 @@ class UpdateBrandParams extends Equatable {
 }
 
 class UpdateBrandUseCase extends UseCase<Brand, UpdateBrandParams> {
-  const UpdateBrandUseCase(this._repository);
+  UpdateBrandUseCase(this._repository);
   final BrandsRepository _repository;
 
   @override
