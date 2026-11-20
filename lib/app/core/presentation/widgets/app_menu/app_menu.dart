@@ -11,7 +11,7 @@ class AppMenuEntry {
     this.icon,
     this.enabled = true,
     this.requiresUnsavedChangesCheck = false,
-    this.onSelectedAsync,
+    this.onSelectedAsync,\n    this.onSelectedGuardedAsync,
   });
 
   final AppKey label;
@@ -19,7 +19,7 @@ class AppMenuEntry {
   final VoidCallback onSelected;
   final bool enabled;
   final bool requiresUnsavedChangesCheck;
-  final Future<bool> Function()? onSelectedAsync;
+  final Future<void> Function()? onSelectedAsync;\n  final Future<bool> Function()? onSelectedGuardedAsync;
 }
 
 /// General anchored menu for page, account and row actions.
