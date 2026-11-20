@@ -17,10 +17,13 @@ import 'support/fake_auth_repository.dart';
 
 class _AccessRepository implements AccessRepository {
   int calls = 0;
+  Completer<Either<Failure, AccessSnapshot>>? pending;
 
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async {
     calls++;
+    final request = pending;
+    if (request != null) return request.future;
     return const Right(
       AccessSnapshot(
         userId: 'u1',
@@ -87,6 +90,37 @@ void main() {
       expect(access.state.snapshot, isNull);
     },
   );
+
+  test('password completion waits for refreshed access before releasing the gate', () async {
+    authRepository.mustChangePassword = true;
+    session.onAuthenticated(testUser);
+    await Future<void>.delayed(Duration.zero);
+    expect((session.current as SessionAuthenticated).mustChangePassword, isTrue);
+
+    final pending = Completer<Either<Failure, AccessSnapshot>>();
+    accessRepository.pending = pending;
+    final completion = session.passwordChangeCompleted();
+    await Future<void>.delayed(Duration.zero);
+
+    expect((session.current as SessionAuthenticated).mustChangePassword, isTrue);
+    expect(access.state.status, AccessStatus.loading);
+
+    pending.complete(const Right(AccessSnapshot(
+      userId: 'u1',
+      username: 'admin',
+      email: null,
+      isSuperAdmin: false,
+      roles: [],
+      permissions: {},
+      branches: [],
+      warehouses: [],
+      posTerminals: [],
+    )));
+    await completion;
+
+    expect((session.current as SessionAuthenticated).mustChangePassword, isFalse);
+    expect(access.state.isReady, isTrue);
+  });
 
   test('sessionCleared clears the access snapshot', () async {
     session.onAuthenticated(testUser);
