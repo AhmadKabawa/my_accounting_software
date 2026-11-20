@@ -108,6 +108,7 @@ void main() {
         child: buildTestApp(
           home: const AccessStatusGate(
             signOutLabel: AuthKeys.signOut,
+            onSignOut: () async => true,
             child: Text('protected shell'),
           ),
         ),
