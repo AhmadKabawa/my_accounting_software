@@ -221,7 +221,7 @@ class AppRouter {
                 path: HomeRoutes.home.path,
                 name: HomeRoutes.home.name,
                 pageBuilder: (context, state) => NoTransitionPage(
-                  child: const HomeScreen(registeredRoutes: allRoutes),
+                  child: HomeScreen(registeredRoutes: allRoutes),
                 ),
               ),
             ],
