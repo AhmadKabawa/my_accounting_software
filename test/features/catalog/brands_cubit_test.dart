@@ -22,7 +22,9 @@ void main() {
     final repository = FakeBrandsRepository();
     repository.onGetBrands = (_) async => const Right(
       PaginatedResult<Brand>(
-        items: [Brand(id: 1, name: 'Existing', slug: 'existing', isActive: true)],
+        items: [
+          Brand(id: 1, name: 'Existing', slug: 'existing', isActive: true),
+        ],
         totalCount: 1,
         currentPage: 1,
         totalPages: 1,
@@ -43,20 +45,30 @@ void main() {
     await Future<void>.delayed(Duration.zero);
 
     expect(cubit.state, isA<BrandsListReady>());
-    expect((cubit.state as BrandsListReady).result.items.single.name, 'Existing');
+    expect(
+      (cubit.state as BrandsListReady).result.items.single.name,
+      'Existing',
+    );
     expect(emitted, hasLength(1));
     expect(emitted.single, isA<BrandsListReady>());
 
-    refreshResult.complete(const Right(
-      PaginatedResult<Brand>(
-        items: [Brand(id: 2, name: 'Updated', slug: 'updated', isActive: true)],
-        totalCount: 1,
-        currentPage: 1,
-        totalPages: 1,
+    refreshResult.complete(
+      const Right(
+        PaginatedResult<Brand>(
+          items: [
+            Brand(id: 2, name: 'Updated', slug: 'updated', isActive: true),
+          ],
+          totalCount: 1,
+          currentPage: 1,
+          totalPages: 1,
+        ),
       ),
-    ));
+    );
     await refresh;
-    expect((cubit.state as BrandsListReady).result.items.single.name, 'Updated');
+    expect(
+      (cubit.state as BrandsListReady).result.items.single.name,
+      'Updated',
+    );
     await subscription.cancel();
     await cubit.close();
   });
