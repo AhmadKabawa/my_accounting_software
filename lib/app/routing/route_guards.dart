@@ -10,7 +10,6 @@ import 'package:accounting_software/app/features/on_boarding/presentation/routin
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 
-/// المسارات المتاحة دون تسجيل دخول. المسارات المعطّلة غير مسجلة أصلاً.
 Set<String> buildPublicRoutes({
   bool signupEnabled = AppConfig.signupEnabled,
   bool forgotPasswordEnabled = AppConfig.forgotPasswordEnabled,
@@ -20,28 +19,26 @@ Set<String> buildPublicRoutes({
   if (onboardingEnabled) OnBoardingRoutes.onboarding.path,
   AuthRoutes.login.path,
   if (signupEnabled) AuthRoutes.register.path,
-  if (forgotPasswordEnabled) ...[
-    AuthRoutes.forgotPassword.path,
-    AuthRoutes.resetPassword.path,
-  ],
+  if (forgotPasswordEnabled) ...[AuthRoutes.forgotPassword.path, AuthRoutes.resetPassword.path],
 };
 
 final Set<String> publicRoutes = buildPublicRoutes();
 
-/// المسارات المحمية، مذكورة صراحةً.
 final Set<String> protectedRoutes = {
   AuthRoutes.selectBranch.path,
+  AuthRoutes.changePassword.path,
   HomeRoutes.home.path,
   ProfileRoutes.profile.path,
 };
 
-/// دالة نقية تحدد وجهة التوجيه. المسارات المعطّلة تُترك لـ GoRouter
-/// كي يعرض NotFoundScreen لأنها غير موجودة في شجرة المسارات.
+/// Pure navigation policy. A forced password change is evaluated before
+/// branch selection and before every other authenticated destination.
 String? resolveRedirect({
   required String location,
   required bool splashDone,
   required bool onboarded,
   required SessionStatus session,
+  bool mustChangePassword = false,
   bool branchSelectionRequired = false,
   bool onboardingEnabled = AppConfig.onboardingEnabled,
   bool signupEnabled = AppConfig.signupEnabled,
@@ -51,27 +48,30 @@ String? resolveRedirect({
   final onboarding = OnBoardingRoutes.onboarding.path;
   final login = AuthRoutes.login.path;
   final home = HomeRoutes.home.path;
+  final changePassword = AuthRoutes.changePassword.path;
+  final selectBranch = AuthRoutes.selectBranch.path;
 
   final disabledRoutes = {
     if (!signupEnabled) AuthRoutes.register.path,
-    if (!forgotPasswordEnabled) ...[
-      AuthRoutes.forgotPassword.path,
-      AuthRoutes.resetPassword.path,
-    ],
+    if (!forgotPasswordEnabled) ...[AuthRoutes.forgotPassword.path, AuthRoutes.resetPassword.path],
     if (!onboardingEnabled) OnBoardingRoutes.onboarding.path,
   };
-  // Let GoRouter's errorPageBuilder render NotFoundScreen for disabled paths.
   if (disabledRoutes.contains(location)) return null;
-
   if (!splashDone) return location == splash ? null : splash;
-
   if (session is SessionChecking) return null;
 
   final authenticated = session is SessionAuthenticated;
+  if (authenticated && mustChangePassword) {
+    return location == changePassword ? null : changePassword;
+  }
+  if (authenticated && location == changePassword) {
+    return branchSelectionRequired ? selectBranch : home;
+  }
 
   if (location == splash) {
     if (onboardingEnabled && !onboarded) return onboarding;
-    return authenticated ? home : login;
+    if (!authenticated) return login;
+    return branchSelectionRequired ? selectBranch : home;
   }
 
   if (onboardingEnabled && !onboarded) {
@@ -79,7 +79,6 @@ String? resolveRedirect({
   }
 
   if (authenticated) {
-    final selectBranch = AuthRoutes.selectBranch.path;
     if (branchSelectionRequired) {
       return location == selectBranch ? null : selectBranch;
     }
@@ -99,15 +98,8 @@ String? resolveRedirect({
   return enabledPublicRoutes.contains(location) ? null : login;
 }
 
-/// مسؤول عن توجيه الصلاحيات فقط (UX؛ الخادم هو الحماية الفعلية).
+/// UX-only permission routing. The database remains the security boundary.
 abstract class AccessRoutingLogic {
-  /// يُستخدم على أي مسار: `GoRoute(redirect: AccessRoutingLogic.require(Permissions.reports.view))`.
-  /// يعيد المستخدم إلى [fallback] إن لم يملك [permission].
-  /// يجب ألا يكون [fallback] نفسه محميًا بنفس الصلاحية لتجنب حلقة توجيه.
-  static GoRouterRedirect require(
-    Permission permission, {
-    RouteItem fallback = HomeRoutes.home,
-  }) =>
-      (context, state) =>
-          AppRouter.accessCubit.can(permission) ? null : fallback.path;
+  static GoRouterRedirect require(Permission permission, {RouteItem fallback = HomeRoutes.home}) =>
+      (context, state) => AppRouter.accessCubit.can(permission) ? null : fallback.path;
 }
