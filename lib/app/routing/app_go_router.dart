@@ -138,8 +138,13 @@ class AppRouter {
         pageBuilder: (context, state) => RouteTransitions.fade(
           context,
           state,
-          BlocProvider(
-            create: (_) => sl<ForcePasswordChangeCubit>(),
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<SessionCubit>.value(value: sl<SessionCubit>()),
+              BlocProvider<ForcePasswordChangeCubit>(
+                create: (_) => sl<ForcePasswordChangeCubit>(),
+              ),
+            ],
             child: const ForcePasswordChangeScreen(),
           ),
         ),
