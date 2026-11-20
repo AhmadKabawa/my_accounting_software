@@ -137,6 +137,7 @@ void main() {
   test('a failed sign-out preserves the authenticated session', () async {
     repo.unitResult = Left(NetworkFailure());
     cubit.onAuthenticated(testUser);
+    await Future<void>.delayed(Duration.zero);
 
     final succeeded = await cubit.signOut();
 
