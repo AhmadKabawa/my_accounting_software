@@ -38,11 +38,16 @@ Future<bool> runGuardedUserMenuAction({
   final succeeded = entry.onSelectedGuardedAsync != null
       ? await entry.onSelectedGuardedAsync!()
       : entry.onSelectedAsync != null
-      ? await entry.onSelectedAsync().then((_) => true)
+      ? await _runAsyncMenuAction(entry)
       : _runSyncMenuAction(entry);
 
   if (entry.requiresUnsavedChangesCheck && succeeded) discardAll();
   return succeeded;
+}
+
+Future<bool> _runAsyncMenuAction(AppMenuEntry entry) async {
+  await entry.onSelectedAsync!();
+  return true;
 }
 
 bool _runSyncMenuAction(AppMenuEntry entry) {
