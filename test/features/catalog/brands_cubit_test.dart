@@ -48,6 +48,12 @@ void main() {
     expect(repository.queries.where((query) => query.pageSize == 1), hasLength(2));
     expect(repository.queries.where((query) => query.pageSize == 1)
         .every((query) => query.search.isEmpty), isTrue);
+
+    await cubit.setStatus(BrandStatusFilter.inactive);
+    expect(cubit.stats?.total, 9);
+    expect(cubit.stats?.active, 6);
+    expect(cubit.stats?.inactive, 3);
+    expect(repository.queries.where((query) => query.pageSize == 1), hasLength(2));
     await cubit.close();
   });
 
