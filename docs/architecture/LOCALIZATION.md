@@ -47,7 +47,7 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 
 ## الاختبارات (`test/localization/key_registry_test.dart`)
 
-تفرّد المفاتيح عبر السجل، واكتمال السجل (كل `enum … implements AppKey` مسجَّل)، ونصوص غير فارغة، وتطابق متغيرات `@name` بين اللغتين.
+تفرّد المفاتيح عبر السجل، واكتمال السجل (كل `enum … implements AppKey` مسجَّل)، ونصوص غير فارغة، وتطابق متغيرات `{name}` بين اللغتين، ومنع صيغة `@name`.
 وبعد تهيئة `easy_localization` بالمحمّل نفسه `MyDartLoader(allKeys)` لكل لغة (ar وen) يتحقق الاختبار أن `key.tr()` لكل مفتاح مسجَّل يعيد نصاً غير المفتاح نفسه (أي أن السجل يصل فعلاً إلى `tr()`).
 
 ## أخطاء القاعدة (ERPnn)
@@ -58,7 +58,7 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 
 ## المتغيرات
 
-تبقى كما كانت: `@length` و`@number` وأمثالها داخل النص، وتُستبدل عبر `tr(namedArgs: …)`.
+صيغة المتغير داخل النص **`{name}` فقط** (صيغة easy_localization)، مثل `{length}` و`{number}`، وتُستبدل عبر `tr(namedArgs: {'name': value})`. صيغة `@name` لا تُستبدل أبداً وتظهر حرفياً للمستخدم؛ يمنعها `test/localization/key_registry_test.dart`. أي نص بمتغير يجب أن يملك اختباراً يتحقق من النص بعد الاستبدال.
 
 ## إضافة لغة ثالثة
 
@@ -100,10 +100,10 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 ## تحديث مفاتيح Catalog UI — 2026-11-19
 
 أضيفت مفاتيح CatalogUiKeys التالية إلى enum المسجّل مسبقاً ضمن allKeys:
-- activeFilterLabel بقيمتي @label و@value لعرض اسم المرشح وقيمته عبر tr(namedArgs: …)، مع تطابق المتغيرات بين العربية والإنجليزية.
+- activeFilterLabel بقيمتي {label} و{value} لعرض اسم المرشح وقيمته عبر tr(namedArgs: …)، مع تطابق المتغيرات بين العربية والإنجليزية.
 - removeFilter لوصف إجراء إزالة شارة المرشح.
 - sortBy لفتح خيارات فرز الجدول على الهاتف.
-- paginationLabel لعرض الصفحة الحالية وآخر صفحة ضمن مفتاح واحد مع @page و@lastPage.
+- paginationLabel لعرض الصفحة الحالية وآخر صفحة ضمن مفتاح واحد مع {page} و{lastPage}.
 
 
 ## تعديل مفاتيح Catalog UI — إصلاحات المراجعة 2026-11-19

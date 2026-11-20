@@ -12,7 +12,7 @@ import 'package:accounting_software/app/features/catalog/domain/usecase/delete_b
 import 'package:accounting_software/app/features/catalog/domain/usecase/get_brands_use_case.dart';
 import 'package:accounting_software/app/features/catalog/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/presentation/cubit/brands_list_cubit.dart';
-import 'package:accounting_software/app/features/catalog/presentation/pages/brands_screen.dart';
+import 'package:accounting_software/app/features/catalog/presentation/pages/brands/brands_screen.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import '../../helpers/localized_app.dart';
 import 'support/fake_brands_repository.dart';
@@ -61,14 +61,21 @@ void main() {
           );
           await tester.pumpAndSettle();
 
-          expect(tester.takeException(), isNull);
-          expect(find.byType(BrandsScreen), findsOneWidget);
-          expect(find.text('Brands'), findsOneWidget);
-          expect(find.text('Total brands'), findsOneWidget);
-          expect(find.text('Active brands'), findsOneWidget);
-          expect(find.text('Inactive brands'), findsOneWidget);
-          expect(find.text('Brand deleted'), findsNothing);
-        });
+            expect(tester.takeException(), isNull);
+            expect(find.byType(BrandsScreen), findsOneWidget);
+            // Breadcrumb + page title both show "Brands".
+            expect(find.text('Brands'), findsWidgets);
+            expect(find.textContaining('Total brands'), findsOneWidget);
+            expect(find.textContaining('Active brands'), findsOneWidget);
+            expect(find.textContaining('Inactive brands'), findsOneWidget);
+            // No unresolved placeholders anywhere on the page.
+            expect(find.textContaining('{'), findsNothing);
+            expect(find.textContaining('@'), findsNothing);
+            // Record actions are icons (AppRowActions), never text buttons.
+            expect(find.text('Edit brand'), findsNothing);
+            expect(find.text('Brand deleted'), findsNothing);
+          },
+        );
       }
     }
   }

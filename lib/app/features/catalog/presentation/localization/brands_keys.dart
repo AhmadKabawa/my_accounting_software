@@ -78,6 +78,8 @@ enum BrandsKeys implements AppKey {
     en: 'Enter the brand details used when assigning it to products.',
   ),
   productCount(ar: 'عدد المنتجات', en: 'Products'),
+  productsLabel(ar: 'المنتجات: {count}', en: 'Products: {count}'),
+  productsUnknown(ar: 'المنتجات: غير متاح', en: 'Products: n/a'),
   activate(ar: 'إعادة تفعيل', en: 'Reactivate'),
   deactivate(ar: 'إيقاف', en: 'Deactivate'),
   deactivateTitle(ar: 'إيقاف الماركة', en: 'Deactivate brand'),
@@ -93,7 +95,8 @@ enum BrandsKeys implements AppKey {
   deleted(ar: 'تم حذف الماركة.', en: 'Brand deleted.'),
   totalBrands(ar: 'إجمالي الماركات', en: 'Total brands'),
   activeBrands(ar: 'الماركات النشطة', en: 'Active brands'),
-  inactiveBrands(ar: 'الماركات الموقوفة', en: 'Inactive brands');
+  inactiveBrands(ar: 'الماركات الموقوفة', en: 'Inactive brands'),
+  statLabel(ar: '{label}: {value}', en: '{label}: {value}');
 
   const BrandsKeys({required this.ar, required this.en});
   @override

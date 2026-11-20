@@ -37,7 +37,7 @@ void main() {
   });
 
   test('texts are non-empty and variables match between languages', () {
-    final vars = RegExp(r'@\w+');
+    final vars = RegExp(r'\{\w+\}');
     for (final k in allKeys) {
       expect(k.ar.trim(), isNotEmpty, reason: '${k.key} (ar)');
       expect(k.en.trim(), isNotEmpty, reason: '${k.key} (en)');
@@ -46,6 +46,17 @@ void main() {
         vars.allMatches(k.en).map((m) => m.group(0)).toSet(),
         reason: '${k.key}: variables differ between ar and en',
       );
+    }
+  });
+
+  // easy_localization substitutes `{name}` only. A `@name` placeholder is
+  // never replaced and reaches the screen literally (the "Page @page of
+  // @lastPage" bug). See docs/architecture/KNOWN_PITFALLS.md (L-01).
+  test('variables use the {name} syntax, never @name', () {
+    final legacy = RegExp(r'@[A-Za-z_]\w*');
+    for (final k in allKeys) {
+      expect(legacy.hasMatch(k.ar), isFalse, reason: '${k.key} (ar)');
+      expect(legacy.hasMatch(k.en), isFalse, reason: '${k.key} (en)');
     }
   });
 

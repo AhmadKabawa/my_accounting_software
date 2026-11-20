@@ -57,6 +57,14 @@ class AppComponentSize extends ResponsiveToken {
   /// Mobile: 200px | Tablet: 240px | Desktop: 280px
   static const cardHeight = AppComponentSize(200, 240, 280);
 
+  /// Search field maximum width in list toolbars (full width on phones).
+  /// Mobile: 320px | Tablet: 360px | Desktop: 420px
+  static const searchFieldWidth = AppComponentSize(320, 360, 420);
+
+  /// Filter control (dropdown) width in list toolbars.
+  /// Mobile: 200px | Tablet: 200px | Desktop: 220px
+  static const filterControlWidth = AppComponentSize(200, 200, 220);
+
   /// Avatar — standard profile picture size
   /// Mobile: 40px | Tablet: 48px | Desktop: 56px
   static const avatar = AppComponentSize(40, 48, 56);

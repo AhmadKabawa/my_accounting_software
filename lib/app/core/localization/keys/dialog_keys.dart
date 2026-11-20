@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 ///
 /// The confirm and cancel buttons reuse `CommonKeys.confirm` / `cancel`.
 enum DialogKeys implements AppKey {
-  typeToConfirm(ar: 'اكتب "@name" للتأكيد', en: 'Type "@name" to confirm'),
+  typeToConfirm(ar: 'اكتب "{name}" للتأكيد', en: 'Type "{name}" to confirm'),
   typedNameLabel(ar: 'اسم الهدف', en: 'Target name'),
   impactTitle(ar: 'ما الذي سيتغيّر', en: 'What will change'),
   criticalLabel(ar: 'إجراء حرج', en: 'Critical action'),

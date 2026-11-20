@@ -260,14 +260,16 @@ void main() {
   });
 
   group('CAT-07 master-data route alias', () {
-    test('redirects to the real Brands page', () {
+    test('redirects to the Catalog hub, which links to Brands', () {
       expect(CatalogRoutes.masterData.path, '/catalog/master-data');
-      expect(catalogMasterDataRedirect(), BrandsRoutes.brands.path);
+      expect(CatalogRoutes.hub.path, '/catalog');
+      expect(catalogMasterDataRedirect(), CatalogRoutes.hub.path);
       expect(BrandsRoutes.brands.path, '/catalog/brands');
     });
 
     test('alias and Brands use the same protected session guards', () {
       for (final path in [
+        CatalogRoutes.hub.path,
         CatalogRoutes.masterData.path,
         BrandsRoutes.brands.path,
       ]) {

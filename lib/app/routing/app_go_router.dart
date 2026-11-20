@@ -41,7 +41,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/select_branch/select_branch_screen.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
-import 'package:accounting_software/app/features/catalog/presentation/pages/brands_screen.dart';
+import 'package:accounting_software/app/features/catalog/presentation/pages/brands/brands_screen.dart';
+import 'package:accounting_software/app/features/catalog/presentation/pages/catalog_hub_screen.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
@@ -253,8 +254,14 @@ class AppRouter {
 
           /// ───────── CATALOG ─────────
           StatefulShellBranch(
-            initialLocation: CatalogRoutes.masterData.path,
+            initialLocation: CatalogRoutes.hub.path,
             routes: [
+              GoRoute(
+                path: CatalogRoutes.hub.path,
+                name: CatalogRoutes.hub.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: CatalogHubScreen()),
+              ),
               GoRoute(
                 path: CatalogRoutes.masterData.path,
                 name: CatalogRoutes.masterData.name,

@@ -1,3 +1,4 @@
+import 'package:accounting_software/app/features/catalog/presentation/localization/catalog_hub_keys.dart';
 import 'package:accounting_software/app/core/access/keys/access_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
@@ -41,6 +42,7 @@ final List<AppKey> allKeys = <AppKey>[
   ...AuthKeys.values,
   ...ProfileKeys.values,
   ...BrandsKeys.values,
+  ...CatalogHubKeys.values,
   ...HomeKeys.values,
   ...OnboardingKeys.values,
 ];

@@ -87,4 +87,6 @@
 
 ## قواعد حديثة
 
+قبل أي شاشة: [الأخطاء المعروفة](docs/architecture/KNOWN_PITFALLS.md) و[دليل بناء شاشة](docs/design/SCREEN_BUILD_PLAYBOOK.md). تفرضها `test/architecture/ui_quality_gate_test.dart`.
+
 سياسة الواجهة (فجوة الـ core، الممنوعات داخل `features/`، التوكنز) في [قواعد المعمارية §5 وقاعدة «فجوة الـ core»](docs/architecture/ARCHITECTURE_RULES.md)، والنصوص والترجمة في [LOCALIZATION.md](docs/architecture/LOCALIZATION.md). لا تنسخ قواعدها هنا (ADR-0001 بند 8).

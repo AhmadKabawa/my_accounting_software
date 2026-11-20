@@ -399,4 +399,33 @@ void main() {
       expect(queries, ['be', '']);
     });
   });
+
+  group('re-opening after a choice (desktop)', () {
+    testWidgets('lists every option, not only the chosen one', (tester) async {
+      await pumpPicker(tester, value: 'Alpha');
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+
+      // 'Beta' is not the field text, so it can only come from the panel.
+      expect(find.text('Beta'), findsOneWidget);
+    });
+
+    testWidgets('a non-clearable field still has an x for typed text', (
+      tester,
+    ) async {
+      await pumpPicker(tester, value: 'Alpha', clearable: false);
+      TextEditingController? controller() =>
+          tester.widget<TextField>(find.byType(TextField)).controller;
+
+      await tester.enterText(find.byType(TextField), 'zz');
+      await tester.pump();
+      expect(find.byTooltip('Clear selection'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Clear selection'));
+      await tester.pumpAndSettle();
+
+      expect(controller()?.text, 'Alpha');
+    });
+  });
 }

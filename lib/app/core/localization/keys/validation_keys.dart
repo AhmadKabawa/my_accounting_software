@@ -10,8 +10,8 @@ enum ValidationKeys implements AppKey {
   emailInvalid(ar: 'بريد إلكتروني غير صالح', en: 'Invalid email address'),
   passwordRequired(ar: 'كلمة المرور مطلوبة', en: 'Password is required'),
   passwordMinLength(
-    ar: 'يجب أن تكون كلمة المرور @length أحرف على الأقل',
-    en: 'Password must be at least @length characters',
+    ar: 'يجب أن تكون كلمة المرور {length} أحرف على الأقل',
+    en: 'Password must be at least {length} characters',
   ),
   passwordNeedsUpper(
     ar: 'يجب أن تحتوي على حرف كبير واحد على الأقل',
@@ -31,17 +31,17 @@ enum ValidationKeys implements AppKey {
   ),
   nameRequired(ar: 'الاسم مطلوب', en: 'Name is required'),
   nameMinLength(
-    ar: 'يجب أن يكون الاسم @length أحرف على الأقل',
-    en: 'Name must be at least @length characters',
+    ar: 'يجب أن يكون الاسم {length} أحرف على الأقل',
+    en: 'Name must be at least {length} characters',
   ),
   phoneInvalid(ar: 'رقم هاتف غير صالح', en: 'Invalid phone number'),
   fieldMinLength(
-    ar: 'يجب أن يكون @length أحرف على الأقل',
-    en: 'Must be at least @length characters',
+    ar: 'يجب أن يكون {length} أحرف على الأقل',
+    en: 'Must be at least {length} characters',
   ),
   fieldMaxLength(
-    ar: 'يجب ألا يتجاوز @length حرفاً',
-    en: 'Must not exceed @length characters',
+    ar: 'يجب ألا يتجاوز {length} حرفاً',
+    en: 'Must not exceed {length} characters',
   );
 
   const ValidationKeys({required this.ar, required this.en});

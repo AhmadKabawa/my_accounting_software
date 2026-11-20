@@ -10,7 +10,7 @@ enum ProfileKeys implements AppKey {
   saveChanges(ar: 'حفظ التغييرات', en: 'Save changes'),
   changePassword(ar: 'تغيير كلمة المرور', en: 'Change password'),
   updateButton(ar: 'تحديث', en: 'Update'),
-  userNumber(ar: 'مستخدم رقم @number', en: 'User #@number'),
+  userNumber(ar: 'مستخدم رقم {number}', en: 'User #{number}'),
   profileUpdated(
     ar: 'تم تحديث الملف الشخصي بنجاح',
     en: 'Profile updated successfully',

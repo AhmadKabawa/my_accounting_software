@@ -28,17 +28,19 @@ import 'package:accounting_software/app/shell/destinations.dart';
 
 const _secret = Permission('sales.view');
 
+const _defaultBranches = [
+  AccessBranch(
+    id: 1,
+    code: 'MAIN',
+    name: 'Main',
+    canView: true,
+    canOperate: true,
+  ),
+];
+
 AccessSnapshot _snapshot(
   Set<Permission> permissions, {
-  List<AccessBranch> branches = const [
-    AccessBranch(
-      id: 1,
-      code: 'MAIN',
-      name: 'Main',
-      canView: true,
-      canOperate: true,
-    ),
-  ],
+  List<AccessBranch> branches = _defaultBranches,
 }) => AccessSnapshot(
   userId: 'u1',
   username: 'shell-test',
@@ -85,7 +87,9 @@ _pump(
   Set<Permission> permissions = const {Permission('sales.view')},
   List<AppDestination>? destinations,
   int? routeBranchCount,
-  List<AccessBranch> branches = const [],
+  // null = one available branch. An explicit empty list tests the
+  // "no available branches" state (AccessStatusGate hides the shell then).
+  List<AccessBranch>? branches,
   List<AppMenuEntry> userMenuEntries = const [],
   Future<bool> Function(ScopeOption)? beforeBranchChange,
   List<AppBreadcrumbItem> Function(GoRouterState state)? breadcrumbBuilder,
@@ -97,7 +101,10 @@ _pump(
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  final repository = _FakeAccessRepository(permissions, branches: branches);
+  final repository = _FakeAccessRepository(
+    permissions,
+    branches: branches ?? _defaultBranches,
+  );
   final access = AccessCubit(getMyAccess: GetMyAccessUseCase(repository));
   await access.load();
   addTearDown(access.close);

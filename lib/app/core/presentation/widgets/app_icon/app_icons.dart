@@ -61,6 +61,14 @@ abstract final class AppIcons {
   static const sortDescending = AppIconData.material(Icons.arrow_downward);
   static const check = AppIconData.material(Icons.check);
 
+  // Row / record actions.
+  static const edit = AppIconData.material(Icons.edit_outlined);
+  static const delete = AppIconData.material(Icons.delete_outline);
+  static const block = AppIconData.material(Icons.block);
+  static const restore = AppIconData.material(Icons.check_circle_outline);
+  static const upload = AppIconData.material(Icons.upload_outlined);
+  static const image = AppIconData.material(Icons.image_outlined);
+
   /// Placeholder until a brand SVG asset (`AppIconData.svg(...)`) is added.
   static const google = AppIconData.material(Icons.account_circle_outlined);
 }

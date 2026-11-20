@@ -178,4 +178,107 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(BottomSheet), findsNothing);
   });
+
+  testWidgets('the x button empties the search and searches at once', (
+    tester,
+  ) async {
+    var query = 'unset';
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: FilterBar(
+            onSearchChanged: (value) => query = value,
+            activeFilters: const [],
+            onClearAll: () {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.close), findsNothing);
+    await tester.enterText(find.byType(TextField), 'abc');
+    await tester.pump();
+    expect(find.byIcon(Icons.close), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pump();
+
+    expect(query, '');
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, '');
+    expect(find.byIcon(Icons.close), findsNothing);
+  });
+
+  testWidgets('removing the search chip or clearing all empties the field', (
+    tester,
+  ) async {
+    var removed = 0;
+    var cleared = 0;
+    Future<void> pumpBar() => tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: FilterBar(
+            onSearchChanged: (_) {},
+            activeFilters: [
+              FilterBarFilter(
+                id: FilterBar.searchFilterId,
+                label: CatalogUiKeys.search,
+                value: 'abc',
+                onRemove: () => removed++,
+              ),
+            ],
+            onClearAll: () => cleared++,
+          ),
+        ),
+      ),
+    );
+
+    String fieldText() =>
+        tester.widget<TextField>(find.byType(TextField)).controller!.text;
+
+    await pumpBar();
+    await tester.enterText(find.byType(TextField), 'abc');
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppBadge).first,
+        matching: find.byType(InkWell),
+      ),
+    );
+    await tester.pump();
+    expect(removed, 1);
+    expect(fieldText(), '');
+
+    await tester.enterText(find.byType(TextField), 'xyz');
+    await tester.pump();
+    await tester.tap(find.text('Clear all'));
+    await tester.pump();
+    expect(cleared, 1);
+    expect(fieldText(), '');
+  });
+
+  testWidgets('the active filter chip shows real values, not placeholders', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: FilterBar(
+            onSearchChanged: (_) {},
+            activeFilters: [
+              FilterBarFilter(
+                id: 'status',
+                label: CatalogUiKeys.filters,
+                value: 'Active',
+                onRemove: () {},
+              ),
+            ],
+            onClearAll: () {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Filters: Active'), findsOneWidget);
+    expect(find.textContaining('{'), findsNothing);
+  });
 }

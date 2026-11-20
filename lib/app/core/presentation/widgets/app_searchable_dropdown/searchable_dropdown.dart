@@ -101,17 +101,42 @@ class _SearchableDropdownState<T extends Object>
   /// focus it must show the selected value again, so the visible text and
   /// [SearchableDropdown.value] can never disagree.
   void _onDesktopFocusChanged() {
-    if (_desktopFocusNode.hasFocus) return;
+    if (_desktopFocusNode.hasFocus) {
+      // The field shows the selected label, which is not a search query:
+      // select it so typing replaces it (see [_effectiveQuery]).
+      final text = _desktopController.text;
+      if (text.isNotEmpty && text == _selectedLabel) {
+        _desktopController.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: text.length,
+        );
+      }
+      return;
+    }
     _setText(_selectedLabel);
     _resetQuery();
     if (mounted) setState(() {});
   }
 
+  /// The x button. With [SearchableDropdown.clearable] it clears the value;
+  /// otherwise (a field that must keep a value) it only drops what the user
+  /// typed and shows the selected label again.
   void _clear() {
+    if (!widget.clearable) {
+      _setText(_selectedLabel);
+      _resetQuery();
+      setState(() {});
+      return;
+    }
     _setText('');
     _resetQuery();
     widget.onChanged(null);
     setState(() {});
+  }
+
+  bool _showClear(String text) {
+    if (text.isEmpty) return false;
+    return widget.clearable || text != _selectedLabel;
   }
 
   /// Drops the pending search so remote results are not left filtered by a
@@ -181,9 +206,16 @@ class _SearchableDropdownState<T extends Object>
     _debounce = Timer(_queryDebounce, () => callback(value));
   }
 
+  /// The field text is a search query only when the user typed it. While it
+  /// still equals the selected label it is just the shown value, so the full
+  /// option list is offered (otherwise re-opening after a choice would list
+  /// only the chosen option).
+  String _effectiveQuery(String text) =>
+      widget.value != null && text == _selectedLabel ? '' : text;
+
   Iterable<T> _options(String query) {
     if (!widget.filterLocally) return widget.options;
-    final normalized = query.trim().toLowerCase();
+    final normalized = _effectiveQuery(query).trim().toLowerCase();
     if (normalized.isEmpty) return widget.options;
     return widget.options.where(
       (option) =>
@@ -262,9 +294,7 @@ class _SearchableDropdownState<T extends Object>
               textInputAction: TextInputAction.search,
               onChanged: _query,
               onSubmitted: onFieldSubmitted,
-              suffix:
-                  !widget.clearable ||
-                      (widget.value == null && controller.text.isEmpty)
+              suffix: !_showClear(controller.text)
                   ? null
                   : AppIconButton(
                       AppIcons.close,
@@ -500,6 +530,17 @@ class _MobileSearchPickerState<T extends Object>
                     setState(() => _query = value);
                     widget.onQueryChanged?.call(value);
                   },
+                  suffix: _query.isEmpty
+                      ? null
+                      : AppIconButton(
+                          AppIcons.close,
+                          tooltipKey: CatalogUiKeys.clearSearch,
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _query = '');
+                            widget.onQueryChanged?.call('');
+                          },
+                        ),
                 ),
                 context.ui.spacing.gap(AppSpacing.md),
                 Expanded(

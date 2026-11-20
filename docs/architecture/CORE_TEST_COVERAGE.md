@@ -94,3 +94,11 @@
 - `test/features/auth/force_password_change_screen_test.dart`: إخفاء الحقلين افتراضياً، ظهور تسجيل الخروج، رفض كلمة دون الحد الأدنى، رفض عدم التطابق، حالة الحفظ، خطأ InlineBanner، ومقاسات 360/1200 في RTL/LTR.
 - `test/features/auth/auth_endpoints_test.dart`: مسارا REST users وRPC complete_password_change.
 - **نتيجة التشغيل الفعلية:** اختبارات AUTH-02 في هذا القسم ناجحة في [GitHub Actions](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/44651692540): route guards، session، integration لإعادة تحميل الصلاحيات، وWidget النموذج. شُغّل formatter على 22 ملف Dart خاصاً بـ AUTH-02 (19 تغيّرت). فحص التنسيق الشامل ما زال يفشل في ملفين موروثين من AUTH-04 (`access_status_gate.dart` و`dashboard_screen_test.dart`). `flutter analyze` شُغّل ولا توجد أخطاء في ملفات AUTH-02، لكنه يفشل بسبب أخطاء اختبار موروثة في access/dashboard/shell. `flutter test` شُغّل: 639 ناجحاً و9 فاشلة في اختبارات shell/access/home وAppBadge/SearchableDropdown؛ مجموعات الإخفاق نفسها موجودة في [تشغيل فرع AUTH-04 الأساسي](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/44647274723). Catalog UI: 36 ناجحاً وواحد فاشل. Chrome visual check لم يُنفذ. الحالة «مراجعة» وفق R12، ولا تُسجل الميزة منجزة حتى تُحل موانع الأساس وتكتمل المراجعة البصرية.
+
+## تحديث: مكوّنات S2
+
+- `test/core/presentation/widgets/app_row_actions_test.dart`: أيقونات فقط، قائمة «المزيد».
+- `app_filter_bar_test.dart`: زر x، شريحة البحث، نص الشريحة بلا متغيرات.
+- `app_searchable_dropdown_test.dart`: إعادة الفتح بعد الاختيار تعرض كل الخيارات.
+- `app_data_table_test.dart`: نص الترقيم بلا `@`/`{`.
+- `test/architecture/ui_quality_gate_test.dart`: بوابة جودة الواجهة (P-06..P-10).

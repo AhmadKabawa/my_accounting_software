@@ -35,6 +35,7 @@ final Set<String> protectedRoutes = {
   HomeRoutes.home.path,
   ProfileRoutes.profile.path,
   BrandsRoutes.brands.path,
+  CatalogRoutes.hub.path,
   CatalogRoutes.masterData.path,
 };
 

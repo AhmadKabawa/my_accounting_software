@@ -7,7 +7,9 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar_style.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
@@ -28,9 +30,19 @@ class FilterBarFilter {
   final VoidCallback onRemove;
 }
 
-/// Search + active filter summary + a caller-owned filter editor.
+/// Search + inline filter controls + active filter summary.
+///
+/// * The search field has a maximum width on tablet/desktop and a clear (x)
+///   button while it holds text; clearing searches immediately.
+/// * Give the chip that represents the search text the id
+///   [searchFilterId]: removing it (or "clear all") also empties the field,
+///   so the visible text can never disagree with the applied search.
+/// * On phones the filter controls move into a bottom sheet.
 class FilterBar extends StatefulWidget {
   static const defaultSearchDebounce = Duration(milliseconds: 300);
+
+  /// Id of the [FilterBarFilter] that stands for the search text.
+  static const searchFilterId = 'search';
 
   const FilterBar({
     super.key,
@@ -92,9 +104,33 @@ class _FilterBarState extends State<FilterBar> {
     widget.onSearchChanged(_controller.text);
   }
 
+  /// The x button: empty the field and search immediately.
+  void _clearSearch() {
+    _debounce?.cancel();
+    _controller.clear();
+    widget.onSearchChanged('');
+  }
+
+  void _clearAll() {
+    _debounce?.cancel();
+    _controller.clear();
+    widget.onClearAll();
+  }
+
+  void _removeFilter(FilterBarFilter filter) {
+    if (filter.id == FilterBar.searchFilterId) {
+      _debounce?.cancel();
+      _controller.clear();
+    }
+    filter.onRemove();
+  }
+
+  bool get _hasFilterEditor =>
+      widget.filterPanelBuilder != null || widget.filterControls.isNotEmpty;
+
   Future<void> _openFilters() async {
     final builder = widget.filterPanelBuilder;
-    if (builder == null && widget.filterControls.isEmpty) return;
+    if (!_hasFilterEditor) return;
 
     if (!ScreenEngine.isMobile(context)) {
       setState(() => _showEditor = !_showEditor);
@@ -113,17 +149,24 @@ class _FilterBarState extends State<FilterBar> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppText(CatalogUiKeys.filters, type: AppTextType.titleMedium),
+              sheetContext.ui.spacing.gap(AppSpacing.md),
               if (builder != null)
                 builder(sheetContext, () {
                   widget.onApply?.call();
                   Navigator.of(sheetContext).pop();
                 })
               else
-                Wrap(
-                  spacing: sheetContext.ui.spacing.sm,
-                  runSpacing: sheetContext.ui.spacing.sm,
-                  children: widget.filterControls,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final control in widget.filterControls) ...[
+                      control,
+                      sheetContext.ui.spacing.gap(AppSpacing.sm),
+                    ],
+                  ],
                 ),
+              sheetContext.ui.spacing.gap(AppSpacing.md),
               AppButton(
                 CatalogUiKeys.apply,
                 onPressed: () {
@@ -138,6 +181,26 @@ class _FilterBarState extends State<FilterBar> {
     );
   }
 
+  Widget _searchField() => ValueListenableBuilder<TextEditingValue>(
+    valueListenable: _controller,
+    builder: (context, value, _) => AppTextField(
+      controller: _controller,
+      labelKey: CatalogUiKeys.search,
+      hintKey: widget.searchHintKey,
+      prefixIcon: AppIcons.search,
+      textInputAction: TextInputAction.search,
+      onChanged: _search,
+      onSubmitted: _submitSearch,
+      suffix: value.text.isEmpty
+          ? null
+          : AppIconButton(
+              AppIcons.close,
+              tooltipKey: CatalogUiKeys.clearSearch,
+              onPressed: _clearSearch,
+            ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final style = FilterBarStyle(context);
@@ -145,53 +208,7 @@ class _FilterBarState extends State<FilterBar> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (mobile)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppTextField(
-                controller: _controller,
-                labelKey: CatalogUiKeys.search,
-                hintKey: widget.searchHintKey,
-                textInputAction: TextInputAction.search,
-                onChanged: _search,
-                onSubmitted: _submitSearch,
-              ),
-              context.ui.spacing.gap(AppSpacing.sm),
-              AppButton(
-                CatalogUiKeys.filters,
-                variant: AppButtonVariant.outlined,
-                onPressed:
-                    widget.filterPanelBuilder == null &&
-                        widget.filterControls.isEmpty
-                    ? null
-                    : _openFilters,
-              ),
-            ],
-          )
-        else
-          Row(
-            children: [
-              Expanded(
-                child: AppTextField(
-                  controller: _controller,
-                  labelKey: CatalogUiKeys.search,
-                  hintKey: widget.searchHintKey,
-                  textInputAction: TextInputAction.search,
-                  onChanged: _search,
-                  onSubmitted: _submitSearch,
-                ),
-              ),
-              if (widget.filterPanelBuilder != null) ...[
-                context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-                AppButton(
-                  CatalogUiKeys.filters,
-                  variant: AppButtonVariant.outlined,
-                  onPressed: _openFilters,
-                ),
-              ],
-            ],
-          ),
+        if (mobile) _mobileToolbar(context) else _wideToolbar(context, style),
         if (!mobile && _showEditor && widget.filterPanelBuilder != null) ...[
           context.ui.spacing.gap(AppSpacing.sm),
           widget.filterPanelBuilder!(context, () {
@@ -206,51 +223,93 @@ class _FilterBarState extends State<FilterBar> {
             },
           ),
         ],
-        if (!mobile && widget.filterControls.isNotEmpty) ...[
-          context.ui.spacing.gap(AppSpacing.sm),
-          Wrap(
-            spacing: style.gap,
-            runSpacing: style.gap,
-            children: widget.filterControls,
-          ),
-        ],
         if (widget.activeFilters.isNotEmpty) ...[
           context.ui.spacing.gap(AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: AppText(
-                  CatalogUiKeys.activeFilters,
-                  type: AppTextType.labelMedium,
-                ),
-              ),
-              AppButton(
-                CatalogUiKeys.clearAll,
-                variant: AppButtonVariant.text,
-                size: AppButtonSize.small,
-                onPressed: widget.onClearAll,
-              ),
-            ],
-          ),
-          Wrap(
-            spacing: style.gap,
-            runSpacing: style.gap,
-            children: [
-              for (final filter in widget.activeFilters)
-                AppBadge(
-                  label: CatalogUiKeys.activeFilterLabel,
-                  labelArgs: {
-                    'label': filter.label.tr(context: context),
-                    'value': filter.value,
-                  },
-                  size: AppBadgeSize.small,
-                  onRemove: filter.onRemove,
-                  removeLabel: CatalogUiKeys.removeFilter,
-                ),
-            ],
-          ),
+          _activeFilters(context, style),
         ],
       ],
     );
   }
+
+  Widget _mobileToolbar(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      _searchField(),
+      if (_hasFilterEditor) ...[
+        context.ui.spacing.gap(AppSpacing.sm),
+        AppButton(
+          CatalogUiKeys.filters,
+          variant: AppButtonVariant.outlined,
+          onPressed: _openFilters,
+        ),
+      ],
+    ],
+  );
+
+  /// One wrapping row: search (capped width), the filter controls inline, then
+  /// the optional filter-panel button.
+  Widget _wideToolbar(BuildContext context, FilterBarStyle style) {
+    final searchWidth = context.ui.size.width(AppComponentSize.searchFieldWidth);
+    final controlWidth = context.ui.size.width(
+      AppComponentSize.filterControlWidth,
+    );
+    return Wrap(
+      spacing: style.gap,
+      runSpacing: style.gap,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: searchWidth),
+          child: _searchField(),
+        ),
+        for (final control in widget.filterControls)
+          SizedBox(width: controlWidth, child: control),
+        if (widget.filterPanelBuilder != null)
+          AppButton(
+            CatalogUiKeys.filters,
+            variant: AppButtonVariant.outlined,
+            onPressed: _openFilters,
+          ),
+      ],
+    );
+  }
+
+  Widget _activeFilters(BuildContext context, FilterBarStyle style) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Row(
+        children: [
+          Expanded(
+            child: AppText(
+              CatalogUiKeys.activeFilters,
+              type: AppTextType.labelMedium,
+            ),
+          ),
+          AppButton(
+            CatalogUiKeys.clearAll,
+            variant: AppButtonVariant.text,
+            size: AppButtonSize.small,
+            onPressed: _clearAll,
+          ),
+        ],
+      ),
+      Wrap(
+        spacing: style.gap,
+        runSpacing: style.gap,
+        children: [
+          for (final filter in widget.activeFilters)
+            AppBadge(
+              label: CatalogUiKeys.activeFilterLabel,
+              labelArgs: {
+                'label': filter.label.tr(context: context),
+                'value': filter.value,
+              },
+              size: AppBadgeSize.small,
+              onRemove: () => _removeFilter(filter),
+              removeLabel: CatalogUiKeys.removeFilter,
+            ),
+        ],
+      ),
+    ],
+  );
 }

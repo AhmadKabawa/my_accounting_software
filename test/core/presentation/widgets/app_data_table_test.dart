@@ -164,6 +164,19 @@ void main() {
     expect(requestedSize, 50);
   });
 
+  testWidgets('pagination label shows real numbers, not placeholders', (
+    tester,
+  ) async {
+    await pumpTable(tester);
+    expect(find.textContaining('@'), findsNothing);
+    expect(find.textContaining('{'), findsNothing);
+    expect(find.byWidgetPredicate(
+        (w) =>
+            w is RichText &&
+            RegExp(r'Page \d+ of \d+').hasMatch(w.text.toPlainText()),
+      ), findsOneWidget);
+  });
+
   testWidgets('mobile sorting is available from a bottom sheet', (
     tester,
   ) async {
