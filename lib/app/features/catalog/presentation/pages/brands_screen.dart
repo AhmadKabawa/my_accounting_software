@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
@@ -514,9 +515,21 @@ class _BrandEditorState extends State<_BrandEditor> {
         ['http', 'https'].contains(logoUri.scheme) &&
         logoUri.host.isNotEmpty;
     return AlertDialog(
-      title: AppText(widget.brand == null ? BrandsKeys.add : BrandsKeys.edit),
+      title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const AppIcon(AppIcons.brands),
+          const SizedBox(width: 10),
+          Expanded(child: AppText(
+            widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
+            type: AppTextType.titleLarge,
+          )),
+        ]),
+        const SizedBox(height: 6),
+        AppText(BrandsKeys.editorSubtitle, type: AppTextType.bodySmall,
+          color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ]),
       content: SizedBox(
-        width: 480,
+        width: 560,
         child: Form(
           key: _form,
           child: SingleChildScrollView(
@@ -524,6 +537,8 @@ class _BrandEditorState extends State<_BrandEditor> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                AppText(BrandsKeys.identitySection, type: AppTextType.titleSmall),
+                context.ui.spacing.gap(AppSpacing.sm),
                 if (_saveFailed) ...[
                   InlineBanner(
                     messageKey: _saveErrorKey,
@@ -578,6 +593,8 @@ class _BrandEditorState extends State<_BrandEditor> {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ],
+                context.ui.spacing.gap(AppSpacing.md),
+                AppText(BrandsKeys.logoSection, type: AppTextType.titleSmall),
                 context.ui.spacing.gap(AppSpacing.sm),
                 AppTextField(
                   controller: _logo,
@@ -614,17 +631,27 @@ class _BrandEditorState extends State<_BrandEditor> {
                     ),
                   ),
                 ],
+                context.ui.spacing.gap(AppSpacing.md),
+                AppText(BrandsKeys.detailsSection, type: AppTextType.titleSmall),
                 context.ui.spacing.gap(AppSpacing.sm),
                 AppTextField(
                   controller: _description,
                   labelKey: BrandsKeys.description,
                   maxLines: 3,
                 ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: AppText(BrandsKeys.active),
-                  value: _active,
-                  onChanged: (value) => setState(() => _active = value),
+                AppCard(
+                  padding: AppSpacing.sm,
+                  child: SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: AppText(BrandsKeys.active),
+                    subtitle: AppText(
+                      _active ? BrandsKeys.active : BrandsKeys.inactive,
+                      type: AppTextType.bodySmall,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    value: _active,
+                    onChanged: (value) => setState(() => _active = value),
+                  ),
                 ),
               ],
             ),
