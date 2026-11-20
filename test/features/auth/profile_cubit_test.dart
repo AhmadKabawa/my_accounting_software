@@ -60,8 +60,9 @@ void main() {
 
   blocTest<ProfileCubit, ProfileStatus>(
     'loading is local: the session is never put in loading',
-    setUp: () {
+    setUp: () async {
       session.onAuthenticated(testUser);
+      await Future<void>.delayed(Duration.zero);
       repo.profile = Completer();
     },
     build: () => cubit,
@@ -81,8 +82,9 @@ void main() {
 
   blocTest<ProfileCubit, ProfileStatus>(
     'a successful update refreshes the session user and says so',
-    setUp: () {
+    setUp: () async {
       session.onAuthenticated(testUser);
+      await Future<void>.delayed(Duration.zero);
       repo.profileResult = const Right(updated);
     },
     build: () => cubit,
@@ -97,8 +99,9 @@ void main() {
 
   blocTest<ProfileCubit, ProfileStatus>(
     'a failed update keeps the user and shows the error',
-    setUp: () {
+    setUp: () async {
       session.onAuthenticated(testUser);
+      await Future<void>.delayed(Duration.zero);
       repo.profileResult = Left(NetworkFailure());
     },
     build: () => cubit,
@@ -123,7 +126,10 @@ void main() {
 
   blocTest<ProfileCubit, ProfileStatus>(
     'change password reports success',
-    setUp: () => session.onAuthenticated(testUser),
+    setUp: () async {
+      session.onAuthenticated(testUser);
+      await Future<void>.delayed(Duration.zero);
+    },
     build: () => cubit,
     act: (c) => c.changePassword(currentPassword: 'a', newPassword: 'b'),
     expect: () => loadingThenIdle,
@@ -135,8 +141,9 @@ void main() {
 
   blocTest<ProfileCubit, ProfileStatus>(
     'a session cleared during the update is not overwritten',
-    setUp: () {
+    setUp: () async {
       session.onAuthenticated(testUser);
+      await Future<void>.delayed(Duration.zero);
       repo.profile = Completer();
     },
     build: () => cubit,
