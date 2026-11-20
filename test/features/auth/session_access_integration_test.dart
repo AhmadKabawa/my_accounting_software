@@ -9,6 +9,7 @@ import 'package:accounting_software/app/core/access/models/access_snapshot.dart'
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/get_cached_usecase.dart';
+import 'package:accounting_software/app/features/auth/domain/usecase/get_must_change_password_usecase.dart';
 import 'package:accounting_software/app/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
 
@@ -50,6 +51,7 @@ void main() {
     access = AccessCubit(getMyAccess: GetMyAccessUseCase(accessRepository));
     session = SessionCubit(
       getCurrentUser: GetCurrentUserUseCase(repository: authRepository),
+      getMustChangePassword: GetMustChangePasswordUseCase(authRepository),
       logout: LogoutUseCase(repository: authRepository),
       sessionCleared: cleared.stream,
       flash: FlashMessages(),
