@@ -110,7 +110,11 @@ class SessionCubit extends Cubit<SessionStatus>
     if (state is SessionAuthenticated) emit(SessionAuthenticated(user));
   }
 
-  Future<void> signOut() async {\n    await signOutWithResult();\n  }\n\n  Future<bool> signOutWithResult() async {
+  Future<void> signOut() async {
+    await signOutWithResult();
+  }
+
+  Future<bool> signOutWithResult() async {
     _signingOut = true;
     Either<Failure, Unit>? result;
     try {
