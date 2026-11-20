@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
-import 'package:accounting_software/app/core/error/exceptions/cache_exception.dart';
+import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
