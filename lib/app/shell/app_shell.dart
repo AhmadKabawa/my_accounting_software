@@ -20,6 +20,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/ap
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 
 const _mobileDestinationOverflowThreshold = 5;
 const _mobileVisibleDestinationsWhenOverflow = 4;
@@ -189,6 +190,7 @@ class AppShell extends StatelessWidget {
             if (entry.requiresUnsavedChangesCheck && succeeded) {
               unsavedChangesGuard?.discardAll();
             }
+            return succeeded;
           },
         ),
     ];
@@ -236,6 +238,7 @@ class AppShell extends StatelessWidget {
     );
 
     return AccessStatusGate(
+      signOutLabel: AuthKeys.signOut,
       onSignOut: () async {
         if (!await _confirmAllForms() || !context.mounted) return false;
         final succeeded = await context
