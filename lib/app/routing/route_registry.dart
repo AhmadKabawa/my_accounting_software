@@ -5,6 +5,7 @@ import 'package:accounting_software/app/features/auth/presentation/routing/auth_
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
+import 'package:accounting_software/app/features/catalog/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 
 /// Build the route catalogue for the selected feature flags. Disabled
@@ -26,6 +27,7 @@ List<RouteItem> buildRouteRegistry({
   ],
   ...HomeRoutes.all,
   ...ProfileRoutes.all,
+  ...BrandsRoutes.all,
 ];
 
 /// Routes used by the running application.
