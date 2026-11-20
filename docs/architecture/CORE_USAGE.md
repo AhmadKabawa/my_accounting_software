@@ -449,6 +449,7 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - افحص `AccessState.isReady` قبل إظهار وظائف محمية. `can(Permission)` يرجع false في initial/loading/failure.
 - تغيير الفرع يتم عبر `selectBranch(id)` من الفروع المسموح بعرضها، ويعيد تحميل snapshot قبل اكتمال التبديل.
 - لعمليات الكتابة استخدم `canOperate(Permission)` أو `PermissionGate(requiresOperation: true)`؛ فهي تجمع صلاحية الخادم مع `can_operate` للفرع المحدد. `canOperateInSelectedBranch` يعبّر عن حالة الفرع وحدها.
+- عند إظهار عنصر إذا كانت أي صلاحية من مجموعة متاحة، استخدم `AccessCubit.canAny(Iterable<Permission>)`؛ تعيد `true` عند تحقق واحدة على الأقل، وتظل `false` قبل جاهزية لقطة الوصول. لا تكرر حلقة `can` داخل الشاشة.
 - مجموعات `Permissions` تطابق الأكواد الفعلية: `customers`/`suppliers` ↔ `parties.*`، و`purchases` ↔ `purchasing.*`، و`journal` ↔ `accounting.*`. لا تُنشئ `module.action` غير موجود في `KnownPermissionCodes`.
 - `AccessStatusGate` يغلّف محتوى `AppShell` ويمنع عرضه حتى تصبح اللقطة جاهزة؛ عند الفشل يعرض رسالة مترجمة وزر `retry`.
 - لا تخزن الصلاحيات محلياً؛ راجع ADR-0006.
