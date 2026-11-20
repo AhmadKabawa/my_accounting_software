@@ -51,7 +51,9 @@ class AppMenu extends StatelessWidget {
       enabled: enabled && entries.isNotEmpty,
       onSelected: (index) async {
         final entry = entries[index];
-        if (entry.onSelectedAsync != null) {
+        if (entry.onSelectedGuardedAsync != null) {
+          await entry.onSelectedGuardedAsync!();
+        } else if (entry.onSelectedAsync != null) {
           await entry.onSelectedAsync!();
         } else {
           entry.onSelected();
