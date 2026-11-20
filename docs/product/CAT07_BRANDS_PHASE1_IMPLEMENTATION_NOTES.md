@@ -1,7 +1,7 @@
 # CAT-07 Brands — Phase 1 Implementation Notes
 
 ## Scope
-Only the Brands tab of CAT-07. Categories, colors, sizes, product types, units, and other master-data tabs remain out of scope.
+CAT-07 is treated as a master-data hub with tabs. Per S49, its initial logical tabs are Brands, Categories, and Product Types. The current implementation phase prioritizes rebuilding Brands as the first fully functional pilot; Categories and Product Types must not appear as fake or inert controls before their own behavior is specified and implemented. The wider CAT-07 areas in ERP_Screen_Navigation_Map (colors, size systems, units, descriptive tables, properties/options, and type relationships) remain separately scoped extensions.
 
 ## Repository and database contracts
 - Brands are the first CAT-07 master-data screen and the pilot for the shared list/table components.
@@ -39,7 +39,7 @@ Do not turn the brand record into a supplier/manufacturer profile. Supplier data
 
 ## Navigation and UX direction
 
-Catalog is a shell-level module. Brands is a child route at `/catalog/brands`, not a top-level shell destination. The route is ready to host sibling catalog features (products, models, colors, sizes, pricing) as they are implemented; this phase does not expose non-existent screens as disabled or fake menu entries.
+The owner selected the CAT-07 hub-and-tabs direction, overriding the earlier Brands-only navigation proposal. The existing `/catalog/brands` path must remain a working deep link to the Brands tab. The hub path and sibling route registration are to be finalized after checking the current route registry. S49 defines the initial logical tabs (Brands, Categories, Product Types); the wider CAT-07 domains in the navigation map are future extensions. Do not expose inert tabs or fake menu entries: a tab becomes visible when its page has an explicit, implemented state and scope.
 
 ## Deliberate boundaries
 - The logo field accepts a public HTTP(S) image URL; uploading image files/storage integration is not part of this phase.
