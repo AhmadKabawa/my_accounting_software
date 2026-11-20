@@ -139,7 +139,7 @@ class _BrandsView extends StatelessWidget {
           ],
           filterControls: [
             SizedBox(
-              width: 190,
+              width: context.ui.size.width(AppComponentSize.cardWidth) * 0.5,
               child: DropdownButtonFormField<BrandStatusFilter>(
                 value: query.status,
                 decoration: InputDecoration(
@@ -219,7 +219,7 @@ class _BrandsView extends StatelessWidget {
   Widget _identity(BuildContext context, Brand brand) => Row(
     children: [
       _logo(context, brand),
-      const SizedBox(width: 12),
+      context.ui.spacing.gap(AppSpacing.smMd, axis: Axis.horizontal),
       Expanded(child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -242,7 +242,10 @@ class _BrandsView extends StatelessWidget {
         width: context.ui.size.width(AppComponentSize.avatarSmall),
         height: context.ui.size.height(AppComponentSize.avatarSmall),
         child: valid
-            ? AppImage.network(raw, width: 44, height: 44,
+            ? AppImage.network(
+                raw,
+                width: context.ui.size.width(AppComponentSize.avatarSmall),
+                height: context.ui.size.height(AppComponentSize.avatarSmall),
                 shape: AppImageShape.rounded, borderRadius: 10,
                 semanticsLabel: brand.name,
                 errorWidget: const Center(child: AppIcon(AppIcons.brokenImage)))
@@ -263,7 +266,7 @@ class _BrandsView extends StatelessWidget {
     children: [
       _identity(context, b),
       if (b.description?.trim().isNotEmpty == true) ...[
-        const SizedBox(height: 10),
+        context.ui.spacing.gap(AppSpacing.sm),
         AppText.raw(b.description!.trim(), type: AppTextType.bodySmall,
           color: Theme.of(context).colorScheme.onSurfaceVariant, maxLines: 2),
       ],
@@ -366,7 +369,7 @@ class _BrandEditorState extends State<_BrandEditor> {
                   if (_slug.text.isEmpty) _slug.text = _slugify(v);
                   if (_failure != null) setState(() => _failure = null);
                 }),
-              const SizedBox(height: 12),
+              context.ui.spacing.gap(AppSpacing.smMd),
               AppTextField(controller: _slug, labelKey: BrandsKeys.slug,
                 validator: (v) {
                   final s = v?.trim() ?? '';
@@ -393,7 +396,7 @@ class _BrandEditorState extends State<_BrandEditor> {
                 }),
               const SizedBox(height: 12),
               AppTextField(controller: _description, labelKey: BrandsKeys.description, maxLines: 3),
-              const SizedBox(height: 20),
+              context.ui.spacing.gap(AppSpacing.md),
               Wrap(alignment: WrapAlignment.end, spacing: 8, children: [
                 AppButton(BrandsKeys.cancel, variant: AppButtonVariant.text,
                   onPressed: _saving ? null : () => Navigator.of(context).pop(false)),
