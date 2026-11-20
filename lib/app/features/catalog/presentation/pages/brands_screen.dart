@@ -440,7 +440,14 @@ class _BrandEditorState extends State<_BrandEditor> {
                     if (slug.isEmpty) {
                       return BrandsKeys.slugRequired.tr(context: context);
                     }
-                    if (!RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*
+                    if (slug.length > 150) {
+                      return BrandsKeys.slugTooLong.tr(context: context);
+                    }
+                    if (!RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*$').hasMatch(slug)) {
+                      return BrandsKeys.slugFormat.tr(context: context);
+                    }
+                    return null;
+                  },
                   onChanged: (_) => setState(() {
                     if (_saveFailed) _saveFailed = false;
                   }),
