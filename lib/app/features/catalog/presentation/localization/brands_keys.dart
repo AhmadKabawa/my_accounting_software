@@ -81,9 +81,15 @@ enum BrandsKeys implements AppKey {
   activate(ar: 'إعادة تفعيل', en: 'Reactivate'),
   deactivate(ar: 'إيقاف', en: 'Deactivate'),
   deactivateTitle(ar: 'إيقاف الماركة', en: 'Deactivate brand'),
-  deactivateMessage(ar: 'سيتم إيقاف الماركة مع الاحتفاظ بها وسجلاتها.', en: 'This brand will be deactivated while keeping its record and references.'),
+  deactivateMessage(
+    ar: 'سيتم إيقاف الماركة مع الاحتفاظ بها وسجلاتها.',
+    en: 'This brand will be deactivated while keeping its record and references.',
+  ),
   statusUpdated(ar: 'تم تحديث حالة الماركة.', en: 'Brand status updated.'),
-  brandInUse(ar: 'لا يمكن حذف الماركة لأنها مرتبطة بمنتجات. يمكنك إيقافها بدلاً من ذلك.', en: 'This brand cannot be deleted because products reference it. Deactivate it instead.'),
+  brandInUse(
+    ar: 'لا يمكن حذف الماركة لأنها مرتبطة بمنتجات. يمكنك إيقافها بدلاً من ذلك.',
+    en: 'This brand cannot be deleted because products reference it. Deactivate it instead.',
+  ),
   deleted(ar: 'تم حذف الماركة.', en: 'Brand deleted.'),
   totalBrands(ar: 'إجمالي الماركات', en: 'Total brands'),
   activeBrands(ar: 'الماركات النشطة', en: 'Active brands'),
@@ -95,7 +101,6 @@ enum BrandsKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => this == BrandsKeys.brandName
-      ? 'brands.name'
-      : 'brands.${this.name}';
+  String get key =>
+      this == BrandsKeys.brandName ? 'brands.name' : 'brands.${this.name}';
 }

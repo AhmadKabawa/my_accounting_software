@@ -221,68 +221,66 @@ class AppDataTable<T> extends StatelessWidget {
               onPressed: () => _showMobileSort(context, sortableColumns),
             ),
           ),
-        scrollArea(
-          [
-              for (final row in rows)
-                Padding(
-                  padding: EdgeInsetsDirectional.only(bottom: style.gap),
-                  child: AppCard(
-                    padding: AppSpacing.md,
-                    onTap: onRowActivated == null
-                        ? null
-                        : () => onRowActivated!(row),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (onSelectionChanged != null)
-                          Align(
-                            alignment: AlignmentDirectional.centerEnd,
-                            child: Checkbox(
-                              value: selectedIds.contains(rowId(row)),
-                              onChanged: (checked) =>
-                                  _toggle(row, checked ?? false),
-                            ),
-                          ),
-                        if (cardBuilder != null)
-                          cardBuilder!(context, row)
-                        else ...[
-                          for (final column in primary)
-                            column.cellBuilder(context, row),
-                          for (final column in secondary)
-                            Padding(
-                              padding: EdgeInsets.only(top: style.gap),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: AppText(
-                                      column.labelKey,
-                                      type: AppTextType.labelSmall,
-                                      color: style.colors.onSurfaceVariant,
-                                      maxLines: 2,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: column.cellBuilder(context, row),
-                                  ),
-                                ],
+        scrollArea([
+          for (final row in rows)
+            Padding(
+              padding: EdgeInsetsDirectional.only(bottom: style.gap),
+              child: AppCard(
+                padding: AppSpacing.md,
+                onTap: onRowActivated == null
+                    ? null
+                    : () => onRowActivated!(row),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (onSelectionChanged != null)
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: Checkbox(
+                          value: selectedIds.contains(rowId(row)),
+                          onChanged: (checked) =>
+                              _toggle(row, checked ?? false),
+                        ),
+                      ),
+                    if (cardBuilder != null)
+                      cardBuilder!(context, row)
+                    else ...[
+                      for (final column in primary)
+                        column.cellBuilder(context, row),
+                      for (final column in secondary)
+                        Padding(
+                          padding: EdgeInsets.only(top: style.gap),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: AppText(
+                                  column.labelKey,
+                                  type: AppTextType.labelSmall,
+                                  color: style.colors.onSurfaceVariant,
+                                  maxLines: 2,
+                                ),
                               ),
-                            ),
-                        ],
-                        if (rowActionsBuilder != null)
-                          Align(
-                            alignment: AlignmentDirectional.centerEnd,
-                            child: rowActionsBuilder!(context, row),
+                              Expanded(
+                                flex: 2,
+                                child: column.cellBuilder(context, row),
+                              ),
+                            ],
                           ),
-                      ],
-                    ),
-                  ),
+                        ),
+                    ],
+                    if (rowActionsBuilder != null)
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: rowActionsBuilder!(context, row),
+                      ),
+                  ],
                 ),
-              if (summaryBuilder != null) summaryBuilder!,
-              _pagination(context, mobile: true),
-            ],
-        ),
+              ),
+            ),
+          if (summaryBuilder != null) summaryBuilder!,
+          _pagination(context, mobile: true),
+        ]),
       ],
     );
   }

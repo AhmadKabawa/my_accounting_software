@@ -33,8 +33,9 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
           isFromCache: data.isFromCache,
         ),
       ),
-      ApiFailure<PaginatedResult<BrandModel>>(:final exception) =>
-        Left(ExceptionMapper.map(exception)),
+      ApiFailure<PaginatedResult<BrandModel>>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
@@ -44,8 +45,9 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
         final result = await _remote.createBrand(draft);
         return switch (result) {
           ApiSuccess<BrandModel>(:final data) => Right(data.toEntity()),
-          ApiFailure<BrandModel>(:final exception) =>
-            Left(_mapWriteFailure(exception)),
+          ApiFailure<BrandModel>(:final exception) => Left(
+            _mapWriteFailure(exception),
+          ),
         };
       });
 
@@ -57,8 +59,9 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
     final result = await _remote.updateBrand(id: id, draft: draft);
     return switch (result) {
       ApiSuccess<BrandModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<BrandModel>(:final exception) =>
-        Left(_mapWriteFailure(exception)),
+      ApiFailure<BrandModel>(:final exception) => Left(
+        _mapWriteFailure(exception),
+      ),
     };
   });
 
@@ -70,8 +73,9 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
     final result = await _remote.setBrandActive(id: id, isActive: isActive);
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) =>
-        Left(ExceptionMapper.map(exception)),
+      ApiFailure<Unit>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
@@ -80,8 +84,7 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
     final result = await _remote.deleteBrand(id);
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) =>
-        Left(_mapDeleteFailure(exception)),
+      ApiFailure<Unit>(:final exception) => Left(_mapDeleteFailure(exception)),
     };
   });
 

@@ -29,47 +29,46 @@ void main() {
   for (final width in [360.0, 600.0, 900.0, 1200.0]) {
     for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
       for (final dark in [false, true]) {
-        testWidgets(
-          'brands page renders at $width, $direction, dark=$dark',
-          (tester) async {
-            setScreenSize(tester, Size(width, 900));
-            final repository = FakeBrandsRepository();
-            sl.registerFactory<BrandsListCubit>(
-              () => BrandsListCubit(
-                getBrands: GetBrandsUseCase(repository),
-                setBrandActive: SetBrandActiveUseCase(repository),
-                deleteBrand: DeleteBrandUseCase(repository),
-              ),
-            );
-            addTearDown(() async => sl.reset());
+        testWidgets('brands page renders at $width, $direction, dark=$dark', (
+          tester,
+        ) async {
+          setScreenSize(tester, Size(width, 900));
+          final repository = FakeBrandsRepository();
+          sl.registerFactory<BrandsListCubit>(
+            () => BrandsListCubit(
+              getBrands: GetBrandsUseCase(repository),
+              setBrandActive: SetBrandActiveUseCase(repository),
+              deleteBrand: DeleteBrandUseCase(repository),
+            ),
+          );
+          addTearDown(() async => sl.reset());
 
-            await tester.pumpWidget(
-              MultiBlocProvider(
-                providers: [
-                  BlocProvider<AccessCubit>(
-                    create: (_) => AccessCubit(
-                      getMyAccess: GetMyAccessUseCase(_NoopAccessRepository()),
-                    ),
+          await tester.pumpWidget(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider<AccessCubit>(
+                  create: (_) => AccessCubit(
+                    getMyAccess: GetMyAccessUseCase(_NoopAccessRepository()),
                   ),
-                ],
-                child: buildTestApp(
-                  direction: direction,
-                  theme: dark ? AppTheme.dark() : AppTheme.light(),
-                  home: const Scaffold(body: BrandsScreen()),
                 ),
+              ],
+              child: buildTestApp(
+                direction: direction,
+                theme: dark ? AppTheme.dark() : AppTheme.light(),
+                home: const Scaffold(body: BrandsScreen()),
               ),
-            );
-            await tester.pumpAndSettle();
+            ),
+          );
+          await tester.pumpAndSettle();
 
-            expect(tester.takeException(), isNull);
-            expect(find.byType(BrandsScreen), findsOneWidget);
-            expect(find.text('Brands'), findsOneWidget);
-            expect(find.text('Total brands'), findsOneWidget);
-            expect(find.text('Active brands'), findsOneWidget);
-            expect(find.text('Inactive brands'), findsOneWidget);
-            expect(find.text('Brand deleted'), findsNothing);
-          },
-        );
+          expect(tester.takeException(), isNull);
+          expect(find.byType(BrandsScreen), findsOneWidget);
+          expect(find.text('Brands'), findsOneWidget);
+          expect(find.text('Total brands'), findsOneWidget);
+          expect(find.text('Active brands'), findsOneWidget);
+          expect(find.text('Inactive brands'), findsOneWidget);
+          expect(find.text('Brand deleted'), findsNothing);
+        });
       }
     }
   }

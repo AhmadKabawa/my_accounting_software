@@ -91,10 +91,7 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(
-        buildTestApp(
-          theme: AppTheme.light(),
-          home: listPage(60),
-        ),
+        buildTestApp(theme: AppTheme.light(), home: listPage(60)),
       );
       expect(tester.takeException(), isNull);
 

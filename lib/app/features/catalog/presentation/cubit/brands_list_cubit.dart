@@ -31,7 +31,11 @@ final class BrandsListLoading extends BrandsListState {
 }
 
 final class BrandsListReady extends BrandsListState {
-  const BrandsListReady({required this.result, required this.query, this.stats});
+  const BrandsListReady({
+    required this.result,
+    required this.query,
+    this.stats,
+  });
   final PaginatedResult<Brand> result;
   final BrandListQuery query;
   final BrandStats? stats;
@@ -83,7 +87,8 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     if (isClosed || requestVersion != _requestVersion) return;
     result.fold(
       (failure) => emit(BrandsListFailed(failure)),
-      (page) => emit(BrandsListReady(result: page, query: _query, stats: _stats)),
+      (page) =>
+          emit(BrandsListReady(result: page, query: _query, stats: _stats)),
     );
   }
 
@@ -120,11 +125,13 @@ class BrandsListCubit extends Cubit<BrandsListState> {
   Future<BrandStats?> _fetchStats() async {
     final results = await Future.wait([
       _getBrands(const BrandListQuery(page: 1, pageSize: 1)),
-      _getBrands(const BrandListQuery(
-        status: BrandStatusFilter.active,
-        page: 1,
-        pageSize: 1,
-      )),
+      _getBrands(
+        const BrandListQuery(
+          status: BrandStatusFilter.active,
+          page: 1,
+          pageSize: 1,
+        ),
+      ),
     ]);
     int? total;
     int? active;
