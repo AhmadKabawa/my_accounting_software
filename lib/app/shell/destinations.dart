@@ -37,6 +37,15 @@ const appDestinations = [
   ),
   AppDestination(
     item: NavBarItem.icons(
+      icon: AppIcons.brands,
+      activeIcon: AppIcons.brands,
+      label: NavKeys.brands,
+    ),
+    branchIndex: 2,
+    permission: Permission('masterdata.manage'),
+  ),
+  AppDestination(
+    item: NavBarItem.icons(
       icon: AppIcons.profile,
       activeIcon: AppIcons.profileActive,
       label: NavKeys.person,
