@@ -171,7 +171,7 @@ class _BrandsView extends StatelessWidget {
               priority: DataTableColumnPriority.secondary, flex: 2,
               cellBuilder: (c, b) => AppText.raw(
                 b.description?.trim().isNotEmpty == true ? b.description!.trim() : '—',
-                color: Theme.of(c).colorScheme.onSurfaceVariant, maxLines: 2)),
+                color: c.ui.theme.colors.onSurfaceVariant, maxLines: 2)),
             DataTableColumn(labelKey: BrandsKeys.productCount,
               priority: DataTableColumnPriority.secondary, numeric: true,
               cellBuilder: (_, b) => AppText.raw(b.productCount?.toString() ?? '—')),
@@ -225,7 +225,7 @@ class _BrandsView extends StatelessWidget {
         children: [
           AppText.raw(brand.name, type: AppTextType.titleSmall),
           AppText.raw(brand.slug, type: AppTextType.bodySmall,
-            color: Theme.of(context).colorScheme.onSurfaceVariant),
+            color: context.ui.theme.colors.onSurfaceVariant),
         ],
       )),
     ],
@@ -250,7 +250,7 @@ class _BrandsView extends StatelessWidget {
                 semanticsLabel: brand.name,
                 errorWidget: const Center(child: AppIcon(AppIcons.brokenImage)))
             : ColoredBox(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                color: context.ui.theme.colors.surfaceContainerHighest,
                 child: const Center(child: AppIcon(AppIcons.brands)))),
     );
   }
@@ -268,7 +268,7 @@ class _BrandsView extends StatelessWidget {
       if (b.description?.trim().isNotEmpty == true) ...[
         context.ui.spacing.gap(AppSpacing.sm),
         AppText.raw(b.description!.trim(), type: AppTextType.bodySmall,
-          color: Theme.of(context).colorScheme.onSurfaceVariant, maxLines: 2),
+          color: context.ui.theme.colors.onSurfaceVariant, maxLines: 2),
       ],
       context.ui.spacing.gap(AppSpacing.sm),
       Wrap(spacing: 8, runSpacing: 8, children: [
