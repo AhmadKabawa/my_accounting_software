@@ -685,7 +685,7 @@ class _BrandEditorState extends State<_BrandEditor> {
                   padding: AppSpacing.sm,
                   child: SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: AppText(BrandsKeys.active),
+                    title: AppText(BrandsKeys.status),
                     subtitle: AppText(
                       _active ? BrandsKeys.active : BrandsKeys.inactive,
                       type: AppTextType.bodySmall,
