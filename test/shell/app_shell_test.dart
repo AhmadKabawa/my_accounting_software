@@ -445,6 +445,41 @@ void main() {
       },
     );
 
+    testWidgets('failed guarded logout keeps dirty forms registered', (
+      tester,
+    ) async {
+      var discards = 0;
+      final guard = UnsavedChangesGuard()
+        ..updateForm(
+          key: Object(),
+          branchIndex: 0,
+          dirty: true,
+          confirm: () async => true,
+          discard: () => discards++,
+        );
+      await _pump(
+        tester,
+        const Size(1200, 900),
+        guard: guard,
+        userMenuEntries: [
+          AppMenuEntry(
+            label: TemplateKeys.save,
+            requiresUnsavedChangesCheck: true,
+            onSelected: () {},
+            onSelectedGuardedAsync: () async => false,
+          ),
+        ],
+      );
+
+      await tester.tap(find.byTooltip('User menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(TemplateKeys.save.en));
+      await tester.pumpAndSettle();
+
+      expect(discards, 0);
+      guard.dispose();
+    });
+
     testWidgets(
       'changing organization confirms a dirty form in an inactive branch',
       (tester) async {
