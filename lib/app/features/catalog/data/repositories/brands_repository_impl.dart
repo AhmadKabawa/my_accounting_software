@@ -4,8 +4,10 @@ import 'package:accounting_software/app/core/error/exceptions/app_exception.dart
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
 import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
+import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/data/datasources/brands_remote_data_source.dart';
+import 'package:accounting_software/app/features/catalog/data/models/brand_model.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/domain/entity/brand_list_query.dart';
@@ -21,28 +23,30 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
     BrandListQuery query,
   ) => execute(() async {
     final result = await _remote.getBrands(query);
-    return result.when(
-      success: (page) => Right(
+    return switch (result) {
+      ApiSuccess<PaginatedResult<BrandModel>>(:final data) => Right(
         PaginatedResult<Brand>(
-          items: page.items.map((model) => model.toEntity()).toList(),
-          totalCount: page.totalCount,
-          currentPage: page.currentPage,
-          totalPages: page.totalPages,
-          isFromCache: page.isFromCache,
+          items: data.items.map((model) => model.toEntity()).toList(),
+          totalCount: data.totalCount,
+          currentPage: data.currentPage,
+          totalPages: data.totalPages,
+          isFromCache: data.isFromCache,
         ),
       ),
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
+      ApiFailure<PaginatedResult<BrandModel>>(:final exception) =>
+        Left(ExceptionMapper.map(exception)),
+    };
   });
 
   @override
   Future<Either<Failure, Brand>> createBrand(BrandDraft draft) =>
       execute(() async {
         final result = await _remote.createBrand(draft);
-        return result.when(
-          success: (model) => Right(model.toEntity()),
-          failure: (exception) => Left(_mapWriteFailure(exception)),
-        );
+        return switch (result) {
+          ApiSuccess<BrandModel>(:final data) => Right(data.toEntity()),
+          ApiFailure<BrandModel>(:final exception) =>
+            Left(_mapWriteFailure(exception)),
+        };
       });
 
   @override
@@ -51,10 +55,11 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
     required BrandDraft draft,
   }) => execute(() async {
     final result = await _remote.updateBrand(id: id, draft: draft);
-    return result.when(
-      success: (model) => Right(model.toEntity()),
-      failure: (exception) => Left(_mapWriteFailure(exception)),
-    );
+    return switch (result) {
+      ApiSuccess<BrandModel>(:final data) => Right(data.toEntity()),
+      ApiFailure<BrandModel>(:final exception) =>
+        Left(_mapWriteFailure(exception)),
+    };
   });
 
   @override
@@ -63,19 +68,21 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
     required bool isActive,
   }) => execute(() async {
     final result = await _remote.setBrandActive(id: id, isActive: isActive);
-    return result.when(
-      success: (_) => const Right(unit),
-      failure: (exception) => Left(ExceptionMapper.map(exception)),
-    );
+    return switch (result) {
+      ApiSuccess<Unit>() => const Right(unit),
+      ApiFailure<Unit>(:final exception) =>
+        Left(ExceptionMapper.map(exception)),
+    };
   });
 
   @override
   Future<Either<Failure, Unit>> deleteBrand(int id) => execute(() async {
     final result = await _remote.deleteBrand(id);
-    return result.when(
-      success: (_) => const Right(unit),
-      failure: (exception) => Left(_mapDeleteFailure(exception)),
-    );
+    return switch (result) {
+      ApiSuccess<Unit>() => const Right(unit),
+      ApiFailure<Unit>(:final exception) =>
+        Left(_mapDeleteFailure(exception)),
+    };
   });
 
   Failure _mapWriteFailure(AppException exception) {
