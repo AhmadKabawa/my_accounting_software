@@ -71,6 +71,7 @@ class BrandsListCubit extends Cubit<BrandsListState> {
   BrandStats? _stats;
 
   BrandListQuery get query => _query;
+  BrandStats? get stats => _stats;
 
   Future<void> load() async {
     _searchTimer?.cancel();
@@ -129,11 +130,13 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     int? active;
     results[0].fold((_) {}, (page) => total = page.totalCount);
     results[1].fold((_) {}, (page) => active = page.totalCount);
-    if (total == null || active == null) return null;
+    final totalCount = total;
+    final activeCount = active;
+    if (totalCount == null || activeCount == null) return null;
     return BrandStats(
-      total: total!,
-      active: active!,
-      inactive: total! - active!,
+      total: totalCount,
+      active: activeCount,
+      inactive: totalCount - activeCount,
     );
   }
 
