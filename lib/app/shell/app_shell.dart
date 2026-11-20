@@ -19,6 +19,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_shell/app_
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
 
 const _mobileDestinationOverflowThreshold = 5;
 const _mobileVisibleDestinationsWhenOverflow = 4;
@@ -235,6 +236,14 @@ class AppShell extends StatelessWidget {
     );
 
     return AccessStatusGate(
+      onSignOut: () async {
+        if (!await _confirmAllForms() || !context.mounted) return false;
+        final succeeded = await context
+            .read<SessionCubit>()
+            .signOutWithResult();
+        if (succeeded) unsavedChangesGuard?.discardAll();
+        return succeeded;
+      },
       child: FlashMessageListener(
         child: Rh.builder(
           context: context,
