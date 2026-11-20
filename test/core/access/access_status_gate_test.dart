@@ -110,5 +110,6 @@ void main() {
     expect(find.text(AccessKeys.noAvailableBranches.en), findsOneWidget);
     expect(find.text('protected shell'), findsNothing);
     expect(find.text('Retry'), findsNothing);
+    expect(find.text('Sign out'), findsOneWidget);
   });
 }
