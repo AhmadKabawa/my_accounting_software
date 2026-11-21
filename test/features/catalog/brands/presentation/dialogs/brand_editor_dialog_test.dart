@@ -31,7 +31,6 @@ class _Picker implements ImagePickerPort {
 
   @override
   Future<PickedImage?> pickImage() => handler();
-
 }
 
 class _Failure extends Failure {
@@ -96,16 +95,15 @@ void main() {
   ) async {
     final repository = FakeBrandsRepository();
     bool? result;
-    await _pumpEditor(
-      tester,
-      repository,
-      onResult: (value) => result = value,
-    );
+    await _pumpEditor(tester, repository, onResult: (value) => result = value);
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Vaude Store');
     await tester.pump();
     expect(
-      tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text,
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).at(1))
+          .controller!
+          .text,
       'vaude-store',
     );
     await tester.tap(find.text(BrandsKeys.save.en));
@@ -127,10 +125,16 @@ void main() {
     await tester.enterText(fields.at(0), 'Second Name');
     await tester.pump();
 
-    expect(tester.widget<TextFormField>(fields.at(1)).controller!.text, 'manual-slug');
+    expect(
+      tester.widget<TextFormField>(fields.at(1)).controller!.text,
+      'manual-slug',
+    );
     await tester.tap(find.text(BrandsKeys.regenerateSlug.en));
     await tester.pump();
-    expect(tester.widget<TextFormField>(fields.at(1)).controller!.text, 'second-name');
+    expect(
+      tester.widget<TextFormField>(fields.at(1)).controller!.text,
+      'second-name',
+    );
   });
 
   testWidgets('Arabic name stays without transliteration and shows guidance', (
@@ -140,7 +144,13 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(0), 'ماركة عربية');
     await tester.pump();
 
-    expect(tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text, isEmpty);
+    expect(
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).at(1))
+          .controller!
+          .text,
+      isEmpty,
+    );
     expect(find.text(BrandsKeys.slugLatinHint.en), findsOneWidget);
   });
 
@@ -158,22 +168,29 @@ void main() {
     await _pumpEditor(tester, FakeBrandsRepository(), brand: brand);
     await tester.enterText(find.byType(TextFormField).at(0), 'Changed name');
     await tester.pump();
-    expect(tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text, 'stable-slug');
+    expect(
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).at(1))
+          .controller!
+          .text,
+      'stable-slug',
+    );
   });
 
-  testWidgets('duplicate save failure shows the duplicate banner and stays open', (
-    tester,
-  ) async {
-    final repository = FakeBrandsRepository()
-      ..onCreateBrand = (_) async => const Left(BrandDuplicateFailure());
-    await _pumpEditor(tester, repository);
-    await tester.enterText(find.byType(TextFormField).at(0), 'Duplicate');
-    await tester.tap(find.text(BrandsKeys.save.en));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'duplicate save failure shows the duplicate banner and stays open',
+    (tester) async {
+      final repository = FakeBrandsRepository()
+        ..onCreateBrand = (_) async => const Left(BrandDuplicateFailure());
+      await _pumpEditor(tester, repository);
+      await tester.enterText(find.byType(TextFormField).at(0), 'Duplicate');
+      await tester.tap(find.text(BrandsKeys.save.en));
+      await tester.pumpAndSettle();
 
-    expect(find.text(BrandsKeys.duplicateError.en), findsOneWidget);
-    expect(find.byType(AppFormDialog), findsOneWidget);
-  });
+      expect(find.text(BrandsKeys.duplicateError.en), findsOneWidget);
+      expect(find.byType(AppFormDialog), findsOneWidget);
+    },
+  );
 
   testWidgets('saving prevents Escape and system back from closing', (
     tester,
@@ -210,11 +227,13 @@ void main() {
     tester,
   ) async {
     final repository = FakeBrandsRepository();
-    final picker = _Picker(() async => PickedImage(
-      bytes: Uint8List.fromList([1, 2, 3]),
-      fileName: 'logo.png',
-      mimeType: 'image/png',
-    ));
+    final picker = _Picker(
+      () async => PickedImage(
+        bytes: Uint8List.fromList([1, 2, 3]),
+        fileName: 'logo.png',
+        mimeType: 'image/png',
+      ),
+    );
     await _pumpEditor(tester, repository, picker: picker);
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
@@ -225,11 +244,13 @@ void main() {
   testWidgets('upload failure shows an inline banner', (tester) async {
     final repository = FakeBrandsRepository()
       ..uploadResult = const Left(_Failure());
-    final picker = _Picker(() async => PickedImage(
-      bytes: Uint8List.fromList([1, 2, 3]),
-      fileName: 'logo.png',
-      mimeType: 'image/png',
-    ));
+    final picker = _Picker(
+      () async => PickedImage(
+        bytes: Uint8List.fromList([1, 2, 3]),
+        fileName: 'logo.png',
+        mimeType: 'image/png',
+      ),
+    );
     await _pumpEditor(tester, repository, picker: picker);
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
@@ -248,7 +269,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(BrandsKeys.saveError.en), findsOneWidget);
-    await tester.enterText(find.byType(TextFormField).at(2), 'Changed description');
+    await tester.enterText(
+      find.byType(TextFormField).at(2),
+      'Changed description',
+    );
     await tester.pump();
     expect(find.text(BrandsKeys.saveError.en), findsOneWidget);
     await tester.enterText(find.byType(TextFormField).at(0), 'Changed name');
@@ -338,5 +362,4 @@ void main() {
       await tester.pumpAndSettle();
     }
   });
-
 }

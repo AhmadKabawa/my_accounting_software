@@ -55,7 +55,7 @@ class BrandsScreen extends StatelessWidget {
                 final refreshFailure = state.hasData ? state.failure : null;
                 final loading = state.isInitialLoading;
                 final refreshing = state.isRefreshing;
-    
+
                 return ListPageTemplate(
                   titleKey: BrandsKeys.title,
                   breadcrumb: AppBreadcrumb(

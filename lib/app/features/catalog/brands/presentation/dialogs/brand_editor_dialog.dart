@@ -174,10 +174,12 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
                             slug: _slug,
                             onNameChanged: _onNameChanged,
                             onSlugChanged: _onSlugChanged,
-                            showSlugHint: _name.text.trim().isNotEmpty &&
+                            showSlugHint:
+                                _name.text.trim().isNotEmpty &&
                                 brandSlugFrom(_name.text).isEmpty,
                             onRegenerateSlug:
-                                _slugTouched && brandSlugFrom(_name.text).isNotEmpty
+                                _slugTouched &&
+                                    brandSlugFrom(_name.text).isNotEmpty
                                 ? _regenerateSlug
                                 : null,
                           ),

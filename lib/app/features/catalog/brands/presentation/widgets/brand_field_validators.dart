@@ -32,5 +32,4 @@ abstract final class BrandFieldValidators {
       ValidationRule.pattern: BrandsKeys.slugFormat,
     },
   );
-
 }

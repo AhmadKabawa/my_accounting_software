@@ -45,10 +45,7 @@ enum BrandsKeys implements AppKey {
     ar: 'اكتب معرّفاً لاتينياً: أحرف إنجليزية وأرقام وشرطة',
     en: 'Enter a Latin identifier: English letters, numbers and hyphens.',
   ),
-  regenerateSlug(
-    ar: 'إعادة توليد من الاسم',
-    en: 'Regenerate from name',
-  ),
+  regenerateSlug(ar: 'إعادة توليد من الاسم', en: 'Regenerate from name'),
   slugFormat(
     ar: 'استخدم أحرفاً إنجليزية صغيرة وأرقاماً، ويمكن الفصل بينها بشرطة (-).',
     en: 'Use lowercase English letters and numbers, separated by hyphens.',

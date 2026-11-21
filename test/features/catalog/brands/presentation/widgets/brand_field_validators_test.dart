@@ -28,5 +28,4 @@ void main() {
     expect(BrandFieldValidators.slug('North Wind'), BrandsKeys.slugFormat.en);
     expect(BrandFieldValidators.slug('north-wind-2'), isNull);
   });
-
 }

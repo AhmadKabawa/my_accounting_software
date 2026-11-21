@@ -54,9 +54,7 @@ Future<void> _pumpScreen(
   addTearDown(tester.view.reset);
   sl.registerFactory<FlashMessages>(FlashMessages.new);
   sl.registerFactory<BrandStatsCubit>(
-    () => BrandStatsCubit(
-      getBrandStats: GetBrandStatsUseCase(repository),
-    ),
+    () => BrandStatsCubit(getBrandStats: GetBrandStatsUseCase(repository)),
   );
   sl.registerFactory<BrandsListCubit>(
     () => BrandsListCubit(
@@ -71,9 +69,9 @@ Future<void> _pumpScreen(
   await tester.pumpWidget(
     buildTestApp(
       home: BlocProvider<AccessCubit>(
-        create: (_) => AccessCubit(
-          getMyAccess: GetMyAccessUseCase(_AccessRepository()),
-        )..load(),
+        create: (_) =>
+            AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))
+              ..load(),
         child: const Scaffold(body: BrandsScreen()),
       ),
     ),
@@ -141,11 +139,7 @@ void main() {
           totalPages: 1,
         ),
       );
-    await _pumpScreen(
-      tester,
-      repository,
-      size: const Size(1280, 900),
-    );
+    await _pumpScreen(tester, repository, size: const Size(1280, 900));
 
     await tester.tap(find.byTooltip(BrandsKeys.deactivate.en).first);
     await tester.pumpAndSettle();
@@ -173,11 +167,7 @@ void main() {
           totalPages: 1,
         ),
       );
-    await _pumpScreen(
-      tester,
-      repository,
-      size: const Size(1280, 900),
-    );
+    await _pumpScreen(tester, repository, size: const Size(1280, 900));
 
     await tester.tap(find.byType(AppMenu));
     await tester.pumpAndSettle();

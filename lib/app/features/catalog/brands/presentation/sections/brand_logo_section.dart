@@ -86,7 +86,6 @@ class BrandLogoSection extends StatelessWidget {
                   ],
                 ),
               ),
-
             ],
           );
         },
