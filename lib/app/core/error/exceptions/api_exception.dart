@@ -87,11 +87,17 @@ class ApiException extends AppException {
     );
   }
 
-  factory ApiException.conflict({String? serverMessage}) {
+  factory ApiException.conflict({
+    String? serverMessage,
+    String? errorCode,
+    String? details,
+  }) {
     return ApiException._(
       message: serverMessage ?? ErrorKeys.conflict.key,
       statusCode: 409,
       type: ApiExceptionType.conflict,
+      errorCode: errorCode,
+      details: details,
     );
   }
 
