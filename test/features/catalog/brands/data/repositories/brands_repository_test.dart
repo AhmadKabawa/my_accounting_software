@@ -125,7 +125,9 @@ void main() {
     );
   });
 
-  test('does not treat every delete conflict as a foreign-key conflict', () async {
+  test(
+    'does not treat every delete conflict as a foreign-key conflict',
+    () async {
     api.deleteFailure = ApiException.conflict();
 
     final result = await repository.deleteBrand(12);
