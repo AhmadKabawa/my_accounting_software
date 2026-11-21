@@ -45,11 +45,12 @@ class BrandLogoSection extends StatelessWidget {
                 ),
                 context.ui.spacing.gap(AppSpacing.sm),
               ],
-              ValueListenableBuilder<TextEditingValue>(
-                valueListenable: logo,
-                builder: (context, value, _) => Row(
+              // Rebuilds on the logo URL and on the name (initials fallback).
+              ListenableBuilder(
+                listenable: Listenable.merge([logo, brandName]),
+                builder: (context, _) => Row(
                   children: [
-                    BrandLogoImage(url: value.text, label: brandName.text),
+                    BrandLogoImage(url: logo.text, label: brandName.text),
                     context.ui.spacing.gap(
                       AppSpacing.smMd,
                       axis: Axis.horizontal,
@@ -61,7 +62,7 @@ class BrandLogoSection extends StatelessWidget {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           AppButton(
-                            value.text.trim().isEmpty
+                            logo.text.trim().isEmpty
                                 ? BrandsKeys.uploadLogo
                                 : BrandsKeys.replaceLogo,
                             variant: AppButtonVariant.outlined,
@@ -74,7 +75,7 @@ class BrandLogoSection extends StatelessWidget {
                                       .read<BrandLogoUploadCubit>()
                                       .pickAndUpload,
                           ),
-                          if (value.text.trim().isNotEmpty)
+                          if (logo.text.trim().isNotEmpty)
                             AppIconButton(
                               AppIcons.delete,
                               tooltipKey: BrandsKeys.removeLogo,
