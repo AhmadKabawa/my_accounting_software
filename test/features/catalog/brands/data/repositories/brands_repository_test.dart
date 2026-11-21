@@ -128,18 +128,19 @@ void main() {
   test(
     'does not treat every delete conflict as a foreign-key conflict',
     () async {
-    api.deleteFailure = ApiException.conflict();
+      api.deleteFailure = ApiException.conflict();
 
-    final result = await repository.deleteBrand(12);
+      final result = await repository.deleteBrand(12);
 
-    result.fold(
-      (failure) {
-        expect(failure, isNot(isA<BrandInUseFailure>()));
-        expect(failure, isA<Failure>());
-      },
-      (_) => fail('Expected conflict failure'),
-    );
-  });
+      result.fold(
+        (failure) {
+          expect(failure, isNot(isA<BrandInUseFailure>()));
+          expect(failure, isA<Failure>());
+        },
+        (_) => fail('Expected conflict failure'),
+      );
+    },
+  );
 
   test(
     'uses the MIME type when an uploaded filename has no extension',
