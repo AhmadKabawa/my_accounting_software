@@ -70,9 +70,7 @@ class _AppFormDialogState extends State<AppFormDialog> {
 
   @override
   Widget build(BuildContext context) => CallbackShortcuts(
-    bindings: {
-      const SingleActivator(LogicalKeyboardKey.escape): _requestClose,
-    },
+    bindings: {const SingleActivator(LogicalKeyboardKey.escape): _requestClose},
     child: Focus(
       autofocus: true,
       child: PopScope(
@@ -148,10 +146,7 @@ class _AppFormDialogState extends State<AppFormDialog> {
 
 /// Opens the shared form shell as a centered dialog or a full-height mobile
 /// sheet. Both presentations are intentionally non-dismissible by the barrier.
-Future<T?> showAppFormDialog<T>(
-  BuildContext context,
-  WidgetBuilder builder,
-) {
+Future<T?> showAppFormDialog<T>(BuildContext context, WidgetBuilder builder) {
   if (context.ui.screen.isMobile) {
     return showModalBottomSheet<T>(
       context: context,

@@ -108,14 +108,17 @@ class AppValidator {
 
         case ValidationRule.pattern:
           final pattern = params?[ValidationRule.pattern] as RegExp?;
-          if (value == null || pattern == null || !pattern.hasMatch(value.trim())) {
+          if (value == null ||
+              pattern == null ||
+              !pattern.hasMatch(value.trim())) {
             return _translate(ValidationRule.pattern, customKeys);
           }
           break;
 
         case ValidationRule.httpUrl:
           final uri = Uri.tryParse(value?.trim() ?? '');
-          final valid = uri != null &&
+          final valid =
+              uri != null &&
               uri.hasScheme &&
               (uri.scheme == 'http' || uri.scheme == 'https') &&
               uri.host.isNotEmpty;

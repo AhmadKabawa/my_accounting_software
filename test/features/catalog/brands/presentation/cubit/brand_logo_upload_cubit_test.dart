@@ -22,11 +22,8 @@ class _TestFailure extends Failure {
   const _TestFailure() : super(messageKey: ErrorKeys.conflict);
 }
 
-PickedImage _image({String mime = 'image/png', int size = 10}) => PickedImage(
-  bytes: Uint8List(size),
-  fileName: 'logo.png',
-  mimeType: mime,
-);
+PickedImage _image({String mime = 'image/png', int size = 10}) =>
+    PickedImage(bytes: Uint8List(size), fileName: 'logo.png', mimeType: mime);
 
 void main() {
   late FakeBrandsRepository repository;

@@ -15,7 +15,9 @@ Future<void> initServiceLocator() async {
   initAccessDI();
   await initAuthStorage();
   initAuthDI();
-  sl.registerLazySingleton<ImagePickerPort>(() => const FilePickerImagePicker());
+  sl.registerLazySingleton<ImagePickerPort>(
+    () => const FilePickerImagePicker(),
+  );
   initCatalogDI();
   initOnBoardingDI();
   initSplashDI(checkSession: sl<SessionCubit>().checkAuthentication);

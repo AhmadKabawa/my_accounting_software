@@ -249,7 +249,9 @@ class _FilterBarState extends State<FilterBar> {
   /// One wrapping row: search (capped width), the filter controls inline, then
   /// the optional filter-panel button.
   Widget _wideToolbar(BuildContext context, FilterBarStyle style) {
-    final searchWidth = context.ui.size.width(AppComponentSize.searchFieldWidth);
+    final searchWidth = context.ui.size.width(
+      AppComponentSize.searchFieldWidth,
+    );
     final controlWidth = context.ui.size.width(
       AppComponentSize.filterControlWidth,
     );

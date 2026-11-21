@@ -125,25 +125,32 @@ void main() {
     );
   });
 
-  test('uploads a logo to the product-images bucket and returns its URL', () async {
-    final bytes = Uint8List.fromList([1, 2, 3]);
-    final result = await repository.uploadLogo(
-      BrandLogoUpload(bytes: bytes, fileName: 'Logo.PNG', mimeType: 'image/png'),
-    );
+  test(
+    'uploads a logo to the product-images bucket and returns its URL',
+    () async {
+      final bytes = Uint8List.fromList([1, 2, 3]);
+      final result = await repository.uploadLogo(
+        BrandLogoUpload(
+          bytes: bytes,
+          fileName: 'Logo.PNG',
+          mimeType: 'image/png',
+        ),
+      );
 
-    expect(
-      api.lastPath,
-      startsWith('/storage/v1/object/product-images/brands/'),
-    );
-    expect(api.lastPath, endsWith('.png'));
-    expect(api.lastRawBody, bytes);
-    expect(api.lastOptions?.headers?['Content-Type'], 'image/png');
-    result.fold(
-      (_) => fail('Expected a public URL'),
-      (url) => expect(
-        url,
-        contains('/storage/v1/object/public/product-images/brands/'),
-      ),
-    );
-  });
+      expect(
+        api.lastPath,
+        startsWith('/storage/v1/object/product-images/brands/'),
+      );
+      expect(api.lastPath, endsWith('.png'));
+      expect(api.lastRawBody, bytes);
+      expect(api.lastOptions?.headers?['Content-Type'], 'image/png');
+      result.fold(
+        (_) => fail('Expected a public URL'),
+        (url) => expect(
+          url,
+          contains('/storage/v1/object/public/product-images/brands/'),
+        ),
+      );
+    },
+  );
 }

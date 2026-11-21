@@ -18,7 +18,10 @@ enum CatalogUiKeys implements AppKey {
   loadMore(ar: 'تحميل المزيد', en: 'Load more'),
   rowsPerPage(ar: 'عدد الصفوف', en: 'Rows per page'),
   sortBy(ar: 'ترتيب حسب', en: 'Sort by'),
-  paginationLabel(ar: 'صفحة {page} من {lastPage}', en: 'Page {page} of {lastPage}'),
+  paginationLabel(
+    ar: 'صفحة {page} من {lastPage}',
+    en: 'Page {page} of {lastPage}',
+  ),
   emptyTitle(ar: 'لا توجد بيانات', en: 'No data'),
   emptyDescription(
     ar: 'لا توجد سجلات لعرضها',

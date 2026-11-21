@@ -82,8 +82,7 @@ void main() {
           // Record actions are icons (AppRowActions), never text buttons.
           expect(find.text('Edit brand'), findsNothing);
           expect(find.text('Brand deleted'), findsNothing);
-          },
-        );
+        });
       }
     }
   }

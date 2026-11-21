@@ -30,10 +30,7 @@ final class BrandsListLoading extends BrandsListState {
 }
 
 final class BrandsListReady extends BrandsListState {
-  const BrandsListReady({
-    required this.result,
-    required this.query,
-  });
+  const BrandsListReady({required this.result, required this.query});
   final PaginatedResult<Brand> result;
   final BrandListQuery query;
 
@@ -83,8 +80,7 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     if (isClosed || requestVersion != _requestVersion) return;
     result.fold(
       (failure) => emit(BrandsListFailed(failure)),
-      (page) =>
-          emit(BrandsListReady(result: page, query: _query)),
+      (page) => emit(BrandsListReady(result: page, query: _query)),
     );
   }
 

@@ -118,9 +118,9 @@ void main() {
     expect(_result, isNull);
   });
 
-  testWidgets(
-    'mobile uses a full-height sheet without overflow',
-    (tester) async {
+  testWidgets('mobile uses a full-height sheet without overflow', (
+    tester,
+  ) async {
     await _open(tester, size: _mobile, errorKey: _error);
 
     expect(find.byType(BottomSheet), findsOneWidget);
@@ -137,9 +137,9 @@ void main() {
     expect(_result, isFalse);
   });
 
-  testWidgets(
-    'dirty Escape uses the shared unsaved changes prompt',
-    (tester) async {
+  testWidgets('dirty Escape uses the shared unsaved changes prompt', (
+    tester,
+  ) async {
     await _open(tester, dirty: true);
 
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);

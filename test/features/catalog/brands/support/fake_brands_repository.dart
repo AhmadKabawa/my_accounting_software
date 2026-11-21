@@ -46,7 +46,9 @@ class FakeBrandsRepository implements BrandsRepository {
   }
 
   BrandLogoUpload? lastUpload;
-  Either<Failure, String> uploadResult = const Right('https://cdn.test/logo.png');
+  Either<Failure, String> uploadResult = const Right(
+    'https://cdn.test/logo.png',
+  );
 
   @override
   Future<Either<Failure, String>> uploadLogo(BrandLogoUpload upload) {

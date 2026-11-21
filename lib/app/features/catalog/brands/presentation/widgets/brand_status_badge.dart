@@ -24,7 +24,9 @@ class BrandProductsBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final count = brand.productCount;
     return AppBadge(
-      label: count == null ? BrandsKeys.productsUnknown : BrandsKeys.productsLabel,
+      label: count == null
+          ? BrandsKeys.productsUnknown
+          : BrandsKeys.productsLabel,
       labelArgs: count == null ? null : {'count': count.toString()},
       tone: AppBadgeTone.neutral,
       size: AppBadgeSize.small,

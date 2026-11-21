@@ -104,9 +104,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'retains search text when actions become visible',
-    (tester) async {
+  testWidgets('retains search text when actions become visible', (
+    tester,
+  ) async {
     var showActions = false;
     late StateSetter update;
 
@@ -146,5 +146,4 @@ void main() {
       'search survives',
     );
   });
-
 }

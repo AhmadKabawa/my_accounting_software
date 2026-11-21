@@ -18,7 +18,11 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/wid
 /// Uploading stores the file in Storage and writes its public URL into
 /// [logo], so the saved value is always a URL (`brands.logo`).
 class BrandLogoSection extends StatelessWidget {
-  const BrandLogoSection({super.key, required this.logo, required this.brandName});
+  const BrandLogoSection({
+    super.key,
+    required this.logo,
+    required this.brandName,
+  });
 
   final TextEditingController logo;
   final TextEditingController brandName;
@@ -49,7 +53,10 @@ class BrandLogoSection extends StatelessWidget {
               builder: (context, value, _) => Row(
                 children: [
                   BrandLogoImage(url: value.text, label: brandName.text),
-                  context.ui.spacing.gap(AppSpacing.smMd, axis: Axis.horizontal),
+                  context.ui.spacing.gap(
+                    AppSpacing.smMd,
+                    axis: Axis.horizontal,
+                  ),
                   Expanded(
                     child: Wrap(
                       spacing: context.ui.spacing.sm,
@@ -66,7 +73,9 @@ class BrandLogoSection extends StatelessWidget {
                           isLoading: uploading,
                           onPressed: uploading
                               ? null
-                              : context.read<BrandLogoUploadCubit>().pickAndUpload,
+                              : context
+                                    .read<BrandLogoUploadCubit>()
+                                    .pickAndUpload,
                         ),
                         if (value.text.trim().isNotEmpty)
                           AppIconButton(

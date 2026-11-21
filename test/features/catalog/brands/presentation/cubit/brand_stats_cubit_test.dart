@@ -12,69 +12,74 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import '../../support/fake_brands_repository.dart';
 
 void main() {
-  test('loads global total, active and inactive counts independently', () async {
-    final repository = FakeBrandsRepository();
-    repository.onGetBrands = (query) async {
-      final count = query.status == BrandStatusFilter.active ? 6 : 9;
-      return Right(
-        PaginatedResult<Brand>(
-          items: const [],
-          totalCount: count,
-          currentPage: 1,
-          totalPages: count,
-        ),
-      );
-    };
-    final cubit = BrandStatsCubit(getBrands: GetBrandsUseCase(repository));
+  test(
+    'loads global total, active and inactive counts independently',
+    () async {
+      final repository = FakeBrandsRepository();
+      repository.onGetBrands = (query) async {
+        final count = query.status == BrandStatusFilter.active ? 6 : 9;
+        return Right(
+          PaginatedResult<Brand>(
+            items: const [],
+            totalCount: count,
+            currentPage: 1,
+            totalPages: count,
+          ),
+        );
+      };
+      final cubit = BrandStatsCubit(getBrands: GetBrandsUseCase(repository));
 
-    await cubit.load();
+      await cubit.load();
 
-    expect(cubit.state, isA<BrandStatsLoaded>());
-    final stats = (cubit.state as BrandStatsLoaded).stats;
-    expect(stats.total, 9);
-    expect(stats.active, 6);
-    expect(stats.inactive, 3);
-    expect(repository.queries, hasLength(2));
-    expect(repository.queries.every((query) => query.search.isEmpty), isTrue);
-    await cubit.close();
-  });
+      expect(cubit.state, isA<BrandStatsLoaded>());
+      final stats = (cubit.state as BrandStatsLoaded).stats;
+      expect(stats.total, 9);
+      expect(stats.active, 6);
+      expect(stats.inactive, 3);
+      expect(repository.queries, hasLength(2));
+      expect(repository.queries.every((query) => query.search.isEmpty), isTrue);
+      await cubit.close();
+    },
+  );
 
-  test('ignores stale statistics when a newer refresh finishes first', () async {
-    final repository = FakeBrandsRepository();
-    final pending = <Completer<Either<Failure, PaginatedResult<Brand>>>>[];
-    repository.onGetBrands = (_) {
-      final request = Completer<Either<Failure, PaginatedResult<Brand>>>();
-      pending.add(request);
-      return request.future;
-    };
-    final cubit = BrandStatsCubit(getBrands: GetBrandsUseCase(repository));
+  test(
+    'ignores stale statistics when a newer refresh finishes first',
+    () async {
+      final repository = FakeBrandsRepository();
+      final pending = <Completer<Either<Failure, PaginatedResult<Brand>>>>[];
+      repository.onGetBrands = (_) {
+        final request = Completer<Either<Failure, PaginatedResult<Brand>>>();
+        pending.add(request);
+        return request.future;
+      };
+      final cubit = BrandStatsCubit(getBrands: GetBrandsUseCase(repository));
 
-    final firstLoad = cubit.load();
-    await Future<void>.delayed(Duration.zero);
-    final secondLoad = cubit.refresh();
-    await Future<void>.delayed(Duration.zero);
-    expect(pending, hasLength(4));
+      final firstLoad = cubit.load();
+      await Future<void>.delayed(Duration.zero);
+      final secondLoad = cubit.refresh();
+      await Future<void>.delayed(Duration.zero);
+      expect(pending, hasLength(4));
 
-    pending[2].complete(Right(_page(total: 10)));
-    pending[3].complete(Right(_page(total: 7)));
-    await Future<void>.delayed(Duration.zero);
-    expect((cubit.state as BrandStatsLoaded).stats.total, 10);
-    expect((cubit.state as BrandStatsLoaded).stats.active, 7);
+      pending[2].complete(Right(_page(total: 10)));
+      pending[3].complete(Right(_page(total: 7)));
+      await Future<void>.delayed(Duration.zero);
+      expect((cubit.state as BrandStatsLoaded).stats.total, 10);
+      expect((cubit.state as BrandStatsLoaded).stats.active, 7);
 
-    pending[0].complete(Right(_page(total: 3)));
-    pending[1].complete(Right(_page(total: 2)));
-    await Future.wait([firstLoad, secondLoad]);
+      pending[0].complete(Right(_page(total: 3)));
+      pending[1].complete(Right(_page(total: 2)));
+      await Future.wait([firstLoad, secondLoad]);
 
-    expect((cubit.state as BrandStatsLoaded).stats.total, 10);
-    expect((cubit.state as BrandStatsLoaded).stats.active, 7);
-    await cubit.close();
-  });
+      expect((cubit.state as BrandStatsLoaded).stats.total, 10);
+      expect((cubit.state as BrandStatsLoaded).stats.active, 7);
+      await cubit.close();
+    },
+  );
 }
 
-PaginatedResult<Brand> _page({required int total}) =>
-    PaginatedResult<Brand>(
-      items: const [],
-      totalCount: total,
-      currentPage: 1,
-      totalPages: total,
-    );
+PaginatedResult<Brand> _page({required int total}) => PaginatedResult<Brand>(
+  items: const [],
+  totalCount: total,
+  currentPage: 1,
+  totalPages: total,
+);

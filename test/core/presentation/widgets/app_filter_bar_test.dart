@@ -204,7 +204,10 @@ void main() {
     await tester.pump();
 
     expect(query, '');
-    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, '');
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      '',
+    );
     expect(find.byIcon(Icons.close), findsNothing);
   });
 
