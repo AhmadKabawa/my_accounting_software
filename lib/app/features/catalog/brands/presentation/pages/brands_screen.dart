@@ -126,4 +126,54 @@ class BrandsScreen extends StatelessWidget {
               ),
         ),
       );
+  Future<void> _edit(BuildContext context, [Brand? brand]) async {
+    final saved = await showAppFormDialog<bool>(
+      context,
+      (_) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => sl<BrandFormCubit>()),
+          BlocProvider(create: (_) => sl<BrandLogoUploadCubit>()),
+        ],
+        child: BrandEditorDialog(brand: brand),
+      ),
+    );
+    if (saved == true && context.mounted) {
+      await context.read<BrandsListCubit>().onBrandSaved(isNew: brand == null);
+    }
+  }
+
+  Future<void> _delete(BuildContext context, Brand brand) async {
+    await showConfirmDialog(
+      context,
+      titleKey: BrandsKeys.delete,
+      messageKey: BrandsKeys.confirmDelete,
+      severity: ConfirmDialogSeverity.warning,
+      targetName: brand.name,
+      onConfirm: () async {
+        final result = await context.read<BrandsListCubit>().delete(brand);
+        return result.fold((failure) => failure.messageKey, (_) => null);
+      },
+    );
+  }
+
+  Future<void> _status(BuildContext context, Brand brand) async {
+    final cubit = context.read<BrandsListCubit>();
+    if (!brand.isActive) {
+      await cubit.activate(brand.id);
+      return;
+    }
+
+    await showConfirmDialog(
+      context,
+      titleKey: BrandsKeys.deactivateTitle,
+      messageKey: BrandsKeys.deactivateMessage,
+      severity: ConfirmDialogSeverity.warning,
+      targetName: brand.name,
+      onConfirm: () async {
+        final result = await cubit.deactivate(brand.id);
+        return result.fold((failure) => failure.messageKey, (_) => null);
+      },
+    );
+  }
+
 }
