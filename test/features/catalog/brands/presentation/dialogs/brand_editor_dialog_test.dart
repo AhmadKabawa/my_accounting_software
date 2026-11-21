@@ -256,9 +256,7 @@ void main() {
     expect(find.text(BrandsKeys.saveError.en), findsNothing);
   });
 
-  testWidgets('clean cancel closes immediately and dirty cancel asks first', (
-    tester,
-  ) async {
+  testWidgets('clean cancel closes immediately', (tester) async {
     bool? cleanResult;
     await _pumpEditor(
       tester,
@@ -267,12 +265,18 @@ void main() {
     );
     await tester.tap(find.text(BrandsKeys.cancel.en));
     await tester.pumpAndSettle();
-    expect(cleanResult, isFalse);
 
+    expect(cleanResult, isFalse);
+    expect(find.byType(AppFormDialog), findsNothing);
+  });
+
+  testWidgets('dirty cancel asks before closing', (tester) async {
     await _pumpEditor(tester, FakeBrandsRepository());
     await tester.enterText(find.byType(TextFormField).at(0), 'Unsaved');
+    await tester.pump();
     await tester.tap(find.text(BrandsKeys.cancel.en));
     await tester.pumpAndSettle();
+
     expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
     expect(find.byType(AppFormDialog), findsOneWidget);
   });
