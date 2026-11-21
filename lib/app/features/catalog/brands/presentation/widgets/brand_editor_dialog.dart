@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
