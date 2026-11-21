@@ -54,7 +54,9 @@ void main() {
         pending.add(request);
         return request.future;
       };
-      final cubit = BrandStatsCubit(getBrandStats: GetBrandStatsUseCase(repository));
+      final cubit = BrandStatsCubit(
+        getBrandStats: GetBrandStatsUseCase(repository),
+      );
 
       final firstLoad = cubit.load();
       await Future<void>.delayed(Duration.zero);
