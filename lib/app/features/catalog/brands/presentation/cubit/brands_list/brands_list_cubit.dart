@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -12,7 +12,7 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/g
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_state.dart';
 
-class BrandsListCubit extends Cubit<BrandsListState> {
+class BrandsListCubit extends BaseCubit<BrandsListState, void> {
   BrandsListCubit({
     required GetBrandsUseCase getBrands,
     required SetBrandActiveUseCase setBrandActive,
