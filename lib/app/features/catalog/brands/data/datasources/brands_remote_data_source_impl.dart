@@ -82,7 +82,7 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
 
   @override
   Future<ApiResult<String>> uploadLogo(BrandLogoUpload upload) {
-    final extension = upload.fileName.split('.').last.toLowerCase();
+    final extension = _fileExtension(upload);
     final stamp = DateTime.now().microsecondsSinceEpoch;
     final path =
         '${BrandsEndpoint.logoFolder}/$stamp-${Random().nextInt(0x7fffffff)}.$extension';
