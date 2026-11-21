@@ -20,8 +20,19 @@ import '../../support/fake_brands_repository.dart';
 
 class _NoopAccessRepository implements AccessRepository {
   @override
-  Future<Either<Failure, AccessSnapshot>> getMyAccess() =>
-      throw UnimplementedError();
+  Future<Either<Failure, AccessSnapshot>> getMyAccess() async => const Right(
+    AccessSnapshot(
+      userId: 'test-user',
+      username: 'test',
+      email: null,
+      isSuperAdmin: false,
+      roles: [],
+      permissions: {},
+      branches: [],
+      warehouses: [],
+      posTerminals: [],
+    ),
+  );
 }
 
 void main() {
@@ -51,7 +62,12 @@ void main() {
             width: width,
             direction: direction,
             dark: dark,
-            home: const Scaffold(body: BrandsScreen()),
+            home: BlocProvider<AccessCubit>(
+              create: (_) => AccessCubit(
+                getMyAccess: GetMyAccessUseCase(_NoopAccessRepository()),
+              )..load(),
+              child: const Scaffold(body: BrandsScreen()),
+            ),
           );
 
           expect(find.byType(BrandsScreen), findsOneWidget);

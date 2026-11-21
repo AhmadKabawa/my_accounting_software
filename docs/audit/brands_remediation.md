@@ -42,7 +42,8 @@
 | DEC-3 | تأجيل FormSection وFormFieldGroup حتى تتكرر الحاجة في ميزتين | مؤكد من الكود | لا تغيير مطلوب | — | قرار بلا كود |
 | DEC-4 | ConfirmDialog لا يُعدّل الآن | مؤكد من الكود | `app_confirm_dialog/confirm_dialog.dart` | — | قرار بلا كود |
 | FIX-1 | تحديث مرجع BrandsKeys في سجل المفاتيح ومسارات الدعم النسبية لاختبارات Brands بعد النقل | مُنفَّذ | `lib/app/localization/key_registry.dart:23`; اختبارات `brands_repository_test.dart`, `brand_logo_upload_cubit_test.dart`, `brand_stats_cubit_test.dart` | `767aff2af8baf7d2b124077a3f2cbb4f9153832b` | كشف CI مراجع قديمة؛ حُدثت للمسارات الجديدة. |
-| FIX-2 | تحديث مستهلكي BrandsKeys/BrandsRoutes/BrandsScreen خارج الميزة، وتصحيح imports helpers للاختبار المنقول، وتركيز اختصارات AppFormDialog وإصلاح اختبارات spinner/state | مُنفَّذ | `catalog_hub_screen.dart`; `route_guards.dart`; `route_registry.dart`; `destinations.dart`; `brands_screen_responsive_test.dart`; `app_form_dialog.dart`; `brands_cubit_test.dart` | هذا commit | استجابة مباشرة لأخطاء CI بعد النقل والمرحلة 1. |
+| FIX-2 | تحديث مستهلكي BrandsKeys/BrandsRoutes/BrandsScreen خارج الميزة، وتصحيح imports helpers للاختبار المنقول، وتركيز اختصارات AppFormDialog وإصلاح اختبارات spinner/state | مُنفَّذ | `catalog_hub_screen.dart`; `route_guards.dart`; `route_registry.dart`; `destinations.dart`; `brands_screen_responsive_test.dart`; `app_form_dialog.dart`; `brands_cubit_test.dart` | `499bafd9165eff1538bddc114ebed2fb831e5b9a` | استجابة مباشرة لأخطاء CI بعد النقل والمرحلة 1. |
+| FIX-3 | نقل Focus إلى داخل CallbackShortcuts لضمان وصول Escape، وإضافة AccessCubit provider إلى مصفوفة اختبار Brands | قيد التنفيذ | `app_form_dialog.dart`; `brands_screen_responsive_test.dart` | هذا commit | عالج فشل 2 اختبارات Esc و16 حالة responsive بسبب ProviderNotFoundException في CI. |
 
 ## الحالة الحالية — 2026-11-20
 
