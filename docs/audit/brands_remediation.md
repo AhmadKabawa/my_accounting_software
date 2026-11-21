@@ -71,3 +71,24 @@
 - N-3: توحيد orchestration ورسائل الشاشة عبر BaseCubit/Effects قيد المرحلة 3.
 - U-2: حقل رابط الشعار اليدوي ما زال متاحاً إلى جانب الرفع والإزالة.
 - P2-8 وDEC-1..DEC-4: قرارات تصميم/نطاق لا تتطلب تغييراً في هذه المرحلة.
+
+
+## متابعة تنفيذ البرومت — 2026-11-21
+
+الفرع `feat/cat07-ui-remediation`؛ متابعة على HEAD بعد commits التنفيذ:
+
+- `adae7329215d2fc6bdc4395a00a3bc1df122bda6`: أضيفت `BrandsRepository.getStats()` ونُقل حساب إجمالي/فعّال/غير فعّال إلى تنفيذ Repository، وأصبح GetBrandStatsUseCase يفوض العملية.
+- `65c42878f76571c6c057818e283916c12935001f`: تصحيح تجميع الإحصاءات بحيث يعتمد على نتائج Repository ذات نوع Failure.
+- `4233bb7f7818bdd572ccb7598a79a5927841375b`: إزالة fallback الذي يصنّف HTTP 409 بلا SQLSTATE كduplicate؛ وتحديد امتداد ملفات الشعار بواسطة MIME type فقط. تحديث وصف التقرير.
+- `c2af5030afd5fb4bd6dfd64d672fe12b2ea6d0f0`: ترحيل BrandStatsCubit وBrandLogoUploadCubit إلى BaseCubit، مع إبقاء ملفات State منفصلة.
+- `cb674160862f5b0aee0b8b8ddcc5b28a5f4b3e79`: ترحيل BrandFormCubit وBrandsListCubit إلى BaseCubit، مع إبقاء ملفات State منفصلة.
+
+### ما لم يكتمل بعد
+
+- إعادة تصميم BrandsListState إلى نموذج Equatable موحد يحمل status/query/result/failure، وتحديث الشاشة والاختبارات بما يتوافق.
+- إعادة تنظيم BrandFormState إلى status موحد وتحديث الحوار، وإكمال Effects/FlashMessages المطلوبة orchestration.
+- استكمال اختبارات جديدة/محدثة لهذه التغييرات وفحص imports/DI/الاستعمالات.
+- لم تُشغّل dart format أو flutter analyze أو flutter test في هذه البيئة؛ لا تُعد هذه commits إثباتاً لسلامة البناء.
+- الخطوة 0/التأكد من حوار تمدد الارتفاع ومرحلة 4 لم يُنفذا في هذه المتابعة.
+
+تم الإبقاء على ملفات State المستقلة عمداً، وعدم دمجها في ملفات Cubit.
