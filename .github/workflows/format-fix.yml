@@ -1,7 +1,9 @@
 name: Format fix (temporary)
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [feat/cat07-ui-remediation]
+    paths: ['.github/workflows/format-fix.yml']
 
 permissions:
   contents: write
