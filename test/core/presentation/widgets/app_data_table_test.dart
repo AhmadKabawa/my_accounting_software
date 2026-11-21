@@ -38,6 +38,7 @@ void main() {
     Size size = const Size(1200, 900),
     List<String> rows = const ['Alpha', 'Beta'],
     bool loading = false,
+    bool refreshing = false,
     bool dark = false,
     double textScale = 1,
     TextDirection direction = TextDirection.rtl,
@@ -65,6 +66,7 @@ void main() {
             rows: rows,
             rowId: (value) => value,
             loading: loading,
+            refreshing: refreshing,
             errorKey: errorKey,
             onRetry: onRetry,
             onRowActivated: onRowActivated,
@@ -248,6 +250,16 @@ void main() {
     );
     await tester.tap(find.text('Load more'));
     expect(loaded, isTrue);
+  });
+
+  testWidgets('refresh indicator keeps the existing rows visible', (
+    tester,
+  ) async {
+    await pumpTable(tester, refreshing: true);
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.text('Alpha'), findsOneWidget);
+    expect(find.text('Beta'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('renders error and delegates retry', (tester) async {

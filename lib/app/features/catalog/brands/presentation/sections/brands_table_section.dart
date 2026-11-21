@@ -27,6 +27,7 @@ class BrandsTableSection extends StatelessWidget {
     required this.rows,
     required this.total,
     required this.loading,
+    this.refreshing = false,
     required this.failure,
     required this.onAdd,
     required this.onEdit,
@@ -41,6 +42,7 @@ class BrandsTableSection extends StatelessWidget {
   final List<Brand> rows;
   final int total;
   final bool loading;
+  final bool refreshing;
   final Failure? failure;
   final VoidCallback onAdd;
   final ValueChanged<Brand> onEdit;
@@ -85,6 +87,7 @@ class BrandsTableSection extends StatelessWidget {
     rows: rows,
     rowId: (b) => b.id,
     loading: loading,
+    refreshing: refreshing,
     errorKey: failure?.messageKey,
     onRetry: onRetry,
     emptyState: AppEmptyState(

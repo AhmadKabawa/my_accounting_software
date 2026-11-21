@@ -56,6 +56,7 @@ class AppDataTable<T> extends StatelessWidget {
     required this.rows,
     required this.rowId,
     this.loading = false,
+    this.refreshing = false,
     this.errorKey,
     this.emptyState,
     this.onRetry,
@@ -82,6 +83,7 @@ class AppDataTable<T> extends StatelessWidget {
   final List<T> rows;
   final Object Function(T row) rowId;
   final bool loading;
+  final bool refreshing;
   final AppKey? errorKey;
   final Widget? emptyState;
   final VoidCallback? onRetry;
@@ -158,12 +160,22 @@ class AppDataTable<T> extends StatelessWidget {
           );
     }
     final style = DataTableStyle(context, density: density);
-    if (type == ScreenType.mobile) return _cards(context, style, bounded);
-    return _table(
-      context,
-      style,
-      full: type == ScreenType.desktop,
-      bounded: bounded,
+    final content = type == ScreenType.mobile
+        ? _cards(context, style, bounded)
+        : _table(
+            context,
+            style,
+            full: type == ScreenType.desktop,
+            bounded: bounded,
+          );
+    if (!refreshing) return content;
+    return Column(
+      mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const LinearProgressIndicator(),
+        if (bounded) Expanded(child: content) else content,
+      ],
     );
   }
 
