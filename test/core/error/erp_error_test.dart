@@ -147,7 +147,7 @@ void main() {
       final e = (result as ApiFailure).exception as ApiException;
 
       expect(e.type, ApiExceptionType.conflict);
-      expect(e.errorCode, isNull);
+      expect(e.errorCode, '23505');
     });
 
     for (final locale in const [Locale('ar'), Locale('en')]) {
