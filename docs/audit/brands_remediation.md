@@ -154,3 +154,6 @@
 لم تُضف بعد كل حالات القائمة المذكورة في بند 10، ولا فحص المحرر عند عروض 360/800/1280. لا تُعد هذه الاختبارات مكتملة لمجرد وجود الملف.
 
 - F3 إعادة تحقق: CI run `44868336919` كشف أن `ListView(shrinkWrap: true)` ملأ ارتفاع الحوار المكتبي رغم `Flexible(loose)`؛ أُعيد توحيد محتوى التمرير إلى `SingleChildScrollView` داخل `Flexible(loose)` على Desktop مع إبقاء `Expanded` على Mobile. الإصلاح في commit التالي؛ يجب أن يعيد CI إثبات اختبار المحتوى القصير والطويل.
+
+- F3 إعادة تحقق: CI run `44868576488` أثبت أن `Flexible(loose)` مع `SingleChildScrollView` ما زال يملأ ارتفاع الشاشة في اختبار المحتوى القصير. التعديل التالي يجعل Desktop `ListView(shrinkWrap: true)` على مستوى الجذر (header/content/footer ضمن scroll واحد) كي يكون ارتفاعه طبيعياً للمحتوى القصير ويظل محدوداً بحد Dialog للمحتوى الطويل؛ Mobile يبقى BottomSheet مع Expanded/SingleChildScrollView.
+- CI run `44868576488`: Analyze فشل بتحذير import غير مستخدم في اختبار المحرر؛ أزيل الاستيراد في commit الإصلاح التالي.

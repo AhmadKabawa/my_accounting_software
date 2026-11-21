@@ -96,54 +96,75 @@ class _AppFormDialogState extends State<AppFormDialog> {
       ],
       widget.child,
     ];
-    final scrollable = SingleChildScrollView(
-      padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
+    final header = Padding(
+      padding: ui.padding.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: content,
+        children: [
+          AppText(widget.titleKey, type: AppTextType.titleLarge),
+          if (widget.subtitleKey != null) ...[
+            ui.spacing.gap(AppSpacing.xs),
+            AppText(widget.subtitleKey!, type: AppTextType.bodySmall),
+          ],
+        ],
       ),
     );
+    final footer = Padding(
+      padding: ui.padding.all(AppSpacing.lg),
+      child: Wrap(
+        alignment: WrapAlignment.end,
+        spacing: ui.spacing.sm,
+        runSpacing: ui.spacing.sm,
+        children: [
+          AppButton(
+            widget.cancelLabelKey ?? CommonKeys.cancel,
+            variant: AppButtonVariant.text,
+            onPressed: widget.busy ? null : _requestClose,
+          ),
+          AppButton(
+            widget.saveLabelKey ?? CommonKeys.save,
+            isLoading: widget.busy,
+            onPressed: widget.busy || !widget.saveEnabled ? null : _save,
+          ),
+        ],
+      ),
+    );
+
+    if (isDialog) {
+      // A shrink-wrapped scrollable gives short forms their natural height;
+      // long forms remain bounded by the Dialog's maxHeight and can scroll.
+      return ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        children: [
+          header,
+          Padding(
+            padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: content,
+            ),
+          ),
+          footer,
+        ],
+      );
+    }
+
     return Column(
-      mainAxisSize: isDialog ? MainAxisSize.min : MainAxisSize.max,
+      mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: ui.padding.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppText(widget.titleKey, type: AppTextType.titleLarge),
-              if (widget.subtitleKey != null) ...[
-                ui.spacing.gap(AppSpacing.xs),
-                AppText(widget.subtitleKey!, type: AppTextType.bodySmall),
-              ],
-            ],
+        header,
+        Expanded(
+          child: SingleChildScrollView(
+            padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: content,
+            ),
           ),
         ),
-        if (isDialog)
-          Flexible(fit: FlexFit.loose, child: scrollable)
-        else
-          Expanded(child: scrollable),
-        Padding(
-          padding: ui.padding.all(AppSpacing.lg),
-          child: Wrap(
-            alignment: WrapAlignment.end,
-            spacing: ui.spacing.sm,
-            runSpacing: ui.spacing.sm,
-            children: [
-              AppButton(
-                widget.cancelLabelKey ?? CommonKeys.cancel,
-                variant: AppButtonVariant.text,
-                onPressed: widget.busy ? null : _requestClose,
-              ),
-              AppButton(
-                widget.saveLabelKey ?? CommonKeys.save,
-                isLoading: widget.busy,
-                onPressed: widget.busy || !widget.saveEnabled ? null : _save,
-              ),
-            ],
-          ),
-        ),
+        footer,
       ],
     );
   }
