@@ -12,8 +12,8 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/d
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brand_stats_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/set_brand_active_use_case.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
 import '../../../../../helpers/localized_app.dart';
 import '../../../../../helpers/screen_matrix.dart';

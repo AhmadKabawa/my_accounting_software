@@ -11,10 +11,10 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/d
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/update_brand_use_case.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_state.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/fake_brands_repository.dart';
