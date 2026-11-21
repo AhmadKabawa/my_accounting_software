@@ -3,18 +3,24 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 
 /// Search + status filter for brands.
 ///
-/// Filter source: the status values are a closed domain enum
-/// ([BrandStatusFilter]), so they are fixed in the client, not fetched.
+/// The parent owns the Cubit; this widget only renders values and callbacks.
 class BrandsFilterBar extends StatelessWidget {
-  const BrandsFilterBar({super.key, required this.query, required this.cubit});
+  const BrandsFilterBar({
+    super.key,
+    required this.query,
+    required this.onSearchChanged,
+    required this.onStatusChanged,
+    required this.onClearAll,
+  });
 
   final BrandListQuery query;
-  final BrandsListCubit cubit;
+  final ValueChanged<String> onSearchChanged;
+  final ValueChanged<BrandStatusFilter> onStatusChanged;
+  final VoidCallback onClearAll;
 
   static AppKey statusLabel(BrandStatusFilter value) => switch (value) {
     BrandStatusFilter.all => BrandsKeys.allStatuses,
@@ -25,27 +31,23 @@ class BrandsFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FilterBar(
     searchHintKey: BrandsKeys.searchHint,
-    // The cubit debounces already; avoid a second 300ms delay here.
     debounce: Duration.zero,
-    onSearchChanged: cubit.searchChanged,
-    onClearAll: () {
-      cubit.searchChanged('');
-      cubit.setStatus(BrandStatusFilter.all);
-    },
+    onSearchChanged: onSearchChanged,
+    onClearAll: onClearAll,
     activeFilters: [
       if (query.search.isNotEmpty)
         FilterBarFilter(
           id: FilterBar.searchFilterId,
           label: BrandsKeys.searchHint,
           value: query.search,
-          onRemove: () => cubit.searchChanged(''),
+          onRemove: () => onSearchChanged(''),
         ),
       if (query.status != BrandStatusFilter.all)
         FilterBarFilter(
           id: 'status',
           label: BrandsKeys.status,
           value: statusLabel(query.status).tr(context: context),
-          onRemove: () => cubit.setStatus(BrandStatusFilter.all),
+          onRemove: () => onStatusChanged(BrandStatusFilter.all),
         ),
     ],
     filterControls: [
@@ -56,7 +58,7 @@ class BrandsFilterBar extends StatelessWidget {
         value: query.status,
         clearable: false,
         onChanged: (value) {
-          if (value != null) cubit.setStatus(value);
+          if (value != null) onStatusChanged(value);
         },
       ),
     ],
