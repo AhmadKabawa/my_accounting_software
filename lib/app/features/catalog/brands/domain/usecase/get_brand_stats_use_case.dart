@@ -14,9 +14,7 @@ class GetBrandStatsUseCase extends UseCase<BrandStats, NoParams> {
   @override
   Future<Either<Failure, BrandStats>> call(NoParams params) async {
     final results = await Future.wait([
-      _repository.getBrands(
-        const BrandListQuery(page: 1, pageSize: 1),
-      ),
+      _repository.getBrands(const BrandListQuery(page: 1, pageSize: 1)),
       _repository.getBrands(
         const BrandListQuery(
           status: BrandStatusFilter.active,
