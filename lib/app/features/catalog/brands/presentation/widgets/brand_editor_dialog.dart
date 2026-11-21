@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
+import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_state.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_effect.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_details_section.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_identity_section.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_logo_section.dart';
@@ -82,7 +81,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
 
   Future<void> _save() async {
     if (_key.currentState?.validate() != true) return;
-    final result = await context.read<BrandFormCubit>().save(
+    await context.read<BrandFormCubit>().save(
       id: widget.brand?.id,
       draft: BrandDraft(
         name: _name.text.trim(),
@@ -93,27 +92,27 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
             : _description.text.trim(),
       ),
     );
-    if (!mounted) return;
-    result.fold(
-      (failure) => setState(() {
-        _failure = failure is BrandDuplicateFailure
-            ? BrandsKeys.duplicateError
-            : failure.messageKey;
-      }),
-      (_) => Navigator.of(context).pop(true),
-    );
   }
 
   @override
   Widget build(
     BuildContext context,
-  ) => BlocBuilder<BrandFormCubit, BrandFormState>(
-    builder: (context, formState) =>
+  ) => BlocBuilder<BrandFormCubit, BrandFormStatus>(
+    builder: (context, formStatus) =>
         BlocBuilder<BrandLogoUploadCubit, BrandLogoUploadState>(
           builder: (context, logoState) {
             final busy =
-                formState.isSaving || logoState.isBusy;
-            return AppFormDialog(
+                formStatus == BrandFormStatus.saving || logoState.isBusy;
+            return BlocEffectListener<BrandFormEffect, BrandFormCubit>(
+              onEffect: (context, effect) {
+                switch (effect) {
+                  case BrandSavedEffect():
+                    Navigator.of(context).pop(true);
+                  case BrandSaveFailedEffect(:final messageKey):
+                    setState(() => _failure = messageKey);
+                }
+              },
+              child: AppFormDialog(
               titleKey: widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
               subtitleKey: BrandsKeys.editorSubtitle,
               saveLabelKey: BrandsKeys.save,
@@ -141,6 +140,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
                     BrandDetailsSection(description: _description),
                   ],
                 ),
+              ),
               ),
             );
           },

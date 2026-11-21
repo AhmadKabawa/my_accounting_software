@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/foundation/base/base_cubit.dart';
+import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -108,19 +108,16 @@ class BrandsListCubit
       SetBrandActiveParams(id: id, isActive: true),
     );
     if (isClosed) return;
-    result.fold(
-      (failure) => _flashMessages.post(
-        failure.messageKey,
-        MessageType.error,
-      ),
-      (_) async {
-        _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);
-        emitEffect(
-          const BrandsMutatedEffect(BrandsMutationKind.statusChanged),
-        );
-        await load();
-      },
+    if (result.isLeft()) {
+      final failure = result.swap().getOrElse(() => const UnexpectedFailure());
+      _flashMessages.post(failure.messageKey, MessageType.error);
+      return;
+    }
+    _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);
+    emitEffect(
+      const BrandsMutatedEffect(BrandsMutationKind.statusChanged),
     );
+    await load();
   }
 
   Future<Either<Failure, Unit>> deactivate(int id) async {

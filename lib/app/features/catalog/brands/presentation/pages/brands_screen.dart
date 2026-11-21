@@ -12,17 +12,16 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
+import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_state.dart';
@@ -59,8 +58,7 @@ class _BrandsView extends StatelessWidget {
       ),
     );
     if (saved == true && context.mounted) {
-      await context.read<BrandsListCubit>().refresh();
-      await context.read<BrandStatsCubit>().refresh();
+      await context.read<BrandsListCubit>().onBrandSaved(isNew: brand == null);
     }
   }
 
@@ -74,12 +72,12 @@ class _BrandsView extends StatelessWidget {
         severity: ConfirmDialogSeverity.warning,
         targetName: brand.name,
         onConfirm: () async {
-          final result = await cubit.setActive(id: brand.id, isActive: false);
+          final result = await cubit.deactivate(brand.id);
           return result.fold((f) => f.messageKey, (_) => null);
         },
       );
       if (changed && context.mounted) {
-        await context.read<BrandStatsCubit>().refresh();
+        
       }
     } else {
       final result = await cubit.setActive(id: brand.id, isActive: true);
@@ -108,7 +106,11 @@ class _BrandsView extends StatelessWidget {
       onConfirm: () async {
         final result = await context.read<BrandsListCubit>().delete(brand);
         return result.fold(
-          (f) => f is BrandInUseFailure ? BrandsKeys.brandInUse : f.messageKey,
+          (f) => f is BrandInUseFailure
+              ? BrandsKeys.brandInUse
+              : f is BrandUsageUnknownFailure
+              ? BrandsKeys.brandUsageUnknown
+              : f.messageKey,
           (_) => null,
         );
       },
@@ -126,15 +128,24 @@ class _BrandsView extends StatelessWidget {
             builder: (context, state) {
               final cubit = context.read<BrandsListCubit>();
               final page = state.result;
-              final query = state.query ?? cubit.query;
+              final query = state.query;
               final stats = statsState.stats;
               final rows = page?.items ?? const <Brand>[];
               final total = page?.totalCount ?? 0;
-              final failure = page == null ? state.failure : null;
-              final refreshFailure = page == null ? null : state.failure;
-              final loading = state.isInitial || state.isLoading;
+              final failure = !state.hasData ? state.failure : null;
+              final refreshFailure = state.hasData ? state.failure : null;
+              final loading = state.isInitialLoading;
 
-              return ListPageTemplate(
+              return BlocEffectListener<
+                BrandsListEffect,
+                BrandsListCubit
+              >(
+                onEffect: (context, effect) {
+                  if (effect is BrandsMutatedEffect) {
+                    context.read<BrandStatsCubit>().refresh();
+                  }
+                },
+                child: ListPageTemplate(
                 titleKey: BrandsKeys.title,
                 breadcrumb: AppBreadcrumb(
                   items: [
@@ -202,6 +213,7 @@ class _BrandsView extends StatelessWidget {
                       onToggleStatus: (brand) => _status(context, brand),
                     ),
                   ],
+                ),
                 ),
               );
             },

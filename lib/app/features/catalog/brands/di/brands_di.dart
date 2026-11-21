@@ -47,6 +47,10 @@ void initBrandsDI() {
     () => BrandLogoUploadCubit(uploadLogo: sl(), picker: sl()),
   );
   sl.registerFactory(
-    () => BrandFormCubit(createBrand: sl(), updateBrand: sl()),
+    () => BrandFormCubit(
+      createBrand: sl(),
+      updateBrand: sl(),
+      flashMessages: sl(),
+    ),
   );
 }
