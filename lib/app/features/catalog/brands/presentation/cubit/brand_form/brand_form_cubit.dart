@@ -26,10 +26,7 @@ class BrandFormCubit extends BaseCubit<BrandFormStatus, BrandFormEffect> {
   final UpdateBrandUseCase _updateBrand;
   final FlashMessages _flashMessages;
 
-  Future<void> save({
-    required BrandDraft draft,
-    int? id,
-  }) async {
+  Future<void> save({required BrandDraft draft, int? id}) async {
     if (state == BrandFormStatus.saving || isClosed) return;
 
     emit(BrandFormStatus.saving);

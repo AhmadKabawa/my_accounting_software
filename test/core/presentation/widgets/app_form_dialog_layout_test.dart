@@ -33,7 +33,10 @@ void main() {
 
     expect(find.byType(Dialog), findsOneWidget);
     expect(find.byType(SingleChildScrollView), findsOneWidget);
-    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -600));
+    await tester.drag(
+      find.byType(SingleChildScrollView),
+      const Offset(0, -600),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });

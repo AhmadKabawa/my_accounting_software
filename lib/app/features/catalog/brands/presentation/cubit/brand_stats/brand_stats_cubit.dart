@@ -5,10 +5,9 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 
 /// Owns the presentation lifecycle for catalog-wide brand statistics.
 class BrandStatsCubit extends BaseCubit<BrandStatsState, void> {
-  BrandStatsCubit({
-    required GetBrandStatsUseCase getBrandStats,
-  }) : _getBrandStats = getBrandStats,
-       super(const BrandStatsInitial());
+  BrandStatsCubit({required GetBrandStatsUseCase getBrandStats})
+    : _getBrandStats = getBrandStats,
+      super(const BrandStatsInitial());
 
   final GetBrandStatsUseCase _getBrandStats;
   int _requestVersion = 0;
@@ -21,16 +20,13 @@ class BrandStatsCubit extends BaseCubit<BrandStatsState, void> {
     final result = await _getBrandStats(NoParams());
     if (isClosed || version != _requestVersion) return;
 
-    result.fold(
-      (failure) {
-        emit(
-          previous == null
-              ? BrandStatsFailed(failure)
-              : BrandStatsRefreshFailed(previous, failure),
-        );
-      },
-      (stats) => emit(BrandStatsLoaded(stats)),
-    );
+    result.fold((failure) {
+      emit(
+        previous == null
+            ? BrandStatsFailed(failure)
+            : BrandStatsRefreshFailed(previous, failure),
+      );
+    }, (stats) => emit(BrandStatsLoaded(stats)));
   }
 
   Future<void> refresh() => load();

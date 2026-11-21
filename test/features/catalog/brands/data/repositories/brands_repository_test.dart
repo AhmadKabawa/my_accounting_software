@@ -50,30 +50,32 @@ void main() {
     },
   );
 
-  test('gets total and active statistics with two lightweight count requests',
-      () async {
-    api.statsTotalCount = 14;
-    api.statsActiveCount = 9;
+  test(
+    'gets total and active statistics with two lightweight count requests',
+    () async {
+      api.statsTotalCount = 14;
+      api.statsActiveCount = 9;
 
-    final result = await repository.getBrandStats();
+      final result = await repository.getBrandStats();
 
-    result.fold((_) => fail('Expected aggregate statistics'), (stats) {
-      expect(stats.total, 14);
-      expect(stats.active, 9);
-      expect(stats.inactive, 5);
-    });
-    expect(api.paginatedQueries, hasLength(2));
-    expect(
-      api.paginatedQueries.every((query) => query['select'] == 'id'),
-      isTrue,
-    );
-    expect(
-      api.paginatedQueries.every((query) => !query.containsKey('products')),
-      isTrue,
-    );
-    expect(api.lastPage, 1);
-    expect(api.lastLimit, 1);
-  });
+      result.fold((_) => fail('Expected aggregate statistics'), (stats) {
+        expect(stats.total, 14);
+        expect(stats.active, 9);
+        expect(stats.inactive, 5);
+      });
+      expect(api.paginatedQueries, hasLength(2));
+      expect(
+        api.paginatedQueries.every((query) => query['select'] == 'id'),
+        isTrue,
+      );
+      expect(
+        api.paginatedQueries.every((query) => !query.containsKey('products')),
+        isTrue,
+      );
+      expect(api.lastPage, 1);
+      expect(api.lastLimit, 1);
+    },
+  );
 
   test('fails the aggregate when the active count request fails', () async {
     api.activeStatsFailure = ApiException.forbidden();

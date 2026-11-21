@@ -24,8 +24,7 @@ class BrandsListState extends Equatable {
   final Failure? failure;
 
   bool get hasData => result != null;
-  bool get isInitialLoading =>
-      status == BrandsListStatus.loading && !hasData;
+  bool get isInitialLoading => status == BrandsListStatus.loading && !hasData;
   bool get isRefreshing => status == BrandsListStatus.refreshing;
 
   BrandsListState copyWith({

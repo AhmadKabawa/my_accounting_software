@@ -44,59 +44,47 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
   @override
   Future<ApiResult<BrandStats>> getBrandStats() async {
     // Temporary two-request count; replace with one RPC when available.
-    final results = await Future.wait<
-      ApiResult<PaginatedResult<_BrandCountRow>>
-    >([
-      _apiClient.getPaginated<_BrandCountRow>(
-        BrandsEndpoint.collection,
-        fromJson: _BrandCountRow.fromJson,
-        page: 1,
-        limit: 1,
-        parser: PaginatedParserPresets.supabase,
-        queryParameters: {'select': 'id'},
-      ),
-      _apiClient.getPaginated<_BrandCountRow>(
-        BrandsEndpoint.collection,
-        fromJson: _BrandCountRow.fromJson,
-        page: 1,
-        limit: 1,
-        parser: PaginatedParserPresets.supabase,
-        queryParameters: {
-          'select': 'id',
-          'is_active': 'eq.true',
-        },
-      ),
-    ]);
+    final results =
+        await Future.wait<ApiResult<PaginatedResult<_BrandCountRow>>>([
+          _apiClient.getPaginated<_BrandCountRow>(
+            BrandsEndpoint.collection,
+            fromJson: _BrandCountRow.fromJson,
+            page: 1,
+            limit: 1,
+            parser: PaginatedParserPresets.supabase,
+            queryParameters: {'select': 'id'},
+          ),
+          _apiClient.getPaginated<_BrandCountRow>(
+            BrandsEndpoint.collection,
+            fromJson: _BrandCountRow.fromJson,
+            page: 1,
+            limit: 1,
+            parser: PaginatedParserPresets.supabase,
+            queryParameters: {'select': 'id', 'is_active': 'eq.true'},
+          ),
+        ]);
 
     final totalResult = results[0];
     final activeResult = results[1];
-    if (totalResult
-        case ApiFailure<PaginatedResult<_BrandCountRow>>(
-          :final exception,
-        )) {
+    if (totalResult case ApiFailure<PaginatedResult<_BrandCountRow>>(
+      :final exception,
+    )) {
       return ApiFailure<BrandStats>(exception);
     }
-    if (activeResult
-        case ApiFailure<PaginatedResult<_BrandCountRow>>(
-          :final exception,
-        )) {
+    if (activeResult case ApiFailure<PaginatedResult<_BrandCountRow>>(
+      :final exception,
+    )) {
       return ApiFailure<BrandStats>(exception);
     }
 
-    final total = (totalResult
-            as ApiSuccess<PaginatedResult<_BrandCountRow>>)
+    final total = (totalResult as ApiSuccess<PaginatedResult<_BrandCountRow>>)
         .data
         .totalCount;
-    final active = (activeResult
-            as ApiSuccess<PaginatedResult<_BrandCountRow>>)
+    final active = (activeResult as ApiSuccess<PaginatedResult<_BrandCountRow>>)
         .data
         .totalCount;
     return ApiSuccess(
-      BrandStats(
-        total: total,
-        active: active,
-        inactive: total - active,
-      ),
+      BrandStats(total: total, active: active, inactive: total - active),
     );
   }
 

@@ -145,41 +145,40 @@ void main() {
     });
   });
 
-  test('Supabase pagination uses Content-Range total for a one-row page',
-      () async {
-    final service = DioService(
-      tokenManager: TokenManager(storage: MemoryStorage()),
-      networkInfoImpl: _Online(),
-      languageProvider: _Lang(),
-      refreshEndpoint: _refreshEndpoint,
-    );
-    final adapter = RoutedAdapter((options) async {
-      expect(options.headers['Prefer'], 'count=exact');
-      expect(options.headers['Range'], '0-0');
-      return ResponseBody.fromString(
-        '[{"id":1}]',
-        200,
-        headers: {
-          Headers.contentTypeHeader: [Headers.jsonContentType],
-          'content-range': ['0-0/250'],
-        },
+  test(
+    'Supabase pagination uses Content-Range total for a one-row page',
+    () async {
+      final service = DioService(
+        tokenManager: TokenManager(storage: MemoryStorage()),
+        networkInfoImpl: _Online(),
+        languageProvider: _Lang(),
+        refreshEndpoint: _refreshEndpoint,
       );
-    });
-    service.dio.httpClientAdapter = adapter;
+      final adapter = RoutedAdapter((options) async {
+        expect(options.headers['Prefer'], 'count=exact');
+        expect(options.headers['Range'], '0-0');
+        return ResponseBody.fromString(
+          '[{"id":1}]',
+          200,
+          headers: {
+            Headers.contentTypeHeader: [Headers.jsonContentType],
+            'content-range': ['0-0/250'],
+          },
+        );
+      });
+      service.dio.httpClientAdapter = adapter;
 
-    final result = await ApiClient(dioService: service).getPaginated<_Item>(
-      _endpoint,
-      fromJson: _parse,
-      page: 1,
-      limit: 1,
-    );
+      final result = await ApiClient(
+        dioService: service,
+      ).getPaginated<_Item>(_endpoint, fromJson: _parse, page: 1, limit: 1);
 
-    expect(result, isA<ApiSuccess<PaginatedResult<_Item>>>());
-    final page = (result as ApiSuccess<PaginatedResult<_Item>>).data;
-    expect(page.items, hasLength(1));
-    expect(page.totalCount, 250);
-    expect(page.totalPages, 250);
-  });
+      expect(result, isA<ApiSuccess<PaginatedResult<_Item>>>());
+      final page = (result as ApiSuccess<PaginatedResult<_Item>>).data;
+      expect(page.items, hasLength(1));
+      expect(page.totalCount, 250);
+      expect(page.totalPages, 250);
+    },
+  );
 
   group('errors never escape', () {
     test('a throwing fromJson becomes an ApiFailure', () async {

@@ -46,23 +46,25 @@ void main() {
     await cubit.close();
   });
 
-  test('refreshing retains the previous rows until the new result arrives',
-      () async {
-    final repository = FakeBrandsRepository();
-    final cubit = _listCubit(repository);
-    await cubit.load();
-    final pending = Completer<Either<Failure, PaginatedResult<Brand>>>();
-    repository.onGetBrands = (_) => pending.future;
+  test(
+    'refreshing retains the previous rows until the new result arrives',
+    () async {
+      final repository = FakeBrandsRepository();
+      final cubit = _listCubit(repository);
+      await cubit.load();
+      final pending = Completer<Either<Failure, PaginatedResult<Brand>>>();
+      repository.onGetBrands = (_) => pending.future;
 
-    final refresh = cubit.refresh();
-    expect(cubit.state.status, BrandsListStatus.refreshing);
-    expect(cubit.state.result!.items.single.name, 'Northwind');
-    pending.complete(const Right(_page(name: 'Updated')));
-    await refresh;
+      final refresh = cubit.refresh();
+      expect(cubit.state.status, BrandsListStatus.refreshing);
+      expect(cubit.state.result!.items.single.name, 'Northwind');
+      pending.complete(const Right(_page(name: 'Updated')));
+      await refresh;
 
-    expect(cubit.state.result!.items.single.name, 'Updated');
-    await cubit.close();
-  });
+      expect(cubit.state.result!.items.single.name, 'Updated');
+      await cubit.close();
+    },
+  );
 
   test('failure with data retains rows and exposes failure', () async {
     final repository = FakeBrandsRepository();
@@ -164,147 +166,154 @@ void main() {
     });
   });
 
-  test('delete with positive or unknown product count makes no request',
-      () async {
-    final repository = FakeBrandsRepository();
-    final cubit = _listCubit(repository);
-    const used = Brand(
-      id: 1,
-      name: 'Used',
-      slug: 'used',
-      isActive: true,
-      productCount: 2,
-    );
-    const unknown = Brand(
-      id: 2,
-      name: 'Unknown',
-      slug: 'unknown',
-      isActive: true,
-    );
+  test(
+    'delete with positive or unknown product count makes no request',
+    () async {
+      final repository = FakeBrandsRepository();
+      final cubit = _listCubit(repository);
+      const used = Brand(
+        id: 1,
+        name: 'Used',
+        slug: 'used',
+        isActive: true,
+        productCount: 2,
+      );
+      const unknown = Brand(
+        id: 2,
+        name: 'Unknown',
+        slug: 'unknown',
+        isActive: true,
+      );
 
-    final usedResult = await cubit.delete(used);
-    final unknownResult = await cubit.delete(unknown);
+      final usedResult = await cubit.delete(used);
+      final unknownResult = await cubit.delete(unknown);
 
-    expect(usedResult.isLeft(), isTrue);
-    expect(
-      usedResult.fold((failure) => failure, (_) => null),
-      isA<BrandInUseFailure>(),
-    );
-    expect(unknownResult.isLeft(), isTrue);
-    expect(
-      unknownResult.fold((failure) => failure, (_) => null),
-      isA<BrandUsageUnknownFailure>(),
-    );
-    expect(repository.deletedIds, isEmpty);
-    expect(repository.queries, isEmpty);
-    await cubit.close();
-  });
+      expect(usedResult.isLeft(), isTrue);
+      expect(
+        usedResult.fold((failure) => failure, (_) => null),
+        isA<BrandInUseFailure>(),
+      );
+      expect(unknownResult.isLeft(), isTrue);
+      expect(
+        unknownResult.fold((failure) => failure, (_) => null),
+        isA<BrandUsageUnknownFailure>(),
+      );
+      expect(repository.deletedIds, isEmpty);
+      expect(repository.queries, isEmpty);
+      await cubit.close();
+    },
+  );
 
-  test('activate, deactivate and delete emit mutation effects and flashes',
-      () async {
-    final repository = FakeBrandsRepository();
-    final messages = FlashMessages();
-    final flashes = [];
-    final stopListening = messages.listen(flashes.add);
-    final cubit = _listCubit(repository, flashMessages: messages);
-    final effects = <BrandsListEffect>[];
-    final subscription = cubit.effectStream.listen(effects.add);
+  test(
+    'activate, deactivate and delete emit mutation effects and flashes',
+    () async {
+      final repository = FakeBrandsRepository();
+      final messages = FlashMessages();
+      final flashes = [];
+      final stopListening = messages.listen(flashes.add);
+      final cubit = _listCubit(repository, flashMessages: messages);
+      final effects = <BrandsListEffect>[];
+      final subscription = cubit.effectStream.listen(effects.add);
 
-    await cubit.activate(12);
-    await cubit.deactivate(12);
-    await cubit.delete(FakeBrandsRepository.brand);
-    await Future<void>.delayed(Duration.zero);
+      await cubit.activate(12);
+      await cubit.deactivate(12);
+      await cubit.delete(FakeBrandsRepository.brand);
+      await Future<void>.delayed(Duration.zero);
 
-    expect(
-      effects.map((effect) => (effect as BrandsMutatedEffect).kind),
-      [
+      expect(effects.map((effect) => (effect as BrandsMutatedEffect).kind), [
         BrandsMutationKind.statusChanged,
         BrandsMutationKind.statusChanged,
         BrandsMutationKind.deleted,
-      ],
-    );
-    expect(flashes, hasLength(3));
-    expect(
-      flashes.every((message) => message.type == MessageType.success),
-      isTrue,
-    );
-    await subscription.cancel();
-    stopListening();
-    await cubit.close();
-  });
+      ]);
+      expect(flashes, hasLength(3));
+      expect(
+        flashes.every((message) => message.type == MessageType.success),
+        isTrue,
+      );
+      await subscription.cancel();
+      stopListening();
+      await cubit.close();
+    },
+  );
 
-  test('activate failure posts an error flash without mutation effect',
-      () async {
-    final repository = FakeBrandsRepository();
-    repository.statusMutationResult = const Left(_Failure());
-    final messages = FlashMessages();
-    final flashes = [];
-    final stopListening = messages.listen(flashes.add);
-    final cubit = _listCubit(repository, flashMessages: messages);
-    final effects = <BrandsListEffect>[];
-    final subscription = cubit.effectStream.listen(effects.add);
+  test(
+    'activate failure posts an error flash without mutation effect',
+    () async {
+      final repository = FakeBrandsRepository();
+      repository.statusMutationResult = const Left(_Failure());
+      final messages = FlashMessages();
+      final flashes = [];
+      final stopListening = messages.listen(flashes.add);
+      final cubit = _listCubit(repository, flashMessages: messages);
+      final effects = <BrandsListEffect>[];
+      final subscription = cubit.effectStream.listen(effects.add);
 
-    await cubit.activate(12);
+      await cubit.activate(12);
 
-    expect(effects, isEmpty);
-    expect(flashes, hasLength(1));
-    expect(flashes.single.type, MessageType.error);
-    await subscription.cancel();
-    stopListening();
-    await cubit.close();
-  });
+      expect(effects, isEmpty);
+      expect(flashes, hasLength(1));
+      expect(flashes.single.type, MessageType.error);
+      await subscription.cancel();
+      stopListening();
+      await cubit.close();
+    },
+  );
 
-  test('deleting the last row on a later page moves to the previous page',
-      () async {
-    final repository = FakeBrandsRepository();
-    repository.onGetBrands = (query) async {
-      if (repository.deletedIds.isNotEmpty) {
-        return const Right(
+  test(
+    'deleting the last row on a later page moves to the previous page',
+    () async {
+      final repository = FakeBrandsRepository();
+      repository.onGetBrands = (query) async {
+        if (repository.deletedIds.isNotEmpty) {
+          return const Right(
+            PaginatedResult<Brand>(
+              items: [],
+              totalCount: 0,
+              currentPage: 1,
+              totalPages: 0,
+            ),
+          );
+        }
+        return Right(
           PaginatedResult<Brand>(
-            items: [],
-            totalCount: 0,
-            currentPage: 1,
-            totalPages: 0,
+            items: const [FakeBrandsRepository.brand],
+            totalCount: 26,
+            currentPage: query.page,
+            totalPages: 2,
           ),
         );
-      }
-      return Right(
-        PaginatedResult<Brand>(
-          items: const [FakeBrandsRepository.brand],
-          totalCount: 26,
-          currentPage: query.page,
-          totalPages: 2,
-        ),
-      );
-    };
-    final cubit = _listCubit(repository);
+      };
+      final cubit = _listCubit(repository);
 
-    await cubit.setPage(2);
-    await cubit.delete(FakeBrandsRepository.brand);
+      await cubit.setPage(2);
+      await cubit.delete(FakeBrandsRepository.brand);
 
-    expect(cubit.state.query.page, 1);
-    expect(cubit.state.result!.items, isEmpty);
-    await cubit.close();
-  });
+      expect(cubit.state.query.page, 1);
+      expect(cubit.state.result!.items, isEmpty);
+      await cubit.close();
+    },
+  );
 
-  test('no list state is emitted after close while a request is pending',
-      () async {
-    final repository = FakeBrandsRepository();
-    final pending = Completer<Either<Failure, PaginatedResult<Brand>>>();
-    repository.onGetBrands = (_) => pending.future;
-    final cubit = _listCubit(repository);
-    var emissions = 0;
-    final subscription = cubit.stream.listen((_) => emissions++);
-    final load = cubit.load();
+  test(
+    'no list state is emitted after close while a request is pending',
+    () async {
+      final repository = FakeBrandsRepository();
+      final pending = Completer<Either<Failure, PaginatedResult<Brand>>>();
+      repository.onGetBrands = (_) => pending.future;
+      final cubit = _listCubit(repository);
+      var emissions = 0;
+      final subscription = cubit.stream.listen((_) => emissions++);
+      final load = cubit.load();
 
-    await cubit.close();
-    final countAtClose = emissions;
-    pending.complete(const Right(_page()));
-    await load;
+      await cubit.close();
+      final countAtClose = emissions;
+      pending.complete(const Right(_page()));
+      await load;
 
-    expect(emissions, countAtClose);
-    await subscription.cancel();
-  });
+      expect(emissions, countAtClose);
+      await subscription.cancel();
+    },
+  );
 
   test('form save emits BrandSavedEffect and returns to idle', () async {
     final repository = FakeBrandsRepository();
@@ -315,7 +324,9 @@ void main() {
     final effects = <BrandFormEffect>[];
     final subscription = cubit.effectStream.listen(effects.add);
 
-    await cubit.save(draft: const BrandDraft(name: 'New', slug: 'new'));
+    await cubit.save(
+      draft: const BrandDraft(name: 'New', slug: 'new'),
+    );
     await Future<void>.delayed(Duration.zero);
 
     expect(cubit.state, BrandFormStatus.idle);
@@ -333,7 +344,9 @@ void main() {
     final effects = <BrandFormEffect>[];
     final subscription = cubit.effectStream.listen(effects.add);
 
-    await cubit.save(draft: const BrandDraft(name: 'New', slug: 'new'));
+    await cubit.save(
+      draft: const BrandDraft(name: 'New', slug: 'new'),
+    );
     await Future<void>.delayed(Duration.zero);
 
     expect(effects.single, isA<BrandSaveFailedEffect>());
@@ -353,7 +366,9 @@ void main() {
     final effects = <BrandFormEffect>[];
     final subscription = cubit.effectStream.listen(effects.add);
 
-    await cubit.save(draft: const BrandDraft(name: 'New', slug: 'new'));
+    await cubit.save(
+      draft: const BrandDraft(name: 'New', slug: 'new'),
+    );
     await Future<void>.delayed(Duration.zero);
 
     expect(

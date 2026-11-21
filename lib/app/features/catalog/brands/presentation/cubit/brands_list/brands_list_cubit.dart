@@ -74,12 +74,9 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     _requestVersion++;
     _searchTimer?.cancel();
     emit(state.copyWith(query: query, clearFailure: true));
-    _searchTimer = Timer(
-      const Duration(milliseconds: 300),
-      () {
-        if (!isClosed) load();
-      },
-    );
+    _searchTimer = Timer(const Duration(milliseconds: 300), () {
+      if (!isClosed) load();
+    });
   }
 
   Future<void> setStatus(BrandStatusFilter status) {
@@ -104,11 +101,7 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     _searchTimer?.cancel();
     _searchTimer = null;
     _updateQuery(
-      state.query.copyWith(
-        search: '',
-        status: BrandStatusFilter.all,
-        page: 1,
-      ),
+      state.query.copyWith(search: '', status: BrandStatusFilter.all, page: 1),
     );
     return load();
   }
@@ -121,19 +114,14 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     );
     if (isClosed) return;
     if (result.isLeft()) {
-      final failure = result.fold<Failure?>(
-        (failure) => failure,
-        (_) => null,
-      );
+      final failure = result.fold<Failure?>((failure) => failure, (_) => null);
       if (failure != null) {
         _flashMessages.post(failure.messageKey, MessageType.error);
       }
       return;
     }
     _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);
-    emitEffect(
-      const BrandsMutatedEffect(BrandsMutationKind.statusChanged),
-    );
+    emitEffect(const BrandsMutatedEffect(BrandsMutationKind.statusChanged));
     await load();
   }
 
@@ -144,9 +132,7 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     if (isClosed) return result;
     if (result.isRight()) {
       _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);
-      emitEffect(
-        const BrandsMutatedEffect(BrandsMutationKind.statusChanged),
-      );
+      emitEffect(const BrandsMutatedEffect(BrandsMutationKind.statusChanged));
       await load();
     }
     return result;
