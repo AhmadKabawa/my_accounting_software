@@ -4,14 +4,15 @@ import 'package:accounting_software/app/core/presentation/widgets/app_color_swat
 
 import '../../../../helpers/localized_app.dart';
 
-BoxDecoration _decoration(WidgetTester tester) => tester
-    .widget<DecoratedBox>(
-      find.descendant(
-        of: find.byType(AppColorSwatch),
-        matching: find.byType(DecoratedBox),
-      ),
-    )
-    .decoration as BoxDecoration;
+BoxDecoration _decoration(WidgetTester tester) {
+  final box = tester.widget<DecoratedBox>(
+    find.descendant(
+      of: find.byType(AppColorSwatch),
+      matching: find.byType(DecoratedBox),
+    ),
+  );
+  return box.decoration as BoxDecoration;
+}
 
 Future<void> _pump(WidgetTester tester, String? hex) => tester.pumpWidget(
   buildTestApp(home: Scaffold(body: Center(child: AppColorSwatch(hex: hex)))),

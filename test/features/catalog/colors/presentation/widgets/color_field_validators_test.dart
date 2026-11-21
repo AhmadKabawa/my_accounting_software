@@ -47,7 +47,8 @@ void main() {
   test('sort order: optional whole number', () {
     expect(ColorFieldValidators.sortOrder(''), isNull);
     expect(ColorFieldValidators.sortOrder('12'), isNull);
-    expect(ColorFieldValidators.sortOrder('-1'), ColorsKeys.sortOrderFormat.en);
-    expect(ColorFieldValidators.sortOrder('1.5'), ColorsKeys.sortOrderFormat.en);
+    final message = ColorsKeys.sortOrderFormat.en;
+    expect(ColorFieldValidators.sortOrder('-1'), message);
+    expect(ColorFieldValidators.sortOrder('1.5'), message);
   });
 }

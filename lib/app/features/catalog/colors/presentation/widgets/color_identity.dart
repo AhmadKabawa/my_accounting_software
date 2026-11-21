@@ -14,9 +14,7 @@ class ColorIdentity extends StatelessWidget {
     children: [
       AppColorSwatch(hex: color.hexCode, size: AppIconSize.lg),
       context.ui.spacing.gap(AppSpacing.smMd, axis: Axis.horizontal),
-      Expanded(
-        child: AppText.raw(color.name, type: AppTextType.titleSmall),
-      ),
+      Expanded(child: AppText.raw(color.name, type: AppTextType.titleSmall)),
     ],
   );
 }

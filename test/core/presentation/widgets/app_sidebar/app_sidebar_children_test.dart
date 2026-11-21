@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_navigation
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
 final _items = [
@@ -73,8 +74,11 @@ void main() {
     expect(opened, '/catalog/brands');
   });
 
-  test('the catalog destination child points at the real Brands route', () {
+  test('the catalog destination children point at the real routes', () {
     final catalog = appDestinations[1].item;
-    expect(catalog.children.single.path, BrandsRoutes.brands.path);
+    expect(catalog.children.map((child) => child.path), [
+      BrandsRoutes.brands.path,
+      ColorsRoutes.colors.path,
+    ]);
   });
 }

@@ -4,7 +4,7 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/loc
 import 'package:accounting_software/app/localization/key_registry.dart';
 
 void main() {
-  test('color keys are registered, unique and translated in both languages', () {
+  test('color keys are registered, unique and translated', () {
     final english = MyDartLoader.build(allKeys, (key) => key.en);
     final arabic = MyDartLoader.build(allKeys, (key) => key.ar);
     final registered = allKeys

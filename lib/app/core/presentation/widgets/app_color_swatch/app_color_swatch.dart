@@ -35,6 +35,7 @@ class AppColorSwatch extends StatelessWidget {
     final argb = HexColor.toArgb(hex);
     final scheme = Theme.of(context).colorScheme;
     final dimension = size.of(context);
+    final ring = selected ? AppBorderWidth.thick : AppBorderWidth.thin;
     final circle = SizedBox.square(
       dimension: dimension,
       child: DecoratedBox(
@@ -43,9 +44,7 @@ class AppColorSwatch extends StatelessWidget {
           color: argb == null ? null : Color(argb),
           border: Border.all(
             color: selected ? scheme.primary : scheme.outline,
-            width: (selected ? AppBorderWidth.thick : AppBorderWidth.thin).of(
-              context,
-            ),
+            width: ring.of(context),
           ),
         ),
       ),
@@ -58,11 +57,7 @@ class AppColorSwatch extends StatelessWidget {
       selected: selected,
       label: semanticLabel,
       excludeSemantics: true,
-      child: InkResponse(
-        onTap: onTap,
-        radius: dimension,
-        child: circle,
-      ),
+      child: InkResponse(onTap: onTap, radius: dimension, child: circle),
     );
   }
 }

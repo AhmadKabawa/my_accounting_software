@@ -93,8 +93,8 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Navy');
     await tester.enterText(find.byType(TextFormField).at(1), 'NAVY');
-    await tester.enterText(find.byType(TextFormField).at(2), '1e3a8a');
-    await tester.enterText(find.byType(TextFormField).at(3), '5');
+    await tester.enterText(find.byType(TextFormField).at(3), '1e3a8a');
+    await tester.enterText(find.byType(TextFormField).at(2), '5');
     await tester.tap(find.text(ColorsKeys.save.en));
     await tester.pumpAndSettle();
 
@@ -116,7 +116,7 @@ void main() {
     );
     await tester.pump();
 
-    expect(_controller(tester, 2).text, '#DC2626');
+    expect(_controller(tester, 3).text, '#DC2626');
     expect(find.byType(AppColorSwatch), findsWidgets);
   });
 
@@ -144,8 +144,8 @@ void main() {
 
     expect(_controller(tester, 0).text, 'Navy');
     expect(_controller(tester, 1).text, 'NAVY');
-    expect(_controller(tester, 2).text, '#1E3A8A');
-    expect(_controller(tester, 3).text, '2');
+    expect(_controller(tester, 2).text, '2');
+    expect(_controller(tester, 3).text, '#1E3A8A');
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Dark navy');
     await tester.tap(find.text(ColorsKeys.save.en));

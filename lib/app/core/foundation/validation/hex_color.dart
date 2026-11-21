@@ -11,7 +11,8 @@ abstract final class HexColor {
   static const _rgbLength = 6;
   static const _hexRadix = 16;
 
-  static bool isValid(String? value) => value != null && pattern.hasMatch(value);
+  static bool isValid(String? value) =>
+      value != null && pattern.hasMatch(value);
 
   /// The `0xAARRGGBB` integer Flutter's `Color` takes, or null when [value] is
   /// not a valid hex color. A trailing `AA` (CSS order) becomes the alpha.

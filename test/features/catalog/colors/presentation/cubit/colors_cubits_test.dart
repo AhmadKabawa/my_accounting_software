@@ -135,7 +135,7 @@ void main() {
       await cubit.close();
     });
 
-    test('a failed deactivate returns the failure and does not reload', () async {
+    test('a failed deactivate returns the failure, no reload', () async {
       final repository = FakeColorsRepository()
         ..statusResult = const Left(_Failure());
       final cubit = _list(repository);
