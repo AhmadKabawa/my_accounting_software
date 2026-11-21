@@ -14,9 +14,12 @@ BoxDecoration _decoration(WidgetTester tester) {
   return box.decoration as BoxDecoration;
 }
 
-Future<void> _pump(WidgetTester tester, String? hex) => tester.pumpWidget(
-  buildTestApp(home: Scaffold(body: Center(child: AppColorSwatch(hex: hex)))),
-);
+Future<void> _pump(WidgetTester tester, String? hex) async {
+  final swatch = AppColorSwatch(hex: hex);
+  await tester.pumpWidget(
+    buildTestApp(home: Scaffold(body: Center(child: swatch))),
+  );
+}
 
 void main() {
   testWidgets('fills the circle with the parsed color', (tester) async {
