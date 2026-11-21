@@ -15,7 +15,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';

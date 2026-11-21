@@ -108,11 +108,13 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     );
     if (isClosed) return;
     if (result.isLeft()) {
-      final failure = result.fold(
+      final failure = result.fold<Failure?>(
         (failure) => failure,
-        (_) => const UnexpectedFailure(),
+        (_) => null,
       );
-      _flashMessages.post(failure.messageKey, MessageType.error);
+      if (failure != null) {
+        _flashMessages.post(failure.messageKey, MessageType.error);
+      }
       return;
     }
     _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);

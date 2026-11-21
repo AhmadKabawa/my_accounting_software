@@ -150,7 +150,10 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
       BrandsEndpoint.logoUpload(path),
       data: upload.bytes,
       options: Options(
-        headers: {'Content-Type': upload.normalizedMimeType, 'x-upsert': 'false'},
+        headers: {
+          'Content-Type': upload.normalizedMimeType,
+          'x-upsert': 'false',
+        },
       ),
       fromJson: (_) => BrandsEndpoint.logoPublicUrl(AppConfig.baseUrl, path),
     );
@@ -175,12 +178,13 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     return trimmed.isEmpty ? null : trimmed;
   }
 
-  String _fileExtension(BrandLogoUpload upload) => switch (upload.mimeType.toLowerCase()) {
-    'image/jpeg' => 'jpg',
-    'image/png' => 'png',
-    'image/webp' => 'webp',
-    _ => 'img',
-  };
+  String _fileExtension(BrandLogoUpload upload) =>
+      switch (upload.mimeType.toLowerCase()) {
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+        _ => 'img',
+      };
 
   String _escapeFilterValue(String value) =>
       value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
