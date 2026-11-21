@@ -34,7 +34,7 @@
 | U-1 | توزيع الإجراءات الحالي: Edit أساسي، والحذف يظهر فقط عند productCount == 0، وتفعيل/تعطيل في Overflow | مؤكد من الكود | `brands_table_section.dart:112-139` | — | الحذف مشروط بقيمة 0 تحديداً؛ null لا يظهر |
 | U-2 | حقل رابط الشعار اليدوي ما زال جزءاً من BrandLogoSection إلى جانب الرفع/الإزالة | مؤكد من الكود | `brand_logo_section.dart:20-25,65-100` | — | — |
 | U-3 | فشل Refresh يحول الحالة إلى Failed بدلاً من إبقاء الصفوف مع InlineBanner وإعادة المحاولة | مؤكد من الكود | `brands_list_cubit.dart:73-89`; `brands_table_section.dart:80-88` | — | مؤشر التحميل لا يُمثّل كحالة مستقلة عند وجود Ready |
-| ST-1 | ملفات Brands موجودة مباشرة تحت catalog/data وdomain وpresentation، لا تحت catalog/brands | مؤكد من الكود | `lib/app/features/catalog/{data,domain,presentation}` | — | مرحلة 0 |
+| ST-1 | نقل Brands إلى catalog/brands/{data,domain,presentation,di} مع إبقاء Hub وDI/Routes الخاصة به على مستوى catalog | مُنفَّذ | `lib/app/features/catalog/brands/`; `catalog/di/catalog_di.dart`; `catalog/presentation/routing/catalog_routes.dart` | `72961a6c55501e5d131c3a5bb99e8ec2501fdbac` | نقل الملفات والاختبارات وتحديث imports وDI ومسارات Brands. |
 | ST-2 | ملفات كل Cubit تجمع State وCubit في ملف واحد ولا تتبع مجلد cubit/<name> | مؤكد من الكود | `presentation/cubit/brand_form_cubit.dart`; `brand_stats_cubit.dart`; `brands_list_cubit.dart` | — | يُسجل كاتفاق بنيوي للميزات القادمة؛ لا يُعاد تقسيم Cubits ضمن النقل الصرف |
 | ST-3 | لا يوجد GetBrandStatsUseCase مستقل | مؤكد من الكود | `domain/usecase/` (لا يوجد ملف get_brand_stats_use_case.dart) | — | مرتبط بـ P1-3 |
 | DEC-1 | لا Freezed ولا Bloc؛ Cubit فقط | مؤكد من الكود | `pubspec.yaml`; `presentation/cubit/*.dart` | — | قرار بلا كود |
@@ -47,5 +47,5 @@
 - خط الأساس: HEAD هو `55e290f`. لا تتوفر أدوات `dart` و`flutter` في بيئة التنفيذ؛ لذلك لم أُشغّل `dart format` أو `flutter analyze` أو `flutter test` محلياً.
 - فحص CI الموجود لنفس HEAD: Workflow run `44839609573` فشل. خطوة التنسيق وجدت 13 ملفاً تحتاج format؛ خطوة analyze انتهت بالفشل؛ الاختبارات الكاملة انتهت بالفشل مع أخطاء ProviderNotFoundException في اختبارات PermissionGate/AccessCubit وأخطاء تفاعل في `app_searchable_dropdown_test.dart`. اختبار catalog UI المخصص نجح. هذه نتائج CI سابقة وليست تشغيلًا محلياً جديداً.
 - المرحلة 0: مُنفَّذة في commit PHASE0؛ نُقلت ملفات Brands والاختبارات إلى `catalog/brands`، مع بقاء Hub و`catalog_di.dart` و`catalog_routes.dart` على مستوى catalog.
-- المرحلة 1: لم تبدأ بعد.
+- المرحلة 1: بدأ التنفيذ؛ AppFormDialog أُضيف في commit مستقل، وما زال تثبيت مواضع أبناء القوالب (N-4) قيد التنفيذ.
 - الاختبارات الجديدة: لا توجد اختبارات جديدة في هذا التدقيق؛ أي اختبار سيُضاف ولا يتاح تشغيله سيُوسم «لم يُشغَّل».

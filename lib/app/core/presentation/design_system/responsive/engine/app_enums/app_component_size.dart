@@ -57,6 +57,10 @@ class AppComponentSize extends ResponsiveToken {
   /// Mobile: 200px | Tablet: 240px | Desktop: 280px
   static const cardHeight = AppComponentSize(200, 240, 280);
 
+  /// Maximum width for responsive create/edit form dialogs.
+  /// Mobile: 480px | Tablet: 600px | Desktop: 720px
+  static const formDialogWidth = AppComponentSize(480, 600, 720);
+
   /// Search field maximum width in list toolbars (full width on phones).
   /// Mobile: 320px | Tablet: 360px | Desktop: 420px
   static const searchFieldWidth = AppComponentSize(320, 360, 420);
