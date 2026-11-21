@@ -15,7 +15,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
@@ -94,11 +93,7 @@ class _BrandsView extends StatelessWidget {
       onConfirm: () async {
         final result = await context.read<BrandsListCubit>().delete(brand);
         return result.fold(
-          (failure) => failure is BrandInUseFailure
-              ? BrandsKeys.brandInUse
-              : failure is BrandUsageUnknownFailure
-              ? BrandsKeys.brandUsageUnknown
-              : failure.messageKey,
+          (failure) => failure.messageKey,
           (_) => null,
         );
       },
@@ -107,10 +102,16 @@ class _BrandsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<BrandStatsCubit, BrandStatsState>(
-        builder: (context, statsState) =>
-            BlocBuilder<BrandsListCubit, BrandsListState>(
-              builder: (context, state) {
+      BlocEffectListener<BrandsListEffect, BrandsListCubit>(
+        onEffect: (context, effect) {
+          if (effect is BrandsMutatedEffect) {
+            context.read<BrandStatsCubit>().refresh();
+          }
+        },
+        child: BlocBuilder<BrandStatsCubit, BrandStatsState>(
+          builder: (context, statsState) =>
+              BlocBuilder<BrandsListCubit, BrandsListState>(
+                builder: (context, state) {
                 final cubit = context.read<BrandsListCubit>();
                 final page = state.result;
                 final query = state.query;
@@ -122,16 +123,7 @@ class _BrandsView extends StatelessWidget {
                 final loading = state.isInitialLoading;
                 final refreshing = state.isRefreshing;
 
-                return BlocEffectListener<
-                  BrandsListEffect,
-                  BrandsListCubit
-                >(
-                  onEffect: (context, effect) {
-                    if (effect is BrandsMutatedEffect) {
-                      context.read<BrandStatsCubit>().refresh();
-                    }
-                  },
-                  child: ListPageTemplate(
+                return ListPageTemplate(
                     titleKey: BrandsKeys.title,
                     breadcrumb: AppBreadcrumb(
                       items: [
@@ -156,10 +148,7 @@ class _BrandsView extends StatelessWidget {
                       query: query,
                       onSearchChanged: cubit.searchChanged,
                       onStatusChanged: cubit.setStatus,
-                      onClearAll: () {
-                        cubit.searchChanged('');
-                        cubit.setStatus(BrandStatusFilter.all);
-                      },
+                      onClearAll: cubit.clearFilters,
                     ),
                     state: loading
                         ? AppPageState.loading
