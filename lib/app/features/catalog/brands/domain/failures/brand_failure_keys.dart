@@ -20,5 +20,5 @@ enum BrandFailureKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'brands.$name';
+  String get key => 'brandFailure.$name';
 }
