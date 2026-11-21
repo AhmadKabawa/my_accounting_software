@@ -133,14 +133,16 @@ void main() {
       expect(statsCalls, 1);
 
       await listCubit.refresh();
+      await statsCubit.refresh();
       await listCubit.refresh();
+      await statsCubit.refresh();
       await tester.pumpAndSettle();
-      expect(statsCalls, 1);
+      expect(statsCalls, 3);
 
       await listCubit.activate(12);
       await tester.pumpAndSettle();
 
-      expect(statsCalls, 2);
+      expect(statsCalls, 4);
       expect(tester.takeException(), isNull);
     },
   );
