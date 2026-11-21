@@ -355,12 +355,12 @@ class ApiClient implements IApiClient {
   }
 
   ApiException _mapStatusCode(DioException e) {
-    final erp = _extractErpError(e.response?.data);
-    if (erp != null) {
+    final databaseError = _extractDatabaseError(e.response?.data);
+    if (databaseError != null && ErpErrorKeys.isErpCode(databaseError.code)) {
       return ApiException.erp(
-        errorCode: erp.code,
-        serverMessage: erp.message,
-        details: erp.details,
+        errorCode: databaseError.code,
+        serverMessage: databaseError.message,
+        details: databaseError.details,
         statusCode: e.response?.statusCode,
       );
     }
@@ -374,7 +374,10 @@ class ApiClient implements IApiClient {
       403 => ApiException.forbidden(),
       404 => ApiException.notFound(),
       409 => ApiException.conflict(
-        serverMessage: _extractMessage(e.response?.data),
+        serverMessage:
+            databaseError?.message ?? _extractMessage(e.response?.data),
+        errorCode: databaseError?.code,
+        details: databaseError?.details,
       ),
       422 => ApiException.validationError(
         serverMessage: _extractMessage(e.response?.data),
@@ -387,17 +390,17 @@ class ApiClient implements IApiClient {
     };
   }
 
-  /// PostgREST reports a database error as `{code, message, details, hint}`;
-  /// a business rule has `code` = `ERPnn` (decision 76). Anything else is
-  /// not a business-rule error and keeps the existing mapping.
-  ({String code, String? message, String? details})? _extractErpError(
+  /// PostgREST reports database errors as `{code, message, details, hint}`.
+  /// Preserve SQLSTATE codes as well as ERP business-rule codes so feature
+  /// repositories can distinguish unique and foreign-key conflicts.
+  ({String code, String? message, String? details})? _extractDatabaseError(
     dynamic data,
   ) {
     if (data is! Map) return null;
     final code = data['code']?.toString();
-    if (!ErpErrorKeys.isErpCode(code)) return null;
+    if (code == null || code.isEmpty) return null;
     return (
-      code: code!,
+      code: code,
       message: data['message']?.toString(),
       details: data['details']?.toString(),
     );
