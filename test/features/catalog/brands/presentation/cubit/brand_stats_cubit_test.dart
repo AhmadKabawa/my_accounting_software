@@ -6,7 +6,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brand_stats_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats_cubit.dart';
 
 import '../../support/fake_brands_repository.dart';
@@ -27,7 +27,7 @@ void main() {
           ),
         );
       };
-      final cubit = BrandStatsCubit(getBrands: GetBrandsUseCase(repository));
+      final cubit = BrandStatsCubit(getBrandStats: GetBrandStatsUseCase(repository));
 
       await cubit.load();
 
@@ -52,7 +52,7 @@ void main() {
         pending.add(request);
         return request.future;
       };
-      final cubit = BrandStatsCubit(getBrands: GetBrandsUseCase(repository));
+      final cubit = BrandStatsCubit(getBrandStats: GetBrandStatsUseCase(repository));
 
       final firstLoad = cubit.load();
       await Future<void>.delayed(Duration.zero);
