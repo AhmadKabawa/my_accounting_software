@@ -170,16 +170,19 @@ void main() {
       expect(result, isA<ApiFailure<_Item>>());
     });
 
-    test('a PostgREST conflict preserves its SQLSTATE code and details', () async {
-      final result = await clientFor(
-        '{"code":"23503","message":"foreign key violation","details":"Key is referenced"}',
-        status: 409,
-      ).post<dynamic>(_endpoint);
+    test(
+      'a PostgREST conflict preserves its SQLSTATE code and details',
+      () async {
+        final result = await clientFor(
+          '{"code":"23503","message":"foreign key violation","details":"Key is referenced"}',
+          status: 409,
+        ).post<dynamic>(_endpoint);
 
-      final exception = (result as ApiFailure<dynamic>).exception;
-      expect(exception, isA<ApiException>());
-      expect((exception as ApiException).errorCode, '23503');
-      expect(exception.details, 'Key is referenced');
-    });
+        final exception = (result as ApiFailure<dynamic>).exception;
+        expect(exception, isA<ApiException>());
+        expect((exception as ApiException).errorCode, '23503');
+        expect(exception.details, 'Key is referenced');
+      },
+    );;
   });
 }
