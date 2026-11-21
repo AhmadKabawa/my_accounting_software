@@ -5,6 +5,7 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/repositories/brands_repository.dart';
 
 class FakeBrandsRepository implements BrandsRepository {
@@ -12,6 +13,9 @@ class FakeBrandsRepository implements BrandsRepository {
   final List<int> deletedIds = [];
   Future<Either<Failure, PaginatedResult<Brand>>> Function(BrandListQuery)?
   onGetBrands;
+  Future<Either<Failure, BrandStats>> Function()? onGetBrandStats;
+  Future<Either<Failure, Brand>> Function(BrandDraft)? onCreateBrand;
+  Future<Either<Failure, Brand>> Function(int, BrandDraft)? onUpdateBrand;
 
   @override
   Future<Either<Failure, PaginatedResult<Brand>>> getBrands(
@@ -20,18 +24,34 @@ class FakeBrandsRepository implements BrandsRepository {
     queries.add(query);
     final handler = onGetBrands;
     if (handler != null) return handler(query);
-    return Future.value(Right(_page()));
+    return Future.value(Right(_page(query: query)));
   }
 
   @override
-  Future<Either<Failure, Brand>> createBrand(BrandDraft draft) =>
-      Future.value(Right(_brand));
+  Future<Either<Failure, BrandStats>> getBrandStats() {
+    final handler = onGetBrandStats;
+    if (handler != null) return handler();
+    return Future.value(
+      const Right(BrandStats(total: 1, active: 1, inactive: 0)),
+    );
+  }
+
+  @override
+  Future<Either<Failure, Brand>> createBrand(BrandDraft draft) {
+    final handler = onCreateBrand;
+    if (handler != null) return handler(draft);
+    return Future.value(Right(brand));
+  }
 
   @override
   Future<Either<Failure, Brand>> updateBrand({
     required int id,
     required BrandDraft draft,
-  }) => Future.value(Right(_brand));
+  }) {
+    final handler = onUpdateBrand;
+    if (handler != null) return handler(id, draft);
+    return Future.value(Right(brand));
+  }
 
   @override
   Future<Either<Failure, Unit>> setBrandActive({
@@ -56,7 +76,7 @@ class FakeBrandsRepository implements BrandsRepository {
     return Future.value(uploadResult);
   }
 
-  static const _brand = Brand(
+  static const brand = Brand(
     id: 12,
     name: 'Northwind',
     slug: 'northwind',
@@ -64,10 +84,11 @@ class FakeBrandsRepository implements BrandsRepository {
     productCount: 0,
   );
 
-  static PaginatedResult<Brand> _page() => const PaginatedResult<Brand>(
-    items: [_brand],
-    totalCount: 1,
-    currentPage: 1,
-    totalPages: 1,
-  );
+  static PaginatedResult<Brand> _page({BrandListQuery? query}) =>
+      PaginatedResult<Brand>(
+        items: const [brand],
+        totalCount: 1,
+        currentPage: query?.page ?? 1,
+        totalPages: 1,
+      );
 }
