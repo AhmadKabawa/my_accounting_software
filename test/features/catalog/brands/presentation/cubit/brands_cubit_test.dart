@@ -72,6 +72,35 @@ void main() {
     await cubit.close();
   });
 
+  test('keeps the last successful rows when refresh fails', () async {
+    final repository = FakeBrandsRepository();
+    repository.onGetBrands = (_) async => const Right(
+      PaginatedResult<Brand>(
+        items: [
+          Brand(id: 1, name: 'Existing', slug: 'existing', isActive: true),
+        ],
+        totalCount: 1,
+        currentPage: 1,
+        totalPages: 1,
+      ),
+    );
+    final cubit = BrandsListCubit(
+      getBrands: GetBrandsUseCase(repository),
+      setBrandActive: SetBrandActiveUseCase(repository),
+      deleteBrand: DeleteBrandUseCase(repository),
+    );
+    await cubit.load();
+
+    repository.onGetBrands = (_) async => const Left(NetworkFailure());
+    await cubit.refresh();
+
+    expect(cubit.state, isA<BrandsListRefreshFailed>());
+    final state = cubit.state as BrandsListRefreshFailed;
+    expect(state.result.items.single.name, 'Existing');
+    expect(state.failure, isA<NetworkFailure>());
+    await cubit.close();
+  });
+
   test(
     'latest debounced search wins over an older in-flight request',
     () async {
