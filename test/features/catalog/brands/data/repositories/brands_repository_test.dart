@@ -114,16 +114,19 @@ void main() {
     );
   });
 
-  test('maps a delete foreign-key conflict to an in-use failure', () async {
-    api.deleteFailure = ApiException.conflict(errorCode: '23503');
+  test(
+    'maps a delete foreign-key conflict to an in-use failure',
+    () async {
+      api.deleteFailure = ApiException.conflict(errorCode: '23503');
 
-    final result = await repository.deleteBrand(12);
+      final result = await repository.deleteBrand(12);
 
-    result.fold(
-      (failure) => expect(failure, isA<BrandInUseFailure>()),
-      (_) => fail('Expected in-use failure'),
-    );
-  });
+      result.fold(
+        (failure) => expect(failure, isA<BrandInUseFailure>()),
+        (_) => fail('Expected in-use failure'),
+      );
+    },
+  );
 
   test(
     'does not treat every delete conflict as a foreign-key conflict',
