@@ -27,7 +27,9 @@ void main() {
           ),
         );
       };
-      final cubit = BrandStatsCubit(getBrandStats: GetBrandStatsUseCase(repository));
+      final cubit = BrandStatsCubit(
+        getBrandStats: GetBrandStatsUseCase(repository),
+      );
 
       await cubit.load();
 
