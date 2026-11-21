@@ -9,7 +9,7 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats_cubit.dart';
 
-import 'support/fake_brands_repository.dart';
+import '../../support/fake_brands_repository.dart';
 
 void main() {
   test('loads global total, active and inactive counts independently', () async {

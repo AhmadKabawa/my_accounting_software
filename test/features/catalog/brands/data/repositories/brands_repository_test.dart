@@ -11,7 +11,7 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'support/fake_brands_api_client.dart';
+import '../../support/fake_brands_api_client.dart';
 
 void main() {
   late FakeBrandsApiClient api;

@@ -41,6 +41,7 @@
 | DEC-2 | Effects عبر BaseCubit الموجود | مؤكد من الكود | `lib/app/core/foundation/base/base_cubit.dart` | — | قرار بلا كود |
 | DEC-3 | تأجيل FormSection وFormFieldGroup حتى تتكرر الحاجة في ميزتين | مؤكد من الكود | لا تغيير مطلوب | — | قرار بلا كود |
 | DEC-4 | ConfirmDialog لا يُعدّل الآن | مؤكد من الكود | `app_confirm_dialog/confirm_dialog.dart` | — | قرار بلا كود |
+| FIX-1 | تحديث مرجع BrandsKeys في سجل المفاتيح ومسارات الدعم النسبية لاختبارات Brands بعد النقل | مُنفَّذ | `lib/app/localization/key_registry.dart:23`; اختبارات `brands_repository_test.dart`, `brand_logo_upload_cubit_test.dart`, `brand_stats_cubit_test.dart` | هذا commit | كشف CI مراجع قديمة؛ حُدثت للمسارات الجديدة. |
 
 ## الحالة الحالية — 2026-11-20
 

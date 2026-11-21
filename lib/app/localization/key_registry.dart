@@ -20,7 +20,7 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 import 'package:accounting_software/app/features/home/presentation/localization/home_keys.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/localization/onboarding_keys.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
-import 'package:accounting_software/app/features/catalog/presentation/localization/brands_keys.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 
 final List<AppKey> allKeys = <AppKey>[
   ...CommonKeys.values,
