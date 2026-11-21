@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_result.d
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/create_brand_use_case.dart';
@@ -126,6 +127,38 @@ void main() {
       async.flushMicrotasks();
       expect(repository.queries, hasLength(1));
       expect(repository.queries.single.search, 'shoe');
+      cubit.close();
+      async.flushMicrotasks();
+    });
+  });
+
+  test('clearFilters cancels pending search and issues one reset load', () {
+    fakeAsync((async) {
+      final repository = FakeBrandsRepository();
+      final cubit = _listCubit(repository);
+
+      cubit.setStatus(BrandStatusFilter.active);
+      async.flushMicrotasks();
+      cubit.setPage(3);
+      async.flushMicrotasks();
+      cubit.searchChanged('pending');
+
+      final requestCount = repository.queries.length;
+      cubit.clearFilters();
+      async.flushMicrotasks();
+
+      expect(repository.queries, hasLength(requestCount + 1));
+      expect(cubit.state.query.search, isEmpty);
+      expect(cubit.state.query.status, BrandStatusFilter.all);
+      expect(cubit.state.query.page, 1);
+      expect(repository.queries.last.search, isEmpty);
+      expect(repository.queries.last.status, BrandStatusFilter.all);
+      expect(repository.queries.last.page, 1);
+
+      async.elapse(const Duration(milliseconds: 300));
+      async.flushMicrotasks();
+      expect(repository.queries, hasLength(requestCount + 1));
+
       cubit.close();
       async.flushMicrotasks();
     });
