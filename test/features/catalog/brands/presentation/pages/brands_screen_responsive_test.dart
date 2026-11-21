@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/delete_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brand_stats_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats_cubit.dart';
@@ -46,7 +47,7 @@ void main() {
         ) async {
           final repository = FakeBrandsRepository();
           sl.registerFactory<BrandStatsCubit>(
-            () => BrandStatsCubit(getBrands: GetBrandsUseCase(repository)),
+            () => BrandStatsCubit(getBrandStats: GetBrandStatsUseCase(repository)),
           );
           sl.registerFactory<BrandsListCubit>(
             () => BrandsListCubit(
