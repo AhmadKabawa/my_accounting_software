@@ -149,9 +149,17 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     final result = await _deleteBrand(brand.id);
     if (isClosed) return result;
     if (result.isRight()) {
+      // Deleting the only row of a later page: go back first, so the table
+      // never flashes an empty page.
+      final wasLastRowOnLaterPage =
+          (state.result?.items.length ?? 0) <= 1 && state.query.page > 1;
+      if (wasLastRowOnLaterPage) {
+        _updateQuery(state.query.copyWith(page: state.query.page - 1));
+      }
       await load();
       if (isClosed) return result;
-      if (state.result != null &&
+      if (!wasLastRowOnLaterPage &&
+          state.result != null &&
           state.result!.items.isEmpty &&
           state.query.page > 1) {
         _updateQuery(state.query.copyWith(page: state.query.page - 1));

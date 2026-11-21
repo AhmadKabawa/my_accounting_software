@@ -14,6 +14,7 @@ import 'package:accounting_software/app/core/localization/keys/common_keys.dart'
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/delete_brand_use_case.dart';
@@ -176,7 +177,7 @@ void main() {
     await tester.tap(find.text(CommonKeys.confirm.en));
     await tester.pumpAndSettle();
 
-    expect(find.text(BrandsKeys.brandInUse.en), findsOneWidget);
+    expect(find.text(BrandFailureKeys.brandInUse.en), findsOneWidget);
     expect(find.text('Can delete'), findsWidgets);
   });
 }

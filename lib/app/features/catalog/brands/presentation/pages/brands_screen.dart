@@ -138,6 +138,7 @@ class BrandsScreen extends StatelessWidget {
   }
 
   Future<void> _delete(BuildContext context, Brand brand) async {
+    final cubit = context.read<BrandsListCubit>();
     await showConfirmDialog(
       context,
       titleKey: BrandsKeys.delete,
@@ -145,7 +146,7 @@ class BrandsScreen extends StatelessWidget {
       severity: ConfirmDialogSeverity.warning,
       targetName: brand.name,
       onConfirm: () async {
-        final result = await context.read<BrandsListCubit>().delete(brand);
+        final result = await cubit.delete(brand);
         return result.fold((failure) => failure.messageKey, (_) => null);
       },
     );
