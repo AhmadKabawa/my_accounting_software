@@ -10,6 +10,7 @@ import 'package:accounting_software/app/features/on_boarding/presentation/routin
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 Set<String> buildPublicRoutes({
@@ -35,6 +36,7 @@ final Set<String> protectedRoutes = {
   HomeRoutes.home.path,
   ProfileRoutes.profile.path,
   BrandsRoutes.brands.path,
+  ColorsRoutes.colors.path,
   CatalogRoutes.hub.path,
   CatalogRoutes.masterData.path,
 };

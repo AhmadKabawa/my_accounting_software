@@ -11,6 +11,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text/app_t
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/catalog_hub_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 
 /// The Catalog tab: a hub that lists the catalog areas. Each area opens its own
 /// page inside the Catalog branch (so the bottom bar / sidebar stays on Catalog).
@@ -40,6 +42,12 @@ class CatalogHubScreen extends StatelessWidget {
               titleKey: BrandsKeys.title,
               descriptionKey: CatalogHubKeys.brandsDescription,
               onOpen: () => context.go(BrandsRoutes.brands.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.colors,
+              titleKey: ColorsKeys.title,
+              descriptionKey: CatalogHubKeys.colorsDescription,
+              onOpen: () => context.go(ColorsRoutes.colors.path),
             ),
           ],
         ),

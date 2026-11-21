@@ -1,0 +1,120 @@
+import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/access/domain/access_repository.dart';
+import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
+import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
+import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/usecase/get_colors_use_case.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/usecase/set_color_active_use_case.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
+import '../../../../../helpers/localized_app.dart';
+import '../../../../../helpers/screen_matrix.dart';
+import '../../support/fake_colors_repository.dart';
+
+class _AccessRepository implements AccessRepository {
+  _AccessRepository({required this.canManage});
+  final bool canManage;
+
+  @override
+  Future<Either<Failure, AccessSnapshot>> getMyAccess() async => Right(
+    AccessSnapshot(
+      userId: 'test-user',
+      username: 'test',
+      email: null,
+      isSuperAdmin: false,
+      roles: [],
+      permissions: {if (canManage) Permissions.masterData.manage},
+      branches: [],
+      warehouses: [],
+      posTerminals: [],
+    ),
+  );
+}
+
+void _register(FakeColorsRepository repository) {
+  sl.registerFactory<FlashMessages>(FlashMessages.new);
+  sl.registerFactory<ColorsListCubit>(
+    () => ColorsListCubit(
+      getColors: GetColorsUseCase(repository),
+      setColorActive: SetColorActiveUseCase(repository),
+      flashMessages: sl(),
+    ),
+  );
+  addTearDown(() async => sl.reset());
+}
+
+Widget _home({required bool canManage}) => BlocProvider<AccessCubit>(
+  create: (_) => AccessCubit(
+    getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: canManage)),
+  )..load(),
+  child: const Scaffold(body: ColorsScreen()),
+);
+
+void main() {
+  setUpAll(() => useTranslations(const Locale('en')));
+
+  for (final width in [360.0, 600.0, 900.0, 1200.0]) {
+    for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
+      for (final dark in [false, true]) {
+        testWidgets('colors page renders at $width, $direction, dark=$dark', (
+          tester,
+        ) async {
+          _register(FakeColorsRepository());
+          await pumpScreenMatrix(
+            tester,
+            width: width,
+            direction: direction,
+            dark: dark,
+            home: _home(canManage: true),
+          );
+
+          expect(find.byType(ColorsScreen), findsOneWidget);
+          expect(find.text('Navy'), findsWidgets);
+          expect(find.textContaining('{'), findsNothing);
+          expect(find.textContaining('@'), findsNothing);
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  }
+
+  testWidgets('an empty catalog shows the add call to action', (tester) async {
+    final repository = FakeColorsRepository()
+      ..onGetColors = (_) async =>
+          Right(FakeColorsRepository.page(items: const []));
+    _register(repository);
+    await pumpScreenMatrix(
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    expect(find.text(ColorsKeys.empty.en), findsOneWidget);
+    expect(find.text(ColorsKeys.add.en), findsWidgets);
+  });
+
+  testWidgets('without manage permission there is no add action', (
+    tester,
+  ) async {
+    _register(FakeColorsRepository());
+    await pumpScreenMatrix(
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: false),
+    );
+
+    expect(find.text(ColorsKeys.add.en), findsNothing);
+  });
+}

@@ -44,6 +44,8 @@ import 'package:accounting_software/app/features/profile/presentation/localizati
 import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/catalog_hub_screen.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
@@ -272,6 +274,12 @@ class AppRouter {
                 name: BrandsRoutes.brands.name,
                 pageBuilder: (context, state) =>
                     NoTransitionPage(child: const BrandsScreen()),
+              ),
+              GoRoute(
+                path: ColorsRoutes.colors.path,
+                name: ColorsRoutes.colors.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: ColorsScreen()),
               ),
             ],
           ),
