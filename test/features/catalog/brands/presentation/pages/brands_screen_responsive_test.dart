@@ -47,7 +47,9 @@ void main() {
         ) async {
           final repository = FakeBrandsRepository();
           sl.registerFactory<BrandStatsCubit>(
-            () => BrandStatsCubit(getBrandStats: GetBrandStatsUseCase(repository)),
+            () => BrandStatsCubit(
+              getBrandStats: GetBrandStatsUseCase(repository),
+            ),
           );
           sl.registerFactory<BrandsListCubit>(
             () => BrandsListCubit(
