@@ -86,22 +86,29 @@ class _AppFormDialogState extends State<AppFormDialog> {
   Widget _buildSurface(BuildContext context) {
     final ui = context.ui;
     final isDialog = !ui.screen.isMobile;
-    final scrollable = SingleChildScrollView(
-      padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (widget.errorKey != null) ...[
-            InlineBanner(
-              messageKey: widget.errorKey!,
-              variant: InlineBannerVariant.error,
+    final content = <Widget>[
+      if (widget.errorKey != null) ...[
+        InlineBanner(
+          messageKey: widget.errorKey!,
+          variant: InlineBannerVariant.error,
+        ),
+        ui.spacing.gap(AppSpacing.md),
+      ],
+      widget.child,
+    ];
+    final scrollable = isDialog
+        ? ListView(
+            shrinkWrap: true,
+            padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
+            children: content,
+          )
+        : SingleChildScrollView(
+            padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: content,
             ),
-            ui.spacing.gap(AppSpacing.md),
-          ],
-          widget.child,
-        ],
-      ),
-    );
+          );
     return Column(
       mainAxisSize: isDialog ? MainAxisSize.min : MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
