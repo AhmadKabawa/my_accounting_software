@@ -115,7 +115,7 @@ void main() {
   });
 
   test('maps a delete foreign-key conflict to an in-use failure', () async {
-    api.deleteFailure = ApiException.conflict();
+    api.deleteFailure = ApiException.erp(errorCode: '23503', statusCode: 409);
 
     final result = await repository.deleteBrand(12);
 
@@ -124,6 +124,36 @@ void main() {
       (_) => fail('Expected in-use failure'),
     );
   });
+
+  test('does not treat every delete conflict as a foreign-key conflict', () async {
+    api.deleteFailure = ApiException.conflict();
+
+    final result = await repository.deleteBrand(12);
+
+    result.fold(
+      (failure) {
+        expect(failure, isNot(isA<BrandInUseFailure>()));
+        expect(failure, isA<Failure>());
+      },
+      (_) => fail('Expected conflict failure'),
+    );
+  });
+
+  test(
+    'uses the MIME type when an uploaded filename has no extension',
+    () async {
+      final result = await repository.uploadLogo(
+        BrandLogoUpload(
+          bytes: Uint8List.fromList([1, 2, 3]),
+          fileName: 'brand-logo',
+          mimeType: 'image/png',
+        ),
+      );
+
+      expect(api.lastPath, endsWith('.png'));
+      expect(result.isRight(), isTrue);
+    },
+  );
 
   test(
     'uploads a logo to the product-images bucket and returns its URL',
