@@ -138,11 +138,12 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppPageHeader(titleKey: widget.titleKey),
-          if (widget.state == AppPageState.error)
-            InlineBanner(
-              messageKey: widget.errorKey ?? TemplateKeys.defaultError,
-              variant: InlineBannerVariant.error,
-            ),
+          widget.state == AppPageState.error
+              ? InlineBanner(
+                  messageKey: widget.errorKey ?? TemplateKeys.defaultError,
+                  variant: InlineBannerVariant.error,
+                )
+              : const SizedBox.shrink(),
           Expanded(child: _scrollableBody()),
           if (widget.onSave != null)
             AppButton(
@@ -207,11 +208,12 @@ class DashboardTemplate extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AppPageHeader(titleKey: titleKey),
-        if (state == AppPageState.error)
-          InlineBanner(
-            messageKey: errorKey ?? TemplateKeys.defaultError,
-            variant: InlineBannerVariant.error,
-          ),
+        state == AppPageState.error
+            ? InlineBanner(
+                messageKey: errorKey ?? TemplateKeys.defaultError,
+                variant: InlineBannerVariant.error,
+              )
+            : const SizedBox.shrink(),
         Expanded(
           child: switch (state) {
             AppPageState.loading => const AppSkeleton.card(),
@@ -299,11 +301,14 @@ class ListPageTemplate extends StatelessWidget {
             primaryAction: primaryAction,
             breadcrumb: breadcrumb,
           ),
-          if (actions != null)
-            Padding(
-              padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
-              child: actions!,
-            ),
+          actions != null
+              ? Padding(
+                  padding: context.ui.padding.symmetric(
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: actions!,
+                )
+              : const SizedBox.shrink(),
           filterBar,
           context.ui.spacing.gap(AppSpacing.md),
           switch (state) {

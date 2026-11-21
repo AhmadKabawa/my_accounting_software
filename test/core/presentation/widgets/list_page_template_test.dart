@@ -103,4 +103,48 @@ void main() {
     expect(retries, 1);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'retains search text when actions become visible',
+    (tester) async {
+    var showActions = false;
+    late StateSetter update;
+
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) {
+              update = setState;
+              return ListPageTemplate(
+                titleKey: CatalogUiKeys.filters,
+                filterBar: FilterBar(
+                  onSearchChanged: (_) {},
+                  activeFilters: const [],
+                  onClearAll: () {},
+                ),
+                actions: showActions ? const Text('Actions') : null,
+                dataTable: const SizedBox(height: 100),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    final search = find.byType(TextFormField).first;
+    await tester.enterText(search, 'search survives');
+    await tester.pump();
+    update(() => showActions = true);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).first)
+          .controller!
+          .text,
+      'search survives',
+    );
+  });
+
 }

@@ -26,7 +26,7 @@
 | N-1 | `_slugify` يحذف كل ما ليس a-z0-9، فينتج slug فارغاً للاسم العربي | مؤكد من الكود | `brand_editor_dialog.dart:50-54` | — | — |
 | N-2 | BrandsTableSection وBrandsFilterBar يستلمان BrandsListCubit مباشرة رغم وصف الأول بأنه Pure presentation | مؤكد من الكود | `brands_table_section.dart:18-46`; `brands_filter_bar.dart:13-19` | — | ربط العرض بالـ Cubit يناقض التعليق |
 | N-3 | BrandsScreen تنسق refresh الإحصاءات في عدة مسارات وتستعمل MessageViewWidgets مباشرة؛ نمط Auth يستخدم BaseCubit/FlashMessages/Effects | مؤكد من الكود | `brands_screen.dart:39-120` | — | يلزم توحيد orchestration لاحقاً؛ لا تعديل في المرحلتين 0 و1 |
-| N-4 | ListPageTemplate يدرج actions بشرط if داخل Column قبل FilterBar؛ FormPageTemplate وDashboardTemplate لديهما شروط خطأ في موضع مشابه قبل ابن ذي State/Expanded | غير مؤكد | `app_page_templates.dart:140-146,209-216,300-309` | — | استنتاج بنيوي؛ يلزم Widget Test لإثبات فقدان State. لم يُشغَّل |
+| N-4 | إدراج أبناء شرطية قبل FilterBar/Expanded قد يغيّر مواضع العناصر؛ ثُبّتت المواضع بإبن placeholder دائم | غير مؤكد | `app_page_templates.dart:140-146,209-216,300-309`; `list_page_template_test.dart`; `page_template_child_identity_test.dart` | هذا commit | أُضيفت اختبارات ListPageTemplate وFormPageTemplate وDashboardTemplate؛ لم تُشغَّل على HEAD السابق لإثبات إعادة الإنتاج. لم يُشغَّل |
 | N-5 | محرر الماركة لا يحرس التغييرات غير المحفوظة، بخلاف FormPageTemplate الذي يملك dirty وUnsavedChangesGuard | مؤكد من الكود | `brand_editor_dialog.dart:18-151`; `app_page_templates.dart:23-108` | — | — |
 | N-6a | BrandEditorDialogState عامة بدلاً من خاصة | مؤكد من الكود | `brand_editor_dialog.dart:22-25` | — | — |
 | N-6b | بعض Widgets لا تستقبل super.key | مؤكد من الكود | `brands_table_section.dart:21-24`; `brand_editor_dialog.dart:18-23` | — | يُراجع عند نقل الملفات فقط إذا لم يتطلب تغيير منطق |
@@ -47,5 +47,5 @@
 - خط الأساس: HEAD هو `55e290f`. لا تتوفر أدوات `dart` و`flutter` في بيئة التنفيذ؛ لذلك لم أُشغّل `dart format` أو `flutter analyze` أو `flutter test` محلياً.
 - فحص CI الموجود لنفس HEAD: Workflow run `44839609573` فشل. خطوة التنسيق وجدت 13 ملفاً تحتاج format؛ خطوة analyze انتهت بالفشل؛ الاختبارات الكاملة انتهت بالفشل مع أخطاء ProviderNotFoundException في اختبارات PermissionGate/AccessCubit وأخطاء تفاعل في `app_searchable_dropdown_test.dart`. اختبار catalog UI المخصص نجح. هذه نتائج CI سابقة وليست تشغيلًا محلياً جديداً.
 - المرحلة 0: مُنفَّذة في commit PHASE0؛ نُقلت ملفات Brands والاختبارات إلى `catalog/brands`، مع بقاء Hub و`catalog_di.dart` و`catalog_routes.dart` على مستوى catalog.
-- المرحلة 1: بدأ التنفيذ؛ AppFormDialog أُضيف في commit مستقل، وما زال تثبيت مواضع أبناء القوالب (N-4) قيد التنفيذ.
+- المرحلة 1: مُنفَّذة في commitين مستقلين: AppFormDialog، ثم تثبيت مواضع الأبناء في ListPageTemplate وFormPageTemplate وDashboardTemplate مع اختبارات Widget. لم تتوفر أدوات Dart/Flutter محلياً؛ الاختبارات الجديدة لم تُشغَّل محلياً.
 - الاختبارات الجديدة: لا توجد اختبارات جديدة في هذا التدقيق؛ أي اختبار سيُضاف ولا يتاح تشغيله سيُوسم «لم يُشغَّل».
