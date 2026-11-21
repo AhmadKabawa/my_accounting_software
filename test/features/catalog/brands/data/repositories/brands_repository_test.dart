@@ -137,7 +137,7 @@ void main() {
   });
 
   test('maps a create conflict to a duplicate failure', () async {
-    api.postFailure = ApiException.conflict();
+    api.postFailure = ApiException.conflict(errorCode: '23505');
 
     final result = await repository.createBrand(
       const BrandDraft(name: 'Northwind', slug: 'northwind'),
