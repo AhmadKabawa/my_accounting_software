@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -105,9 +104,6 @@ class BrandsListCubit extends BaseCubit<BrandsListState, void> {
     if (response.isRight()) {
       await load();
       if (!isClosed) {
-        _flashMessages.post(BrandsKeys.deleted, MessageType.success);
-      }
-      if (!isClosed) {
         _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);
       }
     }
@@ -126,6 +122,9 @@ class BrandsListCubit extends BaseCubit<BrandsListState, void> {
           state.result!.items.isEmpty) {
         _query = _query.copyWith(page: _query.page - 1);
         await load();
+      }
+      if (!isClosed) {
+        _flashMessages.post(BrandsKeys.deleted, MessageType.success);
       }
     }
     return response;
