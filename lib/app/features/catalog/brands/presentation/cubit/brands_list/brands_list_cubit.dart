@@ -44,11 +44,15 @@ class BrandsListCubit extends BaseCubit<BrandsListState, void> {
     _searchTimer?.cancel();
     final version = ++_requestVersion;
     final previous = state.result;
-    emit(BrandsListState(
-      status: previous == null ? BrandsListStatus.loading : BrandsListStatus.success,
-      query: _query,
-      result: previous,
-    ));
+    emit(
+      BrandsListState(
+        status: previous == null
+            ? BrandsListStatus.loading
+            : BrandsListStatus.success,
+        query: _query,
+        result: previous,
+      ),
+    );
     final response = await _getBrands(_query);
     if (isClosed || version != _requestVersion) return;
     response.fold(
