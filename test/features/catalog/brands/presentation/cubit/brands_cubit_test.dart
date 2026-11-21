@@ -38,7 +38,7 @@ void main() {
 
     final load = cubit.load();
     expect(cubit.state.status, BrandsListStatus.loading);
-    pending.complete(const Right(_page()));
+    pending.complete(Right(_page()));
     await load;
 
     expect(cubit.state.status, BrandsListStatus.ready);
@@ -58,7 +58,7 @@ void main() {
       final refresh = cubit.refresh();
       expect(cubit.state.status, BrandsListStatus.refreshing);
       expect(cubit.state.result!.items.single.name, 'Northwind');
-      pending.complete(const Right(_page(name: 'Updated')));
+      pending.complete(Right(_page(name: 'Updated')));
       await refresh;
 
       expect(cubit.state.result!.items.single.name, 'Updated');
@@ -106,9 +106,9 @@ void main() {
 
     final first = cubit.load();
     final second = cubit.setSort(ascending: false);
-    pending[1].complete(const Right(_page(name: 'Newest')));
+    pending[1].complete(Right(_page(name: 'Newest')));
     await second;
-    pending[0].complete(const Right(_page(name: 'Old')));
+    pending[0].complete(Right(_page(name: 'Old')));
     await first;
 
     expect(cubit.state.result!.items.single.name, 'Newest');
@@ -307,7 +307,7 @@ void main() {
 
       await cubit.close();
       final countAtClose = emissions;
-      pending.complete(const Right(_page()));
+      pending.complete(Right(_page()));
       await load;
 
       expect(emissions, countAtClose);
