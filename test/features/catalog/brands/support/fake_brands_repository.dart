@@ -16,6 +16,7 @@ class FakeBrandsRepository implements BrandsRepository {
   Future<Either<Failure, BrandStats>> Function()? onGetBrandStats;
   Future<Either<Failure, Brand>> Function(BrandDraft)? onCreateBrand;
   Future<Either<Failure, Brand>> Function(int, BrandDraft)? onUpdateBrand;
+  Either<Failure, Unit> setActiveResult = const Right(unit);
 
   @override
   Future<Either<Failure, PaginatedResult<Brand>>> getBrands(
@@ -57,7 +58,7 @@ class FakeBrandsRepository implements BrandsRepository {
   Future<Either<Failure, Unit>> setBrandActive({
     required int id,
     required bool isActive,
-  }) => Future.value(const Right(unit));
+  }) => Future.value(setActiveResult);
 
   @override
   Future<Either<Failure, Unit>> deleteBrand(int id) {
