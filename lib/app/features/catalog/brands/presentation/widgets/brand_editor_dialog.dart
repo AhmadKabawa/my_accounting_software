@@ -103,46 +103,45 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<BrandFormCubit, BrandFormState>(
-        builder: (context, formState) =>
-            BlocBuilder<BrandLogoUploadCubit, BrandLogoUploadState>(
-              builder: (context, logoState) {
-                final busy = formState is BrandFormSaving ||
-                    logoState is BrandLogoUploading;
-                return AppFormDialog(
-                  titleKey: widget.brand == null
-                      ? BrandsKeys.add
-                      : BrandsKeys.edit,
-                  subtitleKey: BrandsKeys.editorSubtitle,
-                  saveLabelKey: BrandsKeys.save,
-                  cancelLabelKey: BrandsKeys.cancel,
-                  busy: busy,
-                  saveEnabled: !busy,
-                  dirty: _dirty,
-                  errorKey: _failure,
-                  onSave: _save,
-                  child: Form(
-                    key: _key,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        BrandIdentitySection(
-                          name: _name,
-                          slug: _slug,
-                          onNameChanged: (value) {
-                            if (_slug.text.isEmpty) {
-                              _slug.text = _slugify(value);
-                            }
-                          },
-                        ),
-                        BrandLogoSection(logo: _logo, brandName: _name),
-                        BrandDetailsSection(description: _description),
-                      ],
+  Widget build(
+    BuildContext context,
+  ) => BlocBuilder<BrandFormCubit, BrandFormState>(
+    builder: (context, formState) =>
+        BlocBuilder<BrandLogoUploadCubit, BrandLogoUploadState>(
+          builder: (context, logoState) {
+            final busy =
+                formState is BrandFormSaving || logoState is BrandLogoUploading;
+            return AppFormDialog(
+              titleKey: widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
+              subtitleKey: BrandsKeys.editorSubtitle,
+              saveLabelKey: BrandsKeys.save,
+              cancelLabelKey: BrandsKeys.cancel,
+              busy: busy,
+              saveEnabled: !busy,
+              dirty: _dirty,
+              errorKey: _failure,
+              onSave: _save,
+              child: Form(
+                key: _key,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    BrandIdentitySection(
+                      name: _name,
+                      slug: _slug,
+                      onNameChanged: (value) {
+                        if (_slug.text.isEmpty) {
+                          _slug.text = _slugify(value);
+                        }
+                      },
                     ),
-                  ),
-                );
-              },
-            ),
-      );
+                    BrandLogoSection(logo: _logo, brandName: _name),
+                    BrandDetailsSection(description: _description),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+  );
 }
