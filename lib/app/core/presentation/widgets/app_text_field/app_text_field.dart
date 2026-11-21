@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -31,6 +32,9 @@ class AppTextField extends StatelessWidget {
     this.focusNode,
     this.onSubmitted,
     this.density,
+    this.inputFormatters,
+    this.textDirection,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   final TextEditingController controller;
@@ -58,6 +62,13 @@ class AppTextField extends StatelessWidget {
   /// Optional per-field override; null inherits AppDensityScope.
   final AppDensity? density;
 
+  /// Restricts what can be typed (for example hex digits only).
+  final List<TextInputFormatter>? inputFormatters;
+
+  /// Forces a direction for values that are always left-to-right (codes, hex).
+  final TextDirection? textDirection;
+  final TextCapitalization textCapitalization;
+
   @override
   Widget build(BuildContext context) {
     final style = AppTextFieldStyle(context, density: density);
@@ -77,6 +88,9 @@ class AppTextField extends StatelessWidget {
       autofillHints: autofillHints,
       textInputAction: textInputAction,
       validator: validator,
+      inputFormatters: inputFormatters,
+      textDirection: textDirection,
+      textCapitalization: textCapitalization,
       onChanged: onChanged,
       style: style.textStyle,
       onFieldSubmitted: onSubmitted == null ? null : (_) => onSubmitted!(),
