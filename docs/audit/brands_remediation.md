@@ -3,7 +3,7 @@
 ## الحالة الحالية — 2026-11-21
 
 - الفرع: `feat/cat07-ui-remediation`
-- HEAD عند تحديث التقرير: `3ab1c5c55fa35d7b63023b6c4d4796cf027d21c2`
+- HEAD عند تحديث التقرير: `11532aeb403ed23ef6b105bfb2f1e8084b95ec18`
 - النطاق: إغلاق انحرافات المرحلة 3 فقط؛ المرحلة 4 لم تبدأ.
 
 ## سجل البنود
@@ -17,7 +17,8 @@
 | BrandsListState/Cubit/Effects | مُنفَّذ | presentation/cubit/brands_list | `75fa2739f8773a31c481a5f3f38ba349072defab` | State موحد وEffect typed؛ الشاشة رُبطت به في commit الشاشة. |
 | BrandFormCubit/Effects | مُنفَّذ | presentation/cubit/brand_form | `75fa2739f8773a31c481a5f3f38ba349072defab` | idle/saving، منع الحفظ المزدوج، رسائل النجاح والفشل عبر Effects. |
 | الشاشة وDI والمحرر | مُنفَّذ | brands_screen.dart، brand_editor_dialog.dart، brands_di.dart | `fec17b311f76ea85292672ff55dd923108ee3b6b` و`8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b` | listener واحد لتحديث الإحصاءات؛ المحرر يستمع إلى BrandFormEffect. |
-| الاختبارات | قيد التنفيذ | test/features/catalog/brands | — | تحديثها وكتابتها لم يكتمل بعد؛ لا تشغيل. |
+| اختبارات Domain وFakes | مُنفَّذ | test/features/catalog/brands/domain/entity/brand_test.dart؛ support/fake_brands_repository.dart؛ support/fake_brands_api_client.dart | `11532aeb403ed23ef6b105bfb2f1e8084b95ec18` | اختبار hasProducts/canDelete للقيم 0 و>0 وnull؛ تحديث fakes لدعم getBrandStats. لم تُشغَّل. |
+| اختبارات Cubits والشاشة وRepository | قيد التنفيذ | test/features/catalog/brands | — | ما زالت تحتاج التحديث والكتابة؛ لا تشغيل. |
 | تدقيق grep النهائي | قيد التنفيذ | lib وtest | — | بعد تحديث الاختبارات والمستهلكين. |
 
 ## ما لم يُشغَّل
