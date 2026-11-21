@@ -115,7 +115,7 @@ void main() {
   });
 
   test('maps a delete foreign-key conflict to an in-use failure', () async {
-    api.deleteFailure = ApiException.erp(errorCode: '23503', statusCode: 409);
+    api.deleteFailure = ApiException.conflict(errorCode: '23503');
 
     final result = await repository.deleteBrand(12);
 
