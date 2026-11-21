@@ -1,42 +1,7 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brand_stats_use_case.dart';
-
-sealed class BrandStatsState extends Equatable {
-  const BrandStatsState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-final class BrandStatsInitial extends BrandStatsState {
-  const BrandStatsInitial();
-}
-
-final class BrandStatsLoading extends BrandStatsState {
-  const BrandStatsLoading();
-}
-
-final class BrandStatsLoaded extends BrandStatsState {
-  const BrandStatsLoaded(this.stats);
-
-  final BrandStats stats;
-
-  @override
-  List<Object?> get props => [stats];
-}
-
-final class BrandStatsFailed extends BrandStatsState {
-  const BrandStatsFailed(this.failure);
-
-  final Failure failure;
-
-  @override
-  List<Object?> get props => [failure];
-}
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_state.dart';
 
 /// Owns the presentation lifecycle for catalog-wide brand statistics.
 class BrandStatsCubit extends Cubit<BrandStatsState> {

@@ -5,8 +5,10 @@ import 'package:accounting_software/app/core/presentation/widgets/app_form_dialo
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_state.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_details_section.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_identity_section.dart';
