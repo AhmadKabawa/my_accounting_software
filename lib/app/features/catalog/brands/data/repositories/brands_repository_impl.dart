@@ -148,8 +148,7 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
 
   bool _isDuplicate(AppException exception) =>
       exception is ApiException &&
-      (exception.errorCode == '23505' ||
-          (exception.statusCode == 409 && exception.errorCode == null));
+      exception.errorCode == '23505';
 
   bool _isForeignKeyConflict(AppException exception) =>
       exception is ApiException && exception.errorCode == '23503';

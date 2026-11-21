@@ -14,7 +14,7 @@
 | P1-2 | لا يوجد Dialog Shell عام للمحرر | مُعالَج في المرحلة 2 | `brand_editor_dialog.dart`; `app_form_dialog.dart` | phase 2 | المحرر يستخدم showAppFormDialog/AppFormDialog المشترك |
 | P1-3 | منطق الإحصاءات داخل BrandStatsCubit | مُعالَج في المرحلة 2 | `domain/usecase/get_brand_stats_use_case.dart`; `presentation/cubit/brand_stats_cubit.dart`; `di/brands_di.dart` | phase 2 | أضيف GetBrandStatsUseCase لاحتواء استعلامي الإجمالي والفعّال؛ Cubit يدير دورة الحالة فقط |
 | P1-4 | حذف الماركة يعتمد على `productCount != 0`؛ القيمة null تجعل الشرط true | مؤكد من الكود | `brands/presentation/cubit/brands_list_cubit.dart:132-134` | — | null يمنع الحذف احترازياً؛ يلزم قرار مجال صريح حول unknown count |
-| P1-5 | تصنيف HTTP 409 عام في مساري الكتابة والحذف | مُعالَج في المرحلة 2 | `core/network/dio/api_client.dart`; `core/error/exceptions/api_exception.dart`; `brands/data/repositories/brands_repository_impl.dart` | phase 2 | يحتفظ ApiClient بـ SQLSTATE؛ 23505 للـ unique و23503 للـ foreign key. تعارض 409 بلا SQLSTATE يبقى fallback duplicate في مسار الكتابة فقط |
+| P1-5 | تصنيف HTTP 409 عام في مساري الكتابة والحذف | مُعالَج في المرحلة 2 | `core/network/dio/api_client.dart`; `core/error/exceptions/api_exception.dart`; `brands/data/repositories/brands_repository_impl.dart` | phase 2 | يحتفظ ApiClient بـ SQLSTATE؛ 23505 للـ unique و23503 للـ foreign key. تعارض 409 بلا SQLSTATE يبقى لا يُصنّف 409 بلا SQLSTATE على أنه duplicate |
 | P1-6 | فتح محرر الماركة دون حواجز إغلاق | مُعالَج في المرحلة 2 | `brands/presentation/pages/brands_screen.dart`; `brand_editor_dialog.dart`; `app_form_dialog.dart` | phase 2 | يستخدم المحرر الغلاف المشترك الذي يمنع الإغلاق أثناء busy ويطلب تأكيد التغييرات غير المحفوظة |
 | P1-7 | ملكية BrandLogoUploadCubit داخل قسم الشعار | مُعالَج في المرحلة 2 | `brands_screen.dart`; `brand_logo_section.dart`; `brand_editor_dialog.dart` | phase 2 | أصبح Cubit ضمن نطاق المحرر، ويُحتسب رفع الشعار ضمن busy guard |
 | P2-8 | رفع الشعار يبقى State-only ولا يحتاج Effect | مؤكد من الكود | `brands/presentation/cubit/brand_logo_upload_cubit.dart:9-41` | — | قرار بلا تغيير |
@@ -30,7 +30,7 @@
 | N-5 | محرر الماركة لا يحرس التغييرات غير المحفوظة | مُعالَج في المرحلة 2 | `brand_editor_dialog.dart`; `app_form_dialog.dart` | phase 2 | dirty مشتق من controllers؛ الإلغاء وEscape يمران بتأكيد التغييرات غير المحفوظة |
 | N-6a | BrandEditorDialogState عامة | مُعالَج في المرحلة 2 | `brand_editor_dialog.dart` | phase 2 | الحالة أصبحت `_BrandEditorDialogState` خاصة |
 | N-6b | بعض Widgets لا تستقبل super.key | مؤكد من الكود | `brands/presentation/sections/brands_table_section.dart:21-24`; `brands/presentation/widgets/brand_editor_dialog.dart:18-23` | — | يُراجع عند نقل الملفات فقط إذا لم يتطلب تغيير منطق |
-| N-6c | امتداد ملف الشعار عند غياب النقطة غير صحيح | مُعالَج في المرحلة 2 | `brands_remote_data_source_impl.dart` | phase 2 | يُستنتج الامتداد من MIME type عند غياب امتداد صالح من اسم الملف |
+| N-6c | امتداد ملف الشعار عند غياب النقطة غير صحيح | مُعالَج في المرحلة 2 | `brands_remote_data_source_impl.dart` | phase 2 | يُحدد الامتداد وفق MIME type فقط |
 | U-1 | توزيع الإجراءات الحالي: Edit أساسي، والحذف يظهر فقط عند productCount == 0، وتفعيل/تعطيل في Overflow | مؤكد من الكود | `brands/presentation/sections/brands_table_section.dart:112-139` | — | الحذف مشروط بقيمة 0 تحديداً؛ null لا يظهر |
 | U-2 | حقل رابط الشعار اليدوي ما زال جزءاً من BrandLogoSection إلى جانب الرفع/الإزالة | مؤكد من الكود | `brands/presentation/sections/brand_logo_section.dart:20-25,65-100` | — | — |
 | U-3 | فشل Refresh يحول الحالة إلى Failed بدلاً من إبقاء الصفوف | مُعالَج في المرحلة 2 | `brands_list_cubit.dart`; `brands_screen.dart` | phase 2 | الصفوف السابقة تبقى ظاهرة مع InlineBanner وإعادة المحاولة |
@@ -68,6 +68,6 @@
 - P2-11 وN-1: سياسة slug للأسماء العربية وإعادة توليده ما زالت تحتاج قراراً؛ المحرر يتيح إدخال slug يدوياً.
 - P2-12: احتمال ملفات Storage يتيمة بعد رفع ناجح ثم إلغاء/فشل حفظ الماركة؛ يحتاج مسار تنظيف/تعويض مستقل.
 - S-1: معالجة wildcard في البحث مؤجلة حتى اختبار سلوك PostgREST الفعلي.
-- N-3: توحيد orchestration ورسائل الشاشة عبر BaseCubit/Effects لم يُنفذ.
+- N-3: توحيد orchestration ورسائل الشاشة عبر BaseCubit/Effects قيد المرحلة 3.
 - U-2: حقل رابط الشعار اليدوي ما زال متاحاً إلى جانب الرفع والإزالة.
 - P2-8 وDEC-1..DEC-4: قرارات تصميم/نطاق لا تتطلب تغييراً في هذه المرحلة.

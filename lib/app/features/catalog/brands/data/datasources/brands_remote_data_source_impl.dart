@@ -115,22 +115,12 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     return trimmed.isEmpty ? null : trimmed;
   }
 
-  String _fileExtension(BrandLogoUpload upload) {
-    final fileName = upload.fileName.trim();
-    final dotIndex = fileName.lastIndexOf('.');
-    if (dotIndex >= 0 && dotIndex < fileName.length - 1) {
-      final extension = fileName.substring(dotIndex + 1).toLowerCase();
-      if (const {'jpg', 'jpeg', 'png', 'webp'}.contains(extension)) {
-        return extension;
-      }
-    }
-    return switch (upload.mimeType.toLowerCase()) {
-      'image/jpeg' => 'jpg',
-      'image/png' => 'png',
-      'image/webp' => 'webp',
-      _ => 'img',
-    };
-  }
+  String _fileExtension(BrandLogoUpload upload) => switch (upload.mimeType.toLowerCase()) {
+    'image/jpeg' => 'jpg',
+    'image/png' => 'png',
+    'image/webp' => 'webp',
+    _ => 'img',
+  };
 
   String _escapeFilterValue(String value) =>
       value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
