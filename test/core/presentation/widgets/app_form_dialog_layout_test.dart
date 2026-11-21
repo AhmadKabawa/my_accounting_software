@@ -16,7 +16,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(Dialog), findsOneWidget);
-    expect(tester.getSize(find.byType(Dialog)).height, lessThan(500));
+    // `Dialog` itself is the full-screen centering wrapper; measure the form.
+    expect(tester.getSize(find.byType(AppFormDialog)).height, lessThan(500));
     expect(tester.takeException(), isNull);
   });
 
