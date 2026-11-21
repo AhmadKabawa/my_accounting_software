@@ -58,7 +58,7 @@ class FakeBrandsRepository implements BrandsRepository {
   Future<Either<Failure, Unit>> setBrandActive({
     required int id,
     required bool isActive,
-  }) => Future.value(setActiveResult);
+  }) => Future.value(statusMutationResult);
 
   @override
   Future<Either<Failure, Unit>> deleteBrand(int id) {
