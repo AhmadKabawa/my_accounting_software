@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
@@ -11,6 +12,15 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import '../../support/fake_brands_repository.dart';
+
+class _CompleterPicker implements ImagePickerPort {
+  _CompleterPicker(this.result);
+
+  final Completer<PickedImage?> result;
+
+  @override
+  Future<PickedImage?> pickImage() => result.future;
+}
 
 class _FakePicker implements ImagePickerPort {
   _FakePicker(this.image);
@@ -35,6 +45,22 @@ void main() {
   );
 
   setUp(() => repository = FakeBrandsRepository());
+
+  test('exposes a busy state while the image picker is open', () async {
+    final pickerResult = Completer<PickedImage?>();
+    final cubit = BrandLogoUploadCubit(
+      uploadLogo: UploadBrandLogoUseCase(repository),
+      picker: _CompleterPicker(pickerResult),
+    );
+
+    final picking = cubit.pickAndUpload();
+    expect(cubit.state, const BrandLogoPicking());
+    expect(cubit.state.isBusy, isTrue);
+    pickerResult.complete(null);
+    await picking;
+    expect(cubit.state, const BrandLogoIdle());
+    await cubit.close();
+  });
 
   test('uploads a valid image and exposes its public URL', () async {
     final cubit = build(_image());
