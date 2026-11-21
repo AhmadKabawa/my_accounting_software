@@ -136,24 +136,16 @@ class _BrandsView extends StatelessWidget {
           return BlocBuilder<BrandsListCubit, BrandsListState>(
             builder: (context, state) {
               final cubit = context.read<BrandsListCubit>();
-              final page = switch (state) {
-                BrandsListReady() => state,
-                BrandsListRefreshFailed(:final result, :final query) =>
-                  BrandsListReady(result: result, query: query),
-                _ => null,
-              };
-              final query = page?.query ?? cubit.query;
+              final page = state.result;
+              final query = state.query ?? cubit.query;
               final stats = statsState is BrandStatsLoaded
                   ? statsState.stats
                   : null;
               final rows = page?.items ?? const <Brand>[];
               final total = page?.totalCount ?? 0;
-              final failure = state is BrandsListFailed ? state.failure : null;
-              final refreshFailure = state is BrandsListRefreshFailed
-                  ? state.failure
-                  : null;
-              final loading =
-                  state is BrandsListInitial || state is BrandsListLoading;
+              final failure = page == null ? state.failure : null;
+              final refreshFailure = page == null ? null : state.failure;
+              final loading = state.isInitial || state.isLoading;
 
               return ListPageTemplate(
                 titleKey: BrandsKeys.title,
