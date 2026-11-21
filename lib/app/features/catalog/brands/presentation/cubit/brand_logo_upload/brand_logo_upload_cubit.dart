@@ -1,4 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
@@ -6,7 +6,7 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 
 /// Picks an image, checks type/size, uploads it, and exposes the public URL.
-class BrandLogoUploadCubit extends Cubit<BrandLogoUploadState> {
+class BrandLogoUploadCubit extends BaseCubit<BrandLogoUploadState, void> {
   BrandLogoUploadCubit({
     required UploadBrandLogoUseCase uploadLogo,
     required ImagePickerPort picker,

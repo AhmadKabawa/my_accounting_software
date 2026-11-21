@@ -1,10 +1,10 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brand_stats_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_state.dart';
 
 /// Owns the presentation lifecycle for catalog-wide brand statistics.
-class BrandStatsCubit extends Cubit<BrandStatsState> {
+class BrandStatsCubit extends BaseCubit<BrandStatsState, void> {
   BrandStatsCubit({required GetBrandStatsUseCase getBrandStats})
     : _getBrandStats = getBrandStats,
       super(const BrandStatsInitial());
