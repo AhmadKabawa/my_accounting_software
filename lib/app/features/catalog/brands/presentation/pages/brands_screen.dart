@@ -33,74 +33,6 @@ class BrandsScreen extends StatelessWidget {
   const BrandsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (_) => sl<BrandsListCubit>()..load()),
-      BlocProvider(create: (_) => sl<BrandStatsCubit>()..load()),
-    ],
-    child: const _BrandsView(),
-  );
-}
-
-class _BrandsView extends StatelessWidget {
-  const _BrandsView();
-
-  Future<void> _edit(BuildContext context, [Brand? brand]) async {
-    final saved = await showAppFormDialog<bool>(
-      context,
-      (_) => MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => sl<BrandFormCubit>()),
-          BlocProvider(create: (_) => sl<BrandLogoUploadCubit>()),
-        ],
-        child: BrandEditorDialog(brand: brand),
-      ),
-    );
-    if (saved == true && context.mounted) {
-      await context.read<BrandsListCubit>().onBrandSaved(
-        isNew: brand == null,
-      );
-    }
-  }
-
-  Future<void> _status(BuildContext context, Brand brand) async {
-    final cubit = context.read<BrandsListCubit>();
-    if (brand.isActive) {
-      await showConfirmDialog(
-        context,
-        titleKey: BrandsKeys.deactivateTitle,
-        messageKey: BrandsKeys.deactivateMessage,
-        severity: ConfirmDialogSeverity.warning,
-        targetName: brand.name,
-        onConfirm: () async {
-          final result = await cubit.deactivate(brand.id);
-          return result.fold((failure) => failure.messageKey, (_) => null);
-        },
-      );
-      return;
-    }
-    await cubit.activate(brand.id);
-  }
-
-  Future<void> _delete(BuildContext context, Brand brand) async {
-    await showConfirmDialog(
-      context,
-      titleKey: BrandsKeys.delete,
-      messageKey: BrandsKeys.confirmDelete,
-      severity: ConfirmDialogSeverity.critical,
-      targetName: brand.name,
-      requireTypedName: true,
-      onConfirm: () async {
-        final result = await context.read<BrandsListCubit>().delete(brand);
-        return result.fold(
-          (failure) => failure.messageKey,
-          (_) => null,
-        );
-      },
-    );
-  }
-
-  @override
   Widget build(BuildContext context) =>
       BlocEffectListener<BrandsListEffect, BrandsListCubit>(
         onEffect: (context, effect) {
@@ -112,18 +44,18 @@ class _BrandsView extends StatelessWidget {
           builder: (context, statsState) =>
               BlocBuilder<BrandsListCubit, BrandsListState>(
                 builder: (context, state) {
-                final cubit = context.read<BrandsListCubit>();
-                final page = state.result;
-                final query = state.query;
-                final stats = statsState.stats;
-                final rows = page?.items ?? const <Brand>[];
-                final total = page?.totalCount ?? 0;
-                final failure = state.hasData ? null : state.failure;
-                final refreshFailure = state.hasData ? state.failure : null;
-                final loading = state.isInitialLoading;
-                final refreshing = state.isRefreshing;
+                  final cubit = context.read<BrandsListCubit>();
+                  final page = state.result;
+                  final query = state.query;
+                  final stats = statsState.stats;
+                  final rows = page?.items ?? const <Brand>[];
+                  final total = page?.totalCount ?? 0;
+                  final failure = state.hasData ? null : state.failure;
+                  final refreshFailure = state.hasData ? state.failure : null;
+                  final loading = state.isInitialLoading;
+                  final refreshing = state.isRefreshing;
 
-                return ListPageTemplate(
+                  return ListPageTemplate(
                     titleKey: BrandsKeys.title,
                     breadcrumb: AppBreadcrumb(
                       items: [
@@ -189,9 +121,9 @@ class _BrandsView extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+        ),
       );
 }
