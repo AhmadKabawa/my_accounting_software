@@ -46,6 +46,23 @@ final class BrandsListFailed extends BrandsListState {
   List<Object?> get props => [failure];
 }
 
+/// A refresh failed after content was already available. Keep the last
+/// successful page so a transient network error does not erase the list.
+final class BrandsListRefreshFailed extends BrandsListState {
+  const BrandsListRefreshFailed({
+    required this.result,
+    required this.query,
+    required this.failure,
+  });
+
+  final PaginatedResult<Brand> result;
+  final BrandListQuery query;
+  final Failure failure;
+
+  @override
+  List<Object?> get props => [result, query, failure];
+}
+
 class BrandsListCubit extends Cubit<BrandsListState> {
   BrandsListCubit({
     required GetBrandsUseCase getBrands,
@@ -71,15 +88,28 @@ class BrandsListCubit extends Cubit<BrandsListState> {
     _searchTimer?.cancel();
     final requestVersion = ++_requestVersion;
     final currentState = state;
-    if (currentState is BrandsListReady) {
-      emit(BrandsListReady(result: currentState.result, query: _query));
-    } else {
+    final previousResult = switch (currentState) {
+      BrandsListReady(:final result) => result,
+      BrandsListRefreshFailed(:final result) => result,
+      _ => null,
+    };
+    if (previousResult == null) {
       emit(const BrandsListLoading());
+    } else {
+      emit(BrandsListReady(result: previousResult, query: _query));
     }
     final result = await _getBrands(_query);
     if (isClosed || requestVersion != _requestVersion) return;
     result.fold(
-      (failure) => emit(BrandsListFailed(failure)),
+      (failure) => emit(
+        previousResult == null
+            ? BrandsListFailed(failure)
+            : BrandsListRefreshFailed(
+                result: previousResult,
+                query: _query,
+                failure: failure,
+              ),
+      ),
       (page) => emit(BrandsListReady(result: page, query: _query)),
     );
   }
