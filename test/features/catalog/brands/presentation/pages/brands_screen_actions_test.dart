@@ -30,7 +30,7 @@ import '../../support/fake_brands_repository.dart';
 
 class _AccessRepository implements AccessRepository {
   @override
-  Future<Either<Failure, AccessSnapshot>> getMyAccess() async => const Right(
+  Future<Either<Failure, AccessSnapshot>> getMyAccess() async => Right(
     AccessSnapshot(
       userId: 'test-user',
       username: 'test',
