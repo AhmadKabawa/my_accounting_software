@@ -117,7 +117,8 @@ class _BrandsView extends StatelessWidget {
               final total = page?.totalCount ?? 0;
               final failure = !state.hasData ? state.failure : null;
               final refreshFailure = state.hasData ? state.failure : null;
-              final loading = state.isInitialLoading || state.isRefreshing;
+              final loading = state.isInitialLoading;
+              final refreshing = state.isRefreshing;
 
               return BlocEffectListener<
                 BrandsListEffect,
@@ -188,7 +189,7 @@ class _BrandsView extends StatelessWidget {
                       onPageChanged: (page) => cubit.setPage(page),
                       rows: rows,
                       total: total,
-                      loading: loading,
+                      loading: loading || refreshing,
                       failure: failure,
                       onAdd: () => _edit(context),
                       onEdit: (brand) => _edit(context, brand),
