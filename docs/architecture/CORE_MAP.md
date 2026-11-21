@@ -251,3 +251,9 @@
 - AppBadge يدعم namedArgs وإجراء إزالة اختياري؛ استعملته FilterBar لشارات الفلاتر النشطة.
 - AppDataTable يوفّر فرز الهاتف عبر BottomSheet، ويستخدم مفتاح paginationLabel واحداً مع page/lastPage.
 - ListPageTemplate لا يكرر بانر الخطأ أو Retry؛ AppDataTable هو مالك حالة الخطأ في صفحات القوائم.
+
+## Form dialog and table updates — 2026-11-21
+
+- `core/presentation/widgets/app_form_dialog/app_form_dialog.dart`: `AppFormDialog` + `showAppFormDialog<T>` (L3). نافذة على الشاشات الكبيرة وورقة كاملة الارتفاع على الهاتف، دائماً غير قابلة للإغلاق بالـ barrier. `busy` يمنع الإغلاق كلياً (الرجوع وEsc والإلغاء)، و`dirty` يسأل عبر `showConfirmDialog` (warning، `TemplateKeys.unsavedChanges`). على الكبيرة ترتفع النافذة بقدر المحتوى وتتمرر عند الطول. الإغلاق البرمجي بـ `Navigator.pop(true)` يتجاوز الحارس عمداً. اختبار الارتفاع يقيس `AppFormDialog` لا `Dialog` (الأخير غلاف يملأ الشاشة).
+- `AppDataTable`: معامل `refreshing` يعرض شريط تقدم رفيعاً دون إخفاء الصفوف. عمود `rowActionsBuilder` صار بعرض ثابت `AppComponentSize.hitArea × 4` في الترويسة والصف بدل حصة `flex` نسبية (كانت تفيض 10px عند 1280).
+- القوالب (`ListPageTemplate` و`FormPageTemplate` و`DashboardTemplate`): مواضع الأبناء ثابتة؛ لا `if` يضيف/يحذف ابناً قبل ابن يحمل State (يضيع نص البحث/الحقل). تغطيها `page_template_child_identity_test.dart` و`list_page_template_test.dart`.

@@ -91,6 +91,43 @@ class Invoice with _$Invoice {
 
 انظر [ADR-0002](ADR/0002-state-modeling-and-bloc-vs-cubit.md).
 
+## قالب CRUD: Brands هو المرجع
+
+`features/catalog/brands` هو النموذج لأي قائمة + محرر. يُنسخ منه ما يلي:
+
+**الشجرة**
+
+```
+catalog/brands/
+  data/{datasources,models,repositories,brands_endpoint.dart}
+  domain/{entity,failures,repositories,usecase,utility}
+  presentation/{cubit/<name>/,dialogs,pages,sections,widgets,localization,routing}
+  di/brands_di.dart
+```
+
+**الحالة**
+- مجلد لكل Cubit: `cubit/<name>/<name>_cubit.dart` و`_state.dart` و`_effect.dart`.
+- حالة تحمل بيانات = ملف مستقل (`Equatable`، حقل `status` + بيانات). enum صغير (مثل `BrandFormStatus`) = داخل ملف الـ Cubit. الـ Effects دائماً ملف مستقل. الحالات الفرعية لأي `sealed` في ملف واحد مع الأب بلا `part`.
+- State = الحالة الدائمة التي تُعرض؛ Effect = حدث لمرة واحدة (نجاح حفظ، تغيّر بيانات).
+- عقد القائمة: `initial / loading / ready / refreshing / failed`. الصفوف القديمة تبقى عند فشل التحديث ويظهر `InlineBanner` مع إعادة المحاولة؛ `AppPageState.error` فقط عند الفشل بلا صفوف، و`loading` فقط عند التحميل الأول.
+- نمط العملية: الـ Cubit ينفّذ ويرسل `FlashMessages` ويصدر Effect؛ الشاشة تستمع ولا تنسّق (مثلاً تحديث الإحصائيات من `BrandsMutatedEffect` في موضع واحد). فشل عملية داخل `ConfirmDialog` يُعاد للحوار (`Either`) ليعرضه، ولا يُرسل Flash.
+- لا freezed للحالات، وBloc فقط عند الحاجة الفعلية (ADR-0002).
+
+**النماذج**
+- `showAppFormDialog` + `AppFormDialog` (core): `busy` و`dirty` و`errorKey`؛ لا إغلاق بالـ barrier ولا أثناء الحفظ، وتأكيد خروج عند التغيير غير المحفوظ. الإغلاق البرمجي `Navigator.pop(true)` يتجاوز الحارس عمداً.
+- مصدر واحد لحالة الحفظ (الـ Cubit)؛ لا `_saving` محلية. Cubits النموذج والرفع تُنشأ فوق الحوار لا داخل قسم، ويُمنع الحفظ أثناء الرفع.
+- الأقسام (`sections/`) والجداول والفلاتر تستلم قيماً وCallbacks ولا تقرأ Cubit.
+- حقل مولَّد (slug) يتوقف عن التوليد التلقائي عند أول تعديل يدوي، ويبقى فارغاً مع تلميح للاسم العربي بلا transliteration.
+
+**البيانات والأخطاء**
+- يُصنَّف الخطأ بـ `ApiException.errorCode` (`23505` تكرار، `23503` ارتباط) لا بـ HTTP 409 وحده.
+- مفاتيح رسائل `Failure` الخاصة بالنطاق تعيش في `domain/failures/` لا في `presentation/` (Domain لا يعتمد على Presentation).
+- الإحصائيات عبر Use Case مخصص (`GetBrandStatsUseCase`)؛ التنفيذ الحالي طلبا عدّ ويُستبدلان بـ RPC دون تغيير في العرض.
+- قرار الحذف من الكيان (`Brand.canDelete`)؛ `productCount == null` لا يعني «مستخدم» بل «تعذر التحقق».
+
+**الجداول**
+- عمود إجراءات الصف بعرض ثابت من token (`hitArea × 4`): إجراءان ظاهران، والمدمّر (حذف) في قائمة Overflow وفي حالة `canDelete` فقط.
+
 ## كيف تضيف ميزة جديدة
 
 1. أنشئ الشجرة أعلاه بالطبقات التي لها مسؤولية فعلية فقط.
@@ -102,5 +139,5 @@ class Invoice with _$Invoice {
 
 - `features/home` لوحة محاسبة بدائية على بيانات تجريبية (`SampleHomeRepository`) وتتبع هذا القالب؛ يُستبدل المستودع بتجميع الوحدات الحقيقية لاحقاً.
 - `on_boarding` ما زال تجريبياً ومستثنى من اختبار منع العناصر الخام فقط؛ الأرقام المباشرة صارت مفحوصة فيه أيضاً.
-- لا قالب CRUD (قائمة + تفاصيل + نموذج) بعد؛ يُبنى على أول ميزة حقيقية.
+- قالب CRUD (قائمة + نموذج) المرجع هو `features/catalog/brands`؛ انظر القسم التالي. التفاصيل والنماذج الأعقد (فاتورة بسطور) لم تُبنَ بعد.
 - قرارا أمان الجلسة: [SECURITY_DECISIONS.md](SECURITY_DECISIONS.md).
