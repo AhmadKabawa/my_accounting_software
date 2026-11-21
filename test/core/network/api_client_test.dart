@@ -183,6 +183,6 @@ void main() {
         expect((exception as ApiException).errorCode, '23503');
         expect(exception.details, 'Key is referenced');
       },
-    );;
+    );
   });
 }
