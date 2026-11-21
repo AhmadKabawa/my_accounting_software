@@ -12,9 +12,11 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
@@ -40,10 +42,13 @@ class _BrandsView extends StatelessWidget {
   const _BrandsView();
 
   Future<void> _edit(BuildContext context, [Brand? brand]) async {
-    final saved = await showDialog<bool>(
-      context: context,
-      builder: (_) => BlocProvider(
-        create: (_) => sl<BrandFormCubit>(),
+    final saved = await showAppFormDialog<bool>(
+      context,
+      (_) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => sl<BrandFormCubit>()),
+          BlocProvider(create: (_) => sl<BrandLogoUploadCubit>()),
+        ],
         child: BrandEditorDialog(brand: brand),
       ),
     );
