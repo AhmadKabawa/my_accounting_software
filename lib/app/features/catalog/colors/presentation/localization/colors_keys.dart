@@ -86,5 +86,5 @@ enum ColorsKeys implements AppKey {
   final String en;
   @override
   String get key =>
-      this == ColorsKeys.colorName ? 'colors.name' : 'colors.${this.name}';
+      this == ColorsKeys.colorName ? 'colors.name' : 'colors.$name';
 }

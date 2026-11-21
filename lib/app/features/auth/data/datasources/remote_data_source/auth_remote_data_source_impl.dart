@@ -100,8 +100,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           }
           final value =
               (rows.single as Map<String, dynamic>)['must_change_password'];
-          if (value is! bool)
+          if (value is! bool) {
             throw const FormatException('public.users password flag invalid');
+          }
           return value;
         },
         requiresAuth: true,

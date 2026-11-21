@@ -52,7 +52,7 @@ class AppPageHeader extends StatelessWidget {
               final action = primaryAction;
               final heading = Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [title, if (subtitle != null) subtitle!],
+                children: [title, ?subtitle],
               );
               if (action == null) return heading;
 

@@ -8,7 +8,7 @@ import 'package:accounting_software/app/core/storage/storage_service.dart';
 class HiveStorageService implements StorageService {
   final Box<String> box;
 
-  const HiveStorageService({required Box<String> box}) : box = box;
+  const HiveStorageService({required this.box});
 
   // ─── الكتابة (تحويل كل شيء إلى String) ─────────────────────────────────────
   @override

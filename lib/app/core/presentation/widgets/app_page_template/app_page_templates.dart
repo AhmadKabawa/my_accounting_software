@@ -7,7 +7,6 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_body/app_page_body.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_header/app_page_header.dart';
@@ -127,11 +126,12 @@ class _FormPageTemplateState extends State<FormPageTemplate> {
       canPop: !_isDirty,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop || !_isDirty) return;
+        final navigator = Navigator.of(context);
         final leave = await _confirmLeave();
-        if (leave && mounted) {
+        if (leave && mounted && navigator.mounted) {
           // Navigator.pop bypasses this PopScope's canPop check.
           _discardForm();
-          Navigator.of(context).pop();
+          navigator.pop();
         }
       },
       child: Column(

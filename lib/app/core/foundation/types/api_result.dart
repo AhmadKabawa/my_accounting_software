@@ -39,7 +39,7 @@ extension ApiResultWhenSuccessX<T> on ApiResult<T> {
 }
 
 /// الجسر الوحيد بين نتيجة طبقة البيانات (ApiResult) وعقد الـ domain
-/// (Either<Failure, T>). يحوّل الاستثناء إلى Failure في مكان واحد.
+/// (`Either<Failure, T>`). يحوّل الاستثناء إلى Failure في مكان واحد.
 extension ApiResultEitherX<T> on ApiResult<T> {
   Either<Failure, T> toEither() => when<Either<Failure, T>>(
     success: (data) => Right(data),

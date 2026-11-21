@@ -125,7 +125,7 @@ void main() {
 
       expect(disabled.background, isNot(enabled.background));
       expect(disabled.foreground, isNot(enabled.foreground));
-      expect(disabled.foreground.alpha, lessThan(255));
+      expect(disabled.foreground.a, lessThan(1));
     });
 
     testWidgets('pressed differs from enabled', (tester) async {

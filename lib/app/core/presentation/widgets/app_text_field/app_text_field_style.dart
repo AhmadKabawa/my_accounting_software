@@ -95,7 +95,7 @@ class AppTextFieldStyle {
     Widget? prefix,
     Widget? suffix,
   }) {
-    final disabled = _scheme.onSurface.withOpacity(0.12);
+    final disabled = _scheme.onSurface.withValues(alpha: 0.12);
     return InputDecoration(
       labelText: label,
       hintText: hint,

@@ -40,12 +40,13 @@ class ForcePasswordChangeCubit extends Cubit<ForcePasswordChangeState> {
       (failure) async => emit(ForcePasswordChangeState(failure: failure)),
       (_) async {
         await _session.passwordChangeCompleted();
-        if (!isClosed)
+        if (!isClosed) {
           emit(
             const ForcePasswordChangeState(
               status: ForcePasswordChangeStatus.completed,
             ),
           );
+        }
       },
     );
   }

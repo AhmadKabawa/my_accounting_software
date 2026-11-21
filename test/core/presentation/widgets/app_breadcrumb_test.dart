@@ -67,7 +67,7 @@ void main() {
     expect(size.width, greaterThanOrEqualTo(minimum));
     expect(size.height, greaterThanOrEqualTo(minimum));
     final root =
-        tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+        tester.binding.rootPipelineOwner.semanticsOwner!.rootSemanticsNode!;
     final occurrences = _labels(
       root,
     ).fold<int>(0, (total, label) => total + 'Save'.allMatches(label).length);

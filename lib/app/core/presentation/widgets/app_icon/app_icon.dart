@@ -77,7 +77,7 @@ class AppIcon extends StatelessWidget {
         colorBlendMode: tint != null ? BlendMode.srcIn : null,
         loadingBuilder: (_, image, progress) =>
             progress == null ? image : _placeholder(context, px),
-        errorBuilder: (_, __, ___) => SizedBox.square(
+        errorBuilder: (_, _, _) => SizedBox.square(
           dimension: px,
           child: AppIcon.fixed(AppIcons.brokenImage, pixelSize: px * 0.7),
         ),

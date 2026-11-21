@@ -109,9 +109,8 @@ class AppImage extends StatelessWidget {
     this.semanticsLabel,
     this.errorWidget,
     this.loadingWidget,
-    bool isNetwork = true,
-  }) : isNetwork = isNetwork,
-       shape = AppImageShape.circle,
+    this.isNetwork = true,
+  }) : shape = AppImageShape.circle,
        borderRadius = 0;
 
   /// banner عرض كامل
@@ -126,9 +125,8 @@ class AppImage extends StatelessWidget {
     this.semanticsLabel,
     this.errorWidget,
     this.loadingWidget,
-    bool isNetwork = true,
-  }) : isNetwork = isNetwork,
-       shape = AppImageShape.rounded,
+    this.isNetwork = true,
+  }) : shape = AppImageShape.rounded,
        borderRadius = 16;
 
   /// صورة مربعة (Square)
@@ -144,9 +142,8 @@ class AppImage extends StatelessWidget {
     this.semanticsLabel,
     this.errorWidget,
     this.loadingWidget,
-    bool isNetwork = true,
-  }) : isNetwork = isNetwork,
-       width = size,
+    this.isNetwork = true,
+  }) : width = size,
        height = size;
 
   // ───────────────────────────────────────────────────────────────
@@ -197,7 +194,7 @@ class AppImage extends StatelessWidget {
         width: w == double.infinity ? null : w,
         height: h,
         fit: fit,
-        errorBuilder: (_, __, ___) => _buildError(w, h),
+        errorBuilder: (_, _, _) => _buildError(w, h),
       );
     }
 
@@ -210,7 +207,7 @@ class AppImage extends StatelessWidget {
         if (loadingProgress == null) return child;
         return loadingWidget ?? _buildShimmer(w, h);
       },
-      errorBuilder: (_, __, ___) => errorWidget ?? _buildError(w, h),
+      errorBuilder: (_, _, _) => errorWidget ?? _buildError(w, h),
     );
   }
 
@@ -322,7 +319,7 @@ class _ShimmerBoxState extends State<_ShimmerBox>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animation,
-      builder: (_, __) => Container(
+      builder: (_, _) => Container(
         width: widget.width,
         height: widget.height,
         decoration: BoxDecoration(

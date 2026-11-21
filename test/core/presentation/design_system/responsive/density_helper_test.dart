@@ -1,6 +1,5 @@
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field_style.dart';

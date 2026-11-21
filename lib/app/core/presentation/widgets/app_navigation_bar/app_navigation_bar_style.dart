@@ -136,7 +136,7 @@ class AppNavigationBarStyle {
 
   List<BoxShadow> activeItemShadow(Color color) => [
     BoxShadow(
-      color: color.withOpacity(_itemShadowOpacity),
+      color: color.withValues(alpha: _itemShadowOpacity),
       blurRadius: _fixed(AppElevation.lg),
       offset: _itemShadowOffset,
     ),
@@ -145,7 +145,7 @@ class AppNavigationBarStyle {
   List<BoxShadow> _glow(Color color, {required double blur, Offset? offset}) =>
       [
         BoxShadow(
-          color: color.withOpacity(_glowOpacity),
+          color: color.withValues(alpha: _glowOpacity),
           blurRadius: blur,
           offset: offset ?? _pillShadowOffset,
         ),
@@ -176,7 +176,10 @@ class AppNavigationBarStyle {
           margin: EdgeInsets.all(spacing),
           background: Colors.transparent,
           gradient: LinearGradient(
-            colors: [primary.withOpacity(_pillStartOpacity), primary],
+            colors: [
+              primary.withValues(alpha: _pillStartOpacity),
+              primary,
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

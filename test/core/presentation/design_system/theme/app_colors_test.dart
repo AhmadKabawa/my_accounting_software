@@ -77,9 +77,14 @@ void main() {
       ]) {
         for (final c in [semantic.debit, semantic.credit]) {
           // Neutral-ish: the channels stay close to each other.
+          final channels = [
+            c.r,
+            c.g,
+            c.b,
+          ].map((channel) => (channel * 255).round());
           final spread =
-              [c.red, c.green, c.blue].reduce((a, b) => a > b ? a : b) -
-              [c.red, c.green, c.blue].reduce((a, b) => a < b ? a : b);
+              channels.reduce((a, b) => a > b ? a : b) -
+              channels.reduce((a, b) => a < b ? a : b);
           expect(spread, lessThan(40));
         }
         expect(semantic.balanceNegative, isNot(semantic.debit));

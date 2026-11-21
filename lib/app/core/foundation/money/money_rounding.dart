@@ -27,7 +27,7 @@ final class MoneyRounding {
       maxDecimalPlaces,
       'decimalPlaces',
     );
-    if (this.roundingIncrement.signum < 0) {
+    if (this.roundingIncrement.sign < 0) {
       throw ArgumentError.value(
         roundingIncrement,
         'roundingIncrement',
@@ -69,7 +69,7 @@ final class MoneyRounding {
   /// يقرّب [value] وفق إعدادات العملة.
   Decimal apply(Decimal value) {
     var result = value;
-    if (roundingIncrement.signum > 0) {
+    if (roundingIncrement.sign > 0) {
       result = MoneyDecimalMath.roundToIncrement(
         result,
         roundingIncrement,

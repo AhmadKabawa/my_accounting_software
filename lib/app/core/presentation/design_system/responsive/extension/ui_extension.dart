@@ -6,7 +6,6 @@
 export '../engine/app_enums.dart';
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/adaptive_layout.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_gap.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';

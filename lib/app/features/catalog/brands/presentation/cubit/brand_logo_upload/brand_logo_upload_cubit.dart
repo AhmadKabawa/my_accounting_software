@@ -22,7 +22,7 @@ class BrandLogoUploadCubit extends BaseCubit<BrandLogoUploadState, void> {
     if (state.isBusy) return;
 
     emit(const BrandLogoPicking());
-    final picked;
+    final PickedImage? picked;
     try {
       picked = await _picker.pickImage();
     } catch (_) {

@@ -68,7 +68,7 @@ class _AccessStatusGateState extends State<AccessStatusGate> {
                 ),
               ),
             ),
-            if (statusView != null) statusView,
+            ?statusView,
           ],
         );
       },

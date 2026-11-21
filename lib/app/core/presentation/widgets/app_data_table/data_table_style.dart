@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 
 class DataTableStyle {

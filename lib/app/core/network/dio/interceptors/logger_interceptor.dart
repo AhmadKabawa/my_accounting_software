@@ -95,46 +95,50 @@ class LoggerInterceptor extends Interceptor {
   static const _line = '─────────────────────────────────────────';
 
   @override
-  void onRequest(RequestOptions o, RequestInterceptorHandler h) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (kDebugMode) {
       debugPrint('┌$_line');
-      debugPrint('│ 🚀 REQUEST  ${o.method}  ${redactUri(o.uri)}');
-      if (o.data != null) debugPrint('│ Body    : ${redactSensitive(o.data)}');
-      if (o.queryParameters.isNotEmpty) {
-        debugPrint('│ Params  : ${redactSensitive(o.queryParameters)}');
+      debugPrint('│ 🚀 REQUEST  ${options.method}  ${redactUri(options.uri)}');
+      if (options.data != null) {
+        debugPrint('│ Body    : ${redactSensitive(options.data)}');
+      }
+      if (options.queryParameters.isNotEmpty) {
+        debugPrint('│ Params  : ${redactSensitive(options.queryParameters)}');
       }
       debugPrint('└$_line');
     }
-    h.next(o);
+    handler.next(options);
   }
 
   @override
-  void onResponse(Response r, ResponseInterceptorHandler h) {
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
-      final body = redactSensitive(r.data).toString();
+      final body = redactSensitive(response.data).toString();
       debugPrint('┌$_line');
       debugPrint(
-        '│ ✅ RESPONSE [${r.statusCode}]  ${redactUri(r.requestOptions.uri)}',
+        '│ ✅ RESPONSE [${response.statusCode}]  '
+        '${redactUri(response.requestOptions.uri)}',
       );
       debugPrint('│ ${body.substring(0, body.length.clamp(0, 400))}');
       debugPrint('└$_line');
     }
-    h.next(r);
+    handler.next(response);
   }
 
   @override
-  void onError(DioException e, ErrorInterceptorHandler h) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     if (kDebugMode) {
       debugPrint('┌$_line');
       debugPrint(
-        '│ ❌ ERROR [${e.response?.statusCode}]  ${redactUri(e.requestOptions.uri)}',
+        '│ ❌ ERROR [${err.response?.statusCode}]  '
+        '${redactUri(err.requestOptions.uri)}',
       );
-      debugPrint('│ ${e.message}');
-      if (e.response?.data != null) {
-        debugPrint('│ ${redactSensitive(e.response?.data)}');
+      debugPrint('│ ${err.message}');
+      if (err.response?.data != null) {
+        debugPrint('│ ${redactSensitive(err.response?.data)}');
       }
       debugPrint('└$_line');
     }
-    h.next(e);
+    handler.next(err);
   }
 }

@@ -4,7 +4,6 @@ import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
@@ -12,7 +11,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_card/app_c
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
@@ -290,7 +288,7 @@ class AppDataTable<T> extends StatelessWidget {
                 ),
               ),
             ),
-          if (summaryBuilder != null) summaryBuilder!,
+          ?summaryBuilder,
           _pagination(context, mobile: true),
         ]),
       ],
@@ -345,8 +343,9 @@ class AppDataTable<T> extends StatelessWidget {
               full || column.priority != DataTableColumnPriority.secondary,
         )
         .toList();
-    if (!full && visible.isEmpty && columns.isNotEmpty)
+    if (!full && visible.isEmpty && columns.isNotEmpty) {
       visible.add(columns.first);
+    }
     Widget cells(T? row, {required bool header}) => Row(
       children: [
         if (onSelectionChanged != null)
@@ -360,8 +359,8 @@ class AppDataTable<T> extends StatelessWidget {
                     onChanged: (value) => _toggleAll(value ?? false),
                   )
                 : Checkbox(
-                    value: selectedIds.contains(rowId(row!)),
-                    onChanged: (value) => _toggle(row as T, value ?? false),
+                    value: selectedIds.contains(rowId(row as T)),
+                    onChanged: (value) => _toggle(row, value ?? false),
                   ),
           ),
         for (final column in visible)
@@ -444,7 +443,7 @@ class AppDataTable<T> extends StatelessWidget {
             shrinkWrap: !bounded,
             physics: bounded ? null : const NeverScrollableScrollPhysics(),
             itemCount: rows.length,
-            separatorBuilder: (_, __) => Divider(
+            separatorBuilder: (_, _) => Divider(
               height: AppBorderWidth.thin.of(context),
               color: style.divider,
             ),
@@ -509,7 +508,7 @@ class AppDataTable<T> extends StatelessWidget {
             child: ClipRRect(borderRadius: style.radius, child: surface),
           ),
         ),
-        if (summaryBuilder != null) summaryBuilder!,
+        ?summaryBuilder,
         _pagination(context),
       ],
     );

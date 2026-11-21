@@ -41,9 +41,9 @@ final class Money implements Comparable<Money> {
   final Decimal amount;
   final int currencyId;
 
-  bool get isZero => amount.signum == 0;
-  bool get isNegative => amount.signum < 0;
-  bool get isPositive => amount.signum > 0;
+  bool get isZero => amount.sign == 0;
+  bool get isNegative => amount.sign < 0;
+  bool get isPositive => amount.sign > 0;
 
   Money operator +(Money other) {
     _requireSameCurrency(other, '+');
@@ -73,7 +73,7 @@ final class Money implements Comparable<Money> {
         'must differ from the current currency',
       );
     }
-    if (rate.signum <= 0) {
+    if (rate.sign <= 0) {
       throw ArgumentError.value(rate.toString(), 'rate', 'must be > 0');
     }
     return Money(amount * rate, toCurrencyId);

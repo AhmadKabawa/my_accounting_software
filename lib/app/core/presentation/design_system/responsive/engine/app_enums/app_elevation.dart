@@ -77,7 +77,7 @@ class AppElevation extends ResponsiveToken {
         offset: Offset(0, value / 2),
         blurRadius: value,
         spreadRadius: value / 4,
-        color: Theme.of(context).colorScheme.shadow.withOpacity(0.12),
+        color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.12),
       ),
     ];
   }

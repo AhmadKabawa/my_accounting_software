@@ -14,7 +14,7 @@ ChipThemeData buildChipTheme({
       color: colorScheme.outlineVariant,
       width: AppBorderWidth.thin.mobile,
     ),
-    disabledColor: colorScheme.onSurface.withOpacity(0.1),
+    disabledColor: colorScheme.onSurface.withValues(alpha: 0.1),
     labelStyle: textTheme.labelMedium,
     selectedColor: colorScheme.primaryContainer,
     padding: EdgeInsets.symmetric(

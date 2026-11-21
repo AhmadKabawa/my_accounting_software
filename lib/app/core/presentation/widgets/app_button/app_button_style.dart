@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_enums.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 
 enum AppButtonVariant { primary, secondary, outlined, danger, text }
@@ -171,17 +170,19 @@ class AppButtonStyle {
       case AppButtonState.pressed:
         foreground = enabledForeground;
         background = Color.alphaBlend(
-          foreground.withOpacity(_pressedOverlayOpacity),
+          foreground.withValues(alpha: _pressedOverlayOpacity),
           enabledBackground,
         );
         borderColor = isOutlined ? _scheme.outline : null;
       case AppButtonState.disabled:
-        foreground = _scheme.onSurface.withOpacity(_disabledForegroundOpacity);
+        foreground = _scheme.onSurface.withValues(
+          alpha: _disabledForegroundOpacity,
+        );
         background = isTransparent
             ? Colors.transparent
-            : _scheme.onSurface.withOpacity(_disabledBackgroundOpacity);
+            : _scheme.onSurface.withValues(alpha: _disabledBackgroundOpacity);
         borderColor = isOutlined
-            ? _scheme.onSurface.withOpacity(_disabledBackgroundOpacity)
+            ? _scheme.onSurface.withValues(alpha: _disabledBackgroundOpacity)
             : null;
     }
 

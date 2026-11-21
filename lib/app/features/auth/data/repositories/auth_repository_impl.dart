@@ -117,8 +117,9 @@ class AuthRepositoryImpl with RepositoryExecutor implements AuthRepository {
     final password = await _remote.setPasswordWithoutCurrent(
       newPassword: newPassword,
     );
-    if (password is ApiFailure<Unit>)
+    if (password is ApiFailure<Unit>) {
       return Left(ExceptionMapper.map(password.exception));
+    }
     // Clear the server-owned flag only after Auth accepted the new password.
     return (await _remote.completePasswordChange()).toEither();
   });

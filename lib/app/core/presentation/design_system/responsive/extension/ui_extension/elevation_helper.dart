@@ -21,7 +21,9 @@ class ElevationHelper {
       offset: Offset(0, value(elevation) / 2),
       blurRadius: value(elevation),
       spreadRadius: value(elevation) / 4,
-      color: Theme.of(context).colorScheme.shadow.withOpacity(_shadowOpacity),
+      color: Theme.of(
+        context,
+      ).colorScheme.shadow.withValues(alpha: _shadowOpacity),
     ),
   ];
 

@@ -27,9 +27,9 @@ void main() {
                     builder: (_) => Scaffold(
                       body: FormPageTemplate(
                         titleKey: TemplateKeys.save,
-                        child: const Text('Form'),
                         dirty: true,
                         onDiscard: () => discarded++,
+                        child: const Text('Form'),
                       ),
                     ),
                   ),
@@ -67,8 +67,8 @@ void main() {
           home: Scaffold(
             body: FormPageTemplate(
               titleKey: TemplateKeys.save,
-              child: const Text('Form'),
               state: AppPageState.error,
+              child: const Text('Form'),
             ),
           ),
         ),
@@ -104,9 +104,9 @@ void main() {
         home: Scaffold(
           body: FormPageTemplate(
             titleKey: TemplateKeys.save,
-            child: const Text('Form'),
             onSave: () {},
             saving: true,
+            child: const Text('Form'),
           ),
         ),
       ),
@@ -125,8 +125,8 @@ void main() {
         home: Scaffold(
           body: FormPageTemplate(
             titleKey: TemplateKeys.save,
-            child: const Text('Form'),
             state: AppPageState.loading,
+            child: const Text('Form'),
           ),
         ),
       ),
@@ -148,8 +148,8 @@ void main() {
         home: Scaffold(
           body: FormPageTemplate(
             titleKey: TemplateKeys.save,
-            child: const Text('Form'),
             state: AppPageState.empty,
+            child: const Text('Form'),
           ),
         ),
       ),
@@ -176,9 +176,9 @@ void main() {
                     builder: (_) => Scaffold(
                       body: FormPageTemplate(
                         titleKey: TemplateKeys.save,
-                        child: const Text('Form'),
                         dirty: true,
                         onDiscard: () => discarded++,
+                        child: const Text('Form'),
                       ),
                     ),
                   ),
