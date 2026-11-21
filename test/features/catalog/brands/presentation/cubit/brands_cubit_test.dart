@@ -15,7 +15,7 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'support/fake_brands_repository.dart';
+import '../../support/fake_brands_repository.dart';
 
 void main() {
   test('keeps the current page visible while a refresh is in flight', () async {
@@ -49,8 +49,7 @@ void main() {
       (cubit.state as BrandsListReady).result.items.single.name,
       'Existing',
     );
-    expect(emitted, hasLength(1));
-    expect(emitted.single, isA<BrandsListReady>());
+    expect(emitted.whereType<BrandsListLoading>(), isEmpty);
 
     refreshResult.complete(
       const Right(

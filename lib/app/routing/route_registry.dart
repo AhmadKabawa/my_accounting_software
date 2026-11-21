@@ -4,7 +4,7 @@ import 'package:accounting_software/app/features/auth/presentation/routing/auth_
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
-import 'package:accounting_software/app/features/catalog/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 

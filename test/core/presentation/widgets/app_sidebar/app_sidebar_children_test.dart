@@ -5,8 +5,8 @@ import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
-import 'package:accounting_software/app/features/catalog/presentation/localization/brands_keys.dart';
-import 'package:accounting_software/app/features/catalog/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
 final _items = [

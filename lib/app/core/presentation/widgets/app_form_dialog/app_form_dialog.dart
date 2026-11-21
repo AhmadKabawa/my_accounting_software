@@ -69,7 +69,9 @@ class _AppFormDialogState extends State<AppFormDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => CallbackShortcuts(
+  Widget build(BuildContext context) => Focus(
+    autofocus: true,
+    child: CallbackShortcuts(
     bindings: {
       const SingleActivator(LogicalKeyboardKey.escape): _requestClose,
     },
@@ -80,6 +82,7 @@ class _AppFormDialogState extends State<AppFormDialog> {
       },
       child: _buildSurface(context),
     ),
+  ),
   );
 
   Widget _buildSurface(BuildContext context) {

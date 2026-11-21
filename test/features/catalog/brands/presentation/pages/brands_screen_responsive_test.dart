@@ -13,10 +13,10 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/g
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats_cubit.dart';
-import 'package:accounting_software/app/features/catalog/presentation/pages/brands/brands_screen.dart';
-import '../../helpers/localized_app.dart';
-import '../../helpers/screen_matrix.dart';
-import 'support/fake_brands_repository.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
+import '../../../../../helpers/localized_app.dart';
+import '../../../../../helpers/screen_matrix.dart';
+import '../../support/fake_brands_repository.dart';
 
 class _NoopAccessRepository implements AccessRepository {
   @override

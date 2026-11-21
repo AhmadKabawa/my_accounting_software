@@ -59,7 +59,8 @@ Future<void> _open(
     ),
   );
   await tester.tap(find.text('open'));
-  await tester.pumpAndSettle();
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 300));
 }
 
 void main() {
@@ -71,7 +72,7 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pump();
     await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(_appButton(tester, CommonKeys.cancel).onPressed, isNull);
     expect(_appButton(tester, CommonKeys.save).isLoading, isTrue);
