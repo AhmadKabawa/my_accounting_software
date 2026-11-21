@@ -412,11 +412,17 @@ class AppDataTable<T> extends StatelessWidget {
             ),
           ),
         if (rowActionsBuilder != null)
-          Expanded(
-            flex: 1,
+          // A fixed track (four hit areas: two inline actions plus the
+          // overflow menu with room to spare) instead of a proportional share,
+          // so the buttons never overflow on narrow desktop widths.
+          SizedBox(
+            width: context.ui.size.width(AppComponentSize.hitArea) * 4,
             child: header
                 ? const SizedBox.shrink()
-                : rowActionsBuilder!(context, row as T),
+                : Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: rowActionsBuilder!(context, row as T),
+                  ),
           ),
       ],
     );
