@@ -16,7 +16,7 @@ class FakeBrandsRepository implements BrandsRepository {
   Future<Either<Failure, BrandStats>> Function()? onGetBrandStats;
   Future<Either<Failure, Brand>> Function(BrandDraft)? onCreateBrand;
   Future<Either<Failure, Brand>> Function(int, BrandDraft)? onUpdateBrand;
-  Either<Failure, Unit> setActiveResult = const Right(unit);
+  Either<Failure, Unit> statusMutationResult = const Right(unit);
 
   @override
   Future<Either<Failure, PaginatedResult<Brand>>> getBrands(

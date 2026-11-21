@@ -15,8 +15,7 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 
-class BrandsListCubit
-    extends BaseCubit<BrandsListState, BrandsListEffect> {
+class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
   BrandsListCubit({
     required GetBrandsUseCase getBrands,
     required SetBrandActiveUseCase setBrandActive,

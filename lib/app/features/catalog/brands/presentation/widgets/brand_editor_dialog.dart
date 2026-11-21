@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
@@ -96,55 +96,57 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) => BlocBuilder<BrandFormCubit, BrandFormStatus>(
-    builder: (context, formStatus) =>
-        BlocBuilder<BrandLogoUploadCubit, BrandLogoUploadState>(
-          builder: (context, logoState) {
-            final busy =
-                formStatus == BrandFormStatus.saving || logoState.isBusy;
-            return BlocEffectListener<BrandFormEffect, BrandFormCubit>(
-              onEffect: (context, effect) {
-                switch (effect) {
-                  case BrandSavedEffect():
-                    Navigator.of(context).pop(true);
-                  case BrandSaveFailedEffect(:final messageKey):
-                    setState(() => _failure = messageKey);
-                }
-              },
-              child: AppFormDialog(
-                titleKey: widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
-                subtitleKey: BrandsKeys.editorSubtitle,
-                saveLabelKey: BrandsKeys.save,
-                cancelLabelKey: BrandsKeys.cancel,
-                busy: busy,
-                saveEnabled: !busy,
-                dirty: _dirty,
-                errorKey: _failure,
-                onSave: _save,
-                child: Form(
-                  key: _key,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      BrandIdentitySection(
-                        name: _name,
-                        slug: _slug,
-                        onNameChanged: (value) {
-                          if (_slug.text.isEmpty) {
-                            _slug.text = _slugify(value);
-                          }
-                        },
+  Widget build(BuildContext context) =>
+      BlocBuilder<BrandFormCubit, BrandFormStatus>(
+        builder: (context, formStatus) =>
+            BlocBuilder<BrandLogoUploadCubit, BrandLogoUploadState>(
+              builder: (context, logoState) {
+                final busy =
+                    formStatus == BrandFormStatus.saving || logoState.isBusy;
+
+                return BlocEffectListener<BrandFormEffect, BrandFormCubit>(
+                  onEffect: (context, effect) {
+                    switch (effect) {
+                      case BrandSavedEffect():
+                        Navigator.of(context).pop(true);
+                      case BrandSaveFailedEffect(:final messageKey):
+                        setState(() => _failure = messageKey);
+                    }
+                  },
+                  child: AppFormDialog(
+                    titleKey: widget.brand == null
+                        ? BrandsKeys.add
+                        : BrandsKeys.edit,
+                    subtitleKey: BrandsKeys.editorSubtitle,
+                    saveLabelKey: BrandsKeys.save,
+                    cancelLabelKey: BrandsKeys.cancel,
+                    busy: busy,
+                    saveEnabled: !busy,
+                    dirty: _dirty,
+                    errorKey: _failure,
+                    onSave: _save,
+                    child: Form(
+                      key: _key,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          BrandIdentitySection(
+                            name: _name,
+                            slug: _slug,
+                            onNameChanged: (value) {
+                              if (_slug.text.isEmpty) {
+                                _slug.text = _slugify(value);
+                              }
+                            },
+                          ),
+                          BrandLogoSection(logo: _logo, brandName: _name),
+                          BrandDetailsSection(description: _description),
+                        ],
                       ),
-                      BrandLogoSection(logo: _logo, brandName: _name),
-                      BrandDetailsSection(description: _description),
-                    ],
+                    ),
                   ),
-                ),
-                ),
-            );
-          },
-        ),
-  );
+                );
+              },
+            ),
+      );
 }

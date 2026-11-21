@@ -203,7 +203,7 @@ void main() {
   test('activate failure posts an error flash without mutation effect',
       () async {
     final repository = FakeBrandsRepository();
-    repository.setActiveResult = const Left(_Failure());
+    repository.statusMutationResult = const Left(_Failure());
     final messages = FlashMessages();
     final flashes = [];
     final stopListening = messages.listen(flashes.add);
