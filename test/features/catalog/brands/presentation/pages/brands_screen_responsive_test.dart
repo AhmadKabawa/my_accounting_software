@@ -51,7 +51,6 @@ void main() {
           sl.registerFactory<BrandStatsCubit>(
             () => BrandStatsCubit(
               getBrandStats: GetBrandStatsUseCase(repository),
-              flashMessages: sl(),
             ),
           );
           sl.registerFactory<BrandsListCubit>(
