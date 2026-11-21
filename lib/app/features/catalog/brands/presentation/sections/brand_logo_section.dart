@@ -6,14 +6,12 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_field_validators.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_logo.dart';
 
-/// Editor section: logo preview, upload button, and the URL field.
+/// Editor section: logo preview, upload/replace, and remove controls.
 ///
 /// The parent editor owns the upload Cubit so it can prevent closing while an
 /// upload is in progress.
@@ -88,14 +86,7 @@ class BrandLogoSection extends StatelessWidget {
                   ],
                 ),
               ),
-              context.ui.spacing.gap(AppSpacing.sm),
-              AppTextField(
-                controller: logo,
-                labelKey: BrandsKeys.logo,
-                hintKey: BrandsKeys.logoHint,
-                keyboardType: TextInputType.url,
-                validator: (value) => BrandFieldValidators.logo(value),
-              ),
+
             ],
           );
         },

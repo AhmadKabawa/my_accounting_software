@@ -29,13 +29,4 @@ void main() {
     expect(BrandFieldValidators.slug('north-wind-2'), isNull);
   });
 
-  test('logo: optional, max 500, http(s) URL', () {
-    expect(BrandFieldValidators.logo(''), isNull);
-    expect(BrandFieldValidators.logo('https://a.com/l.png'), isNull);
-    expect(BrandFieldValidators.logo('nope'), BrandsKeys.invalidLogoUrl.en);
-    expect(
-      BrandFieldValidators.logo('https://a.com/${'x' * 500}'),
-      BrandsKeys.logoTooLong.en,
-    );
-  });
 }

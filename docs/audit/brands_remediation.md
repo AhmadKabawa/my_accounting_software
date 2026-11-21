@@ -32,7 +32,7 @@
 | N-6b | بعض Widgets لا تستقبل super.key | مؤكد من الكود | `brands/presentation/sections/brands_table_section.dart:21-24`; `brands/presentation/widgets/brand_editor_dialog.dart:18-23` | — | يُراجع عند نقل الملفات فقط إذا لم يتطلب تغيير منطق |
 | N-6c | امتداد ملف الشعار عند غياب النقطة غير صحيح | مُعالَج في المرحلة 2 | `brands_remote_data_source_impl.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | يُستنتج الامتداد من MIME type عند غياب امتداد صالح من اسم الملف |
 | U-1 | توزيع الإجراءات الحالي: Edit أساسي، والحذف يظهر فقط عند productCount == 0، وتفعيل/تعطيل في Overflow | مؤكد من الكود | `brands/presentation/sections/brands_table_section.dart:112-139` | — | الحذف مشروط بقيمة 0 تحديداً؛ null لا يظهر |
-| U-2 | حقل رابط الشعار اليدوي ما زال جزءاً من BrandLogoSection إلى جانب الرفع/الإزالة | مؤكد من الكود | `brands/presentation/sections/brand_logo_section.dart:20-25,65-100` | — | — |
+| U-2 | حقل رابط الشعار اليدوي ما زال جزءاً من BrandLogoSection إلى جانب الرفع/الإزالة | مُعالَج في المرحلة 4 | `presentation/sections/brand_logo_section.dart`; `presentation/localization/brands_keys.dart`; `brand_field_validators.dart` | سجل المرحلة 4-2 أدناه | أزيل حقل الرابط والتحقق ومفاتيح logo وlogoHint والاختبارات التابعة؛ بقيت المعاينة والرفع والاستبدال والإزالة مع بانر الفشل وتعطيل الأزرار أثناء الرفع. |
 | U-3 | فشل Refresh يحول الحالة إلى Failed بدلاً من إبقاء الصفوف | مُعالَج جزئياً | `lib/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart:28-56`; `brands_screen.dart:88-97` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | تبقى الصفوف السابقة ظاهرة مع InlineBanner وإعادة المحاولة؛ لا يزال مؤشر Refresh داخل AppDataTable غير منفذ. |
 | ST-1 | نقل Brands إلى catalog/brands/{data,domain,presentation,di} مع إبقاء Hub وDI/Routes الخاصة به على مستوى catalog | مُنفَّذ | `lib/app/features/catalog/brands/`; `catalog/di/catalog_di.dart`; `catalog/presentation/routing/catalog_routes.dart` | `72961a6c55501e5d131c3a5bb99e8ec2501fdbac` | نقل الملفات والاختبارات وتحديث imports وDI ومسارات Brands. |
 | ST-2 | ملفات كل Cubit تجمع State وCubit في ملف واحد ولا تتبع مجلد cubit/<name> | مؤكد من الكود | `presentation/cubit/brands/presentation/cubit/brand_form_cubit.dart`; `brands/presentation/cubit/brand_stats_cubit.dart`; `brands/presentation/cubit/brands_list_cubit.dart` | — | يُسجل كاتفاق بنيوي للميزات القادمة؛ لا يُعاد تقسيم Cubits ضمن النقل الصرف |
@@ -133,5 +133,7 @@
 
 | البند | الحالة | الدليل | Commit |
 |---|---|---|---|
-| P1-2/P1-6/P1-7/N-5/N-6a — نقل المحرر وتوفير Cubits عبر showBrandEditor | مُعالَج | `presentation/dialogs/brand_editor_dialog.dart`; helper يوفّر BrandFormCubit وBrandLogoUploadCubit | سيُثبت SHA في التقرير النهائي |
+| P1-2/P1-6/P1-7/N-5/N-6a — نقل المحرر وتوفير Cubits عبر showBrandEditor | مُعالَج | `presentation/dialogs/brand_editor_dialog.dart`; helper يوفّر BrandFormCubit وBrandLogoUploadCubit | `2b5bbbb2d02ac6e98eabd3f887a9115abf083cb4` |
 | P2-11/N-1 — slug | مُعالَج بالكود؛ الاختبارات أضيفت ولم تُشغّل بعد | `domain/utility/brand_slug_from.dart`; `brand_slug_from_test.dart` | سيُثبت SHA في التقرير النهائي |
+
+| U-2 — إزالة إدخال URL اليدوي للشعار | مُعالَج بالكود والاختبار المعدل (غير مشغّل) | `brand_logo_section.dart`; إزالة مفاتيح URL والـ validator واختباره | سيُثبت SHA في التقرير النهائي |

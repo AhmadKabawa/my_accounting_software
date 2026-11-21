@@ -7,7 +7,6 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/loc
 abstract final class BrandFieldValidators {
   static const maxName = 150;
   static const maxSlug = 150;
-  static const maxLogo = 500;
   static final _slugPattern = RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*$');
 
   static String? name(String? value) => AppValidator.validate(
@@ -34,17 +33,4 @@ abstract final class BrandFieldValidators {
     },
   );
 
-  /// Optional: empty is valid.
-  static String? logo(String? value) {
-    if ((value?.trim() ?? '').isEmpty) return null;
-    return AppValidator.validate(
-      value,
-      [ValidationRule.maxLength, ValidationRule.httpUrl],
-      params: {ValidationRule.maxLength: maxLogo},
-      customKeys: {
-        ValidationRule.maxLength: BrandsKeys.logoTooLong,
-        ValidationRule.httpUrl: BrandsKeys.invalidLogoUrl,
-      },
-    );
-  }
 }

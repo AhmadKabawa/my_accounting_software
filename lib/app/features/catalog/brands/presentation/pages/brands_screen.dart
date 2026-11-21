@@ -10,13 +10,10 @@ import 'package:accounting_software/app/core/presentation/state_management/bloc_
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
@@ -24,7 +21,7 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brands_table_section.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_editor_dialog.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_stats_bar.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
@@ -133,16 +130,7 @@ class BrandsScreen extends StatelessWidget {
   );
 
   Future<void> _edit(BuildContext context, [Brand? brand]) async {
-    final saved = await showAppFormDialog<bool>(
-      context,
-      (_) => MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => sl<BrandFormCubit>()),
-          BlocProvider(create: (_) => sl<BrandLogoUploadCubit>()),
-        ],
-        child: BrandEditorDialog(brand: brand),
-      ),
-    );
+    final saved = await showBrandEditor(context, brand: brand);
     if (saved == true && context.mounted) {
       await context.read<BrandsListCubit>().onBrandSaved(isNew: brand == null);
     }

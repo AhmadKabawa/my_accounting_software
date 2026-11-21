@@ -7,7 +7,6 @@ enum BrandsKeys implements AppKey {
   // `name` would shadow the enum value-name lookup used by the key getter.
   brandName(ar: 'اسم الماركة', en: 'Brand name'),
   slug(ar: 'المعرّف المختصر', en: 'Slug'),
-  logo(ar: 'رابط الشعار', en: 'Logo URL'),
   description(ar: 'الوصف', en: 'Description'),
   active(ar: 'فعّالة', en: 'Active'),
   inactive(ar: 'غير فعّالة', en: 'Inactive'),
@@ -58,17 +57,9 @@ enum BrandsKeys implements AppKey {
     ar: 'يجب ألا يتجاوز الاسم 150 حرفاً.',
     en: 'The name must be 150 characters or fewer.',
   ),
-  invalidLogoUrl(
-    ar: 'أدخل رابط صورة صحيحاً يبدأ بـ http أو https.',
-    en: 'Enter a valid image URL beginning with http or https.',
-  ),
   slugTooLong(
     ar: 'يجب ألا يتجاوز المعرّف المختصر 150 حرفاً.',
     en: 'The slug must be 150 characters or fewer.',
-  ),
-  logoTooLong(
-    ar: 'يجب ألا يتجاوز رابط الشعار 500 حرف.',
-    en: 'The logo URL must be 500 characters or fewer.',
   ),
   allStatuses(ar: 'كل الحالات', en: 'All statuses'),
   required(ar: 'هذا الحقل مطلوب', en: 'This field is required'),
@@ -116,10 +107,6 @@ enum BrandsKeys implements AppKey {
   logoFileTooLarge(
     ar: 'حجم الصورة يتجاوز 5 ميغابايت.',
     en: 'The image is larger than 5 MB.',
-  ),
-  logoHint(
-    ar: 'ارفع صورة أو الصق رابطاً عاماً (HTTP/HTTPS).',
-    en: 'Upload an image or paste a public HTTP/HTTPS link.',
   ),
   statLabel(ar: '{label}: {value}', en: '{label}: {value}');
 
