@@ -7,10 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/create_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/update_brand_use_case.dart';
@@ -28,6 +31,104 @@ class _Picker implements ImagePickerPort {
 
   @override
   Future<PickedImage?> pickImage() => handler();
+  testWidgets('ordinary save failure stays open and only name edits clear it', (
+    tester,
+  ) async {
+    final repository = FakeBrandsRepository()
+      ..onCreateBrand = (_) async => const Left(_Failure());
+    await _pumpEditor(tester, repository);
+    await tester.enterText(find.byType(TextFormField).at(0), 'Failed brand');
+    await tester.tap(find.text(BrandsKeys.save.en));
+    await tester.pumpAndSettle();
+
+    expect(find.text(BrandsKeys.saveError.en), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField).at(2), 'Changed description');
+    await tester.pump();
+    expect(find.text(BrandsKeys.saveError.en), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField).at(0), 'Changed name');
+    await tester.pump();
+    expect(find.text(BrandsKeys.saveError.en), findsNothing);
+  });
+
+  testWidgets('clean cancel closes immediately and dirty cancel asks first', (
+    tester,
+  ) async {
+    bool? cleanResult;
+    await _pumpEditor(
+      tester,
+      FakeBrandsRepository(),
+      onResult: (value) => cleanResult = value,
+    );
+    await tester.tap(find.text(BrandsKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(cleanResult, isFalse);
+
+    await _pumpEditor(tester, FakeBrandsRepository());
+    await tester.enterText(find.byType(TextFormField).at(0), 'Unsaved');
+    await tester.tap(find.text(BrandsKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
+    expect(find.byType(AppFormDialog), findsOneWidget);
+  });
+
+  testWidgets('save is disabled while the logo picker is active', (
+    tester,
+  ) async {
+    final pendingPick = Completer<PickedImage?>();
+    final picker = _Picker(() => pendingPick.future);
+    await _pumpEditor(tester, FakeBrandsRepository(), picker: picker);
+    await tester.tap(find.text(BrandsKeys.uploadLogo.en));
+    await tester.pump();
+
+    final save = tester.widget<AppButton>(
+      find.widgetWithText(AppButton, BrandsKeys.save.en),
+    );
+    expect(save.onPressed, isNull);
+    pendingPick.complete(null);
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('removing an existing logo saves null', (tester) async {
+    const brand = Brand(
+      id: 7,
+      name: 'Original',
+      slug: 'stable-slug',
+      logo: 'https://cdn.test/old.png',
+      isActive: true,
+      productCount: 0,
+    );
+    BrandDraft? savedDraft;
+    final repository = FakeBrandsRepository()
+      ..onUpdateBrand = (id, draft) async {
+        savedDraft = draft;
+        return Right(brand);
+      };
+    await _pumpEditor(tester, repository, brand: brand);
+
+    await tester.tap(find.byTooltip(BrandsKeys.removeLogo.en));
+    await tester.pump();
+    await tester.tap(find.text(BrandsKeys.save.en));
+    await tester.pumpAndSettle();
+
+    expect(savedDraft?.logo, isNull);
+  });
+
+  testWidgets('editor renders without overflow at phone, tablet and desktop', (
+    tester,
+  ) async {
+    for (final size in [
+      const Size(360, 800),
+      const Size(800, 900),
+      const Size(1280, 900),
+    ]) {
+      await _pumpEditor(tester, FakeBrandsRepository(), size: size);
+      expect(find.byType(AppFormDialog), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.text(BrandsKeys.cancel.en));
+      await tester.pumpAndSettle();
+    }
+  });
+
 }
 
 class _Failure extends Failure {

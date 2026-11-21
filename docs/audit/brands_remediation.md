@@ -157,3 +157,5 @@
 
 - F3 إعادة تحقق: CI run `44868576488` أثبت أن `Flexible(loose)` مع `SingleChildScrollView` ما زال يملأ ارتفاع الشاشة في اختبار المحتوى القصير. التعديل التالي يجعل Desktop `ListView(shrinkWrap: true)` على مستوى الجذر (header/content/footer ضمن scroll واحد) كي يكون ارتفاعه طبيعياً للمحتوى القصير ويظل محدوداً بحد Dialog للمحتوى الطويل؛ Mobile يبقى BottomSheet مع Expanded/SingleChildScrollView.
 - CI run `44868576488`: Analyze فشل بتحذير import غير مستخدم في اختبار المحرر؛ أزيل الاستيراد في commit الإصلاح التالي.
+
+- توسعة اختبارات المرحلة 5: أضيفت حالات فشل الحفظ العادي، بقاء errorKey عند تعديل الوصف ومسحه عند تعديل الاسم، dirty/clean close، تعطيل الحفظ أثناء اختيار الشعار، إزالة الشعار وحفظ null، وتجربة المحرر عند 360/800/1280. أضيفت في commit مستقل؛ تنتظر نتيجة CI.
