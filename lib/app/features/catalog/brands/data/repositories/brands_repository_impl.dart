@@ -116,6 +116,5 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
       (exception is ApiException && exception.errorCode == '23505');
 
   bool _isForeignKeyConflict(AppException exception) =>
-      exception.statusCode == 409 ||
-      (exception is ApiException && exception.errorCode == '23503');
+      exception is ApiException && exception.errorCode == '23503';
 }
