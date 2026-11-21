@@ -171,7 +171,15 @@ class _BrandsView extends StatelessWidget {
                     onPressed: () => _edit(context),
                   ),
                 ),
-                filterBar: BrandsFilterBar(query: query, cubit: cubit),
+                filterBar: BrandsFilterBar(
+                  query: query,
+                  onSearchChanged: cubit.searchChanged,
+                  onStatusChanged: (status) => cubit.setStatus(status),
+                  onClearAll: () {
+                    cubit.searchChanged('');
+                    cubit.setStatus(BrandStatusFilter.all);
+                  },
+                ),
                 state: loading
                     ? AppPageState.loading
                     : failure != null
@@ -195,8 +203,11 @@ class _BrandsView extends StatelessWidget {
                       ),
                     ],
                     BrandsTableSection(
-                      cubit: cubit,
                       query: query,
+                      onRetry: () => cubit.refresh(),
+                      onSort: (sort) =>
+                          cubit.setSort(ascending: sort.ascending),
+                      onPageChanged: (page) => cubit.setPage(page),
                       rows: rows,
                       total: total,
                       loading: loading,
