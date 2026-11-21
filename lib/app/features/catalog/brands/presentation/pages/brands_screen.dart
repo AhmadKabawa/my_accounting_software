@@ -39,97 +39,97 @@ class BrandsScreen extends StatelessWidget {
       BlocProvider(create: (_) => sl<BrandStatsCubit>()..load()),
     ],
     child: BlocEffectListener<BrandsListEffect, BrandsListCubit>(
-            onEffect: (context, effect) {
-              if (effect is BrandsMutatedEffect) {
-                context.read<BrandStatsCubit>().refresh();
-              }
-            },
-            child: BlocBuilder<BrandStatsCubit, BrandStatsState>(
-              builder: (context, statsState) =>
-                  BlocBuilder<BrandsListCubit, BrandsListState>(
-                    builder: (context, state) {
-                      final cubit = context.read<BrandsListCubit>();
-                      final page = state.result;
-                      final query = state.query;
-                      final stats = statsState.stats;
-                      final rows = page?.items ?? const <Brand>[];
-                      final total = page?.totalCount ?? 0;
-                      final failure = state.hasData ? null : state.failure;
-                      final refreshFailure = state.hasData ? state.failure : null;
-                      final loading = state.isInitialLoading;
-                      final refreshing = state.isRefreshing;
+      onEffect: (context, effect) {
+        if (effect is BrandsMutatedEffect) {
+          context.read<BrandStatsCubit>().refresh();
+        }
+      },
+      child: BlocBuilder<BrandStatsCubit, BrandStatsState>(
+        builder: (context, statsState) =>
+            BlocBuilder<BrandsListCubit, BrandsListState>(
+              builder: (context, state) {
+                final cubit = context.read<BrandsListCubit>();
+                final page = state.result;
+                final query = state.query;
+                final stats = statsState.stats;
+                final rows = page?.items ?? const <Brand>[];
+                final total = page?.totalCount ?? 0;
+                final failure = state.hasData ? null : state.failure;
+                final refreshFailure = state.hasData ? state.failure : null;
+                final loading = state.isInitialLoading;
+                final refreshing = state.isRefreshing;
     
-                      return ListPageTemplate(
-                        titleKey: BrandsKeys.title,
-                        breadcrumb: AppBreadcrumb(
-                          items: [
-                            AppBreadcrumbItem(
-                              label: NavKeys.catalog,
-                              onTap: () => context.go(CatalogRoutes.hub.path),
-                            ),
-                            const AppBreadcrumbItem(label: BrandsKeys.title),
-                          ],
+                return ListPageTemplate(
+                  titleKey: BrandsKeys.title,
+                  breadcrumb: AppBreadcrumb(
+                    items: [
+                      AppBreadcrumbItem(
+                        label: NavKeys.catalog,
+                        onTap: () => context.go(CatalogRoutes.hub.path),
+                      ),
+                      const AppBreadcrumbItem(label: BrandsKeys.title),
+                    ],
+                  ),
+                  count: total,
+                  actions: stats == null ? null : BrandStatsBar(stats),
+                  primaryAction: PermissionGate(
+                    permission: Permissions.masterData.manage,
+                    child: AppButton(
+                      BrandsKeys.add,
+                      icon: AppIcons.add,
+                      onPressed: () => _edit(context),
+                    ),
+                  ),
+                  filterBar: BrandsFilterBar(
+                    query: query,
+                    onSearchChanged: cubit.searchChanged,
+                    onStatusChanged: cubit.setStatus,
+                    onClearAll: cubit.clearFilters,
+                  ),
+                  state: loading
+                      ? AppPageState.loading
+                      : failure != null
+                      ? AppPageState.error
+                      : AppPageState.content,
+                  dataTable: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (refreshFailure != null) ...[
+                        InlineBanner(
+                          messageKey: refreshFailure.messageKey,
+                          variant: InlineBannerVariant.error,
                         ),
-                        count: total,
-                        actions: stats == null ? null : BrandStatsBar(stats),
-                        primaryAction: PermissionGate(
-                          permission: Permissions.masterData.manage,
+                        Align(
+                          alignment: AlignmentDirectional.centerEnd,
                           child: AppButton(
-                            BrandsKeys.add,
-                            icon: AppIcons.add,
-                            onPressed: () => _edit(context),
+                            CatalogUiKeys.retry,
+                            variant: AppButtonVariant.text,
+                            onPressed: cubit.refresh,
                           ),
                         ),
-                        filterBar: BrandsFilterBar(
-                          query: query,
-                          onSearchChanged: cubit.searchChanged,
-                          onStatusChanged: cubit.setStatus,
-                          onClearAll: cubit.clearFilters,
-                        ),
-                        state: loading
-                            ? AppPageState.loading
-                            : failure != null
-                            ? AppPageState.error
-                            : AppPageState.content,
-                        dataTable: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (refreshFailure != null) ...[
-                              InlineBanner(
-                                messageKey: refreshFailure.messageKey,
-                                variant: InlineBannerVariant.error,
-                              ),
-                              Align(
-                                alignment: AlignmentDirectional.centerEnd,
-                                child: AppButton(
-                                  CatalogUiKeys.retry,
-                                  variant: AppButtonVariant.text,
-                                  onPressed: cubit.refresh,
-                                ),
-                              ),
-                            ],
-                            BrandsTableSection(
-                              query: query,
-                              onRetry: cubit.refresh,
-                              onSort: (sort) =>
-                                  cubit.setSort(ascending: sort.ascending),
-                              onPageChanged: cubit.setPage,
-                              rows: rows,
-                              total: total,
-                              loading: loading || refreshing,
-                              failure: failure,
-                              onAdd: () => _edit(context),
-                              onEdit: (brand) => _edit(context, brand),
-                              onDelete: (brand) => _delete(context, brand),
-                              onToggleStatus: (brand) => _status(context, brand),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                      ],
+                      BrandsTableSection(
+                        query: query,
+                        onRetry: cubit.refresh,
+                        onSort: (sort) =>
+                            cubit.setSort(ascending: sort.ascending),
+                        onPageChanged: cubit.setPage,
+                        rows: rows,
+                        total: total,
+                        loading: loading || refreshing,
+                        failure: failure,
+                        onAdd: () => _edit(context),
+                        onEdit: (brand) => _edit(context, brand),
+                        onDelete: (brand) => _delete(context, brand),
+                        onToggleStatus: (brand) => _status(context, brand),
+                      ),
+                    ],
                   ),
+                );
+              },
             ),
-          )
+      ),
+    ),
   );
 
   Future<void> _edit(BuildContext context, [Brand? brand]) async {
