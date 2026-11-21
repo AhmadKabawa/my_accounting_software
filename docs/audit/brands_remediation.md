@@ -1,59 +1,124 @@
-# Brands remediation — المرحلة 3
-
-## الحالة الحالية — 2026-11-21
+# تدقيق معالجة ميزة Brands
 
 - الفرع: `feat/cat07-ui-remediation`
-- HEAD الفعلي للكود قبل commit التقرير: `b552ed03c4509773af1711237da7f9af2f845297`
-- نطاق هذا التسليم: إغلاق انحرافات المرحلة 3 فقط.
-- المرحلة 4: لم تبدأ.
+- HEAD عند بدء التدقيق: `55e290f3b8a9a08318d4593a6a50d1f840b2e0a0`
+- تاريخ التدقيق: 2026-11-20
+- مرجع اصطلاح التدقيق: لم يُعثر على `docs/audit/audit-status.md` أو مجلد `docs/audit/` في HEAD؛ أُنشئ هذا الملف في الموضع المطلوب.
+- مصدر التحقق: قراءة الملفات الفعلية في HEAD. أرقام الأسطر تشير إلى HEAD الابتدائي ما لم يُذكر تحديث لاحق.
 
-## سجل موحّد للبنود
+## سجل النتائج
 
-| البند | الحالة | الملفات والنطاق | Commit / commits | التفاصيل والقيود |
-|---|---|---|---|---|
-| Brand.hasProducts وcanDelete | مُنفَّذ | `lib/app/features/catalog/brands/domain/entity/brand.dart` | `f0b29641a8f93f49ebbdcb145eb516d4a8c0b52a` | hasProducts = productCount معروف وأكبر من صفر؛ canDelete بقي true فقط عندما productCount == 0. |
-| BrandUsageUnknownFailure ومفاتيح BrandsKeys المطلوبة | مُنفَّذ | `domain/failures/brand_failures.dart`؛ `presentation/localization/brands_keys.dart` | `f0b29641a8f93f49ebbdcb145eb516d4a8c0b52a` | أضيف saved وbrandUsageUnknown بالعربية والإنجليزية؛ statusUpdated وdeleted وduplicateError وbrandInUse كانت موجودة. |
-| نقل إحصائيات Brands إلى DataSource | مُنفَّذ | DataSource interface/impl؛ Repository؛ UseCase | `f0b29641a8f93f49ebbdcb145eb516d4a8c0b52a`؛ `891bb114bafee73b3a1d4a75c7812950f4bff14a` | getBrandStats ينفذ طلبين متوازيين select=id وlimit=1: الإجمالي والفعّال. يستخدم totalCount من getPaginated، ويعيد فشلاً إذا فشل أي طلب. inactive = total - active. موثق كحل مؤقت إلى RPC واحد. |
-| BrandsListState/Cubit/Effects | مُنفَّذ | `presentation/cubit/brands_list/` | `75fa2739f8773a31c481a5f3f38ba349072defab`؛ `fec17b311f76ea85292672ff55dd923108ee3b6b`؛ `8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b`؛ `9dd2139da45aae599d124fbff2e756e87c0f2b0b`؛ `b552ed03c4509773af1711237da7f9af2f845297` | State موحد Equatable؛ query غير nullable من AppConfig؛ حالات initial/loading/ready/refreshing/failed؛ clearFailure؛ debounce 300ms؛ requestVersion؛ Effects للإنشاء/التعديل/تغيير الحالة/الحذف؛ activate/deactivate/delete/onBrandSaved. حُذفت حالات القائمة القديمة وgetter query وsetActive. |
-| BrandFormCubit/Effects | مُنفَّذ | `presentation/cubit/brand_form/` | `75fa2739f8773a31c481a5f3f38ba349072defab`؛ `fec17b311f76ea85292672ff55dd923108ee3b6b`؛ `8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b` | BrandFormStatus داخل ملف Cubit؛ BrandFormEffect مستقل؛ منع الحفظ المزدوج بصمت؛ duplicateError داخل Cubit؛ نجاح/فشل عبر Effects؛ حُذف brand_form_state.dart وreset. |
-| الشاشة وDI والمحرر | مُنفَّذ | `brands_screen.dart`؛ `brand_editor_dialog.dart`؛ `brands_di.dart` | `fec17b311f76ea85292672ff55dd923108ee3b6b`؛ `8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b`؛ `9dd2139da45aae599d124fbff2e756e87c0f2b0b`؛ `b552ed03c4509773af1711237da7f9af2f845297` | استهلاك state.query وhasData/isRefreshing؛ listener واحد لـ BrandsMutatedEffect لتحديث الإحصاءات؛ onBrandSaved بعد إغلاق المحرر؛ DI يمرر FlashMessages إلى Cubits. المحرر يستمع إلى BrandFormEffect ويحسب busy من الحفظ ورفع الشعار. |
-| اختبارات Domain وFakes | مُنفَّذ | `brand_test.dart`؛ `fake_brands_repository.dart`؛ `fake_brands_api_client.dart` | `11532aeb403ed23ef6b105bfb2f1e8084b95ec18`؛ `3aacd4f80f40bcb5b729aeab397f8f4e395da848` | تغطية hasProducts/canDelete للقيم 0 و>0 وnull؛ تحديث FakeBrandsRepository لـ getBrandStats ونتيجة تغيير الحالة. **لم تُشغَّل.** |
-| اختبارات BrandsListCubit وBrandFormCubit | مُنفَّذ | `brands_cubit_test.dart` | `f381270160da1405cdefb4d0782cf50619c434c7`؛ `594086c7ffe93e2014f34f8776374d29178bfb11` | انتقال loading→ready؛ refresh يحتفظ بالصفوف؛ الفشل مع/بدون بيانات؛ آخر طلب يفوز؛ fakeAsync debounce 300ms؛ منع حذف >0/null دون شبكة؛ Effects وFlashMessages؛ page fallback؛ close؛ نجاح/فشل/duplicate/save مزدوج. **لم تُشغَّل.** |
-| اختبارات الإحصائيات وRepository والشاشة | مُنفَّذ | `brand_stats_cubit_test.dart`؛ `brands_repository_test.dart`؛ `brands_screen_responsive_test.dart` | `2fc6dc7bfae70e8e831235eb4697a0ae08c8f28f` | إحصائيات repository، فشل أحد الطلبين، حساب inactive، تحديث حقن FlashMessages في اختبار الشاشة. **لم تُشغَّل.** |
-| اختبار Logo Upload | مُنفَّذ | `brand_logo_upload_cubit_test.dart` | `fba66f65dac42a491c15e27a12abc98503355f30` | أضيف اختبار busy أثناء فتح المنتقي والإلغاء والعودة إلى idle. **لم يُشغَّل.** |
-| تدقيق الرموز القديمة في ملفات Brands المتأثرة ضمن lib وtest | مؤكد من الكود | جميع ملفات Dart تحت `lib/app/features/catalog/brands` و`test/features/catalog/brands` | `b552ed03c4509773af1711237da7f9af2f845297` | لم تظهر BrandsListReady/Loading/Failed/RefreshFailed أو BrandFormSaved/BrandFormState أو setActive أو getStats أو brand_form_state.dart؛ لا استعمال لـ cubit.query. state.query هو المصدر. |
-| ما بقي مؤقتاً في الشاشة | مؤكد من الكود | `brands_screen.dart` | `9dd2139da45aae599d124fbff2e756e87c0f2b0b`؛ `b552ed03c4509773af1711237da7f9af2f845297` | أبقينا ConfirmDialog وBrandsTableSection وBrandsFilterBar والفرز/التصفية/الترقيم الحاليين؛ التغيير محدود إلى مصدر الحالة وربط Effects وتحديث الإحصاءات من موضع واحد. |
-| ما بقي مؤقتاً في المحرر | مؤكد من الكود | `brand_editor_dialog.dart` | `8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b`؛ `9dd2139da45aae599d124fbff2e756e87c0f2b0b` | أبقينا AppFormDialog والأقسام الحالية وحقل رابط الشعار اليدوي إلى جانب الرفع. slug auto-fill الحالي لاتيني فقط ولا يضيف transliteration؛ لم يُعَد بناء المحرر في هذه المرحلة. |
-| تعارض طبقات Domain/Presentation | غير مؤكد | `domain/failures/brand_failures.dart` | `f0b29641a8f93f49ebbdcb145eb516d4a8c0b52a` | BrandUsageUnknownFailure يشير إلى BrandsKeys الموجودة في presentation لتلبية طلب المفتاح المحدد؛ هذا يخلق اعتماداً من Domain على Presentation. لم يُغيّر لأن المطلوب سمّى BrandsKeys صراحةً. |
-| تحقق سلوك count في Supabase الفعلي | غير مؤكد | `BrandsRemoteDataSourceImpl.getBrandStats` | `891bb114bafee73b3a1d4a75c7812950f4bff14a` | الكود يستخدم getPaginated الحالي كما طُلب؛ لم يُشغّل اختبار اتصال فعلي للتحقق من Content-Range في البيئة. |
+| المعرّف | الوصف | الحالة | الدليل (ملف:سطر) | الـ commit | ملاحظات |
+|---|---|---|---|---|---|
+| P1-1 | ازدواج حالة Saving بين Dialog وCubit | مُعالَج في المرحلة 2 | `brands/presentation/widgets/brand_editor_dialog.dart`; `brand_form_cubit.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | أزيلت حالة `_saving` المحلية؛ busy مشتق من BrandFormCubit ويُمرر إلى AppFormDialog |
+| P1-2 | لا يوجد Dialog Shell عام للمحرر | مُعالَج في المرحلة 2 | `brand_editor_dialog.dart`; `app_form_dialog.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | المحرر يستخدم showAppFormDialog/AppFormDialog المشترك |
+| P1-3 | منطق الإحصاءات داخل BrandStatsCubit | مُعالَج في المرحلة 2 | `domain/usecase/get_brand_stats_use_case.dart`; `presentation/cubit/brand_stats_cubit.dart`; `di/brands_di.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | أضيف GetBrandStatsUseCase لاحتواء استعلامي الإجمالي والفعّال؛ Cubit يدير دورة الحالة فقط |
+| P1-4 | حذف الماركة يعتمد على `productCount != 0`؛ القيمة null تجعل الشرط true | مؤكد من الكود | `brands/presentation/cubit/brands_list_cubit.dart:132-134` | — | null يمنع الحذف احترازياً؛ يلزم قرار مجال صريح حول unknown count |
+| P1-5 | تصنيف HTTP 409 عام في مساري الكتابة والحذف | مُعالَج في المرحلة 2 | `core/network/dio/api_client.dart`; `core/error/exceptions/api_exception.dart`; `brands/data/repositories/brands_repository_impl.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | يحتفظ ApiClient بـ SQLSTATE؛ 23505 للـ unique و23503 للـ foreign key. تعارض 409 بلا SQLSTATE يبقى fallback duplicate في مسار الكتابة فقط |
+| P1-6 | فتح محرر الماركة دون حواجز إغلاق | مُعالَج في المرحلة 2 | `brands/presentation/pages/brands_screen.dart`; `brand_editor_dialog.dart`; `app_form_dialog.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | يستخدم المحرر الغلاف المشترك الذي يمنع الإغلاق أثناء busy ويطلب تأكيد التغييرات غير المحفوظة |
+| P1-7 | ملكية BrandLogoUploadCubit داخل قسم الشعار | مُعالَج في المرحلة 2 | `brands_screen.dart`; `brand_logo_section.dart`; `brand_editor_dialog.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | أصبح Cubit ضمن نطاق المحرر، ويُحتسب رفع الشعار ضمن busy guard |
+| P2-8 | رفع الشعار يبقى State-only ولا يحتاج Effect | مؤكد من الكود | `brands/presentation/cubit/brand_logo_upload_cubit.dart:9-41` | — | قرار بلا تغيير |
+| P2-9 | فشل Refresh يزيل الصفوف القديمة | مُعالَج في المرحلة 2 | `brands_list_cubit.dart`; `brands_screen.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | أضيف BrandsListRefreshFailed للاحتفاظ بآخر صفحة مع InlineBanner وخيار إعادة المحاولة |
+| P2-10 | FilterBar يفرّغ النص عند إزالة شارة البحث ومسح الكل؛ لا عيب مثبت فيه، والتزامن المتبقي مرتبط بـ N-4 | مؤكد من الكود | `filter_bar.dart:94-126`; `brands/presentation/widgets/brands_filter_bar.dart:26-54` | — | لا تغيير مطلوب في FilterBar قبل اختبار N-4 |
+| P2-11 | لا توجد سياسة واضحة لتحديث slug أو إعادة توليده؛ التوليد الحالي تلقائي فقط عندما يكون الحقل فارغاً | مؤكد من الكود | `brands/presentation/widgets/brand_editor_dialog.dart:50-54,116-120` | — | قرار مجال مؤجل |
+| P2-12 | احتمال ملفات Storage يتيمة بعد رفع مكتمل ثم إلغاء/فشل حفظ الماركة | مؤكد من الكود | `brands/data/datasources/brands_remote_data_source_impl.dart:74-88`; `brands/presentation/widgets/brand_editor_dialog.dart:64-82` | — | دين فني موثّق، لا تنفيذ في هذه المراحل |
+| S-1 | `_escapeFilterValue` يهرّب backslash والاقتباس فقط؛ wildcard الرموز % و_ و* لا تُعالج هنا | مؤكد من الكود | `brands/data/datasources/brands_remote_data_source_impl.dart:112-113` | — | أولوية منخفضة؛ مؤجل حتى اختبار قاعدة البيانات الفعلية |
+| N-1 | `_slugify` يحذف كل ما ليس a-z0-9، فينتج slug فارغاً للاسم العربي | مؤكد من الكود | `brands/presentation/widgets/brand_editor_dialog.dart:50-54` | — | — |
+| N-2 | أقسام العرض تعتمد مباشرة على BrandsListCubit | مُعالَج في المرحلة 2 | `brands_table_section.dart`; `brands_filter_bar.dart`; `brands_screen.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | أزيل اعتماد Cubit من الأقسام، وأصبحت actions عبر callbacks تنسقها الشاشة |
+| N-3 | تعدد مواضع تنسيق refresh الإحصاءات ورسائل الشاشة | مُعالَج جزئياً | `lib/app/features/catalog/brands/presentation/pages/brands_screen.dart:37-42`; `brand_stats_cubit.dart:24-30` | `db05c058089c6de80506b7547add43315a06b66a`; `693bd1a237bb6f2d20c18d088c7fc892227d3cc2`; `12829ce3e1e03c32bb3d02e28f7d0b9fa21b1491` | نُقل listener خارج BlocBuilder وأصبح trigger تحديث الإحصاءات عبر listener واحد؛ أزيل Flash من فشل الإحصاءات. لم يُنشأ orchestration abstraction جديد. |
+| N-4 | إدراج أبناء شرطية قبل FilterBar/Expanded قد يغيّر مواضع العناصر؛ ثُبّتت المواضع بإبن placeholder دائم | غير مؤكد | `app_page_templates.dart:140-146,209-216,300-309`; `list_page_template_test.dart`; `page_template_child_identity_test.dart` | `e84312b57699df525c8f54d5cc91da991f23c74a` | أُضيفت اختبارات ListPageTemplate وFormPageTemplate وDashboardTemplate؛ لم تُشغَّل على HEAD السابق لإثبات إعادة الإنتاج. لم يُشغَّل |
+| N-5 | محرر الماركة لا يحرس التغييرات غير المحفوظة | مُعالَج في المرحلة 2 | `brand_editor_dialog.dart`; `app_form_dialog.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | dirty مشتق من controllers؛ الإلغاء وEscape يمران بتأكيد التغييرات غير المحفوظة |
+| N-6a | BrandEditorDialogState عامة | مُعالَج في المرحلة 2 | `brand_editor_dialog.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | الحالة أصبحت `_BrandEditorDialogState` خاصة |
+| N-6b | بعض Widgets لا تستقبل super.key | مؤكد من الكود | `brands/presentation/sections/brands_table_section.dart:21-24`; `brands/presentation/widgets/brand_editor_dialog.dart:18-23` | — | يُراجع عند نقل الملفات فقط إذا لم يتطلب تغيير منطق |
+| N-6c | امتداد ملف الشعار عند غياب النقطة غير صحيح | مُعالَج في المرحلة 2 | `brands_remote_data_source_impl.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | يُستنتج الامتداد من MIME type عند غياب امتداد صالح من اسم الملف |
+| U-1 | توزيع الإجراءات الحالي: Edit أساسي، والحذف يظهر فقط عند productCount == 0، وتفعيل/تعطيل في Overflow | مؤكد من الكود | `brands/presentation/sections/brands_table_section.dart:112-139` | — | الحذف مشروط بقيمة 0 تحديداً؛ null لا يظهر |
+| U-2 | حقل رابط الشعار اليدوي ما زال جزءاً من BrandLogoSection إلى جانب الرفع/الإزالة | مؤكد من الكود | `brands/presentation/sections/brand_logo_section.dart:20-25,65-100` | — | — |
+| U-3 | فشل Refresh يحول الحالة إلى Failed بدلاً من إبقاء الصفوف | مُعالَج جزئياً | `lib/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart:28-56`; `brands_screen.dart:88-97` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | تبقى الصفوف السابقة ظاهرة مع InlineBanner وإعادة المحاولة؛ لا يزال مؤشر Refresh داخل AppDataTable غير منفذ. |
+| ST-1 | نقل Brands إلى catalog/brands/{data,domain,presentation,di} مع إبقاء Hub وDI/Routes الخاصة به على مستوى catalog | مُنفَّذ | `lib/app/features/catalog/brands/`; `catalog/di/catalog_di.dart`; `catalog/presentation/routing/catalog_routes.dart` | `72961a6c55501e5d131c3a5bb99e8ec2501fdbac` | نقل الملفات والاختبارات وتحديث imports وDI ومسارات Brands. |
+| ST-2 | ملفات كل Cubit تجمع State وCubit في ملف واحد ولا تتبع مجلد cubit/<name> | مؤكد من الكود | `presentation/cubit/brands/presentation/cubit/brand_form_cubit.dart`; `brands/presentation/cubit/brand_stats_cubit.dart`; `brands/presentation/cubit/brands_list_cubit.dart` | — | يُسجل كاتفاق بنيوي للميزات القادمة؛ لا يُعاد تقسيم Cubits ضمن النقل الصرف |
+| ST-3 | GetBrandStatsUseCase مستقل | مُنفَّذ | `domain/usecase/get_brand_stats_use_case.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | Cubit أصبح مستهلكاً للـ UseCase المسجل في DI |
+| DEC-1 | لا Freezed ولا Bloc؛ Cubit فقط | مؤكد من الكود | `pubspec.yaml`; `presentation/cubit/*.dart` | — | قرار بلا كود |
+| DEC-2 | Effects عبر BaseCubit الموجود | مؤكد من الكود | `lib/app/core/foundation/base/base_cubit.dart` | — | قرار بلا كود |
+| DEC-3 | تأجيل FormSection وFormFieldGroup حتى تتكرر الحاجة في ميزتين | مؤكد من الكود | لا تغيير مطلوب | — | قرار بلا كود |
+| DEC-4 | ConfirmDialog لا يُعدّل الآن | مؤكد من الكود | `app_confirm_dialog/confirm_dialog.dart` | — | قرار بلا كود |
+| FIX-1 | تحديث مرجع BrandsKeys في سجل المفاتيح ومسارات الدعم النسبية لاختبارات Brands بعد النقل | مُنفَّذ | `lib/app/localization/key_registry.dart:23`; اختبارات `brands_repository_test.dart`, `brand_logo_upload_cubit_test.dart`, `brand_stats_cubit_test.dart` | `767aff2af8baf7d2b124077a3f2cbb4f9153832b` | كشف CI مراجع قديمة؛ حُدثت للمسارات الجديدة. |
+| FIX-2 | تحديث مستهلكي BrandsKeys/BrandsRoutes/BrandsScreen خارج الميزة، وتصحيح imports helpers للاختبار المنقول، وتركيز اختصارات AppFormDialog وإصلاح اختبارات spinner/state | مُنفَّذ | `catalog_hub_screen.dart`; `route_guards.dart`; `route_registry.dart`; `destinations.dart`; `brands_screen_responsive_test.dart`; `app_form_dialog.dart`; `brands_cubit_test.dart` | `499bafd9165eff1538bddc114ebed2fb831e5b9a` | استجابة مباشرة لأخطاء CI بعد النقل والمرحلة 1. |
+| FIX-3 | نقل Focus إلى داخل CallbackShortcuts وإصلاح مصفوفة اختبارات Brands | مُنفَّذ | `app_form_dialog.dart`; `brands_screen_responsive_test.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 1) | تأكد CI من نجاح التحليل والاختبارات، بما فيها اختبارات Catalog UI. |
 
-## ما لم يُشغَّل
+## الحالة الحالية — 2026-11-21 (تحديث ما قبل المرحلة 4)
 
-- لم يُشغَّل `dart format --set-exit-if-changed .`.
-- لم يُشغَّل `flutter analyze --no-fatal-infos`.
-- لم يُشغَّل `flutter test` أو أي أمر Dart/Flutter آخر.
-- لم تُشغَّل أي من الاختبارات في:
-  - `test/features/catalog/brands/domain/entity/brand_test.dart`
-  - `test/features/catalog/brands/presentation/cubit/brands_cubit_test.dart`
-  - `test/features/catalog/brands/presentation/cubit/brand_stats_cubit_test.dart`
-  - `test/features/catalog/brands/presentation/cubit/brand_logo_upload_cubit_test.dart`
-  - `test/features/catalog/brands/data/repositories/brands_repository_test.dart`
-  - `test/features/catalog/brands/presentation/pages/brands_screen_responsive_test.dart`
-- لم يُنفّذ CI؛ لا يوجد ادعاء بنجاح التنسيق أو التحليل أو الاختبارات.
+- الفرع المستهدف: `feat/cat07-ui-remediation` فقط؛ لم يُنشأ فرع جديد.
+- آخر HEAD قبل commit هذا التقرير: `21742455eaa145bc754359502fc35d44f4fc8ae9`.
+- مقارنة الفرع مع HEAD السابق `338340b1744b1e450522e0008293bcb7a34990e1`: الفرع ahead بـ 13 commits وbehind بـ 0.
+- هذا التقرير يستعيد سجل التدقيق التاريخي من commit `4b1540df2a6aa264372a354fe4e41b6f8a14b822` ويحافظ على جميع المعرفات P1-1 إلى ST-3 وDEC-1..4 وFIX-1..3. ثم يضيف نتائج المرحلة 3 وتحديثات المعالجة الحالية.
+- ملاحظة توثيقية: السجل التاريخي كان يذكر بعض تغييرات المرحلة 1/2 باسم المرحلة فقط دون SHA؛ لم أختلق SHA لها، ووسمتها بأنها غير مدونة في النسخة التاريخية. أما commits المرحلة 3 والإصلاحات الحالية فأدرجت SHA الفعلية حيث توفرت.
 
-## بنود مؤجلة
+### حالة المراحل
 
-| البند | الحالة | السبب |
+- المرحلة 0: مكتملة؛ نقل Brands إلى `lib/app/features/catalog/brands` وتحديث DI/Routes والاختبارات. Commit النقل الموثق: `72961a6c55501e5d131c3a5bb99e8ec2501fdbac`.
+- المرحلة 1: مكتملة وفق السجل السابق؛ AppFormDialog، تثبيت مواضع أبناء القوالب، وإصلاحات الاختبارات. SHA بعض commits المرحلة 1 غير مدون في النسخة التاريخية.
+- المرحلة 2 (Brands): مكتملة وفق السجل السابق:
+  - AppFormDialog مستخدم في المحرر، ولا توجد حالة `_saving` محلية مكررة؛ busy مشتق من BrandFormCubit ورفع الشعار.
+  - BrandLogoUploadCubit مملوك على مستوى المحرر.
+  - GetBrandStatsUseCase يفصل استعلامات الإحصاءات عن Cubit.
+  - BrandsListRefreshFailed يحتفظ بالصفوف السابقة مع InlineBanner وإعادة المحاولة.
+  - BrandsTableSection وBrandsFilterBar callback-driven (N-2).
+  - SQLSTATE وامتداد ملف الشعار عولجا كما هو موثق في سجل المرحلة 3.
+- المرحلة 3: مكتملة حسب ملفات الفرع وسجلها السابق. تفاصيل commitsها أدناه.
+- المرحلة 4: **لم تبدأ**. التغييرات المدرجة في قسم F1–F7 هي إغلاق إصلاحات ما قبل المرحلة 4، وليست بدء تنفيذ أعمال المرحلة 4.
+
+### سجل المرحلة 3 — commits الموثقة
+
+| النطاق | الحالة والملفات | Commit / commits |
 |---|---|---|
-| S-1: PostgREST wildcard escaping | مؤجل | يتطلب تحققاً من سلوك PostgREST الفعلي قبل تعديل استراتيجية escaping. |
-| P2-12: تنظيف ملفات Storage اليتيمة | مؤجل | يحتاج تدفقاً تعويضياً متفقاً عليه عند نجاح الرفع ثم فشل/إلغاء حفظ الماركة. |
-| RPC إحصائيات الماركات | مؤجل | الطلبان الخفيفان الحاليان حل مؤقت؛ يستبدلان بـ RPC واحد عند توفره. |
-| FormSection | مؤجل | لا يُنشأ تجريد مشترك قبل تكرر الحاجة واعتماده. |
+| Brand.hasProducts وcanDelete؛ BrandUsageUnknownFailure ومفاتيح BrandsKeys | مُنفَّذ؛ `domain/entity/brand.dart` و`domain/failures/brand_failures.dart` و`presentation/localization/brands_keys.dart` | `f0b29641a8f93f49ebbdcb145eb516d4a8c0b52a` |
+| نقل إحصائيات Brands إلى DataSource/Repository/UseCase | مُنفَّذ؛ `getBrandStats` يستعمل طلبين متوازيين select=id وlimit=1، ويعتمد totalCount | `f0b29641a8f93f49ebbdcb145eb516d4a8c0b52a`; `891bb114bafee73b3a1d4a75c7812950f4bff14a` |
+| BrandsListState/Cubit/Effects | مُنفَّذ؛ State موحد، query، debounce، requestVersion، effects | `75fa2739f8773a31c481a5f3f38ba349072defab`; `fec17b311f76ea85292672ff55dd923108ee3b6b`; `8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b`; `9dd2139da45aae599d124fbff2e756e87c0f2b0b`; `b552ed03c4509773af1711237da7f9af2f845297` |
+| BrandFormCubit/Effects | مُنفَّذ؛ منع الحفظ المزدوج ونجاح/فشل عبر Effects | `75fa2739f8773a31c481a5f3f38ba349072defab`; `fec17b311f76ea85292672ff55dd923108ee3b6b`; `8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b` |
+| الشاشة وDI والمحرر | مُنفَّذ؛ state.query، listener واحد لتحديث الإحصاءات، DI، busy من الحفظ ورفع الشعار | `fec17b311f76ea85292672ff55dd923108ee3b6b`; `8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b`; `9dd2139da45aae599d124fbff2e756e87c0f2b0b`; `b552ed03c4509773af1711237da7f9af2f845297` |
+| اختبارات Domain/Fakes وList/Form Cubits والإحصاءات وRepository والشاشة وLogo Upload | أُضيفت/حُدثت؛ لم يثبت تشغيلها في السجل السابق | `11532aeb403ed23ef6b105bfb2f1e8084b95ec18`; `3aacd4f80f40bcb5b729aeab397f8f4e395da848`; `f381270160da1405cdefb4d0782cf50619c434c7`; `594086c7ffe93e2014f34f8776374d29178bfb11`; `2fc6dc7bfae70e8e831235eb4697a0ae08c8f28f`; `fba66f65dac42a491c15e27a12abc98503355f30` |
+| FIX-1: مرجع BrandsKeys ومسارات اختبارات النقل | مُنفَّذ | `767aff2af8baf7d2b124077a3f2cbb4f9153832b` |
+| FIX-2: مستهلكو Routes/Keys وإصلاحات AppFormDialog واختبارات النقل | مُنفَّذ | `499bafd9165eff1538bddc114ebed2fb831e5b9a` |
+| FIX-3: Focus وCallbackShortcuts ومصفوفة اختبارات Brands | مُنفَّذ؛ SHA غير مدون في السجل التاريخي | غير مدون في النسخة التاريخية |
 
-## القرارات الثابتة
+### نتائج طلبات ما قبل المرحلة 4 (F1–F7)
 
-- Effects عبر BaseCubit مطلوبة؛ لا يُبرر غيابها.
-- لا Freezed ولا Bloc ولا حزم جديدة.
-- سياسة slug بلا transliteration؛ تنفيذها في المرحلة 4، وليست بنداً مؤجلاً في هذه المرحلة.
-- لا تعديل على ConfirmDialog أو EffectMixin أو BaseCubit.
+| البند | النتيجة الحالية | الدليل في الكود/الاختبار | Commit / commits |
+|---|---|---|---|
+| F1 — فحص CI وإصلاح السبب الجذري | لم تتوفر نتيجة Workflow قابلة للتوثيق. استعلام الـ commit `21742455eaa145bc754359502fc35d44f4fc8ae9` أعاد قائمة فارغة؛ أداة الاستعلام المتاحة تقتصر على runs المرتبطة بأحداث Pull Request ولا تعرض كل Push runs. لذلك لا يوجد Run ID أو نتائج خطوات يمكن إثباتها. عُثر أثناء فحص الاختبارات على مرجع غير معرّف `setActiveResult` في FakeBrandsRepository، وصُحح إلى `statusMutationResult`. | `test/features/catalog/brands/support/fake_brands_repository.dart:19,61` | `21742455eaa145bc754359502fc35d44f4fc8ae9` |
+| F2 — استعادة التقرير ودمج المرحلة 3 | هذا التحديث يعيد محتوى التقرير التاريخي ويحافظ على كل المعرفات، ويضيف سجل المرحلة 3 ونتائج F1–F7 والحالة الحالية. | هذا الملف؛ commits المرحلة 3 أعلاه | commit هذا التحديث |
+| F3 — ارتفاع AppFormDialog | عُدّل وضع الحوار المكتبي فقط: `Column(mainAxisSize: min)` و`Flexible(fit: loose)`. وضع bottom sheet يبقى على `Expanded` كما كان. أضيف اختبار للمحتوى القصير وآخر للمحتوى الطويل والتمرير. **الاختبار لم يُشغّل بعد؛ لا أدعي أن السلوك ثبت تنفيذياً.** | `lib/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart:106,123-125`; `test/core/presentation/widgets/app_form_dialog_layout_test.dart:11-36` | `e5d96add7ae3d003871c64de2467554c5150232b`; `a1586258dc225056085e6f1b375a6846eb5e1730` |
+| F4 — Listener وclearFilters وFailure mapping | نُقل BlocEffectListener خارج BlocBuilder. أضيف `clearFilters()` لإلغاء debounce وتحديث search/status/page في query واحد ثم load واحد، واستُخدم في onClearAll. أصبح `_delete` يعيد `failure.messageKey` مباشرة دون تحويل مكرر. أضيفت اختبارات clearFilters ومرات refresh للإحصاءات بعد إعادة البناء. **لم تُشغّل.** | `brands_screen.dart:37-42,83`; `brands_list_cubit.dart:103-115`; `brands_cubit_test.dart:135-161`; `brands_screen_responsive_test.dart:98-143` | `efb052abe999a9c7f68823b591a1c05b7d57fa80`; `db05c058089c6de80506b7547add43315a06b66a`; `5a9375212df26f7468fb68e9552c21baffbf8950`; `4cb193fe37199b442ac8524553f7036f43dfa01a`; `693bd1a237bb6f2d20c18d088c7fc892227d3cc2` |
+| F5 — إزالة Flash من فشل الإحصاءات | أزيل اعتماد FlashMessages من BrandStatsCubit وDI. حالات Failed وRefreshFailed باقية، وRefreshFailed يحتفظ بآخر قيمة. أضيف اختبار للاحتفاظ بالقيمة عند فشل refresh. **لم يُشغّل.** | `brand_stats_cubit.dart:24-30`; `brands_di.dart:36`; `brand_stats_cubit_test.dart` | `12829ce3e1e03c32bb3d02e28f7d0b9fa21b1491`; `eae7bad261b94536c72c0f8491e9d2ac3443c31e`; `5fc22e137028980e6597b91567fe36f299bd0310`; `923356dc9f6689c0cb84b01807f74628af29f48a` |
+| F6 — getPaginated / Supabase count | الكود يرسل `Prefer: count=exact`، يقرأ `Content-Range`، ويمرر العدد إلى PaginatedParser؛ لا يعتمد على عدد الصفوف المسترجعة عند وجود header. أضيف Fake adapter test يرجع صفاً واحداً وContent-Range بإجمالي 250 ويتحقق من totalCount=250. لم يُجرَ فحص اتصال Supabase حقيقي؛ يبقى فحصاً يدوياً. **الاختبار لم يُشغّل.** | `lib/app/core/network/dio/api_client.dart:156,183-184,328,433`; `test/core/network/api_client_test.dart:148-180` | `43af013f9419352186602fd6890d2d19fe694a2b` |
+| F7 — نمط Auth ومفاتيح Failure | لا يوجد اعتماد من Auth Domain على Presentation keys في الملفات المفحوصة. AuthRepository يستعمل Failure من Core؛ AuthFlowCubit يمرر `failure.messageKey` مباشرة إلى Flash/Effect، ويستورد AuthKeys لرسائل النجاح في طبقة Presentation. لا تعديل مطلوب. | `auth_repository.dart:2`; `auth_flow_cubit.dart:14,55,75`; `auth_repository_impl.dart:5` | لا commit — فحص وتوثيق فقط |
+
+### ما أُنجز مبكراً من عناصر واجهة المرحلة 4
+
+- N-2: BrandsTableSection وBrandsFilterBar callback-driven؛ منجز سابقاً في المرحلة 2.
+- P1-1/P1-2/P1-6/P1-7/N-5/N-6a: استخدام AppFormDialog وإزالة حالة `_saving` المحلية وحماية dirty/busy؛ منجز سابقاً في المرحلة 2.
+- U-3: الاحتفاظ بصفوف القائمة وإظهار InlineBanner وإعادة المحاولة عند فشل refresh؛ منجز جزئياً كما هو موضح أعلاه.
+- F3/F4/F5/F6: أُغلقت تعديلات ما قبل المرحلة 4 الموضحة في الجدول، مع بقاء تشغيل الاختبارات/التحليل.
+
+### ما لم يُنفذ — لا يُعد بدءاً للمرحلة 4
+
+- U-1: إعادة النظر في توزيع إجراءات Edit/Delete/Activate/Deactivate.
+- U-2: إزالة/إعادة تصميم حقل رابط الشعار اليدوي مقابل الرفع والإزالة.
+- P2-11 وN-1: سياسة slug للأسماء العربية وإعادة التوليد؛ لا transliteration ولا قرار جديد.
+- مؤشر Refresh داخل AppDataTable.
+- نقل محرر الماركة إلى مجلد `dialogs/` وتقديم `showBrandEditor`.
+- P1-4: قرار مجال صريح لمعنى `productCount == null`؛ المنع الاحترازي للحذف باقٍ.
+- P2-12: تنظيف ملفات Storage اليتيمة بعد رفع ناجح ثم فشل/إلغاء حفظ الماركة.
+- S-1: اختبار PostgREST الحقيقي لتحديد escaping للـ wildcard.
+- التحقق اليدوي من Content-Range على Supabase الحقيقي.
+- معالجة اعتماد Domain الخاص بـ Brands على `BrandsKeys` في Presentation لم تُنفذ؛ هذا خارج فحص Auth F7 ويظل ديناً معمارياً موثقاً.
+
+### التحقق والتشغيل
+
+- لم يتوفر Flutter أو Dart SDK في بيئة التنفيذ؛ لم يُشغّل `dart format` أو `flutter analyze` أو `flutter test`.
+- أُضيفت/حُدثت الاختبارات المذكورة، لكنها **غير مشغّلة**.
+- لا يوجد Workflow run ID موثق لهذا HEAD من مصدر الأدوات المتاح؛ لا يوجد ادعاء بأن Check formatting أو Analyze أو Run tests أو Run catalog UI widget tests نجحت.
+- فحص Supabase الحقيقي لم يُجرَ.
+- لم تُضف dependencies، ولم يُستخدم Freezed أو Bloc.
+- لم تُعدّل `ConfirmDialog` أو `EffectMixin` أو `BaseCubit`.
 - لا تبدأ المرحلة 4.
