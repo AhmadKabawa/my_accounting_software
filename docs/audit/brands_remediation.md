@@ -19,7 +19,7 @@
 | الشاشة وDI والمحرر | مُنفَّذ | brands_screen.dart، brand_editor_dialog.dart، brands_di.dart | `fec17b311f76ea85292672ff55dd923108ee3b6b` و`8ddc5dd390d1d2f0c6da808e5da6e88da05abc1b` | listener واحد لتحديث الإحصاءات؛ المحرر يستمع إلى BrandFormEffect. |
 | اختبارات Domain وFakes | مُنفَّذ | test/features/catalog/brands/domain/entity/brand_test.dart؛ support/fake_brands_repository.dart؛ support/fake_brands_api_client.dart | `11532aeb403ed23ef6b105bfb2f1e8084b95ec18` | اختبار hasProducts/canDelete للقيم 0 و>0 وnull؛ تحديث fakes لدعم getBrandStats. **لم تُشغَّل.** |
 | اختبارات BrandsListCubit وBrandFormCubit | مُنفَّذ | test/features/catalog/brands/presentation/cubit/brands_cubit_test.dart؛ support/fake_brands_repository.dart | `f381270160da1405cdefb4d0782cf50619c434c7` و`3aacd4f80f40bcb5b729aeab397f8f4e395da848` و`594086c7ffe93e2014f34f8776374d29178bfb11` | اختبارات الانتقالات والـ refresh والفشل والطلبات المتزامنة وdebounce والحذف والـ Effects والحفظ المزدوج؛ أضيفت محاكاة فشل تغيير الحالة. **لم تُشغَّل.** |
-| اختبارات BrandStatsCubit وRepository والشاشة | قيد التنفيذ | test/features/catalog/brands | — | ما زالت تحتاج التحديث والكتابة؛ لا تشغيل. |
+| اختبارات BrandStatsCubit وRepository والشاشة | مُنفَّذ | brand_stats_cubit_test.dart؛ brands_repository_test.dart؛ brands_screen_responsive_test.dart | `2fc6dc7bfae70e8e831235eb4697a0ae08c8f28f` | اختبارات إحصاءات repository/failure، وتحديث FlashMessages في screen DI. **لم تُشغَّل.** |
 | تدقيق grep النهائي | قيد التنفيذ | lib وtest | — | بعد تحديث الاختبارات والمستهلكين. |
 
 ## ما لم يُشغَّل
