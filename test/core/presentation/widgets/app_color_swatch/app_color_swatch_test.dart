@@ -16,7 +16,9 @@ BoxDecoration _decoration(WidgetTester tester) {
 
 Future<void> _pumpSwatch(WidgetTester tester, Widget swatch) async {
   await tester.pumpWidget(
-    buildTestApp(home: Scaffold(body: Center(child: swatch))),
+    buildTestApp(
+      home: Scaffold(body: Center(child: swatch)),
+    ),
   );
 }
 
