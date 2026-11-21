@@ -7,7 +7,6 @@ import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
@@ -27,7 +26,6 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brands_table_section.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_stats_bar.dart';
@@ -65,13 +63,6 @@ class _BrandsView extends StatelessWidget {
     }
   }
 
-  void _toast(BuildContext context, AppKey key) =>
-      MessageViewWidgets.showMessage(
-        context,
-        messageKey: key,
-        type: MessageType.success,
-      );
-
   Future<void> _status(BuildContext context, Brand brand) async {
     final cubit = context.read<BrandsListCubit>();
     if (brand.isActive) {
@@ -88,7 +79,6 @@ class _BrandsView extends StatelessWidget {
       );
       if (changed && context.mounted) {
         await context.read<BrandStatsCubit>().refresh();
-        _toast(context, BrandsKeys.statusUpdated);
       }
     } else {
       final result = await cubit.setActive(id: brand.id, isActive: true);
@@ -101,7 +91,6 @@ class _BrandsView extends StatelessWidget {
         ),
         (_) {
           context.read<BrandStatsCubit>().refresh();
-          _toast(context, BrandsKeys.statusUpdated);
         },
       );
     }
@@ -125,7 +114,6 @@ class _BrandsView extends StatelessWidget {
     );
     if (deleted && context.mounted) {
       await context.read<BrandStatsCubit>().refresh();
-      _toast(context, BrandsKeys.deleted);
     }
   }
 
@@ -138,9 +126,7 @@ class _BrandsView extends StatelessWidget {
               final cubit = context.read<BrandsListCubit>();
               final page = state.result;
               final query = state.query ?? cubit.query;
-              final stats = statsState is BrandStatsLoaded
-                  ? statsState.stats
-                  : null;
+              final stats = statsState.stats;
               final rows = page?.items ?? const <Brand>[];
               final total = page?.totalCount ?? 0;
               final failure = page == null ? state.failure : null;

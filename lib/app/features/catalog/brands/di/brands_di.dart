@@ -38,6 +38,7 @@ void initBrandsDI() {
       getBrands: sl(),
       setBrandActive: sl(),
       deleteBrand: sl(),
+      flashMessages: sl(),
     ),
   );
   sl.registerFactory(

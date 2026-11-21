@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -11,20 +13,24 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/d
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_state.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 
 class BrandsListCubit extends BaseCubit<BrandsListState, void> {
   BrandsListCubit({
     required GetBrandsUseCase getBrands,
     required SetBrandActiveUseCase setBrandActive,
     required DeleteBrandUseCase deleteBrand,
+    required FlashMessages flashMessages,
   }) : _getBrands = getBrands,
        _setBrandActive = setBrandActive,
        _deleteBrand = deleteBrand,
+       _flashMessages = flashMessages,
        super(const BrandsListState());
 
   final GetBrandsUseCase _getBrands;
   final SetBrandActiveUseCase _setBrandActive;
   final DeleteBrandUseCase _deleteBrand;
+  final FlashMessages _flashMessages;
 
   BrandListQuery _query = const BrandListQuery(
     page: AppConfig.defaultPage,
@@ -96,7 +102,15 @@ class BrandsListCubit extends BaseCubit<BrandsListState, void> {
       SetBrandActiveParams(id: id, isActive: isActive),
     );
     if (isClosed) return response;
-    if (response.isRight()) await load();
+    if (response.isRight()) {
+      await load();
+      if (!isClosed) {
+        _flashMessages.post(BrandsKeys.deleted, MessageType.success);
+      }
+      if (!isClosed) {
+        _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);
+      }
+    }
     return response;
   }
 

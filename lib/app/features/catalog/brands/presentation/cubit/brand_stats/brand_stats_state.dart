@@ -5,6 +5,8 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 sealed class BrandStatsState extends Equatable {
   const BrandStatsState();
 
+  BrandStats? get stats => null;
+
   @override
   List<Object?> get props => [];
 }
@@ -18,12 +20,15 @@ final class BrandStatsLoading extends BrandStatsState {
 }
 
 final class BrandStatsLoaded extends BrandStatsState {
-  const BrandStatsLoaded(this.stats);
+  const BrandStatsLoaded(this.value);
 
-  final BrandStats stats;
+  final BrandStats value;
 
   @override
-  List<Object?> get props => [stats];
+  BrandStats get stats => value;
+
+  @override
+  List<Object?> get props => [value];
 }
 
 final class BrandStatsFailed extends BrandStatsState {
@@ -33,4 +38,18 @@ final class BrandStatsFailed extends BrandStatsState {
 
   @override
   List<Object?> get props => [failure];
+}
+
+/// A refresh failure keeps the last successful snapshot visible.
+final class BrandStatsRefreshFailed extends BrandStatsState {
+  const BrandStatsRefreshFailed(this.value, this.failure);
+
+  final BrandStats value;
+  final Failure failure;
+
+  @override
+  BrandStats get stats => value;
+
+  @override
+  List<Object?> get props => [value, failure];
 }
