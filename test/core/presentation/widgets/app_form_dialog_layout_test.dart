@@ -32,9 +32,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(Dialog), findsOneWidget);
-    expect(find.byType(SingleChildScrollView), findsOneWidget);
+    expect(find.byType(ListView), findsOneWidget);
     await tester.drag(
-      find.byType(SingleChildScrollView),
+      find.byType(ListView),
       const Offset(0, -600),
     );
     await tester.pumpAndSettle();
