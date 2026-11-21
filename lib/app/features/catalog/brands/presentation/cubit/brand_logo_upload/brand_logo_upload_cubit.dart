@@ -18,9 +18,16 @@ class BrandLogoUploadCubit extends BaseCubit<BrandLogoUploadState, void> {
   final ImagePickerPort _picker;
 
   Future<void> pickAndUpload() async {
-    if (state is BrandLogoUploading) return;
+    if (state.isBusy) return;
+
+    emit(const BrandLogoPicking());
     final picked = await _picker.pickImage();
-    if (picked == null || isClosed) return; // cancelled
+    if (isClosed) return;
+    if (picked == null) {
+      emit(const BrandLogoIdle());
+      return;
+    }
+
     final upload = BrandLogoUpload(
       bytes: picked.bytes,
       fileName: picked.fileName,
@@ -30,10 +37,11 @@ class BrandLogoUploadCubit extends BaseCubit<BrandLogoUploadState, void> {
       emit(const BrandLogoUploadFailed(BrandsKeys.logoFileType));
       return;
     }
-    if (upload.isTooLarge) {
+    if (upload.isTooLarge || upload.isEmpty) {
       emit(const BrandLogoUploadFailed(BrandsKeys.logoFileTooLarge));
       return;
     }
+
     emit(const BrandLogoUploading());
     final result = await _uploadLogo(upload);
     if (isClosed) return;

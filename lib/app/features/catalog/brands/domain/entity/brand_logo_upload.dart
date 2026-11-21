@@ -18,8 +18,10 @@ class BrandLogoUpload extends Equatable {
   final String fileName;
   final String mimeType;
 
-  bool get hasAllowedType => allowedMimeTypes.contains(mimeType);
+  String get normalizedMimeType => mimeType.trim().toLowerCase();
+  bool get hasAllowedType => allowedMimeTypes.contains(normalizedMimeType);
   bool get isTooLarge => bytes.length > maxBytes;
+  bool get isEmpty => bytes.isEmpty;
 
   @override
   List<Object?> get props => [bytes.length, fileName, mimeType];
