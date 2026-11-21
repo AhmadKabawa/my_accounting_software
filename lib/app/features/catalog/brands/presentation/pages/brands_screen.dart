@@ -146,8 +146,8 @@ class _BrandsView extends StatelessWidget {
               final stats = statsState is BrandStatsLoaded
                   ? statsState.stats
                   : null;
-              final rows = page?.result.items ?? const <Brand>[];
-              final total = page?.result.totalCount ?? 0;
+              final rows = page?.items ?? const <Brand>[];
+              final total = page?.totalCount ?? 0;
               final failure = state is BrandsListFailed ? state.failure : null;
               final refreshFailure = state is BrandsListRefreshFailed
                   ? state.failure
