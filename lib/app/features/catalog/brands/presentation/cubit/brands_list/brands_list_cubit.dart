@@ -109,7 +109,10 @@ class BrandsListCubit
     );
     if (isClosed) return;
     if (result.isLeft()) {
-      final failure = result.swap().getOrElse(() => const UnexpectedFailure());
+      final failure = result.fold(
+        (failure) => failure,
+        (_) => const UnexpectedFailure(),
+      );
       _flashMessages.post(failure.messageKey, MessageType.error);
       return;
     }

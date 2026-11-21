@@ -65,7 +65,7 @@ class _BrandsView extends StatelessWidget {
   Future<void> _status(BuildContext context, Brand brand) async {
     final cubit = context.read<BrandsListCubit>();
     if (brand.isActive) {
-      final changed = await showConfirmDialog(
+      await showConfirmDialog(
         context,
         titleKey: BrandsKeys.deactivateTitle,
         messageKey: BrandsKeys.deactivateMessage,
@@ -73,30 +73,16 @@ class _BrandsView extends StatelessWidget {
         targetName: brand.name,
         onConfirm: () async {
           final result = await cubit.deactivate(brand.id);
-          return result.fold((f) => f.messageKey, (_) => null);
+          return result.fold((failure) => failure.messageKey, (_) => null);
         },
       );
-      if (changed && context.mounted) {
-        
-      }
     } else {
-      final result = await cubit.setActive(id: brand.id, isActive: true);
-      if (!context.mounted) return;
-      result.fold(
-        (f) => MessageViewWidgets.showMessage(
-          context,
-          messageKey: f.messageKey,
-          type: MessageType.error,
-        ),
-        (_) {
-          context.read<BrandStatsCubit>().refresh();
-        },
-      );
+      await cubit.activate(brand.id);
     }
   }
 
   Future<void> _delete(BuildContext context, Brand brand) async {
-    final deleted = await showConfirmDialog(
+    await showConfirmDialog(
       context,
       titleKey: BrandsKeys.delete,
       messageKey: BrandsKeys.confirmDelete,
@@ -106,18 +92,15 @@ class _BrandsView extends StatelessWidget {
       onConfirm: () async {
         final result = await context.read<BrandsListCubit>().delete(brand);
         return result.fold(
-          (f) => f is BrandInUseFailure
+          (failure) => failure is BrandInUseFailure
               ? BrandsKeys.brandInUse
-              : f is BrandUsageUnknownFailure
+              : failure is BrandUsageUnknownFailure
               ? BrandsKeys.brandUsageUnknown
-              : f.messageKey,
+              : failure.messageKey,
           (_) => null,
         );
       },
     );
-    if (deleted && context.mounted) {
-      await context.read<BrandStatsCubit>().refresh();
-    }
   }
 
   @override
@@ -134,7 +117,7 @@ class _BrandsView extends StatelessWidget {
               final total = page?.totalCount ?? 0;
               final failure = !state.hasData ? state.failure : null;
               final refreshFailure = state.hasData ? state.failure : null;
-              final loading = state.isInitialLoading;
+              final loading = state.isInitialLoading || state.isRefreshing;
 
               return BlocEffectListener<
                 BrandsListEffect,

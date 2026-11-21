@@ -9,6 +9,7 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_effect.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_details_section.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_identity_section.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_logo_section.dart';
@@ -113,35 +114,35 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
                 }
               },
               child: AppFormDialog(
-              titleKey: widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
-              subtitleKey: BrandsKeys.editorSubtitle,
-              saveLabelKey: BrandsKeys.save,
-              cancelLabelKey: BrandsKeys.cancel,
-              busy: busy,
-              saveEnabled: !busy,
-              dirty: _dirty,
-              errorKey: _failure,
-              onSave: _save,
-              child: Form(
-                key: _key,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    BrandIdentitySection(
-                      name: _name,
-                      slug: _slug,
-                      onNameChanged: (value) {
-                        if (_slug.text.isEmpty) {
-                          _slug.text = _slugify(value);
-                        }
-                      },
-                    ),
-                    BrandLogoSection(logo: _logo, brandName: _name),
-                    BrandDetailsSection(description: _description),
-                  ],
+                titleKey: widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
+                subtitleKey: BrandsKeys.editorSubtitle,
+                saveLabelKey: BrandsKeys.save,
+                cancelLabelKey: BrandsKeys.cancel,
+                busy: busy,
+                saveEnabled: !busy,
+                dirty: _dirty,
+                errorKey: _failure,
+                onSave: _save,
+                child: Form(
+                  key: _key,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      BrandIdentitySection(
+                        name: _name,
+                        slug: _slug,
+                        onNameChanged: (value) {
+                          if (_slug.text.isEmpty) {
+                            _slug.text = _slugify(value);
+                          }
+                        },
+                      ),
+                      BrandLogoSection(logo: _logo, brandName: _name),
+                      BrandDetailsSection(description: _description),
+                    ],
+                  ),
                 ),
-              ),
-              ),
+                ),
             );
           },
         ),
