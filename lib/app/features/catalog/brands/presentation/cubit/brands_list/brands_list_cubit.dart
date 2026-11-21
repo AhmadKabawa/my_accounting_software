@@ -100,6 +100,19 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     return load();
   }
 
+  Future<void> clearFilters() {
+    _searchTimer?.cancel();
+    _searchTimer = null;
+    _updateQuery(
+      state.query.copyWith(
+        search: '',
+        status: BrandStatusFilter.all,
+        page: 1,
+      ),
+    );
+    return load();
+  }
+
   Future<void> refresh() => load();
 
   Future<void> activate(int id) async {
