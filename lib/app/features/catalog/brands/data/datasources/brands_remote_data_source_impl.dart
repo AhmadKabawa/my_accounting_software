@@ -90,7 +90,7 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
       BrandsEndpoint.logoUpload(path),
       data: upload.bytes,
       options: Options(
-        headers: {'Content-Type': upload.mimeType, 'x-upsert': 'false'},
+        headers: {'Content-Type': upload.normalizedMimeType, 'x-upsert': 'false'},
       ),
       fromJson: (_) => BrandsEndpoint.logoPublicUrl(AppConfig.baseUrl, path),
     );

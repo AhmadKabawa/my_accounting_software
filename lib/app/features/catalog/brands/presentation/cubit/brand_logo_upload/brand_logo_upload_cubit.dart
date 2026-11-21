@@ -33,11 +33,11 @@ class BrandLogoUploadCubit extends BaseCubit<BrandLogoUploadState, void> {
       fileName: picked.fileName,
       mimeType: picked.mimeType,
     );
-    if (!upload.hasAllowedType) {
+    if (!upload.hasAllowedType || upload.isEmpty) {
       emit(const BrandLogoUploadFailed(BrandsKeys.logoFileType));
       return;
     }
-    if (upload.isTooLarge || upload.isEmpty) {
+    if (upload.isTooLarge) {
       emit(const BrandLogoUploadFailed(BrandsKeys.logoFileTooLarge));
       return;
     }

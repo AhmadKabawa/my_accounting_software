@@ -34,7 +34,7 @@ class BrandLogoSection extends StatelessWidget {
           if (state is BrandLogoUploaded) logo.text = state.url;
         },
         builder: (context, state) {
-          final uploading = state is BrandLogoUploading;
+          final uploading = state.isBusy;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
