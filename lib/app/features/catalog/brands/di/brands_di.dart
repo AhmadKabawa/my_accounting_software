@@ -7,6 +7,7 @@ import 'package:accounting_software/app/features/catalog/brands/domain/repositor
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/create_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/delete_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brand_stats_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/set_brand_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/update_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
@@ -24,13 +25,14 @@ void initBrandsDI() {
   );
 
   sl.registerLazySingleton(() => GetBrandsUseCase(sl()));
+  sl.registerLazySingleton(() => GetBrandStatsUseCase(sl()));
   sl.registerLazySingleton(() => CreateBrandUseCase(sl()));
   sl.registerLazySingleton(() => UpdateBrandUseCase(sl()));
   sl.registerLazySingleton(() => SetBrandActiveUseCase(sl()));
   sl.registerLazySingleton(() => DeleteBrandUseCase(sl()));
   sl.registerLazySingleton(() => UploadBrandLogoUseCase(sl()));
 
-  sl.registerFactory(() => BrandStatsCubit(getBrands: sl()));
+  sl.registerFactory(() => BrandStatsCubit(getBrandStats: sl()));
   sl.registerFactory(
     () => BrandsListCubit(
       getBrands: sl(),
