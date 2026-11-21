@@ -19,6 +19,9 @@ class Brand extends Equatable {
   final bool isActive;
   final int? productCount;
 
+  bool get canDelete => productCount == 0;
+  bool get productCountKnown => productCount != null;
+
   @override
   List<Object?> get props => [
     id,

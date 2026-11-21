@@ -5,11 +5,14 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 
 abstract interface class BrandsRepository {
   Future<Either<Failure, PaginatedResult<Brand>>> getBrands(
     BrandListQuery query,
   );
+
+  Future<Either<Failure, BrandStats>> getStats();
 
   Future<Either<Failure, Brand>> createBrand(BrandDraft draft);
 

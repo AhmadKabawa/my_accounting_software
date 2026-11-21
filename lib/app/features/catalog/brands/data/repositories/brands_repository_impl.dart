@@ -12,6 +12,7 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/repositories/brands_repository.dart';
 
@@ -38,6 +39,40 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
         ExceptionMapper.map(exception),
       ),
     };
+  });
+
+  @override
+  Future<Either<Failure, BrandStats>> getStats() => execute(() async {
+    final results = await Future.wait([
+      _remote.getBrands(const BrandListQuery(page: 1, pageSize: 1)),
+      _remote.getBrands(
+        const BrandListQuery(
+          status: BrandStatusFilter.active,
+          page: 1,
+          pageSize: 1,
+        ),
+      ),
+    ]);
+
+    Failure? failure;
+    int? total;
+    int? active;
+    results[0].fold(
+      (value) => failure = ExceptionMapper.map(value),
+      (page) => total = page.totalCount,
+    );
+    results[1].fold(
+      (value) => failure ??= ExceptionMapper.map(value),
+      (page) => active = page.totalCount,
+    );
+    if (failure != null) return Left(failure!);
+    final totalCount = total!;
+    final activeCount = active!;
+    return Right(BrandStats(
+      total: totalCount,
+      active: activeCount,
+      inactive: totalCount - activeCount,
+    ));
   });
 
   @override
