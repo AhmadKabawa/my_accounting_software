@@ -6,11 +6,13 @@ import 'package:accounting_software/app/core/access/permission_gate/permission_g
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -129,14 +131,22 @@ class _BrandsView extends StatelessWidget {
           return BlocBuilder<BrandsListCubit, BrandsListState>(
             builder: (context, state) {
               final cubit = context.read<BrandsListCubit>();
-              final page = state is BrandsListReady ? state : null;
-              final query = cubit.query;
+              final page = switch (state) {
+                BrandsListReady() => state,
+                BrandsListRefreshFailed(:final result, :final query) =>
+                  BrandsListReady(result: result, query: query),
+                _ => null,
+              };
+              final query = page?.query ?? cubit.query;
               final stats = statsState is BrandStatsLoaded
                   ? statsState.stats
                   : null;
               final rows = page?.result.items ?? const <Brand>[];
               final total = page?.result.totalCount ?? 0;
               final failure = state is BrandsListFailed ? state.failure : null;
+              final refreshFailure = state is BrandsListRefreshFailed
+                  ? state.failure
+                  : null;
               final loading =
                   state is BrandsListInitial || state is BrandsListLoading;
 
@@ -167,17 +177,36 @@ class _BrandsView extends StatelessWidget {
                     : failure != null
                     ? AppPageState.error
                     : AppPageState.content,
-                dataTable: BrandsTableSection(
-                  cubit: cubit,
-                  query: query,
-                  rows: rows,
-                  total: total,
-                  loading: loading,
-                  failure: failure,
-                  onAdd: () => _edit(context),
-                  onEdit: (brand) => _edit(context, brand),
-                  onDelete: (brand) => _delete(context, brand),
-                  onToggleStatus: (brand) => _status(context, brand),
+                dataTable: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (refreshFailure != null) ...[
+                      InlineBanner(
+                        messageKey: refreshFailure.messageKey,
+                        variant: InlineBannerVariant.error,
+                      ),
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: AppButton(
+                          CatalogUiKeys.retry,
+                          variant: AppButtonVariant.text,
+                          onPressed: () => cubit.refresh(),
+                        ),
+                      ),
+                    ],
+                    BrandsTableSection(
+                      cubit: cubit,
+                      query: query,
+                      rows: rows,
+                      total: total,
+                      loading: loading,
+                      failure: failure,
+                      onAdd: () => _edit(context),
+                      onEdit: (brand) => _edit(context, brand),
+                      onDelete: (brand) => _delete(context, brand),
+                      onToggleStatus: (brand) => _status(context, brand),
+                    ),
+                  ],
                 ),
               );
             },
