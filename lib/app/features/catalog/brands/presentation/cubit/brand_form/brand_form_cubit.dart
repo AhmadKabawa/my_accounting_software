@@ -14,7 +14,7 @@ class BrandFormCubit extends BaseCubit<BrandFormState, void> {
     required UpdateBrandUseCase updateBrand,
   }) : _createBrand = createBrand,
        _updateBrand = updateBrand,
-       super(const BrandFormIdle());
+       super(const BrandFormState());
 
   final CreateBrandUseCase _createBrand;
   final UpdateBrandUseCase _updateBrand;
@@ -23,18 +23,24 @@ class BrandFormCubit extends BaseCubit<BrandFormState, void> {
     required BrandDraft draft,
     int? id,
   }) async {
-    if (state is BrandFormSaving) return const Left(ValidationFailure());
-    emit(const BrandFormSaving());
-    final result = id == null
+    if (state.isSaving) return const Left(ValidationFailure());
+    emit(const BrandFormState(status: BrandFormStatus.saving));
+    final response = id == null
         ? await _createBrand(draft)
         : await _updateBrand(UpdateBrandParams(id: id, draft: draft));
-    if (isClosed) return result;
-    result.fold(
-      (failure) => emit(BrandFormFailed(failure)),
-      (brand) => emit(BrandFormSaved(brand)),
+    if (isClosed) return response;
+    response.fold(
+      (failure) => emit(BrandFormState(
+        status: BrandFormStatus.failure,
+        failure: failure,
+      )),
+      (brand) => emit(BrandFormState(
+        status: BrandFormStatus.saved,
+        brand: brand,
+      )),
     );
-    return result;
+    return response;
   }
 
-  void reset() => emit(const BrandFormIdle());
+  void reset() => emit(const BrandFormState());
 }

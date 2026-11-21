@@ -2,32 +2,21 @@ import 'package:equatable/equatable.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 
-sealed class BrandFormState extends Equatable {
-  const BrandFormState();
-}
+enum BrandFormStatus { idle, saving, saved, failure }
 
-final class BrandFormIdle extends BrandFormState {
-  const BrandFormIdle();
-  @override
-  List<Object?> get props => [];
-}
+class BrandFormState extends Equatable {
+  const BrandFormState({
+    this.status = BrandFormStatus.idle,
+    this.brand,
+    this.failure,
+  });
 
-final class BrandFormSaving extends BrandFormState {
-  const BrandFormSaving();
-  @override
-  List<Object?> get props => [];
-}
+  final BrandFormStatus status;
+  final Brand? brand;
+  final Failure? failure;
 
-final class BrandFormSaved extends BrandFormState {
-  const BrandFormSaved(this.brand);
-  final Brand brand;
-  @override
-  List<Object?> get props => [brand];
-}
+  bool get isSaving => status == BrandFormStatus.saving;
 
-final class BrandFormFailed extends BrandFormState {
-  const BrandFormFailed(this.failure);
-  final Failure failure;
   @override
-  List<Object?> get props => [failure];
+  List<Object?> get props => [status, brand, failure];
 }

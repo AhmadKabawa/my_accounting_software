@@ -112,7 +112,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
         BlocBuilder<BrandLogoUploadCubit, BrandLogoUploadState>(
           builder: (context, logoState) {
             final busy =
-                formState is BrandFormSaving || logoState is BrandLogoUploading;
+                formState.isSaving || logoState is BrandLogoUploading;
             return AppFormDialog(
               titleKey: widget.brand == null ? BrandsKeys.add : BrandsKeys.edit,
               subtitleKey: BrandsKeys.editorSubtitle,

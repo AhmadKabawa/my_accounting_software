@@ -20,7 +20,7 @@ class BrandsListCubit extends BaseCubit<BrandsListState, void> {
   }) : _getBrands = getBrands,
        _setBrandActive = setBrandActive,
        _deleteBrand = deleteBrand,
-       super(const BrandsListInitial());
+       super(const BrandsListState());
 
   final GetBrandsUseCase _getBrands;
   final SetBrandActiveUseCase _setBrandActive;
@@ -33,33 +33,30 @@ class BrandsListCubit extends BaseCubit<BrandsListState, void> {
   Timer? _searchTimer;
   int _requestVersion = 0;
   BrandListQuery get query => _query;
+
   Future<void> load() async {
     _searchTimer?.cancel();
-    final requestVersion = ++_requestVersion;
-    final currentState = state;
-    final previousResult = switch (currentState) {
-      BrandsListReady(:final result) => result,
-      BrandsListRefreshFailed(:final result) => result,
-      _ => null,
-    };
-    if (previousResult == null) {
-      emit(const BrandsListLoading());
-    } else {
-      emit(BrandsListReady(result: previousResult, query: _query));
-    }
-    final result = await _getBrands(_query);
-    if (isClosed || requestVersion != _requestVersion) return;
-    result.fold(
-      (failure) => emit(
-        previousResult == null
-            ? BrandsListFailed(failure)
-            : BrandsListRefreshFailed(
-                result: previousResult,
-                query: _query,
-                failure: failure,
-              ),
-      ),
-      (page) => emit(BrandsListReady(result: page, query: _query)),
+    final version = ++_requestVersion;
+    final previous = state.result;
+    emit(BrandsListState(
+      status: previous == null ? BrandsListStatus.loading : BrandsListStatus.success,
+      query: _query,
+      result: previous,
+    ));
+    final response = await _getBrands(_query);
+    if (isClosed || version != _requestVersion) return;
+    response.fold(
+      (failure) => emit(BrandsListState(
+        status: BrandsListStatus.failure,
+        query: _query,
+        result: previous,
+        failure: failure,
+      )),
+      (page) => emit(BrandsListState(
+        status: BrandsListStatus.success,
+        query: _query,
+        result: page,
+      )),
     );
   }
 
@@ -68,6 +65,7 @@ class BrandsListCubit extends BaseCubit<BrandsListState, void> {
     _requestVersion++;
     _searchTimer?.cancel();
     _searchTimer = Timer(const Duration(milliseconds: 300), load);
+    emit(state.copyWith(query: _query, clearFailure: true));
   }
 
   Future<void> setStatus(BrandStatusFilter status) {
@@ -94,34 +92,29 @@ class BrandsListCubit extends BaseCubit<BrandsListState, void> {
     required int id,
     required bool isActive,
   }) async {
-    final result = await _setBrandActive(
+    final response = await _setBrandActive(
       SetBrandActiveParams(id: id, isActive: isActive),
     );
-    if (isClosed) return result;
-    if (result.isRight()) {
-      await load();
-    }
-    return result;
+    if (isClosed) return response;
+    if (response.isRight()) await load();
+    return response;
   }
 
   Future<Either<Failure, Unit>> delete(Brand brand) async {
-    if (!brand.canDelete) {
-      return const Left(BrandInUseFailure());
-    }
-    final result = await _deleteBrand(brand.id);
-    if (isClosed) return result;
-    if (result.isRight()) {
+    if (!brand.canDelete) return const Left(BrandInUseFailure());
+    final response = await _deleteBrand(brand.id);
+    if (isClosed) return response;
+    if (response.isRight()) {
       await load();
-      final current = state;
       if (!isClosed &&
           _query.page > 1 &&
-          current is BrandsListReady &&
-          current.result.items.isEmpty) {
+          state.result != null &&
+          state.result!.items.isEmpty) {
         _query = _query.copyWith(page: _query.page - 1);
         await load();
       }
     }
-    return result;
+    return response;
   }
 
   @override
