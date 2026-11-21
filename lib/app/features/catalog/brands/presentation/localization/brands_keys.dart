@@ -39,12 +39,16 @@ enum BrandsKeys implements AppKey {
     en: 'Could not delete the brand. It may be referenced by other records or you may lack permission.',
   ),
   slugRequired(
-    ar: 'أدخل معرّفاً مختصراً باللغة الإنجليزية والأرقام.',
-    en: 'Enter a slug using English letters and numbers.',
+    ar: 'أدخل معرّفاً مختصراً باللغة الإنجليزية والأرقام والشرطة.',
+    en: 'Enter a slug using English letters, numbers and hyphens.',
   ),
-  slugHelp(
-    ar: 'المعرّف المختصر مطلوب. إذا كان الاسم عربياً، أدخل slug إنجليزياً يدوياً.',
-    en: 'A slug is required. For an Arabic brand name, enter an English slug manually.',
+  slugLatinHint(
+    ar: 'اكتب معرّفاً لاتينياً: أحرف إنجليزية وأرقام وشرطة',
+    en: 'Enter a Latin identifier: English letters, numbers and hyphens.',
+  ),
+  regenerateSlug(
+    ar: 'إعادة توليد من الاسم',
+    en: 'Regenerate from name',
   ),
   slugFormat(
     ar: 'استخدم أحرفاً إنجليزية صغيرة وأرقاماً، ويمكن الفصل بينها بشرطة (-).',

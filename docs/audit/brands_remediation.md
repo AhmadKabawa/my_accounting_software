@@ -20,10 +20,10 @@
 | P2-8 | رفع الشعار يبقى State-only ولا يحتاج Effect | مؤكد من الكود | `brands/presentation/cubit/brand_logo_upload_cubit.dart:9-41` | — | قرار بلا تغيير |
 | P2-9 | فشل Refresh يزيل الصفوف القديمة | مُعالَج في المرحلة 2 | `brands_list_cubit.dart`; `brands_screen.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | أضيف BrandsListRefreshFailed للاحتفاظ بآخر صفحة مع InlineBanner وخيار إعادة المحاولة |
 | P2-10 | FilterBar يفرّغ النص عند إزالة شارة البحث ومسح الكل؛ لا عيب مثبت فيه، والتزامن المتبقي مرتبط بـ N-4 | مؤكد من الكود | `filter_bar.dart:94-126`; `brands/presentation/widgets/brands_filter_bar.dart:26-54` | — | لا تغيير مطلوب في FilterBar قبل اختبار N-4 |
-| P2-11 | لا توجد سياسة واضحة لتحديث slug أو إعادة توليده؛ التوليد الحالي تلقائي فقط عندما يكون الحقل فارغاً | مؤكد من الكود | `brands/presentation/widgets/brand_editor_dialog.dart:50-54,116-120` | — | قرار مجال مؤجل |
+| P2-11 | لا توجد سياسة واضحة لتحديث slug أو إعادة توليده؛ التوليد الحالي تلقائي فقط عندما يكون الحقل فارغاً | مُعالَج في المرحلة 4 | `domain/utility/brand_slug_from.dart`; `presentation/dialogs/brand_editor_dialog.dart`; `presentation/sections/brand_identity_section.dart` | سجل المرحلة 4-1 أدناه | دالة نقية بلا Flutter؛ التوليد في الإنشاء فقط حتى أول تعديل يدوي؛ التعديل يبدأ محمياً؛ إعادة التوليد صريحة؛ لا transliteration. |
 | P2-12 | احتمال ملفات Storage يتيمة بعد رفع مكتمل ثم إلغاء/فشل حفظ الماركة | مؤكد من الكود | `brands/data/datasources/brands_remote_data_source_impl.dart:74-88`; `brands/presentation/widgets/brand_editor_dialog.dart:64-82` | — | دين فني موثّق، لا تنفيذ في هذه المراحل |
 | S-1 | `_escapeFilterValue` يهرّب backslash والاقتباس فقط؛ wildcard الرموز % و_ و* لا تُعالج هنا | مؤكد من الكود | `brands/data/datasources/brands_remote_data_source_impl.dart:112-113` | — | أولوية منخفضة؛ مؤجل حتى اختبار قاعدة البيانات الفعلية |
-| N-1 | `_slugify` يحذف كل ما ليس a-z0-9، فينتج slug فارغاً للاسم العربي | مؤكد من الكود | `brands/presentation/widgets/brand_editor_dialog.dart:50-54` | — | — |
+| N-1 | `_slugify` يحذف كل ما ليس a-z0-9، فينتج slug فارغاً للاسم العربي | مُعالَج في المرحلة 4 | `domain/utility/brand_slug_from.dart`; `brand_field_validators.dart`; `brands_keys.dart` | سجل المرحلة 4-1 أدناه | helper مستقل في Domain؛ الاسم العربي يبقى slug فارغاً مع مساعدة ar/en، والـ validator يرفضه برسالة مطلوبة. |
 | N-2 | أقسام العرض تعتمد مباشرة على BrandsListCubit | مُعالَج في المرحلة 2 | `brands_table_section.dart`; `brands_filter_bar.dart`; `brands_screen.dart` | غير مدون SHA في النسخة التاريخية (مرحلة 2) | أزيل اعتماد Cubit من الأقسام، وأصبحت actions عبر callbacks تنسقها الشاشة |
 | N-3 | تعدد مواضع تنسيق refresh الإحصاءات ورسائل الشاشة | مُعالَج جزئياً | `lib/app/features/catalog/brands/presentation/pages/brands_screen.dart:37-42`; `brand_stats_cubit.dart:24-30` | `db05c058089c6de80506b7547add43315a06b66a`; `693bd1a237bb6f2d20c18d088c7fc892227d3cc2`; `12829ce3e1e03c32bb3d02e28f7d0b9fa21b1491` | نُقل listener خارج BlocBuilder وأصبح trigger تحديث الإحصاءات عبر listener واحد؛ أزيل Flash من فشل الإحصاءات. لم يُنشأ orchestration abstraction جديد. |
 | N-4 | إدراج أبناء شرطية قبل FilterBar/Expanded قد يغيّر مواضع العناصر؛ ثُبّتت المواضع بإبن placeholder دائم | غير مؤكد | `app_page_templates.dart:140-146,209-216,300-309`; `list_page_template_test.dart`; `page_template_child_identity_test.dart` | `e84312b57699df525c8f54d5cc91da991f23c74a` | أُضيفت اختبارات ListPageTemplate وFormPageTemplate وDashboardTemplate؛ لم تُشغَّل على HEAD السابق لإثبات إعادة الإنتاج. لم يُشغَّل |
@@ -66,7 +66,7 @@
   - BrandsTableSection وBrandsFilterBar callback-driven (N-2).
   - SQLSTATE وامتداد ملف الشعار عولجا كما هو موثق في سجل المرحلة 3.
 - المرحلة 3: مكتملة حسب ملفات الفرع وسجلها السابق. تفاصيل commitsها أدناه.
-- المرحلة 4: **لم تبدأ**. التغييرات المدرجة في قسم F1–F7 هي إغلاق إصلاحات ما قبل المرحلة 4، وليست بدء تنفيذ أعمال المرحلة 4.
+- المرحلة 4: بدأت؛ أُنجز نقل المحرر وتأسيس سياسة slug في commit المرحلة 4-1 أدناه. بقية بنود الواجهة قيد التنفيذ.
 
 ### سجل المرحلة 3 — commits الموثقة
 
@@ -127,3 +127,11 @@
 - لم تُضف dependencies، ولم يُستخدم Freezed أو Bloc.
 - لم تُعدّل `ConfirmDialog` أو `EffectMixin` أو `BaseCubit`.
 - لا تبدأ المرحلة 4.
+
+
+### سجل المرحلة 4 — تحديثات التنفيذ
+
+| البند | الحالة | الدليل | Commit |
+|---|---|---|---|
+| P1-2/P1-6/P1-7/N-5/N-6a — نقل المحرر وتوفير Cubits عبر showBrandEditor | مُعالَج | `presentation/dialogs/brand_editor_dialog.dart`; helper يوفّر BrandFormCubit وBrandLogoUploadCubit | سيُثبت SHA في التقرير النهائي |
+| P2-11/N-1 — slug | مُعالَج بالكود؛ الاختبارات أضيفت ولم تُشغّل بعد | `domain/utility/brand_slug_from.dart`; `brand_slug_from_test.dart` | سيُثبت SHA في التقرير النهائي |

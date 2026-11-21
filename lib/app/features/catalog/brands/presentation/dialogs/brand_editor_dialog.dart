@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/utility/brand_slug_from.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_effect.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
@@ -14,7 +16,20 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/sec
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_identity_section.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_logo_section.dart';
 
-/// Add/edit dialog for one brand. Opened with form and logo-upload Cubits.
+/// Opens the shared brand editor and owns the form/upload Cubit lifetimes.
+Future<bool?> showBrandEditor(BuildContext context, {Brand? brand}) =>
+    showAppFormDialog<bool>(
+      context,
+      (_) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => sl<BrandFormCubit>()),
+          BlocProvider(create: (_) => sl<BrandLogoUploadCubit>()),
+        ],
+        child: BrandEditorDialog(brand: brand),
+      ),
+    );
+
+/// Add/edit dialog for one brand.
 class BrandEditorDialog extends StatefulWidget {
   const BrandEditorDialog({super.key, this.brand});
 
@@ -35,6 +50,8 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   late final String _initialLogo;
   late final String _initialDescription;
   AppKey? _failure;
+  bool _slugTouched = false;
+  bool _settingSlug = false;
 
   bool get _dirty =>
       _name.text != _initialName ||
@@ -50,18 +67,46 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
     _initialSlug = brand?.slug ?? '';
     _initialLogo = brand?.logo ?? '';
     _initialDescription = brand?.description ?? '';
+    _slugTouched = brand != null;
     _name = TextEditingController(text: _initialName);
     _slug = TextEditingController(text: _initialSlug);
     _logo = TextEditingController(text: _initialLogo);
     _description = TextEditingController(text: _initialDescription);
-    for (final controller in [_name, _slug, _logo, _description]) {
-      controller.addListener(_onChanged);
-    }
+    _name.addListener(_onChanged);
+    _slug.addListener(_onChanged);
+    _logo.addListener(_onChanged);
+    _description.addListener(_onChanged);
   }
 
   void _onChanged() {
     if (!mounted) return;
+    setState(() {});
+  }
+
+  void _onNameChanged(String value) {
+    if (!mounted) return;
     setState(() => _failure = null);
+    if (widget.brand == null && !_slugTouched) {
+      _setSlug(brandSlugFrom(value));
+    }
+  }
+
+  void _onSlugChanged(String value) {
+    if (_settingSlug || _slugTouched || !mounted) return;
+    setState(() => _slugTouched = true);
+  }
+
+  void _setSlug(String value) {
+    _settingSlug = true;
+    _slug.text = value;
+    _settingSlug = false;
+  }
+
+  void _regenerateSlug() {
+    final generated = brandSlugFrom(_name.text);
+    if (generated.isEmpty) return;
+    setState(() => _slugTouched = false);
+    _setSlug(generated);
   }
 
   @override
@@ -73,12 +118,6 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
     }
     super.dispose();
   }
-
-  String _slugify(String value) => value
-      .trim()
-      .toLowerCase()
-      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-      .replaceAll(RegExp(r'^-|-$'), '');
 
   Future<void> _save() async {
     if (_key.currentState?.validate() != true) return;
@@ -133,11 +172,14 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
                           BrandIdentitySection(
                             name: _name,
                             slug: _slug,
-                            onNameChanged: (value) {
-                              if (_slug.text.isEmpty) {
-                                _slug.text = _slugify(value);
-                              }
-                            },
+                            onNameChanged: _onNameChanged,
+                            onSlugChanged: _onSlugChanged,
+                            showSlugHint: _name.text.trim().isNotEmpty &&
+                                brandSlugFrom(_name.text).isEmpty,
+                            onRegenerateSlug:
+                                _slugTouched && brandSlugFrom(_name.text).isNotEmpty
+                                ? _regenerateSlug
+                                : null,
                           ),
                           BrandLogoSection(logo: _logo, brandName: _name),
                           BrandDetailsSection(description: _description),
