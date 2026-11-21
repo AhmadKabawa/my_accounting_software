@@ -12,5 +12,5 @@ class GetBrandStatsUseCase extends UseCase<BrandStats, NoParams> {
 
   @override
   Future<Either<Failure, BrandStats>> call(NoParams params) =>
-      _repository.getStats();
+      _repository.getBrandStats();
 }

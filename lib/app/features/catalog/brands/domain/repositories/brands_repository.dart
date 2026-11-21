@@ -12,7 +12,7 @@ abstract interface class BrandsRepository {
     BrandListQuery query,
   );
 
-  Future<Either<Failure, BrandStats>> getStats();
+  Future<Either<Failure, BrandStats>> getBrandStats();
 
   Future<Either<Failure, Brand>> createBrand(BrandDraft draft);
 

@@ -13,6 +13,7 @@ import 'package:accounting_software/app/features/catalog/brands/data/models/bran
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 
 class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
   const BrandsRemoteDataSourceImpl(this._apiClient);
@@ -124,4 +125,13 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
 
   String _escapeFilterValue(String value) =>
       value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
+}
+
+class _BrandCountRow {
+  const _BrandCountRow(this.id);
+
+  final int id;
+
+  factory _BrandCountRow.fromJson(Map<String, dynamic> json) =>
+      _BrandCountRow(json['id'] as int);
 }

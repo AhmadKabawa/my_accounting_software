@@ -19,6 +19,7 @@ class Brand extends Equatable {
   final bool isActive;
   final int? productCount;
 
+  bool get hasProducts => productCount != null && productCount! > 0;
   bool get canDelete => productCount == 0;
   bool get productCountKnown => productCount != null;
 

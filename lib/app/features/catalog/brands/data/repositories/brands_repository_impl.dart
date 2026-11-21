@@ -42,38 +42,15 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
   });
 
   @override
-  Future<Either<Failure, BrandStats>> getStats() async {
-    final results = await Future.wait([
-      getBrands(const BrandListQuery(page: 1, pageSize: 1)),
-      getBrands(
-        const BrandListQuery(
-          status: BrandStatusFilter.active,
-          page: 1,
-          pageSize: 1,
-        ),
+  Future<Either<Failure, BrandStats>> getBrandStats() => execute(() async {
+    final result = await _remote.getBrandStats();
+    return switch (result) {
+      ApiSuccess<BrandStats>(:final data) => Right(data),
+      ApiFailure<BrandStats>(:final exception) => Left(
+        ExceptionMapper.map(exception),
       ),
-    ]);
-
-    Failure? failure;
-    int? total;
-    int? active;
-    results[0].fold(
-      (value) => failure = value,
-      (page) => total = page.totalCount,
-    );
-    results[1].fold(
-      (value) => failure ??= value,
-      (page) => active = page.totalCount,
-    );
-    if (failure != null) return Left(failure!);
-    final totalCount = total!;
-    final activeCount = active!;
-    return Right(BrandStats(
-      total: totalCount,
-      active: activeCount,
-      inactive: totalCount - activeCount,
-    ));
-  }
+    };
+  });
 
   @override
   Future<Either<Failure, Brand>> createBrand(BrandDraft draft) =>
