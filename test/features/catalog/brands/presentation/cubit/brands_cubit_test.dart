@@ -203,8 +203,7 @@ void main() {
   test('activate failure posts an error flash without mutation effect',
       () async {
     final repository = FakeBrandsRepository();
-    // The fake's status result is overridden through the dedicated callback
-    // in the repository test double when failure behavior is needed.
+    repository.setActiveResult = const Left(_Failure());
     final messages = FlashMessages();
     final flashes = [];
     final stopListening = messages.listen(flashes.add);
@@ -215,7 +214,8 @@ void main() {
     await cubit.activate(12);
 
     expect(effects, isEmpty);
-    expect(flashes, isEmpty);
+    expect(flashes, hasLength(1));
+    expect(flashes.single.type, MessageType.error);
     await subscription.cancel();
     stopListening();
     await cubit.close();
