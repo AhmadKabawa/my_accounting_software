@@ -96,19 +96,13 @@ class _AppFormDialogState extends State<AppFormDialog> {
       ],
       widget.child,
     ];
-    final scrollable = isDialog
-        ? ListView(
-            shrinkWrap: true,
-            padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
-            children: content,
-          )
-        : SingleChildScrollView(
-            padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: content,
-            ),
-          );
+    final scrollable = SingleChildScrollView(
+      padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: content,
+      ),
+    );
     return Column(
       mainAxisSize: isDialog ? MainAxisSize.min : MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
