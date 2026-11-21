@@ -41,9 +41,9 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 import 'package:accounting_software/app/features/auth/presentation/pages/select_branch/select_branch_screen.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
-import 'package:accounting_software/app/features/catalog/presentation/pages/brands/brands_screen.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/catalog_hub_screen.dart';
-import 'package:accounting_software/app/features/catalog/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 AppMenuEntry buildSignOutMenuEntry({

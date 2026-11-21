@@ -46,6 +46,6 @@
 
 - خط الأساس: HEAD هو `55e290f`. لا تتوفر أدوات `dart` و`flutter` في بيئة التنفيذ؛ لذلك لم أُشغّل `dart format` أو `flutter analyze` أو `flutter test` محلياً.
 - فحص CI الموجود لنفس HEAD: Workflow run `44839609573` فشل. خطوة التنسيق وجدت 13 ملفاً تحتاج format؛ خطوة analyze انتهت بالفشل؛ الاختبارات الكاملة انتهت بالفشل مع أخطاء ProviderNotFoundException في اختبارات PermissionGate/AccessCubit وأخطاء تفاعل في `app_searchable_dropdown_test.dart`. اختبار catalog UI المخصص نجح. هذه نتائج CI سابقة وليست تشغيلًا محلياً جديداً.
-- المرحلة 0: لم تبدأ بعد.
+- المرحلة 0: مُنفَّذة في commit PHASE0؛ نُقلت ملفات Brands والاختبارات إلى `catalog/brands`، مع بقاء Hub و`catalog_di.dart` و`catalog_routes.dart` على مستوى catalog.
 - المرحلة 1: لم تبدأ بعد.
 - الاختبارات الجديدة: لا توجد اختبارات جديدة في هذا التدقيق؛ أي اختبار سيُضاف ولا يتاح تشغيله سيُوسم «لم يُشغَّل».
