@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brand_stats_use_case.dart';
@@ -24,7 +23,6 @@ void main() {
       );
     final cubit = BrandStatsCubit(
       getBrandStats: GetBrandStatsUseCase(repository),
-      flashMessages: FlashMessages(),
     );
 
     await cubit.load();
@@ -49,7 +47,6 @@ void main() {
     };
     final cubit = BrandStatsCubit(
       getBrandStats: GetBrandStatsUseCase(repository),
-      flashMessages: FlashMessages(),
     );
 
     final first = cubit.load();
@@ -69,13 +66,37 @@ void main() {
     await cubit.close();
   });
 
+  test('refresh failure retains the last stats without a flash message',
+      () async {
+    var requests = 0;
+    final repository = FakeBrandsRepository()
+      ..onGetBrandStats = () async {
+        requests++;
+        if (requests == 1) {
+          return const Right(BrandStats(total: 9, active: 6, inactive: 3));
+        }
+        return const Left(_StatsFailure());
+      };
+    final cubit = BrandStatsCubit(
+      getBrandStats: GetBrandStatsUseCase(repository),
+    );
+
+    await cubit.load();
+    await cubit.refresh();
+
+    expect(cubit.state, isA<BrandStatsRefreshFailed>());
+    final state = cubit.state as BrandStatsRefreshFailed;
+    expect(state.stats, const BrandStats(total: 9, active: 6, inactive: 3));
+    expect(state.failure, isA<_StatsFailure>());
+    await cubit.close();
+  });
+
   test('reports failure when the repository cannot calculate statistics',
       () async {
     final repository = FakeBrandsRepository()
       ..onGetBrandStats = () async => const Left(_StatsFailure());
     final cubit = BrandStatsCubit(
       getBrandStats: GetBrandStatsUseCase(repository),
-      flashMessages: FlashMessages(),
     );
 
     await cubit.load();
