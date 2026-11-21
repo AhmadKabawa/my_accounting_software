@@ -1,4 +1,5 @@
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
+import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
@@ -21,7 +22,15 @@ class BrandLogoUploadCubit extends BaseCubit<BrandLogoUploadState, void> {
     if (state.isBusy) return;
 
     emit(const BrandLogoPicking());
-    final picked = await _picker.pickImage();
+    final picked;
+    try {
+      picked = await _picker.pickImage();
+    } catch (_) {
+      if (!isClosed) {
+        emit(const BrandLogoUploadFailed(ErrorKeys.unknown));
+      }
+      return;
+    }
     if (isClosed) return;
     if (picked == null) {
       emit(const BrandLogoIdle());
