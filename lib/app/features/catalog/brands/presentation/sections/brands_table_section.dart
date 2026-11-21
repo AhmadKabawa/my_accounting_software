@@ -117,20 +117,20 @@ class BrandsTableSection extends StatelessWidget {
             labelKey: BrandsKeys.edit,
             onPressed: () => onEdit(b),
           ),
-          if (b.productCount == 0)
+          AppRowAction(
+            icon: b.isActive ? AppIcons.block : AppIcons.restore,
+            labelKey: b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
+            onPressed: () => onToggleStatus(b),
+          ),
+        ],
+        overflow: [
+          if (b.canDelete)
             AppRowAction(
               icon: AppIcons.delete,
               labelKey: BrandsKeys.delete,
               destructive: true,
               onPressed: () => onDelete(b),
             ),
-        ],
-        overflow: [
-          AppRowAction(
-            icon: b.isActive ? AppIcons.block : AppIcons.restore,
-            labelKey: b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
-            onPressed: () => onToggleStatus(b),
-          ),
         ],
       ),
     ),
