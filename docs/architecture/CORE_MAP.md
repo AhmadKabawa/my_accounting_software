@@ -257,3 +257,10 @@
 - `core/presentation/widgets/app_form_dialog/app_form_dialog.dart`: `AppFormDialog` + `showAppFormDialog<T>` (L3). نافذة على الشاشات الكبيرة وورقة كاملة الارتفاع على الهاتف، دائماً غير قابلة للإغلاق بالـ barrier. `busy` يمنع الإغلاق كلياً (الرجوع وEsc والإلغاء)، و`dirty` يسأل عبر `showConfirmDialog` (warning، `TemplateKeys.unsavedChanges`). على الكبيرة ترتفع النافذة بقدر المحتوى وتتمرر عند الطول. الإغلاق البرمجي بـ `Navigator.pop(true)` يتجاوز الحارس عمداً. اختبار الارتفاع يقيس `AppFormDialog` لا `Dialog` (الأخير غلاف يملأ الشاشة).
 - `AppDataTable`: معامل `refreshing` يعرض شريط تقدم رفيعاً دون إخفاء الصفوف. عمود `rowActionsBuilder` صار بعرض ثابت `AppComponentSize.hitArea × 4` في الترويسة والصف بدل حصة `flex` نسبية (كانت تفيض 10px عند 1280).
 - القوالب (`ListPageTemplate` و`FormPageTemplate` و`DashboardTemplate`): مواضع الأبناء ثابتة؛ لا `if` يضيف/يحذف ابناً قبل ابن يحمل State (يضيع نص البحث/الحقل). تغطيها `page_template_child_identity_test.dart` و`list_page_template_test.dart`.
+
+## إضافات Core من ميزة الألوان (CAT-07)
+
+- `core/foundation/validation/hex_color.dart`: `HexColor` (`isValid`، `toArgb`، `normalize`) نقي بلا Flutter، يطابق قيد `colors_hex_code_check` (`#RRGGBB` أو `#RRGGBBAA`).
+- `widgets/app_color_swatch/`: `AppColorSwatch` (C26) عيّنة لون دائرية بإطار `scheme.outline`. للعرض فقط تكون مخفية عن قارئات الشاشة (الاسم بجانبها)؛ مع `onTap` تصبح زراً باسم `semanticLabel`، و`selected` يرسم حلقة أسمك بلون primary (الحالة ليست باللون وحده).
+- `AppTextField`: معاملات جديدة اختيارية `inputFormatters`، `textDirection` (لقيم LTR دائماً كالرموز وHEX)، `textCapitalization`.
+- `core/network/postgrest_helpers.dart`: `PostgrestValue.escapeFilter` / `nullableTrim` / `single` لمصادر البيانات المشتركة. Brands ما زال يملك نسخه المحلية ويمكن نقله لاحقاً.
