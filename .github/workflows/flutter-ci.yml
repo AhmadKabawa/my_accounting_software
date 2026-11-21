@@ -32,11 +32,6 @@ jobs:
         timeout-minutes: 5
         run: flutter pub get
 
-      - name: Formatter preview (temporary)
-        run: |
-          dart format --output=show lib/app/features/catalog/brands/presentation/widgets/brand_editor_dialog.dart
-          dart format --output=show test/features/catalog/brands/data/repositories/brands_repository_test.dart
-
       - name: Check formatting
         timeout-minutes: 5
         run: dart format --set-exit-if-changed .
