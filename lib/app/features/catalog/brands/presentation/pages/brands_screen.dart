@@ -126,6 +126,7 @@ class BrandsScreen extends StatelessWidget {
               ),
         ),
       );
+
   Future<void> _edit(BuildContext context, [Brand? brand]) async {
     final saved = await showAppFormDialog<bool>(
       context,
