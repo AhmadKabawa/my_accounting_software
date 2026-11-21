@@ -33,7 +33,7 @@ void initBrandsDI() {
   sl.registerLazySingleton(() => UploadBrandLogoUseCase(sl()));
 
   sl.registerFactory(
-    () => BrandStatsCubit(getBrandStats: sl(), flashMessages: sl()),
+    () => BrandStatsCubit(getBrandStats: sl()),
   );
   sl.registerFactory(
     () => BrandsListCubit(
