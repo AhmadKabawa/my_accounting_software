@@ -10,7 +10,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text/app_t
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_card.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_logo.dart';
@@ -21,7 +20,9 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/wid
 class BrandsTableSection extends StatelessWidget {
   const BrandsTableSection({
     super.key,
-    required this.cubit,
+    required this.onRetry,
+    required this.onSort,
+    required this.onPageChanged,
     required this.query,
     required this.rows,
     required this.total,
@@ -33,7 +34,9 @@ class BrandsTableSection extends StatelessWidget {
     required this.onToggleStatus,
   });
 
-  final BrandsListCubit cubit;
+  final VoidCallback onRetry;
+  final ValueChanged<DataTableSort> onSort;
+  final ValueChanged<int> onPageChanged;
   final BrandListQuery query;
   final List<Brand> rows;
   final int total;
@@ -83,7 +86,7 @@ class BrandsTableSection extends StatelessWidget {
     rowId: (b) => b.id,
     loading: loading,
     errorKey: failure?.messageKey,
-    onRetry: cubit.refresh,
+    onRetry: onRetry,
     emptyState: AppEmptyState(
       icon: AppIcons.brands,
       titleKey: query.search.isEmpty && query.status == BrandStatusFilter.all
@@ -133,11 +136,11 @@ class BrandsTableSection extends StatelessWidget {
     ),
     sortKey: 'name',
     sortAscending: query.sortAscending,
-    onSort: (s) => cubit.setSort(ascending: s.ascending),
+    onSort: onSort,
     page: query.page,
     pageSize: query.pageSize,
     totalCount: total,
     hasMore: query.page * query.pageSize < total,
-    onPageChanged: cubit.setPage,
+    onPageChanged: onPageChanged,
   );
 }
