@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/access/domain/access_repository.dar
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/delete_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
@@ -46,9 +47,11 @@ void main() {
           tester,
         ) async {
           final repository = FakeBrandsRepository();
+          sl.registerFactory<FlashMessages>(FlashMessages.new);
           sl.registerFactory<BrandStatsCubit>(
             () => BrandStatsCubit(
               getBrandStats: GetBrandStatsUseCase(repository),
+              flashMessages: sl(),
             ),
           );
           sl.registerFactory<BrandsListCubit>(
@@ -56,6 +59,7 @@ void main() {
               getBrands: GetBrandsUseCase(repository),
               setBrandActive: SetBrandActiveUseCase(repository),
               deleteBrand: DeleteBrandUseCase(repository),
+              flashMessages: sl(),
             ),
           );
           addTearDown(() async => sl.reset());
