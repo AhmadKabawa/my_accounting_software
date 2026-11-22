@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
-import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/app_semantic_colors.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import '../../../helpers/localized_app.dart';
 
@@ -20,9 +20,8 @@ void main() {
             theme: theme,
             home: Builder(
               builder: (context) {
-                final colors = Theme.of(context).colorScheme;
-                final semantic =
-                    Theme.of(context).extension<AppSemanticColors>()!;
+                final colors = context.ui.theme.colors;
+                final semantic = context.ui.theme.semanticColors;
                 toneExpected = switch (tone) {
                   AppIconTone.neutral => colors.onSurface,
                   AppIconTone.primary => colors.primary,
