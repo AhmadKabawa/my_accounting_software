@@ -246,6 +246,5 @@ void main() {
     await cubit.delete(_brands().first);
     await tester.pumpAndSettle();
     expect(statsRequests, 6);
-
   });
 }
