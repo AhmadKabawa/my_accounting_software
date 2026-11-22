@@ -411,8 +411,9 @@ void main() {
       expect(find.text('Beta'), findsOneWidget);
     });
 
-
-    testWidgets('selects another value after reopening without clearing', (tester) async {
+    testWidgets('selects another value after reopening without clearing', (
+      tester,
+    ) async {
       String? selected;
       await pumpPicker(tester, onChanged: (v) => selected = v);
       await tester.tap(find.byType(TextField));

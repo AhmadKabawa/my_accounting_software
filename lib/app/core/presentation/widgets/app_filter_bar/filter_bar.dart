@@ -64,6 +64,7 @@ class FilterBar extends StatefulWidget {
   filterPanelBuilder;
   final List<Widget> filterControls;
   final VoidCallback? onApply;
+
   /// Deprecated compatibility parameter; FilterBar never debounces locally.
   final Duration debounce;
 

@@ -97,8 +97,9 @@ abstract final class ColorNameResolver {
     final y = r * 0.2126 + g * 0.7152 + b * 0.0722;
     final z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
 
-    double f(double value) =>
-        value > 0.008856 ? math.pow(value, 1 / 3).toDouble() : (7.787 * value) + (16 / 116);
+    double f(double value) => value > 0.008856
+        ? math.pow(value, 1 / 3).toDouble()
+        : (7.787 * value) + (16 / 116);
     final fx = f(x), fy = f(y), fz = f(z);
     return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
   }

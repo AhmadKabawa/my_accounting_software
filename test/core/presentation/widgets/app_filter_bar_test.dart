@@ -9,7 +9,9 @@ import '../../../helpers/localized_app.dart';
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets('search is delegated immediately and removes an active filter', (tester) async {
+  testWidgets('search is delegated immediately and removes an active filter', (
+    tester,
+  ) async {
     var query = '';
     var removed = 0;
     var cleared = 0;
