@@ -29,7 +29,9 @@ class ListStatsBar<F> extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final availableWidth = constraints.maxWidth;
+        final availableWidth = constraints.hasBoundedWidth
+            ? constraints.maxWidth
+            : context.ui.screen.width();
         final gap = _cardGap.of(context);
         final fit = ((availableWidth + gap) / (_minCardWidth + gap)).floor();
         final columns = math.max(2, math.min(items.length, fit));
