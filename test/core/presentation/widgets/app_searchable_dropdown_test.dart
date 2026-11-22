@@ -127,6 +127,30 @@ void main() {
     expect(changes, [null]);
   });
 
+  testWidgets('panel all selection closes the panel and releases field focus', (
+    tester,
+  ) async {
+    final changes = <String?>[];
+    await pumpPicker(
+      tester,
+      value: 'Alpha',
+      allOptionLabel: _allOptions,
+      onChanged: changes.add,
+    );
+    await tester.tap(find.byType(TextField));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('All options'));
+    await tester.pumpAndSettle();
+
+    expect(changes, [null]);
+    expect(find.text('All options'), findsNothing);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).focusNode?.hasFocus,
+      isFalse,
+      reason: 'Selecting null must close the picker, not leave autocomplete focused',
+    );
+  });
+
   testWidgets('keyboard arrows and enter select an autocomplete option', (
     tester,
   ) async {
