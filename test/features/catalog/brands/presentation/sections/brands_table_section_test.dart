@@ -61,8 +61,7 @@ class _AccessRepository implements AccessRepository {
 
 Widget _withAccess(Widget child) => BlocProvider<AccessCubit>(
   create: (_) =>
-      AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))
-        ..load(),
+      AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))..load(),
   child: Scaffold(body: child),
 );
 
@@ -85,9 +84,7 @@ void main() {
 
   testWidgets('empty brands uses its dedicated AppEmptyState', (tester) async {
     await tester.pumpWidget(
-      buildTestApp(
-        home: _withAccess(_section(rows: const [], total: 0)),
-      ),
+      buildTestApp(home: _withAccess(_section(rows: const [], total: 0))),
     );
 
     expect(find.byType(AppEmptyState), findsOneWidget);
