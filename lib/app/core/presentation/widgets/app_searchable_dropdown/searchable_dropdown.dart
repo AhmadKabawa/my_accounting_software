@@ -370,6 +370,7 @@ class _SearchableDropdownState<T extends Object>
 
   Widget _panelTrigger(BuildContext context, SearchableDropdownStyle style) {
     final label = _panelDisplayLabel(context);
+    if (_desktopController.text != label) _setText(label);
     return Semantics(
       button: true,
       enabled: widget.enabled && !widget.readOnly,
@@ -386,7 +387,7 @@ class _SearchableDropdownState<T extends Object>
         child: ExcludeFocus(
           child: IgnorePointer(
             child: AppTextField(
-              controller: TextEditingController(text: label),
+              controller: _desktopController,
               labelKey: widget.labelKey,
               readOnly: true,
               enabled: widget.enabled,
@@ -891,8 +892,6 @@ class _PanelSearchPickerState<T extends Object>
                         ? InlineBanner(messageKey: data.errorKey!, variant: InlineBannerVariant.error)
                         : data.loading
                         ? const AppSkeleton.block()
-                        : count == 0
-                        ? Center(child: AppText(widget.emptyKey))
                         : ListView(
                             children: [
                               if (widget.allOptionLabel != null)
@@ -902,6 +901,11 @@ class _PanelSearchPickerState<T extends Object>
                                   selected: widget.selectedValue == null,
                                   active: _activeIndex == 0,
                                   onTap: () => widget.onSelect(null, true),
+                                ),
+                              if (options.isEmpty && _query.trim().isNotEmpty)
+                                Padding(
+                                  padding: context.ui.padding.all(AppSpacing.md),
+                                  child: AppText(widget.emptyKey),
                                 ),
                               for (var index = 0; index < options.length; index++)
                                 _tile(
