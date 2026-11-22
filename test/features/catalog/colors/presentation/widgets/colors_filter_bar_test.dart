@@ -21,12 +21,14 @@ void main() {
 
     await tester.pumpWidget(
       buildTestApp(
-        home: Scaffold(
-          body: ColorsFilterBar(
-            query: const ColorListQuery(),
-            onSearchChanged: (value) => search = value,
-            onStatusChanged: (value) => status = value,
-            onClearAll: () {},
+        home: StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: ColorsFilterBar(
+              query: ColorListQuery(search: search, status: status),
+              onSearchChanged: (value) => setState(() => search = value),
+              onStatusChanged: (value) => setState(() => status = value),
+              onClearAll: () {},
+            ),
           ),
         ),
       ),
@@ -41,6 +43,22 @@ void main() {
     await tester.tap(find.text('Inactive').last);
     await tester.pumpAndSettle();
     expect(status, ColorStatusFilter.inactive);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+      'Inactive',
+    );
+
+    // Reopen without clearing the selected label and choose another status.
+    await tester.tap(find.byType(TextField).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Active').last);
+    await tester.pumpAndSettle();
+    expect(status, ColorStatusFilter.active);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+      'Active',
+    );
+
     final dropdown = tester.widget<SearchableDropdown<ColorStatusFilter>>(
       find.byType(SearchableDropdown<ColorStatusFilter>),
     );
