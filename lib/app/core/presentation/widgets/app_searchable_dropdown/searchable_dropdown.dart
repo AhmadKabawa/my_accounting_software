@@ -504,7 +504,12 @@ class _SearchableDropdownState<T extends Object>
           _optionTile(
             context,
             widget.allOptionLabel!.tr(context: context),
-            () => widget.onChanged(null),
+            () {
+              widget.onChanged(null);
+              // The nullable selection is terminal just like a normal choice:
+              // close RawAutocomplete explicitly instead of waiting for blur.
+              _desktopFocusNode.unfocus();
+            },
             selected: widget.value == null,
           ),
         for (final option in options)
