@@ -156,8 +156,11 @@ class ColorsGridSection extends StatelessWidget {
           },
         ),
         context.ui.spacing.gap(AppSpacing.md),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+        Wrap(
+          alignment: WrapAlignment.end,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: context.ui.spacing.value(AppSpacing.sm),
+          runSpacing: context.ui.spacing.value(AppSpacing.sm),
           children: [
             AppButton(
               ColorsKeys.previousPage,
@@ -167,9 +170,7 @@ class ColorsGridSection extends StatelessWidget {
                   ? () => onPageChanged(query.page - 1)
                   : null,
             ),
-            context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
             AppText.raw('${query.page} / $pages'),
-            context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
             AppButton(
               ColorsKeys.nextPage,
               variant: AppButtonVariant.outlined,
