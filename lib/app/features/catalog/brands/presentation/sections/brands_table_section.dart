@@ -73,12 +73,6 @@ class BrandsTableSection extends StatelessWidget {
         },
       ),
       DataTableColumn(
-        labelKey: BrandsKeys.productCount,
-        priority: DataTableColumnPriority.secondary,
-        numeric: true,
-        cellBuilder: (_, b) => BrandProductsBadge(b),
-      ),
-      DataTableColumn(
         labelKey: BrandsKeys.status,
         priority: DataTableColumnPriority.secondary,
         cellBuilder: (_, b) => BrandStatusBadge(b),
