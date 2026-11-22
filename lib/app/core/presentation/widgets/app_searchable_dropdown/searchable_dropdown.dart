@@ -810,6 +810,18 @@ class _PanelSearchPickerState<T extends Object>
     super.dispose();
   }
 
+  void _selectActive(List<T> options) {
+    const allCount = 1;
+    if (_activeIndex == 0) {
+      widget.onSelect(null);
+      return;
+    }
+    final index = _activeIndex - allCount;
+    if (index >= 0 && index < options.length) {
+      widget.onSelect(options[index]);
+    }
+  }
+
   KeyEventResult _handleKey(FocusNode _, KeyEvent event, List<T> options) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     final count = options.length + 1;
@@ -826,15 +838,7 @@ class _PanelSearchPickerState<T extends Object>
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.enter && count > 0) {
-      const allCount = 1;
-      if (allCount == 1 && _activeIndex == 0) {
-        widget.onSelect(null);
-      } else {
-        final index = _activeIndex - allCount;
-        if (index >= 0 && index < options.length) {
-          widget.onSelect(options[index]);
-        }
-      }
+      _selectActive(options);
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
@@ -878,6 +882,7 @@ class _PanelSearchPickerState<T extends Object>
                     prefixIcon: AppIcons.search,
                     autofocus: true,
                     textInputAction: TextInputAction.search,
+                    onSubmitted: () => _selectActive(options),
                     onChanged: (value) {
                       setState(() {
                         _query = value;
