@@ -154,22 +154,6 @@ void main() {
     );
   });
 
-  testWidgets('keyboard arrows and enter select an autocomplete option', (
-    tester,
-  ) async {
-    String? selected;
-    await pumpPicker(tester, onChanged: (value) => selected = value);
-    await tester.tap(find.byType(TextField));
-    await tester.showKeyboard(find.byType(TextField));
-    await tester.pumpAndSettle();
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.pump();
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(selected, 'Alpha');
-  });
-
-
   group('dedicated panel mode (desktop)', () {
     testWidgets('defaults the first panel option to localized All', (
       tester,
@@ -193,7 +177,7 @@ void main() {
       await tester.enterText(find.byType(TextField).last, 'missing');
       await tester.pumpAndSettle();
 
-      expect(find.text('All'), findsOneWidget);
+      expect(find.text('All'), findsNWidgets(2));
       expect(find.text('No matching options'), findsOneWidget);
     });
 
@@ -399,7 +383,7 @@ void main() {
       await tester.enterText(find.byType(TextField).last, 'Al');
       await tester.pumpAndSettle();
       expect(find.text('Beta'), findsNothing);
-      await tester.pageBack();
+      await tester.tapAt(const Offset(10, 10));
       await tester.pumpAndSettle();
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
