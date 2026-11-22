@@ -224,7 +224,7 @@ void main() {
       expect(find.text('Alpha'), findsOneWidget);
       await tester.tap(find.text('Alpha').last);
       await tester.pumpAndSettle();
-      expect(find.byType(Dialog), findsNothing);
+      expect(find.byKey(const ValueKey('searchable-dropdown-panel')), findsNothing);
       expect(find.text('Alpha'), findsOneWidget);
     });
 
@@ -313,6 +313,7 @@ void main() {
 
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
+      await tester.showKeyboard(find.byType(TextField).last);
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
@@ -321,6 +322,7 @@ void main() {
 
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
+      await tester.showKeyboard(find.byType(TextField).last);
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pumpAndSettle();
       expect(find.byType(Dialog), findsNothing);
@@ -711,15 +713,37 @@ void main() {
     testWidgets('selects another value after reopening without clearing', (
       tester,
     ) async {
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
       String? selected;
-      await pumpPicker(tester, onChanged: (v) => selected = v);
+      await tester.pumpWidget(
+        buildTestApp(
+          home: StatefulBuilder(
+            builder: (context, setState) => Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: 1200,
+                  child: SearchableDropdown<String>(
+                    options: const ['Alpha', 'Beta'],
+                    labelKey: CatalogUiKeys.chooseOption,
+                    optionLabel: (value) => value,
+                    value: selected,
+                    onChanged: (value) => setState(() => selected = value),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
       await tester.tap(find.byType(TextField));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Alpha'));
       await tester.pumpAndSettle();
       expect(selected, 'Alpha');
 
-      await pumpPicker(tester, value: 'Alpha', onChanged: (v) => selected = v);
       await tester.tap(find.byType(TextField));
       await tester.pumpAndSettle();
       expect(find.text('Beta'), findsOneWidget);
