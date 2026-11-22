@@ -43,7 +43,7 @@ void main() {
         ),
       ),
     );
-    await t.drag(find.byType(CustomPaint).first, const Offset(10, 10));
+    await t.drag(find.byType(GestureDetector).first, const Offset(10, 10));
     await t.pump();
     expect(result, endsWith('80'));
   });
