@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source_impl.dart';
+import 'package:accounting_software/app/features/catalog/brands/data/datasources/brand_stats_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/repositories/brands_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
@@ -19,7 +20,10 @@ void main() {
 
   setUp(() {
     api = FakeBrandsApiClient();
-    repository = BrandsRepositoryImpl(BrandsRemoteDataSourceImpl(api));
+    repository = BrandsRepositoryImpl(
+      BrandsRemoteDataSourceImpl(api),
+      BrandStatsRemoteDataSourceImpl(api),
+    );
   });
 
   test(
