@@ -41,6 +41,28 @@ class AppSettingsManager {
   Future<bool> getSidebarCollapsed() async =>
       await storage.read<bool>(StorageKeys.sidebarCollapsed) ?? false;
 
+  // ─── List view mode (per screen) ────────────────────────────────────────────
+  Future<void> setViewMode(String screenId, String mode) async {
+    await storage.write<String>(StorageKeys.viewMode(screenId), mode);
+  }
+
+  Future<String?> getViewMode(String screenId) =>
+      storage.read<String>(StorageKeys.viewMode(screenId));
+
+  // ─── Sidebar sections ──────────────────────────────────────────────────────
+  Future<void> setSidebarOpenSections(Set<String> ids) async {
+    await storage.write<String>(
+      StorageKeys.sidebarOpenSections,
+      (ids.toList()..sort()).join(','),
+    );
+  }
+
+  Future<Set<String>> getSidebarOpenSections() async {
+    final raw = await storage.read<String>(StorageKeys.sidebarOpenSections);
+    if (raw == null || raw.isEmpty) return <String>{};
+    return raw.split(',').where((id) => id.isNotEmpty).toSet();
+  }
+
   // ─── Onboarding ────────────────────────────────────────────────────────────
   Future<void> setOnboarded() async {
     await storage.write<bool>(StorageKeys.onboardingKey, true);

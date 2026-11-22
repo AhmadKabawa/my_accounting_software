@@ -109,10 +109,10 @@ void main() {
       // Sections/widgets are parts of a page; the page itself owns the frame.
       if (path.contains('/sections/') || path.contains('/widgets/')) continue;
       final text = file.readAsStringSync();
-      if (text.contains('AppDataTable<') &&
+      if ((text.contains('AppDataTable<') || text.contains('AppDataView<')) &&
           !text.contains('ListPageTemplate(')) {
         violations.add(
-          '${file.path} uses AppDataTable without ListPageTemplate',
+          '${file.path} uses AppDataTable/AppDataView without ListPageTemplate',
         );
       }
     }

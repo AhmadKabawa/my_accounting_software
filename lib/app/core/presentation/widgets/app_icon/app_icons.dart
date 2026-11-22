@@ -66,6 +66,12 @@ abstract final class AppIcons {
   // Row / record actions.
   static const edit = AppIconData.material(Icons.edit_outlined);
   static const delete = AppIconData.material(Icons.delete_outline);
+  static const cardView = AppIconData.material(Icons.view_agenda_outlined);
+  static const sort = AppIconData.material(Icons.swap_vert);
+  static const filter = AppIconData.material(Icons.tune);
+  static const collapse = AppIconData.material(Icons.expand_less);
+  static const chevronEnd = AppIconData.material(Icons.chevron_right);
+  static const chevronStart = AppIconData.material(Icons.chevron_left);
   static const gridView = AppIconData.material(Icons.grid_view);
   static const tableView = AppIconData.material(Icons.table_rows_outlined);
   static const block = AppIconData.material(Icons.block);

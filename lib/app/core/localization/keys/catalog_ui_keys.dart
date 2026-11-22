@@ -28,6 +28,16 @@ enum CatalogUiKeys implements AppKey {
     ar: 'لا توجد سجلات لعرضها',
     en: 'There are no records to display',
   ),
+  showingOf(ar: 'عرض {shown} من {total}', en: 'Showing {shown} of {total}'),
+  pageNumber(ar: 'صفحة {page}', en: 'Page {page}'),
+  viewMode(ar: 'طريقة العرض', en: 'View mode'),
+  viewTable(ar: 'جدول', en: 'Table'),
+  viewCards(ar: 'بطاقات', en: 'Cards'),
+  viewGrid(ar: 'شبكة', en: 'Grid'),
+  sortAscendingLabel(ar: 'تصاعدي', en: 'Ascending'),
+  sortDescendingLabel(ar: 'تنازلي', en: 'Descending'),
+  resultsCount(ar: '{count} نتيجة', en: '{count} results'),
+  selectRow(ar: 'تحديد الصف', en: 'Select row'),
   moreActions(ar: 'المزيد', en: 'More actions'),
   retry(ar: 'إعادة المحاولة', en: 'Retry');
 

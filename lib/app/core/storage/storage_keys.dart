@@ -10,6 +10,15 @@ class StorageKeys {
   static const StorageKey settings = StorageKey('app_settings');
   static const StorageKey onboardingKey = StorageKey('onboarding_completed');
   static const StorageKey sidebarCollapsed = StorageKey('sidebar_collapsed');
+
+  /// Per-screen view mode (table/cards/grid): `view_mode.<screenId>`.
+  static StorageKey viewMode(String screenId) =>
+      StorageKey('view_mode.$screenId');
+
+  /// Open sidebar sections (comma-separated ids).
+  static const StorageKey sidebarOpenSections = StorageKey(
+    'sidebar_open_sections',
+  );
   static const StorageKey tokenKey = StorageKey('auth_token');
   static const StorageKey accessToken = StorageKey('auth_token');
   static const StorageKey refreshToken = StorageKey('refreshToken');

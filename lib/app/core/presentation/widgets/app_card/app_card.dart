@@ -12,12 +12,17 @@ class AppCard extends StatelessWidget {
     this.radius = AppRadius.lg,
     this.onTap,
     this.semanticsLabel,
+    this.selected = false,
   });
 
   final Widget child;
   final AppSpacing padding;
   final AppRadius radius;
   final VoidCallback? onTap;
+
+  /// Marks the card as the chosen one: a thicker border in the primary color
+  /// and the semantic `selected` flag (the border is not the only signal).
+  final bool selected;
 
   /// Read by screen readers instead of the card's content when set.
   final String? semanticsLabel;
@@ -44,16 +49,23 @@ class AppCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
         side: BorderSide(
-          color: scheme.outlineVariant,
-          width: AppBorderWidth.thin.of(context),
+          color: selected ? scheme.primary : scheme.outlineVariant,
+          width: (selected ? AppBorderWidth.thick : AppBorderWidth.thin).of(
+            context,
+          ),
         ),
       ),
       clipBehavior: Clip.antiAlias,
       child: content,
     );
 
-    return semanticsLabel == null
+    return semanticsLabel == null && !selected
         ? card
-        : Semantics(label: semanticsLabel, container: true, child: card);
+        : Semantics(
+            label: semanticsLabel,
+            selected: selected,
+            container: true,
+            child: card,
+          );
   }
 }

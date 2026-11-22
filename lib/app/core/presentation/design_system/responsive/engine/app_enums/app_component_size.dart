@@ -81,6 +81,22 @@ class AppComponentSize extends ResponsiveToken {
   /// Mobile: 64px | Tablet: 72px | Desktop: 80px
   static const avatarLarge = AppComponentSize(64, 72, 80);
 
+  /// Minimum width of a secondary table column before it is hidden.
+  /// Mobile: 96px | Tablet: 112px | Desktop: 120px
+  static const tableColumnMin = AppComponentSize(96, 112, 120);
+
+  /// Minimum width of the primary table column (never hidden).
+  /// Mobile: 160px | Tablet: 200px | Desktop: 220px
+  static const tableColumnPrimaryMin = AppComponentSize(160, 200, 220);
+
+  /// Grid tile (data grid view) maximum width and fixed height.
+  /// Width mobile: 160px | Tablet: 200px | Desktop: 220px
+  static const gridTileWidth = AppComponentSize(160, 200, 220);
+
+  /// Grid tile height.
+  /// Mobile: 176px | Tablet: 192px | Desktop: 208px
+  static const gridTileHeight = AppComponentSize(176, 192, 208);
+
   /// Hit area — minimum touch target size (accessibility)
   /// Mobile: 44px | Tablet: 48px | Desktop: 52px
   static const hitArea = AppComponentSize(44, 48, 52);

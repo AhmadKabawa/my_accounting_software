@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/access/permission_gate/permission_g
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -50,7 +51,7 @@ class BrandsTableSection extends StatelessWidget {
   final ValueChanged<Brand> onToggleStatus;
 
   @override
-  Widget build(BuildContext context) => AppDataTable<Brand>(
+  Widget build(BuildContext context) => AppDataView<Brand>(
     columns: [
       DataTableColumn(
         labelKey: BrandsKeys.brandName,

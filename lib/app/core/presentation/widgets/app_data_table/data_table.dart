@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:accounting_software/app/core/foundation/config/app_config.dart';
-import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/app_density_scope.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table_layout.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table_style.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
+export 'data_table_layout.dart';
 export 'data_table_style.dart';
 
 enum DataTableColumnPriority { primary, secondary, hiddenOnMobile }
@@ -40,24 +33,28 @@ class DataTableColumn<T> {
   bool get sortable => sortKey != null;
 }
 
-/// Responsive table with server-driven sort and pagination callbacks.
-///
-/// The supplied [rows] are only the current server page. This widget never
-/// sorts, filters, or paginates the complete collection locally.
-class AppDataTable<T> extends StatelessWidget {
-  static const _loadingPlaceholderCount = 5;
-  static const _maxSecondaryCardFields = 3;
+class DataTableSort {
+  const DataTableSort(this.key, this.ascending);
+  final String key;
+  final bool ascending;
+}
 
+/// The table view of a record list: a soft header band and rows.
+///
+/// Table only. Loading, empty, error, refreshing, pagination and the other
+/// view modes belong to `AppDataView`, which wraps this widget.
+///
+/// Columns are hidden progressively by priority and by the width of the
+/// container ([DataTableLayout]); the primary column never hides. The screen
+/// type plays no part here, so the table can never disagree with the shell.
+/// The supplied [rows] are only the current server page: nothing is sorted,
+/// filtered or paginated locally.
+class AppDataTable<T> extends StatelessWidget {
   const AppDataTable({
     super.key,
     required this.columns,
     required this.rows,
     required this.rowId,
-    this.loading = false,
-    this.refreshing = false,
-    this.errorKey,
-    this.emptyState,
-    this.onRetry,
     this.sortKey,
     this.sortAscending = true,
     this.onSort,
@@ -65,26 +62,38 @@ class AppDataTable<T> extends StatelessWidget {
     this.onSelectionChanged,
     this.rowActionsBuilder,
     this.onRowActivated,
-    this.cardBuilder,
-    this.summaryBuilder,
-    this.page = 1,
-    this.pageSize = AppConfig.defaultPageSize,
-    this.totalCount = 0,
-    this.onPageChanged,
-    this.onPageSizeChanged,
-    this.hasMore = false,
-    this.onLoadMore,
     this.density,
+    this.zebra = DataTableStyle.defaultZebra,
   });
+
+  /// The columns that fit [width] once the selection and action tracks are
+  /// reserved. `AppDataView` uses it to decide when a table is too narrow.
+  static List<DataTableColumn<T>> visibleFor<T>(
+    BuildContext context,
+    List<DataTableColumn<T>> columns, {
+    required double width,
+    required bool hasSelection,
+    required bool hasActions,
+  }) {
+    final hit = context.ui.size.width(AppComponentSize.hitArea);
+    final reserved =
+        (hasSelection ? hit : 0) + (hasActions ? hit * _actionTrackHits : 0);
+    return DataTableLayout.visibleColumns(
+      columns,
+      availableWidth: width - reserved,
+      minWidth: context.ui.size.width(AppComponentSize.tableColumnMin),
+      primaryMinWidth: context.ui.size.width(
+        AppComponentSize.tableColumnPrimaryMin,
+      ),
+    );
+  }
+
+  /// Two inline actions plus the overflow menu, with room to spare.
+  static const _actionTrackHits = 4;
 
   final List<DataTableColumn<T>> columns;
   final List<T> rows;
   final Object Function(T row) rowId;
-  final bool loading;
-  final bool refreshing;
-  final AppKey? errorKey;
-  final Widget? emptyState;
-  final VoidCallback? onRetry;
   final String? sortKey;
   final bool sortAscending;
   final ValueChanged<DataTableSort>? onSort;
@@ -92,265 +101,49 @@ class AppDataTable<T> extends StatelessWidget {
   final ValueChanged<Set<Object>>? onSelectionChanged;
   final Widget Function(BuildContext context, T row)? rowActionsBuilder;
   final ValueChanged<T>? onRowActivated;
-  final Widget Function(BuildContext context, T row)? cardBuilder;
-  final Widget? summaryBuilder;
-  final int page;
-  final int pageSize;
-  final int totalCount;
-  final ValueChanged<int>? onPageChanged;
-  final ValueChanged<int>? onPageSizeChanged;
-  final bool hasMore;
-  final VoidCallback? onLoadMore;
   final AppDensity? density;
+  final bool zebra;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final type = ScreenEngine.screenTypeForWidth(constraints.maxWidth);
-        final effectiveDensity =
-            density ??
-            (type == ScreenType.desktop
-                ? AppDensity.compact
-                : AppDensity.comfortable);
-        // Inside a page scroll (AppPageBody) the height is unbounded: render at
-        // natural height and let the page scroll. With a bounded height the
-        // table keeps its own scroll area.
+        // Inside a page scroll the height is unbounded: natural height.
         final bounded = constraints.hasBoundedHeight;
+        final effectiveDensity = density ?? AppDensity.comfortable;
+        final visible = visibleFor(
+          context,
+          columns,
+          width: constraints.maxWidth,
+          hasSelection: onSelectionChanged != null,
+          hasActions: rowActionsBuilder != null,
+        );
         return AppDensityScope(
           density: effectiveDensity,
-          child: _buildForWidth(context, type, effectiveDensity, bounded),
+          child: _table(
+            context,
+            DataTableStyle(context, density: effectiveDensity, zebra: zebra),
+            visible,
+            bounded,
+          ),
         );
       },
     );
   }
 
-  Widget _buildForWidth(
-    BuildContext context,
-    ScreenType type,
-    AppDensity density,
-    bool bounded,
-  ) {
-    if (errorKey != null) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          InlineBanner(
-            messageKey: errorKey!,
-            variant: InlineBannerVariant.error,
-          ),
-          if (onRetry != null)
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: AppButton(CatalogUiKeys.retry, onPressed: onRetry),
-            ),
-        ],
-      );
-    }
-    if (loading) return _loading(context, bounded);
-    if (rows.isEmpty) {
-      return emptyState ??
-          AppEmptyState(
-            icon: AppIcons.info,
-            titleKey: CatalogUiKeys.emptyTitle,
-            descriptionKey: CatalogUiKeys.emptyDescription,
-            compact: type != ScreenType.mobile,
-          );
-    }
-    final style = DataTableStyle(context, density: density);
-    final content = type == ScreenType.mobile
-        ? _cards(context, style, bounded)
-        : _table(
-            context,
-            style,
-            full: type == ScreenType.desktop,
-            bounded: bounded,
-          );
-    if (!refreshing) return content;
-    return Column(
-      mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const LinearProgressIndicator(),
-        if (bounded) Expanded(child: content) else content,
-      ],
-    );
-  }
-
-  Widget _loading(BuildContext context, bool bounded) => ListView(
-    shrinkWrap: true,
-    physics: bounded ? null : const NeverScrollableScrollPhysics(),
-    children: [
-      for (var i = 0; i < _loadingPlaceholderCount; i++)
-        const AppSkeleton.tableRow(),
-    ],
-  );
-
-  Widget _cards(BuildContext context, DataTableStyle style, bool bounded) {
-    final visible = columns
-        .where(
-          (column) => column.priority != DataTableColumnPriority.hiddenOnMobile,
-        )
-        .toList();
-    final declaredPrimary = visible
-        .where((column) => column.priority == DataTableColumnPriority.primary)
-        .toList();
-    final primary = declaredPrimary.isEmpty && visible.isNotEmpty
-        ? [visible.first]
-        : declaredPrimary;
-    final secondary = visible
-        .where(
-          (column) =>
-              column.priority == DataTableColumnPriority.secondary &&
-              !primary.contains(column),
-        )
-        .take(_maxSecondaryCardFields)
-        .toList();
-    final sortableColumns = visible.where((column) => column.sortable).toList();
-
-    Widget scrollArea(List<Widget> children) {
-      final list = ListView(
-        shrinkWrap: !bounded,
-        physics: bounded ? null : const NeverScrollableScrollPhysics(),
-        children: children,
-      );
-      return bounded ? Expanded(child: list) : list;
-    }
-
-    return Column(
-      mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (sortableColumns.isNotEmpty && onSort != null)
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: AppButton(
-              CatalogUiKeys.sortBy,
-              variant: AppButtonVariant.outlined,
-              size: AppButtonSize.small,
-              onPressed: () => _showMobileSort(context, sortableColumns),
-            ),
-          ),
-        scrollArea([
-          for (final row in rows)
-            Padding(
-              padding: EdgeInsetsDirectional.only(bottom: style.gap),
-              child: AppCard(
-                padding: AppSpacing.md,
-                onTap: onRowActivated == null
-                    ? null
-                    : () => onRowActivated!(row),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (onSelectionChanged != null)
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: Checkbox(
-                          value: selectedIds.contains(rowId(row)),
-                          onChanged: (checked) =>
-                              _toggle(row, checked ?? false),
-                        ),
-                      ),
-                    if (cardBuilder != null)
-                      cardBuilder!(context, row)
-                    else ...[
-                      for (final column in primary)
-                        column.cellBuilder(context, row),
-                      for (final column in secondary)
-                        Padding(
-                          padding: EdgeInsets.only(top: style.gap),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: AppText(
-                                  column.labelKey,
-                                  type: AppTextType.labelSmall,
-                                  color: style.colors.onSurfaceVariant,
-                                  maxLines: 2,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: column.cellBuilder(context, row),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                    if (rowActionsBuilder != null)
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: rowActionsBuilder!(context, row),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ?summaryBuilder,
-          _pagination(context, mobile: true),
-        ]),
-      ],
-    );
-  }
-
-  Future<void> _showMobileSort(
-    BuildContext context,
-    List<DataTableColumn<T>> sortableColumns,
-  ) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      useSafeArea: true,
-      builder: (sheetContext) => Padding(
-        padding: sheetContext.ui.padding.all(AppSpacing.md),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (final column in sortableColumns)
-              AppButton(
-                column.labelKey,
-                variant: AppButtonVariant.text,
-                onPressed: () {
-                  final key = column.sortKey!;
-                  onSort?.call(
-                    DataTableSort(key, sortKey == key ? !sortAscending : true),
-                  );
-                  Navigator.of(sheetContext).pop();
-                },
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Bounded height: the rows fill the remaining space and scroll inside the
-  /// table. Unbounded height (inside a page scroll): natural height.
-  Widget _fill(bool bounded, Widget child) =>
-      bounded ? Expanded(child: child) : child;
-
   Widget _table(
     BuildContext context,
-    DataTableStyle style, {
-    required bool full,
-    required bool bounded,
-  }) {
-    final visible = columns
-        .where(
-          (column) =>
-              full || column.priority != DataTableColumnPriority.secondary,
-        )
-        .toList();
-    if (!full && visible.isEmpty && columns.isNotEmpty) {
-      visible.add(columns.first);
-    }
+    DataTableStyle style,
+    List<DataTableColumn<T>> visible,
+    bool bounded,
+  ) {
+    final hit = context.ui.size.width(AppComponentSize.hitArea);
+
     Widget cells(T? row, {required bool header}) => Row(
       children: [
         if (onSelectionChanged != null)
           SizedBox(
-            width: context.ui.size.width(AppComponentSize.hitArea),
+            width: hit,
             child: header
                 ? Checkbox(
                     value:
@@ -369,39 +162,7 @@ class AppDataTable<T> extends StatelessWidget {
             child: Padding(
               padding: style.cellPadding,
               child: header
-                  ? Semantics(
-                      button: column.sortable,
-                      child: InkWell(
-                        onTap: column.sortable && onSort != null
-                            ? () => onSort!(
-                                DataTableSort(
-                                  column.sortKey!,
-                                  sortKey == column.sortKey
-                                      ? !sortAscending
-                                      : true,
-                                ),
-                              )
-                            : null,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: AppText(
-                                column.labelKey,
-                                type: AppTextType.tableHeader,
-                                maxLines: 2,
-                              ),
-                            ),
-                            if (column.sortable && sortKey == column.sortKey)
-                              AppIcon(
-                                sortAscending
-                                    ? AppIcons.sortAscending
-                                    : AppIcons.sortDescending,
-                                size: AppIconSize.sm,
-                              ),
-                          ],
-                        ),
-                      ),
-                    )
+                  ? _header(column, style)
                   : Align(
                       alignment: column.numeric
                           ? AlignmentDirectional.centerEnd
@@ -411,11 +172,8 @@ class AppDataTable<T> extends StatelessWidget {
             ),
           ),
         if (rowActionsBuilder != null)
-          // A fixed track (four hit areas: two inline actions plus the
-          // overflow menu with room to spare) instead of a proportional share,
-          // so the buttons never overflow on narrow desktop widths.
           SizedBox(
-            width: context.ui.size.width(AppComponentSize.hitArea) * 4,
+            width: hit * _actionTrackHits,
             child: header
                 ? const SizedBox.shrink()
                 : Align(
@@ -426,165 +184,117 @@ class AppDataTable<T> extends StatelessWidget {
       ],
     );
 
-    final surface = Column(
-      mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
-      children: [
-        Container(
-          constraints: BoxConstraints(minHeight: style.headerHeight),
-          decoration: BoxDecoration(
-            color: style.headerBackground,
-            border: Border(bottom: BorderSide(color: style.divider)),
-          ),
-          child: cells(null, header: true),
-        ),
-        _fill(
-          bounded,
-          ListView.separated(
-            shrinkWrap: !bounded,
-            physics: bounded ? null : const NeverScrollableScrollPhysics(),
-            itemCount: rows.length,
-            separatorBuilder: (_, _) => Divider(
-              height: AppBorderWidth.thin.of(context),
-              color: style.divider,
-            ),
-            itemBuilder: (context, index) {
-              final row = rows[index];
-              return Focus(
-                canRequestFocus: true,
-                onKeyEvent: (node, event) {
-                  if (event is! KeyDownEvent) return KeyEventResult.ignored;
-                  if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-                    node.nextFocus();
-                    return KeyEventResult.handled;
-                  }
-                  if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-                    node.previousFocus();
-                    return KeyEventResult.handled;
-                  }
-                  if (event.logicalKey == LogicalKeyboardKey.enter) {
-                    onRowActivated?.call(row);
-                    return KeyEventResult.handled;
-                  }
-                  if (event.logicalKey == LogicalKeyboardKey.space) {
-                    if (onSelectionChanged != null) {
-                      _toggle(row, !selectedIds.contains(rowId(row)));
-                    }
-                    return KeyEventResult.handled;
-                  }
-                  return KeyEventResult.ignored;
-                },
-                child: Semantics(
-                  container: true,
-                  selected: selectedIds.contains(rowId(row)),
-                  child: InkWell(
-                    hoverColor: style.rowHover,
-                    onTap: onRowActivated == null
-                        ? null
-                        : () => onRowActivated!(row),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(minHeight: style.rowHeight),
-                      child: cells(row, header: false),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+    final headerBand = Container(
+      constraints: BoxConstraints(minHeight: style.headerHeight),
+      decoration: BoxDecoration(
+        color: style.headerBackground,
+        borderRadius: style.bandRadius,
+      ),
+      child: cells(null, header: true),
+    );
+
+    final list = ListView.builder(
+      shrinkWrap: !bounded,
+      physics: bounded ? null : const NeverScrollableScrollPhysics(),
+      itemCount: rows.length,
+      itemBuilder: (context, index) =>
+          _row(context, style, rows[index], index, cells),
     );
 
     return Column(
       mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _fill(
-          bounded,
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: style.surface,
-              borderRadius: style.radius,
-              border: style.border,
-            ),
-            child: ClipRRect(borderRadius: style.radius, child: surface),
-          ),
-        ),
-        ?summaryBuilder,
-        _pagination(context),
+        headerBand,
+        context.ui.spacing.gap(AppSpacing.xs),
+        if (bounded) Expanded(child: list) else list,
       ],
     );
   }
 
-  Widget _pagination(BuildContext context, {bool mobile = false}) {
-    if (mobile) {
-      if (!hasMore || onLoadMore == null) return const SizedBox.shrink();
-      return Padding(
-        padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
-        child: AppButton(CatalogUiKeys.loadMore, onPressed: onLoadMore),
-      );
-    }
-    if (onPageChanged == null && onPageSizeChanged == null) {
-      return const SizedBox.shrink();
-    }
-    final lastPage = totalCount == 0 ? 1 : (totalCount / pageSize).ceil();
-    return Padding(
-      padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: context.ui.spacing.md,
-        runSpacing: context.ui.spacing.sm,
-        children: [
-          if (onPageSizeChanged != null)
-            SizedBox(
-              width: context.ui.size.width(AppComponentSize.cardWidth),
-              child: SearchableDropdown<int>(
-                options: AppConfig.pageSizeOptions,
-                labelKey: CatalogUiKeys.rowsPerPage,
-                optionLabel: (value) => value.toString(),
-                value: pageSize,
-                clearable: false,
-                onChanged: (value) {
-                  if (value != null) onPageSizeChanged!(value);
-                },
+  Widget _header(DataTableColumn<T> column, DataTableStyle style) {
+    final sorted = column.sortable && sortKey == column.sortKey;
+    return Semantics(
+      button: column.sortable,
+      child: InkWell(
+        onTap: column.sortable && onSort != null
+            ? () => onSort!(
+                DataTableSort(
+                  column.sortKey!,
+                  sortKey == column.sortKey ? !sortAscending : true,
+                ),
+              )
+            : null,
+        child: Row(
+          children: [
+            Flexible(
+              child: AppText(
+                column.labelKey,
+                type: AppTextType.tableHeader,
+                color: style.headerForeground,
+                maxLines: 2,
               ),
             ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppButton(
-                CatalogUiKeys.previousPage,
-                size: AppButtonSize.small,
-                variant: AppButtonVariant.outlined,
-                onPressed: page > 1 && onPageChanged != null
-                    ? () => onPageChanged!(page - 1)
-                    : null,
+            if (sorted)
+              AppIcon(
+                sortAscending
+                    ? AppIcons.sortAscending
+                    : AppIcons.sortDescending,
+                size: AppIconSize.sm,
+                color: style.headerForeground,
               ),
-              Padding(
-                padding: context.ui.padding.symmetric(
-                  horizontal: AppSpacing.sm,
-                ),
-                child: AppText.raw(
-                  CatalogUiKeys.paginationLabel.tr(
-                    context: context,
-                    namedArgs: {
-                      'page': page.toString(),
-                      'lastPage': lastPage.toString(),
-                    },
-                  ),
-                  maxLines: 2,
-                ),
-              ),
-              AppButton(
-                CatalogUiKeys.nextPage,
-                size: AppButtonSize.small,
-                variant: AppButtonVariant.outlined,
-                onPressed: page < lastPage && onPageChanged != null
-                    ? () => onPageChanged!(page + 1)
-                    : null,
-              ),
-            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _row(
+    BuildContext context,
+    DataTableStyle style,
+    T row,
+    int index,
+    Widget Function(T? row, {required bool header}) cells,
+  ) {
+    final selected = selectedIds.contains(rowId(row));
+    return Focus(
+      canRequestFocus: true,
+      onKeyEvent: (node, event) {
+        if (event is! KeyDownEvent) return KeyEventResult.ignored;
+        if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+          node.nextFocus();
+          return KeyEventResult.handled;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+          node.previousFocus();
+          return KeyEventResult.handled;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.enter) {
+          onRowActivated?.call(row);
+          return KeyEventResult.handled;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.space) {
+          if (onSelectionChanged != null) _toggle(row, !selected);
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Semantics(
+        container: true,
+        selected: selected,
+        child: Material(
+          color: style.rowColor(index, selected: selected),
+          borderRadius: style.bandRadius,
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            hoverColor: style.rowHover,
+            onTap: onRowActivated == null ? null : () => onRowActivated!(row),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: style.rowHeight),
+              child: cells(row, header: false),
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -606,10 +316,4 @@ class AppDataTable<T> extends StatelessWidget {
     }
     callback(next);
   }
-}
-
-class DataTableSort {
-  const DataTableSort(this.key, this.ascending);
-  final String key;
-  final bool ascending;
 }
