@@ -46,6 +46,17 @@ void main() {
       'Inactive',
     );
 
+    // Reopen with the selected label still visible, then choose another value.
+    await tester.tap(find.byType(TextField).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Active').last);
+    await tester.pumpAndSettle();
+    expect(status, BrandStatusFilter.active);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+      'Active',
+    );
+
     await tester.tap(find.byType(TextField).last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('All statuses').last);
