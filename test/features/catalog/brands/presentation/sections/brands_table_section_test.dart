@@ -42,7 +42,6 @@ Widget _section({
   onToggleStatus: (_) {},
 );
 
-
 class _AccessRepository implements AccessRepository {
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async => Right(
