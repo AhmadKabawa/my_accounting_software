@@ -186,16 +186,16 @@ void main() {
   testWidgets('stats failure does not prevent the brands list from loading', (
     tester,
   ) async {
-    final repository = FakeBrandsRepository()
-      ..onGetBrands = (_) async => Right(
-        PaginatedResult<Brand>(
-          items: _brands(),
-          totalCount: 3,
-          currentPage: 1,
-          totalPages: 1,
-        ),
-      )
-      ..onGetBrandStats = () async => const Left(BrandInUseFailure());
+    final repository = FakeBrandsRepository();
+    repository.onGetBrands = (_) async => Right(
+      PaginatedResult<Brand>(
+        items: _brands(),
+        totalCount: 3,
+        currentPage: 1,
+        totalPages: 1,
+      ),
+    );
+    repository.onGetBrandStats = () async => const Left(BrandInUseFailure());
     await _pumpScreen(tester, repository, size: const Size(1280, 900));
 
     expect(find.text('Can delete'), findsOneWidget);
@@ -207,19 +207,19 @@ void main() {
     tester,
   ) async {
     var statsRequests = 0;
-    final repository = FakeBrandsRepository()
-      ..onGetBrands = (_) async => Right(
-        PaginatedResult<Brand>(
-          items: _brands(),
-          totalCount: 3,
-          currentPage: 1,
-          totalPages: 1,
-        ),
-      )
-      ..onGetBrandStats = () async {
-        statsRequests++;
-        return const Right(BrandStats(total: 3, active: 2, inactive: 1));
-      };
+    final repository = FakeBrandsRepository();
+    repository.onGetBrands = (_) async => Right(
+      PaginatedResult<Brand>(
+        items: _brands(),
+        totalCount: 3,
+        currentPage: 1,
+        totalPages: 1,
+      ),
+    );
+    repository.onGetBrandStats = () async {
+      statsRequests++;
+      return const Right(BrandStats(total: 3, active: 2, inactive: 1));
+    };
     await _pumpScreen(tester, repository, size: const Size(1280, 900));
 
     expect(statsRequests, 1);
