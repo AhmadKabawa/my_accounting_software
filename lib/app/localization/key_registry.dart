@@ -23,6 +23,7 @@ import 'package:accounting_software/app/features/profile/presentation/localizati
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
+import 'package:accounting_software/app/core/foundation/color/color_name_keys.dart';
 
 final List<AppKey> allKeys = <AppKey>[
   ...CommonKeys.values,
@@ -45,6 +46,7 @@ final List<AppKey> allKeys = <AppKey>[
   ...ProfileKeys.values,
   ...BrandsKeys.values,
   ...ColorsKeys.values,
+  ...ColorNameKeys.values,
   ...BrandFailureKeys.values,
   ...CatalogHubKeys.values,
   ...HomeKeys.values,
