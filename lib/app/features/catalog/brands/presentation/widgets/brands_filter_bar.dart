@@ -52,17 +52,13 @@ class BrandsFilterBar extends StatelessWidget {
     ],
     filterControls: [
       SearchableDropdown<BrandStatusFilter>(
-        options: const [
-          BrandStatusFilter.active,
-          BrandStatusFilter.inactive,
-        ],
+        options: const [BrandStatusFilter.active, BrandStatusFilter.inactive],
         labelKey: BrandsKeys.status,
         optionLabel: (value) => statusLabel(value).tr(context: context),
         value: query.status == BrandStatusFilter.all ? null : query.status,
         allOptionLabel: BrandsKeys.allStatuses,
         mode: SearchableDropdownMode.panel,
-        onChanged: (value) =>
-            onStatusChanged(value ?? BrandStatusFilter.all),
+        onChanged: (value) => onStatusChanged(value ?? BrandStatusFilter.all),
       ),
     ],
   );
