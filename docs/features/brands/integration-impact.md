@@ -48,7 +48,7 @@ DATA_MODEL/API source: docs/backend/DATA_MODEL.md snapshot 2026-11-15; docs/back
 - No SQL, migration, or Supabase write is performed by this task.
 
 ## 10. Tests, docs, migration risks
-- Test independent list/stats state and partial failure.
+- Test independent list/stats state and partial failure. SearchableDropdown panel label synchronization now uses a build-derived label and keyed trigger controller; autocomplete option refresh remains separate.
 - Test product counts obey RLS and are not derived from page data; live verification remains NOT_VERIFIED.
 - Preserve feature-import architecture tests; no direct cross-feature import.
 - Backend changes are owned by backend maintainer and must update DATA_MODEL.
