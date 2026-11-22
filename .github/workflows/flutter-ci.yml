@@ -36,6 +36,18 @@ jobs:
         timeout-minutes: 5
         run: dart format --set-exit-if-changed .
 
+
+      - name: Upload formatted source snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatted-source-snapshot
+          path: |
+            lib/app/core/presentation/widgets/app_color_picker/app_color_picker.dart
+            lib/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart
+            test/architecture/icon_tone_test.dart
+            test/core/presentation/widgets/app_searchable_dropdown_test.dart
+
       - name: Analyze
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         timeout-minutes: 10
