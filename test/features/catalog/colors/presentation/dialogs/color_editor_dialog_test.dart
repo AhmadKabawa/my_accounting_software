@@ -182,8 +182,7 @@ void main() {
     expect(_controller(tester, 3).text, '#1E3A8A');
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Dark navy');
-    await tester.tap(find.text(ColorsKeys.save.en));
-    await tester.pumpAndSettle();
+    await _tapSave(tester);
 
     expect(repository.updated.single.$1, 7);
     expect(repository.updated.single.$2.name, 'Dark navy');
