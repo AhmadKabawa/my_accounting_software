@@ -129,4 +129,3 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
   String _escapeFilterValue(String value) =>
       value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
 }
-
