@@ -61,7 +61,7 @@ class BrandStatsBar extends StatelessWidget {
         color: selected
             ? Theme.of(context).colorScheme.primary
             : Colors.transparent,
-        width: selected ? 2 : 0,
+        width: selected ? AppBorderWidth.thick.of(context) : 0,
       ),
       borderRadius: AppRadius.lg.circular(context),
     ),
@@ -70,17 +70,17 @@ class BrandStatsBar extends StatelessWidget {
         selected ? AppBorderWidth.thick.of(context) : 0,
       ),
       child: AppCard(
-      onTap: () => onFilterSelected(filter),
-      padding: AppSpacing.md,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AppText(label),
-          context.ui.spacing.gap(AppSpacing.xs),
-          AppText.raw(value.toString(), type: AppTextType.amountKpi),
-        ],
-      ),
+        onTap: () => onFilterSelected(filter),
+        padding: AppSpacing.md,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppText(label),
+            context.ui.spacing.gap(AppSpacing.xs),
+            AppText.raw(value.toString(), type: AppTextType.amountKpi),
+          ],
+        ),
       ),
     ),
   );
