@@ -4,7 +4,10 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/message_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -19,7 +22,14 @@ enum MessageType { error, success, warning, info, loading }
 ///   قد يحمل تفاصيل SQL أو أسماء جداول. المسار الآمن هو `Failure.messageKey`
 ///   (مفتاح مترجم من رمز الخطأ) أو [failureBanner]. التفاصيل التقنية تُسجَّل
 ///   في `ExceptionMapper` عبر `Logger`، ولا تُعرض.
-/// - الألوان: `colors.error` للخطأ و`semanticColors` لـ success/warning/info.
+/// - الألوان: خلفية هادئة ونص ملوّن من توكنات الحبات (`AppSaasColors`)، نفس
+///   مصدر `AppBadge`. الخطأ لا يأخذ لون النجاح أبداً، والأيقونة تُعرض فعلاً.
+/// - SnackBar: نص مختصر (3 أسطر)، أيقونة دلالية، زر إغلاق، وإجراء اختياري
+///   ([showMessage] `actionKey` + `onAction`)، بعرض محدود على التابلت والديسكتوب.
+///   الرسالة المكررة (نفس النص والنوع وهي ظاهرة) لا تُعرض مرتين.
+/// - loading: Dialog حاجب مخصص للعمليات التي لا يصح معها التفاعل. حيث يمكن
+///   مؤشر مضمّن (زر `isLoading`، `refreshing` في القوائم، هياكل Skeleton) يُفضَّل
+///   ولا يُستعمل هذا الحاجب (قرار D-12).
 /// - الأخطاء التي على المستخدم قراءتها كاملة (رفض قاعدة، تحقق) تُعرض داخل
 ///   النموذج بـ [failureBanner] لا بـ SnackBar زائل.
 class MessageViewWidgets {
@@ -43,6 +53,8 @@ class MessageViewWidgets {
     String? title,
     MessageType type = MessageType.info,
     bool isDialog = false,
+    AppKey? actionKey,
+    VoidCallback? onAction,
   }) {
     assert(
       messageKey != null || message != null,
@@ -98,11 +110,7 @@ class MessageViewWidgets {
           ),
           title: Row(
             children: [
-              AppIcon(
-                style.icon,
-                size: AppIconSize.lg,
-                color: style.background,
-              ),
+              AppIcon(style.icon, size: AppIconSize.lg, color: style.foreground),
               if (titleKey != null || title != null) ...[
                 dialogContext.ui.spacing.gap(AppSpacing.sm),
                 Expanded(
@@ -126,21 +134,104 @@ class MessageViewWidgets {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
+    _showSnackBar(
+      context,
+      style: style,
+      type: type,
+      messageKey: messageKey,
+      message: message,
+      actionKey: actionKey,
+      onAction: onAction,
+    );
+  }
+
+  /// SnackBars currently queued or visible per messenger, by "type|text": a
+  /// message already on screen is not queued again. Keyed by the messenger so
+  /// state never leaks between apps or tests.
+  static final Expando<Set<String>> _visibleSnacks = Expando('snacks');
+
+  static void _showSnackBar(
+    BuildContext context, {
+    required _MessageStyle style,
+    required MessageType type,
+    required AppKey? messageKey,
+    required String? message,
+    required AppKey? actionKey,
+    required VoidCallback? onAction,
+  }) {
+    final text = messageKey != null
+        ? messageKey.tr(context: context)
+        : (message ?? '');
+    final id = '${type.name}|$text';
+    final messenger = ScaffoldMessenger.of(context);
+    final visible = _visibleSnacks[messenger] ??= <String>{};
+    if (!visible.add(id)) return;
+    final mobile = ScreenEngine.isMobile(context);
+    final shape = RoundedRectangleBorder(
+      borderRadius: AppSurfaceShape.tableBand.circular(context),
+      side: BorderSide(
+        color: style.foreground,
+        width: AppBorderWidth.thin.of(context),
+      ),
+    );
+    final hasAction = actionKey != null && onAction != null;
+
+    final controller = messenger.showSnackBar(
       SnackBar(
-        content: _text(
-          messageKey,
-          message,
-          AppTextType.bodyMedium,
-          color: style.foreground,
+        // The whole bar is one live region: announced when it appears.
+        content: Semantics(
+          liveRegion: true,
+          container: true,
+          child: Row(
+            children: [
+              ExcludeSemantics(
+                child: AppIcon(style.icon, size: AppIconSize.md, color: style.foreground),
+              ),
+              context.ui.spacing.gap(AppSpacing.sm),
+              Expanded(
+                child: AppText.raw(
+                  text,
+                  type: AppTextType.bodyMedium,
+                  color: style.foreground,
+                  maxLines: _snackMaxLines,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (hasAction)
+                AppButton(
+                  actionKey,
+                  variant: AppButtonVariant.text,
+                  size: AppButtonSize.small,
+                  onPressed: () {
+                    messenger.hideCurrentSnackBar();
+                    onAction();
+                  },
+                ),
+              AppIconButton(
+                AppIcons.close,
+                tooltipKey: MessageKeys.close,
+                size: AppButtonSize.small,
+                color: style.foreground,
+                onPressed: messenger.hideCurrentSnackBar,
+              ),
+            ],
+          ),
         ),
         backgroundColor: style.background,
         behavior: SnackBarBehavior.floating,
-        margin: context.ui.padding.all(AppSpacing.md),
-        shape: RoundedRectangleBorder(borderRadius: context.ui.radius.md),
+        // A phone: screen width minus margins. Larger: a limited width.
+        margin: mobile ? context.ui.padding.all(AppSpacing.md) : null,
+        width: mobile
+            ? null
+            : context.ui.size.width(AppComponentSize.snackBarWidth),
+        shape: shape,
+        elevation: 0,
       ),
     );
+    controller.closed.whenComplete(() => visible.remove(id));
   }
+
+  static const _snackMaxLines = 3;
 
   /// يُخفي أعلى رسالة Dialog/Loading مفتوحة فقط.
   ///
@@ -206,7 +297,8 @@ class MessageViewWidgets {
       : AppText.raw(raw ?? '', type: type, color: color);
 }
 
-/// ألوان وأيقونة كل نوع رسالة (غير loading).
+/// ألوان وأيقونة كل نوع رسالة (غير loading). [background] هادئة و[foreground]
+/// للنص والأيقونة والحد؛ كلاهما من توكنات الحبات (فاتح وداكن).
 class _MessageStyle {
   const _MessageStyle(this.background, this.foreground, this.icon);
 
@@ -215,29 +307,16 @@ class _MessageStyle {
   final AppIconData icon;
 
   factory _MessageStyle.of(BuildContext context, MessageType type) {
-    final colors = context.ui.theme.colors;
-    final semantic = context.ui.theme.semanticColors;
-    return switch (type) {
-      MessageType.error => _MessageStyle(
-        colors.error,
-        colors.onError,
-        AppIcons.error,
-      ),
-      MessageType.success => _MessageStyle(
-        semantic.success,
-        semantic.onSuccess,
-        AppIcons.success,
-      ),
-      MessageType.warning => _MessageStyle(
-        semantic.warning,
-        semantic.onWarning,
-        AppIcons.warning,
-      ),
-      MessageType.info || MessageType.loading => _MessageStyle(
-        semantic.info,
-        semantic.onInfo,
+    final (tone, icon) = switch (type) {
+      MessageType.error => (AppBadgeTone.error, AppIcons.error),
+      MessageType.success => (AppBadgeTone.success, AppIcons.success),
+      MessageType.warning => (AppBadgeTone.warning, AppIcons.warning),
+      MessageType.info || MessageType.loading => (
+        AppBadgeTone.info,
         AppIcons.info,
       ),
     };
+    final (foreground, background) = AppBadgeStyle.toneColors(context, tone);
+    return _MessageStyle(background, foreground, icon);
   }
 }

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
-import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/app_semantic_colors.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/app_saas_colors.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 
@@ -27,60 +30,174 @@ Future<void> _pump(
 void main() {
   setUp(() => useTranslations(const Locale('ar')));
 
-  testWidgets('a SnackBar uses the semantic color of its type', (tester) async {
-    await _pump(
-      tester,
-      (context) => MessageViewWidgets.showMessage(
-        context,
-        message: 'saved',
-        type: MessageType.success,
+  Future<SnackBar> showSnack(
+    WidgetTester tester,
+    MessageType type, {
+    String text = 'msg',
+    AppKey? actionKey,
+    VoidCallback? onAction,
+    ThemeData? theme,
+    Size size = const Size(1200, 800),
+  }) async {
+    setScreenSize(tester, size);
+    await tester.pumpWidget(
+      buildTestApp(
+        theme: theme ?? AppTheme.light(),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => MessageViewWidgets.showMessage(
+                context,
+                message: text,
+                type: type,
+                actionKey: actionKey,
+                onAction: onAction,
+              ),
+              child: const Text('go'),
+            ),
+          ),
+        ),
       ),
     );
     await tester.tap(find.text('go'));
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    return tester.widget<SnackBar>(find.byType(SnackBar));
+  }
 
-    final bar = tester.widget<SnackBar>(find.byType(SnackBar));
-    expect(find.text('saved'), findsOneWidget);
-    expect(bar.backgroundColor, AppSemanticColors.light.success);
-  });
-
-  testWidgets('error uses ColorScheme.error, warning the semantic warning', (
-    tester,
-  ) async {
-    await _pump(
+  group('SnackBar', () {
+    testWidgets('quiet pill background per type, never another type\'s', (
       tester,
-      (context) => MessageViewWidgets.showMessage(
-        context,
-        message: 'bad',
-        type: MessageType.error,
-      ),
-    );
-    await tester.tap(find.text('go'));
-    await tester.pump();
-    expect(
-      tester.widget<SnackBar>(find.byType(SnackBar)).backgroundColor,
-      AppTheme.light().colorScheme.error,
-    );
+    ) async {
+      const light = AppSaasColors.light;
+      final expected = {
+        MessageType.success: light.pillSuccess.container,
+        MessageType.error: light.pillError.container,
+        MessageType.warning: light.pillWarning.container,
+        MessageType.info: light.pillInfo.container,
+      };
+      for (final entry in expected.entries) {
+        final bar = await showSnack(tester, entry.key, text: entry.key.name);
+        expect(bar.backgroundColor, entry.value, reason: entry.key.name);
+        tester
+            .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+            .clearSnackBars();
+        await tester.pumpAndSettle();
+      }
+      expect(
+        expected[MessageType.error],
+        isNot(expected[MessageType.success]),
+      );
+    });
 
-    tester
-        .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
-        .clearSnackBars();
-    await tester.pumpAndSettle();
+    testWidgets('the semantic icon is actually drawn', (tester) async {
+      await showSnack(tester, MessageType.error);
+      expect(
+        find.descendant(
+          of: find.byType(SnackBar),
+          matching: find.byType(AppIcon),
+        ),
+        findsWidgets,
+      );
+      expect(find.byIcon(Icons.error_outline), findsOneWidget);
+    });
 
-    await _pump(
+    testWidgets('has a close button that dismisses it', (tester) async {
+      await showSnack(tester, MessageType.info);
+      await tester.tap(find.byTooltip('إغلاق'));
+      await tester.pumpAndSettle();
+      expect(find.byType(SnackBar), findsNothing);
+    });
+
+    testWidgets('optional action fires and closes', (tester) async {
+      var undone = 0;
+      await showSnack(
+        tester,
+        MessageType.success,
+        actionKey: CommonKeys.retry,
+        onAction: () => undone++,
+      );
+      await tester.tap(find.text('إعادة المحاولة'));
+      await tester.pumpAndSettle();
+      expect(undone, 1);
+      expect(find.byType(SnackBar), findsNothing);
+    });
+
+    testWidgets('limited width on desktop, full width on a phone', (
       tester,
-      (context) => MessageViewWidgets.showMessage(
-        context,
-        message: 'careful',
-        type: MessageType.warning,
-      ),
-    );
-    await tester.tap(find.text('go'));
-    await tester.pump();
-    expect(
-      tester.widget<SnackBar>(find.byType(SnackBar).last).backgroundColor,
-      AppSemanticColors.light.warning,
-    );
+    ) async {
+      final wide = await showSnack(tester, MessageType.info);
+      expect(wide.width, isNotNull);
+      expect(wide.margin, isNull);
+      tester
+          .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+          .clearSnackBars();
+      await tester.pumpAndSettle();
+      final phone = await showSnack(
+        tester,
+        MessageType.info,
+        size: const Size(360, 800),
+      );
+      expect(phone.width, isNull);
+      expect(phone.margin, isNotNull);
+    });
+
+    testWidgets('the same message is not shown twice while visible', (
+      tester,
+    ) async {
+      setScreenSize(tester, const Size(1200, 800));
+      late BuildContext ctx;
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                ctx = context;
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      );
+      for (var i = 0; i < 3; i++) {
+        MessageViewWidgets.showMessage(
+          ctx,
+          message: 'same',
+          type: MessageType.error,
+        );
+      }
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('same'), findsOneWidget);
+      tester
+          .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+          .clearSnackBars();
+      await tester.pumpAndSettle();
+      expect(find.text('same'), findsNothing);
+    });
+
+    testWidgets('renders in dark theme and RTL without errors', (
+      tester,
+    ) async {
+      for (final type in [
+        MessageType.error,
+        MessageType.success,
+        MessageType.warning,
+        MessageType.info,
+      ]) {
+        await showSnack(tester, type, theme: AppTheme.dark(), text: type.name);
+        expect(tester.takeException(), isNull);
+        tester
+            .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+            .clearSnackBars();
+        await tester.pumpAndSettle();
+      }
+    });
+
+    testWidgets('long text is capped, not stretched', (tester) async {
+      await showSnack(tester, MessageType.warning, text: 'long ' * 200);
+      expect(tester.takeException(), isNull);
+    });
   });
 
   testWidgets('a dialog shows the message with an AppButton to close it', (

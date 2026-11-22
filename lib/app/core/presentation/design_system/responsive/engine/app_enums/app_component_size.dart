@@ -89,6 +89,11 @@ class AppComponentSize extends ResponsiveToken {
   /// Mobile: 160px | Tablet: 200px | Desktop: 220px
   static const tableColumnPrimaryMin = AppComponentSize(160, 200, 220);
 
+  /// Fixed width of a floating SnackBar on tablet/desktop (a phone uses the
+  /// screen width minus margins). Limited, never stretched across the window.
+  /// Mobile: 360px | Tablet: 400px | Desktop: 440px
+  static const snackBarWidth = AppComponentSize(360, 400, 440);
+
   /// Grid tile (data grid view) maximum width and fixed height.
   /// Width mobile: 160px | Tablet: 200px | Desktop: 220px
   static const gridTileWidth = AppComponentSize(160, 200, 220);
