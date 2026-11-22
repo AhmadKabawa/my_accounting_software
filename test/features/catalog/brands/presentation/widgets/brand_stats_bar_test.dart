@@ -50,10 +50,24 @@ void main() {
       ),
     );
 
-    final cards = tester.widgetList<DecoratedBox>(find.byType(DecoratedBox));
-    final borderWidths = cards
-        .map((card) => (card.decoration as BoxDecoration).border!.top.width)
+    final cards = tester
+        .widgetList<AppCard>(find.byType(AppCard))
+        .map((card) => card.selected)
         .toList();
-    expect(borderWidths, [0, 2, 0]);
+    expect(cards, [false, true, false]);
+  });
+
+  testWidgets('shows placeholders while the stats are not loaded', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: BrandStatsBar(null, onFilterSelected: (_) {}),
+        ),
+      ),
+    );
+    expect(find.byType(AppCard), findsNWidgets(3));
+    expect(tester.takeException(), isNull);
   });
 }

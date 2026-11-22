@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
+import '../../../../../helpers/memory_storage.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/domain/access_repository.dart';
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
@@ -49,6 +51,9 @@ void main() {
         ) async {
           final repository = FakeBrandsRepository();
           sl.registerFactory<FlashMessages>(FlashMessages.new);
+  sl.registerSingleton<AppSettingsManager>(
+    AppSettingsManager(storage: MemoryStorage()),
+  );
           sl.registerFactory<BrandStatsCubit>(
             () => BrandStatsCubit(
               getBrandStats: GetBrandStatsUseCase(repository),
@@ -113,6 +118,9 @@ void main() {
         setBrandActive: SetBrandActiveUseCase(repository),
         deleteBrand: DeleteBrandUseCase(repository),
         flashMessages: FlashMessages(),
+      );
+      sl.registerSingleton<AppSettingsManager>(
+        AppSettingsManager(storage: MemoryStorage()),
       );
       sl.registerFactory<BrandStatsCubit>(() => statsCubit);
       sl.registerFactory<BrandsListCubit>(() => listCubit);

@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -13,6 +14,7 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_card.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_grid_tile.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_logo.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_status_badge.dart';
 
@@ -34,6 +36,7 @@ class BrandsTableSection extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onToggleStatus,
+    this.mode,
   });
 
   final VoidCallback onRetry;
@@ -50,12 +53,15 @@ class BrandsTableSection extends StatelessWidget {
   final ValueChanged<Brand> onDelete;
   final ValueChanged<Brand> onToggleStatus;
 
+  /// The user's chosen view; null = the screen's responsive default.
+  final AppViewMode? mode;
+
   @override
   Widget build(BuildContext context) => AppDataView<Brand>(
     columns: [
       DataTableColumn(
         labelKey: BrandsKeys.brandName,
-        sortKey: 'name',
+        sortKey: query.sortField.name,
         priority: DataTableColumnPriority.primary,
         flex: 3,
         cellBuilder: (_, b) => BrandIdentity(b),
@@ -81,10 +87,12 @@ class BrandsTableSection extends StatelessWidget {
       ),
       DataTableColumn(
         labelKey: BrandsKeys.status,
+        sortKey: 'status',
         priority: DataTableColumnPriority.secondary,
         cellBuilder: (_, b) => BrandStatusBadge(b),
       ),
     ],
+    mode: mode,
     rows: rows,
     rowId: (b) => b.id,
     loading: loading,
@@ -112,6 +120,7 @@ class BrandsTableSection extends StatelessWidget {
           : null,
     ),
     cardBuilder: (_, b) => BrandCard(b),
+    gridItemBuilder: (_, b) => BrandGridTile(b),
     rowActionsBuilder: (c, b) => PermissionGate(
       permission: Permissions.masterData.manage,
       child: AppRowActions(

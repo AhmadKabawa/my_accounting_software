@@ -82,6 +82,8 @@ enum BrandsKeys implements AppKey {
   saved(ar: 'تم حفظ الماركة.', en: 'Brand saved.'),
   statusUpdated(ar: 'تم تحديث حالة الماركة.', en: 'Brand status updated.'),
   deleted(ar: 'تم حذف الماركة.', en: 'Brand deleted.'),
+  sortByName(ar: 'الاسم', en: 'Name'),
+  sortByStatus(ar: 'الحالة', en: 'Status'),
   totalBrands(ar: 'إجمالي الماركات', en: 'Total brands'),
   activeBrands(ar: 'الماركات النشطة', en: 'Active brands'),
   inactiveBrands(ar: 'الماركات الموقوفة', en: 'Inactive brands'),

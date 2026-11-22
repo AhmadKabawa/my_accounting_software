@@ -31,7 +31,10 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
       parser: PaginatedParserPresets.supabase,
       queryParameters: {
         'select': BrandsEndpoint.selectWithProductCount,
-        'order': 'name.${query.sortAscending ? 'asc' : 'desc'}',
+        'order':
+            '${query.sortField.column}.${query.sortAscending ? 'asc' : 'desc'}'
+            // Equal values keep a stable order across pages.
+            ',name.asc',
         if (searchTerm.isNotEmpty)
           'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
         if (query.status == BrandStatusFilter.active) 'is_active': 'eq.true',

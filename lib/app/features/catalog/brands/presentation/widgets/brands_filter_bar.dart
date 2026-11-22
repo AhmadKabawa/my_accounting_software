@@ -15,12 +15,20 @@ class BrandsFilterBar extends StatelessWidget {
     required this.onSearchChanged,
     required this.onStatusChanged,
     required this.onClearAll,
+    required this.onSort,
+    this.leading,
+    this.trailing,
+    this.resultCount,
   });
 
   final BrandListQuery query;
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<BrandStatusFilter> onStatusChanged;
   final VoidCallback onClearAll;
+  final void Function(BrandSortField field, bool ascending) onSort;
+  final Widget? leading;
+  final Widget? trailing;
+  final int? resultCount;
 
   static AppKey statusLabel(BrandStatusFilter value) => switch (value) {
     BrandStatusFilter.all => BrandsKeys.allStatuses,
@@ -34,6 +42,19 @@ class BrandsFilterBar extends StatelessWidget {
     debounce: Duration.zero,
     onSearchChanged: onSearchChanged,
     onClearAll: onClearAll,
+    leading: leading,
+    trailing: trailing,
+    resultCount: resultCount,
+    sortOptions: const [
+      FilterBarSortOption(key: 'name', label: BrandsKeys.sortByName),
+      FilterBarSortOption(key: 'status', label: BrandsKeys.sortByStatus),
+    ],
+    sortKey: query.sortField.name,
+    sortAscending: query.sortAscending,
+    onSort: (key, ascending) {
+      final field = BrandSortField.tryParse(key);
+      if (field != null) onSort(field, ascending);
+    },
     activeFilters: [
       if (query.search.isNotEmpty)
         FilterBarFilter(

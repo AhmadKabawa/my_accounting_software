@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_stat_card/app_stat_card.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
@@ -16,7 +17,7 @@ class BrandStatsBar extends StatelessWidget {
     this.selectedFilter = BrandStatusFilter.all,
   });
 
-  final BrandStats stats;
+  final BrandStats? stats;
   final ValueChanged<BrandStatusFilter> onFilterSelected;
   final BrandStatusFilter selectedFilter;
 
@@ -25,61 +26,28 @@ class BrandStatsBar extends StatelessWidget {
     spacing: context.ui.spacing.sm,
     runSpacing: context.ui.spacing.sm,
     children: [
-      _card(
-        context,
-        BrandsKeys.totalBrands,
-        stats.total,
-        BrandStatusFilter.all,
-        selectedFilter == BrandStatusFilter.all,
-      ),
-      _card(
-        context,
-        BrandsKeys.activeBrands,
-        stats.active,
-        BrandStatusFilter.active,
-        selectedFilter == BrandStatusFilter.active,
-      ),
-      _card(
-        context,
-        BrandsKeys.inactiveBrands,
-        stats.inactive,
-        BrandStatusFilter.inactive,
-        selectedFilter == BrandStatusFilter.inactive,
-      ),
+      _card(BrandsKeys.totalBrands, stats?.total, BrandStatusFilter.all,
+          AppIcons.brands, AppBadgeTone.info),
+      _card(BrandsKeys.activeBrands, stats?.active, BrandStatusFilter.active,
+          AppIcons.restore, AppBadgeTone.success),
+      _card(BrandsKeys.inactiveBrands, stats?.inactive,
+          BrandStatusFilter.inactive, AppIcons.block, AppBadgeTone.neutral),
     ],
   );
 
   Widget _card(
-    BuildContext context,
     AppKey label,
-    int value,
+    int? value,
     BrandStatusFilter filter,
-    bool selected,
-  ) => DecoratedBox(
-    decoration: BoxDecoration(
-      border: Border.all(
-        color: selected
-            ? Theme.of(context).colorScheme.primary
-            : Colors.transparent,
-        width: selected ? AppBorderWidth.thick.of(context) : 0,
-      ),
-      borderRadius: AppRadius.lg.circular(context),
-    ),
-    child: Padding(
-      padding: EdgeInsets.all(selected ? AppBorderWidth.thick.of(context) : 0),
-      child: AppCard(
-        onTap: () => onFilterSelected(filter),
-        padding: AppSpacing.md,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppText(label),
-            context.ui.spacing.gap(AppSpacing.xs),
-            AppText.raw(value.toString(), type: AppTextType.amountKpi),
-          ],
-        ),
-      ),
-    ),
+    AppIconData icon,
+    AppBadgeTone tone,
+  ) => AppStatCard(
+    titleKey: label,
+    value: value?.toString(),
+    icon: icon,
+    tone: tone,
+    loading: stats == null,
+    selected: selectedFilter == filter,
+    onTap: () => onFilterSelected(filter),
   );
 }

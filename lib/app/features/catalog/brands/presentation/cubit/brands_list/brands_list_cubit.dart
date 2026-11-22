@@ -85,9 +85,15 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     return load();
   }
 
-  Future<void> setSort({required bool ascending}) {
-    if (state.query.sortAscending == ascending) return Future.value();
-    _updateQuery(state.query.copyWith(sortAscending: ascending, page: 1));
+  Future<void> setSort({BrandSortField? field, required bool ascending}) {
+    final next = field ?? state.query.sortField;
+    if (state.query.sortAscending == ascending &&
+        state.query.sortField == next) {
+      return Future.value();
+    }
+    _updateQuery(
+      state.query.copyWith(sortField: next, sortAscending: ascending, page: 1),
+    );
     return load();
   }
 

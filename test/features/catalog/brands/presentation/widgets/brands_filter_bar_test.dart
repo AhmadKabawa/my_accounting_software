@@ -26,6 +26,7 @@ void main() {
               onSearchChanged: (value) => setState(() => search = value),
               onStatusChanged: (value) => setState(() => status = value),
               onClearAll: () {},
+              onSort: (_, _) {},
             ),
           ),
         ),
@@ -88,6 +89,7 @@ void main() {
             onStatusChanged: (value) =>
                 statusCleared = value == BrandStatusFilter.all,
             onClearAll: () {},
+              onSort: (_, _) {},
           ),
         ),
       ),
