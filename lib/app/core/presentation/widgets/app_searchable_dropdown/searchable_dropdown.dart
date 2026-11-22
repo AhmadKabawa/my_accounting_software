@@ -504,7 +504,7 @@ class _SearchableDropdownState<T extends Object>
         if (widget.allOptionLabel != null)
           _optionTile(
             context,
-            widget.allOptionLabel.tr(context: context),
+            widget.allOptionLabel!.tr(context: context),
             () {
               widget.onChanged(null);
               // The nullable selection is terminal just like a normal choice:
