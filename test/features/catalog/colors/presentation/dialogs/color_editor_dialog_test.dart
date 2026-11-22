@@ -167,8 +167,7 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(1), 'SOFT-BLUE');
     await tester.enterText(find.byType(TextFormField).at(3), '#aabbcc80');
     await tester.enterText(find.byType(TextFormField).at(2), '0');
-    await tester.tap(find.text(ColorsKeys.save.en));
-    await tester.pumpAndSettle();
+    await _tapSave(tester);
 
     expect(repository.created.single.hexCode, '#AABBCC80');
   });
