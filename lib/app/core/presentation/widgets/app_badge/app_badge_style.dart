@@ -35,16 +35,36 @@ class AppBadgeStyle {
 
   final BuildContext context;
 
+  /// The quiet foreground/background pair of [tone], from the `AppSaasColors`
+  /// pill tokens (Light and Dark). Single source for badges and stat cards.
+  /// Neutral stays the outlined chip look (surface + outline).
+  static (Color foreground, Color background) toneColors(
+    BuildContext context,
+    AppBadgeTone tone,
+  ) {
+    final scheme = Theme.of(context).colorScheme;
+    final pills = context.ui.theme.saasColors;
+    return switch (tone) {
+      AppBadgeTone.neutral => (scheme.onSurface, scheme.surfaceContainerLow),
+      AppBadgeTone.success => (
+        pills.pillSuccess.foreground,
+        pills.pillSuccess.container,
+      ),
+      AppBadgeTone.warning => (
+        pills.pillWarning.foreground,
+        pills.pillWarning.container,
+      ),
+      AppBadgeTone.info => (pills.pillInfo.foreground, pills.pillInfo.container),
+      AppBadgeTone.error => (
+        pills.pillError.foreground,
+        pills.pillError.container,
+      ),
+    };
+  }
+
   BadgeVisual resolve(AppBadgeTone tone, AppBadgeSize size) {
     final scheme = Theme.of(context).colorScheme;
-    final semantic = context.ui.theme.semanticColors;
-    final (foreground, background) = switch (tone) {
-      AppBadgeTone.neutral => (scheme.onSurface, scheme.surfaceContainerLow),
-      AppBadgeTone.success => (semantic.success, semantic.successContainer),
-      AppBadgeTone.warning => (semantic.warning, semantic.warningContainer),
-      AppBadgeTone.info => (semantic.info, semantic.infoContainer),
-      AppBadgeTone.error => (scheme.error, scheme.errorContainer),
-    };
+    final (foreground, background) = toneColors(context, tone);
     final compact = AppDensityScope.of(context) == AppDensity.compact;
     final small = size == AppBadgeSize.small;
     final horizontal = small ? AppSpacing.sm : AppSpacing.md;
@@ -60,7 +80,7 @@ class AppBadgeStyle {
         horizontal: context.ui.spacing.value(horizontal),
         vertical: vertical,
       ),
-      radius: context.ui.radius.full,
+      radius: AppSurfaceShape.pill.circular(context),
       iconSize: context.ui.icon.size(small ? AppIconSize.sm : AppIconSize.md),
       iconGap: context.ui.spacing.value(AppSpacing.xs),
       textType: small ? AppTextType.labelSmall : AppTextType.labelMedium,

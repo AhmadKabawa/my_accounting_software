@@ -28,8 +28,10 @@ class AppRowAction {
 
 /// Row/card actions as icon buttons (never text buttons).
 ///
-/// [primary] actions are shown inline as icon buttons with tooltips (keep it
-/// to 2); [overflow] actions go to a "more" menu with icon + label.
+/// At most [maxVisible] actions are shown inline as icon buttons with
+/// tooltips: the first [maxVisible] of [primary]. Any further [primary]
+/// actions join [overflow] in the "more" menu (icon + label), so a row never
+/// shows more than two icons plus the menu.
 class AppRowActions extends StatelessWidget {
   const AppRowActions({
     super.key,
@@ -37,11 +39,19 @@ class AppRowActions extends StatelessWidget {
     this.overflow = const [],
   });
 
+  static const maxVisible = 2;
+
   final List<AppRowAction> primary;
   final List<AppRowAction> overflow;
 
   @override
-  Widget build(BuildContext context) => Row(
+  Widget build(BuildContext context) {
+    final inline = primary.take(maxVisible).toList();
+    final menu = [...primary.skip(maxVisible), ...overflow];
+    return _row(inline, menu);
+  }
+
+  Widget _row(List<AppRowAction> primary, List<AppRowAction> overflow) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
       for (final action in primary)
