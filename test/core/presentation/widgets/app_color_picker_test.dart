@@ -6,6 +6,31 @@ import '../../../helpers/localized_app.dart';
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
+  testWidgets('color selection area uses its actual square hit bounds', (
+    t,
+  ) async {
+    String? result;
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: AppColorPicker(
+            value: '#228B22',
+            onChanged: (value) => result = value,
+          ),
+        ),
+      ),
+    );
+
+    final area = find.byType(GestureDetector).first;
+    expect(t.getSize(area).width, 220);
+    expect(t.getSize(area).height, 220);
+
+    await t.tapAt(t.getTopLeft(area) + const Offset(200, 20));
+    await t.pump();
+
+    expect(result, isNot('#228B22'));
+  });
+
   testWidgets('null value state', (t) async {
     await t.pumpWidget(
       buildTestApp(
