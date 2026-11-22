@@ -32,9 +32,6 @@ jobs:
         timeout-minutes: 5
         run: flutter pub get
 
-      - name: Temporary formatter diagnostic
-        run: dart format --output=show test/features/catalog/brands/presentation/sections/brands_table_section_test.dart
-
       - name: Check formatting
         timeout-minutes: 5
         run: dart format --set-exit-if-changed .
