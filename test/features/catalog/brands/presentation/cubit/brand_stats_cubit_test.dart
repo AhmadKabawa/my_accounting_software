@@ -130,13 +130,13 @@ void main() {
         deleteBrand: DeleteBrandUseCase(repository),
         flashMessages: FlashMessages(),
       );
-  
+
       await Future.wait([statsCubit.load(), listCubit.load()]);
-  
+
       expect(statsCubit.state, isA<BrandStatsFailed>());
       expect(listCubit.state.status, BrandsListStatus.ready);
       expect(listCubit.state.hasData, isTrue);
-  
+
       await statsCubit.close();
       await listCubit.close();
     },
