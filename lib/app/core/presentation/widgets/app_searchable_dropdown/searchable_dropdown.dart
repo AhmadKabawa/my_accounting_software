@@ -365,7 +365,7 @@ class _SearchableDropdownState<T extends Object>
 
   String _panelDisplayLabel(BuildContext context) {
     if (widget.value != null) return widget.optionLabel(widget.value as T);
-    return widget.allOptionLabel?.tr(context: context) ?? '';
+    return (widget.allOptionLabel ?? CatalogUiKeys.allOptions).tr(context: context);
   }
 
   Widget _panelTrigger(BuildContext context, SearchableDropdownStyle style) {
@@ -414,7 +414,7 @@ class _SearchableDropdownState<T extends Object>
                 optionLabel: widget.optionLabel,
                 optionSubtitle: widget.optionSubtitle,
                 emptyKey: widget.emptyKey,
-                allOptionLabel: widget.allOptionLabel,
+                allOptionLabel: widget.allOptionLabel ?? CatalogUiKeys.allOptions,
                 selectedValue: widget.value,
                 filterLocally: widget.filterLocally,
                 onQueryChanged: widget.onQueryChanged == null ? null : _query,
@@ -503,7 +503,7 @@ class _SearchableDropdownState<T extends Object>
         if (widget.allOptionLabel != null)
           _optionTile(
             context,
-            widget.allOptionLabel!.tr(context: context),
+            widget.allOptionLabel.tr(context: context),
             () {
               widget.onChanged(null);
               // The nullable selection is terminal just like a normal choice:
@@ -771,7 +771,7 @@ class _PanelSearchPicker<T extends Object> extends StatefulWidget {
     required this.onSelect,
     required this.selectedValue,
     this.optionSubtitle,
-    this.allOptionLabel,
+    required this.allOptionLabel,
     this.onQueryChanged,
     this.onAddNew,
   });
@@ -781,7 +781,7 @@ class _PanelSearchPicker<T extends Object> extends StatefulWidget {
   final String Function(T) optionLabel;
   final String? Function(T)? optionSubtitle;
   final AppKey emptyKey;
-  final AppKey? allOptionLabel;
+  final AppKey allOptionLabel;
   final T? selectedValue;
   final bool filterLocally;
   final ValueChanged<String>? onQueryChanged;
@@ -808,7 +808,7 @@ class _PanelSearchPickerState<T extends Object>
 
   KeyEventResult _handleKey(FocusNode node, KeyEvent event, List<T> options) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
-    final count = options.length + (widget.allOptionLabel == null ? 0 : 1);
+    final count = options.length + 1;
     if (event.logicalKey == LogicalKeyboardKey.escape) {
       Navigator.of(context).maybePop();
       return KeyEventResult.handled;
@@ -822,7 +822,7 @@ class _PanelSearchPickerState<T extends Object>
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.enter && count > 0) {
-      final allCount = widget.allOptionLabel == null ? 0 : 1;
+      const allCount = 1;
       if (allCount == 1 && _activeIndex == 0) {
         widget.onSelect(null, true);
       } else {
@@ -899,8 +899,7 @@ class _PanelSearchPickerState<T extends Object>
                         ? const AppSkeleton.block()
                         : ListView(
                             children: [
-                              if (widget.allOptionLabel != null)
-                                _tile(
+                              _tile(
                                   context,
                                   widget.allOptionLabel!.tr(context: context),
                                   selected: widget.selectedValue == null,
