@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
@@ -75,6 +74,11 @@ class BrandsScreen extends StatelessWidget {
                           : null;
                       final loading = state.isInitialLoading;
                       final refreshing = state.isRefreshing;
+                      final addAction = ListAddAction(
+                        labelKey: BrandsKeys.add,
+                        permission: Permissions.masterData.manage,
+                        onPressed: () => _edit(context),
+                      );
 
                       return ListPageTemplate(
                         titleKey: BrandsKeys.title,
@@ -132,14 +136,7 @@ class BrandsScreen extends StatelessWidget {
                           onRefresh: cubit.refresh,
                           refreshing: state.isRefreshing,
                         ),
-                        primaryAction: PermissionGate(
-                          permission: Permissions.masterData.manage,
-                          child: AppButton(
-                            BrandsKeys.add,
-                            icon: AppIcons.add,
-                            onPressed: () => _edit(context),
-                          ),
-                        ),
+                        addAction: addAction,
                         loadingViewMode: mode ?? AppViewMode.table,
                         state: loading
                             ? AppPageState.loading
@@ -163,7 +160,7 @@ class BrandsScreen extends StatelessWidget {
                           loading: loading,
                           refreshing: refreshing,
                           failure: failure,
-                          onAdd: () => _edit(context),
+                          addAction: addAction,
                           onEdit: (brand) => _edit(context, brand),
                           onDelete: (brand) => _delete(context, brand),
                           onToggleStatus: (brand) => _status(context, brand),
