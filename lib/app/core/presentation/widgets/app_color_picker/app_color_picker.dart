@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/foundation/validation/hex_color.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_swatch/app_color_swatch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -30,14 +29,14 @@ class _AppColorPickerState extends State<AppColorPicker>{
  void _sync(String? input){final h=HexColor.normalize(input);_manual=false;if(h==null||!HexColor.isValid(h)){_alpha=null;_controller.text='';return;} _alpha=h.length==_alphaLength?h.substring(_rgbLength):null;final hsv=HSVColor.fromColor(Color(HexColor.toArgb(h)!));_hue=hsv.hue;_sat=hsv.saturation;_val=hsv.value;_controller.text=h.substring(0,_rgbLength);}
  String _output()=>_manual?_hex(_color):_alpha==null?_hex(_color):'${_hex(_color)}$_alpha';
  void _emit(){widget.onChanged(_output());_controller.text=_hex(_color);}
- void _manualHex(String text){final h=HexColor.normalize(text);if(h==null||!HexColor.isValid(h))return;_manual=true;_alpha=null;final hsv=HSVColor.fromColor(Color(HexColor.toArgb(h)!));setState((){_hue=hsv.hue;_sat=hsv.saturation;_val=hsv.value;});widget.onChanged(h.substring(0,_rgbLength));}
+ void _manualHex(String text){final h=HexColor.normalize(text.startsWith('#')?text:'#$text');if(h==null||!HexColor.isValid(h))return;_manual=true;_alpha=null;final hsv=HSVColor.fromColor(Color(HexColor.toArgb(h)!));setState((){_hue=hsv.hue;_sat=hsv.saturation;_val=hsv.value;});widget.onChanged(h.substring(0,_rgbLength));}
  void _sv(Offset p){setState((){_sat=(p.dx/_size).clamp(0.0,1.0);_val=(1-p.dy/_size).clamp(0.0,1.0);});_emit();}
  void _setHue(double x){setState(()=>_hue=(x/_size*360).clamp(0.0,360.0));_emit();}
  void _preset(String hex){if(!HexColor.isValid(hex))return;_sync(hex);setState((){});widget.onChanged(HexColor.normalize(hex));}
  @override Widget build(BuildContext context){final ui=context.ui;return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
- Semantics(label:AppColorPickerKeys.sv.tr(context:context),slider:true,child:GestureDetector(onPanDown:(e)=>_sv(e.localPosition),onPanUpdate:(e)=>_sv(e.localPosition),child:SizedBox(height:_size,child:CustomPaint(painter:_SvPainter(_hue,_sat,_val),child:const SizedBox.expand())))),
+ Semantics(label:AppColorPickerKeys.sv.tr(context:context),slider:true,child:GestureDetector(onPanDown:(e)=>_sv(e.localPosition),onPanUpdate:(e)=>_sv(e.localPosition),child:SizedBox(width:_size,height:_size,child:CustomPaint(painter:_SvPainter(_hue,_sat,_val),child:const SizedBox.expand())))),
  ui.spacing.gap(AppSpacing.md),
- Semantics(label:AppColorPickerKeys.hue.tr(context:context),slider:true,child:GestureDetector(onPanDown:(e)=>_setHue(e.localPosition.dx),onPanUpdate:(e)=>_setHue(e.localPosition.dx),child:SizedBox(height:_hueHeight,child:CustomPaint(painter:_HuePainter(_hue),child:const SizedBox.expand())))),
+ Semantics(label:AppColorPickerKeys.hue.tr(context:context),slider:true,child:GestureDetector(onPanDown:(e)=>_setHue(e.localPosition.dx),onPanUpdate:(e)=>_setHue(e.localPosition.dx),child:SizedBox(width:_size,height:_hueHeight,child:CustomPaint(painter:_HuePainter(_hue),child:const SizedBox.expand())))),
  ui.spacing.gap(AppSpacing.md),
  Row(children:[Expanded(child:AppTextField(controller:_controller,labelKey:AppColorPickerKeys.hex,textDirection:TextDirection.ltr,onChanged:_manualHex,inputFormatters:[FilteringTextInputFormatter.allow(RegExp(r'[#0-9a-fA-F]'))])),ui.spacing.gap(AppSpacing.sm),AppColorSwatch(hex:widget.value,size:AppIconSize.lg),AppIconButton(AppIcons.copy,tooltipKey:AppColorPickerKeys.copy,onPressed:widget.value==null?null:()=>Clipboard.setData(ClipboardData(text:widget.value!)))]),
  if(widget.value==null)AppText(AppColorPickerKeys.noColor),
