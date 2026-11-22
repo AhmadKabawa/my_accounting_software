@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failure_keys.dart';
 import 'package:accounting_software/app/localization/key_registry.dart';
 
 void main() {
@@ -11,7 +12,7 @@ void main() {
         .where((key) => key.key.startsWith('colors.'))
         .toList();
 
-    expect(registered, hasLength(ColorsKeys.values.length));
+    expect(registered, hasLength(ColorsKeys.values.length + ColorFailureKeys.values.length));
     expect(
       registered.map((key) => key.key).toSet(),
       hasLength(ColorsKeys.values.length),
