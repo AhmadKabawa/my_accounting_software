@@ -31,7 +31,7 @@ DATA_MODEL/API source: docs/backend/DATA_MODEL.md snapshot 2026-11-15; docs/back
 - No pricing, POS, or report validation changes.
 
 ## 7. Search/filter/sort and aggregation
-- Current search is name/slug; status maps to is_active.
+- Current search is name/slug; status maps to is_active. The matching total/active/inactive statistics card is visually selected for the current status filter.
 - The existing product count remains sourced from products(count), without loading product rows. New product-presence filter (all/with/without) and with/without-products stats use PostgREST count requests with an embedded products relation, but stay hidden while live semantics/RLS are NOT_VERIFIED. B-10 asks for SECURITY INVOKER RPC; B-12 asks for products(brand_id) index; B-13 optionally supplies list View/RPC for count sorting.
 - Never calculate counts from loaded page or download products into Flutter.
 
