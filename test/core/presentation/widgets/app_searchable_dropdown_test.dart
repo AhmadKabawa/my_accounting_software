@@ -9,6 +9,7 @@ import '../../../helpers/localized_app.dart';
 import '../../../helpers/test_key.dart';
 
 const _loadFailed = TestKey('test.dropdown.loadFailed');
+const _allOptions = TestKey('All options');
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
@@ -26,6 +27,7 @@ void main() {
     bool readOnly = false,
     bool clearable = true,
     WidgetBuilder? onAddNew,
+    AppKey? allOptionLabel,
     bool dark = false,
     double textScale = 1,
     TextDirection direction = TextDirection.rtl,
@@ -55,6 +57,7 @@ void main() {
                 readOnly: readOnly,
                 clearable: clearable,
                 onAddNew: onAddNew,
+                allOptionLabel: allOptionLabel,
               ),
             ),
           ),
@@ -98,6 +101,40 @@ void main() {
     expect(find.text('Alpha'), findsOneWidget);
     expect(find.text('Beta'), findsNothing);
     await tester.tap(find.text('Alpha'));
+    await tester.pumpAndSettle();
+    expect(selected, 'Alpha');
+  });
+
+
+  testWidgets('nullable all option emits null and exposes selected semantics', (
+    tester,
+  ) async {
+    final changes = <String?>[];
+    await pumpPicker(
+      tester,
+      value: 'Alpha',
+      allOptionLabel: _allOptions,
+      onChanged: changes.add,
+    );
+    await tester.tap(find.byType(TextField));
+    await tester.pumpAndSettle();
+
+    final allOption = find.text('All options');
+    expect(allOption, findsOneWidget);
+    await tester.tap(allOption);
+    await tester.pumpAndSettle();
+    expect(changes, [null]);
+  });
+
+  testWidgets('keyboard arrows and enter select an autocomplete option', (
+    tester,
+  ) async {
+    String? selected;
+    await pumpPicker(tester, onChanged: (value) => selected = value);
+    await tester.tap(find.byType(TextField));
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(selected, 'Alpha');
   });
