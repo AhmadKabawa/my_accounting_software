@@ -176,7 +176,7 @@ void main() {
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
 
-      expect(find.text('All'), findsOneWidget);
+      expect(find.text('All'), findsNWidgets(2));
       expect(find.text('Alpha'), findsOneWidget);
     });
 
