@@ -389,6 +389,8 @@ class _SearchableDropdownState<T extends Object>
       enabled: widget.enabled,
       readOnly: widget.readOnly,
       style: style,
+      triggerKey: _panelTriggerKey,
+      link: _panelLayerLink,
       onTap: widget.enabled && !widget.readOnly
           ? () => _openPanelPicker(context)
           : null,
@@ -1090,6 +1092,8 @@ class _PanelTrigger extends StatefulWidget {
     required this.enabled,
     required this.readOnly,
     required this.style,
+    required this.triggerKey,
+    required this.link,
     required this.onTap,
   });
 
@@ -1098,6 +1102,8 @@ class _PanelTrigger extends StatefulWidget {
   final bool enabled;
   final bool readOnly;
   final SearchableDropdownStyle style;
+  final GlobalKey triggerKey;
+  final LayerLink link;
   final VoidCallback? onTap;
 
   @override
@@ -1128,6 +1134,8 @@ class _PanelTriggerState extends State<_PanelTrigger> {
     excludeSemantics: true,
     onTap: widget.onTap,
     child: CompositedTransformTarget(
+      key: widget.triggerKey,
+      link: widget.link,
       child: InkWell(
         onTap: widget.onTap,
         borderRadius: widget.style.radius,
