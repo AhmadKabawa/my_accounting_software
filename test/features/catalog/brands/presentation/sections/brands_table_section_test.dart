@@ -61,8 +61,9 @@ class _AccessRepository implements AccessRepository {
 }
 
 Widget _withAccess(Widget child) => BlocProvider<AccessCubit>(
-  create: (_) =>
-      AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))..load(),
+  create: (_) => AccessCubit(
+    getMyAccess: GetMyAccessUseCase(_AccessRepository()),
+  )..load(),
   child: Scaffold(body: child),
 );
 
@@ -76,9 +77,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(
-      buildTestApp(home: _withAccess(_section())),
-    );
+    await tester.pumpWidget(buildTestApp(home: _withAccess(_section())));
 
     expect(find.text(BrandsKeys.productCount.en), findsOneWidget);
     expect(find.text('Products: 2'), findsOneWidget);
