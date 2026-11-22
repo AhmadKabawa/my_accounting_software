@@ -439,7 +439,7 @@ class _SearchableDropdownState<T extends Object>
                   optionLabel: widget.optionLabel,
                   optionSubtitle: widget.optionSubtitle,
                   emptyKey: widget.emptyKey,
-                  allOptionLabel: widget.allOptionLabel,
+                  allOptionLabel: widget.allOptionLabel ?? CatalogUiKeys.allOptions,
                   selectedValue: widget.value,
                   filterLocally: widget.filterLocally,
                   onQueryChanged: widget.onQueryChanged == null ? null : _query,
