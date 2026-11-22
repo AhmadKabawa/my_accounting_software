@@ -7,7 +7,7 @@ void main() {
     expect(ColorNameResolver.resolve('#F57C21'), ColorName.orange);
     expect(
       ColorNameResolver.resolve('#05AD9D'),
-      anyOf(ColorName.teal, ColorName.turquoise),
+      ColorName.turquoise,
     );
     expect(ColorNameResolver.resolve('#000000'), ColorName.black);
     expect(ColorNameResolver.resolve('#FFFFFF'), ColorName.white);
