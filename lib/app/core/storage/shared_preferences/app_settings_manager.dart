@@ -38,6 +38,10 @@ class AppSettingsManager {
     await storage.write<bool>(StorageKeys.sidebarCollapsed, collapsed);
   }
 
+  /// null = the user never chose (the caller picks its default).
+  Future<bool?> getSidebarCollapsedOrNull() =>
+      storage.read<bool>(StorageKeys.sidebarCollapsed);
+
   Future<bool> getSidebarCollapsed() async =>
       await storage.read<bool>(StorageKeys.sidebarCollapsed) ?? false;
 

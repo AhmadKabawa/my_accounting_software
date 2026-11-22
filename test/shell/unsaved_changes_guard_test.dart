@@ -17,7 +17,6 @@ import 'package:accounting_software/app/core/presentation/design_system/theme/ap
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_scope_selector/scope_selector.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_navigation_rail/app_navigation_rail.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/routing/unsaved_changes_guard.dart';
@@ -258,7 +257,7 @@ void main() {
     );
   });
 
-  testWidgets('switching to an inactive rail destination keeps the form', (
+  testWidgets('switching to an inactive sidebar destination keeps the form', (
     tester,
   ) async {
     var discarded = 0;
@@ -268,7 +267,7 @@ void main() {
       dirty: true,
       onDiscard: () => discarded++,
     );
-    expect(find.byType(AppNavigationRail), findsOneWidget);
+    expect(find.byType(AppSidebar), findsOneWidget);
     await tester.tap(find.byIcon(_icons[1]));
     await tester.pumpAndSettle();
     expect(find.byType(Dialog), findsNothing);

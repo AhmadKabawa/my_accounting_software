@@ -100,7 +100,7 @@ class AppComponentSize extends ResponsiveToken {
 
   /// Grid tile height.
   /// Mobile: 176px | Tablet: 192px | Desktop: 208px
-  static const gridTileHeight = AppComponentSize(176, 192, 208);
+  static const gridTileHeight = AppComponentSize(208, 224, 240);
 
   /// Hit area — minimum touch target size (accessibility)
   /// Mobile: 44px | Tablet: 48px | Desktop: 52px

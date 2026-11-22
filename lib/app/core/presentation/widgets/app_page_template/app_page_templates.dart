@@ -334,13 +334,13 @@ class ListPageTemplate extends StatelessWidget {
             titleKey: titleKey,
             count: count,
             primaryAction: primaryAction,
-            breadcrumb: breadcrumb,
+            // The top bar already shows the trail on wider screens; showing it
+            // again here would repeat it.
+            breadcrumb: context.ui.screen.isMobile ? breadcrumb : null,
           ),
           above != null
               ? Padding(
-                  padding: context.ui.padding.symmetric(
-                    vertical: AppSpacing.sm,
-                  ),
+                  padding: context.ui.padding.only(bottom: AppSpacing.md),
                   child: above,
                 )
               : _none,

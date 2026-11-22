@@ -84,15 +84,16 @@ class BrandsScreen extends StatelessWidget {
                         const AppBreadcrumbItem(label: BrandsKeys.title),
                       ],
                     ),
-                    count: total,
                     stats: BrandStatsBar(
                       statsState.stats,
                       onFilterSelected: cubit.setStatus,
                       selectedFilter: query.status,
+                      loading:
+                          statsState is BrandStatsInitial ||
+                          statsState is BrandStatsLoading,
                     ),
                     filterBar: BrandsFilterBar(
                       query: query,
-                      resultCount: total,
                       onSearchChanged: cubit.searchChanged,
                       onStatusChanged: cubit.setStatus,
                       onClearAll: cubit.clearFilters,

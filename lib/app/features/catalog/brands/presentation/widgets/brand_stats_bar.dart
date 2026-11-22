@@ -15,21 +15,25 @@ class BrandStatsBar extends StatelessWidget {
     super.key,
     required this.onFilterSelected,
     this.selectedFilter = BrandStatusFilter.all,
+    this.loading = false,
   });
 
   final BrandStats? stats;
   final ValueChanged<BrandStatusFilter> onFilterSelected;
   final BrandStatusFilter selectedFilter;
 
+  /// Placeholders only while the first load runs; a failure shows "—".
+  final bool loading;
+
   @override
-  Widget build(BuildContext context) => Wrap(
-    spacing: context.ui.spacing.sm,
-    runSpacing: context.ui.spacing.sm,
+  Widget build(BuildContext context) => Row(
     children: [
       _card(BrandsKeys.totalBrands, stats?.total, BrandStatusFilter.all,
           AppIcons.brands, AppBadgeTone.info),
+      context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
       _card(BrandsKeys.activeBrands, stats?.active, BrandStatusFilter.active,
           AppIcons.restore, AppBadgeTone.success),
+      context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
       _card(BrandsKeys.inactiveBrands, stats?.inactive,
           BrandStatusFilter.inactive, AppIcons.block, AppBadgeTone.neutral),
     ],
@@ -41,13 +45,16 @@ class BrandStatsBar extends StatelessWidget {
     BrandStatusFilter filter,
     AppIconData icon,
     AppBadgeTone tone,
-  ) => AppStatCard(
+  ) => Expanded(
+    child: AppStatCard(
+    compact: true,
     titleKey: label,
     value: value?.toString(),
     icon: icon,
     tone: tone,
-    loading: stats == null,
+    loading: loading,
     selected: selectedFilter == filter,
     onTap: () => onFilterSelected(filter),
+  ),
   );
 }

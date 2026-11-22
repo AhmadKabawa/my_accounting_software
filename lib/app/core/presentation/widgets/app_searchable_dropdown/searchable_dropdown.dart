@@ -444,9 +444,9 @@ class _SearchableDropdownState<T extends Object>
     final below = screenHeight - triggerTop - triggerSize.height - gap;
     final above = triggerTop - gap;
     final style = SearchableDropdownStyle(context);
-    final showAbove = below < style.maxOptionsHeight && above > below;
+    final showAbove = below < style.maxPanelHeight && above > below;
     final availableHeight = (showAbove ? above : below)
-        .clamp(0.0, style.maxOptionsHeight)
+        .clamp(0.0, style.maxPanelHeight)
         .toDouble();
     final panelWidth = triggerSize.width;
     final direction = Directionality.of(context);
@@ -943,14 +943,13 @@ class _PanelSearchPickerState<T extends Object>
           onKeyEvent: (node, event) => _handleKey(node, event, options),
           child: SafeArea(
             child: Padding(
-              padding: context.ui.padding.all(AppSpacing.md),
+              padding: context.ui.padding.all(AppSpacing.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppTextField(
                     controller: _controller,
                     focusNode: _searchFocus,
-                    labelKey: widget.labelKey,
                     hintKey: CatalogUiKeys.search,
                     prefixIcon: AppIcons.search,
                     autofocus: true,
@@ -980,7 +979,7 @@ class _PanelSearchPickerState<T extends Object>
                             },
                           ),
                   ),
-                  context.ui.spacing.gap(AppSpacing.md),
+                  context.ui.spacing.gap(AppSpacing.sm),
                   Expanded(
                     child: data.errorKey != null
                         ? InlineBanner(
@@ -990,6 +989,7 @@ class _PanelSearchPickerState<T extends Object>
                         : data.loading
                         ? const AppSkeleton.block()
                         : ListView(
+                            padding: EdgeInsets.zero,
                             children: [
                               _tile(
                                 context,
@@ -1052,7 +1052,10 @@ class _PanelSearchPickerState<T extends Object>
           color: active
               ? context.ui.theme.colors.surfaceContainerHighest
               : null,
-          padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
+          padding: context.ui.padding.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           child: Row(
             children: [
               Expanded(

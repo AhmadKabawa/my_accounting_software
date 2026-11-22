@@ -179,22 +179,18 @@ class _AppSidebarState extends State<AppSidebar> {
       collapsed: widget.collapsed,
       open: children.isEmpty ? null : open,
       onTap: () {
+        // Icon-only: an item with sub-items opens the full sidebar on its
+        // section instead of a popup; a plain item just navigates.
+        if (widget.collapsed && children.isNotEmpty) {
+          _openSection(item);
+          widget.onToggle?.call();
+          return;
+        }
         _openSection(item);
         widget.onIndexChanged(index);
       },
       onToggle: children.isEmpty ? null : () => _toggle(item),
     );
-
-    if (widget.collapsed) {
-      if (children.isEmpty) return row;
-      return _CollapsedSection(
-        item: item,
-        children: children,
-        row: row,
-        onParent: () => widget.onIndexChanged(index),
-        onChild: (path) => widget.onChildSelected?.call(path),
-      );
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -285,6 +281,36 @@ class _SidebarItem extends StatelessWidget {
       color: color,
     );
 
+    if (collapsed) {
+      final side = style.itemMinHeight;
+      return Semantics(
+        label: label,
+        button: true,
+        selected: selected || ancestor,
+        onTap: onTap,
+        child: ExcludeSemantics(
+          child: Center(
+            child: Tooltip(
+              message: label,
+              child: SizedBox(
+                width: side,
+                height: side,
+                child: Material(
+                  color: style.itemBackground(selected: selected),
+                  shape: const CircleBorder(),
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: onTap,
+                    child: Center(child: icon),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Semantics(
       label: label,
       button: true,
@@ -302,12 +328,7 @@ class _SidebarItem extends StatelessWidget {
               constraints: BoxConstraints(minHeight: style.itemMinHeight),
               child: Padding(
                 padding: style.itemPadding,
-                child: collapsed
-                    ? Tooltip(
-                        message: label,
-                        child: Center(child: icon),
-                      )
-                    : Row(
+                child: Row(
                         children: [
                           icon,
                           SizedBox(width: style.iconLabelGap),
@@ -354,57 +375,6 @@ class _SidebarItem extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Icon-only mode for an item with children: the row opens a popup menu with
-/// the destination itself and each child.
-class _CollapsedSection extends StatelessWidget {
-  const _CollapsedSection({
-    required this.item,
-    required this.children,
-    required this.row,
-    required this.onParent,
-    required this.onChild,
-  });
-
-  final NavBarItem item;
-  final List<NavBarChild> children;
-  final Widget row;
-  final VoidCallback onParent;
-  final ValueChanged<String> onChild;
-
-  @override
-  Widget build(BuildContext context) => PopupMenuButton<String?>(
-    tooltip: item.label.tr(context: context),
-    position: PopupMenuPosition.under,
-    onSelected: (path) => path == null ? onParent() : onChild(path),
-    itemBuilder: (context) => [
-      PopupMenuItem<String?>(
-        value: null,
-        child: Row(
-          children: [
-            AppIcon(item.icon),
-            context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-            AppText(item.label),
-          ],
-        ),
-      ),
-      for (final child in children)
-        PopupMenuItem<String?>(
-          value: child.path,
-          child: Row(
-            children: [
-              AppIcon(child.icon),
-              context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-              AppText(child.label),
-            ],
-          ),
-        ),
-    ],
-    // The row is the popup's anchor: IgnorePointer so the popup button, not
-    // the row's own InkWell, receives the tap.
-    child: IgnorePointer(child: row),
-  );
 }
 
 class _SidebarChild extends StatelessWidget {

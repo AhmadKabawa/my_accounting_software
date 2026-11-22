@@ -30,6 +30,7 @@ class AppStatCard extends StatelessWidget {
     this.loading = false,
     this.selected = false,
     this.onTap,
+    this.compact = false,
   });
 
   final AppKey titleKey;
@@ -43,6 +44,10 @@ class AppStatCard extends StatelessWidget {
   final bool selected;
   final VoidCallback? onTap;
 
+  /// A slim tile for dense pages: small padding, title above the value, no
+  /// description. Use it when several tiles sit in one row.
+  final bool compact;
+
   static const _emptyValue = '—';
 
   @override
@@ -53,6 +58,7 @@ class AppStatCard extends StatelessWidget {
     // One merged node: "title value description", tappable when [onTap].
     return MergeSemantics(
       child: AppCard(
+          padding: compact ? AppSpacing.sm : AppSpacing.md,
           selected: selected,
           onTap: loading ? null : onTap,
           child: loading
@@ -66,7 +72,10 @@ class AppStatCard extends StatelessWidget {
                         foreground: foreground,
                         background: background,
                       ),
-                      context.ui.spacing.gap(AppSpacing.md),
+                      context.ui.spacing.gap(
+                        compact ? AppSpacing.sm : AppSpacing.md,
+                        axis: Axis.horizontal,
+                      ),
                     ],
                     Expanded(
                       child: Column(
@@ -77,17 +86,20 @@ class AppStatCard extends StatelessWidget {
                             titleKey,
                             type: AppTextType.labelMedium,
                             color: colors.onSurfaceVariant,
-                            maxLines: 2,
+                            maxLines: compact ? 1 : 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          context.ui.spacing.gap(AppSpacing.xs),
+                          if (!compact) context.ui.spacing.gap(AppSpacing.xs),
                           AppText.raw(
                             shown,
-                            type: AppTextType.amountKpi,
+                            type: compact
+                                ? AppTextType.titleMedium
+                                : AppTextType.amountKpi,
                             color: value == null
                                 ? colors.onSurfaceVariant
                                 : colors.onSurface,
                           ),
-                          if (descriptionKey != null) ...[
+                          if (descriptionKey != null && !compact) ...[
                             context.ui.spacing.gap(AppSpacing.xs),
                             AppText(
                               descriptionKey!,

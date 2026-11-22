@@ -216,7 +216,6 @@ class _FilterBarState extends State<FilterBar> {
       labelKey: CatalogUiKeys.search,
       hintKey: widget.searchHintKey,
       prefixIcon: AppIcons.search,
-      pill: true,
       textInputAction: TextInputAction.search,
       onChanged: widget.onSearchChanged,
       onSubmitted: _submitSearch,

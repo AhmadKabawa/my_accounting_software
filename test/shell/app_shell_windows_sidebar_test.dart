@@ -164,19 +164,20 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tablet rail expands into the labelled sidebar and closes', (
+  testWidgets('tablet sidebar starts icon-only and opens on demand', (
     tester,
   ) async {
     final settings = AppSettingsManager(storage: _MemoryStorage());
     await _pump(tester, settings, size: const Size(800, 900));
-    expect(find.byType(AppSidebar), findsNothing);
-
+    expect(
+      tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed,
+      isTrue,
+    );
     await tester.tap(find.byTooltip(ShellKeys.expandSidebar.en));
     await tester.pumpAndSettle();
-    expect(find.byType(AppSidebar), findsOneWidget);
-
-    await tester.tap(find.byTooltip(ShellKeys.collapseSidebar.en));
-    await tester.pumpAndSettle();
-    expect(find.byType(AppSidebar), findsNothing);
+    expect(
+      tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed,
+      isFalse,
+    );
   });
 }

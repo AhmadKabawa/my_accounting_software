@@ -1,6 +1,7 @@
 // lib/core/network/dio_service.dart
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
@@ -29,7 +30,11 @@ class DioService {
         baseUrl: AppConfig.baseUrl,
         connectTimeout: const Duration(milliseconds: AppConfig.connectTimeout),
         receiveTimeout: const Duration(milliseconds: AppConfig.receiveTimeout),
-        sendTimeout: const Duration(milliseconds: AppConfig.sendTimeout),
+        // On the web a send timeout forces a CORS preflight and is not
+        // supported without a body, so it is only set on other platforms.
+        sendTimeout: kIsWeb
+            ? null
+            : const Duration(milliseconds: AppConfig.sendTimeout),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

@@ -17,5 +17,5 @@ abstract final class AppSurfaceShape {
   static const AppRadius card = AppRadius.lg;
   static const AppRadius pill = AppRadius.full;
   static const AppRadius tableBand = AppRadius.md;
-  static const AppRadius control = AppRadius.full;
+  static const AppRadius control = AppRadius.md;
 }

@@ -21,7 +21,6 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_navigation_rail/app_navigation_rail.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/shell/app_shell.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
@@ -160,7 +159,6 @@ void main() {
       await _pump(tester, const Size(390, 844));
 
       expect(find.byType(AppNavigationBar), findsOneWidget);
-      expect(find.byType(AppNavigationRail), findsNothing);
       expect(find.byType(AppSidebar), findsNothing);
     });
 
@@ -175,12 +173,12 @@ void main() {
       expect(scaffold.floatingActionButton, isNull);
     });
 
-    testWidgets('tablet → rail only', (tester) async {
+    testWidgets('tablet → sidebar, icon-only by default', (tester) async {
       await _pump(tester, const Size(800, 1280));
 
-      expect(find.byType(AppNavigationRail), findsOneWidget);
+      expect(find.byType(AppSidebar), findsOneWidget);
+      expect(tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed, isTrue);
       expect(find.byType(AppNavigationBar), findsNothing);
-      expect(find.byType(AppSidebar), findsNothing);
     });
 
     testWidgets('desktop → sidebar only', (tester) async {
@@ -188,7 +186,6 @@ void main() {
 
       expect(find.byType(AppSidebar), findsOneWidget);
       expect(find.byType(AppNavigationBar), findsNothing);
-      expect(find.byType(AppNavigationRail), findsNothing);
     });
 
     testWidgets('phone landscape (844×390) keeps the bottom bar', (
@@ -197,7 +194,6 @@ void main() {
       await _pump(tester, const Size(844, 390));
 
       expect(find.byType(AppNavigationBar), findsOneWidget);
-      expect(find.byType(AppNavigationRail), findsNothing);
     });
 
     testWidgets('the shell adds no SafeArea around the screens', (
@@ -289,24 +285,21 @@ void main() {
       await _pump(tester, const Size(360, 800));
 
       expect(find.byType(AppNavigationBar), findsOneWidget);
-      expect(find.byType(AppNavigationRail), findsNothing);
       expect(find.byType(AppSidebar), findsNothing);
     });
 
-    testWidgets('600 width uses the tablet rail', (tester) async {
+    testWidgets('600 width uses the tablet sidebar', (tester) async {
       await _pump(tester, const Size(600, 900));
 
-      expect(find.byType(AppNavigationRail), findsOneWidget);
+      expect(find.byType(AppSidebar), findsOneWidget);
       expect(find.byType(AppNavigationBar), findsNothing);
-      expect(find.byType(AppSidebar), findsNothing);
     });
 
-    testWidgets('900 width uses the tablet rail', (tester) async {
+    testWidgets('900 width uses the tablet sidebar', (tester) async {
       await _pump(tester, const Size(900, 1200));
 
-      expect(find.byType(AppNavigationRail), findsOneWidget);
+      expect(find.byType(AppSidebar), findsOneWidget);
       expect(find.byType(AppNavigationBar), findsNothing);
-      expect(find.byType(AppSidebar), findsNothing);
     });
 
     testWidgets('1200 width uses the desktop sidebar', (tester) async {
@@ -314,7 +307,6 @@ void main() {
 
       expect(find.byType(AppSidebar), findsOneWidget);
       expect(find.byType(AppNavigationBar), findsNothing);
-      expect(find.byType(AppNavigationRail), findsNothing);
     });
   });
 

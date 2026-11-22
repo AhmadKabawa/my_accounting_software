@@ -14,4 +14,11 @@ class SearchableDropdownStyle {
   );
   double get maxOptionsHeight =>
       context.ui.size.height(AppComponentSize.cardHeight) * 2;
+
+  /// The desktop picker: the search row plus about three options; the rest
+  /// scrolls. Small on purpose so it never covers the page.
+  double get maxPanelHeight =>
+      context.ui.size.height(AppComponentSize.large) * _panelRows;
+
+  static const _panelRows = 5;
 }

@@ -13,7 +13,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_navigation_rail/app_navigation_rail.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_scope_selector/scope_selector.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_shell/app_shell_top_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
@@ -251,6 +250,26 @@ class AppShell extends StatelessWidget {
       ),
     );
 
+    Widget sidebar({bool startCollapsed = false}) => settingsManager != null
+        ? _PersistedSidebar(
+            items: items,
+            activeIndex: current < 0 ? 0 : current,
+            onIndexChanged: onSelect,
+            settingsManager: settingsManager!,
+            collapsible: startCollapsed || supportsCollapsibleSidebar,
+            startCollapsed: startCollapsed,
+            activePath: _activePath(context),
+            onChildSelected: (path) => context.go(path),
+          )
+        : AppSidebar(
+            items: items,
+            activeIndex: current < 0 ? 0 : current,
+            onIndexChanged: onSelect,
+            collapsed: startCollapsed,
+            activePath: _activePath(context),
+            onChildSelected: (path) => context.go(path),
+          );
+
     return AccessStatusGate(
       signOutLabel: AuthKeys.signOut,
       onSignOut: () async {
@@ -300,36 +319,9 @@ class AppShell extends StatelessWidget {
                     ),
             );
           },
-          tablet: (_) => Scaffold(
-            appBar: topBar,
-            body: _TabletNavigation(
-              items: items,
-              activeIndex: current < 0 ? 0 : current,
-              onIndexChanged: onSelect,
-              activePath: _activePath(context),
-              onChildSelected: (path) => context.go(path),
-              content: shellContent,
-            ),
-          ),
-          desktop: (_) => withSideNav(
-            settingsManager != null
-                ? _PersistedSidebar(
-                    items: items,
-                    activeIndex: current < 0 ? 0 : current,
-                    onIndexChanged: onSelect,
-                    settingsManager: settingsManager!,
-                    collapsible: supportsCollapsibleSidebar,
-                    activePath: _activePath(context),
-                    onChildSelected: (path) => context.go(path),
-                  )
-                : AppSidebar(
-                    items: items,
-                    activeIndex: current < 0 ? 0 : current,
-                    onIndexChanged: onSelect,
-                    activePath: _activePath(context),
-                    onChildSelected: (path) => context.go(path),
-                  ),
-          ),
+          // A tablet gets the same sidebar, icon-only until the user opens it.
+          tablet: (_) => withSideNav(sidebar(startCollapsed: true)),
+          desktop: (_) => withSideNav(sidebar()),
         ),
       ),
     );
@@ -345,6 +337,7 @@ class _PersistedSidebar extends StatefulWidget {
     required this.onIndexChanged,
     required this.settingsManager,
     required this.collapsible,
+    this.startCollapsed = false,
     this.activePath,
     this.onChildSelected,
   });
@@ -357,12 +350,15 @@ class _PersistedSidebar extends StatefulWidget {
   final AppSettingsManager settingsManager;
   final bool collapsible;
 
+  /// The collapsed state when nothing was saved yet (tablet: icon-only).
+  final bool startCollapsed;
+
   @override
   State<_PersistedSidebar> createState() => _PersistedSidebarState();
 }
 
 class _PersistedSidebarState extends State<_PersistedSidebar> {
-  bool _collapsed = false;
+  late bool _collapsed = widget.startCollapsed;
   bool _restored = false;
   Set<String> _openSections = const {};
 
@@ -374,8 +370,9 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
 
   Future<void> _restore() async {
     final collapsed = widget.collapsible
-        ? await widget.settingsManager.getSidebarCollapsed()
-        : false;
+        ? await widget.settingsManager.getSidebarCollapsedOrNull() ??
+              widget.startCollapsed
+        : widget.startCollapsed;
     final open = await widget.settingsManager.getSidebarOpenSections();
     if (!mounted) return;
     setState(() {
@@ -404,87 +401,6 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
     onOpenSectionsChanged: (open) =>
         widget.settingsManager.setSidebarOpenSections(open),
   );
-}
-
-/// Tablet: a compact rail beside the content with a clear button that expands
-/// it into the labelled tree, laid over the content (the content does not
-/// move). Choosing a destination or a child returns it to compact.
-class _TabletNavigation extends StatefulWidget {
-  const _TabletNavigation({
-    required this.items,
-    required this.activeIndex,
-    required this.onIndexChanged,
-    required this.content,
-    this.activePath,
-    this.onChildSelected,
-  });
-
-  final List<NavBarItem> items;
-  final int activeIndex;
-  final ValueChanged<int> onIndexChanged;
-  final String? activePath;
-  final ValueChanged<String>? onChildSelected;
-  final Widget content;
-
-  @override
-  State<_TabletNavigation> createState() => _TabletNavigationState();
-}
-
-class _TabletNavigationState extends State<_TabletNavigation> {
-  bool _expanded = false;
-
-  void _setExpanded(bool value) => setState(() => _expanded = value);
-
-  @override
-  Widget build(BuildContext context) {
-    final rail = AppNavigationRail(
-      items: widget.items,
-      activeIndex: widget.activeIndex,
-      onIndexChanged: widget.onIndexChanged,
-      onExpand: () => _setExpanded(true),
-    );
-    return Stack(
-      children: [
-        Row(
-          children: [
-            rail,
-            Expanded(child: widget.content),
-          ],
-        ),
-        if (_expanded) ...[
-          Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => _setExpanded(false),
-              child: ColoredBox(color: Theme.of(context).colorScheme.scrim),
-            ),
-          ),
-          PositionedDirectional(
-            start: 0,
-            top: 0,
-            bottom: 0,
-            child: Material(
-              elevation: AppElevation.lg.of(context),
-              child: AppSidebar(
-                items: widget.items,
-                activeIndex: widget.activeIndex,
-                activePath: widget.activePath,
-                onToggle: () => _setExpanded(false),
-                onIndexChanged: (index) {
-                  _setExpanded(false);
-                  widget.onIndexChanged(index);
-                },
-                onChildSelected: (path) {
-                  _setExpanded(false);
-                  widget.onChildSelected?.call(path);
-                },
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
 }
 
 /// What the phone "More" sheet returns: a branch, and the child path when a

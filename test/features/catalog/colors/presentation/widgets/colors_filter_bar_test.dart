@@ -38,6 +38,9 @@ void main() {
     await tester.pump();
     expect(search, 'navy');
 
+    // The labelled filter row opens from the Filters button.
+    await tester.tap(find.text('Filters'));
+    await tester.pumpAndSettle();
     await tester.tap(find.byType(TextField).last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Inactive').last);
