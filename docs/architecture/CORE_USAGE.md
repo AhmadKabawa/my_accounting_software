@@ -551,4 +551,4 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - `AppColorPicker` لتعديل قيمة HEX مع null وحفظ alpha عند عدم تعديل HEX يدوياً؛ `AppColorSwatch` للعرض فقط.
 - `ColorNameResolver` اقتراح محلي تقريبي للاسم، وليس بديلاً عن قيمة HEX ولا مصدراً للبيانات.
 - `AppIconTone` يحدد دلالة اللون، ويرجع إلى `context.ui.theme.colors` و`context.ui.theme.semanticColors` فقط.
-- `SearchableDropdown` يحتفظ بالنمط autocomplete الحالي. لا تضع debounce للفلترة داخل FilterBar؛ مالك البيانات/Cubit يتولى debounce. FilterBar يرسل البحث مباشرة (والـ debounce مسؤولية Cubit).
+- `SearchableDropdown` يحتفظ بالنمط autocomplete الحالي؛ `allOptionLabel` اختياري لإظهار اختيار null في لوحة سطح المكتب، ويميز الخيار الحالي بعلامة check و`Semantics.selected`. لا تضع debounce للفلترة داخل FilterBar؛ مالك البيانات/Cubit يتولى debounce. FilterBar يرسل البحث مباشرة (والـ debounce مسؤولية Cubit).
