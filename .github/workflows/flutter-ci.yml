@@ -7,7 +7,7 @@ on:
     branches: [vscode]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   quality:
@@ -35,6 +35,29 @@ jobs:
       - name: Check formatting
         timeout-minutes: 5
         run: dart format --set-exit-if-changed .
+
+
+      - name: Commit formatter output
+        if: ${{ always() && github.event_name == 'push' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            lib/app/core/presentation/widgets/app_color_picker/app_color_picker.dart \
+            lib/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart \
+            test/architecture/icon_tone_test.dart \
+            test/architecture/feature_imports_test.dart \
+            test/core/foundation/color_name_resolver_test.dart \
+            test/core/presentation/widgets/app_breadcrumb_test.dart \
+            test/core/presentation/widgets/app_color_picker_test.dart \
+            test/core/presentation/widgets/app_icon_tone_test.dart \
+            test/core/presentation/widgets/app_searchable_dropdown_test.dart \
+            test/features/catalog/brands/presentation/widgets/brands_filter_bar_test.dart \
+            test/features/catalog/colors/presentation/widgets/colors_filter_bar_test.dart
+          if ! git diff --cached --quiet; then
+            git commit -m "style: apply dart format"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
 
       - name: Analyze
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
