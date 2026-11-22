@@ -70,9 +70,9 @@ Widget _withAccess(Widget child) => BlocProvider<AccessCubit>(
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets('table retains the products column and its existing count badge', (
-    tester,
-  ) async {
+  testWidgets(
+    'table retains the products column and its existing count badge',
+    (tester) async {
     tester.view.physicalSize = const Size(1280, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
