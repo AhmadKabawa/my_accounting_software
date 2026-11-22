@@ -8,7 +8,7 @@ import '../../../../../helpers/localized_app.dart';
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets('search and status callbacks stay connected to the query', (
+  testWidgets('search and panel status callbacks stay connected to the query', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1200, 900);
@@ -19,12 +19,14 @@ void main() {
 
     await tester.pumpWidget(
       buildTestApp(
-        home: Scaffold(
-          body: BrandsFilterBar(
-            query: const BrandListQuery(),
-            onSearchChanged: (value) => search = value,
-            onStatusChanged: (value) => status = value,
-            onClearAll: () {},
+        home: StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: BrandsFilterBar(
+              query: BrandListQuery(search: search, status: status),
+              onSearchChanged: (value) => setState(() => search = value),
+              onStatusChanged: (value) => setState(() => status = value),
+              onClearAll: () {},
+            ),
           ),
         ),
       ),
@@ -39,6 +41,20 @@ void main() {
     await tester.tap(find.text('Inactive').last);
     await tester.pumpAndSettle();
     expect(status, BrandStatusFilter.inactive);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+      'Inactive',
+    );
+
+    await tester.tap(find.byType(TextField).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('All statuses').last);
+    await tester.pumpAndSettle();
+    expect(status, BrandStatusFilter.all);
+    expect(
+      tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+      'All statuses',
+    );
   });
 
   testWidgets('active search and status are represented as removable chips', (

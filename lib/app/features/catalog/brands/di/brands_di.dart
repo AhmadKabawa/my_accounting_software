@@ -2,6 +2,8 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source_impl.dart';
+import 'package:accounting_software/app/features/catalog/brands/data/datasources/brand_stats_remote_data_source.dart';
+import 'package:accounting_software/app/features/catalog/brands/data/datasources/brand_stats_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/repositories/brands_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/repositories/brands_repository.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/create_brand_use_case.dart';
@@ -20,8 +22,14 @@ void initBrandsDI() {
   sl.registerLazySingleton<BrandsRemoteDataSource>(
     () => BrandsRemoteDataSourceImpl(sl<IApiClient>()),
   );
+  sl.registerLazySingleton<BrandStatsRemoteDataSource>(
+    () => BrandStatsRemoteDataSourceImpl(sl<IApiClient>()),
+  );
   sl.registerLazySingleton<BrandsRepository>(
-    () => BrandsRepositoryImpl(sl<BrandsRemoteDataSource>()),
+    () => BrandsRepositoryImpl(
+      sl<BrandsRemoteDataSource>(),
+      sl<BrandStatsRemoteDataSource>(),
+    ),
   );
 
   sl.registerLazySingleton(() => GetBrandsUseCase(sl()));

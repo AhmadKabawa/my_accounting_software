@@ -25,6 +25,8 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_filter_bar.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import '../../../../../helpers/localized_app.dart';
 import '../../support/fake_brands_repository.dart';
 
@@ -179,5 +181,70 @@ void main() {
 
     expect(find.text(BrandFailureKeys.brandInUse.en), findsOneWidget);
     expect(find.text('Can delete'), findsWidgets);
+  });
+
+  testWidgets('stats failure does not prevent the brands list from loading', (
+    tester,
+  ) async {
+    final repository = FakeBrandsRepository();
+    repository.onGetBrands = (_) async => Right(
+      PaginatedResult<Brand>(
+        items: _brands(),
+        totalCount: 3,
+        currentPage: 1,
+        totalPages: 1,
+      ),
+    );
+    repository.onGetBrandStats = () async => const Left(BrandInUseFailure());
+    await _pumpScreen(tester, repository, size: const Size(1280, 900));
+
+    expect(find.text('Can delete'), findsOneWidget);
+    expect(find.text('In use'), findsOneWidget);
+    expect(find.byType(BrandsScreen), findsOneWidget);
+  });
+
+  testWidgets('all successful list mutations refresh statistics', (
+    tester,
+  ) async {
+    var statsRequests = 0;
+    final repository = FakeBrandsRepository();
+    repository.onGetBrands = (_) async => Right(
+      PaginatedResult<Brand>(
+        items: _brands(),
+        totalCount: 3,
+        currentPage: 1,
+        totalPages: 1,
+      ),
+    );
+    repository.onGetBrandStats = () async {
+      statsRequests++;
+      return const Right(BrandStats(total: 3, active: 2, inactive: 1));
+    };
+    await _pumpScreen(tester, repository, size: const Size(1280, 900));
+
+    expect(statsRequests, 1);
+    final cubit = BlocProvider.of<BrandsListCubit>(
+      tester.element(find.byType(BrandsFilterBar)),
+    );
+
+    await cubit.onBrandSaved(isNew: true);
+    await tester.pumpAndSettle();
+    expect(statsRequests, 2);
+
+    await cubit.onBrandSaved(isNew: false);
+    await tester.pumpAndSettle();
+    expect(statsRequests, 3);
+
+    await cubit.activate(1);
+    await tester.pumpAndSettle();
+    expect(statsRequests, 4);
+
+    await cubit.deactivate(2);
+    await tester.pumpAndSettle();
+    expect(statsRequests, 5);
+
+    await cubit.delete(_brands().first);
+    await tester.pumpAndSettle();
+    expect(statsRequests, 6);
   });
 }

@@ -200,9 +200,6 @@ class _SearchableDropdownState<T extends Object>
       });
     }
 
-    if (oldWidget.value != widget.value && !_desktopFocusNode.hasFocus) {
-      _setText(_selectedLabel);
-    }
     _desktopPanelEntry?.markNeedsBuild();
   }
 
@@ -385,37 +382,18 @@ class _SearchableDropdownState<T extends Object>
 
   Widget _panelTrigger(BuildContext context, SearchableDropdownStyle style) {
     final label = _panelDisplayLabel(context);
-    if (_desktopController.text != label) _setText(label);
-    return Semantics(
-      button: true,
-      enabled: widget.enabled && !widget.readOnly,
-      label: widget.labelKey.tr(context: context),
-      value: label,
-      excludeSemantics: true,
+    return _PanelTrigger(
+      key: ValueKey(label),
+      label: label,
+      labelKey: widget.labelKey,
+      enabled: widget.enabled,
+      readOnly: widget.readOnly,
+      style: style,
+      triggerKey: _panelTriggerKey,
+      link: _panelLayerLink,
       onTap: widget.enabled && !widget.readOnly
           ? () => _openPanelPicker(context)
           : null,
-      child: CompositedTransformTarget(
-        key: _panelTriggerKey,
-        link: _panelLayerLink,
-        child: InkWell(
-          onTap: widget.enabled && !widget.readOnly
-              ? () => _openPanelPicker(context)
-              : null,
-          borderRadius: style.radius,
-          child: ExcludeFocus(
-            child: IgnorePointer(
-              child: AppTextField(
-                controller: _desktopController,
-                labelKey: widget.labelKey,
-                readOnly: true,
-                enabled: widget.enabled,
-                suffix: const AppIcon(AppIcons.expand),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -1100,4 +1078,78 @@ class _PanelSearchPickerState<T extends Object>
       ),
     );
   }
+}
+
+/// Owns the read-only panel trigger controller. The parent keys this widget by
+/// the label derived during build, so a changed selection rebuilds the field
+/// without lifecycle callbacks or post-frame controller mutations.
+class _PanelTrigger extends StatefulWidget {
+  const _PanelTrigger({
+    super.key,
+    required this.label,
+    required this.labelKey,
+    required this.enabled,
+    required this.readOnly,
+    required this.style,
+    required this.triggerKey,
+    required this.link,
+    required this.onTap,
+  });
+
+  final String label;
+  final AppKey labelKey;
+  final bool enabled;
+  final bool readOnly;
+  final SearchableDropdownStyle style;
+  final GlobalKey triggerKey;
+  final LayerLink link;
+  final VoidCallback? onTap;
+
+  @override
+  State<_PanelTrigger> createState() => _PanelTriggerState();
+}
+
+class _PanelTriggerState extends State<_PanelTrigger> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.label);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    enabled: widget.enabled && !widget.readOnly,
+    label: widget.labelKey.tr(context: context),
+    value: widget.label,
+    excludeSemantics: true,
+    onTap: widget.onTap,
+    child: CompositedTransformTarget(
+      key: widget.triggerKey,
+      link: widget.link,
+      child: InkWell(
+        onTap: widget.onTap,
+        borderRadius: widget.style.radius,
+        child: ExcludeFocus(
+          child: IgnorePointer(
+            child: AppTextField(
+              controller: _controller,
+              labelKey: widget.labelKey,
+              readOnly: true,
+              enabled: widget.enabled,
+              suffix: const AppIcon(AppIcons.expand),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }

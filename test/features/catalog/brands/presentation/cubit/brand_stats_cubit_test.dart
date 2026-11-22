@@ -2,6 +2,12 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_state.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/usecase/set_brand_active_use_case.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/usecase/get_brands_use_case.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/usecase/delete_brand_use_case.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
@@ -107,6 +113,32 @@ void main() {
 
       expect(cubit.state, isA<BrandStatsFailed>());
       await cubit.close();
+    },
+  );
+
+  test(
+    'stats failure does not block the independent brands list cubit',
+    () async {
+      final repository = FakeBrandsRepository()
+        ..onGetBrandStats = () async => const Left(_StatsFailure());
+      final statsCubit = BrandStatsCubit(
+        getBrandStats: GetBrandStatsUseCase(repository),
+      );
+      final listCubit = BrandsListCubit(
+        getBrands: GetBrandsUseCase(repository),
+        setBrandActive: SetBrandActiveUseCase(repository),
+        deleteBrand: DeleteBrandUseCase(repository),
+        flashMessages: FlashMessages(),
+      );
+
+      await Future.wait([statsCubit.load(), listCubit.load()]);
+
+      expect(statsCubit.state, isA<BrandStatsFailed>());
+      expect(listCubit.state.status, BrandsListStatus.ready);
+      expect(listCubit.state.hasData, isTrue);
+
+      await statsCubit.close();
+      await listCubit.close();
     },
   );
 }
