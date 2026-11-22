@@ -713,7 +713,7 @@ void main() {
       expect(find.text('Beta'), findsOneWidget);
     });
 
-    testWidgets('selects another value after reopening without clearing', (
+    testWidgets('reopens with all options after selecting a value', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(1200, 900);
