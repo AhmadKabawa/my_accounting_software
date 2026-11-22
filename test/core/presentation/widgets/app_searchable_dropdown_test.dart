@@ -149,7 +149,8 @@ void main() {
     expect(
       tester.widget<TextField>(find.byType(TextField)).focusNode?.hasFocus,
       isFalse,
-      reason: 'Selecting null must close the picker, not leave autocomplete focused',
+      reason:
+          'Selecting null must close the picker, not leave autocomplete focused',
     );
   });
 
@@ -264,7 +265,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
-      expect(tester.widget<TextField>(find.byType(TextField).last).controller?.text, '');
+      expect(
+        tester.widget<TextField>(find.byType(TextField).last).controller?.text,
+        '',
+      );
       expect(find.text('Beta'), findsOneWidget);
     });
 
