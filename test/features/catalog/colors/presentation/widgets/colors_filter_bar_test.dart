@@ -70,7 +70,10 @@ void main() {
       ),
     );
 
-    expect(find.text('Search by color name, code or HEX: navy'), findsOneWidget);
+    expect(
+      find.text('Search by color name, code or HEX: navy'),
+      findsOneWidget,
+    );
     expect(find.text('Status: Active'), findsOneWidget);
     expect(find.byType(AppBadge), findsNWidgets(2));
     await tester.tap(

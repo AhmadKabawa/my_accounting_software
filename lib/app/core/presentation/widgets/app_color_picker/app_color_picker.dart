@@ -30,6 +30,7 @@ class AppColorPicker extends StatefulWidget {
   });
   final String? value;
   final ValueChanged<String?> onChanged;
+
   /// Reports raw HEX edits, including incomplete or invalid input.
   final ValueChanged<String>? onInputChanged;
   final List<String> presets;
@@ -111,8 +112,7 @@ class _AppColorPickerState extends State<AppColorPicker> {
     }
   }
 
-  String _output() =>
-      _alpha == null ? _hex(_color) : '${_hex(_color)}$_alpha';
+  String _output() => _alpha == null ? _hex(_color) : '${_hex(_color)}$_alpha';
   void _emit() {
     widget.onChanged(_output());
     _controller.text = _hex(_color);

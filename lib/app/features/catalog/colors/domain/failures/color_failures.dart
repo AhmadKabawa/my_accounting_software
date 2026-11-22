@@ -3,7 +3,8 @@ import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failure_keys.dart';
 
 class ColorInUseFailure extends Failure {
-  const ColorInUseFailure() : super(messageKey: ColorFailureKeys.inUse, statusCode: 409);
+  const ColorInUseFailure()
+    : super(messageKey: ColorFailureKeys.inUse, statusCode: 409);
 }
 
 /// The color code is already used (`colors.code` is UNIQUE, SQLSTATE 23505).

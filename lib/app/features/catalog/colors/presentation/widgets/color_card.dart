@@ -12,11 +12,7 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/wid
 
 /// Mobile card body for one color (the table's card mode).
 class ColorCard extends StatelessWidget {
-  const ColorCard(
-    this.color, {
-    super.key,
-    this.swatchSize = AppIconSize.lg,
-  });
+  const ColorCard(this.color, {super.key, this.swatchSize = AppIconSize.lg});
   final CatalogColor color;
   final AppIconSize swatchSize;
 
@@ -48,9 +44,8 @@ class ColorCard extends StatelessWidget {
               AppIcons.copy,
               tooltipKey: ColorsKeys.copyHex,
               size: AppButtonSize.small,
-              onPressed: () => Clipboard.setData(
-                ClipboardData(text: color.hexCode!),
-              ),
+              onPressed: () =>
+                  Clipboard.setData(ClipboardData(text: color.hexCode!)),
             ),
           ],
         )

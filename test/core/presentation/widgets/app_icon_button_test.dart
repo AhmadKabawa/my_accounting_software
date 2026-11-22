@@ -49,7 +49,9 @@ void main() {
     expect(taps, 1);
   });
 
-  testWidgets('custom icon color does not change the button surface', (tester) async {
+  testWidgets('custom icon color does not change the button surface', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       buildTestApp(
         theme: AppTheme.light(),

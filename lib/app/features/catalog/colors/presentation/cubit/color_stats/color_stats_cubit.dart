@@ -21,9 +21,8 @@ class ColorStatsCubit extends BaseCubit<ColorStatsState, Never> {
       (failure) => emit(
         state.copyWith(status: ColorStatsStatus.failed, failure: failure),
       ),
-      (stats) => emit(
-        state.copyWith(status: ColorStatsStatus.ready, stats: stats),
-      ),
+      (stats) =>
+          emit(state.copyWith(status: ColorStatsStatus.ready, stats: stats)),
     );
   }
 

@@ -6,11 +6,7 @@ import 'package:accounting_software/app/features/catalog/colors/domain/entity/ca
 
 /// Swatch + name (+ HEX): the primary cell of the table and the card header.
 class ColorIdentity extends StatelessWidget {
-  const ColorIdentity(
-    this.color, {
-    super.key,
-    this.size = AppIconSize.lg,
-  });
+  const ColorIdentity(this.color, {super.key, this.size = AppIconSize.lg});
   final CatalogColor color;
   final AppIconSize size;
 

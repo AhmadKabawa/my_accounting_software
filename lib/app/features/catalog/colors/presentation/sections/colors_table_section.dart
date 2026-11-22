@@ -114,9 +114,8 @@ class ColorsTableSection extends StatelessWidget {
                       AppIcons.copy,
                       tooltipKey: ColorsKeys.copyHex,
                       size: AppButtonSize.small,
-                      onPressed: () => Clipboard.setData(
-                        ClipboardData(text: c.hexCode!),
-                      ),
+                      onPressed: () =>
+                          Clipboard.setData(ClipboardData(text: c.hexCode!)),
                     ),
                   ],
                 ),

@@ -114,8 +114,8 @@ void main() {
     await _pumpEditor(tester, FakeColorsRepository());
 
     final preset = find.byWidgetPredicate(
-        (w) => w is AppColorSwatch && w.hex == '#DC2626' && w.onTap != null,
-      );
+      (w) => w is AppColorSwatch && w.hex == '#DC2626' && w.onTap != null,
+    );
     await tester.ensureVisible(preset);
     await tester.pumpAndSettle();
     await tester.tap(preset);

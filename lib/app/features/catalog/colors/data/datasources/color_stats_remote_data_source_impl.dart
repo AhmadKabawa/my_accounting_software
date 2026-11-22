@@ -21,13 +21,11 @@ class ColorStatsRemoteDataSourceImpl implements ColorStatsRemoteDataSource {
       page: 1,
       limit: 1,
     );
-    if (totalResult case ApiFailure<PaginatedResult<int>>(
-      :final exception,
-    )) {
+    if (totalResult case ApiFailure<PaginatedResult<int>>(:final exception)) {
       return ApiFailure<ColorStats>(exception);
     }
-    final total = (totalResult as ApiSuccess<PaginatedResult<int>>)
-        .data.totalCount;
+    final total =
+        (totalResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
 
     final activeResult = await _apiClient.getPaginated<int>(
       ColorsEndpoint.collection,
@@ -37,20 +35,14 @@ class ColorStatsRemoteDataSourceImpl implements ColorStatsRemoteDataSource {
       page: 1,
       limit: 1,
     );
-    if (activeResult case ApiFailure<PaginatedResult<int>>(
-      :final exception,
-    )) {
+    if (activeResult case ApiFailure<PaginatedResult<int>>(:final exception)) {
       return ApiFailure<ColorStats>(exception);
     }
-    final active = (activeResult as ApiSuccess<PaginatedResult<int>>)
-        .data.totalCount;
+    final active =
+        (activeResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
 
     return ApiSuccess(
-      ColorStats(
-        total: total,
-        active: active,
-        inactive: total - active,
-      ),
+      ColorStats(total: total, active: active, inactive: total - active),
     );
   }
 }

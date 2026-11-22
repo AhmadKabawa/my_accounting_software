@@ -155,7 +155,10 @@ void main() {
       expect(repository.deleted, [7]);
       expect(repository.queries, hasLength(2));
       expect(repository.queries.last.page, 1);
-      expect((effects.single as ColorsMutatedEffect).kind, ColorsMutationKind.deleted);
+      expect(
+        (effects.single as ColorsMutatedEffect).kind,
+        ColorsMutationKind.deleted,
+      );
       await sub.cancel();
       await cubit.close();
     });

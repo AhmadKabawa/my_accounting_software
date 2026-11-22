@@ -55,9 +55,7 @@ void _register(FakeColorsRepository repository) {
     ),
   );
   sl.registerFactory<ColorStatsCubit>(
-    () => ColorStatsCubit(
-      getColorStats: GetColorStatsUseCase(repository),
-    ),
+    () => ColorStatsCubit(getColorStats: GetColorStatsUseCase(repository)),
   );
   addTearDown(() async => sl.reset());
 }
@@ -137,9 +135,7 @@ void main() {
     expect(find.byType(ColorsGridSection), findsNothing);
   });
 
-  testWidgets('grid view renders on a narrow RTL dark screen', (
-    tester,
-  ) async {
+  testWidgets('grid view renders on a narrow RTL dark screen', (tester) async {
     _register(FakeColorsRepository());
     await pumpScreenMatrix(
       tester,

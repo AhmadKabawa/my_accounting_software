@@ -98,7 +98,9 @@ class ColorsGridSection extends StatelessWidget {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: context.ui.size.width(AppComponentSize.cardWidth),
+            maxCrossAxisExtent: context.ui.size.width(
+              AppComponentSize.cardWidth,
+            ),
             mainAxisExtent:
                 context.ui.size.height(AppComponentSize.cardHeight) +
                 context.ui.spacing.lg,
@@ -112,9 +114,7 @@ class ColorsGridSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: ColorCard(color, swatchSize: AppIconSize.xl),
-                  ),
+                  Expanded(child: ColorCard(color, swatchSize: AppIconSize.xl)),
                   PermissionGate(
                     permission: Permissions.masterData.manage,
                     child: Align(

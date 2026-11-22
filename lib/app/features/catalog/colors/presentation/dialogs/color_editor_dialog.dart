@@ -82,8 +82,8 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
     if (_name.text.trim().isEmpty && _lastAutoName != null) {
       _setAutoName(_lastAutoName!);
     } else {
-      _manualName = _name.text.trim().isNotEmpty &&
-          _name.text.trim() != _lastAutoName;
+      _manualName =
+          _name.text.trim().isNotEmpty && _name.text.trim() != _lastAutoName;
     }
   }
 
@@ -114,8 +114,8 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
 
   void _onNameChanged() {
     if (_updatingName) return;
-    _manualName = _name.text.trim().isNotEmpty &&
-        _name.text.trim() != _lastAutoName;
+    _manualName =
+        _name.text.trim().isNotEmpty && _name.text.trim() != _lastAutoName;
   }
 
   void _onHexChanged() {

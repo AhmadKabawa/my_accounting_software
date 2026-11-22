@@ -31,7 +31,8 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
         'select': ColorsEndpoint.select,
         'order': _order(query),
         if (searchTerm.isNotEmpty)
-          'or': '(name.ilike."*$searchTerm*",code.ilike."*$searchTerm*",hex_code.ilike."*$searchTerm*")',
+          'or':
+              '(name.ilike."*$searchTerm*",code.ilike."*$searchTerm*",hex_code.ilike."*$searchTerm*")',
         if (query.status == ColorStatusFilter.active) 'is_active': 'eq.true',
         if (query.status == ColorStatusFilter.inactive) 'is_active': 'eq.false',
       },

@@ -24,9 +24,15 @@ enum ColorsKeys implements AppKey {
   inactive(ar: 'موقوف', en: 'Inactive'),
   status(ar: 'الحالة', en: 'Status'),
   allStatuses(ar: 'كل الحالات', en: 'All statuses'),
-  searchHint(ar: 'ابحث باسم اللون أو رمزه أو HEX', en: 'Search by color name, code or HEX'),
+  searchHint(
+    ar: 'ابحث باسم اللون أو رمزه أو HEX',
+    en: 'Search by color name, code or HEX',
+  ),
   suggestedName(ar: 'الاسم المقترح', en: 'Suggested name'),
-  suggestedNameHint(ar: 'اقتراح تلقائي قابل للتعديل؛ لن يتغير بعد تعديل الاسم يدوياً.', en: 'An editable suggestion; it will not change after you manually edit the name.'),
+  suggestedNameHint(
+    ar: 'اقتراح تلقائي قابل للتعديل؛ لن يتغير بعد تعديل الاسم يدوياً.',
+    en: 'An editable suggestion; it will not change after you manually edit the name.',
+  ),
   totalColors(ar: 'إجمالي الألوان', en: 'Total colors'),
   activeColors(ar: 'الألوان الفعالة', en: 'Active colors'),
   inactiveColors(ar: 'الألوان الموقوفة', en: 'Inactive colors'),

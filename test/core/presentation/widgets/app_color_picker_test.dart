@@ -112,7 +112,9 @@ void main() {
     expect(result, '#AABBCC44');
   });
 
-  testWidgets('preset selection preserves an existing alpha channel', (t) async {
+  testWidgets('preset selection preserves an existing alpha channel', (
+    t,
+  ) async {
     String? result;
     await t.pumpWidget(
       buildTestApp(

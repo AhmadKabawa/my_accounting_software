@@ -12,7 +12,10 @@ void main() {
         .where((key) => key.key.startsWith('colors.'))
         .toList();
 
-    expect(registered, hasLength(ColorsKeys.values.length + ColorFailureKeys.values.length));
+    expect(
+      registered,
+      hasLength(ColorsKeys.values.length + ColorFailureKeys.values.length),
+    );
     expect(
       registered.map((key) => key.key).toSet(),
       hasLength(ColorsKeys.values.length),

@@ -120,7 +120,10 @@ void main() {
   test('maps deleting a referenced color to ColorInUseFailure', () async {
     api.deleteFailure = ApiException.conflict(errorCode: '23503');
     final result = await repository.deleteColor(7);
-    expect(result.fold((failure) => failure, (_) => null), isA<ColorInUseFailure>());
+    expect(
+      result.fold((failure) => failure, (_) => null),
+      isA<ColorInUseFailure>(),
+    );
     expect(api.lastPath, '/rest/v1/colors');
     expect(api.lastQueryParameters, {'id': 'eq.7'});
   });

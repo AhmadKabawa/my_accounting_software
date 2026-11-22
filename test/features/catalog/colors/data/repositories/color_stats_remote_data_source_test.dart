@@ -24,9 +24,6 @@ void main() {
     );
     expect(api.paginatedQueries, hasLength(2));
     expect(api.paginatedQueries[0], {'select': 'id'});
-    expect(api.paginatedQueries[1], {
-      'select': 'id',
-      'is_active': 'eq.true',
-    });
+    expect(api.paginatedQueries[1], {'select': 'id', 'is_active': 'eq.true'});
   });
 }
