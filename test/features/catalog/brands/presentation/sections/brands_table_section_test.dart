@@ -80,7 +80,8 @@ void main() {
 
       expect(find.text(BrandsKeys.productCount.en), findsOneWidget);
       expect(find.text('Products: 2'), findsOneWidget);
-  });
+    },
+  );
 
   testWidgets('empty brands uses its dedicated AppEmptyState', (tester) async {
     await tester.pumpWidget(
