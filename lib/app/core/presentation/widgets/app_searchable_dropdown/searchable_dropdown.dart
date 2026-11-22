@@ -16,6 +16,9 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text_field
 
 export 'searchable_dropdown_style.dart';
 
+/// Select between the legacy editable autocomplete and a trigger-driven panel.
+enum SearchableDropdownMode { autocomplete, panel }
+
 /// A generic, single-selection searchable picker. Data loading and querying
 /// remain owned by the caller; pass remote results and [onQueryChanged].
 class SearchableDropdown<T extends Object> extends StatefulWidget {
@@ -37,6 +40,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
     this.clearable = true,
     this.onAddNew,
     this.allOptionLabel,
+    this.mode = SearchableDropdownMode.autocomplete,
   });
 
   final List<T> options;
@@ -61,6 +65,10 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   /// Optional localized label for an explicit null selection (for example,
   /// “All statuses”). It is rendered as a first-class panel option.
   final AppKey? allOptionLabel;
+
+  /// `autocomplete` preserves the original editable/remote-search contract.
+  /// `panel` shows the selected value in a trigger and opens a dedicated picker.
+  final SearchableDropdownMode mode;
 
   @override
   State<SearchableDropdown<T>> createState() => _SearchableDropdownState<T>();
@@ -240,6 +248,10 @@ class _SearchableDropdownState<T extends Object>
     final style = SearchableDropdownStyle(context);
     final isMobile = ScreenEngine.isMobile(context);
 
+    if (widget.mode == SearchableDropdownMode.panel) {
+      return _panelTrigger(context, style);
+    }
+
     // Disabled looks unavailable; read-only keeps the normal look but cannot
     // be edited, so the two states stay visually distinct.
     if (!widget.enabled || widget.readOnly) {
@@ -348,6 +360,102 @@ class _SearchableDropdownState<T extends Object>
           ),
       ],
     );
+  }
+
+
+  String _panelDisplayLabel(BuildContext context) {
+    if (widget.value != null) return widget.optionLabel(widget.value as T);
+    return widget.allOptionLabel?.tr(context: context) ?? '';
+  }
+
+  Widget _panelTrigger(BuildContext context, SearchableDropdownStyle style) {
+    final label = _panelDisplayLabel(context);
+    return Semantics(
+      button: true,
+      enabled: widget.enabled && !widget.readOnly,
+      label: widget.labelKey.tr(context: context),
+      value: label,
+      onTap: widget.enabled && !widget.readOnly
+          ? () => _openPanelPicker(context)
+          : null,
+      child: InkWell(
+        onTap: widget.enabled && !widget.readOnly
+            ? () => _openPanelPicker(context)
+            : null,
+        borderRadius: style.radius,
+        child: ExcludeFocus(
+          child: IgnorePointer(
+            child: AppTextField(
+              controller: TextEditingController(text: label),
+              labelKey: widget.labelKey,
+              readOnly: true,
+              enabled: widget.enabled,
+              suffix: const AppIcon(AppIcons.expand),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openPanelPicker(BuildContext context) async {
+    final isMobile = ScreenEngine.isMobile(context);
+    final selection = isMobile
+        ? await showModalBottomSheet<_PickerSelection<T>>(
+            context: context,
+            isScrollControlled: true,
+            useSafeArea: true,
+            builder: (sheetContext) => FractionallySizedBox(
+              heightFactor: _mobileSheetHeightFactor,
+              child: _PanelSearchPicker<T>(
+                data: _pickerData,
+                labelKey: widget.labelKey,
+                optionLabel: widget.optionLabel,
+                optionSubtitle: widget.optionSubtitle,
+                emptyKey: widget.emptyKey,
+                allOptionLabel: widget.allOptionLabel,
+                selectedValue: widget.value,
+                filterLocally: widget.filterLocally,
+                onQueryChanged: widget.onQueryChanged == null ? null : _query,
+                onAddNew: widget.onAddNew,
+                onSelect: (value, isAll) => Navigator.of(sheetContext).pop(
+                  _PickerSelection<T>(value: value, selected: true),
+                ),
+              ),
+            ),
+          )
+        : await showDialog<_PickerSelection<T>>(
+            context: context,
+            builder: (dialogContext) => Dialog(
+              child: SizedBox(
+                width: 520,
+                height: 560,
+                child: _PanelSearchPicker<T>(
+                  data: _pickerData,
+                  labelKey: widget.labelKey,
+                  optionLabel: widget.optionLabel,
+                  optionSubtitle: widget.optionSubtitle,
+                  emptyKey: widget.emptyKey,
+                  allOptionLabel: widget.allOptionLabel,
+                  selectedValue: widget.value,
+                  filterLocally: widget.filterLocally,
+                  onQueryChanged: widget.onQueryChanged == null ? null : _query,
+                  onAddNew: widget.onAddNew,
+                  onSelect: (value, isAll) => Navigator.of(dialogContext).pop(
+                    _PickerSelection<T>(value: value, selected: true),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+    if (!mounted) return;
+    if (selection?.selected == true) {
+      widget.onChanged(selection!.value);
+    }
+    _resetQuery();
+    _setText(_panelDisplayLabel(context));
+    if (mounted) setState(() {});
   }
 
   Widget _optionsPanel(
@@ -640,3 +748,222 @@ class _MobileSearchPickerState<T extends Object>
     );
   }
 }
+
+class _PickerSelection<T extends Object> {
+  const _PickerSelection({required this.value, required this.selected});
+  final T? value;
+  final bool selected;
+}
+
+class _PanelSearchPicker<T extends Object> extends StatefulWidget {
+  const _PanelSearchPicker({
+    required this.data,
+    required this.labelKey,
+    required this.optionLabel,
+    required this.emptyKey,
+    required this.filterLocally,
+    required this.onSelect,
+    required this.selectedValue,
+    this.optionSubtitle,
+    this.allOptionLabel,
+    this.onQueryChanged,
+    this.onAddNew,
+  });
+
+  final ValueListenable<_PickerData<T>> data;
+  final AppKey labelKey;
+  final String Function(T) optionLabel;
+  final String? Function(T)? optionSubtitle;
+  final AppKey emptyKey;
+  final AppKey? allOptionLabel;
+  final T? selectedValue;
+  final bool filterLocally;
+  final ValueChanged<String>? onQueryChanged;
+  final WidgetBuilder? onAddNew;
+  final void Function(T? value, bool isAll) onSelect;
+
+  @override
+  State<_PanelSearchPicker<T>> createState() => _PanelSearchPickerState<T>();
+}
+
+class _PanelSearchPickerState<T extends Object>
+    extends State<_PanelSearchPicker<T>> {
+  final _controller = TextEditingController();
+  final _searchFocus = FocusNode();
+  String _query = '';
+  int _activeIndex = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _searchFocus.dispose();
+    super.dispose();
+  }
+
+  KeyEventResult _handleKey(FocusNode node, KeyEvent event, List<T> options) {
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    final count = options.length + (widget.allOptionLabel == null ? 0 : 1);
+    if (event.logicalKey == LogicalKeyboardKey.escape) {
+      Navigator.of(context).maybePop();
+      return KeyEventResult.handled;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.arrowDown && count > 0) {
+      setState(() => _activeIndex = (_activeIndex + 1) % count);
+      return KeyEventResult.handled;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.arrowUp && count > 0) {
+      setState(() => _activeIndex = (_activeIndex - 1 + count) % count);
+      return KeyEventResult.handled;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.enter && count > 0) {
+      final allCount = widget.allOptionLabel == null ? 0 : 1;
+      if (allCount == 1 && _activeIndex == 0) {
+        widget.onSelect(null, true);
+      } else {
+        final index = _activeIndex - allCount;
+        if (index >= 0 && index < options.length) {
+          widget.onSelect(options[index], false);
+        }
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<_PickerData<T>>(
+      valueListenable: widget.data,
+      builder: (context, data, _) {
+        final normalized = _query.trim().toLowerCase();
+        final options = widget.filterLocally && normalized.isNotEmpty
+            ? data.options.where((option) {
+                return widget.optionLabel(option).toLowerCase().contains(normalized) ||
+                    (widget.optionSubtitle?.call(option)?.toLowerCase().contains(normalized) ?? false);
+              }).toList(growable: false)
+            : data.options;
+        final allCount = widget.allOptionLabel == null ? 0 : 1;
+        final count = options.length + allCount;
+        if (count == 0) _activeIndex = 0;
+        if (_activeIndex >= count && count > 0) _activeIndex = count - 1;
+
+        return Focus(
+          onKeyEvent: (node, event) => _handleKey(node, event, options),
+          child: SafeArea(
+            child: Padding(
+              padding: context.ui.padding.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppTextField(
+                    controller: _controller,
+                    focusNode: _searchFocus,
+                    labelKey: widget.labelKey,
+                    hintKey: CatalogUiKeys.search,
+                    prefixIcon: AppIcons.search,
+                    autofocus: true,
+                    textInputAction: TextInputAction.search,
+                    onChanged: (value) {
+                      setState(() {
+                        _query = value;
+                        _activeIndex = 0;
+                      });
+                      widget.onQueryChanged?.call(value);
+                    },
+                    suffix: _query.isEmpty
+                        ? null
+                        : AppIconButton(
+                            AppIcons.close,
+                            tooltipKey: CatalogUiKeys.clearSearch,
+                            onPressed: () {
+                              _controller.clear();
+                              setState(() {
+                                _query = '';
+                                _activeIndex = 0;
+                              });
+                              widget.onQueryChanged?.call('');
+                            },
+                          ),
+                  ),
+                  context.ui.spacing.gap(AppSpacing.md),
+                  Expanded(
+                    child: data.errorKey != null
+                        ? InlineBanner(messageKey: data.errorKey!, variant: InlineBannerVariant.error)
+                        : data.loading
+                        ? const AppSkeleton.block()
+                        : count == 0
+                        ? Center(child: AppText(widget.emptyKey))
+                        : ListView(
+                            children: [
+                              if (widget.allOptionLabel != null)
+                                _tile(
+                                  context,
+                                  widget.allOptionLabel!.tr(context: context),
+                                  selected: widget.selectedValue == null,
+                                  active: _activeIndex == 0,
+                                  onTap: () => widget.onSelect(null, true),
+                                ),
+                              for (var index = 0; index < options.length; index++)
+                                _tile(
+                                  context,
+                                  widget.optionLabel(options[index]),
+                                  subtitle: widget.optionSubtitle?.call(options[index]),
+                                  selected: widget.selectedValue == options[index],
+                                  active: _activeIndex == index + allCount,
+                                  onTap: () => widget.onSelect(options[index], false),
+                                ),
+                              if (widget.onAddNew != null) widget.onAddNew!(context),
+                            ],
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _tile(
+    BuildContext context,
+    String label, {
+    String? subtitle,
+    required bool selected,
+    required bool active,
+    required VoidCallback onTap,
+  }) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          color: active ? context.ui.theme.colors.surfaceContainerHighest : null,
+          padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText.raw(label, maxLines: 2),
+                    if (subtitle != null && subtitle.isNotEmpty)
+                      AppText.raw(
+                        subtitle,
+                        type: AppTextType.bodySmall,
+                        color: context.ui.theme.colors.onSurfaceVariant,
+                        maxLines: 2,
+                      ),
+                  ],
+                ),
+              ),
+              if (selected) const AppIcon(AppIcons.check, tone: AppIconTone.primary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
