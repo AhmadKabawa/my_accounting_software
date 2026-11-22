@@ -30,7 +30,7 @@ void main() {
       ),
     );
 
-    await tester.enterText(find.byType(TextField), 'navy');
+    await tester.enterText(find.byType(TextField).first, 'navy');
     await tester.pump();
     expect(search, 'navy');
 
