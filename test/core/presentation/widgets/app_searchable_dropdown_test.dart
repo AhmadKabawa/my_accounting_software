@@ -169,6 +169,28 @@ void main() {
 
 
   group('dedicated panel mode (desktop)', () {
+    testWidgets('defaults the first panel option to localized All', (
+      tester,
+    ) async {
+      await pumpPicker(tester, mode: SearchableDropdownMode.panel);
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('All'), findsOneWidget);
+      expect(find.text('Alpha'), findsOneWidget);
+    });
+
+    testWidgets('shows no-results beneath the All option', (tester) async {
+      await pumpPicker(tester, mode: SearchableDropdownMode.panel);
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'missing');
+      await tester.pumpAndSettle();
+
+      expect(find.text('All'), findsOneWidget);
+      expect(find.text('No matching options'), findsOneWidget);
+    });
+
     testWidgets('opens, selects, closes, reopens and selects another value', (
       tester,
     ) async {
@@ -362,7 +384,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
-      expect(tester.widget<TextField>(find.byType(TextField).last).controller?.text, '');
+      expect(
+        tester.widget<TextField>(find.byType(TextField).last).controller?.text,
+        '',
+      );
       expect(find.text('Beta'), findsOneWidget);
     });
   });
