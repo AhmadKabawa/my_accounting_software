@@ -69,13 +69,13 @@ class BrandStatsBar extends StatelessWidget {
       onTap: () => onFilterSelected(filter),
       padding: AppSpacing.md,
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        AppText(label),
-        context.ui.spacing.gap(AppSpacing.xs),
-        AppText.raw(value.toString(), type: AppTextType.amountKpi),
-      ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppText(label),
+          context.ui.spacing.gap(AppSpacing.xs),
+          AppText.raw(value.toString(), type: AppTextType.amountKpi),
+        ],
       ),
     ),
   );
