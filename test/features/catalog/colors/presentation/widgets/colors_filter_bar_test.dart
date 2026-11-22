@@ -55,7 +55,8 @@ void main() {
               status: ColorStatusFilter.active,
             ),
             onSearchChanged: (value) => searchCleared = value.isEmpty,
-            onStatusChanged: (value) => statusCleared = value == ColorStatusFilter.all,
+            onStatusChanged: (value) =>
+                statusCleared = value == ColorStatusFilter.all,
             onClearAll: () {},
           ),
         ),
@@ -65,9 +66,19 @@ void main() {
     expect(find.text('Search by color name or code: navy'), findsOneWidget);
     expect(find.text('Status: Active'), findsOneWidget);
     expect(find.byType(AppBadge), findsNWidgets(2));
-    await tester.tap(find.descendant(of: find.byType(AppBadge).first, matching: find.byType(InkWell)));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppBadge).first,
+        matching: find.byType(InkWell),
+      ),
+    );
     expect(searchCleared, isTrue);
-    await tester.tap(find.descendant(of: find.byType(AppBadge).last, matching: find.byType(InkWell)));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppBadge).last,
+        matching: find.byType(InkWell),
+      ),
+    );
     expect(statusCleared, isTrue);
   });
 }
