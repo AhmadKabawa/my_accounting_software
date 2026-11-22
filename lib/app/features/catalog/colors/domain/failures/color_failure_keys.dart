@@ -14,5 +14,5 @@ enum ColorFailureKeys implements AppKey {
   final String en;
 
   @override
-  String get key => 'colors.failure.$name';
+  String get key => 'colors.$name';
 }
