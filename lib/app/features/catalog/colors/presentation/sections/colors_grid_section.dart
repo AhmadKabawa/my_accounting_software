@@ -98,9 +98,9 @@ class ColorsGridSection extends StatelessWidget {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: context.ui.size.width(
-              AppComponentSize.cardWidth,
-            ),
+            maxCrossAxisExtent: context.ui.screen.isMobile
+                ? 400
+                : context.ui.size.width(AppComponentSize.cardWidth),
             mainAxisExtent:
                 context.ui.size.height(AppComponentSize.cardHeight) +
                 context.ui.spacing.lg,
