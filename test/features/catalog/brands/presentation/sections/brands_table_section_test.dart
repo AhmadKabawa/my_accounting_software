@@ -72,14 +72,14 @@ void main() {
   testWidgets(
     'table retains the products column and its existing count badge',
     (tester) async {
-    tester.view.physicalSize = const Size(1280, 900);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(buildTestApp(home: _withAccess(_section())));
+      await tester.pumpWidget(buildTestApp(home: _withAccess(_section())));
 
-    expect(find.text(BrandsKeys.productCount.en), findsOneWidget);
-    expect(find.text('Products: 2'), findsOneWidget);
+      expect(find.text(BrandsKeys.productCount.en), findsOneWidget);
+      expect(find.text('Products: 2'), findsOneWidget);
   });
 
   testWidgets('empty brands uses its dedicated AppEmptyState', (tester) async {
