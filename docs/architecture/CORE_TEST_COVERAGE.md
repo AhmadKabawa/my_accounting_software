@@ -118,3 +118,10 @@
 
 `app_saas_colors_test`، `app_data_view_test` (مصفوفة العرض)، `app_filter_bar_test`، `list_page_template_test`، `app_stat_card_test`، `app_row_actions_test`، `message_view_widgets_test`، `test/shell/app_shell_windows_sidebar_test`، اختبارات الماركات (الاستعلام، الإحصاءات، الفلاتر، الشاشة).
 فجوات: اختبار شجرة «المزيد» على الهاتف، واختبار صلاحيات الشجرة في الشريط الجانبي، ولقطات Golden.
+
+
+## Shared CRUD list widgets — 2026-11-22
+
+- `test/core/presentation/widgets/list_stats_bar_test.dart`: card counts 1–6 at widths 360/600/1200, equal widths, no full-row singleton, and loading placeholders preserving count.
+- `test/core/presentation/widgets/crud_empty_state_test.dart`: empty/no-results copy, optional create action, callback, and denied-permission visibility.
+- These tests were added in this change; they have not been run in a Flutter environment. Treat their runtime status as NOT_VERIFIED until the specified Flutter commands pass.
