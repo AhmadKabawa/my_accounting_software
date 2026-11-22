@@ -173,6 +173,7 @@ class _SearchableDropdownState<T extends Object>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _desktopFocusNode.hasFocus) return;
       _setText(_panelDisplayLabel(context));
+      setState(() {});
     });
   }
 
@@ -217,15 +218,12 @@ class _SearchableDropdownState<T extends Object>
     if (panelLabelChanged && !_desktopFocusNode.hasFocus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || _desktopFocusNode.hasFocus) return;
-        _setText(
-          widget.mode == SearchableDropdownMode.panel
-              ? _panelDisplayLabel(context)
-              : _selectedLabel,
-        );
+        final label = widget.mode == SearchableDropdownMode.panel
+            ? _panelDisplayLabel(context)
+            : _selectedLabel;
+        _setText(label);
+        setState(() {});
       });
-    } else if (oldWidget.value != widget.value &&
-        !_desktopFocusNode.hasFocus) {
-      _setText(_selectedLabel);
     }
     _desktopPanelEntry?.markNeedsBuild();
   }
