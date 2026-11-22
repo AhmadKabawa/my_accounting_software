@@ -5,10 +5,7 @@ void main() {
   test('resolves common apparel colors with Lab distance', () {
     expect(ColorNameResolver.resolve('#228B22'), ColorName.forestGreen);
     expect(ColorNameResolver.resolve('#F57C21'), ColorName.orange);
-    expect(
-      ColorNameResolver.resolve('#05AD9D'),
-      ColorName.turquoise,
-    );
+    expect(ColorNameResolver.resolve('#05AD9D'), ColorName.turquoise);
     expect(ColorNameResolver.resolve('#000000'), ColorName.black);
     expect(ColorNameResolver.resolve('#FFFFFF'), ColorName.white);
   });
