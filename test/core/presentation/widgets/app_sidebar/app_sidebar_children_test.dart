@@ -76,7 +76,7 @@ void main() {
     expect(opened, '/catalog/brands');
   });
 
-  testWidgets('a parent opens its list first and navigates on the second tap', (
+  testWidgets('one tap opens or closes the list and never navigates', (
     tester,
   ) async {
     final taps = <int>[];
@@ -87,7 +87,47 @@ void main() {
     expect(find.text('Brands'), findsOneWidget);
     await tester.tap(find.text('Catalog'));
     await tester.pumpAndSettle();
+    expect(taps, isEmpty);
+    expect(find.text('Brands'), findsNothing);
+  });
+
+  testWidgets('a double tap on a parent opens its own page', (tester) async {
+    final taps = <int>[];
+    await _pump(tester, activeIndex: 0, onIndex: taps.add);
+    await tester.tap(find.text('Catalog'));
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tap(find.text('Catalog'));
+    await tester.pumpAndSettle();
     expect(taps, [1]);
+  });
+
+  testWidgets('only one list is open: choosing another page closes it', (
+    tester,
+  ) async {
+    int active = 1;
+    late StateSetter update;
+    await tester.pumpWidget(
+      buildTestApp(
+        home: StatefulBuilder(
+          builder: (context, setState) {
+            update = setState;
+            return Scaffold(
+              body: AppSidebar(
+                items: _items,
+                activeIndex: active,
+                onIndexChanged: (i) => setState(() => active = i),
+                activePath: active == 1 ? '/catalog/brands' : '/',
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    expect(find.text('Brands'), findsOneWidget);
+    await tester.tap(find.text('home'));
+    await tester.pumpAndSettle();
+    expect(find.text('Brands'), findsNothing);
+    update(() {});
   });
 
   testWidgets('icon-only mode shows the children as icons under the parent', (

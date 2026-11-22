@@ -412,8 +412,10 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
     });
   }
 
-  /// True while the sidebar was opened from icon-only mode: choosing a page
-  /// folds it back to icons (a sidebar that started open stays open).
+  /// True while the sidebar was opened from icon-only mode. It stays open
+  /// while the user picks different pages, and folds back to icons when the
+  /// page already shown is chosen again (a sidebar that started open stays
+  /// open).
   bool _openedFromIcons = false;
 
   Future<void> _toggle() async {
@@ -423,25 +425,40 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
     await widget.settingsManager.setSidebarCollapsed(collapsed);
   }
 
-  /// After a page was chosen (even the one already shown).
-  void _afterNavigate() {
-    if (_openedFromIcons && !_collapsed && widget.collapsible) _toggle();
+  /// After a page was chosen: [same] = it is the page already shown.
+  void _afterNavigate({required bool same}) {
+    if (same && _openedFromIcons && !_collapsed && widget.collapsible) {
+      _toggle();
+    }
   }
+
+  bool _isCurrentIndex(int index) {
+    if (index != widget.activeIndex) return false;
+    // The parent's own page is a different page from its active child.
+    final children = widget.items[index].children;
+    return !children.any((c) => AppSidebar.isChildActive(c, widget.activePath));
+  }
+
+  bool _isCurrentPath(String path) =>
+      widget.activePath == path ||
+      (widget.activePath?.startsWith('$path/') ?? false);
 
   @override
   Widget build(BuildContext context) => AppSidebar(
     items: widget.items,
     activeIndex: widget.activeIndex,
     onIndexChanged: (index) {
+      final same = _isCurrentIndex(index);
       widget.onIndexChanged(index);
-      _afterNavigate();
+      _afterNavigate(same: same);
     },
     collapsed: _collapsed,
     onToggle: _restored && widget.collapsible ? _toggle : null,
     activePath: widget.activePath,
     onChildSelected: (path) {
+      final same = _isCurrentPath(path);
       widget.onChildSelected?.call(path);
-      _afterNavigate();
+      _afterNavigate(same: same);
     },
     initialOpenSections: _openSections,
     onOpenSectionsChanged: (open) {

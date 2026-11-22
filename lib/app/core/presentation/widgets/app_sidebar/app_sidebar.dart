@@ -20,8 +20,11 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text/app_t
 /// * The section of the selected destination or active child opens by itself.
 /// * Open sections are reported through [onOpenSectionsChanged] (the owner
 ///   persists them) and restored from [initialOpenSections].
-/// * [collapsed] (icons only): a tooltip names each item; an item with
-///   children opens a popup menu with its destination and its children.
+/// * Accordion: one section open at a time. One tap on a parent opens or
+///   closes its list (it never leaves the page); a double tap opens the
+///   parent's own page. A page without sub-items closes every list.
+/// * [collapsed] (icons only): a tooltip names each item; the children of the
+///   open section show as smaller icons under their parent.
 /// * The owner filters items by permission before passing them.
 class AppSidebar extends StatefulWidget {
   final List<NavBarItem> items;
@@ -68,53 +71,70 @@ class AppSidebar extends StatefulWidget {
 }
 
 class _AppSidebarState extends State<AppSidebar> {
-  late final Set<String> _open = {...widget.initialOpenSections};
+  /// At most one open section (an accordion): opening one closes the others.
+  final Set<String> _open = {};
+  bool _interacted = false;
 
   @override
   void initState() {
     super.initState();
-    _openActiveSection();
+    _syncToRoute(notify: false);
+    if (_open.isEmpty && widget.initialOpenSections.isNotEmpty) {
+      _open.add(widget.initialOpenSections.first);
+    }
   }
 
   @override
   void didUpdateWidget(AppSidebar old) {
     super.didUpdateWidget(old);
-    // Storage answers after the first frame: merge what it restored, once.
-    // (Merging on every rebuild would reopen sections the user just closed.)
-    if (old.initialOpenSections != widget.initialOpenSections) {
-      _open.addAll(widget.initialOpenSections);
-    }
     if (old.activeIndex != widget.activeIndex ||
         old.activePath != widget.activePath) {
-      _openActiveSection();
+      // Going to another page: its section opens, every other one closes
+      // (a page without sub-items closes them all).
+      _syncToRoute();
+    } else if (old.initialOpenSections != widget.initialOpenSections &&
+        !_interacted &&
+        _open.isEmpty &&
+        widget.initialOpenSections.isNotEmpty) {
+      // Storage answered late: restore once, never over the user's choice.
+      _open.add(widget.initialOpenSections.first);
     }
   }
 
-  /// The selected destination and the section of the active child open.
-  void _openActiveSection() {
+  /// Opens only the section that holds the current page (if any).
+  void _syncToRoute({bool notify = true}) {
+    String? id;
     for (var i = 0; i < widget.items.length; i++) {
       final item = widget.items[i];
       if (item.children.isEmpty) continue;
       final hasActiveChild = item.children.any(
         (c) => AppSidebar.isChildActive(c, widget.activePath),
       );
-      if (i == widget.activeIndex || hasActiveChild) {
-        _open.add(AppSidebar.sectionId(item));
-      }
+      if (i == widget.activeIndex || hasActiveChild) id = AppSidebar.sectionId(item);
     }
+    _setOpen(id, notify: notify);
   }
 
+  void _setOpen(String? id, {bool notify = true}) {
+    final next = id == null ? <String>{} : {id};
+    if (next.length == _open.length && _open.containsAll(next)) return;
+    _open
+      ..clear()
+      ..addAll(next);
+    if (notify) widget.onOpenSectionsChanged?.call({..._open});
+  }
+
+  /// A tap on a parent: opens its list, or closes it when already open.
   void _toggle(NavBarItem item) {
     final id = AppSidebar.sectionId(item);
-    setState(() => _open.contains(id) ? _open.remove(id) : _open.add(id));
-    widget.onOpenSectionsChanged?.call({..._open});
+    _interacted = true;
+    setState(() => _setOpen(_open.contains(id) ? null : id));
   }
 
-  void _openSection(NavBarItem item) {
-    if (item.children.isEmpty) return;
-    var added = false;
-    setState(() => added = _open.add(AppSidebar.sectionId(item)));
-    if (added) widget.onOpenSectionsChanged?.call({..._open});
+  /// A tap on a page without sub-items: every list closes.
+  void _closeAll() {
+    _interacted = true;
+    setState(() => _setOpen(null));
   }
 
   @override
@@ -181,15 +201,23 @@ class _AppSidebarState extends State<AppSidebar> {
       style: style,
       collapsed: widget.collapsed,
       open: children.isEmpty ? null : open,
+      // A parent with sub-items: one tap opens/closes its list and never
+      // leaves the page; a double tap goes to the parent's own page.
       onTap: () {
-        // A parent with sub-items: the first tap only opens its list; a tap
-        // while it is open goes to the parent's own page.
-        if (children.isNotEmpty && !open) {
-          _openSection(item);
-          return;
+        if (children.isEmpty) {
+          _closeAll();
+          widget.onIndexChanged(index);
+        } else {
+          _toggle(item);
         }
-        widget.onIndexChanged(index);
       },
+      onDoubleTap: children.isEmpty
+          ? null
+          : () {
+              _interacted = true;
+              setState(() => _setOpen(AppSidebar.sectionId(item)));
+              widget.onIndexChanged(index);
+            },
       onToggle: children.isEmpty ? null : () => _toggle(item),
     );
 
@@ -203,7 +231,11 @@ class _AppSidebarState extends State<AppSidebar> {
               children: children,
               activePath: widget.activePath,
               style: style,
-              onChild: (path) => widget.onChildSelected?.call(path),
+              onChild: (path) {
+                _interacted = true;
+                setState(() => _setOpen(AppSidebar.sectionId(item)));
+                widget.onChildSelected?.call(path);
+              },
             ),
         ],
       );
@@ -246,8 +278,13 @@ class _AppSidebarState extends State<AppSidebar> {
                                 widget.activePath,
                               ),
                               style: style,
-                              onTap: () =>
-                                  widget.onChildSelected?.call(child.path),
+                              onTap: () {
+                                _interacted = true;
+                                setState(
+                                  () => _setOpen(AppSidebar.sectionId(item)),
+                                );
+                                widget.onChildSelected?.call(child.path);
+                              },
                             ),
                             if (child != children.last)
                               SizedBox(height: style.itemGap),
@@ -274,6 +311,9 @@ class _SidebarItem extends StatelessWidget {
   /// null = no children (no chevron).
   final bool? open;
   final VoidCallback onTap;
+
+  /// Items with sub-items: the second tap of a double tap (opens the page).
+  final VoidCallback? onDoubleTap;
   final VoidCallback? onToggle;
 
   const _SidebarItem({
@@ -284,8 +324,20 @@ class _SidebarItem extends StatelessWidget {
     required this.collapsed,
     required this.open,
     required this.onTap,
+    required this.onDoubleTap,
     required this.onToggle,
   });
+
+  /// Screen readers cannot double tap the row: give them an explicit action.
+  Map<CustomSemanticsAction, VoidCallback>? _openPageAction(
+    BuildContext context,
+  ) => onDoubleTap == null
+      ? null
+      : {
+          CustomSemanticsAction(
+            label: ShellKeys.openPage.tr(context: context),
+          ): onDoubleTap!,
+        };
 
   @override
   Widget build(BuildContext context) {
@@ -305,6 +357,7 @@ class _SidebarItem extends StatelessWidget {
         button: true,
         selected: selected || ancestor,
         onTap: onTap,
+        customSemanticsActions: _openPageAction(context),
         child: ExcludeSemantics(
           child: Center(
             child: Tooltip(
@@ -318,6 +371,7 @@ class _SidebarItem extends StatelessWidget {
                   child: InkWell(
                     customBorder: const CircleBorder(),
                     onTap: onTap,
+                    onDoubleTap: onDoubleTap,
                     child: Center(child: icon),
                   ),
                 ),
@@ -334,6 +388,7 @@ class _SidebarItem extends StatelessWidget {
       selected: selected || ancestor,
       expanded: open,
       onTap: onTap,
+      customSemanticsActions: _openPageAction(context),
       child: ExcludeSemantics(
         child: Material(
           color: style.itemBackground(selected: selected),
@@ -341,6 +396,7 @@ class _SidebarItem extends StatelessWidget {
           child: InkWell(
             borderRadius: style.itemRadius,
             onTap: onTap,
+            onDoubleTap: onDoubleTap,
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: style.itemMinHeight),
               child: Padding(

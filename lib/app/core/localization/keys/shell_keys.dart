@@ -9,6 +9,7 @@ enum ShellKeys implements AppKey {
   userMenu(ar: 'قائمة المستخدم', en: 'User menu'),
   more(ar: 'المزيد', en: 'More'),
   collapseSidebar(ar: 'طي الشريط الجانبي', en: 'Collapse sidebar'),
+  openPage(ar: 'فتح الصفحة', en: 'Open page'),
   openMenu(ar: 'القائمة الرئيسية', en: 'Main menu'),
   expandSidebar(ar: 'توسيع الشريط الجانبي', en: 'Expand sidebar'),
   expandSection(ar: 'فتح القسم', en: 'Expand section'),
