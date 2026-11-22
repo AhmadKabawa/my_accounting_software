@@ -565,3 +565,16 @@ ListPageTemplate(
 )
 ```
 حفظ النمط: `ViewModeCubit(settings: sl<AppSettingsManager>(), screenId: 'feature.screen')..restore()`. مرجع كامل: شاشة الماركات.
+
+
+## CRUD list-page composition
+
+Use the shared list-page building blocks instead of recreating statistics, add buttons, or empty/no-results conditions in a feature:
+
+- Describe search, filters, sort, view modes, and refresh with `ListToolbarConfig` passed to `ListPageTemplate.toolbar`.
+- Supply summary tiles as `ListStatsBar<F>` with `StatItem<F>` values via `ListPageTemplate.stats`.
+- Supply a `ListAddAction` to `ListPageTemplate.addAction`; pass the same action to `CrudEmptyState.addAction` when the data section owns its empty state.
+- Compute `hasActiveFilters` once in the owning section and pass it to `CrudEmptyState`. The widget selects empty/no-results copy and omits the create action when filters are active.
+- Keep every user-visible label as an `AppKey`; the feature owns its permission and callbacks.
+
+See [List page template](../ui/list_page_template.md) for the preferred-slot table and a compact example.
