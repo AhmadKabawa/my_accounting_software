@@ -160,8 +160,10 @@ void main() {
     String? selected;
     await pumpPicker(tester, onChanged: (value) => selected = value);
     await tester.tap(find.byType(TextField));
+    await tester.showKeyboard(find.byType(TextField));
     await tester.pumpAndSettle();
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(selected, 'Alpha');
