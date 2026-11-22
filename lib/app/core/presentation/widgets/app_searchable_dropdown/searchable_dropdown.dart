@@ -376,6 +376,7 @@ class _SearchableDropdownState<T extends Object>
       enabled: widget.enabled && !widget.readOnly,
       label: widget.labelKey.tr(context: context),
       value: label,
+      excludeSemantics: true,
       onTap: widget.enabled && !widget.readOnly
           ? () => _openPanelPicker(context)
           : null,
@@ -848,7 +849,7 @@ class _PanelSearchPickerState<T extends Object>
                     (widget.optionSubtitle?.call(option)?.toLowerCase().contains(normalized) ?? false);
               }).toList(growable: false)
             : data.options;
-        final allCount = widget.allOptionLabel == null ? 0 : 1;
+        const allCount = 1;
         final count = options.length + allCount;
         if (count == 0) _activeIndex = 0;
         if (_activeIndex >= count && count > 0) _activeIndex = count - 1;
@@ -901,7 +902,7 @@ class _PanelSearchPickerState<T extends Object>
                             children: [
                               _tile(
                                   context,
-                                  widget.allOptionLabel!.tr(context: context),
+                                  widget.allOptionLabel.tr(context: context),
                                   selected: widget.selectedValue == null,
                                   active: _activeIndex == 0,
                                   onTap: () => widget.onSelect(null, true),
