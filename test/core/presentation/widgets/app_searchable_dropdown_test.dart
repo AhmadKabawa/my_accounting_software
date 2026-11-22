@@ -224,7 +224,10 @@ void main() {
       expect(find.text('Alpha'), findsOneWidget);
       await tester.tap(find.text('Alpha').last);
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('searchable-dropdown-panel')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('searchable-dropdown-panel')),
+        findsNothing,
+      );
       expect(find.text('Alpha'), findsOneWidget);
     });
 
