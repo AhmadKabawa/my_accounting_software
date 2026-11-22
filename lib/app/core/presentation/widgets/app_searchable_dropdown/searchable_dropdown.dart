@@ -404,6 +404,7 @@ class _SearchableDropdownState<T extends Object>
             widget.optionLabel(option),
             () => select(option),
             selected: widget.value == option,
+            subtitle: widget.optionSubtitle?.call(option),
           ),
         if (widget.onAddNew != null) widget.onAddNew!(context),
       ],
@@ -415,13 +416,12 @@ class _SearchableDropdownState<T extends Object>
     String label,
     VoidCallback onTap, {
     bool selected = false,
+    String? subtitle,
   }) {
     final style = SearchableDropdownStyle(context);
-    final subtitle = widget.optionSubtitle == null || widget.value == null
-        ? null
-        : widget.optionSubtitle!(widget.value as T);
     return Semantics(
       button: true,
+      selected: selected,
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -433,14 +433,21 @@ class _SearchableDropdownState<T extends Object>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText.raw(label, maxLines: 2),
-              if (subtitle != null && subtitle.isNotEmpty) ...[
-                context.ui.spacing.gap(AppSpacing.xs),
-                AppText.raw(
-                  subtitle,
-                  type: AppTextType.bodySmall,
-                  color: style.colors.onSurfaceVariant,
-                  maxLines: 2,
+                    if (subtitle != null && subtitle.isNotEmpty) ...[
+                      context.ui.spacing.gap(AppSpacing.xs),
+                      AppText.raw(
+                        subtitle,
+                        type: AppTextType.bodySmall,
+                        color: style.colors.onSurfaceVariant,
+                        maxLines: 2,
+                      ),
+                    ],
+                  ],
                 ),
+              ),
+              if (selected) ...[
+                context.ui.spacing.gap(AppSpacing.sm),
+                const AppIcon(AppIcons.check, tone: AppIconTone.primary),
               ],
             ],
           ),
