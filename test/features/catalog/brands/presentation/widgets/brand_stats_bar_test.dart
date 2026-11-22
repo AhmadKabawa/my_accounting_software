@@ -50,9 +50,7 @@ void main() {
       ),
     );
 
-    final cards = tester.widgetList<DecoratedBox>(
-      find.byType(DecoratedBox),
-    );
+    final cards = tester.widgetList<DecoratedBox>(find.byType(DecoratedBox));
     final borderWidths = cards
         .map((card) => (card.decoration as BoxDecoration).border!.top.width)
         .toList();
