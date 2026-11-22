@@ -422,8 +422,8 @@ class _SearchableDropdownState<T extends Object>
                 filterLocally: widget.filterLocally,
                 onQueryChanged: widget.onQueryChanged == null ? null : _query,
                 onAddNew: widget.onAddNew,
-                onSelect: (value, isAll) => Navigator.of(sheetContext).pop(
-                  _PickerSelection<T>(value: value, selected: true),
+                onSelect: (value) => Navigator.of(sheetContext).pop(
+                  _PickerSelection<T>(value: value),
                 ),
               ),
             ),
@@ -445,8 +445,8 @@ class _SearchableDropdownState<T extends Object>
                   filterLocally: widget.filterLocally,
                   onQueryChanged: widget.onQueryChanged == null ? null : _query,
                   onAddNew: widget.onAddNew,
-                  onSelect: (value, isAll) => Navigator.of(dialogContext).pop(
-                    _PickerSelection<T>(value: value, selected: true),
+                  onSelect: (value) => Navigator.of(dialogContext).pop(
+                    _PickerSelection<T>(value: value),
                   ),
                 ),
               ),
@@ -454,9 +454,7 @@ class _SearchableDropdownState<T extends Object>
           );
 
     if (!mounted) return;
-    if (selection?.selected == true) {
-      widget.onChanged(selection!.value);
-    }
+    if (selection != null) widget.onChanged(selection.value);
     _resetQuery();
     _setText(_panelDisplayLabel(context));
     if (mounted) setState(() {});
@@ -759,9 +757,8 @@ class _MobileSearchPickerState<T extends Object>
 }
 
 class _PickerSelection<T extends Object> {
-  const _PickerSelection({required this.value, required this.selected});
+  const _PickerSelection({required this.value});
   final T? value;
-  final bool selected;
 }
 
 class _PanelSearchPicker<T extends Object> extends StatefulWidget {
@@ -789,7 +786,7 @@ class _PanelSearchPicker<T extends Object> extends StatefulWidget {
   final bool filterLocally;
   final ValueChanged<String>? onQueryChanged;
   final WidgetBuilder? onAddNew;
-  final void Function(T? value, bool isAll) onSelect;
+  final ValueChanged<T?> onSelect;
 
   @override
   State<_PanelSearchPicker<T>> createState() => _PanelSearchPickerState<T>();
@@ -809,11 +806,11 @@ class _PanelSearchPickerState<T extends Object>
     super.dispose();
   }
 
-  KeyEventResult _handleKey(FocusNode node, KeyEvent event, List<T> options) {
+  KeyEventResult _handleKey(FocusNode _, KeyEvent event, List<T> options) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     final count = options.length + 1;
     if (event.logicalKey == LogicalKeyboardKey.escape) {
-      Navigator.of(context).maybePop();
+      unawaited(Navigator.of(context).maybePop());
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.arrowDown && count > 0) {
@@ -827,11 +824,11 @@ class _PanelSearchPickerState<T extends Object>
     if (event.logicalKey == LogicalKeyboardKey.enter && count > 0) {
       const allCount = 1;
       if (allCount == 1 && _activeIndex == 0) {
-        widget.onSelect(null, true);
+        widget.onSelect(null);
       } else {
         final index = _activeIndex - allCount;
         if (index >= 0 && index < options.length) {
-          widget.onSelect(options[index], false);
+          widget.onSelect(options[index]);
         }
       }
       return KeyEventResult.handled;
@@ -853,7 +850,6 @@ class _PanelSearchPickerState<T extends Object>
             : data.options;
         const allCount = 1;
         final count = options.length + allCount;
-        if (count == 0) _activeIndex = 0;
         if (_activeIndex >= count && count > 0) _activeIndex = count - 1;
 
         return Focus(
@@ -907,7 +903,7 @@ class _PanelSearchPickerState<T extends Object>
                                   widget.allOptionLabel.tr(context: context),
                                   selected: widget.selectedValue == null,
                                   active: _activeIndex == 0,
-                                  onTap: () => widget.onSelect(null, true),
+                                  onTap: () => widget.onSelect(null),
                                 ),
                               if (options.isEmpty && _query.trim().isNotEmpty)
                                 Padding(
@@ -921,7 +917,7 @@ class _PanelSearchPickerState<T extends Object>
                                   subtitle: widget.optionSubtitle?.call(options[index]),
                                   selected: widget.selectedValue == options[index],
                                   active: _activeIndex == index + allCount,
-                                  onTap: () => widget.onSelect(options[index], false),
+                                  onTap: () => widget.onSelect(options[index]),
                                 ),
                               if (widget.onAddNew != null) widget.onAddNew!(context),
                             ],
