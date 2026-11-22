@@ -200,7 +200,21 @@ class _SearchableDropdownState<T extends Object>
       });
     }
 
-    if (oldWidget.value != widget.value && !_desktopFocusNode.hasFocus) {
+    final panelLabelChanged =
+        oldWidget.value != widget.value ||
+        oldWidget.allOptionLabel != widget.allOptionLabel ||
+        oldWidget.mode != widget.mode;
+    if (panelLabelChanged && !_desktopFocusNode.hasFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _desktopFocusNode.hasFocus) return;
+        _setText(
+          widget.mode == SearchableDropdownMode.panel
+              ? _panelDisplayLabel(context)
+              : _selectedLabel,
+        );
+      });
+    } else if (oldWidget.value != widget.value &&
+        !_desktopFocusNode.hasFocus) {
       _setText(_selectedLabel);
     }
     _desktopPanelEntry?.markNeedsBuild();
@@ -385,7 +399,6 @@ class _SearchableDropdownState<T extends Object>
 
   Widget _panelTrigger(BuildContext context, SearchableDropdownStyle style) {
     final label = _panelDisplayLabel(context);
-    if (_desktopController.text != label) _setText(label);
     return Semantics(
       button: true,
       enabled: widget.enabled && !widget.readOnly,
