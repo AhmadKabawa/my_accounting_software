@@ -67,7 +67,12 @@ class BrandsScreen extends StatelessWidget {
                     ],
                   ),
                   count: total,
-                  actions: stats == null ? null : BrandStatsBar(stats),
+                  actions: stats == null
+                      ? null
+                      : BrandStatsBar(
+                          stats,
+                          onFilterSelected: cubit.setStatus,
+                        ),
                   primaryAction: PermissionGate(
                     permission: Permissions.masterData.manage,
                     child: AppButton(
