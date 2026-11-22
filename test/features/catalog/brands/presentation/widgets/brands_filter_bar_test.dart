@@ -65,7 +65,10 @@ void main() {
 
     expect(find.text('Search by brand or slug: north'), findsOneWidget);
     expect(find.text('Status: Active'), findsOneWidget);
-    final removeButtons = find.byTooltip('Remove filter');
-    expect(removeButtons, findsNWidgets(2));
+    expect(find.byType(AppBadge), findsNWidgets(2));
+    await tester.tap(find.descendant(of: find.byType(AppBadge).first, matching: find.byType(InkWell)));
+    expect(searchCleared, isTrue);
+    await tester.tap(find.descendant(of: find.byType(AppBadge).last, matching: find.byType(InkWell)));
+    expect(statusCleared, isTrue);
   });
 }
