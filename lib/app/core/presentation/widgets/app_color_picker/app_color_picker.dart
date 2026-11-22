@@ -53,7 +53,23 @@ class _AppColorPickerState extends State<AppColorPicker> {
   @override
   void didUpdateWidget(covariant AppColorPicker old) {
     super.didUpdateWidget(old);
-    if (old.value != widget.value) _sync(widget.value);
+    if (old.value != widget.value) {
+      final value = widget.value;
+      _sync(value, updateController: false);
+      final normalized = HexColor.normalize(value);
+      final nextText = normalized != null && HexColor.isValid(normalized)
+          ? normalized.substring(0, _rgbLength)
+          : '';
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || widget.value != value || _controller.text == nextText) {
+          return;
+        }
+        _controller.value = TextEditingValue(
+          text: nextText,
+          selection: TextSelection.collapsed(offset: nextText.length),
+        );
+      });
+    }
   }
 
   @override
@@ -70,11 +86,13 @@ class _AppColorPickerState extends State<AppColorPicker> {
     return '#$red$green$blue'.toUpperCase();
   }
 
-  void _sync(String? input) {
+  void _sync(String? input, {bool updateController = true}) {
     final h = HexColor.normalize(input);
     if (h == null || !HexColor.isValid(h)) {
       _alpha = null;
-      _controller.text = '';
+      if (updateController && _controller.text.isNotEmpty) {
+        _controller.clear();
+      }
       return;
     }
     _alpha = h.length == _alphaLength ? h.substring(_rgbLength) : null;
@@ -82,7 +100,15 @@ class _AppColorPickerState extends State<AppColorPicker> {
     _hue = hsv.hue;
     _sat = hsv.saturation;
     _val = hsv.value;
-    _controller.text = h.substring(0, _rgbLength);
+    if (updateController) {
+      final text = h.substring(0, _rgbLength);
+      if (_controller.text != text) {
+        _controller.value = TextEditingValue(
+          text: text,
+          selection: TextSelection.collapsed(offset: text.length),
+        );
+      }
+    }
   }
 
   String _output() =>
