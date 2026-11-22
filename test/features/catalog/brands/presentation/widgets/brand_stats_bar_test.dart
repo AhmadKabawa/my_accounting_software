@@ -34,4 +34,28 @@ void main() {
     await tester.tap(find.byType(AppCard).first);
     expect(selected, BrandStatusFilter.all);
   });
+
+  testWidgets('visually selects the card matching the current filter', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: BrandStatsBar(
+            const BrandStats(total: 12, active: 8, inactive: 4),
+            onFilterSelected: (_) {},
+            selectedFilter: BrandStatusFilter.active,
+          ),
+        ),
+      ),
+    );
+
+    final cards = tester.widgetList<DecoratedBox>(
+      find.byType(DecoratedBox),
+    );
+    final borderWidths = cards
+        .map((card) => (card.decoration as BoxDecoration).border!.top.width)
+        .toList();
+    expect(borderWidths, [0, 2, 0]);
+  });
 }
