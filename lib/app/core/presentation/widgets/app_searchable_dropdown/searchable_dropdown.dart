@@ -83,6 +83,10 @@ class _SearchableDropdownState<T extends Object>
   late final ValueNotifier<_PickerData<T>> _pickerData;
   late final TextEditingController _desktopController;
   late final FocusNode _desktopFocusNode;
+  final _panelTriggerKey = GlobalKey();
+  final _panelLayerLink = LayerLink();
+  OverlayEntry? _desktopPanelEntry;
+  Completer<_PickerSelection<T>?>? _desktopPanelCompleter;
 
   @override
   void initState() {
@@ -199,12 +203,14 @@ class _SearchableDropdownState<T extends Object>
     if (oldWidget.value != widget.value && !_desktopFocusNode.hasFocus) {
       _setText(_selectedLabel);
     }
+    _desktopPanelEntry?.markNeedsBuild();
   }
 
   String _lastQuery = '';
   @override
   void dispose() {
     _debounce?.cancel();
+    _dismissDesktopPanel();
     _pickerData.dispose();
     _desktopController.dispose();
     _desktopFocusNode
@@ -384,19 +390,23 @@ class _SearchableDropdownState<T extends Object>
       onTap: widget.enabled && !widget.readOnly
           ? () => _openPanelPicker(context)
           : null,
-      child: InkWell(
-        onTap: widget.enabled && !widget.readOnly
-            ? () => _openPanelPicker(context)
-            : null,
-        borderRadius: style.radius,
-        child: ExcludeFocus(
-          child: IgnorePointer(
-            child: AppTextField(
-              controller: _desktopController,
-              labelKey: widget.labelKey,
-              readOnly: true,
-              enabled: widget.enabled,
-              suffix: const AppIcon(AppIcons.expand),
+      child: CompositedTransformTarget(
+        key: _panelTriggerKey,
+        link: _panelLayerLink,
+        child: InkWell(
+          onTap: widget.enabled && !widget.readOnly
+              ? () => _openPanelPicker(context)
+              : null,
+          borderRadius: style.radius,
+          child: ExcludeFocus(
+            child: IgnorePointer(
+              child: AppTextField(
+                controller: _desktopController,
+                labelKey: widget.labelKey,
+                readOnly: true,
+                enabled: widget.enabled,
+                suffix: const AppIcon(AppIcons.expand),
+              ),
             ),
           ),
         ),
@@ -425,18 +435,75 @@ class _SearchableDropdownState<T extends Object>
                 filterLocally: widget.filterLocally,
                 onQueryChanged: widget.onQueryChanged == null ? null : _query,
                 onAddNew: widget.onAddNew,
+                onDismiss: () => Navigator.of(sheetContext).maybePop(),
                 onSelect: (value) => Navigator.of(sheetContext).pop(
                   _PickerSelection<T>(value: value),
                 ),
               ),
             ),
           )
-        : await showDialog<_PickerSelection<T>>(
-            context: context,
-            builder: (dialogContext) => Dialog(
+        : await _showDesktopPanel(context);
+
+    if (!mounted) return;
+    if (selection != null) widget.onChanged(selection.value);
+    _resetQuery();
+    _setText(_panelDisplayLabel(context));
+    if (mounted) setState(() {});
+  }
+
+  Future<_PickerSelection<T>?> _showDesktopPanel(
+    BuildContext context,
+  ) {
+    final renderBox =
+        _panelTriggerKey.currentContext?.findRenderObject() as RenderBox?;
+    final triggerSize = renderBox?.size ?? const Size(420, 48);
+    final triggerTop =
+        renderBox?.localToGlobal(Offset.zero).dy ?? 0;
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final below = screenHeight - triggerTop - triggerSize.height - 16;
+    final above = triggerTop - 16;
+    final showAbove = below < 360 && above > below;
+    final availableHeight = (showAbove ? above : below)
+        .clamp(220.0, 560.0)
+        .toDouble();
+    final panelWidth = triggerSize.width.clamp(320.0, 520.0).toDouble();
+    final direction = Directionality.of(context);
+    final targetAnchor = (showAbove
+            ? AlignmentDirectional.topStart
+            : AlignmentDirectional.bottomStart)
+        .resolve(direction);
+    final followerAnchor = (showAbove
+            ? AlignmentDirectional.bottomStart
+            : AlignmentDirectional.topStart)
+        .resolve(direction);
+    final completer = Completer<_PickerSelection<T>?>();
+    _desktopPanelCompleter = completer;
+
+    final style = SearchableDropdownStyle(context);
+    final entry = OverlayEntry(
+      builder: (overlayContext) => Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: _dismissDesktopPanel,
+              child: const SizedBox.expand(),
+            ),
+          ),
+          CompositedTransformFollower(
+            link: _panelLayerLink,
+            showWhenUnlinked: false,
+            targetAnchor: targetAnchor,
+            followerAnchor: followerAnchor,
+            offset: Offset(0, showAbove ? -8 : 8),
+            child: Material(
+              elevation: overlayContext.ui.shadow.value(AppElevation.md),
+              color: style.colors.surface,
+              borderRadius: style.radius,
+              clipBehavior: Clip.antiAlias,
               child: SizedBox(
-                width: 520,
-                height: 560,
+                width: panelWidth,
+                height: availableHeight,
                 child: _PanelSearchPicker<T>(
                   data: _pickerData,
                   labelKey: widget.labelKey,
@@ -449,19 +516,33 @@ class _SearchableDropdownState<T extends Object>
                   filterLocally: widget.filterLocally,
                   onQueryChanged: widget.onQueryChanged == null ? null : _query,
                   onAddNew: widget.onAddNew,
-                  onSelect: (value) => Navigator.of(dialogContext).pop(
+                  onDismiss: _dismissDesktopPanel,
+                  onSelect: (value) => _dismissDesktopPanel(
                     _PickerSelection<T>(value: value),
                   ),
                 ),
               ),
             ),
-          );
+          ),
+        ],
+      ),
+    );
+    _desktopPanelEntry = entry;
+    Overlay.of(context).insert(entry);
+    return completer.future;
+  }
 
-    if (!mounted) return;
-    if (selection != null) widget.onChanged(selection.value);
-    _resetQuery();
-    _setText(_panelDisplayLabel(context));
-    if (mounted) setState(() {});
+  void _dismissDesktopPanel([_PickerSelection<T>? selection]) {
+    final entry = _desktopPanelEntry;
+    _desktopPanelEntry = null;
+    entry?.remove();
+    entry?.dispose();
+
+    final completer = _desktopPanelCompleter;
+    _desktopPanelCompleter = null;
+    if (completer != null && !completer.isCompleted) {
+      completer.complete(selection);
+    }
   }
 
   Widget _optionsPanel(
@@ -773,6 +854,7 @@ class _PanelSearchPicker<T extends Object> extends StatefulWidget {
     required this.emptyKey,
     required this.filterLocally,
     required this.onSelect,
+    required this.onDismiss,
     required this.selectedValue,
     this.optionSubtitle,
     required this.allOptionLabel,
@@ -791,6 +873,7 @@ class _PanelSearchPicker<T extends Object> extends StatefulWidget {
   final ValueChanged<String>? onQueryChanged;
   final WidgetBuilder? onAddNew;
   final ValueChanged<T?> onSelect;
+  final VoidCallback onDismiss;
 
   @override
   State<_PanelSearchPicker<T>> createState() => _PanelSearchPickerState<T>();
@@ -830,7 +913,7 @@ class _PanelSearchPickerState<T extends Object>
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     final count = options.length + 1;
     if (event.logicalKey == LogicalKeyboardKey.escape) {
-      unawaited(Navigator.of(context).maybePop());
+      widget.onDismiss();
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.arrowDown && count > 0) {
@@ -871,6 +954,7 @@ class _PanelSearchPickerState<T extends Object>
         if (_activeIndex >= count && count > 0) _activeIndex = count - 1;
 
         return Focus(
+          key: const ValueKey('searchable-dropdown-panel'),
           onKeyEvent: (node, event) => _handleKey(node, event, options),
           child: SafeArea(
             child: Padding(
