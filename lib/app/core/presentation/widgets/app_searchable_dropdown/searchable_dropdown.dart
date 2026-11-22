@@ -1080,7 +1080,6 @@ class _PanelSearchPickerState<T extends Object>
   }
 }
 
-
 /// Owns the read-only panel trigger controller. The parent keys this widget by
 /// the label derived during build, so a changed selection rebuilds the field
 /// without lifecycle callbacks or post-frame controller mutations.
