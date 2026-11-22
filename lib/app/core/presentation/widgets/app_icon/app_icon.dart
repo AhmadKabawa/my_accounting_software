@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon_data.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon_tone.dart';
 
 export 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon_data.dart';
 export 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
+export 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon_tone.dart';
 
 /// Draws an [AppIconData] at a responsive size ([AppIconSize] token).
 ///
@@ -17,6 +19,7 @@ class AppIcon extends StatelessWidget {
     super.key,
     this.size = AppIconSize.md,
     this.color,
+    this.tone,
     this.fit = BoxFit.contain,
     this.semanticsLabel,
   }) : pixelSize = null;
@@ -28,6 +31,7 @@ class AppIcon extends StatelessWidget {
     super.key,
     required double this.pixelSize,
     this.color,
+    this.tone,
     this.fit = BoxFit.contain,
     this.semanticsLabel,
   }) : size = AppIconSize.md;
@@ -36,16 +40,17 @@ class AppIcon extends StatelessWidget {
   final double? pixelSize;
   final AppIconSize size;
 
-  /// Tint. Material icons default to `onSurface`; images/SVGs keep their own
-  /// colors unless a tint is given.
+  /// Explicit tint retained for compatibility. When both [tone] and [color]
+  /// are supplied, [color] wins.
   final Color? color;
+  final AppIconTone? tone;
   final BoxFit fit;
   final String? semanticsLabel;
 
   @override
   Widget build(BuildContext context) {
     final px = pixelSize ?? context.ui.icon.size(size);
-    final tint = color ?? _defaultColor(context);
+    final tint = color ?? _toneColor(context) ?? _defaultColor(context);
 
     Widget child = switch (icon) {
       MaterialIconData(:final data) => Icon(data, size: px, color: tint),
@@ -92,6 +97,20 @@ class AppIcon extends StatelessWidget {
       );
     }
     return child;
+  }
+
+  Color? _toneColor(BuildContext context) {
+    final colors = context.ui.theme.colors;
+    final semantic = context.ui.theme.semanticColors;
+    return switch (tone) {
+      AppIconTone.neutral => colors.onSurface,
+      AppIconTone.primary => colors.primary,
+      AppIconTone.success => semantic.success,
+      AppIconTone.warning => semantic.warning,
+      AppIconTone.info => semantic.info,
+      AppIconTone.danger => colors.error,
+      null => null,
+    };
   }
 
   ColorFilter? _filter(Color? tint) =>
