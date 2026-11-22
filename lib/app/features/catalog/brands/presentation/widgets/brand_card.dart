@@ -30,7 +30,7 @@ class BrandCard extends StatelessWidget {
         Wrap(
           spacing: context.ui.spacing.sm,
           runSpacing: context.ui.spacing.sm,
-          children: [BrandStatusBadge(brand)],
+          children: [BrandStatusBadge(brand), BrandProductsBadge(brand)],
         ),
       ],
     );
