@@ -26,7 +26,7 @@
 - UI permission gates are usability only, not authorization.
 
 ## 5. Main scenarios
-- Search by name/slug and filter by active state. Product-presence filtering is deferred until relation-count behavior is verified.
+- Search by name/slug and filter by active state. The existing products(count) field remains the source for the pre-existing product-count column and badge; live PostgREST/RLS behavior is NOT_VERIFIED. Product-presence filtering and with/without-products cards remain hidden until their count queries are verified.
 - Click a statistics card to apply its corresponding filter and show a chip.
 - Create/update/delete/toggle; refresh stats after each successful mutation.
 - Stats failure must not block list loading; list failure must not hide stats.
@@ -38,7 +38,7 @@
 | Stats | brand_stats RPC (future) | total,active,inactive,with_products,without_products, optional most_used_brand | SECURITY INVOKER | server aggregation |
 | Product relation | public.products | products.brand_id → brands.id | product RLS | count only; never fetch rows |
 
-Current stats fallback reads total and active using two count requests; inactive = total - active. Product counters are withheld until verified; target RPC is B-10.
+Current stats fallback reads total and active using two count requests; inactive = total - active. The existing list request already includes products(count), which remains the source for the existing product-count column and mobile badge; it is not a newly introduced count source. Live PostgREST relation-count semantics and RLS visibility are NOT_VERIFIED. Do not hide the pre-existing column/badge solely because live verification is unavailable. Product-presence filters and with/without-products cards remain hidden until their separate count requests are verified; B-10 remains the target aggregate RPC.
 
 ## 7. Information displayed
 | Element | Priority | Source | Placement | Reason |
@@ -47,9 +47,9 @@ Current stats fallback reads total and active using two count requests; inactive
 | Logo | primary | brands.logo | table/mobile card | visual identification |
 | Status | primary | brands.is_active | table/mobile card | lifecycle |
 | Description | secondary | brands.description | roomy layouts/details | supporting context |
-| Product count | secondary | products(count) | table/mobile card only after live verification | coverage |
+| Product count | secondary | existing products(count) in brands list request | table/mobile card (existing behavior restored) | coverage; live PostgREST/RLS NOT_VERIFIED |
 | Total/active/inactive | summary | count/RPC | clickable stats cards | overview |
-| With/without products | summary | RPC B-10 | clickable cards only after RPC | identify coverage gaps |
+| With/without products | summary | count requests via PostgREST embedded products relation, only after live verification; B-10 target | hidden while NOT_VERIFIED | identify coverage gaps |
 
 Do not display id, uuid, origin_node_id, updated_at, or invented created_at.
 
@@ -69,14 +69,14 @@ Do not display id, uuid, origin_node_id, updated_at, or invented created_at.
 ## 10. Search, filters, sort
 - Search: name and slug; server ilike with escaped values; debounce only in BrandsListCubit.
 - Status options: active/inactive; null means all; all is allOptionLabel, not an option.
-- Product-presence filter: NOT_IMPLEMENTED / hidden until B-10 and live PostgREST/RLS behavior are verified; do not render an unverified filter.
+- Product-presence filter (all/with products/without products): hidden while embedded-resource count semantics and RLS are NOT_VERIFIED. When verified, use PostgREST count requests with an embedded products relation filter; do not load product rows. B-10 is the target aggregate RPC, not a prerequisite to retain the existing product-count field.
 - Chips represent active filters; clear-all resets search and both filters.
 - Sort remains name only. created_at sort waits for B-11. Product-count sort waits for B-13 if unsupported by PostgREST.
 - Counts never depend on loaded page.
 
 ## 11. Table and mobile list
-- Preserve name/logo/slug, status, product count and existing row actions.
-- Product count is visible only after PostgREST behavior is verified.
+- Preserve name/logo/slug, status, existing product-count column and mobile BrandProductsBadge, and existing row actions.
+- Product count comes from the pre-existing products(count) request. Live PostgREST/RLS verification is NOT_VERIFIED; this is not a reason to remove the existing UI.
 - Keep row actions as icon actions with tooltips; no placeholder buttons.
 - No sort_order.
 
@@ -88,9 +88,9 @@ Do not display id, uuid, origin_node_id, updated_at, or invented created_at.
 
 ## 13. States
 - Initial/loading/content/error and empty/no-results remain distinct.
-- Distinguish no brands; no filtered results; all brands have no products (only with verified full aggregate).
+- Distinguish no brands and no filtered results with separate AppEmptyState content. The all-brands-have-no-products state remains hidden until the full product-count aggregate is verified.
 - Stats loading/failure is independent; retain last successful stats on refresh failure.
-- If relation counts are not verified, hide product-count cards/chips/labels rather than guess.
+- If relation counts are not verified, hide only new product-presence filters and with/without-products cards/chips; retain the pre-existing product-count column and badge sourced from products(count).
 
 ## 14. State transitions
 - Keep existing route and list context.
@@ -128,7 +128,7 @@ Do not display id, uuid, origin_node_id, updated_at, or invented created_at.
 | Stats target | POST /rest/v1/rpc/brand_stats | B-10; SECURITY INVOKER; one aggregate row |
 | Create/update/toggle/delete | existing brands REST endpoints | preserve payload and RLS |
 
-Live PostgREST and RLS verification is NOT_VERIFIED. Do not display product-derived UI until verified.
+Live PostgREST and RLS verification is NOT_VERIFIED. Preserve the pre-existing products(count) display; do not expose new product-presence filters/cards or the all-without-products empty state until verified.
 
 ## 20. Open decisions and deferrals
 - B-10: stats RPC with product counters and optional most_used_brand.
