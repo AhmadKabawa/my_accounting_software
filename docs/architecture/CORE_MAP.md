@@ -272,3 +272,12 @@
 - ColorNameResolver: `foundation/color/` (مطابقة CIELAB/ΔE76 محلية، اقتراح اسم لون فقط؛ القيم المرجعية تشمل forestGreen `#228B22` وorange `#F57C21` وturquoise `#05AD9D`).
 - AppIconTone: `presentation/widgets/app_icon/` (لون دلالي عبر ColorScheme وAppSemanticColors؛ لا نظام ألوان مستقل).
 - SearchableDropdown: `presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart`؛ `SearchableDropdownMode.autocomplete` هو الافتراضي ويحافظ على RawAutocomplete والبحث البعيد، و`SearchableDropdownMode.panel` نمط trigger يفتح لوحة بحث مستقلة على desktop وحقل بحث داخل BottomSheet على الهاتف. يبدأ البحث فارغاً، وتظهر «الكل» أولاً بالترجمة الافتراضية ويمكن تخصيصها عبر `allOptionLabel`، وتظهر ✓ للقيمة المختارة، وتغلق اللوحة عند الاختيار. يدعم أسهم/Enter/Esc وSemantics وحالة لا نتائج.
+
+## ملحق: نظام عرض البيانات والـ SaaS UI (توحيد الواجهات)
+
+- `widgets/app_data_view/`: `AppDataView` (جدول/بطاقات/شبكة، حالات، ترقيم، تحديد)، `ViewModeSwitcher`، `ViewModeCubit`، `AppPaginationBar`، `AppRecordCard`، `AppDataGrid`. الجدول وحده في `app_data_table/`.
+- `widgets/app_stat_card/`: `AppStatCard`.
+- `widgets/app_filter_bar/`: `FilterBar` بخانات `leading/trailing` وفرز وفلاتر ومربع بحث حبة.
+- `widgets/app_page_template/`: `ListPageTemplate` ببطاقة واحدة وعقد أخطاء موحّد.
+- `theme/extensions/app_saas_colors.dart`: توكنات canvas/الجدول/selected/الحبات؛ `AppSurfaceShape` للأشكال.
+- `widgets/app_sidebar/` شجرة قابلة للطي، `app_navigation_rail/` سكة قابلة للتوسع، `app_shell/app_shell_top_bar.dart`.

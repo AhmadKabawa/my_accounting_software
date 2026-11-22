@@ -29,7 +29,7 @@ enum MessageType { error, success, warning, info, loading }
 ///   الرسالة المكررة (نفس النص والنوع وهي ظاهرة) لا تُعرض مرتين.
 /// - loading: Dialog حاجب مخصص للعمليات التي لا يصح معها التفاعل. حيث يمكن
 ///   مؤشر مضمّن (زر `isLoading`، `refreshing` في القوائم، هياكل Skeleton) يُفضَّل
-///   ولا يُستعمل هذا الحاجب (قرار D-12).
+///   ولا يُستعمل هذا الحاجب (قرار UI-04 في docs/design/UI_DECISIONS_LOG.md).
 /// - الأخطاء التي على المستخدم قراءتها كاملة (رفض قاعدة، تحقق) تُعرض داخل
 ///   النموذج بـ [failureBanner] لا بـ SnackBar زائل.
 class MessageViewWidgets {

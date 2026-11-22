@@ -14,7 +14,7 @@ class DataTableStyle {
 
   /// Zebra striping default. On: in wide tables of accounting figures the eye
   /// needs a guide across the row; the stripe is only a quiet tint and the
-  /// row text, not color, carries all information. Decision log D-05.
+  /// row text, not color, carries all information. Decision log UI-01.
   static const bool defaultZebra = true;
 
   final BuildContext context;

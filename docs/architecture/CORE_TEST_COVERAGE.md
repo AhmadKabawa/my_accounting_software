@@ -113,3 +113,8 @@
 - `app_icon_tone_test.dart`: يثبت ربط كل AppIconTone بدور ColorScheme أو AppSemanticColors الموافق في light/dark؛ `test/architecture/icon_tone_test.dart` يمنع تمرير `color:` مباشرة إلى AppIcon داخل Features، ويقارن المخالفات مع `_knownDebt` التي يجب أن تتقلص. قائمة الدين في الاختبار الجديد فارغة؛ لم يُشغّل.
 - `test/core/foundation/color_name_resolver_test.dart`: يثبت `#228B22` = forestGreen (أخضر غامق)، `#F57C21` = orange، و`#05AD9D` = turquoise، إضافة إلى RGB/RGBA والمدخلات غير الصالحة؛ لم يُشغّل.
 - **حالة التحقق لهذه المجموعة:** أضيفت الاختبارات والتعديلات فقط. `dart format`, `flutter analyze` و`flutter test` لم تُشغّل من بيئة التعديل لعدم توفر Flutter SDK. نتائج التشغيل السابقة التي أرسلها المستخدم محفوظة في المحادثة ولا تثبت نجاح الكود بعد هذه التعديلات.
+
+## اختبارات توحيد الواجهات (لم تُشغَّل بعد — لا Flutter في بيئة التنفيذ)
+
+`app_saas_colors_test`، `app_data_view_test` (مصفوفة العرض)، `app_filter_bar_test`، `list_page_template_test`، `app_stat_card_test`، `app_row_actions_test`، `message_view_widgets_test`، `test/shell/app_shell_windows_sidebar_test`، اختبارات الماركات (الاستعلام، الإحصاءات، الفلاتر، الشاشة).
+فجوات: اختبار شجرة «المزيد» على الهاتف، واختبار صلاحيات الشجرة في الشريط الجانبي، ولقطات Golden.

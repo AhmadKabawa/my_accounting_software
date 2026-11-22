@@ -552,3 +552,16 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 - `ColorNameResolver` اقتراح محلي تقريبي للاسم، وليس بديلاً عن قيمة HEX ولا مصدراً للبيانات.
 - `AppIconTone`: `danger` للحذف/التعطيل/الخطر، `success` للتفعيل/النجاح، `warning` للتحذير، `info` للمعلومة، `primary` للإضافة، و`neutral` للتعديل/العرض/الثانوي. لا تمرر `color:` إلى AppIcon داخل Features.
 - `SearchableDropdown`: استخدم `mode: SearchableDropdownMode.panel` لحقل يعرض القيمة الحالية ويفتح لوحة بحث مستقلة؛ يظهر خيار «الكل» (null) افتراضياً أولاً على desktop والهاتف، ويمكن تخصيص تسميته عبر `allOptionLabel`. تظهر علامة ✓ للقيمة المختارة، ويغلق الاختيار اللوحة فوراً. البحث يبدأ فارغاً عند كل فتح، والأسهم/Enter/Esc تعمل داخل اللوحة. أبقِ `SearchableDropdownMode.autocomplete` الافتراضي للحقول ذات البحث البعيد أو التي تعتمد عقد RawAutocomplete الحالي؛ `filterLocally: false` و`onQueryChanged` يبقيان مملوكين لمصدر البيانات. لا تضع debounce للفلترة داخل FilterBar؛ مالك البيانات/Cubit يتولى debounce. FilterBar يرسل البحث مباشرة (والـ debounce مسؤولية Cubit).
+
+## نمط شاشة قائمة (SaaS)
+
+```dart
+ListPageTemplate(
+  titleKey: K.title,
+  stats: ...,                         // AppStatCard على القماش
+  filterBar: FilterBar(leading: ViewModeSwitcher(...), trailing: primaryAction, sortOptions: [...]),
+  errorKey: failure?.messageKey, onRetry: cubit.refresh,
+  dataTable: AppDataView<T>(columns: [...], cardBuilder: ..., gridItemBuilder: ..., mode: chosenMode),
+)
+```
+حفظ النمط: `ViewModeCubit(settings: sl<AppSettingsManager>(), screenId: 'feature.screen')..restore()`. مرجع كامل: شاشة الماركات.
