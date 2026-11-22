@@ -65,7 +65,9 @@ class _AppColorPickerState extends State<AppColorPicker> {
     final red = (argb >> 16) & 0xff;
     final green = (argb >> 8) & 0xff;
     final blue = argb & 0xff;
-    return '#${red.toRadixString(16).padLeft(2, '0')}${green.toRadixString(16).padLeft(2, '0')}${blue.toRadixString(16).padLeft(2, '0')}'
+    return '#${red.toRadixString(16).padLeft(2, '0')}'
+        '${green.toRadixString(16).padLeft(2, '0')}'
+        '${blue.toRadixString(16).padLeft(2, '0')}'
         .toUpperCase();
   }
   void _sync(String? input) {
