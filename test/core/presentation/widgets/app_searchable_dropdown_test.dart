@@ -106,7 +106,6 @@ void main() {
     expect(selected, 'Alpha');
   });
 
-
   testWidgets('nullable all option emits null and exposes selected semantics', (
     tester,
   ) async {

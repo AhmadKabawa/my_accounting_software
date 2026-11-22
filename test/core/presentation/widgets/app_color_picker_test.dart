@@ -117,7 +117,9 @@ void main() {
     await t.tap(find.text('Update'));
     await t.pump();
 
-    expect(t.widget<TextField>(find.byType(TextField)).controller?.text, '#123456');
+    expect(
+      t.widget<TextField>(find.byType(TextField)).controller?.text,
+      '#123456',
+    );
   });
-
 }

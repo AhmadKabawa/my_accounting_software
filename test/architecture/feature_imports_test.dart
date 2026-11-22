@@ -71,7 +71,6 @@ Set<String> crossFeatureViolations(Map<String, String> sources) {
   return violations;
 }
 
-
 /// Feature screens must express icon intent with AppIconTone, not paint colors.
 /// Explicit colors remain supported by AppIcon for compatibility in Core.
 const _iconColorKnownDebt = <String>{};
@@ -175,7 +174,6 @@ void main() {
     },
   );
 
-
   test('features use semantic AppIconTone instead of direct icon colors', () {
     final sources = _readFeatureSources();
     final found = featureIconColorViolations(sources);
@@ -190,7 +188,8 @@ void main() {
     expect(
       _iconColorKnownDebt.difference(found),
       isEmpty,
-      reason: 'These direct-color usages no longer exist: remove them from debt.',
+      reason:
+          'These direct-color usages no longer exist: remove them from debt.',
     );
   });
 
