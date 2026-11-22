@@ -49,6 +49,34 @@ void main() {
     expect(taps, 1);
   });
 
+  testWidgets('custom icon color does not change the button surface', (tester) async {
+    await tester.pumpWidget(
+      buildTestApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: Center(
+            child: AppIconButton(
+              AppIcons.block,
+              tooltipKey: tooltip,
+              color: Colors.red,
+              onPressed: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final material = tester.widget<Material>(
+      find.descendant(
+        of: find.byType(AppIconButton),
+        matching: find.byType(Material),
+      ),
+    );
+    final icon = tester.widget<Icon>(find.byType(Icon).first);
+    expect(icon.color, Colors.red);
+    expect(material.color, isNot(Colors.red));
+  });
+
   testWidgets('does nothing when disabled', (tester) async {
     await pump(tester);
 
