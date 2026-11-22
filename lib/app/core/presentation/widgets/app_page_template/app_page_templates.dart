@@ -323,7 +323,9 @@ class ListPageTemplate extends StatelessWidget {
 
   /// `error` renders [dataTable] unless [errorKey] is given.
   final AppPageState state;
+  /// Optional record count displayed beside the page title.
   final int? count;
+
   /// Legacy: use [addAction] to build the standard permission-gated action.
   final Widget? primaryAction;
   final ListAddAction? addAction;
