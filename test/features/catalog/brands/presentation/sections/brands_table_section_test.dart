@@ -77,7 +77,7 @@ void main() {
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(
-      buildTestApp(home: Scaffold(body: _section())),
+      buildTestApp(home: _withAccess(_section())),
     );
 
     expect(find.text(BrandsKeys.productCount.en), findsOneWidget);
