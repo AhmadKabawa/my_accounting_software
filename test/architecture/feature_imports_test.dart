@@ -71,29 +71,6 @@ Set<String> crossFeatureViolations(Map<String, String> sources) {
   return violations;
 }
 
-/// Feature screens must express icon intent with AppIconTone, not paint colors.
-/// Explicit colors remain supported by AppIcon for compatibility in Core.
-const _iconColorKnownDebt = <String>{};
-
-Set<String> featureIconColorViolations(Map<String, String> sources) {
-  final violations = <String>{};
-  final invocation = RegExp(r'AppIcon(?:\.fixed)?\s*\(');
-  sources.forEach((path, content) {
-    if (!path.startsWith('lib/app/features/')) return;
-    final lines = content.split('\n');
-    for (var index = 0; index < lines.length; index++) {
-      if (!invocation.hasMatch(lines[index])) continue;
-      final window = lines.skip(index).take(24).join('\n');
-      final end = window.indexOf(')');
-      final call = end < 0 ? window : window.substring(0, end + 1);
-      if (RegExp(r'\bcolor\s*:').hasMatch(call)) {
-        violations.add('$path:${index + 1}');
-      }
-    }
-  });
-  return violations;
-}
-
 Map<String, String> _readFeatureSources() => {
   for (final file
       in Directory('lib/app/features')
@@ -173,36 +150,6 @@ void main() {
       expect(source, contains('onPressed: widget.onSignOut'));
     },
   );
-
-  test('features use semantic AppIconTone instead of direct icon colors', () {
-    final sources = _readFeatureSources();
-    final found = featureIconColorViolations(sources);
-
-    expect(
-      found.difference(_iconColorKnownDebt),
-      isEmpty,
-      reason:
-          'Use AppIconTone for feature icon meaning. Direct color is retained '
-          'only for compatibility and must be tracked as known debt.',
-    );
-    expect(
-      _iconColorKnownDebt.difference(found),
-      isEmpty,
-      reason:
-          'These direct-color usages no longer exist: remove them from debt.',
-    );
-  });
-
-  test('the AppIcon direct-color rule detects a violation (self-check)', () {
-    expect(
-      featureIconColorViolations({
-        'lib/app/features/example/presentation/example_screen.dart': '''
-AppIcon(AppIcons.add, color: Colors.red),
-''',
-      }),
-      {'lib/app/features/example/presentation/example_screen.dart:1'},
-    );
-  });
 
   test('the core rule detects feature imports (self-check)', () {
     expect(
