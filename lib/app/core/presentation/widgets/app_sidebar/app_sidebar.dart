@@ -179,11 +179,9 @@ class _AppSidebarState extends State<AppSidebar> {
       collapsed: widget.collapsed,
       open: children.isEmpty ? null : open,
       onTap: () {
-        // Icon-only: an item with sub-items opens the full sidebar on its
-        // section instead of a popup; a plain item just navigates.
-        if (widget.collapsed && children.isNotEmpty) {
-          _openSection(item);
-          widget.onToggle?.call();
+        // Icon-only: tapping the current parent again folds its sub-icons.
+        if (widget.collapsed && children.isNotEmpty && isCurrent && open) {
+          _toggle(item);
           return;
         }
         _openSection(item);
@@ -191,6 +189,22 @@ class _AppSidebarState extends State<AppSidebar> {
       },
       onToggle: children.isEmpty ? null : () => _toggle(item),
     );
+
+    if (widget.collapsed) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          row,
+          if (open && children.isNotEmpty)
+            _CollapsedChildren(
+              children: children,
+              activePath: widget.activePath,
+              style: style,
+              onChild: (path) => widget.onChildSelected?.call(path),
+            ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -369,6 +383,88 @@ class _SidebarItem extends StatelessWidget {
                         ],
                       ),
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Icon-only mode: the sub-items of an open section as smaller icons inside
+/// one soft capsule right under their parent, so they read as its children.
+class _CollapsedChildren extends StatelessWidget {
+  const _CollapsedChildren({
+    required this.children,
+    required this.activePath,
+    required this.style,
+    required this.onChild,
+  });
+
+  final List<NavBarChild> children;
+  final String? activePath;
+  final AppSidebarStyle style;
+  final ValueChanged<String> onChild;
+
+  @override
+  Widget build(BuildContext context) {
+    final side = style.itemMinHeight;
+    return Padding(
+      padding: EdgeInsets.only(top: style.itemGap),
+      child: Center(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: context.ui.theme.saasColors.tableHeaderBand,
+            borderRadius: style.itemRadius,
+          ),
+          child: Padding(
+            padding: style.togglePadding,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final child in children) ...[
+                  Builder(
+                    builder: (context) {
+                      final selected = AppSidebar.isChildActive(
+                        child,
+                        activePath,
+                      );
+                      final label = child.label.tr(context: context);
+                      return Semantics(
+                        label: label,
+                        button: true,
+                        selected: selected,
+                        excludeSemantics: true,
+                        onTap: () => onChild(child.path),
+                        child: Tooltip(
+                          message: label,
+                          child: SizedBox.square(
+                            dimension: side,
+                            child: Material(
+                              color: style.itemBackground(selected: selected),
+                              shape: const CircleBorder(),
+                              child: InkWell(
+                                customBorder: const CircleBorder(),
+                                onTap: () => onChild(child.path),
+                                child: Center(
+                                  child: AppIcon.fixed(
+                                    child.icon,
+                                    pixelSize: style.childIconSize,
+                                    color: style.itemForeground(
+                                      selected: selected,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  if (child != children.last) SizedBox(height: style.itemGap),
+                ],
+              ],
             ),
           ),
         ),

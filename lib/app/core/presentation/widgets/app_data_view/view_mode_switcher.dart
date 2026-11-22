@@ -4,10 +4,11 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
-/// Pill-shaped switch between the view modes a screen supports. The selected
-/// mode uses the `selected` token. Each button has a tooltip and a semantic
-/// "selected" state, so color is never the only signal.
+/// A small menu for the view modes a screen supports: the button shows the
+/// icon of the current mode with a small arrow; opening it lists the other
+/// modes. The button has a tooltip and a semantic label with the current mode.
 class ViewModeSwitcher extends StatelessWidget {
   const ViewModeSwitcher({
     super.key,
@@ -35,75 +36,61 @@ class ViewModeSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (modes.length < 2) return const SizedBox.shrink();
-    final saas = context.ui.theme.saasColors;
+    final colors = context.ui.theme.colors;
     final radius = AppSurfaceShape.control.circular(context);
+    final others = [
+      for (final mode in modes)
+        if (mode != selected) mode,
+    ];
+    final side = context.ui.size.width(AppComponentSize.medium);
     return Semantics(
       container: true,
-      label: CatalogUiKeys.viewMode.tr(context: context),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: saas.tableHeaderBand,
-          borderRadius: radius,
-        ),
-        child: Padding(
-          padding: context.ui.padding.all(AppSpacing.xs),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final mode in modes)
-                _ModeButton(
-                  mode: mode,
-                  selected: mode == selected,
-                  onTap: () => onChanged(mode),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ModeButton extends StatelessWidget {
-  const _ModeButton({
-    required this.mode,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final AppViewMode mode;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final saas = context.ui.theme.saasColors;
-    final radius = AppSurfaceShape.control.circular(context);
-    final label = ViewModeSwitcher.labelOf(mode).tr(context: context);
-    final side = context.ui.size.width(AppComponentSize.small);
-    return Tooltip(
-      message: label,
-      child: Semantics(
-        button: true,
-        selected: selected,
-        label: label,
-        excludeSemantics: true,
-        child: Material(
-          color: selected ? saas.selected : Colors.transparent,
-          borderRadius: radius,
-          child: InkWell(
+      label:
+          '${CatalogUiKeys.viewMode.tr(context: context)}: '
+          '${labelOf(selected).tr(context: context)}',
+      child: PopupMenuButton<AppViewMode>(
+        tooltip: CatalogUiKeys.viewMode.tr(context: context),
+        position: PopupMenuPosition.under,
+        onSelected: onChanged,
+        itemBuilder: (menuContext) => [
+          for (final mode in others)
+            PopupMenuItem<AppViewMode>(
+              value: mode,
+              child: Row(
+                children: [
+                  AppIcon(iconOf(mode), size: AppIconSize.md),
+                  menuContext.ui.spacing.gap(
+                    AppSpacing.sm,
+                    axis: Axis.horizontal,
+                  ),
+                  AppText(labelOf(mode)),
+                ],
+              ),
+            ),
+        ],
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: context.ui.theme.saasColors.tableHeaderBand,
             borderRadius: radius,
-            onTap: onTap,
-            child: SizedBox.square(
-              dimension: side,
-              child: Center(
-                child: AppIcon(
-                  ViewModeSwitcher.iconOf(mode),
-                  size: AppIconSize.md,
-                  color: selected
-                      ? saas.onSelected
-                      : context.ui.theme.colors.onSurfaceVariant,
-                ),
+          ),
+          child: SizedBox(
+            height: side,
+            child: Padding(
+              padding: context.ui.padding.symmetric(horizontal: AppSpacing.sm),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppIcon(
+                    iconOf(selected),
+                    size: AppIconSize.md,
+                    color: colors.onSurface,
+                  ),
+                  AppIcon(
+                    AppIcons.expand,
+                    size: AppIconSize.sm,
+                    color: colors.onSurfaceVariant,
+                  ),
+                ],
               ),
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_pagination_bar.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
@@ -252,6 +253,25 @@ void main() {
       expect(tableChecked, 1);
     });
 
+    testWidgets('a single page still shows page 1, selected', (tester) async {
+      setScreenSize(tester, const Size(1200, 900));
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: AppPaginationBar(
+              page: 1,
+              pageSize: 25,
+              totalCount: 3,
+              shownCount: 3,
+              onPageChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+      expect(find.text('1'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('ViewModeSwitcher reports the chosen mode', (tester) async {
       AppViewMode? picked;
       setScreenSize(tester, const Size(1200, 900));
@@ -266,7 +286,12 @@ void main() {
           ),
         ),
       );
-      await tester.tap(find.byTooltip('Grid'));
+      // The button shows the current mode; the menu lists the other ones.
+      await tester.tap(find.byType(ViewModeSwitcher));
+      await tester.pumpAndSettle();
+      expect(find.text('Table'), findsNothing);
+      await tester.tap(find.text('Grid'));
+      await tester.pumpAndSettle();
       expect(picked, AppViewMode.grid);
     });
 

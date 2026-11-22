@@ -9,6 +9,7 @@ import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
@@ -224,21 +225,23 @@ class AppShell extends StatelessWidget {
     final routeBreadcrumbs =
         breadcrumbBuilder?.call(GoRouterState.of(context)) ?? breadcrumbs;
 
-    PreferredSizeWidget? topBar;
-    if (snapshot != null && titleKey != null) {
-      topBar = AppShellTopBar(
-        titleKey: titleKey,
-        snapshot: snapshot,
-        selectedBranchId: access.state.selectedBranchId,
-        onBranchChanged: selectBranch,
-        beforeBranchChange: unsavedChangesGuard == null
-            ? beforeBranchChange
-            : confirmBranchChange,
-        breadcrumbs: routeBreadcrumbs,
-        cashierSessionKey: cashierSessionKey,
-        userMenuEntries: guardedUserMenuEntries,
-      );
-    }
+    PreferredSizeWidget? buildTopBar({Widget? leading}) =>
+        snapshot != null && titleKey != null
+        ? AppShellTopBar(
+            leading: leading,
+            titleKey: titleKey,
+            snapshot: snapshot,
+            selectedBranchId: access.state.selectedBranchId,
+            onBranchChanged: selectBranch,
+            beforeBranchChange: unsavedChangesGuard == null
+                ? beforeBranchChange
+                : confirmBranchChange,
+            breadcrumbs: routeBreadcrumbs,
+            cashierSessionKey: cashierSessionKey,
+            userMenuEntries: guardedUserMenuEntries,
+          )
+        : null;
+    final topBar = buildTopBar();
 
     Widget withSideNav(Widget nav) => Scaffold(
       appBar: topBar,
@@ -305,7 +308,34 @@ class AppShell extends StatelessWidget {
                 : current;
 
             return Scaffold(
-              appBar: topBar,
+              // The phone keeps its bottom bar; the menu icon opens the full
+              // sidebar (all destinations and their sub-items) as a drawer.
+              appBar: buildTopBar(
+                leading: Builder(
+                  builder: (barContext) => AppIconButton(
+                    AppIcons.menu,
+                    tooltipKey: ShellKeys.openMenu,
+                    onPressed: () => Scaffold.of(barContext).openDrawer(),
+                  ),
+                ),
+              ),
+              drawer: Builder(
+                builder: (drawerContext) => Drawer(
+                  child: AppSidebar(
+                    items: items,
+                    activeIndex: current < 0 ? 0 : current,
+                    activePath: _activePath(context),
+                    onIndexChanged: (index) {
+                      Navigator.of(drawerContext).pop();
+                      onSelect(index);
+                    },
+                    onChildSelected: (path) {
+                      Navigator.of(drawerContext).pop();
+                      context.go(path);
+                    },
+                  ),
+                ),
+              ),
               body: shellContent,
               bottomNavigationBar: mobileItems.isEmpty
                   ? null

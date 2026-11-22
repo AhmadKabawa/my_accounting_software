@@ -6,7 +6,8 @@ enum BrandStatusFilter { all, active, inactive }
 /// needs a view/RPC, see docs/audit/UI_SAAS_VERIFY.md).
 enum BrandSortField {
   name('name'),
-  status('is_active');
+  status('is_active'),
+  created('created_at');
 
   const BrandSortField(this.column);
   final String column;

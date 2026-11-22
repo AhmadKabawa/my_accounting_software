@@ -128,8 +128,9 @@ void main() {
       await _pumpScreen(tester, repository, size: size);
 
       expect(find.byType(AppRowActions), findsNWidgets(3));
-      expect(find.byType(AppMenu), findsOneWidget);
-      await tester.tap(find.byType(AppMenu));
+      // Every row keeps its menu; delete is disabled while products exist.
+      expect(find.byType(AppMenu), findsNWidgets(3));
+      await tester.tap(find.byType(AppMenu).first);
       await tester.pumpAndSettle();
       expect(find.text(BrandsKeys.delete.en), findsOneWidget);
     });
@@ -149,7 +150,8 @@ void main() {
       );
     await _pumpScreen(tester, repository, size: const Size(1280, 900));
 
-    await tester.tap(find.byTooltip(BrandsKeys.deactivate.en).first);
+    // Status is a switch in its column: row 1 is active, row 2 is not.
+    await tester.tap(find.byType(Switch).at(0));
     await tester.pumpAndSettle();
     expect(find.text(BrandsKeys.deactivateMessage.en), findsOneWidget);
     expect(repository.statusUpdates, isEmpty);
@@ -157,7 +159,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(repository.statusUpdates, contains((1, false)));
 
-    await tester.tap(find.byTooltip(BrandsKeys.activate.en).first);
+    await tester.tap(find.byType(Switch).at(1));
     await tester.pumpAndSettle();
     expect(repository.statusUpdates, contains((2, true)));
   });
@@ -177,7 +179,7 @@ void main() {
       );
     await _pumpScreen(tester, repository, size: const Size(1280, 900));
 
-    await tester.tap(find.byType(AppMenu));
+    await tester.tap(find.byType(AppMenu).first);
     await tester.pumpAndSettle();
     await tester.tap(find.text(BrandsKeys.delete.en));
     await tester.pumpAndSettle();

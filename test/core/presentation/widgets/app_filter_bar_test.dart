@@ -354,6 +354,7 @@ void main() {
       bool? ascending;
       await pumpBar(
         tester,
+        size: const Size(360, 800),
         sortOptions: options,
         onSort: (k, a) {
           key = k;
@@ -366,6 +367,30 @@ void main() {
       await tester.tap(find.text('Descending'));
       await tester.pump();
       await tester.tap(find.text('Done'));
+      await tester.pumpAndSettle();
+      expect(key, 'name');
+      expect(ascending, isFalse);
+    });
+
+    testWidgets('wide: sort is a menu; the active field flips its direction', (
+      tester,
+    ) async {
+      String? key;
+      bool? ascending;
+      await pumpBar(
+        tester,
+        sortOptions: options,
+        onSort: (k, a) {
+          key = k;
+          ascending = a;
+        },
+      );
+      await tester.tap(find.text('Sort by'));
+      await tester.pumpAndSettle();
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(find.byIcon(Icons.check), findsOneWidget);
+      // 'name' is the active field (ascending): choosing it flips to descending.
+      await tester.tap(find.text('Search').last);
       await tester.pumpAndSettle();
       expect(key, 'name');
       expect(ascending, isFalse);

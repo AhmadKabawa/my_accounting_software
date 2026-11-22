@@ -41,6 +41,7 @@ enum CatalogUiKeys implements AppKey {
   resultsCount(ar: '{count} نتيجة', en: '{count} results'),
   selectRow(ar: 'تحديد الصف', en: 'Select row'),
   moreActions(ar: 'المزيد', en: 'More actions'),
+  refresh(ar: 'تحديث البيانات', en: 'Refresh data'),
   retry(ar: 'إعادة المحاولة', en: 'Retry');
 
   const CatalogUiKeys({required this.ar, required this.en});

@@ -9,11 +9,10 @@ import 'package:accounting_software/app/core/presentation/state_management/bloc_
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_data_view/view_mode_switcher.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
@@ -92,27 +91,41 @@ class BrandsScreen extends StatelessWidget {
                           statsState is BrandStatsInitial ||
                           statsState is BrandStatsLoading,
                     ),
-                    filterBar: BrandsFilterBar(
-                      query: query,
+                    toolbar: ListToolbarConfig(
+                      searchHintKey: BrandsKeys.searchHint,
                       onSearchChanged: cubit.searchChanged,
-                      onStatusChanged: cubit.setStatus,
                       onClearAll: cubit.clearFilters,
-                      onSort: (field, ascending) =>
-                          cubit.setSort(field: field, ascending: ascending),
-                      leading: ViewModeSwitcher(
-                        modes: _modes,
-                        selected:
-                            mode ??
-                            AppDataView.defaultModeFor(context),
-                        onChanged: context.read<ViewModeCubit>().select,
+                      activeFilters: BrandsFilterBar.activeFilters(
+                        context,
+                        query,
+                        onSearchChanged: cubit.searchChanged,
+                        onStatusChanged: cubit.setStatus,
                       ),
-                      trailing: PermissionGate(
-                        permission: Permissions.masterData.manage,
-                        child: AppButton(
-                          BrandsKeys.add,
-                          icon: AppIcons.add,
-                          onPressed: () => _edit(context),
-                        ),
+                      filterControls: BrandsFilterBar.controls(
+                        context,
+                        query,
+                        onStatusChanged: cubit.setStatus,
+                      ),
+                      // Sort and filters are answered by the database.
+                      sortOptions: BrandsFilterBar.sortOptions,
+                      sortKey: query.sortField.name,
+                      sortAscending: query.sortAscending,
+                      onSort: (key, ascending) => cubit.setSort(
+                        field: BrandSortField.tryParse(key),
+                        ascending: ascending,
+                      ),
+                      viewModes: _modes,
+                      viewMode: mode,
+                      onViewModeChanged: context.read<ViewModeCubit>().select,
+                      onRefresh: cubit.refresh,
+                      refreshing: state.isRefreshing,
+                    ),
+                    primaryAction: PermissionGate(
+                      permission: Permissions.masterData.manage,
+                      child: AppButton(
+                        BrandsKeys.add,
+                        icon: AppIcons.add,
+                        onPressed: () => _edit(context),
                       ),
                     ),
                     loadingViewMode: mode ?? AppViewMode.table,

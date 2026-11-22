@@ -6,7 +6,13 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/view_mode_switcher.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
@@ -285,6 +291,7 @@ class ListPageTemplate extends StatelessWidget {
     required this.titleKey,
     required this.dataTable,
     this.filterBar,
+    this.toolbar,
     this.state = AppPageState.content,
     this.count,
     this.primaryAction,
@@ -303,6 +310,9 @@ class ListPageTemplate extends StatelessWidget {
   final AppKey titleKey;
   final Widget? breadcrumb;
   final Widget? filterBar;
+
+  /// Preferred over [filterBar]: the template builds the toolbar itself.
+  final ListToolbarConfig? toolbar;
   final Widget dataTable;
 
   /// `error` renders [dataTable] unless [errorKey] is given.
@@ -334,9 +344,7 @@ class ListPageTemplate extends StatelessWidget {
             titleKey: titleKey,
             count: count,
             primaryAction: primaryAction,
-            // The top bar already shows the trail on wider screens; showing it
-            // again here would repeat it.
-            breadcrumb: context.ui.screen.isMobile ? breadcrumb : null,
+            breadcrumb: breadcrumb,
           ),
           above != null
               ? Padding(
@@ -349,7 +357,7 @@ class ListPageTemplate extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                filterBar ?? _none,
+                filterBar ?? _toolbar(context),
                 activeFilters != null
                     ? Padding(
                         padding: EdgeInsets.only(top: gap),
@@ -381,6 +389,38 @@ class ListPageTemplate extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _toolbar(BuildContext context) {
+    final config = toolbar;
+    if (config == null) return _none;
+    final hasModes = config.viewModes.length > 1;
+    return FilterBar(
+      searchHintKey: config.searchHintKey,
+      debounce: config.searchDebounce,
+      onSearchChanged: config.onSearchChanged,
+      onClearAll: config.onClearAll,
+      activeFilters: config.activeFilters,
+      filterControls: config.filterControls,
+      sortOptions: config.sortOptions,
+      sortKey: config.sortKey,
+      sortAscending: config.sortAscending,
+      onSort: config.onSort,
+      leading: hasModes && config.onViewModeChanged != null
+          ? ViewModeSwitcher(
+              modes: config.viewModes,
+              selected: config.viewMode ?? AppDataView.defaultModeFor(context),
+              onChanged: config.onViewModeChanged!,
+            )
+          : null,
+      trailing: config.onRefresh == null
+          ? null
+          : AppIconButton(
+              AppIcons.refresh,
+              tooltipKey: CatalogUiKeys.refresh,
+              onPressed: config.refreshing ? null : config.onRefresh,
+            ),
     );
   }
 

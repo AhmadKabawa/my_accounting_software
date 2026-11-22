@@ -8,6 +8,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_table
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/view_mode_switcher.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import '../../../helpers/localized_app.dart';
@@ -298,6 +300,65 @@ void main() {
       update(() => showStats = true);
       await tester.pumpAndSettle();
       expect(find.text('kept'), findsOneWidget);
+    });
+  });
+
+  group('the template builds the toolbar from a config', () {
+    Future<void> pump(
+      WidgetTester tester,
+      ListToolbarConfig config, {
+      Size size = const Size(1200, 900),
+    }) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: ListPageTemplate(
+              titleKey: CatalogUiKeys.filters,
+              toolbar: config,
+              primaryAction: const Text('ADD'),
+              dataTable: const Text('DATA'),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('refresh and view menu come from the config', (tester) async {
+      var refreshed = 0;
+      AppViewMode? picked;
+      await pump(
+        tester,
+        ListToolbarConfig(
+          onSearchChanged: (_) {},
+          onClearAll: () {},
+          onRefresh: () => refreshed++,
+          viewModes: AppViewMode.values,
+          onViewModeChanged: (m) => picked = m,
+        ),
+      );
+      expect(find.byType(ViewModeSwitcher), findsOneWidget);
+      await tester.tap(find.byTooltip('Refresh data'));
+      expect(refreshed, 1);
+      await tester.tap(find.byType(ViewModeSwitcher));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Cards'));
+      expect(picked, AppViewMode.cards);
+      // The primary action sits in the page header, not in the toolbar.
+      expect(find.text('ADD'), findsOneWidget);
+    });
+
+    testWidgets('no refresh button and no view menu without config', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        ListToolbarConfig(onSearchChanged: (_) {}, onClearAll: () {}),
+      );
+      expect(find.byTooltip('Refresh data'), findsNothing);
+      expect(find.byType(ViewModeSwitcher), findsNothing);
     });
   });
 }

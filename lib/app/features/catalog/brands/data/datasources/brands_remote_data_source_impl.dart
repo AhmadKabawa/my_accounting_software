@@ -31,10 +31,7 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
       parser: PaginatedParserPresets.supabase,
       queryParameters: {
         'select': BrandsEndpoint.selectWithProductCount,
-        'order':
-            '${query.sortField.column}.${query.sortAscending ? 'asc' : 'desc'}'
-            // Equal values keep a stable order across pages.
-            ',name.asc',
+        'order': _order(query),
         if (searchTerm.isNotEmpty)
           'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
         if (query.status == BrandStatusFilter.active) 'is_active': 'eq.true',
@@ -102,6 +99,16 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     );
   }
 
+  /// Sorting is done by the database. Any field other than the name adds
+  /// `name.asc` so equal values keep a stable order across pages.
+  String _order(BrandListQuery query) {
+    final direction = query.sortAscending ? 'asc' : 'desc';
+    final primary = '${query.sortField.column}.$direction';
+    return query.sortField == BrandSortField.name
+        ? primary
+        : '$primary,name.asc';
+  }
+
   BrandModel _singleBrandFromList(List<dynamic> rows) {
     if (rows.length != 1 || rows.single is! Map<String, dynamic>) {
       throw const FormatException('Expected one brand from PostgREST');
@@ -114,6 +121,7 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     'slug': draft.slug.trim(),
     'logo': _nullableTrim(draft.logo),
     'description': _nullableTrim(draft.description),
+    if (draft.isActive != null) 'is_active': draft.isActive,
   };
 
   String? _nullableTrim(String? value) {

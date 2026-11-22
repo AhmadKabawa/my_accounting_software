@@ -55,10 +55,12 @@ abstract final class AppIcons {
   static const back = AppIconData.material(Icons.arrow_back);
   static const sidebarCollapse = AppIconData.material(Icons.menu_open);
   static const sidebarExpand = AppIconData.material(Icons.menu);
+  static const menu = AppIconData.material(Icons.menu);
 
   // Pickers (ScopeSelector).
   static const expand = AppIconData.material(Icons.expand_more);
   static const search = AppIconData.material(Icons.search);
+  static const sortNeutral = AppIconData.material(Icons.unfold_more);
   static const sortAscending = AppIconData.material(Icons.arrow_upward);
   static const sortDescending = AppIconData.material(Icons.arrow_downward);
   static const check = AppIconData.material(Icons.check);

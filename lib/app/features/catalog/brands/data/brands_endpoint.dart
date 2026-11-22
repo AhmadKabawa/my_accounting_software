@@ -5,7 +5,7 @@ abstract final class BrandsEndpoint {
   static const select =
       'id,name,slug,logo,description,is_active,created_at,updated_at';
   static const selectWithProductCount =
-      'id,name,slug,logo,description,is_active,products(count)';
+      'id,name,slug,logo,description,is_active,created_at,products(count)';
 
   /// Storage bucket used for logos (docs/backend §7: public, 5 MB,
   /// JPEG/PNG/WebP; writes need `catalog.manage`).

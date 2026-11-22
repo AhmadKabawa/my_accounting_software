@@ -69,7 +69,7 @@ void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
   testWidgets(
-    'table retains the products column and its existing count badge',
+    'the products column shows just the number',
     (tester) async {
       tester.view.physicalSize = const Size(1280, 900);
       tester.view.devicePixelRatio = 1;
@@ -78,7 +78,8 @@ void main() {
       await tester.pumpWidget(buildTestApp(home: _withAccess(_section())));
 
       expect(find.text(BrandsKeys.productCount.en), findsOneWidget);
-      expect(find.text('Products: 2'), findsOneWidget);
+      expect(find.text('Products: 2'), findsNothing);
+      expect(find.text('2'), findsWidgets);
     },
   );
 

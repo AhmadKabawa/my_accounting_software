@@ -83,7 +83,8 @@ class AppPaginationBar extends StatelessWidget {
         ],
       );
     }
-    final showNumbers = onPageChanged != null && _lastPage > 1;
+    // Always shown with a page callback: one page reads "‹ 1 ›" (1 chosen).
+    final showNumbers = onPageChanged != null;
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
       crossAxisAlignment: WrapCrossAlignment.center,

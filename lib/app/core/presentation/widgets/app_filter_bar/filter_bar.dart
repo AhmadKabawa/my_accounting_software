@@ -229,12 +229,54 @@ class _FilterBarState extends State<FilterBar> {
     ),
   );
 
-  Widget _sortButton() => AppButton(
-    CatalogUiKeys.sortBy,
-    icon: AppIcons.sort,
-    variant: AppButtonVariant.outlined,
-    onPressed: _openSort,
-  );
+  Widget _sortButton() {
+    final button = AppButton(
+      CatalogUiKeys.sortBy,
+      icon: AppIcons.sort,
+      variant: AppButtonVariant.outlined,
+      onPressed: ScreenEngine.isMobile(context) ? _openSort : () {},
+    );
+    // A phone keeps the bottom sheet; wider screens get a small menu.
+    if (ScreenEngine.isMobile(context)) return button;
+    return PopupMenuButton<String>(
+      tooltip: CatalogUiKeys.sortBy.tr(context: context),
+      position: PopupMenuPosition.under,
+      onSelected: (key) {
+        // Choosing the active field again reverses its direction.
+        final same = key == widget.sortKey;
+        widget.onSort?.call(key, same ? !widget.sortAscending : true);
+      },
+      itemBuilder: (menuContext) => [
+        for (final option in widget.sortOptions)
+          PopupMenuItem<String>(
+            value: option.key,
+            child: Row(
+              children: [
+                SizedBox.square(
+                  dimension: menuContext.ui.size.width(AppComponentSize.small),
+                  child: option.key == widget.sortKey
+                      ? const AppIcon(AppIcons.check, size: AppIconSize.md)
+                      : null,
+                ),
+                menuContext.ui.spacing.gap(
+                  AppSpacing.sm,
+                  axis: Axis.horizontal,
+                ),
+                Expanded(child: AppText(option.label)),
+                if (option.key == widget.sortKey)
+                  AppIcon(
+                    widget.sortAscending
+                        ? AppIcons.sortAscending
+                        : AppIcons.sortDescending,
+                    size: AppIconSize.md,
+                  ),
+              ],
+            ),
+          ),
+      ],
+      child: IgnorePointer(child: button),
+    );
+  }
 
   Widget _filtersButton() => AppButton(
     CatalogUiKeys.filters,

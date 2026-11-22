@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/utility/brand_slug_from.dart';
@@ -50,6 +52,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   late final String _initialLogo;
   late final String _initialDescription;
   AppKey? _failure;
+  bool _active = true;
   bool _slugTouched = false;
   bool _settingSlug = false;
 
@@ -130,6 +133,8 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
         description: _description.text.trim().isEmpty
             ? null
             : _description.text.trim(),
+        // Only a new brand chooses its status here; edits use the list switch.
+        isActive: widget.brand == null ? _active : null,
       ),
     );
   }
@@ -185,6 +190,16 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
                           ),
                           BrandLogoSection(logo: _logo, brandName: _name),
                           BrandDetailsSection(description: _description),
+                          if (widget.brand == null) ...[
+                            context.ui.spacing.gap(AppSpacing.md),
+                            AppSwitch(
+                              value: _active,
+                              labelKey: BrandsKeys.activeOnCreate,
+                              onChanged: busy
+                                  ? null
+                                  : (value) => setState(() => _active = value),
+                            ),
+                          ],
                         ],
                       ),
                     ),

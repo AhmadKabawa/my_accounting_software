@@ -54,6 +54,20 @@ void main() {
     },
   );
 
+  test('sorting by another field is sent to the database with a stable tie', () async {
+    await repository.getBrands(
+      const BrandListQuery(
+        sortField: BrandSortField.created,
+        sortAscending: false,
+      ),
+    );
+    expect(api.lastQueryParameters['order'], 'created_at.desc,name.asc');
+    await repository.getBrands(
+      const BrandListQuery(sortField: BrandSortField.status),
+    );
+    expect(api.lastQueryParameters['order'], 'is_active.asc,name.asc');
+  });
+
   test(
     'gets total and active statistics with two lightweight count requests',
     () async {

@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_view/
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -83,13 +84,39 @@ class BrandsTableSection extends StatelessWidget {
         labelKey: BrandsKeys.productCount,
         priority: DataTableColumnPriority.secondary,
         numeric: true,
-        cellBuilder: (_, b) => BrandProductsBadge(b),
+        // The header already says "Products": the cell is just the number.
+        cellBuilder: (c, b) => AppText.raw(
+          b.productCount?.toString() ?? '—',
+          color: c.ui.theme.colors.onSurface,
+        ),
+      ),
+      DataTableColumn(
+        labelKey: BrandsKeys.createdAt,
+        sortKey: 'created',
+        priority: DataTableColumnPriority.secondary,
+        cellBuilder: (c, b) => AppText.raw(
+          b.createdAt == null
+              ? '—'
+              : MaterialLocalizations.of(c).formatShortDate(b.createdAt!),
+          color: c.ui.theme.colors.onSurfaceVariant,
+        ),
       ),
       DataTableColumn(
         labelKey: BrandsKeys.status,
         sortKey: 'status',
         priority: DataTableColumnPriority.secondary,
-        cellBuilder: (_, b) => BrandStatusBadge(b),
+        // A switch for who may manage brands; a plain badge for everyone else.
+        cellBuilder: (_, b) => PermissionGate(
+          permission: Permissions.masterData.manage,
+          fallback: BrandStatusBadge(b),
+          child: AppSwitch(
+            value: b.isActive,
+            semanticsKey: b.isActive
+                ? BrandsKeys.deactivate
+                : BrandsKeys.activate,
+            onChanged: (_) => onToggleStatus(b),
+          ),
+        ),
       ),
     ],
     mode: mode,
@@ -130,20 +157,16 @@ class BrandsTableSection extends StatelessWidget {
             labelKey: BrandsKeys.edit,
             onPressed: () => onEdit(b),
           ),
-          AppRowAction(
-            icon: b.isActive ? AppIcons.block : AppIcons.restore,
-            labelKey: b.isActive ? BrandsKeys.deactivate : BrandsKeys.activate,
-            onPressed: () => onToggleStatus(b),
-          ),
         ],
+        // Status is the switch in its column; delete lives in the menu and is
+        // disabled (not hidden) while the brand still has products.
         overflow: [
-          if (b.canDelete)
-            AppRowAction(
-              icon: AppIcons.delete,
-              labelKey: BrandsKeys.delete,
-              destructive: true,
-              onPressed: () => onDelete(b),
-            ),
+          AppRowAction(
+            icon: AppIcons.delete,
+            labelKey: BrandsKeys.delete,
+            destructive: true,
+            onPressed: b.canDelete ? () => onDelete(b) : null,
+          ),
         ],
       ),
     ),

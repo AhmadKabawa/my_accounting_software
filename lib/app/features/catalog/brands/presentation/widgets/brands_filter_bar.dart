@@ -36,6 +36,52 @@ class BrandsFilterBar extends StatelessWidget {
     BrandStatusFilter.inactive => BrandsKeys.inactive,
   };
 
+  static const sortOptions = [
+    FilterBarSortOption(key: 'name', label: BrandsKeys.sortByName),
+    FilterBarSortOption(key: 'created', label: BrandsKeys.sortByCreated),
+    FilterBarSortOption(key: 'status', label: BrandsKeys.sortByStatus),
+  ];
+
+  /// The applied filters as chips (shared by the widget and the page toolbar).
+  static List<FilterBarFilter> activeFilters(
+    BuildContext context,
+    BrandListQuery query, {
+    required ValueChanged<String> onSearchChanged,
+    required ValueChanged<BrandStatusFilter> onStatusChanged,
+  }) => [
+    if (query.search.isNotEmpty)
+      FilterBarFilter(
+        id: FilterBar.searchFilterId,
+        label: BrandsKeys.searchHint,
+        value: query.search,
+        onRemove: () => onSearchChanged(''),
+      ),
+    if (query.status != BrandStatusFilter.all)
+      FilterBarFilter(
+        id: 'status',
+        label: BrandsKeys.status,
+        value: statusLabel(query.status).tr(context: context),
+        onRemove: () => onStatusChanged(BrandStatusFilter.all),
+      ),
+  ];
+
+  /// The filter controls opened by the "Filters" button.
+  static List<Widget> controls(
+    BuildContext context,
+    BrandListQuery query, {
+    required ValueChanged<BrandStatusFilter> onStatusChanged,
+  }) => [
+    SearchableDropdown<BrandStatusFilter>(
+      options: const [BrandStatusFilter.active, BrandStatusFilter.inactive],
+      labelKey: BrandsKeys.status,
+      optionLabel: (value) => statusLabel(value).tr(context: context),
+      value: query.status == BrandStatusFilter.all ? null : query.status,
+      allOptionLabel: BrandsKeys.allStatuses,
+      mode: SearchableDropdownMode.panel,
+      onChanged: (value) => onStatusChanged(value ?? BrandStatusFilter.all),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) => FilterBar(
     searchHintKey: BrandsKeys.searchHint,
@@ -45,42 +91,19 @@ class BrandsFilterBar extends StatelessWidget {
     leading: leading,
     trailing: trailing,
     resultCount: resultCount,
-    sortOptions: const [
-      FilterBarSortOption(key: 'name', label: BrandsKeys.sortByName),
-      FilterBarSortOption(key: 'status', label: BrandsKeys.sortByStatus),
-    ],
+    sortOptions: sortOptions,
     sortKey: query.sortField.name,
     sortAscending: query.sortAscending,
     onSort: (key, ascending) {
       final field = BrandSortField.tryParse(key);
       if (field != null) onSort(field, ascending);
     },
-    activeFilters: [
-      if (query.search.isNotEmpty)
-        FilterBarFilter(
-          id: FilterBar.searchFilterId,
-          label: BrandsKeys.searchHint,
-          value: query.search,
-          onRemove: () => onSearchChanged(''),
-        ),
-      if (query.status != BrandStatusFilter.all)
-        FilterBarFilter(
-          id: 'status',
-          label: BrandsKeys.status,
-          value: statusLabel(query.status).tr(context: context),
-          onRemove: () => onStatusChanged(BrandStatusFilter.all),
-        ),
-    ],
-    filterControls: [
-      SearchableDropdown<BrandStatusFilter>(
-        options: const [BrandStatusFilter.active, BrandStatusFilter.inactive],
-        labelKey: BrandsKeys.status,
-        optionLabel: (value) => statusLabel(value).tr(context: context),
-        value: query.status == BrandStatusFilter.all ? null : query.status,
-        allOptionLabel: BrandsKeys.allStatuses,
-        mode: SearchableDropdownMode.panel,
-        onChanged: (value) => onStatusChanged(value ?? BrandStatusFilter.all),
-      ),
-    ],
+    activeFilters: activeFilters(
+      context,
+      query,
+      onSearchChanged: onSearchChanged,
+      onStatusChanged: onStatusChanged,
+    ),
+    filterControls: controls(context, query, onStatusChanged: onStatusChanged),
   );
 }

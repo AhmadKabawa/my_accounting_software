@@ -235,13 +235,19 @@ class AppDataTable<T> extends StatelessWidget {
                 maxLines: 2,
               ),
             ),
-            if (sorted)
+            // Every sortable column shows an arrow: the active one points the
+            // way it sorts, the others show the neutral "sortable" mark.
+            if (column.sortable)
               AppIcon(
-                sortAscending
+                !sorted
+                    ? AppIcons.sortNeutral
+                    : sortAscending
                     ? AppIcons.sortAscending
                     : AppIcons.sortDescending,
                 size: AppIconSize.sm,
-                color: style.headerForeground,
+                color: sorted
+                    ? style.headerForeground
+                    : style.headerForeground.withValues(alpha: 0.5),
               ),
           ],
         ),
