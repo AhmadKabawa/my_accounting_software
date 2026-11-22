@@ -12,29 +12,6 @@ void main() {
     tester,
   ) async {
     for (final theme in [AppTheme.light(), AppTheme.dark()]) {
-      Color? expected;
-      await tester.pumpWidget(
-        buildTestApp(
-          theme: theme,
-          home: Builder(
-            builder: (context) {
-              final colors = Theme.of(context).colorScheme;
-              final semantic = Theme.of(context).extension<AppSemanticColors>()!;
-              expected = switch (AppIconTone.values.first) {
-                AppIconTone.neutral => colors.onSurface,
-                AppIconTone.primary => colors.primary,
-                AppIconTone.success => semantic.success,
-                AppIconTone.warning => semantic.warning,
-                AppIconTone.info => semantic.info,
-                AppIconTone.danger => colors.error,
-              };
-              return const Scaffold(
-                body: AppIcon(AppIcons.add, tone: AppIconTone.neutral),
-              );
-            },
-          ),
-        ),
-      );
 
       for (final tone in AppIconTone.values) {
         Color? toneExpected;
