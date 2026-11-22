@@ -380,7 +380,6 @@ class _SearchableDropdownState<T extends Object>
     );
   }
 
-
   String _panelDisplayLabel(BuildContext context) {
     final value = widget.value;
     if (value != null) return widget.optionLabel(value);
@@ -447,9 +446,9 @@ class _SearchableDropdownState<T extends Object>
                 onQueryChanged: widget.onQueryChanged == null ? null : _query,
                 onAddNew: widget.onAddNew,
                 onDismiss: () => Navigator.of(sheetContext).maybePop(),
-                onSelect: (value) => Navigator.of(sheetContext).pop(
-                  _PickerSelection<T>(value: value),
-                ),
+                onSelect: (value) => Navigator.of(
+                  sheetContext,
+                ).pop(_PickerSelection<T>(value: value)),
               ),
             ),
           )
@@ -462,14 +461,11 @@ class _SearchableDropdownState<T extends Object>
     if (mounted) setState(() {});
   }
 
-  Future<_PickerSelection<T>?> _showDesktopPanel(
-    BuildContext context,
-  ) {
+  Future<_PickerSelection<T>?> _showDesktopPanel(BuildContext context) {
     final renderBox =
         _panelTriggerKey.currentContext?.findRenderObject() as RenderBox?;
     final triggerSize = renderBox?.size ?? const Size(420, 48);
-    final triggerTop =
-        renderBox?.localToGlobal(Offset.zero).dy ?? 0;
+    final triggerTop = renderBox?.localToGlobal(Offset.zero).dy ?? 0;
     final screenHeight = MediaQuery.sizeOf(context).height;
     final gap = context.ui.padding.all(AppSpacing.md).top;
     final below = screenHeight - triggerTop - triggerSize.height - gap;
@@ -481,14 +477,16 @@ class _SearchableDropdownState<T extends Object>
         .toDouble();
     final panelWidth = triggerSize.width;
     final direction = Directionality.of(context);
-    final targetAnchor = (showAbove
-            ? AlignmentDirectional.topStart
-            : AlignmentDirectional.bottomStart)
-        .resolve(direction);
-    final followerAnchor = (showAbove
-            ? AlignmentDirectional.bottomStart
-            : AlignmentDirectional.topStart)
-        .resolve(direction);
+    final targetAnchor =
+        (showAbove
+                ? AlignmentDirectional.topStart
+                : AlignmentDirectional.bottomStart)
+            .resolve(direction);
+    final followerAnchor =
+        (showAbove
+                ? AlignmentDirectional.bottomStart
+                : AlignmentDirectional.topStart)
+            .resolve(direction);
     final completer = Completer<_PickerSelection<T>?>();
     _desktopPanelCompleter = completer;
 
@@ -529,9 +527,8 @@ class _SearchableDropdownState<T extends Object>
                   onQueryChanged: widget.onQueryChanged == null ? null : _query,
                   onAddNew: widget.onAddNew,
                   onDismiss: _dismissDesktopPanel,
-                  onSelect: (value) => _dismissDesktopPanel(
-                    _PickerSelection<T>(value: value),
-                  ),
+                  onSelect: (value) =>
+                      _dismissDesktopPanel(_PickerSelection<T>(value: value)),
                 ),
               ),
             ),
@@ -950,16 +947,19 @@ class _PanelSearchPickerState<T extends Object>
       builder: (context, data, _) {
         final normalized = _query.trim().toLowerCase();
         final options = widget.filterLocally && normalized.isNotEmpty
-            ? data.options.where((option) {
-                return widget.optionLabel(option).toLowerCase().contains(
-                      normalized,
-                    ) ||
-                    (widget.optionSubtitle
-                            ?.call(option)
-                            ?.toLowerCase()
-                            .contains(normalized) ??
-                        false);
-              }).toList(growable: false)
+            ? data.options
+                  .where((option) {
+                    return widget
+                            .optionLabel(option)
+                            .toLowerCase()
+                            .contains(normalized) ||
+                        (widget.optionSubtitle
+                                ?.call(option)
+                                ?.toLowerCase()
+                                .contains(normalized) ??
+                            false);
+                  })
+                  .toList(growable: false)
             : data.options;
         const allCount = 1;
         final count = options.length + allCount;
@@ -1106,4 +1106,3 @@ class _PanelSearchPickerState<T extends Object>
     );
   }
 }
-

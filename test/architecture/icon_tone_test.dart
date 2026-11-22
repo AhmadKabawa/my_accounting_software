@@ -84,8 +84,8 @@ Map<String, String> _readFeatureSources() => {
           .listSync(recursive: true)
           .whereType<File>()
           .where((file) => file.path.endsWith('.dart')))
-    entity.path.replaceAll(String.fromCharCode(92), '/'):
-        entity.readAsStringSync(),
+    entity.path.replaceAll(String.fromCharCode(92), '/'): entity
+        .readAsStringSync(),
 };
 
 void main() {

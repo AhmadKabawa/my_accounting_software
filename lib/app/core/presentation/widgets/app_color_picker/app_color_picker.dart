@@ -67,6 +67,7 @@ class _AppColorPickerState extends State<AppColorPicker> {
     final blue = (argb & 0xff).toRadixString(16).padLeft(2, '0');
     return '#$red$green$blue'.toUpperCase();
   }
+
   void _sync(String? input) {
     final h = HexColor.normalize(input);
     _manual = false;

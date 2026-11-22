@@ -12,7 +12,6 @@ void main() {
     tester,
   ) async {
     for (final theme in [AppTheme.light(), AppTheme.dark()]) {
-
       for (final tone in AppIconTone.values) {
         Color? toneExpected;
         await tester.pumpWidget(
@@ -30,9 +29,7 @@ void main() {
                   AppIconTone.info => semantic.info,
                   AppIconTone.danger => colors.error,
                 };
-                return Scaffold(
-                  body: AppIcon(AppIcons.add, tone: tone),
-                );
+                return Scaffold(body: AppIcon(AppIcons.add, tone: tone));
               },
             ),
           ),

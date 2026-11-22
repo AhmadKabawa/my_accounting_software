@@ -213,7 +213,10 @@ void main() {
       expect(find.byIcon(Icons.check), findsOneWidget);
       await tester.tap(find.text('Beta').last);
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('searchable-dropdown-panel')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('searchable-dropdown-panel')),
+        findsNothing,
+      );
       expect(find.text('Beta'), findsOneWidget);
 
       await tester.tap(find.byType(InkWell).first);
