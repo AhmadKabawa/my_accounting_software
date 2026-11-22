@@ -178,6 +178,10 @@ void main() {
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
 
+      expect(
+        find.byKey(const ValueKey('searchable-dropdown-panel')),
+        findsOneWidget,
+      );
       expect(find.text('All'), findsNWidgets(2));
       expect(find.text('Alpha'), findsOneWidget);
     });
@@ -225,7 +229,7 @@ void main() {
       expect(find.byIcon(Icons.check), findsOneWidget);
       await tester.tap(find.text('Beta').last);
       await tester.pumpAndSettle();
-      expect(find.byType(Dialog), findsNothing);
+      expect(find.byKey(const ValueKey('searchable-dropdown-panel')), findsNothing);
       expect(find.text('Beta'), findsOneWidget);
 
       await tester.tap(find.byType(InkWell).first);
@@ -263,6 +267,10 @@ void main() {
       );
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('searchable-dropdown-panel')),
+        findsOneWidget,
+      );
       await tester.tap(find.text('All options'));
       await tester.pumpAndSettle();
 
