@@ -27,7 +27,7 @@
 
 ## 5. Main scenarios
 - Search by name/slug and filter by active state. The existing products(count) field remains the source for the pre-existing product-count column and badge; live PostgREST/RLS behavior is NOT_VERIFIED. Product-presence filtering and with/without-products cards remain hidden until their count queries are verified.
-- Click a statistics card to apply its corresponding filter and show a chip.
+- Click a statistics card to apply its corresponding filter and show a chip; visually select the card matching the current filter.
 - Create/update/delete/toggle; refresh stats after each successful mutation.
 - Stats failure must not block list loading; list failure must not hide stats.
 
