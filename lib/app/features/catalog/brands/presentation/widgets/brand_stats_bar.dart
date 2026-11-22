@@ -9,11 +9,7 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/loc
 
 /// Clickable server-derived counters; selecting one applies its list filter.
 class BrandStatsBar extends StatelessWidget {
-  const BrandStatsBar(
-    this.stats, {
-    super.key,
-    required this.onFilterSelected,
-  });
+  const BrandStatsBar(this.stats, {super.key, required this.onFilterSelected});
 
   final BrandStats stats;
   final ValueChanged<BrandStatusFilter> onFilterSelected;
