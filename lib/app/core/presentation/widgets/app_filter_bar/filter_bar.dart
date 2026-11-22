@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
@@ -38,7 +36,8 @@ class FilterBarFilter {
 ///   so the visible text can never disagree with the applied search.
 /// * On phones the filter controls move into a bottom sheet.
 class FilterBar extends StatefulWidget {
-  static const defaultSearchDebounce = Duration(milliseconds: 300);
+  /// Retained for source compatibility. Debouncing belongs to the query owner.
+  static const defaultSearchDebounce = Duration.zero;
 
   /// Id of the [FilterBarFilter] that stands for the search text.
   static const searchFilterId = 'search';
@@ -65,6 +64,7 @@ class FilterBar extends StatefulWidget {
   filterPanelBuilder;
   final List<Widget> filterControls;
   final VoidCallback? onApply;
+  /// Deprecated compatibility parameter; FilterBar never debounces locally.
   final Duration debounce;
 
   @override
@@ -74,7 +74,6 @@ class FilterBar extends StatefulWidget {
 class _FilterBarState extends State<FilterBar> {
   late final TextEditingController _ownedController;
   bool _showEditor = false;
-  Timer? _debounce;
 
   TextEditingController get _controller =>
       widget.searchController ?? _ownedController;
@@ -87,38 +86,28 @@ class _FilterBarState extends State<FilterBar> {
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _ownedController.dispose();
     super.dispose();
   }
 
-  void _search(String value) {
-    _debounce?.cancel();
-    _debounce = Timer(widget.debounce, () => widget.onSearchChanged(value));
-  }
+  void _search(String value) => widget.onSearchChanged(value);
 
   /// Enter / the keyboard's search key: search now, without the debounce.
-  void _submitSearch() {
-    _debounce?.cancel();
-    widget.onSearchChanged(_controller.text);
-  }
+  void _submitSearch() => widget.onSearchChanged(_controller.text);
 
   /// The x button: empty the field and search immediately.
   void _clearSearch() {
-    _debounce?.cancel();
     _controller.clear();
     widget.onSearchChanged('');
   }
 
   void _clearAll() {
-    _debounce?.cancel();
     _controller.clear();
     widget.onClearAll();
   }
 
   void _removeFilter(FilterBarFilter filter) {
     if (filter.id == FilterBar.searchFilterId) {
-      _debounce?.cancel();
       _controller.clear();
     }
     filter.onRemove();

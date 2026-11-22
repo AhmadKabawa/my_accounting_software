@@ -9,7 +9,7 @@ import '../../../helpers/localized_app.dart';
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets('debounces search and removes an active filter', (tester) async {
+  testWidgets('search is delegated immediately and removes an active filter', (tester) async {
     var query = '';
     var removed = 0;
     var cleared = 0;
@@ -33,7 +33,7 @@ void main() {
     );
 
     await tester.enterText(find.byType(TextField), 'brand');
-    await tester.pump(const Duration(milliseconds: 301));
+    await tester.pump();
     expect(query, 'brand');
 
     expect(find.byType(AppBadge), findsOneWidget);
