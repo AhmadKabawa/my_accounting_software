@@ -88,7 +88,7 @@ Do not display id, uuid, origin_node_id, updated_at, or invented created_at.
 
 ## 13. States
 - Initial/loading/content/error and empty/no-results remain distinct.
-- Distinguish no brands and no filtered results with separate AppEmptyState content. The all-brands-have-no-products state remains hidden until the full product-count aggregate is verified.
+- Distinguish no brands and no filtered results with separate AppEmptyState content (both are implemented in BrandsTableSection). The all-brands-have-no-products state remains hidden because the full product-count aggregate is NOT_VERIFIED.
 - Stats loading/failure is independent; retain last successful stats on refresh failure.
 - If relation counts are not verified, hide only new product-presence filters and with/without-products cards/chips; retain the pre-existing product-count column and badge sourced from products(count).
 
