@@ -99,6 +99,22 @@ abstract final class AppLightColors {
   static const Color onInfo = AppColors.neutral0;
   static const Color infoContainer = Color(0xFFE7F0FB);
 
+  // ─── SaaS surfaces (مصدر واحد لشكل لوحة الإدارة) ───
+  /// خلفية الصفحة خلف البطاقة الرئيسية (أغمق قليلاً من [surface]).
+  static const Color canvas = AppColors.neutral100;
+
+  /// شريط رأس الجدول الناعم ونصه.
+  static const Color tableHeaderBand = AppColors.neutral100;
+  static const Color onTableHeader = AppColors.neutral600;
+
+  /// تظليل التناوب وتمرير المؤشر لصفوف الجدول.
+  static const Color tableZebra = AppColors.neutral50;
+  static const Color tableRowHover = AppColors.neutral100;
+
+  /// عنصر التنقل النشط (حبة بلون العلامة) ونصه.
+  static const Color selected = primary;
+  static const Color onSelected = onPrimary;
+
   // ─── Accounting: محايدة عمداً (لا أحمر/أخضر) ───
   static const Color debit = Color(0xFF2F3E4E);
   static const Color credit = Color(0xFF2F4A3F);
@@ -181,6 +197,15 @@ abstract final class AppDarkColors {
   static const Color info = Color(0xFF7DB8F5);
   static const Color onInfo = background;
   static const Color infoContainer = Color(0xFF162536);
+
+  // ─── SaaS surfaces ───
+  static const Color canvas = background;
+  static const Color tableHeaderBand = Color(0xFF222222);
+  static const Color onTableHeader = onSurfaceVariant;
+  static const Color tableZebra = Color(0xFF202020);
+  static const Color tableRowHover = Color(0xFF2A2A2A);
+  static const Color selected = primary;
+  static const Color onSelected = onPrimary;
 
   // ─── Accounting ───
   static const Color debit = Color(0xFFB9C7D6);

@@ -16,6 +16,11 @@ class ThemeHelper {
   AppSemanticColors get semanticColors =>
       Theme.of(context).extension<AppSemanticColors>() ??
       (isDark ? AppSemanticColors.dark : AppSemanticColors.light);
+
+  /// أسطح ولوحة الإدارة: canvas، شريط رأس الجدول، العنصر النشط، حبات الحالة.
+  AppSaasColors get saasColors =>
+      Theme.of(context).extension<AppSaasColors>() ??
+      (isDark ? AppSaasColors.dark : AppSaasColors.light);
   TextTheme get textTheme => Theme.of(context).textTheme;
 
   T value<T>({required T dark, required T light}) {

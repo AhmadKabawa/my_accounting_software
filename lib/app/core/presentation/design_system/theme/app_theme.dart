@@ -9,11 +9,11 @@ class AppTheme {
   static ThemeData light() => buildTheme(
     colorScheme: lightColorScheme,
     semanticColors: AppSemanticColors.light,
-    background: AppLightColors.background,
+    background: AppLightColors.canvas,
   );
   static ThemeData dark() => buildTheme(
     colorScheme: darkColorScheme,
     semanticColors: AppSemanticColors.dark,
-    background: AppDarkColors.background,
+    background: AppDarkColors.canvas,
   );
 }

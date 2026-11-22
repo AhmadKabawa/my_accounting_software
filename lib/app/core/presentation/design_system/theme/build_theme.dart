@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_text_styles.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/app_saas_colors.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/app_semantic_colors.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/components/app_bar_theme.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/components/bottom_sheet_theme.dart';
@@ -19,10 +20,13 @@ import 'package:accounting_software/app/core/presentation/design_system/theme/co
 ///
 /// [background] is the page color (Scaffold). It is separate from
 /// `colorScheme.surface`, which is the color of cards and tables.
+/// [saasColors] (canvas, table band, selected, status pills) defaults to the
+/// set matching the brightness.
 ThemeData buildTheme({
   required ColorScheme colorScheme,
   required AppSemanticColors semanticColors,
   required Color background,
+  AppSaasColors? saasColors,
 }) {
   final textTheme = buildTextTheme(colorScheme: colorScheme);
 
@@ -31,7 +35,13 @@ ThemeData buildTheme({
     brightness: colorScheme.brightness,
     fontFamily: AppFontFamily.sans,
     colorScheme: colorScheme,
-    extensions: [semanticColors],
+    extensions: [
+      semanticColors,
+      saasColors ??
+          (colorScheme.brightness == Brightness.dark
+              ? AppSaasColors.dark
+              : AppSaasColors.light),
+    ],
     textTheme: textTheme,
     appBarTheme: buildAppBarTheme(
       colorScheme: colorScheme,

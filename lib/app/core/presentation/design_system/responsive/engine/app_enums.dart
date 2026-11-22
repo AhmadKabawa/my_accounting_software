@@ -8,6 +8,7 @@ part 'app_enums/app_base_width.dart';
 part 'app_enums/responsive_token.dart';
 part 'app_enums/app_spacing.dart';
 part 'app_enums/app_radius.dart';
+part 'app_enums/app_surface_shape.dart';
 part 'app_enums/app_font_size.dart';
 part 'app_enums/app_icon_size.dart';
 part 'app_enums/app_elevation.dart';
