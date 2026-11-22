@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brand_stats_remote_data_source_impl.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 
 class _StatsApiClient extends Fake implements IApiClient {
   _StatsApiClient({
