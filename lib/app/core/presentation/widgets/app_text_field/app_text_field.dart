@@ -35,7 +35,11 @@ class AppTextField extends StatelessWidget {
     this.inputFormatters,
     this.textDirection,
     this.textCapitalization = TextCapitalization.none,
+    this.pill = false,
   });
+
+  /// Fully rounded (pill) shape, used by list toolbars.
+  final bool pill;
 
   final TextEditingController controller;
   final AppKey labelKey;
@@ -71,7 +75,7 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = AppTextFieldStyle(context, density: density);
+    final style = AppTextFieldStyle(context, density: density, pill: pill);
     final icon = prefixIcon;
 
     return TextFormField(

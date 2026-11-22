@@ -9,7 +9,10 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 /// Reads tokens only (radius, spacing, text roles, icon sizes) so the field
 /// scales with the screen exactly like `AppButton`.
 class AppTextFieldStyle {
-  const AppTextFieldStyle(this.context, {this.density});
+  const AppTextFieldStyle(this.context, {this.density, this.pill = false});
+
+  /// Fully rounded field (toolbar search); the radius is `AppSurfaceShape.pill`.
+  final bool pill;
 
   final BuildContext context;
 
@@ -33,8 +36,11 @@ class AppTextFieldStyle {
 
   ColorScheme get _scheme => Theme.of(context).colorScheme;
 
-  BorderRadius get radius =>
-      Rh.circularRadius(context, AppRadius.md, mode: _adaptive);
+  BorderRadius get radius => Rh.circularRadius(
+    context,
+    pill ? AppSurfaceShape.pill : AppRadius.md,
+    mode: _adaptive,
+  );
 
   EdgeInsets get contentPadding {
     final padding = Rh.symmetricPadding(

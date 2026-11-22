@@ -286,4 +286,143 @@ void main() {
     expect(find.text('Filters: Active'), findsOneWidget);
     expect(find.textContaining('{'), findsNothing);
   });
+
+  group('toolbar slots, sort and a single apply button', () {
+    Future<void> pumpBar(
+      WidgetTester tester, {
+      Size size = const Size(1200, 900),
+      Widget? leading,
+      Widget? trailing,
+      List<FilterBarSortOption> sortOptions = const [],
+      void Function(String, bool)? onSort,
+      int? resultCount,
+      List<Widget> filterControls = const [],
+      VoidCallback? onApply,
+    }) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: FilterBar(
+              onSearchChanged: (_) {},
+              activeFilters: const [],
+              onClearAll: () {},
+              leading: leading,
+              trailing: trailing,
+              sortOptions: sortOptions,
+              sortKey: 'name',
+              onSort: onSort,
+              resultCount: resultCount,
+              filterControls: filterControls,
+              onApply: onApply,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    const options = [
+      FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+      FilterBarSortOption(key: 'is_active', label: CatalogUiKeys.filters),
+    ];
+
+    testWidgets('wide order: leading, search, then trailing at the end', (
+      tester,
+    ) async {
+      await pumpBar(
+        tester,
+        leading: const Text('LEAD'),
+        trailing: const Text('TRAIL'),
+      );
+      final lead = tester.getTopLeft(find.text('LEAD')).dx;
+      final search = tester.getTopLeft(find.byType(TextField)).dx;
+      final trail = tester.getTopLeft(find.text('TRAIL')).dx;
+      expect(lead, lessThan(search));
+      expect(search, lessThan(trail));
+    });
+
+    testWidgets('no sort button without options or callback', (tester) async {
+      await pumpBar(tester);
+      expect(find.text('Sort by'), findsNothing);
+    });
+
+    testWidgets('the sort button reports key and direction', (tester) async {
+      String? key;
+      bool? ascending;
+      await pumpBar(
+        tester,
+        sortOptions: options,
+        onSort: (k, a) {
+          key = k;
+          ascending = a;
+        },
+      );
+      await tester.tap(find.text('Sort by'));
+      await tester.pumpAndSettle();
+      expect(find.byType(BottomSheet), findsOneWidget);
+      await tester.tap(find.text('Descending'));
+      await tester.pump();
+      await tester.tap(find.text('Done'));
+      await tester.pumpAndSettle();
+      expect(key, 'name');
+      expect(ascending, isFalse);
+    });
+
+    testWidgets('result count is optional text', (tester) async {
+      await pumpBar(tester);
+      expect(find.textContaining('results'), findsNothing);
+      await pumpBar(tester, resultCount: 12);
+      expect(find.text('12 results'), findsOneWidget);
+    });
+
+    testWidgets('wide filter controls open under the bar with no apply', (
+      tester,
+    ) async {
+      await pumpBar(
+        tester,
+        filterControls: [const Text('Status control')],
+      );
+      expect(find.text('Status control'), findsNothing);
+      await tester.tap(find.text('Filters'));
+      await tester.pumpAndSettle();
+      expect(find.text('Status control'), findsOneWidget);
+      expect(find.text('Apply'), findsNothing);
+    });
+
+    testWidgets('phone sheet has exactly one apply button', (tester) async {
+      var applied = 0;
+      await pumpBar(
+        tester,
+        size: const Size(390, 844),
+        filterControls: [const Text('Status control')],
+        onApply: () => applied++,
+      );
+      await tester.tap(find.text('Filters'));
+      await tester.pumpAndSettle();
+      expect(find.text('Apply'), findsOneWidget);
+      await tester.tap(find.text('Apply'));
+      await tester.pumpAndSettle();
+      expect(applied, 1);
+      expect(find.byType(BottomSheet), findsNothing);
+    });
+
+    testWidgets('phone: search comes first, then sort and filters', (
+      tester,
+    ) async {
+      await pumpBar(
+        tester,
+        size: const Size(390, 844),
+        sortOptions: options,
+        onSort: (_, _) {},
+        filterControls: [const Text('x')],
+      );
+      final search = tester.getTopLeft(find.byType(TextField)).dy;
+      final sort = tester.getTopLeft(find.text('Sort by')).dy;
+      expect(search, lessThan(sort));
+      expect(tester.takeException(), isNull);
+    });
+  });
 }

@@ -7,4 +7,7 @@ class FilterBarStyle {
   ColorScheme get colors => context.ui.theme.colors;
   EdgeInsets get padding => context.ui.padding.all(AppSpacing.sm);
   double get gap => context.ui.spacing.sm;
+
+  /// Fully rounded shape of the toolbar controls (search, sort, filters).
+  BorderRadius get controlRadius => AppSurfaceShape.control.circular(context);
 }
