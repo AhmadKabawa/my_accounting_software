@@ -119,26 +119,26 @@ void main() {
   test(
     'stats failure does not block the independent brands list cubit',
     () async {
-    final repository = FakeBrandsRepository()
-      ..onGetBrandStats = () async => const Left(_StatsFailure());
-    final statsCubit = BrandStatsCubit(
-      getBrandStats: GetBrandStatsUseCase(repository),
-    );
-    final listCubit = BrandsListCubit(
-      getBrands: GetBrandsUseCase(repository),
-      setBrandActive: SetBrandActiveUseCase(repository),
-      deleteBrand: DeleteBrandUseCase(repository),
-      flashMessages: FlashMessages(),
-    );
-
-    await Future.wait([statsCubit.load(), listCubit.load()]);
-
-    expect(statsCubit.state, isA<BrandStatsFailed>());
-    expect(listCubit.state.status, BrandsListStatus.ready);
-    expect(listCubit.state.hasData, isTrue);
-
-    await statsCubit.close();
-    await listCubit.close();
+      final repository = FakeBrandsRepository()
+        ..onGetBrandStats = () async => const Left(_StatsFailure());
+      final statsCubit = BrandStatsCubit(
+        getBrandStats: GetBrandStatsUseCase(repository),
+      );
+      final listCubit = BrandsListCubit(
+        getBrands: GetBrandsUseCase(repository),
+        setBrandActive: SetBrandActiveUseCase(repository),
+        deleteBrand: DeleteBrandUseCase(repository),
+        flashMessages: FlashMessages(),
+      );
+  
+      await Future.wait([statsCubit.load(), listCubit.load()]);
+  
+      expect(statsCubit.state, isA<BrandStatsFailed>());
+      expect(listCubit.state.status, BrandsListStatus.ready);
+      expect(listCubit.state.hasData, isTrue);
+  
+      await statsCubit.close();
+      await listCubit.close();
     },
   );
 }
