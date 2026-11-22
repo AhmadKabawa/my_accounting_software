@@ -181,25 +181,27 @@ void main() {
     );
   });
 
-  testWidgets('opened from icons: stays open on another page, folds on the same',
-      (tester) async {
-    final settings = AppSettingsManager(storage: _MemoryStorage());
-    await _pump(tester, settings, size: const Size(800, 900));
-    bool collapsed() =>
-        tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed;
-    expect(collapsed(), isTrue);
-    await tester.tap(find.byTooltip(ShellKeys.expandSidebar.en));
-    await tester.pumpAndSettle();
-    expect(collapsed(), isFalse);
+  testWidgets(
+    'opened from icons: stays open on another page, folds on the same',
+    (tester) async {
+      final settings = AppSettingsManager(storage: _MemoryStorage());
+      await _pump(tester, settings, size: const Size(800, 900));
+      bool collapsed() =>
+          tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed;
+      expect(collapsed(), isTrue);
+      await tester.tap(find.byTooltip(ShellKeys.expandSidebar.en));
+      await tester.pumpAndSettle();
+      expect(collapsed(), isFalse);
 
-    // Another page: the sidebar stays open.
-    await tester.tap(find.text('home').last);
-    await tester.pumpAndSettle();
-    expect(collapsed(), isFalse);
+      // Another page: the sidebar stays open.
+      await tester.tap(find.text('home').last);
+      await tester.pumpAndSettle();
+      expect(collapsed(), isFalse);
 
-    // The page already shown, again: back to icons.
-    await tester.tap(find.text('home').last);
-    await tester.pumpAndSettle();
-    expect(collapsed(), isTrue);
-  });
+      // The page already shown, again: back to icons.
+      await tester.tap(find.text('home').last);
+      await tester.pumpAndSettle();
+      expect(collapsed(), isTrue);
+    },
+  );
 }

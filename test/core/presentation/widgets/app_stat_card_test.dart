@@ -54,10 +54,7 @@ void main() {
     );
     final value = tester.widget<Text>(find.text('42'));
     final title = tester.widget<Text>(find.text('Filters'));
-    expect(
-      value.style!.fontSize!,
-      greaterThan(title.style!.fontSize!),
-    );
+    expect(value.style!.fontSize!, greaterThan(title.style!.fontSize!));
   });
 
   testWidgets('loading shows placeholders and ignores taps', (tester) async {

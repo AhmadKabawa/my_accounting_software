@@ -89,7 +89,7 @@ void main() {
             onStatusChanged: (value) =>
                 statusCleared = value == BrandStatusFilter.all,
             onClearAll: () {},
-              onSort: (_, _) {},
+            onSort: (_, _) {},
           ),
         ),
       ),

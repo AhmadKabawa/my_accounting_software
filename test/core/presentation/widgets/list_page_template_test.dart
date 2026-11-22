@@ -252,9 +252,7 @@ void main() {
 
     testWidgets('loading placeholders follow the view mode', (tester) async {
       await tester.pumpWidget(
-        buildTestApp(
-          home: page(state: AppPageState.loading),
-        ),
+        buildTestApp(home: page(state: AppPageState.loading)),
       );
       final rows = tester
           .widgetList<AppSkeleton>(find.byType(AppSkeleton))

@@ -11,10 +11,8 @@ class BrandGridTile extends StatelessWidget {
   final Brand brand;
 
   @override
-  Widget build(BuildContext context) => FittedBox(
-    fit: BoxFit.scaleDown,
-    child: _content(context),
-  );
+  Widget build(BuildContext context) =>
+      FittedBox(fit: BoxFit.scaleDown, child: _content(context));
 
   Widget _content(BuildContext context) => Column(
     mainAxisSize: MainAxisSize.min,

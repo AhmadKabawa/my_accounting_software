@@ -41,9 +41,7 @@ class AppDropdownMenu extends StatelessWidget {
         elevation: WidgetStatePropertyAll(
           context.ui.shadow.value(AppElevation.md),
         ),
-        padding: WidgetStatePropertyAll(
-          context.ui.padding.all(AppSpacing.xs),
-        ),
+        padding: WidgetStatePropertyAll(context.ui.padding.all(AppSpacing.xs)),
         minimumSize: WidgetStatePropertyAll(Size(width, 0)),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(

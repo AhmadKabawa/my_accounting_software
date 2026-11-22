@@ -58,61 +58,61 @@ class AppStatCard extends StatelessWidget {
     // One merged node: "title value description", tappable when [onTap].
     return MergeSemantics(
       child: AppCard(
-          padding: compact ? AppSpacing.sm : AppSpacing.md,
-          selected: selected,
-          onTap: loading ? null : onTap,
-          child: loading
-              ? _loading(context)
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (icon != null) ...[
-                      _IconBadge(
-                        icon: icon!,
-                        foreground: foreground,
-                        background: background,
-                      ),
-                      context.ui.spacing.gap(
-                        compact ? AppSpacing.sm : AppSpacing.md,
-                        axis: Axis.horizontal,
-                      ),
-                    ],
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AppText(
-                            titleKey,
-                            type: AppTextType.labelMedium,
-                            color: colors.onSurfaceVariant,
-                            maxLines: compact ? 1 : 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          if (!compact) context.ui.spacing.gap(AppSpacing.xs),
-                          AppText.raw(
-                            shown,
-                            type: compact
-                                ? AppTextType.titleMedium
-                                : AppTextType.amountKpi,
-                            color: value == null
-                                ? colors.onSurfaceVariant
-                                : colors.onSurface,
-                          ),
-                          if (descriptionKey != null && !compact) ...[
-                            context.ui.spacing.gap(AppSpacing.xs),
-                            AppText(
-                              descriptionKey!,
-                              type: AppTextType.bodySmall,
-                              color: colors.onSurfaceVariant,
-                              maxLines: 2,
-                            ),
-                          ],
-                        ],
-                      ),
+        padding: compact ? AppSpacing.sm : AppSpacing.md,
+        selected: selected,
+        onTap: loading ? null : onTap,
+        child: loading
+            ? _loading(context)
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (icon != null) ...[
+                    _IconBadge(
+                      icon: icon!,
+                      foreground: foreground,
+                      background: background,
+                    ),
+                    context.ui.spacing.gap(
+                      compact ? AppSpacing.sm : AppSpacing.md,
+                      axis: Axis.horizontal,
                     ),
                   ],
-                ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppText(
+                          titleKey,
+                          type: AppTextType.labelMedium,
+                          color: colors.onSurfaceVariant,
+                          maxLines: compact ? 1 : 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (!compact) context.ui.spacing.gap(AppSpacing.xs),
+                        AppText.raw(
+                          shown,
+                          type: compact
+                              ? AppTextType.titleMedium
+                              : AppTextType.amountKpi,
+                          color: value == null
+                              ? colors.onSurfaceVariant
+                              : colors.onSurface,
+                        ),
+                        if (descriptionKey != null && !compact) ...[
+                          context.ui.spacing.gap(AppSpacing.xs),
+                          AppText(
+                            descriptionKey!,
+                            type: AppTextType.bodySmall,
+                            color: colors.onSurfaceVariant,
+                            maxLines: 2,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }

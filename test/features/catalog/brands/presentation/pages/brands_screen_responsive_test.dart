@@ -51,9 +51,9 @@ void main() {
         ) async {
           final repository = FakeBrandsRepository();
           sl.registerFactory<FlashMessages>(FlashMessages.new);
-  sl.registerSingleton<AppSettingsManager>(
-    AppSettingsManager(storage: MemoryStorage()),
-  );
+          sl.registerSingleton<AppSettingsManager>(
+            AppSettingsManager(storage: MemoryStorage()),
+          );
           sl.registerFactory<BrandStatsCubit>(
             () => BrandStatsCubit(
               getBrandStats: GetBrandStatsUseCase(repository),

@@ -68,20 +68,17 @@ Widget _withAccess(Widget child) => BlocProvider<AccessCubit>(
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets(
-    'the products column shows just the number',
-    (tester) async {
-      tester.view.physicalSize = const Size(1280, 900);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
+  testWidgets('the products column shows just the number', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
 
-      await tester.pumpWidget(buildTestApp(home: _withAccess(_section())));
+    await tester.pumpWidget(buildTestApp(home: _withAccess(_section())));
 
-      expect(find.text(BrandsKeys.productCount.en), findsOneWidget);
-      expect(find.text('Products: 2'), findsNothing);
-      expect(find.text('2'), findsWidgets);
-    },
-  );
+    expect(find.text(BrandsKeys.productCount.en), findsOneWidget);
+    expect(find.text('Products: 2'), findsNothing);
+    expect(find.text('2'), findsWidgets);
+  });
 
   testWidgets('empty brands uses its dedicated AppEmptyState', (tester) async {
     await tester.pumpWidget(

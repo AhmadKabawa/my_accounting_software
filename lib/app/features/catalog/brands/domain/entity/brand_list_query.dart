@@ -78,5 +78,13 @@ class BrandListQuery extends Equatable {
   );
 
   @override
-  List<Object?> get props => [search, status, sortField, sortAscending, thenSorts, page, pageSize];
+  List<Object?> get props => [
+    search,
+    status,
+    sortField,
+    sortAscending,
+    thenSorts,
+    page,
+    pageSize,
+  ];
 }

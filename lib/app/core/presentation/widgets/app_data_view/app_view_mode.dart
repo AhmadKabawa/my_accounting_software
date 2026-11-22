@@ -19,11 +19,9 @@ enum AppViewMode {
 /// [AppSettingsManager]. `null` means "no choice yet": the data view then picks
 /// the default for the device. Presentation preference only; no business rule.
 class ViewModeCubit extends Cubit<AppViewMode?> {
-  ViewModeCubit({
-    required AppSettingsManager settings,
-    required this.screenId,
-  }) : _settings = settings,
-       super(null);
+  ViewModeCubit({required AppSettingsManager settings, required this.screenId})
+    : _settings = settings,
+      super(null);
 
   final AppSettingsManager _settings;
 

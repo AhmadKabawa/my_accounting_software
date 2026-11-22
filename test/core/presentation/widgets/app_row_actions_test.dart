@@ -49,30 +49,31 @@ void main() {
     expect(restored, 1);
   });
 
-  testWidgets('at most two inline icons; extra primary actions go to the menu', (
-    tester,
-  ) async {
-    AppRowAction action(AppIconData icon, int i) => AppRowAction(
-      icon: icon,
-      labelKey: CatalogUiKeys.retry,
-      onPressed: () {},
-    );
-    await tester.pumpWidget(
-      buildTestApp(
-        home: Scaffold(
-          body: AppRowActions(
-            primary: [
-              action(AppIcons.edit, 1),
-              action(AppIcons.block, 2),
-              action(AppIcons.restore, 3),
-            ],
-            overflow: [action(AppIcons.delete, 4)],
+  testWidgets(
+    'at most two inline icons; extra primary actions go to the menu',
+    (tester) async {
+      AppRowAction action(AppIconData icon, int i) => AppRowAction(
+        icon: icon,
+        labelKey: CatalogUiKeys.retry,
+        onPressed: () {},
+      );
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: AppRowActions(
+              primary: [
+                action(AppIcons.edit, 1),
+                action(AppIcons.block, 2),
+                action(AppIcons.restore, 3),
+              ],
+              overflow: [action(AppIcons.delete, 4)],
+            ),
           ),
         ),
-      ),
-    );
-    // Two inline icon buttons plus the "more" menu button.
-    expect(find.byType(AppIconButton), findsNWidgets(2));
-    expect(find.byTooltip('More actions'), findsOneWidget);
-  });
+      );
+      // Two inline icon buttons plus the "more" menu button.
+      expect(find.byType(AppIconButton), findsNWidgets(2));
+      expect(find.byTooltip('More actions'), findsOneWidget);
+    },
+  );
 }

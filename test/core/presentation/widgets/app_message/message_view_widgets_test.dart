@@ -84,10 +84,7 @@ void main() {
             .clearSnackBars();
         await tester.pumpAndSettle();
       }
-      expect(
-        expected[MessageType.error],
-        isNot(expected[MessageType.success]),
-      );
+      expect(expected[MessageType.error], isNot(expected[MessageType.success]));
     });
 
     testWidgets('the semantic icon is actually drawn', (tester) async {
@@ -176,9 +173,7 @@ void main() {
       expect(find.text('same'), findsNothing);
     });
 
-    testWidgets('renders in dark theme and RTL without errors', (
-      tester,
-    ) async {
+    testWidgets('renders in dark theme and RTL without errors', (tester) async {
       for (final type in [
         MessageType.error,
         MessageType.success,

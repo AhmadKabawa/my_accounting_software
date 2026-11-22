@@ -59,114 +59,119 @@ class BrandsScreen extends StatelessWidget {
         }
       },
       child: BlocBuilder<ViewModeCubit, AppViewMode?>(
-        builder: (context, mode) => BlocBuilder<BrandStatsCubit, BrandStatsState>(
-          builder: (context, statsState) =>
-              BlocBuilder<BrandsListCubit, BrandsListState>(
-                builder: (context, state) {
-                  final cubit = context.read<BrandsListCubit>();
-                  final page = state.result;
-                  final query = state.query;
-                  final rows = page?.items ?? const <Brand>[];
-                  final total = page?.totalCount ?? 0;
-                  final failure = state.hasData ? null : state.failure;
-                  final refreshFailure = state.hasData ? state.failure : null;
-                  final loading = state.isInitialLoading;
-                  final refreshing = state.isRefreshing;
+        builder: (context, mode) =>
+            BlocBuilder<BrandStatsCubit, BrandStatsState>(
+              builder: (context, statsState) =>
+                  BlocBuilder<BrandsListCubit, BrandsListState>(
+                    builder: (context, state) {
+                      final cubit = context.read<BrandsListCubit>();
+                      final page = state.result;
+                      final query = state.query;
+                      final rows = page?.items ?? const <Brand>[];
+                      final total = page?.totalCount ?? 0;
+                      final failure = state.hasData ? null : state.failure;
+                      final refreshFailure = state.hasData
+                          ? state.failure
+                          : null;
+                      final loading = state.isInitialLoading;
+                      final refreshing = state.isRefreshing;
 
-                  return ListPageTemplate(
-                    titleKey: BrandsKeys.title,
-                    breadcrumb: AppBreadcrumb(
-                      items: [
-                        AppBreadcrumbItem(
-                          label: NavKeys.catalog,
-                          onTap: () => context.go(CatalogRoutes.hub.path),
-                        ),
-                        const AppBreadcrumbItem(label: BrandsKeys.title),
-                      ],
-                    ),
-                    stats: BrandStatsBar(
-                      statsState.stats,
-                      onFilterSelected: cubit.setStatus,
-                      selectedFilter: query.status,
-                      loading:
-                          statsState is BrandStatsInitial ||
-                          statsState is BrandStatsLoading,
-                    ),
-                    toolbar: ListToolbarConfig(
-                      searchHintKey: BrandsKeys.searchHint,
-                      onSearchChanged: cubit.searchChanged,
-                      onClearAll: cubit.clearFilters,
-                      activeFilters: BrandsFilterBar.activeFilters(
-                        context,
-                        query,
-                        onSearchChanged: cubit.searchChanged,
-                        onStatusChanged: cubit.setStatus,
-                      ),
-                      filterControls: BrandsFilterBar.controls(
-                        context,
-                        query,
-                        onStatusChanged: cubit.setStatus,
-                      ),
-                      // Sort and filters are answered by the database.
-                      sortOptions: BrandsFilterBar.sortOptions,
-                      sorts: [
-                        for (final sort in query.sorts)
-                          FilterBarSort(sort.field.name, sort.ascending),
-                      ],
-                      onSortsChanged: (sorts) => cubit.setSorts([
-                        for (final sort in sorts)
-                          if (BrandSortField.tryParse(sort.key) != null)
-                            BrandSort(
-                              BrandSortField.tryParse(sort.key)!,
-                              sort.ascending,
+                      return ListPageTemplate(
+                        titleKey: BrandsKeys.title,
+                        breadcrumb: AppBreadcrumb(
+                          items: [
+                            AppBreadcrumbItem(
+                              label: NavKeys.catalog,
+                              onTap: () => context.go(CatalogRoutes.hub.path),
                             ),
-                      ]),
-                      viewModes: _modes,
-                      viewMode: mode,
-                      onViewModeChanged: context.read<ViewModeCubit>().select,
-                      onRefresh: cubit.refresh,
-                      refreshing: state.isRefreshing,
-                    ),
-                    primaryAction: PermissionGate(
-                      permission: Permissions.masterData.manage,
-                      child: AppButton(
-                        BrandsKeys.add,
-                        icon: AppIcons.add,
-                        onPressed: () => _edit(context),
-                      ),
-                    ),
-                    loadingViewMode: mode ?? AppViewMode.table,
-                    state: loading
-                        ? AppPageState.loading
-                        : failure != null
-                        ? AppPageState.error
-                        : AppPageState.content,
-                    errorKey: failure?.messageKey,
-                    refreshErrorKey: refreshFailure?.messageKey,
-                    onRetry: cubit.refresh,
-                    dataTable: BrandsTableSection(
-                      mode: mode,
-                      query: query,
-                      onRetry: cubit.refresh,
-                      onSort: (sort) => cubit.setSort(
-                        field: BrandSortField.tryParse(sort.key),
-                        ascending: sort.ascending,
-                      ),
-                      onPageChanged: cubit.setPage,
-                      rows: rows,
-                      total: total,
-                      loading: loading,
-                      refreshing: refreshing,
-                      failure: failure,
-                      onAdd: () => _edit(context),
-                      onEdit: (brand) => _edit(context, brand),
-                      onDelete: (brand) => _delete(context, brand),
-                      onToggleStatus: (brand) => _status(context, brand),
-                    ),
-                  );
-                },
-              ),
-        ),
+                            const AppBreadcrumbItem(label: BrandsKeys.title),
+                          ],
+                        ),
+                        stats: BrandStatsBar(
+                          statsState.stats,
+                          onFilterSelected: cubit.setStatus,
+                          selectedFilter: query.status,
+                          loading:
+                              statsState is BrandStatsInitial ||
+                              statsState is BrandStatsLoading,
+                        ),
+                        toolbar: ListToolbarConfig(
+                          searchHintKey: BrandsKeys.searchHint,
+                          onSearchChanged: cubit.searchChanged,
+                          onClearAll: cubit.clearFilters,
+                          activeFilters: BrandsFilterBar.activeFilters(
+                            context,
+                            query,
+                            onSearchChanged: cubit.searchChanged,
+                            onStatusChanged: cubit.setStatus,
+                          ),
+                          filterControls: BrandsFilterBar.controls(
+                            context,
+                            query,
+                            onStatusChanged: cubit.setStatus,
+                          ),
+                          // Sort and filters are answered by the database.
+                          sortOptions: BrandsFilterBar.sortOptions,
+                          sorts: [
+                            for (final sort in query.sorts)
+                              FilterBarSort(sort.field.name, sort.ascending),
+                          ],
+                          onSortsChanged: (sorts) => cubit.setSorts([
+                            for (final sort in sorts)
+                              if (BrandSortField.tryParse(sort.key) != null)
+                                BrandSort(
+                                  BrandSortField.tryParse(sort.key)!,
+                                  sort.ascending,
+                                ),
+                          ]),
+                          viewModes: _modes,
+                          viewMode: mode,
+                          onViewModeChanged: context
+                              .read<ViewModeCubit>()
+                              .select,
+                          onRefresh: cubit.refresh,
+                          refreshing: state.isRefreshing,
+                        ),
+                        primaryAction: PermissionGate(
+                          permission: Permissions.masterData.manage,
+                          child: AppButton(
+                            BrandsKeys.add,
+                            icon: AppIcons.add,
+                            onPressed: () => _edit(context),
+                          ),
+                        ),
+                        loadingViewMode: mode ?? AppViewMode.table,
+                        state: loading
+                            ? AppPageState.loading
+                            : failure != null
+                            ? AppPageState.error
+                            : AppPageState.content,
+                        errorKey: failure?.messageKey,
+                        refreshErrorKey: refreshFailure?.messageKey,
+                        onRetry: cubit.refresh,
+                        dataTable: BrandsTableSection(
+                          mode: mode,
+                          query: query,
+                          onRetry: cubit.refresh,
+                          onSort: (sort) => cubit.setSort(
+                            field: BrandSortField.tryParse(sort.key),
+                            ascending: sort.ascending,
+                          ),
+                          onPageChanged: cubit.setPage,
+                          rows: rows,
+                          total: total,
+                          loading: loading,
+                          refreshing: refreshing,
+                          failure: failure,
+                          onAdd: () => _edit(context),
+                          onEdit: (brand) => _edit(context, brand),
+                          onDelete: (brand) => _delete(context, brand),
+                          onToggleStatus: (brand) => _status(context, brand),
+                        ),
+                      );
+                    },
+                  ),
+            ),
       ),
     ),
   );

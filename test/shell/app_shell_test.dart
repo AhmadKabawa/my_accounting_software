@@ -177,7 +177,10 @@ void main() {
       await _pump(tester, const Size(800, 1280));
 
       expect(find.byType(AppSidebar), findsOneWidget);
-      expect(tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed, isTrue);
+      expect(
+        tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed,
+        isTrue,
+      );
       expect(find.byType(AppNavigationBar), findsNothing);
     });
 

@@ -97,7 +97,9 @@ class AppPaginationBar extends StatelessWidget {
           children: [
             if (onPageSizeChanged != null)
               SizedBox(
-                width: context.ui.size.width(AppComponentSize.filterControlWidth),
+                width: context.ui.size.width(
+                  AppComponentSize.filterControlWidth,
+                ),
                 child: SearchableDropdown<int>(
                   options: AppConfig.pageSizeOptions,
                   labelKey: CatalogUiKeys.rowsPerPage,
@@ -143,10 +145,7 @@ class _Ellipsis extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox.square(
     dimension: context.ui.size.width(AppComponentSize.small),
     child: Center(
-      child: AppText.raw(
-        '…',
-        color: context.ui.theme.colors.onSurfaceVariant,
-      ),
+      child: AppText.raw('…', color: context.ui.theme.colors.onSurfaceVariant),
     ),
   );
 }

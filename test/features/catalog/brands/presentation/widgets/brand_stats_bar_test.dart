@@ -62,9 +62,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       buildTestApp(
-        home: Scaffold(
-          body: BrandStatsBar(null, onFilterSelected: (_) {}),
-        ),
+        home: Scaffold(body: BrandStatsBar(null, onFilterSelected: (_) {})),
       ),
     );
     expect(find.byType(AppCard), findsNWidgets(3));

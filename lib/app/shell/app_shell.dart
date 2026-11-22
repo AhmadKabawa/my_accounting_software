@@ -505,9 +505,8 @@ class _MoreTree extends StatelessWidget {
                 ),
             leading: AppIcon(destination.item.icon),
             title: AppText(destination.item.label),
-            onTap: () => Navigator.of(
-              context,
-            ).pop(_MoreChoice(destination.branchIndex)),
+            onTap: () =>
+                Navigator.of(context).pop(_MoreChoice(destination.branchIndex)),
           ),
           if (destination.item.children.isNotEmpty)
             Padding(

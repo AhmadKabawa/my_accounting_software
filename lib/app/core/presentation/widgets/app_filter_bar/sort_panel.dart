@@ -106,8 +106,7 @@ class _SortPanelState extends State<SortPanel> {
             color: context.ui.theme.colors.onSurfaceVariant,
           ),
         ),
-        for (final option in widget.options)
-          _row(context, option),
+        for (final option in widget.options) _row(context, option),
       ],
     ),
   );

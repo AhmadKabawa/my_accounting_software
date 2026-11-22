@@ -948,6 +948,7 @@ class _PanelSearchPickerState<T extends Object>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppTextField(
+                    labelKey: widget.labelKey,
                     controller: _controller,
                     focusNode: _searchFocus,
                     hintKey: CatalogUiKeys.search,

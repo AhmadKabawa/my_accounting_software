@@ -214,7 +214,9 @@ class AppDataView<T> extends StatelessWidget {
 
   Widget _pagination(BuildContext context) {
     final hasPaging =
-        onPageChanged != null || onPageSizeChanged != null || onLoadMore != null;
+        onPageChanged != null ||
+        onPageSizeChanged != null ||
+        onLoadMore != null;
     if (!hasPaging) return const SizedBox.shrink();
     return AppPaginationBar(
       page: page,

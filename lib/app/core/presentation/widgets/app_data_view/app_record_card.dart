@@ -93,10 +93,7 @@ class AppRecordCard<T> extends StatelessWidget {
               ),
           ],
           if (actions != null)
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: actions,
-            ),
+            Align(alignment: AlignmentDirectional.centerEnd, child: actions),
         ],
       ),
     );

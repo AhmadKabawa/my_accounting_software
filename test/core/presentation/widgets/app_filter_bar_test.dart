@@ -407,10 +407,7 @@ void main() {
     testWidgets('wide filter controls open under the bar with no apply', (
       tester,
     ) async {
-      await pumpBar(
-        tester,
-        filterControls: [const Text('Status control')],
-      );
+      await pumpBar(tester, filterControls: [const Text('Status control')]);
       expect(find.text('Status control'), findsNothing);
       await tester.tap(find.text('Filters'));
       await tester.pumpAndSettle();

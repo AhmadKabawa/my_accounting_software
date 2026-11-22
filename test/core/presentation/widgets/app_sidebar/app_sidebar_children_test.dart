@@ -134,7 +134,10 @@ void main() {
     tester,
   ) async {
     await _pump(tester, activeIndex: 1, collapsed: true);
-    expect(find.byIcon((AppIcons.brands as MaterialIconData).data), findsOneWidget);
+    expect(
+      find.byIcon((AppIcons.brands as MaterialIconData).data),
+      findsOneWidget,
+    );
     expect(find.text('Brands'), findsNothing);
   });
 

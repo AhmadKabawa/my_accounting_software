@@ -17,10 +17,7 @@ double _contrast(Color a, Color b) {
 void main() {
   group('AppSaasColors', () {
     test('يُسجَّل في الثيمين الفاتح والداكن', () {
-      expect(
-        AppTheme.light().extension<AppSaasColors>(),
-        AppSaasColors.light,
-      );
+      expect(AppTheme.light().extension<AppSaasColors>(), AppSaasColors.light);
       expect(AppTheme.dark().extension<AppSaasColors>(), AppSaasColors.dark);
     });
 
@@ -45,11 +42,20 @@ void main() {
     ]) {
       test('$name: تباين حبات الحالة والعنصر النشط ≥ 4.5', () {
         final pairs = <String, (Color, Color)>{
-          'success': (colors.pillSuccess.foreground, colors.pillSuccess.container),
+          'success': (
+            colors.pillSuccess.foreground,
+            colors.pillSuccess.container,
+          ),
           'error': (colors.pillError.foreground, colors.pillError.container),
-          'warning': (colors.pillWarning.foreground, colors.pillWarning.container),
+          'warning': (
+            colors.pillWarning.foreground,
+            colors.pillWarning.container,
+          ),
           'info': (colors.pillInfo.foreground, colors.pillInfo.container),
-          'neutral': (colors.pillNeutral.foreground, colors.pillNeutral.container),
+          'neutral': (
+            colors.pillNeutral.foreground,
+            colors.pillNeutral.container,
+          ),
           'selected': (colors.onSelected, colors.selected),
           'tableHeader': (colors.onTableHeader, colors.tableHeaderBand),
         };

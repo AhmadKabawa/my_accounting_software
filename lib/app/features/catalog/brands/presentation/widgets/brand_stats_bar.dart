@@ -28,14 +28,29 @@ class BrandStatsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      _card(BrandsKeys.totalBrands, stats?.total, BrandStatusFilter.all,
-          AppIcons.brands, AppBadgeTone.info),
+      _card(
+        BrandsKeys.totalBrands,
+        stats?.total,
+        BrandStatusFilter.all,
+        AppIcons.brands,
+        AppBadgeTone.info,
+      ),
       context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-      _card(BrandsKeys.activeBrands, stats?.active, BrandStatusFilter.active,
-          AppIcons.restore, AppBadgeTone.success),
+      _card(
+        BrandsKeys.activeBrands,
+        stats?.active,
+        BrandStatusFilter.active,
+        AppIcons.restore,
+        AppBadgeTone.success,
+      ),
       context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-      _card(BrandsKeys.inactiveBrands, stats?.inactive,
-          BrandStatusFilter.inactive, AppIcons.block, AppBadgeTone.neutral),
+      _card(
+        BrandsKeys.inactiveBrands,
+        stats?.inactive,
+        BrandStatusFilter.inactive,
+        AppIcons.block,
+        AppBadgeTone.neutral,
+      ),
     ],
   );
 
@@ -47,14 +62,14 @@ class BrandStatsBar extends StatelessWidget {
     AppBadgeTone tone,
   ) => Expanded(
     child: AppStatCard(
-    compact: true,
-    titleKey: label,
-    value: value?.toString(),
-    icon: icon,
-    tone: tone,
-    loading: loading,
-    selected: selectedFilter == filter,
-    onTap: () => onFilterSelected(filter),
-  ),
+      compact: true,
+      titleKey: label,
+      value: value?.toString(),
+      icon: icon,
+      tone: tone,
+      loading: loading,
+      selected: selectedFilter == filter,
+      onTap: () => onFilterSelected(filter),
+    ),
   );
 }

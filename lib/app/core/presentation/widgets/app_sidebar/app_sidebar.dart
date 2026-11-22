@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:flutter/rendering.dart';
 
 /// Desktop navigation as a tree, optionally reduced to an icon rail.
 ///
@@ -110,7 +111,8 @@ class _AppSidebarState extends State<AppSidebar> {
       final hasActiveChild = item.children.any(
         (c) => AppSidebar.isChildActive(c, widget.activePath),
       );
-      if (i == widget.activeIndex || hasActiveChild) id = AppSidebar.sectionId(item);
+      if (i == widget.activeIndex || hasActiveChild)
+        id = AppSidebar.sectionId(item);
     }
     _setOpen(id, notify: notify);
   }
@@ -334,9 +336,8 @@ class _SidebarItem extends StatelessWidget {
   ) => onDoubleTap == null
       ? null
       : {
-          CustomSemanticsAction(
-            label: ShellKeys.openPage.tr(context: context),
-          ): onDoubleTap!,
+          CustomSemanticsAction(label: ShellKeys.openPage.tr(context: context)):
+              onDoubleTap!,
         };
 
   @override
@@ -402,45 +403,45 @@ class _SidebarItem extends StatelessWidget {
               child: Padding(
                 padding: style.itemPadding,
                 child: Row(
-                        children: [
-                          icon,
-                          SizedBox(width: style.iconLabelGap),
-                          Expanded(
-                            child: AppText(
-                              item.label,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              type: AppTextType.labelLarge,
-                              color: color,
-                            ),
-                          ),
-                          if (onToggle != null)
-                            Tooltip(
-                              message:
-                                  (open!
-                                          ? ShellKeys.collapseSection
-                                          : ShellKeys.expandSection)
-                                      .tr(context: context),
-                              child: Semantics(
-                                button: true,
-                                expanded: open,
-                                label: label,
-                                child: InkWell(
-                                  borderRadius: style.itemRadius,
-                                  onTap: onToggle,
-                                  child: Padding(
-                                    padding: style.chevronPadding,
-                                    child: AppIcon.fixed(
-                                      open! ? AppIcons.collapse : AppIcons.expand,
-                                      pixelSize: style.chevronSize,
-                                      color: color,
-                                    ),
-                                  ),
-                                ),
+                  children: [
+                    icon,
+                    SizedBox(width: style.iconLabelGap),
+                    Expanded(
+                      child: AppText(
+                        item.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        type: AppTextType.labelLarge,
+                        color: color,
+                      ),
+                    ),
+                    if (onToggle != null)
+                      Tooltip(
+                        message:
+                            (open!
+                                    ? ShellKeys.collapseSection
+                                    : ShellKeys.expandSection)
+                                .tr(context: context),
+                        child: Semantics(
+                          button: true,
+                          expanded: open,
+                          label: label,
+                          child: InkWell(
+                            borderRadius: style.itemRadius,
+                            onTap: onToggle,
+                            child: Padding(
+                              padding: style.chevronPadding,
+                              child: AppIcon.fixed(
+                                open! ? AppIcons.collapse : AppIcons.expand,
+                                pixelSize: style.chevronSize,
+                                color: color,
                               ),
                             ),
-                        ],
+                          ),
+                        ),
                       ),
+                  ],
+                ),
               ),
             ),
           ),

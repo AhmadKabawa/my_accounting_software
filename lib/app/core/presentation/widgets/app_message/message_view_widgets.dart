@@ -110,7 +110,11 @@ class MessageViewWidgets {
           ),
           title: Row(
             children: [
-              AppIcon(style.icon, size: AppIconSize.lg, color: style.foreground),
+              AppIcon(
+                style.icon,
+                size: AppIconSize.lg,
+                color: style.foreground,
+              ),
               if (titleKey != null || title != null) ...[
                 dialogContext.ui.spacing.gap(AppSpacing.sm),
                 Expanded(
@@ -185,7 +189,11 @@ class MessageViewWidgets {
           child: Row(
             children: [
               ExcludeSemantics(
-                child: AppIcon(style.icon, size: AppIconSize.md, color: style.foreground),
+                child: AppIcon(
+                  style.icon,
+                  size: AppIconSize.md,
+                  color: style.foreground,
+                ),
               ),
               context.ui.spacing.gap(AppSpacing.sm),
               Expanded(
@@ -311,10 +319,8 @@ class _MessageStyle {
       MessageType.error => (AppBadgeTone.error, AppIcons.error),
       MessageType.success => (AppBadgeTone.success, AppIcons.success),
       MessageType.warning => (AppBadgeTone.warning, AppIcons.warning),
-      MessageType.info || MessageType.loading => (
-        AppBadgeTone.info,
-        AppIcons.info,
-      ),
+      MessageType.info ||
+      MessageType.loading => (AppBadgeTone.info, AppIcons.info),
     };
     final (foreground, background) = AppBadgeStyle.toneColors(context, tone);
     return _MessageStyle(background, foreground, icon);

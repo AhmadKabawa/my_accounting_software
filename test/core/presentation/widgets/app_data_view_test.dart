@@ -72,7 +72,9 @@ void main() {
                     rows: rows,
                     rowId: (v) => v,
                     mode: mode,
-                    gridItemBuilder: withGrid ? (_, v) => Text('Tile $v') : null,
+                    gridItemBuilder: withGrid
+                        ? (_, v) => Text('Tile $v')
+                        : null,
                     loading: loading,
                     refreshing: refreshing,
                     errorKey: errorKey,
@@ -98,14 +100,12 @@ void main() {
   }
 
   group('DataTableLayout', () {
-    DataTableColumn<String> col(
-      String id,
-      DataTableColumnPriority p,
-    ) => DataTableColumn<String>(
-      labelKey: TestKey(id),
-      priority: p,
-      cellBuilder: (_, v) => Text(v),
-    );
+    DataTableColumn<String> col(String id, DataTableColumnPriority p) =>
+        DataTableColumn<String>(
+          labelKey: TestKey(id),
+          priority: p,
+          cellBuilder: (_, v) => Text(v),
+        );
     final primary = col('p', DataTableColumnPriority.primary);
     final s1 = col('s1', DataTableColumnPriority.secondary);
     final s2 = col('s2', DataTableColumnPriority.secondary);
@@ -320,7 +320,11 @@ void main() {
     ) async {
       DataTableSort? sort;
       var page = 0;
-      await pump(tester, onSort: (s) => sort = s, onPageChanged: (p) => page = p);
+      await pump(
+        tester,
+        onSort: (s) => sort = s,
+        onPageChanged: (p) => page = p,
+      );
       await tester.tap(find.text('test.table.name').first);
       expect(sort?.key, 'name');
       expect(sort?.ascending, isFalse); // already sorted ascending: flips

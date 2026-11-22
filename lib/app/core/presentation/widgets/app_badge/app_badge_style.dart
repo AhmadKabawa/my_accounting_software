@@ -54,7 +54,10 @@ class AppBadgeStyle {
         pills.pillWarning.foreground,
         pills.pillWarning.container,
       ),
-      AppBadgeTone.info => (pills.pillInfo.foreground, pills.pillInfo.container),
+      AppBadgeTone.info => (
+        pills.pillInfo.foreground,
+        pills.pillInfo.container,
+      ),
       AppBadgeTone.error => (
         pills.pillError.foreground,
         pills.pillError.container,
