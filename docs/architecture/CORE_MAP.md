@@ -281,3 +281,10 @@
 - `widgets/app_page_template/`: `ListPageTemplate` ببطاقة واحدة وعقد أخطاء موحّد.
 - `theme/extensions/app_saas_colors.dart`: توكنات canvas/الجدول/selected/الحبات؛ `AppSurfaceShape` للأشكال.
 - `widgets/app_sidebar/` شجرة قابلة للطي، `app_navigation_rail/` سكة قابلة للتوسع، `app_shell/app_shell_top_bar.dart`.
+
+
+### List page composition
+- `ListPageTemplate` is the shared T1 list-page frame. New screens use `toolbar: ListToolbarConfig`, `stats: ListStatsBar`, and `addAction: ListAddAction`; older slots remain for compatibility (see `docs/ui/list_page_template.md`).
+- `ListStatsBar<F>` and `StatItem<F>` compose responsive, wrapping `AppStatCard` tiles.
+- `ListAddAction` / `ListAddButton` centralize the permission-gated list create action; the feature supplies the permission, label key, and callback.
+- `CrudEmptyState` composes `AppEmptyState` with the empty-vs-no-results distinction and optional create action.
