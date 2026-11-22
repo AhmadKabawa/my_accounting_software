@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon_data.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
@@ -31,6 +32,7 @@ Future<void> _pump(
   String? activePath,
   ValueChanged<String>? onChild,
   bool collapsed = false,
+  ValueChanged<int>? onIndex,
 }) async {
   tester.view.physicalSize = const Size(1400, 900);
   tester.view.devicePixelRatio = 1;
@@ -41,7 +43,7 @@ Future<void> _pump(
         body: AppSidebar(
           items: _items,
           activeIndex: activeIndex,
-          onIndexChanged: (_) {},
+          onIndexChanged: onIndex ?? (_) {},
           activePath: activePath,
           onChildSelected: onChild,
           collapsed: collapsed,
@@ -72,6 +74,28 @@ void main() {
     await _pump(tester, activeIndex: 1, onChild: (p) => opened = p);
     await tester.tap(find.text('Brands'));
     expect(opened, '/catalog/brands');
+  });
+
+  testWidgets('a parent opens its list first and navigates on the second tap', (
+    tester,
+  ) async {
+    final taps = <int>[];
+    await _pump(tester, activeIndex: 0, onIndex: taps.add);
+    await tester.tap(find.text('Catalog'));
+    await tester.pumpAndSettle();
+    expect(taps, isEmpty);
+    expect(find.text('Brands'), findsOneWidget);
+    await tester.tap(find.text('Catalog'));
+    await tester.pumpAndSettle();
+    expect(taps, [1]);
+  });
+
+  testWidgets('icon-only mode shows the children as icons under the parent', (
+    tester,
+  ) async {
+    await _pump(tester, activeIndex: 1, collapsed: true);
+    expect(find.byIcon((AppIcons.brands as MaterialIconData).data), findsOneWidget);
+    expect(find.text('Brands'), findsNothing);
   });
 
   test('the catalog destination children point at the real routes', () {

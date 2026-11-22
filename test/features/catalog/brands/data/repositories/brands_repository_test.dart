@@ -41,7 +41,7 @@ void main() {
 
       expect(api.lastPath, '/rest/v1/brands');
       expect(api.lastQueryParameters['select'], contains('products(count)'));
-      expect(api.lastQueryParameters['order'], 'name.desc');
+      expect(api.lastQueryParameters['order'], 'name.desc,id.asc');
       expect(api.lastQueryParameters['is_active'], 'eq.true');
       expect(api.lastQueryParameters['or'], contains(r'North \"Wind\"'));
       expect(api.lastPage, 2);
@@ -54,18 +54,23 @@ void main() {
     },
   );
 
-  test('sorting by another field is sent to the database with a stable tie', () async {
+  test('sort criteria go to the database in order with a stable tie', () async {
     await repository.getBrands(
       const BrandListQuery(
-        sortField: BrandSortField.created,
+        sortField: BrandSortField.updated,
+        sortAscending: false,
+        thenSorts: [BrandSort(BrandSortField.name, true)],
+      ),
+    );
+    expect(api.lastQueryParameters['order'], 'updated_at.desc,name.asc,id.asc');
+    await repository.getBrands(
+      const BrandListQuery(
+        sortField: BrandSortField.newest,
         sortAscending: false,
       ),
     );
-    expect(api.lastQueryParameters['order'], 'created_at.desc,name.asc');
-    await repository.getBrands(
-      const BrandListQuery(sortField: BrandSortField.status),
-    );
-    expect(api.lastQueryParameters['order'], 'is_active.asc,name.asc');
+    // "Newest" sorts by id (no created_at column), so no extra id term.
+    expect(api.lastQueryParameters['order'], 'id.desc');
   });
 
   test(

@@ -38,7 +38,8 @@ class BrandsFilterBar extends StatelessWidget {
 
   static const sortOptions = [
     FilterBarSortOption(key: 'name', label: BrandsKeys.sortByName),
-    FilterBarSortOption(key: 'created', label: BrandsKeys.sortByCreated),
+    FilterBarSortOption(key: 'newest', label: BrandsKeys.sortByNewest),
+    FilterBarSortOption(key: 'updated', label: BrandsKeys.sortByUpdated),
     FilterBarSortOption(key: 'status', label: BrandsKeys.sortByStatus),
   ];
 

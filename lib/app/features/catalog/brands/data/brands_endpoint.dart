@@ -3,9 +3,9 @@ import 'package:accounting_software/app/core/network/api_end_points.dart';
 abstract final class BrandsEndpoint {
   static const collection = AppEndpoint('/rest/v1/brands');
   static const select =
-      'id,name,slug,logo,description,is_active,created_at,updated_at';
+      'id,name,slug,logo,description,is_active,updated_at';
   static const selectWithProductCount =
-      'id,name,slug,logo,description,is_active,created_at,products(count)';
+      'id,name,slug,logo,description,is_active,updated_at,products(count)';
 
   /// Storage bucket used for logos (docs/backend §7: public, 5 MB,
   /// JPEG/PNG/WebP; writes need `catalog.manage`).

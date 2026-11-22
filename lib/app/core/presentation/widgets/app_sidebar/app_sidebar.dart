@@ -79,8 +79,11 @@ class _AppSidebarState extends State<AppSidebar> {
   @override
   void didUpdateWidget(AppSidebar old) {
     super.didUpdateWidget(old);
-    // Storage answers after the first frame: merge what it restored.
-    _open.addAll(widget.initialOpenSections);
+    // Storage answers after the first frame: merge what it restored, once.
+    // (Merging on every rebuild would reopen sections the user just closed.)
+    if (old.initialOpenSections != widget.initialOpenSections) {
+      _open.addAll(widget.initialOpenSections);
+    }
     if (old.activeIndex != widget.activeIndex ||
         old.activePath != widget.activePath) {
       _openActiveSection();
@@ -109,9 +112,9 @@ class _AppSidebarState extends State<AppSidebar> {
 
   void _openSection(NavBarItem item) {
     if (item.children.isEmpty) return;
-    if (_open.add(AppSidebar.sectionId(item))) {
-      widget.onOpenSectionsChanged?.call({..._open});
-    }
+    var added = false;
+    setState(() => added = _open.add(AppSidebar.sectionId(item)));
+    if (added) widget.onOpenSectionsChanged?.call({..._open});
   }
 
   @override
@@ -179,12 +182,12 @@ class _AppSidebarState extends State<AppSidebar> {
       collapsed: widget.collapsed,
       open: children.isEmpty ? null : open,
       onTap: () {
-        // Icon-only: tapping the current parent again folds its sub-icons.
-        if (widget.collapsed && children.isNotEmpty && isCurrent && open) {
-          _toggle(item);
+        // A parent with sub-items: the first tap only opens its list; a tap
+        // while it is open goes to the parent's own page.
+        if (children.isNotEmpty && !open) {
+          _openSection(item);
           return;
         }
-        _openSection(item);
         widget.onIndexChanged(index);
       },
       onToggle: children.isEmpty ? null : () => _toggle(item),

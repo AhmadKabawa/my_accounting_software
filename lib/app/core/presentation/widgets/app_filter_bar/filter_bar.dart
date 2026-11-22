@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_dropdown_menu/app_dropdown_menu.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_panel.dart';
+export 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_panel.dart'
+    show FilterBarSortOption, FilterBarSort, toggleSort;
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
@@ -29,11 +33,6 @@ class FilterBarFilter {
 }
 
 /// One server-sortable field offered by the sort control.
-class FilterBarSortOption {
-  const FilterBarSortOption({required this.key, required this.label});
-  final String key;
-  final AppKey label;
-}
 
 /// The list toolbar: `[leading] [search pill] [sort] [filters] ... [trailing]`
 /// in one wrapping row, then the filter row (when opened), then the active
@@ -76,6 +75,10 @@ class FilterBar extends StatefulWidget {
     this.sortKey,
     this.sortAscending = true,
     this.onSort,
+    this.sorts = const [],
+    this.onSortsChanged,
+    this.maxSorts = 2,
+    this.searchSuffix,
     this.resultCount,
   });
 
@@ -98,6 +101,15 @@ class FilterBar extends StatefulWidget {
   final String? sortKey;
   final bool sortAscending;
   final void Function(String key, bool ascending)? onSort;
+
+  /// Multi-sort: the active criteria in priority order. When
+  /// [onSortsChanged] is set it replaces [sortKey]/[onSort].
+  final List<FilterBarSort> sorts;
+  final ValueChanged<List<FilterBarSort>>? onSortsChanged;
+  final int maxSorts;
+
+  /// Placed right after the search field (e.g. a refresh button).
+  final Widget? searchSuffix;
   final int? resultCount;
 
   @override
@@ -143,7 +155,9 @@ class _FilterBarState extends State<FilterBar> {
   bool get _hasFilterEditor =>
       widget.filterPanelBuilder != null || widget.filterControls.isNotEmpty;
 
-  bool get _hasSort => widget.sortOptions.isNotEmpty && widget.onSort != null;
+  bool get _multiSort => widget.onSortsChanged != null;
+  bool get _hasSort =>
+      widget.sortOptions.isNotEmpty && (_multiSort || widget.onSort != null);
 
   void _apply() => widget.onApply?.call();
 
@@ -230,51 +244,79 @@ class _FilterBarState extends State<FilterBar> {
   );
 
   Widget _sortButton() {
+    final mobile = ScreenEngine.isMobile(context);
+    if (_multiSort) {
+      final panel = SortPanel(
+        options: widget.sortOptions,
+        sorts: widget.sorts,
+        maxSorts: widget.maxSorts,
+        onChanged: widget.onSortsChanged!,
+      );
+      // A phone keeps the bottom sheet; wider screens get the dropdown.
+      if (mobile) {
+        return AppButton(
+          CatalogUiKeys.sortBy,
+          icon: AppIcons.sort,
+          variant: AppButtonVariant.outlined,
+          onPressed: () => showModalBottomSheet<void>(
+            context: context,
+            useSafeArea: true,
+            builder: (_) => Padding(
+              padding: context.ui.padding.all(AppSpacing.md),
+              child: panel,
+            ),
+          ),
+        );
+      }
+      return AppDropdownMenu(
+        anchorBuilder: (context, toggle, open) => AppButton(
+          CatalogUiKeys.sortBy,
+          icon: AppIcons.sort,
+          variant: AppButtonVariant.outlined,
+          onPressed: toggle,
+        ),
+        children: [panel],
+      );
+    }
     final button = AppButton(
       CatalogUiKeys.sortBy,
       icon: AppIcons.sort,
       variant: AppButtonVariant.outlined,
-      onPressed: ScreenEngine.isMobile(context) ? _openSort : () {},
+      onPressed: mobile ? _openSort : () {},
     );
     // A phone keeps the bottom sheet; wider screens get a small menu.
-    if (ScreenEngine.isMobile(context)) return button;
-    return PopupMenuButton<String>(
-      tooltip: CatalogUiKeys.sortBy.tr(context: context),
-      position: PopupMenuPosition.under,
-      onSelected: (key) {
-        // Choosing the active field again reverses its direction.
-        final same = key == widget.sortKey;
-        widget.onSort?.call(key, same ? !widget.sortAscending : true);
-      },
-      itemBuilder: (menuContext) => [
+    if (mobile) return button;
+    return AppDropdownMenu(
+      anchorBuilder: (context, toggle, open) => AppButton(
+        CatalogUiKeys.sortBy,
+        icon: AppIcons.sort,
+        variant: AppButtonVariant.outlined,
+        onPressed: toggle,
+      ),
+      children: [
         for (final option in widget.sortOptions)
-          PopupMenuItem<String>(
-            value: option.key,
-            child: Row(
-              children: [
-                SizedBox.square(
-                  dimension: menuContext.ui.size.width(AppComponentSize.small),
-                  child: option.key == widget.sortKey
-                      ? const AppIcon(AppIcons.check, size: AppIconSize.md)
-                      : null,
-                ),
-                menuContext.ui.spacing.gap(
-                  AppSpacing.sm,
-                  axis: Axis.horizontal,
-                ),
-                Expanded(child: AppText(option.label)),
-                if (option.key == widget.sortKey)
-                  AppIcon(
+          AppDropdownItem(
+            label: option.label,
+            selected: option.key == widget.sortKey,
+            trailing: option.key == widget.sortKey
+                ? AppIcon(
                     widget.sortAscending
                         ? AppIcons.sortAscending
                         : AppIcons.sortDescending,
                     size: AppIconSize.md,
-                  ),
-              ],
-            ),
+                    color: context.ui.theme.saasColors.onSelected,
+                  )
+                : null,
+            onPressed: () {
+              // Choosing the active field again reverses its direction.
+              final same = option.key == widget.sortKey;
+              widget.onSort?.call(
+                option.key,
+                same ? !widget.sortAscending : true,
+              );
+            },
           ),
       ],
-      child: IgnorePointer(child: button),
     );
   }
 
@@ -315,7 +357,15 @@ class _FilterBarState extends State<FilterBar> {
   Widget _mobileToolbar(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      _searchField(),
+      Row(
+        children: [
+          Expanded(child: _searchField()),
+          if (widget.searchSuffix != null) ...[
+            context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
+            widget.searchSuffix!,
+          ],
+        ],
+      ),
       if (widget.leading != null ||
           _hasSort ||
           _hasFilterEditor ||
@@ -349,9 +399,18 @@ class _FilterBarState extends State<FilterBar> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         ?widget.leading,
-        ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: searchWidth),
-          child: _searchField(),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: searchWidth),
+              child: _searchField(),
+            ),
+            if (widget.searchSuffix != null) ...[
+              context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
+              widget.searchSuffix!,
+            ],
+          ],
         ),
         if (_hasSort) _sortButton(),
         if (_hasFilterEditor) _filtersButton(),

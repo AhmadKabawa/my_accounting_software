@@ -22,6 +22,9 @@ class ListToolbarConfig {
     this.sortKey,
     this.sortAscending = true,
     this.onSort,
+    this.sorts = const [],
+    this.onSortsChanged,
+    this.maxSorts = 2,
     this.viewModes = const [],
     this.viewMode,
     this.onViewModeChanged,
@@ -42,12 +45,18 @@ class ListToolbarConfig {
   final bool sortAscending;
   final void Function(String key, bool ascending)? onSort;
 
+  /// Multi-sort (preferred): the active criteria in priority order, changed
+  /// from the sort menu's up/down arrows. Replaces [sortKey]/[onSort].
+  final List<FilterBarSort> sorts;
+  final ValueChanged<List<FilterBarSort>>? onSortsChanged;
+  final int maxSorts;
+
   /// Two or more modes show the view menu. [viewMode] null = the default.
   final List<AppViewMode> viewModes;
   final AppViewMode? viewMode;
   final ValueChanged<AppViewMode>? onViewModeChanged;
 
-  /// Not null = a refresh button next to the search.
+  /// Not null = a refresh button right after the search field.
   final VoidCallback? onRefresh;
   final bool refreshing;
 }

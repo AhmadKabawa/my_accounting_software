@@ -9,7 +9,7 @@ class BrandModel {
     this.description,
     required this.isActive,
     this.productCount,
-    this.createdAt,
+    this.updatedAt,
   });
 
   final int id;
@@ -19,7 +19,7 @@ class BrandModel {
   final String? description;
   final bool isActive;
   final int? productCount;
-  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   factory BrandModel.fromJson(Map<String, dynamic> json) {
     final rawId = json['id'];
@@ -34,7 +34,7 @@ class BrandModel {
       description: json['description'] as String?,
       isActive: json['is_active'] as bool? ?? true,
       productCount: _readProductCount(json['products']),
-      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? ''),
+      updatedAt: DateTime.tryParse(json['updated_at']?.toString() ?? ''),
     );
   }
 
@@ -64,7 +64,7 @@ class BrandModel {
     'description': description,
     'is_active': isActive,
     if (productCount != null) 'products': {'count': productCount},
-    if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+    if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
   };
 
   Brand toEntity() => Brand(
@@ -75,6 +75,6 @@ class BrandModel {
     description: description,
     isActive: isActive,
     productCount: productCount,
-    createdAt: createdAt,
+    updatedAt: updatedAt,
   );
 }

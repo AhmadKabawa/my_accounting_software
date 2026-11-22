@@ -412,24 +412,42 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
     });
   }
 
+  /// True while the sidebar was opened from icon-only mode: choosing a page
+  /// folds it back to icons (a sidebar that started open stays open).
+  bool _openedFromIcons = false;
+
   Future<void> _toggle() async {
     final collapsed = !_collapsed;
+    _openedFromIcons = !collapsed;
     setState(() => _collapsed = collapsed);
     await widget.settingsManager.setSidebarCollapsed(collapsed);
+  }
+
+  /// After a page was chosen (even the one already shown).
+  void _afterNavigate() {
+    if (_openedFromIcons && !_collapsed && widget.collapsible) _toggle();
   }
 
   @override
   Widget build(BuildContext context) => AppSidebar(
     items: widget.items,
     activeIndex: widget.activeIndex,
-    onIndexChanged: widget.onIndexChanged,
+    onIndexChanged: (index) {
+      widget.onIndexChanged(index);
+      _afterNavigate();
+    },
     collapsed: _collapsed,
     onToggle: _restored && widget.collapsible ? _toggle : null,
     activePath: widget.activePath,
-    onChildSelected: widget.onChildSelected,
+    onChildSelected: (path) {
+      widget.onChildSelected?.call(path);
+      _afterNavigate();
+    },
     initialOpenSections: _openSections,
-    onOpenSectionsChanged: (open) =>
-        widget.settingsManager.setSidebarOpenSections(open),
+    onOpenSectionsChanged: (open) {
+      _openSections = open;
+      widget.settingsManager.setSidebarOpenSections(open);
+    },
   );
 }
 

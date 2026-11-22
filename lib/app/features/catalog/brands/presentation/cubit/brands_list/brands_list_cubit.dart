@@ -85,17 +85,49 @@ class BrandsListCubit extends BaseCubit<BrandsListState, BrandsListEffect> {
     return load();
   }
 
+  /// One sort (a column-header click): replaces any multi-sort.
   Future<void> setSort({BrandSortField? field, required bool ascending}) {
     final next = field ?? state.query.sortField;
     if (state.query.sortAscending == ascending &&
-        state.query.sortField == next) {
+        state.query.sortField == next &&
+        state.query.thenSorts.isEmpty) {
       return Future.value();
     }
     _updateQuery(
-      state.query.copyWith(sortField: next, sortAscending: ascending, page: 1),
+      state.query.copyWith(
+        sortField: next,
+        sortAscending: ascending,
+        thenSorts: const [],
+        page: 1,
+      ),
     );
     return load();
   }
+
+  /// The sort menu: up to two criteria, answered by the database.
+  Future<void> setSorts(List<BrandSort> sorts) {
+    if (sorts.isEmpty) return Future.value();
+    final primary = sorts.first;
+    final rest = sorts.skip(1).take(1).toList();
+    if (primary.field == state.query.sortField &&
+        primary.ascending == state.query.sortAscending &&
+        _sameSorts(rest, state.query.thenSorts)) {
+      return Future.value();
+    }
+    _updateQuery(
+      state.query.copyWith(
+        sortField: primary.field,
+        sortAscending: primary.ascending,
+        thenSorts: rest,
+        page: 1,
+      ),
+    );
+    return load();
+  }
+
+  bool _sameSorts(List<BrandSort> a, List<BrandSort> b) =>
+      a.length == b.length &&
+      [for (var i = 0; i < a.length; i++) a[i] == b[i]].every((e) => e);
 
   Future<void> setPage(int page) {
     if (page < 1 || page == state.query.page) return Future.value();

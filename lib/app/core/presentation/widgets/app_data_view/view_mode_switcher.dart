@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_dropdown_menu/app_dropdown_menu.dart';
 
 /// A small menu for the view modes a screen supports: the button shows the
 /// icon of the current mode with a small arrow; opening it lists the other
@@ -36,65 +36,63 @@ class ViewModeSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (modes.length < 2) return const SizedBox.shrink();
-    final colors = context.ui.theme.colors;
+    final saas = context.ui.theme.saasColors;
     final radius = AppSurfaceShape.control.circular(context);
-    final others = [
-      for (final mode in modes)
-        if (mode != selected) mode,
-    ];
-    final side = context.ui.size.width(AppComponentSize.medium);
+    final side = context.ui.size.height(AppComponentSize.medium);
     return Semantics(
       container: true,
       label:
           '${CatalogUiKeys.viewMode.tr(context: context)}: '
           '${labelOf(selected).tr(context: context)}',
-      child: PopupMenuButton<AppViewMode>(
-        tooltip: CatalogUiKeys.viewMode.tr(context: context),
-        position: PopupMenuPosition.under,
-        onSelected: onChanged,
-        itemBuilder: (menuContext) => [
-          for (final mode in others)
-            PopupMenuItem<AppViewMode>(
-              value: mode,
-              child: Row(
-                children: [
-                  AppIcon(iconOf(mode), size: AppIconSize.md),
-                  menuContext.ui.spacing.gap(
-                    AppSpacing.sm,
-                    axis: Axis.horizontal,
-                  ),
-                  AppText(labelOf(mode)),
-                ],
-              ),
-            ),
-        ],
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: context.ui.theme.saasColors.tableHeaderBand,
+      child: AppDropdownMenu(
+        minWidth: AppComponentSize.large,
+        anchorBuilder: (context, toggle, open) => Tooltip(
+          message: CatalogUiKeys.viewMode.tr(context: context),
+          child: Material(
+            color: saas.selected,
             borderRadius: radius,
-          ),
-          child: SizedBox(
-            height: side,
-            child: Padding(
-              padding: context.ui.padding.symmetric(horizontal: AppSpacing.sm),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AppIcon(
-                    iconOf(selected),
-                    size: AppIconSize.md,
-                    color: colors.onSurface,
+            child: InkWell(
+              borderRadius: radius,
+              onTap: toggle,
+              child: SizedBox(
+                height: side,
+                child: Padding(
+                  padding: context.ui.padding.symmetric(
+                    horizontal: AppSpacing.smMd,
                   ),
-                  AppIcon(
-                    AppIcons.expand,
-                    size: AppIconSize.sm,
-                    color: colors.onSurfaceVariant,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppIcon(
+                        iconOf(selected),
+                        size: AppIconSize.md,
+                        color: saas.onSelected,
+                      ),
+                      context.ui.spacing.gap(
+                        AppSpacing.xs,
+                        axis: Axis.horizontal,
+                      ),
+                      AppIcon(
+                        open ? AppIcons.collapse : AppIcons.expand,
+                        size: AppIconSize.sm,
+                        color: saas.onSelected,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
         ),
+        children: [
+          for (final mode in modes)
+            if (mode != selected)
+              AppDropdownItem(
+                label: labelOf(mode),
+                icon: iconOf(mode),
+                onPressed: () => onChanged(mode),
+              ),
+        ],
       ),
     );
   }

@@ -99,14 +99,16 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     );
   }
 
-  /// Sorting is done by the database. Any field other than the name adds
-  /// `name.asc` so equal values keep a stable order across pages.
+  /// Sorting is done by the database: every criterion becomes one `order`
+  /// term. `id.asc` is appended unless `id` is already sorted, so equal values
+  /// keep a stable order across pages.
   String _order(BrandListQuery query) {
-    final direction = query.sortAscending ? 'asc' : 'desc';
-    final primary = '${query.sortField.column}.$direction';
-    return query.sortField == BrandSortField.name
-        ? primary
-        : '$primary,name.asc';
+    final terms = [
+      for (final sort in query.sorts)
+        '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
+    ];
+    final hasId = query.sorts.any((s) => s.field == BrandSortField.newest);
+    return [...terms, if (!hasId) 'id.asc'].join(',');
   }
 
   BrandModel _singleBrandFromList(List<dynamic> rows) {

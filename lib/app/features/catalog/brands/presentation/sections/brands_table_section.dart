@@ -91,13 +91,13 @@ class BrandsTableSection extends StatelessWidget {
         ),
       ),
       DataTableColumn(
-        labelKey: BrandsKeys.createdAt,
-        sortKey: 'created',
+        labelKey: BrandsKeys.updatedAt,
+        sortKey: 'updated',
         priority: DataTableColumnPriority.secondary,
         cellBuilder: (c, b) => AppText.raw(
-          b.createdAt == null
+          b.updatedAt == null
               ? '—'
-              : MaterialLocalizations.of(c).formatShortDate(b.createdAt!),
+              : MaterialLocalizations.of(c).formatShortDate(b.updatedAt!),
           color: c.ui.theme.colors.onSurfaceVariant,
         ),
       ),

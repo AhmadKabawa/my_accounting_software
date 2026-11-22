@@ -407,6 +407,9 @@ class ListPageTemplate extends StatelessWidget {
       sortKey: config.sortKey,
       sortAscending: config.sortAscending,
       onSort: config.onSort,
+      sorts: config.sorts,
+      onSortsChanged: config.onSortsChanged,
+      maxSorts: config.maxSorts,
       leading: hasModes && config.onViewModeChanged != null
           ? ViewModeSwitcher(
               modes: config.viewModes,
@@ -414,7 +417,7 @@ class ListPageTemplate extends StatelessWidget {
               onChanged: config.onViewModeChanged!,
             )
           : null,
-      trailing: config.onRefresh == null
+      searchSuffix: config.onRefresh == null
           ? null
           : AppIconButton(
               AppIcons.refresh,

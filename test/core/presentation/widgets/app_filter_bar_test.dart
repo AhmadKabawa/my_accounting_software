@@ -388,7 +388,8 @@ void main() {
       await tester.tap(find.text('Sort by'));
       await tester.pumpAndSettle();
       expect(find.byType(BottomSheet), findsNothing);
-      expect(find.byIcon(Icons.check), findsOneWidget);
+      // The active field carries the direction arrow.
+      expect(find.byIcon(Icons.arrow_upward), findsOneWidget);
       // 'name' is the active field (ascending): choosing it flips to descending.
       await tester.tap(find.text('Search').last);
       await tester.pumpAndSettle();
