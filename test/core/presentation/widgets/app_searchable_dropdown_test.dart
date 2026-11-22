@@ -29,6 +29,7 @@ void main() {
     bool clearable = true,
     WidgetBuilder? onAddNew,
     AppKey? allOptionLabel,
+    SearchableDropdownMode mode = SearchableDropdownMode.autocomplete,
     bool dark = false,
     double textScale = 1,
     TextDirection direction = TextDirection.rtl,
@@ -59,6 +60,7 @@ void main() {
                 clearable: clearable,
                 onAddNew: onAddNew,
                 allOptionLabel: allOptionLabel,
+                mode: mode,
               ),
             ),
           ),
@@ -162,6 +164,205 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(selected, 'Alpha');
+  });
+
+
+  group('dedicated panel mode (desktop)', () {
+    testWidgets('opens, selects, closes, reopens and selects another value', (
+      tester,
+    ) async {
+      String? selected = 'Alpha';
+      await tester.view.resetPhysicalSize();
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        buildTestApp(
+          home: StatefulBuilder(
+            builder: (context, setState) => Scaffold(
+              body: SearchableDropdown<String>(
+                mode: SearchableDropdownMode.panel,
+                options: const ['Alpha', 'Beta'],
+                labelKey: CatalogUiKeys.chooseOption,
+                optionLabel: (value) => value,
+                value: selected,
+                allOptionLabel: _allOptions,
+                onChanged: (value) => setState(() => selected = value),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Alpha'), findsOneWidget);
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      expect(find.text('All options'), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsOneWidget);
+      await tester.tap(find.text('Beta').last);
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.text('Beta'), findsOneWidget);
+
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      expect(find.text('Alpha'), findsOneWidget);
+      await tester.tap(find.text('Alpha').last);
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.text('Alpha'), findsOneWidget);
+    });
+
+    testWidgets('all selection closes and updates displayed value', (
+      tester,
+    ) async {
+      String? selected = 'Alpha';
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        buildTestApp(
+          home: StatefulBuilder(
+            builder: (context, setState) => Scaffold(
+              body: SearchableDropdown<String>(
+                mode: SearchableDropdownMode.panel,
+                options: const ['Alpha', 'Beta'],
+                labelKey: CatalogUiKeys.chooseOption,
+                optionLabel: (value) => value,
+                value: selected,
+                allOptionLabel: _allOptions,
+                onChanged: (value) => setState(() => selected = value),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('All options'));
+      await tester.pumpAndSettle();
+
+      expect(selected, isNull);
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.text('All options'), findsOneWidget);
+    });
+
+    testWidgets('search is cleared after close and reopen', (tester) async {
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await pumpPicker(
+        tester,
+        mode: SearchableDropdownMode.panel,
+        allOptionLabel: _allOptions,
+      );
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'Al');
+      await tester.pumpAndSettle();
+      expect(find.text('Beta'), findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(find.byType(TextField).last).controller?.text, '');
+      expect(find.text('Beta'), findsOneWidget);
+    });
+
+    testWidgets('supports arrow keys, enter and escape', (tester) async {
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      String? selected;
+      await pumpPicker(
+        tester,
+        mode: SearchableDropdownMode.panel,
+        allOptionLabel: _allOptions,
+        onChanged: (value) => selected = value,
+      );
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(selected, 'Alpha');
+      expect(find.byType(Dialog), findsNothing);
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsNothing);
+    });
+  });
+
+  group('dedicated panel mode (mobile)', () {
+    testWidgets('all, selected check, selection and reopen are supported', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      String? selected = 'Alpha';
+      await tester.pumpWidget(
+        buildTestApp(
+          home: StatefulBuilder(
+            builder: (context, setState) => Scaffold(
+              body: SearchableDropdown<String>(
+                mode: SearchableDropdownMode.panel,
+                options: const ['Alpha', 'Beta'],
+                labelKey: CatalogUiKeys.chooseOption,
+                optionLabel: (value) => value,
+                value: selected,
+                allOptionLabel: _allOptions,
+                onChanged: (value) => setState(() => selected = value),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      expect(find.text('All options'), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsOneWidget);
+      await tester.tap(find.text('All options'));
+      await tester.pumpAndSettle();
+      expect(selected, isNull);
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(find.text('All options'), findsOneWidget);
+
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Beta').last);
+      await tester.pumpAndSettle();
+      expect(selected, 'Beta');
+      expect(find.byType(BottomSheet), findsNothing);
+    });
+
+    testWidgets('search starts empty after closing and reopening', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await pumpPicker(
+        tester,
+        mode: SearchableDropdownMode.panel,
+        allOptionLabel: _allOptions,
+        size: const Size(390, 844),
+      );
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'Al');
+      await tester.pumpAndSettle();
+      expect(find.text('Beta'), findsNothing);
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(InkWell).first);
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(find.byType(TextField).last).controller?.text, '');
+      expect(find.text('Beta'), findsOneWidget);
+    });
   });
 
   testWidgets('shows the no-results message once', (tester) async {
