@@ -851,9 +851,10 @@ class _PanelSearchPickerState<T extends Object>
                 return widget.optionLabel(option).toLowerCase().contains(
                       normalized,
                     ) ||
-                    (widget.optionSubtitle?.call(option)?.toLowerCase().contains(
-                          normalized,
-                        ) ??
+                    (widget.optionSubtitle
+                            ?.call(option)
+                            ?.toLowerCase()
+                            .contains(normalized) ??
                         false);
               }).toList(growable: false)
             : data.options;
