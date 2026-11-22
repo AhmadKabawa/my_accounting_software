@@ -104,10 +104,12 @@
 - `test/architecture/ui_quality_gate_test.dart`: بوابة جودة الواجهة (P-06..P-10).
 
 
-## تغطية مكونات UX Foundation (هذه المجموعة)
+## تغطية مكونات UX Foundation (هذه المجموعة) — تحديث 2026-11-22
 
-- SearchableDropdown panel: NOT_VERIFIED — اختبارات فتح/اختيار/إعادة فتح/اختيار آخر/الكل/بحث وإعادة فتح مطلوبة.
-- FilterBar: تغطية موجودة لمسح البحث وChips ومسح الكل وتخطيط responsive؛ مراجعة الفجوات والاختبارات الإضافية NOT_VERIFIED.
-- AppColorPicker: NOT_VERIFIED — HEX valid/invalid/null/alpha/edge cases.
-- ColorNameResolver: NOT_VERIFIED — ΔE76 والأسماء/الحالات الحدية.
-- AppIconTone: NOT_VERIFIED — تباين ≥3:1 لكل tone على surface في light/dark، وarchitecture debt guard.
+- `app_searchable_dropdown_test.dart`: فتح/اختيار/إعادة فتح/اختيار قيمة أخرى، nullable all option في لوحة سطح المكتب، واختبار تنقل لوحة المفاتيح عبر ArrowDown/Enter. لوحة RawAutocomplete تدير إبراز الخيار والتنقل الافتراضي؛ علامة check وSemantics.selected تعكسان القيمة الحالية. لم يُشغّل.
+- `brands_filter_bar_test.dart` و`colors_filter_bar_test.dart`: ربط البحث وتغيير الحالة إلى inactive، وتمثيل البحث والحالة النشطين كشرائح قابلة للإزالة. تدفق المصدر: FilterBar يرسل البحث فوراً، وBrandsListCubit/ColorsListCubit يملكان debounce (300ms)؛ تغيير الحالة يستدعي setStatus ثم load، ومسح الكل يعيد البحث والحالة والصفحة. لم يُشغّل.
+- `app_filter_bar_test.dart`: مسح البحث، إزالة شريحة البحث، مسح الكل، تخطيط responsive، محرر الهاتف/سطح المكتب.
+- `app_color_picker_test.dart`: null، HEX صالح/غير صالح، حفظ alpha عند السحب، إسقاط alpha عند إدخال HEX يدوياً، تجاهل preset غير صالح، اختيار preset صالح، ومزامنة قيمة خارجية. لم يُشغّل.
+- `app_icon_tone_test.dart`: تباين ≥3:1 لكل tone على surface في light/dark. أضيفت بوابة `feature_imports_test.dart` لمنع `AppIcon(color: ...)` في Features مع قائمة `_iconColorKnownDebt` (فارغة حالياً). لم يُشغّل؛ يجب التأكد من نتائج المسح محلياً.
+- `ColorNameResolver`: اختبارات المطابقة ΔE76 والحالات الحدية موجودة من التغييرات السابقة؛ لم تُشغّل.
+- **حالة التحقق:** كل الاختبارات الجديدة مكتوبة فقط. `dart format`, `flutter analyze` و`flutter test` غير منفذة من هذه الجلسة، ولا تُعد أي نتيجة ناجحة قبل تشغيلها محلياً.
