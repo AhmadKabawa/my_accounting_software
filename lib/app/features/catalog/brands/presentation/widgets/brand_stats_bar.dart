@@ -9,10 +9,16 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/loc
 
 /// Clickable server-derived counters; selecting one applies its list filter.
 class BrandStatsBar extends StatelessWidget {
-  const BrandStatsBar(this.stats, {super.key, required this.onFilterSelected});
+  const BrandStatsBar(
+    this.stats, {
+    super.key,
+    required this.onFilterSelected,
+    this.selectedFilter = BrandStatusFilter.all,
+  });
 
   final BrandStats stats;
   final ValueChanged<BrandStatusFilter> onFilterSelected;
+  final BrandStatusFilter selectedFilter;
 
   @override
   Widget build(BuildContext context) => Wrap(
@@ -24,18 +30,21 @@ class BrandStatsBar extends StatelessWidget {
         BrandsKeys.totalBrands,
         stats.total,
         BrandStatusFilter.all,
+        selectedFilter == BrandStatusFilter.all,
       ),
       _card(
         context,
         BrandsKeys.activeBrands,
         stats.active,
         BrandStatusFilter.active,
+        selectedFilter == BrandStatusFilter.active,
       ),
       _card(
         context,
         BrandsKeys.inactiveBrands,
         stats.inactive,
         BrandStatusFilter.inactive,
+        selectedFilter == BrandStatusFilter.inactive,
       ),
     ],
   );
@@ -45,10 +54,21 @@ class BrandStatsBar extends StatelessWidget {
     AppKey label,
     int value,
     BrandStatusFilter filter,
-  ) => AppCard(
-    onTap: () => onFilterSelected(filter),
-    padding: AppSpacing.md,
-    child: Column(
+    bool selected,
+  ) => DecoratedBox(
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: selected
+            ? Theme.of(context).colorScheme.primary
+            : Colors.transparent,
+        width: selected ? 2 : 0,
+      ),
+      borderRadius: AppRadius.lg.circular(context),
+    ),
+    child: AppCard(
+      onTap: () => onFilterSelected(filter),
+      padding: AppSpacing.md,
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -56,6 +76,7 @@ class BrandStatsBar extends StatelessWidget {
         context.ui.spacing.gap(AppSpacing.xs),
         AppText.raw(value.toString(), type: AppTextType.amountKpi),
       ],
+      ),
     ),
   );
 }
