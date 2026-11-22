@@ -165,7 +165,7 @@ class ColorsTableSection extends StatelessWidget {
               labelKey: c.isActive
                   ? ColorsKeys.deactivate
                   : ColorsKeys.activate,
-              destructive: c.isActive,
+              iconColor: c.isActive ? context.ui.theme.colors.error : null,
               onPressed: () => onToggleStatus(c),
             ),
           ],
