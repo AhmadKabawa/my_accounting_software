@@ -172,7 +172,6 @@ void main() {
       tester,
     ) async {
       String? selected = 'Alpha';
-      await tester.view.resetPhysicalSize();
       tester.view.physicalSize = const Size(1200, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
