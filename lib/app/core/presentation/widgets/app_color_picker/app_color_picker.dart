@@ -62,13 +62,10 @@ class _AppColorPickerState extends State<AppColorPicker> {
 
   String _hex(Color color) {
     final argb = color.toARGB32();
-    final red = (argb >> 16) & 0xff;
-    final green = (argb >> 8) & 0xff;
-    final blue = argb & 0xff;
-    return '#${red.toRadixString(16).padLeft(2, '0')}'
-        '${green.toRadixString(16).padLeft(2, '0')}'
-        '${blue.toRadixString(16).padLeft(2, '0')}'
-        .toUpperCase();
+    final red = ((argb >> 16) & 0xff).toRadixString(16).padLeft(2, '0');
+    final green = ((argb >> 8) & 0xff).toRadixString(16).padLeft(2, '0');
+    final blue = (argb & 0xff).toRadixString(16).padLeft(2, '0');
+    return '#$red$green$blue'.toUpperCase();
   }
   void _sync(String? input) {
     final h = HexColor.normalize(input);
