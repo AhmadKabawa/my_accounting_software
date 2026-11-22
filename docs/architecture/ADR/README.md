@@ -11,6 +11,10 @@
 - [ADR-0005: نوع `Money` و`AmountFormatter` (C13)](0005-money-type-and-amount-formatter.md)
 - [ADR-0006: دورة حياة لقطة صلاحيات المستخدم (C47)](0006-access-snapshot-lifecycle.md)
 
+## القرارات المقترحة
+
+- [ADR-0007 (مقترح): تكامل الميزات دون تجاوز حدود ADR-0004](0007-feature-integration-contracts.md)
+
 ## إضافة ADR
 
 1. استخدم الرقم التالي المكوّن من أربعة أرقام.

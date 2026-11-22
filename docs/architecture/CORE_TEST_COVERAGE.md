@@ -102,3 +102,12 @@
 - `app_searchable_dropdown_test.dart`: إعادة الفتح بعد الاختيار تعرض كل الخيارات.
 - `app_data_table_test.dart`: نص الترقيم بلا `@`/`{`.
 - `test/architecture/ui_quality_gate_test.dart`: بوابة جودة الواجهة (P-06..P-10).
+
+
+## تغطية مكونات UX Foundation (هذه المجموعة)
+
+- SearchableDropdown panel: NOT_VERIFIED — اختبارات فتح/اختيار/إعادة فتح/اختيار آخر/الكل/بحث وإعادة فتح مطلوبة.
+- FilterBar: تغطية موجودة لمسح البحث وChips ومسح الكل وتخطيط responsive؛ مراجعة الفجوات والاختبارات الإضافية NOT_VERIFIED.
+- AppColorPicker: NOT_VERIFIED — HEX valid/invalid/null/alpha/edge cases.
+- ColorNameResolver: NOT_VERIFIED — ΔE76 والأسماء/الحالات الحدية.
+- AppIconTone: NOT_VERIFIED — تباين ≥3:1 لكل tone على surface في light/dark، وarchitecture debt guard.

@@ -83,7 +83,7 @@
 - [خريطة Core](docs/architecture/CORE_MAP.md) للاكتشاف؛ افحص المصدر قبل الاعتماد على API.
 - [تغطية اختبارات Core](docs/architecture/CORE_TEST_COVERAGE.md) لمعرفة الاختبارات والفجوات.
 - [استخدام Core](docs/architecture/CORE_USAGE.md) للأمثلة.
-- [معايير التكويد](docs/architecture/CODING_STANDARDS.md) و[قائمة مراجعة الميزة](docs/architecture/FEATURE_CHECKLIST.md) للمراجعة العملية.
+- [معايير التكويد](docs/architecture/CODING_STANDARDS.md) و[قائمة مراجعة الميزة](docs/architecture/FEATURE_CHECKLIST.md) للمراجعة العملية. تغطية الحقول وأثر التكامل إلزاميان وفق القسم الجديد في FEATURE_CHECKLIST.md.
 
 ## قواعد حديثة
 

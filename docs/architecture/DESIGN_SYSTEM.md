@@ -93,3 +93,17 @@
 - C01 يختار mobile load more من `hasMore/onLoadMore`، بينما tablet/desktop يرسلان page/pageSize callbacks؛ لا تُحمّل المجموعة كاملة لفرزها محلياً.
 
 - C01 يستعمل AppCard لسطح بطاقات الهاتف؛ لا يُعاد تعريف radius أو border أو surface colors داخل DataTable.
+
+
+## نغمات الأيقونات (AppIconTone)
+
+| tone | المعنى واستخدامه |
+|---|---|
+| danger | حذف/تعطيل/خطر؛ من `colors.error` |
+| success | تفعيل/نجاح؛ من `semanticColors.success` |
+| warning | تحذير؛ من `semanticColors.warning` |
+| info | معلومة؛ من `semanticColors.info` |
+| primary | إضافة/إجراء أساسي؛ من `ColorScheme.primary` |
+| neutral | تعديل/عرض/ثانوي؛ من `ColorScheme.onSurface` |
+
+هذه دلالات عامة لا تنشئ palette موازية. تمرير لون مباشر يتجاوز دلالة tone ويُمنع في Features.

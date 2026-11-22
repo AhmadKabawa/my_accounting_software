@@ -544,3 +544,11 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 ## AppDataTable: الشكل
 
 يُعرض الجدول داخل سطح بحواف مدوّرة وإطار رفيع (`DataTableStyle.radius/border`)، بترويسة هادئة (`surfaceContainerLow`) وإبراز عند المرور على الصف (`rowHover`)، والترقيم خارج الإطار. كل القيم من `DataTableStyle`؛ لا تلوّن الجدول من الميزة.
+
+
+## اختيار اللون وتسميات الألوان ونغمات الأيقونات
+
+- `AppColorPicker` لتعديل قيمة HEX مع null وحفظ alpha عند عدم تعديل HEX يدوياً؛ `AppColorSwatch` للعرض فقط.
+- `ColorNameResolver` اقتراح محلي تقريبي للاسم، وليس بديلاً عن قيمة HEX ولا مصدراً للبيانات.
+- `AppIconTone` يحدد دلالة اللون، ويرجع إلى `context.ui.theme.colors` و`context.ui.theme.semanticColors` فقط.
+- `SearchableDropdown` يحتفظ بالنمط autocomplete المتوافق، ويمكن اختيار panel عند دعم API المكوّن. لا تضع debounce للفلترة داخل FilterBar؛ مالك البيانات/Cubit يتولى debounce.

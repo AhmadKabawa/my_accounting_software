@@ -264,3 +264,11 @@
 - `widgets/app_color_swatch/`: `AppColorSwatch` (C26) عيّنة لون دائرية بإطار `scheme.outline`. للعرض فقط تكون مخفية عن قارئات الشاشة (الاسم بجانبها)؛ مع `onTap` تصبح زراً باسم `semanticLabel`، و`selected` يرسم حلقة أسمك بلون primary (الحالة ليست باللون وحده).
 - `AppTextField`: معاملات جديدة اختيارية `inputFormatters`، `textDirection` (لقيم LTR دائماً كالرموز وHEX)، `textCapitalization`.
 - `core/network/postgrest_helpers.dart`: `PostgrestValue.escapeFilter` / `nullableTrim` / `single` لمصادر البيانات المشتركة. Brands ما زال يملك نسخه المحلية ويمكن نقله لاحقاً.
+
+
+## AppColorPicker وColorNameResolver وAppIconTone
+
+- AppColorPicker: `presentation/widgets/app_color_picker/` (تحديد لون HSV، HEX، Presets، swatch، copy).
+- ColorNameResolver: `foundation/color/` (مطابقة CIELAB/ΔE76 محلية، اقتراح اسم لون فقط).
+- AppIconTone: `presentation/widgets/app_icon/` (لون دلالي عبر ColorScheme وAppSemanticColors؛ لا نظام ألوان مستقل).
+- SearchableDropdown: `presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart`؛ يظل autocomplete الحالي متوافقاً، ويضاف نمط panel عند اكتمال التنفيذ.
