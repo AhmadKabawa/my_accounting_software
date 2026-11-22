@@ -116,7 +116,9 @@ void main() {
     },
   );
 
-  test('stats failure does not block the independent brands list cubit', () async {
+  test(
+    'stats failure does not block the independent brands list cubit',
+    () async {
     final repository = FakeBrandsRepository()
       ..onGetBrandStats = () async => const Left(_StatsFailure());
     final statsCubit = BrandStatsCubit(
@@ -137,5 +139,6 @@ void main() {
 
     await statsCubit.close();
     await listCubit.close();
-  });
+    },
+  );
 }
