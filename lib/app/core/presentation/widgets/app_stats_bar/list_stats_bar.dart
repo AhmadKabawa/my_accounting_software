@@ -51,7 +51,7 @@ class ListStatsBar<F> extends StatelessWidget {
                   icon: item.icon,
                   tone: item.tone,
                   loading: loading,
-                  selected: item.filter != null && item.filter == selected,
+                  selected: !loading && item.filter != null && item.filter == selected,
                   onTap: !loading && item.filter != null && onSelected != null
                       ? () => onSelected!(item.filter as F)
                       : null,
