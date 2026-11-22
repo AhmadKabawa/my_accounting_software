@@ -167,6 +167,16 @@ class _SearchableDropdownState<T extends Object>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.mode != SearchableDropdownMode.panel) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _desktopFocusNode.hasFocus) return;
+      _setText(_panelDisplayLabel(context));
+    });
+  }
+
+  @override
   void didUpdateWidget(covariant SearchableDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
