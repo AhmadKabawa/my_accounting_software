@@ -301,6 +301,7 @@ void main() {
       );
       await tester.tap(find.byType(InkWell).first);
       await tester.pumpAndSettle();
+      await tester.showKeyboard(find.byType(TextField).last);
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
