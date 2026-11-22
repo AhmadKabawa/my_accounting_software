@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_stats.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color_draft.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
@@ -26,6 +27,19 @@ class FakeColorsRepository implements ColorsRepository {
   onGetColors;
   Either<Failure, CatalogColor>? saveResult;
   Either<Failure, Unit> statusResult = const Right(unit);
+  Either<Failure, Unit> deleteResult = const Right(unit);
+  ColorStats stats = const ColorStats(total: 1, active: 1, inactive: 0);
+  final List<int> deleted = [];
+
+  @override
+  Future<Either<Failure, Unit>> deleteColor(int id) {
+    deleted.add(id);
+    return Future.value(deleteResult);
+  }
+
+  @override
+  Future<Either<Failure, ColorStats>> getColorStats() =>
+      Future.value(Right(stats));
 
   @override
   Future<Either<Failure, PaginatedResult<CatalogColor>>> getColors(

@@ -16,12 +16,14 @@ class ColorsListState extends Equatable {
     ),
     this.result,
     this.failure,
+    this.isGridView = false,
   });
 
   final ColorsListStatus status;
   final ColorListQuery query;
   final PaginatedResult<CatalogColor>? result;
   final Failure? failure;
+  final bool isGridView;
 
   bool get hasData => result != null;
   bool get isInitialLoading => status == ColorsListStatus.loading && !hasData;
@@ -34,13 +36,15 @@ class ColorsListState extends Equatable {
     Failure? failure,
     bool clearResult = false,
     bool clearFailure = false,
+    bool? isGridView,
   }) => ColorsListState(
     status: status ?? this.status,
     query: query ?? this.query,
     result: clearResult ? null : result ?? this.result,
     failure: clearFailure ? null : failure ?? this.failure,
+    isGridView: isGridView ?? this.isGridView,
   );
 
   @override
-  List<Object?> get props => [status, query, result, failure];
+  List<Object?> get props => [status, query, result, failure, isGridView];
 }

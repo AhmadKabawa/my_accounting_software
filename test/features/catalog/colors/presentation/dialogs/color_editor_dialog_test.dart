@@ -101,7 +101,7 @@ void main() {
     final draft = repository.created.single;
     expect(draft.name, 'Navy');
     expect(draft.code, 'NAVY');
-    expect(draft.hexCode, '#1e3a8a');
+    expect(draft.hexCode, '#1E3A8A');
     expect(draft.sortOrder, 5);
     expect(result, isTrue);
   });
@@ -136,6 +136,37 @@ void main() {
     expect(find.text(ColorsKeys.duplicateError.en), findsOneWidget);
     expect(find.byType(ColorEditorDialog), findsOneWidget);
     expect(result, isNull);
+  });
+
+  testWidgets('HEX suggests a name until the user edits the name', (
+    tester,
+  ) async {
+    await _pumpEditor(tester, FakeColorsRepository());
+
+    await tester.enterText(find.byType(TextFormField).at(3), '#000000');
+    await tester.pump();
+    expect(_controller(tester, 0).text, 'Black');
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'Midnight');
+    await tester.enterText(find.byType(TextFormField).at(3), '#FFFFFF');
+    await tester.pump();
+    expect(_controller(tester, 0).text, 'Midnight');
+  });
+
+  testWidgets('manual RGBA input is stored uppercase with alpha', (
+    tester,
+  ) async {
+    final repository = FakeColorsRepository();
+    await _pumpEditor(tester, repository);
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'Soft blue');
+    await tester.enterText(find.byType(TextFormField).at(1), 'SOFT-BLUE');
+    await tester.enterText(find.byType(TextFormField).at(3), '#aabbcc80');
+    await tester.enterText(find.byType(TextFormField).at(2), '0');
+    await tester.tap(find.text(ColorsKeys.save.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.created.single.hexCode, '#AABBCC80');
   });
 
   testWidgets('editing prefills values and updates by id', (tester) async {

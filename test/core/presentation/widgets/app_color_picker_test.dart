@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_picker/app_color_picker.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_color_swatch/app_color_swatch.dart';
 import '../../../helpers/localized_app.dart';
 
 void main() {
@@ -48,7 +49,7 @@ void main() {
     expect(result, endsWith('80'));
   });
 
-  testWidgets('manual HEX edit drops alpha intentionally', (t) async {
+  testWidgets('manual RGB edit preserves existing alpha', (t) async {
     String? result;
     await t.pumpWidget(
       buildTestApp(
@@ -64,8 +65,53 @@ void main() {
     await t.enterText(find.byType(TextField), '#AABBCC');
     await t.pump();
 
-    expect(result, '#AABBCC');
-    expect(result, isNot(endsWith('80')));
+    expect(result, '#AABBCC80');
+  });
+
+  testWidgets('manual RGBA HEX edit preserves its alpha channel', (t) async {
+    String? result;
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: AppColorPicker(
+            value: '#228B2280',
+            onChanged: (value) => result = value,
+          ),
+        ),
+      ),
+    );
+
+    await t.enterText(find.byType(TextField), '#AABBCC44');
+    await t.pump();
+
+    expect(result, '#AABBCC44');
+  });
+
+  testWidgets('preset selection preserves an existing alpha channel', (t) async {
+    String? result;
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: AppColorPicker(
+            value: '#228B2280',
+            presets: const ['#AABBCC'],
+            onChanged: (value) => result = value,
+          ),
+        ),
+      ),
+    );
+
+    await t.tap(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is AppColorSwatch &&
+            widget.hex == '#AABBCC' &&
+            widget.onTap != null,
+      ),
+    );
+    await t.pump();
+
+    expect(result, '#AABBCC80');
   });
 
   testWidgets('invalid presets are ignored and valid preset is selectable', (

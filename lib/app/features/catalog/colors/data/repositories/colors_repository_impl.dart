@@ -7,19 +7,42 @@ import 'package:accounting_software/app/core/foundation/base/repository_executor
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/colors/data/datasources/colors_remote_data_source.dart';
+import 'package:accounting_software/app/features/catalog/colors/data/datasources/color_stats_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/colors/data/models/color_model.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_stats.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color_draft.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failures.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/repositories/colors_repository.dart';
 
 class ColorsRepositoryImpl with RepositoryExecutor implements ColorsRepository {
-  const ColorsRepositoryImpl(this._remote);
+  const ColorsRepositoryImpl(this._remote, this._statsRemote);
   final ColorsRemoteDataSource _remote;
+  final ColorStatsRemoteDataSource _statsRemote;
 
   /// SQLSTATE of a UNIQUE violation (`colors.code`).
   static const _uniqueViolation = '23505';
+
+  @override
+  Future<Either<Failure, ColorStats>> getColorStats() => execute(() async {
+    final result = await _statsRemote.getColorStats();
+    return switch (result) {
+      ApiSuccess<ColorStats>(:final data) => Right(data),
+      ApiFailure<ColorStats>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
+    };
+  });
+
+  @override
+  Future<Either<Failure, Unit>> deleteColor(int id) => execute(() async {
+    final result = await _remote.deleteColor(id);
+    return switch (result) {
+      ApiSuccess<Unit>() => const Right(unit),
+      ApiFailure<Unit>(:final exception) => Left(_mapDeleteFailure(exception)),
+    };
+  });
 
   @override
   Future<Either<Failure, PaginatedResult<CatalogColor>>> getColors(
@@ -81,6 +104,11 @@ class ColorsRepositoryImpl with RepositoryExecutor implements ColorsRepository {
       ),
     };
   });
+
+  Failure _mapDeleteFailure(AppException exception) =>
+      exception is ApiException && exception.errorCode == '23503'
+      ? const ColorInUseFailure()
+      : ExceptionMapper.map(exception);
 
   Failure _mapWriteFailure(AppException exception) =>
       exception is ApiException && exception.errorCode == _uniqueViolation

@@ -548,7 +548,7 @@ BlocEffectListener<AuthFlowEffect, AuthFlowCubit>(
 
 ## اختيار اللون وتسميات الألوان ونغمات الأيقونات
 
-- `AppColorPicker` لتعديل قيمة HEX مع null وحفظ alpha عند عدم تعديل HEX يدوياً؛ `AppColorSwatch` للعرض فقط.
+- `AppColorPicker` لتعديل قيمة HEX مع null؛ استخدم `onInputChanged` إذا احتاج النموذج التحقق من النص الخام غير المكتمل، و`onChanged` للقيمة الصالحة. يحافظ على alpha الحالي عند تعديل RGB يدوياً أو اختيار preset، ويستبدله عند إدخال RGBA صريح؛ `AppColorSwatch` للعرض فقط.
 - `ColorNameResolver` اقتراح محلي تقريبي للاسم، وليس بديلاً عن قيمة HEX ولا مصدراً للبيانات.
 - `AppIconTone`: `danger` للحذف/التعطيل/الخطر، `success` للتفعيل/النجاح، `warning` للتحذير، `info` للمعلومة، `primary` للإضافة، و`neutral` للتعديل/العرض/الثانوي. لا تمرر `color:` إلى AppIcon داخل Features.
 - `SearchableDropdown`: استخدم `mode: SearchableDropdownMode.panel` لحقل يعرض القيمة الحالية ويفتح لوحة بحث مستقلة؛ يظهر خيار «الكل» (null) افتراضياً أولاً على desktop والهاتف، ويمكن تخصيص تسميته عبر `allOptionLabel`. تظهر علامة ✓ للقيمة المختارة، ويغلق الاختيار اللوحة فوراً. البحث يبدأ فارغاً عند كل فتح، والأسهم/Enter/Esc تعمل داخل اللوحة. أبقِ `SearchableDropdownMode.autocomplete` الافتراضي للحقول ذات البحث البعيد أو التي تعتمد عقد RawAutocomplete الحالي؛ `filterLocally: false` و`onQueryChanged` يبقيان مملوكين لمصدر البيانات. لا تضع debounce للفلترة داخل FilterBar؛ مالك البيانات/Cubit يتولى debounce. FilterBar يرسل البحث مباشرة (والـ debounce مسؤولية Cubit).

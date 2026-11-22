@@ -169,7 +169,7 @@
 
 - `AppIconData` (sealed: material/svg/networkSvg/image/networkImage) و`AppIcons` (المكان الوحيد لتعريف الأيقونات؛ و`NavBarItem.icons` يأخذ `AppIconData`، والمُنشئ القديم بـ `IconData` ما زال يعمل) و`AppIcon(AppIconData, size: AppIconSize)` بحجم responsive. `AppIcon` غير قابل للضغط عمداً.
 - `AppButtonVariant.text` (زر نصي) وأيقونة `AppButton.icon` من نوع `AppIconData`.
-- `AppIconButton` (`widgets/app_button/app_icon_button.dart`): ضمن نظام الأزرار، `tooltipKey` مطلوب، منطقة لمس >= 48 من التوكنز.
+- `AppIconButton` (`widgets/app_button/app_icon_button.dart`): ضمن نظام الأزرار، `tooltipKey` مطلوب، منطقة لمس >= 48 من التوكنز. أضيفت `AppIcons.gridView` و`AppIcons.tableView` لتبديل عرض الشبكة/الجدول.
 - `AppTextField` + `AppTextFieldStyle` (`widgets/app_text_field/`).
 - `AppDivider` (نص اختياري) و`AppPageAppBar` (شريط الصفحات العادية؛ أُزيل شريط الرئيسية القديم `AppAppBar` لأنه خاص بعلامة تجارية).
 - `AppCard` (`widgets/app_card/app_card.dart`): سطح بحدّ لتجميع المحتوى (بطاقات الأرقام، القوائم)؛ الحشو والزوايا من التوكنز، والحدّ بـ `AppBorderWidth.thin`، وقابل للنقر عند تمرير `onTap`.
@@ -268,7 +268,7 @@
 
 ## AppColorPicker وColorNameResolver وAppIconTone
 
-- AppColorPicker: `presentation/widgets/app_color_picker/` (تحديد HSV/SV، Hue، تحرير HEX، Presets صالحة فقط، swatch، copy؛ مزامنة القيمة الخارجية؛ تعديل HEX اليدوي يسقط alpha، والتعديل عبر HSV يحافظ عليه).
+- AppColorPicker: `presentation/widgets/app_color_picker/` (تحديد HSV/SV، Hue، تحرير HEX، Presets صالحة فقط، swatch، copy؛ `onInputChanged` يبلغ عن الإدخال الخام حتى غير المكتمل، و`onChanged` يبلغ القيمة الصالحة؛ مزامنة القيمة الخارجية؛ تعديل RGB اليدوي واختيار preset يحافظان على alpha الحالي؛ إدخال RGBA صريح يستبدل alpha، وتعديل HSV يحافظ عليه).
 - ColorNameResolver: `foundation/color/` (مطابقة CIELAB/ΔE76 محلية، اقتراح اسم لون فقط؛ القيم المرجعية تشمل forestGreen `#228B22` وorange `#F57C21` وturquoise `#05AD9D`).
 - AppIconTone: `presentation/widgets/app_icon/` (لون دلالي عبر ColorScheme وAppSemanticColors؛ لا نظام ألوان مستقل).
 - SearchableDropdown: `presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart`؛ `SearchableDropdownMode.autocomplete` هو الافتراضي ويحافظ على RawAutocomplete والبحث البعيد، و`SearchableDropdownMode.panel` نمط trigger يفتح لوحة بحث مستقلة على desktop وحقل بحث داخل BottomSheet على الهاتف. يبدأ البحث فارغاً، وتظهر «الكل» أولاً بالترجمة الافتراضية ويمكن تخصيصها عبر `allOptionLabel`، وتظهر ✓ للقيمة المختارة، وتغلق اللوحة عند الاختيار. يدعم أسهم/Enter/Esc وSemantics وحالة لا نتائج.

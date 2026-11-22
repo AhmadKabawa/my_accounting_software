@@ -17,6 +17,8 @@ abstract interface class ColorsRemoteDataSource {
     required CatalogColorDraft draft,
   });
 
+  Future<ApiResult<Unit>> deleteColor(int id);
+
   Future<ApiResult<Unit>> setColorActive({
     required int id,
     required bool isActive,

@@ -11,8 +11,13 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/get_colors_use_case.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/usecase/get_color_stats_use_case.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/usecase/delete_color_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/set_color_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_stats/color_stats_cubit.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/sections/colors_grid_section.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
 import '../../../../../helpers/localized_app.dart';
@@ -45,7 +50,13 @@ void _register(FakeColorsRepository repository) {
     () => ColorsListCubit(
       getColors: GetColorsUseCase(repository),
       setColorActive: SetColorActiveUseCase(repository),
+      deleteColor: DeleteColorUseCase(repository),
       flashMessages: sl(),
+    ),
+  );
+  sl.registerFactory<ColorStatsCubit>(
+    () => ColorStatsCubit(
+      getColorStats: GetColorStatsUseCase(repository),
     ),
   );
   addTearDown(() async => sl.reset());
@@ -85,6 +96,65 @@ void main() {
       }
     }
   }
+
+  testWidgets('statistics cards apply the matching status filter', (
+    tester,
+  ) async {
+    final repository = FakeColorsRepository();
+    _register(repository);
+    await pumpScreenMatrix(
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    await tester.tap(find.text(ColorsKeys.activeColors.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.queries.last.status, ColorStatusFilter.active);
+  });
+
+  testWidgets('grid view is optional and can return to the table', (
+    tester,
+  ) async {
+    _register(FakeColorsRepository());
+    await pumpScreenMatrix(
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    await tester.tap(find.byTooltip(ColorsKeys.gridView.en));
+    await tester.pumpAndSettle();
+    expect(find.byType(ColorsGridSection), findsOneWidget);
+
+    await tester.tap(find.byTooltip(ColorsKeys.tableView.en));
+    await tester.pumpAndSettle();
+    expect(find.byType(ColorsGridSection), findsNothing);
+  });
+
+  testWidgets('grid view renders on a narrow RTL dark screen', (
+    tester,
+  ) async {
+    _register(FakeColorsRepository());
+    await pumpScreenMatrix(
+      tester,
+      width: 360,
+      direction: TextDirection.rtl,
+      dark: true,
+      home: _home(canManage: true),
+    );
+
+    await tester.tap(find.byTooltip(ColorsKeys.gridView.en));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ColorsGridSection), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('an empty catalog shows the add call to action', (tester) async {
     final repository = FakeColorsRepository()

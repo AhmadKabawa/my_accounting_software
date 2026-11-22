@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_message/fl
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/get_colors_use_case.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/usecase/delete_color_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/set_color_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_state.dart';
@@ -16,14 +17,17 @@ class ColorsListCubit extends BaseCubit<ColorsListState, ColorsListEffect> {
   ColorsListCubit({
     required GetColorsUseCase getColors,
     required SetColorActiveUseCase setColorActive,
+    required DeleteColorUseCase deleteColor,
     required FlashMessages flashMessages,
   }) : _getColors = getColors,
        _setColorActive = setColorActive,
+       _deleteColor = deleteColor,
        _flashMessages = flashMessages,
        super(const ColorsListState());
 
   final GetColorsUseCase _getColors;
   final SetColorActiveUseCase _setColorActive;
+  final DeleteColorUseCase _deleteColor;
   final FlashMessages _flashMessages;
 
   Timer? _searchTimer;
@@ -107,21 +111,24 @@ class ColorsListCubit extends BaseCubit<ColorsListState, ColorsListEffect> {
 
   Future<void> refresh() => load();
 
-  Future<void> activate(int id) async {
+  void toggleView() => emit(state.copyWith(isGridView: !state.isGridView));
+
+  Future<Either<Failure, Unit>> activate(int id) async {
     final result = await _setColorActive(
       SetColorActiveParams(id: id, isActive: true),
     );
-    if (isClosed) return;
+    if (isClosed) return result;
     if (result.isLeft()) {
       final failure = result.fold<Failure?>((failure) => failure, (_) => null);
       if (failure != null) {
         _flashMessages.post(failure.messageKey, MessageType.error);
       }
-      return;
+      return result;
     }
     _flashMessages.post(ColorsKeys.statusUpdated, MessageType.success);
     emitEffect(const ColorsMutatedEffect(ColorsMutationKind.statusChanged));
     await load();
+    return result;
   }
 
   Future<Either<Failure, Unit>> deactivate(int id) async {
@@ -132,6 +139,18 @@ class ColorsListCubit extends BaseCubit<ColorsListState, ColorsListEffect> {
     if (result.isRight()) {
       _flashMessages.post(ColorsKeys.statusUpdated, MessageType.success);
       emitEffect(const ColorsMutatedEffect(ColorsMutationKind.statusChanged));
+      await load();
+    }
+    return result;
+  }
+
+  Future<Either<Failure, Unit>> delete(int id) async {
+    final result = await _deleteColor(DeleteColorParams(id));
+    if (isClosed) return result;
+    if (result.isRight()) {
+      _flashMessages.post(ColorsKeys.deleted, MessageType.success);
+      emitEffect(const ColorsMutatedEffect(ColorsMutationKind.deleted));
+      _updateQuery(state.query.copyWith(page: 1));
       await load();
     }
     return result;

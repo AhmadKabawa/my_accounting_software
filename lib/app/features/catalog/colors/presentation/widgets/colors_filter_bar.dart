@@ -52,13 +52,15 @@ class ColorsFilterBar extends StatelessWidget {
     ],
     filterControls: [
       SearchableDropdown<ColorStatusFilter>(
-        options: ColorStatusFilter.values,
+        options: const [ColorStatusFilter.active, ColorStatusFilter.inactive],
         labelKey: ColorsKeys.status,
         optionLabel: (value) => statusLabel(value).tr(context: context),
-        value: query.status,
+        value: query.status == ColorStatusFilter.all ? null : query.status,
         clearable: false,
+        mode: SearchableDropdownMode.panel,
+        allOptionLabel: ColorsKeys.allStatuses,
         onChanged: (value) {
-          if (value != null) onStatusChanged(value);
+          onStatusChanged(value ?? ColorStatusFilter.all);
         },
       ),
     ],

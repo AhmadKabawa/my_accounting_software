@@ -5,9 +5,14 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color_draft.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_stats.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failures.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/create_color_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/get_colors_use_case.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/usecase/get_color_stats_use_case.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_stats/color_stats_cubit.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_stats/color_stats_state.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/usecase/delete_color_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/set_color_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/update_color_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_form/color_form_cubit.dart';
@@ -26,6 +31,7 @@ class _Failure extends Failure {
 ColorsListCubit _list(FakeColorsRepository repository) => ColorsListCubit(
   getColors: GetColorsUseCase(repository),
   setColorActive: SetColorActiveUseCase(repository),
+  deleteColor: DeleteColorUseCase(repository),
   flashMessages: FlashMessages(),
 );
 
@@ -135,6 +141,35 @@ void main() {
       await cubit.close();
     });
 
+    test('delete calls the repository, emits deleted and reloads', () async {
+      final repository = FakeColorsRepository();
+      final cubit = _list(repository);
+      final effects = <ColorsListEffect>[];
+      final sub = cubit.effectStream.listen(effects.add);
+      await cubit.setPage(2);
+
+      final result = await cubit.delete(7);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(result.isRight(), isTrue);
+      expect(repository.deleted, [7]);
+      expect(repository.queries, hasLength(2));
+      expect(repository.queries.last.page, 1);
+      expect((effects.single as ColorsMutatedEffect).kind, ColorsMutationKind.deleted);
+      await sub.cancel();
+      await cubit.close();
+    });
+
+    test('view toggle changes only presentation state', () async {
+      final cubit = _list(FakeColorsRepository());
+      expect(cubit.state.isGridView, isFalse);
+      cubit.toggleView();
+      expect(cubit.state.isGridView, isTrue);
+      cubit.toggleView();
+      expect(cubit.state.isGridView, isFalse);
+      await cubit.close();
+    });
+
     test('a failed deactivate returns the failure, no reload', () async {
       final repository = FakeColorsRepository()
         ..statusResult = const Left(_Failure());
@@ -142,6 +177,28 @@ void main() {
       final result = await cubit.deactivate(7);
       expect(result.isLeft(), isTrue);
       expect(repository.queries, isEmpty);
+      await cubit.close();
+    });
+  });
+
+  group('ColorStatsCubit', () {
+    test('loads independent server statistics', () async {
+      final repository = FakeColorsRepository();
+      final cubit = ColorStatsCubit(
+        getColorStats: GetColorStatsUseCase(repository),
+      );
+
+      await cubit.load();
+
+      expect(cubit.state.status, ColorStatsStatus.ready);
+      expect(cubit.state.stats?.total, 1);
+      expect(cubit.state.stats?.active, 1);
+      expect(cubit.state.stats?.inactive, 0);
+
+      repository.stats = const ColorStats(total: 4, active: 3, inactive: 1);
+      await cubit.refresh();
+      expect(cubit.state.stats?.total, 4);
+      expect(cubit.state.stats?.inactive, 1);
       await cubit.close();
     });
   });

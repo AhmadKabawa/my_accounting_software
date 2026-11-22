@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/colors_filter_bar.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import '../../../../../helpers/localized_app.dart';
 
 void main() {
@@ -39,6 +41,11 @@ void main() {
     await tester.tap(find.text('Inactive').last);
     await tester.pumpAndSettle();
     expect(status, ColorStatusFilter.inactive);
+    final dropdown = tester.widget<SearchableDropdown<ColorStatusFilter>>(
+      find.byType(SearchableDropdown<ColorStatusFilter>),
+    );
+    expect(dropdown.mode, SearchableDropdownMode.panel);
+    expect(dropdown.allOptionLabel, ColorsKeys.allStatuses);
   });
 
   testWidgets('active search and status are represented as removable chips', (
@@ -63,7 +70,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Search by color name or code: navy'), findsOneWidget);
+    expect(find.text('Search by color name, code or HEX: navy'), findsOneWidget);
     expect(find.text('Status: Active'), findsOneWidget);
     expect(find.byType(AppBadge), findsNWidgets(2));
     await tester.tap(

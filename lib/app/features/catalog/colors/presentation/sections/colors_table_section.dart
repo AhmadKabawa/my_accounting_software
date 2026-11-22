@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
@@ -50,6 +52,7 @@ class ColorsTableSection extends StatelessWidget {
     required this.onAdd,
     required this.onEdit,
     required this.onToggleStatus,
+    required this.onDelete,
   });
 
   final VoidCallback onRetry;
@@ -64,6 +67,7 @@ class ColorsTableSection extends StatelessWidget {
   final VoidCallback onAdd;
   final ValueChanged<CatalogColor> onEdit;
   final ValueChanged<CatalogColor> onToggleStatus;
+  final ValueChanged<CatalogColor> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -97,9 +101,24 @@ class ColorsTableSection extends StatelessWidget {
                   type: AppTextType.bodySmall,
                   color: ctx.ui.theme.colors.onSurfaceVariant,
                 )
-              : Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: AppText.raw(c.hexCode!),
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: AppText.raw(c.hexCode!),
+                      ),
+                    ),
+                    AppIconButton(
+                      AppIcons.copy,
+                      tooltipKey: ColorsKeys.copyHex,
+                      size: AppButtonSize.small,
+                      onPressed: () => Clipboard.setData(
+                        ClipboardData(text: c.hexCode!),
+                      ),
+                    ),
+                  ],
                 ),
         ),
         DataTableColumn(
@@ -146,7 +165,16 @@ class ColorsTableSection extends StatelessWidget {
               labelKey: c.isActive
                   ? ColorsKeys.deactivate
                   : ColorsKeys.activate,
+              destructive: c.isActive,
               onPressed: () => onToggleStatus(c),
+            ),
+          ],
+          overflow: [
+            AppRowAction(
+              icon: AppIcons.delete,
+              labelKey: ColorsKeys.delete,
+              destructive: true,
+              onPressed: () => onDelete(c),
             ),
           ],
         ),

@@ -13,12 +13,16 @@ class ColorIdentitySection extends StatelessWidget {
     required this.code,
     required this.sortOrder,
     required this.onChanged,
+    required this.onNameChanged,
+    this.suggestedName,
   });
 
   final TextEditingController name;
   final TextEditingController code;
   final TextEditingController sortOrder;
   final VoidCallback onChanged;
+  final VoidCallback onNameChanged;
+  final String? suggestedName;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -31,8 +35,20 @@ class ColorIdentitySection extends StatelessWidget {
         labelKey: ColorsKeys.colorName,
         autofocus: true,
         validator: ColorFieldValidators.name,
-        onChanged: (_) => onChanged(),
+        onChanged: (_) {
+          onNameChanged();
+          onChanged();
+        },
       ),
+      if (suggestedName != null) ...[
+        context.ui.spacing.gap(AppSpacing.xs),
+        AppText(
+          ColorsKeys.suggestedName,
+          type: AppTextType.bodySmall,
+          color: context.ui.theme.colors.onSurfaceVariant,
+        ),
+        AppText.raw(suggestedName!, type: AppTextType.bodySmall),
+      ],
       context.ui.spacing.gap(AppSpacing.smMd),
       AppTextField(
         controller: code,

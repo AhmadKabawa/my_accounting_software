@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/foundation/validation/hex_color.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_color_swatch/app_color_swatch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_color_picker/app_color_picker.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_field_validators.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_presets.dart';
 
-/// Editor section: HEX field, live sample and a preset palette.
-class ColorAppearanceSection extends StatelessWidget {
+/// Editor section: the shared color picker and optional HEX validation.
+class ColorAppearanceSection extends StatefulWidget {
   const ColorAppearanceSection({
     super.key,
     required this.hex,
@@ -21,69 +18,80 @@ class ColorAppearanceSection extends StatelessWidget {
   final TextEditingController hex;
   final VoidCallback onChanged;
 
-  static const _maxHexLength = 9; // #RRGGBBAA
+  @override
+  State<ColorAppearanceSection> createState() => _ColorAppearanceSectionState();
+}
+
+class _ColorAppearanceSectionState extends State<ColorAppearanceSection> {
+  String? _pickerValue;
 
   @override
-  Widget build(BuildContext context) {
-    final current = HexColor.normalize(ColorFieldValidators.withHash(hex.text));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AppText(ColorsKeys.appearanceSection, type: AppTextType.titleSmall),
-        context.ui.spacing.gap(AppSpacing.sm),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: AppTextField(
-                controller: hex,
-                labelKey: ColorsKeys.hexCode,
-                hintKey: ColorsKeys.hexHint,
-                textDirection: TextDirection.ltr,
-                textCapitalization: TextCapitalization.characters,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp('[#0-9A-Fa-f]')),
-                  LengthLimitingTextInputFormatter(_maxHexLength),
-                ],
-                validator: ColorFieldValidators.hex,
-                onChanged: (_) => onChanged(),
-              ),
-            ),
-            context.ui.spacing.gap(AppSpacing.smMd, axis: Axis.horizontal),
-            AppColorSwatch(
-              hex: HexColor.isValid(current) ? current : null,
-              size: AppIconSize.xl,
-            ),
-          ],
-        ),
-        context.ui.spacing.gap(AppSpacing.sm),
-        AppText(
-          ColorsKeys.presets,
-          type: AppTextType.bodySmall,
-          color: context.ui.theme.colors.onSurfaceVariant,
-        ),
-        context.ui.spacing.gap(AppSpacing.xs),
-        Wrap(
-          spacing: context.ui.spacing.sm,
-          runSpacing: context.ui.spacing.sm,
-          children: [
-            for (final preset in ColorPresets.hexes)
-              AppColorSwatch(
-                hex: preset,
-                size: AppIconSize.xl,
-                selected: current == preset,
-                semanticLabel: ColorsKeys.presetPick.tr(
-                  context: context,
-                  namedArgs: {'name': preset},
-                ),
-                onTap: () {
-                  hex.text = preset;
-                  onChanged();
-                },
-              ),
-          ],
-        ),
-      ],
+  void initState() {
+    super.initState();
+    _pickerValue = _validHex(widget.hex.text);
+  }
+
+  @override
+  void didUpdateWidget(covariant ColorAppearanceSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.hex != widget.hex) {
+      _pickerValue = _validHex(widget.hex.text);
+    }
+  }
+
+  String? _validHex(String? value) {
+    final normalized = HexColor.normalize(ColorFieldValidators.withHash(value));
+    return HexColor.isValid(normalized) ? normalized : null;
+  }
+
+  void _setText(String value) {
+    widget.hex.value = TextEditingValue(
+      text: value,
+      selection: TextSelection.collapsed(offset: value.length),
     );
   }
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      AppText(ColorsKeys.appearanceSection, type: AppTextType.titleSmall),
+      context.ui.spacing.gap(AppSpacing.sm),
+      FormField<String>(
+        initialValue: widget.hex.text,
+        validator: (_) => ColorFieldValidators.hex(widget.hex.text),
+        builder: (field) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppColorPicker(
+              value: _pickerValue,
+              presets: ColorPresets.hexes,
+              onInputChanged: (raw) {
+                _setText(raw);
+                field.didChange(raw);
+                widget.onChanged();
+              },
+              onChanged: (value) {
+                final normalized = value == null
+                    ? ''
+                    : HexColor.normalize(value) ?? value;
+                _setText(normalized);
+                field.didChange(normalized);
+                setState(() => _pickerValue = _validHex(normalized));
+                widget.onChanged();
+              },
+            ),
+            if (field.errorText != null) ...[
+              context.ui.spacing.gap(AppSpacing.xs),
+              AppText.raw(
+                field.errorText!,
+                type: AppTextType.bodySmall,
+                color: context.ui.theme.colors.error,
+              ),
+            ],
+          ],
+        ),
+      ),
+    ],
+  );
 }

@@ -10,6 +10,9 @@ import 'package:mocktail/mocktail.dart';
 
 class FakeColorsApiClient extends Fake implements IApiClient {
   Map<String, dynamic> lastQueryParameters = {};
+  final List<Map<String, dynamic>> paginatedQueries = [];
+  int totalCount = 1;
+  int activeCount = 1;
   Map<String, dynamic>? lastBody;
   String? lastPath;
   int? lastPage;
@@ -17,6 +20,7 @@ class FakeColorsApiClient extends Fake implements IApiClient {
   Options? lastOptions;
   AppException? postFailure;
   AppException? patchFailure;
+  AppException? deleteFailure;
 
   static const Map<String, dynamic> colorJson = {
     'id': 7,
@@ -41,12 +45,15 @@ class FakeColorsApiClient extends Fake implements IApiClient {
   }) async {
     lastPath = path.toStringPath();
     lastQueryParameters = queryParameters ?? {};
+    paginatedQueries.add(Map<String, dynamic>.from(lastQueryParameters));
     lastPage = page;
     lastLimit = limit;
     return ApiSuccess(
       PaginatedResult<T>(
         items: [fromJson(colorJson)],
-        totalCount: 1,
+        totalCount: lastQueryParameters['is_active'] == 'eq.true'
+            ? activeCount
+            : totalCount,
         currentPage: page,
         totalPages: 1,
       ),
@@ -69,6 +76,21 @@ class FakeColorsApiClient extends Fake implements IApiClient {
     lastBody = data as Map<String, dynamic>?;
     if (postFailure case final failure?) return ApiFailure<T>(failure);
     return ApiSuccess<T>(fromJsonList!([colorJson]));
+  }
+
+  @override
+  Future<ApiResult<Unit>> delete(
+    AppEndpoint path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    bool requiresAuth = true,
+  }) async {
+    lastPath = path.toStringPath();
+    lastQueryParameters = queryParameters ?? {};
+    if (deleteFailure case final failure?) return ApiFailure<Unit>(failure);
+    return const ApiSuccess<Unit>(unit);
   }
 
   @override

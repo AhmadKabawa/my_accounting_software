@@ -66,6 +66,8 @@ abstract final class AppIcons {
   // Row / record actions.
   static const edit = AppIconData.material(Icons.edit_outlined);
   static const delete = AppIconData.material(Icons.delete_outline);
+  static const gridView = AppIconData.material(Icons.grid_view);
+  static const tableView = AppIconData.material(Icons.table_rows_outlined);
   static const block = AppIconData.material(Icons.block);
   static const restore = AppIconData.material(Icons.check_circle_outline);
   static const upload = AppIconData.material(Icons.upload_outlined);

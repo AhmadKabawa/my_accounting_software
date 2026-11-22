@@ -16,6 +16,7 @@ class AppColorPicker extends StatefulWidget {
     super.key,
     required this.value,
     required this.onChanged,
+    this.onInputChanged,
     this.presets = const [
       '#000000',
       '#FFFFFF',
@@ -29,6 +30,8 @@ class AppColorPicker extends StatefulWidget {
   });
   final String? value;
   final ValueChanged<String?> onChanged;
+  /// Reports raw HEX edits, including incomplete or invalid input.
+  final ValueChanged<String>? onInputChanged;
   final List<String> presets;
   @override
   State<AppColorPicker> createState() => _AppColorPickerState();
@@ -40,7 +43,6 @@ class _AppColorPickerState extends State<AppColorPicker> {
   final _controller = TextEditingController();
   double _hue = 0, _sat = 1, _val = 1;
   String? _alpha;
-  bool _manual = false;
   Color get _color => HSVColor.fromAHSV(1, _hue, _sat, _val).toColor();
   @override
   void initState() {
@@ -70,7 +72,6 @@ class _AppColorPickerState extends State<AppColorPicker> {
 
   void _sync(String? input) {
     final h = HexColor.normalize(input);
-    _manual = false;
     if (h == null || !HexColor.isValid(h)) {
       _alpha = null;
       _controller.text = '';
@@ -84,28 +85,25 @@ class _AppColorPickerState extends State<AppColorPicker> {
     _controller.text = h.substring(0, _rgbLength);
   }
 
-  String _output() => _manual
-      ? _hex(_color)
-      : _alpha == null
-      ? _hex(_color)
-      : '${_hex(_color)}$_alpha';
+  String _output() =>
+      _alpha == null ? _hex(_color) : '${_hex(_color)}$_alpha';
   void _emit() {
     widget.onChanged(_output());
     _controller.text = _hex(_color);
   }
 
   void _manualHex(String text) {
+    widget.onInputChanged?.call(text);
     final h = HexColor.normalize(text.startsWith('#') ? text : '#$text');
     if (h == null || !HexColor.isValid(h)) return;
-    _manual = true;
-    _alpha = null;
+    if (h.length == _alphaLength) _alpha = h.substring(_rgbLength);
     final hsv = HSVColor.fromColor(Color(HexColor.toArgb(h)!));
     setState(() {
       _hue = hsv.hue;
       _sat = hsv.saturation;
       _val = hsv.value;
     });
-    widget.onChanged(h.substring(0, _rgbLength));
+    widget.onChanged(_output());
   }
 
   void _sv(Offset p) {
@@ -123,9 +121,13 @@ class _AppColorPickerState extends State<AppColorPicker> {
 
   void _preset(String hex) {
     if (!HexColor.isValid(hex)) return;
+    final existingAlpha = _alpha;
     _sync(hex);
+    if (hex.length == _rgbLength && existingAlpha != null) {
+      _alpha = existingAlpha;
+    }
     setState(() {});
-    widget.onChanged(HexColor.normalize(hex));
+    widget.onChanged(_output());
   }
 
   @override

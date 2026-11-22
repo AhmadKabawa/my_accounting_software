@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/features/catalog/colors/data/datasources/colors_remote_data_source_impl.dart';
+import 'package:accounting_software/app/features/catalog/colors/data/datasources/color_stats_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/colors/data/repositories/colors_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color_draft.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
@@ -15,7 +16,10 @@ void main() {
 
   setUp(() {
     api = FakeColorsApiClient();
-    repository = ColorsRepositoryImpl(ColorsRemoteDataSourceImpl(api));
+    repository = ColorsRepositoryImpl(
+      ColorsRemoteDataSourceImpl(api),
+      ColorStatsRemoteDataSourceImpl(api),
+    );
   });
 
   test('default query orders by sort_order then name', () async {
@@ -44,6 +48,7 @@ void main() {
     expect(api.lastQueryParameters['is_active'], 'eq.false');
     expect(api.lastQueryParameters['or'], contains(r'Na\"vy'));
     expect(api.lastQueryParameters['or'], contains('code.ilike'));
+    expect(api.lastQueryParameters['or'], contains('hex_code.ilike'));
     expect(api.lastPage, 3);
     expect(api.lastLimit, 10);
   });
@@ -110,6 +115,14 @@ void main() {
       draft: const CatalogColorDraft(name: 'a', code: 'b'),
     );
     expect(result.fold((f) => f, (_) => null), isA<ColorDuplicateFailure>());
+  });
+
+  test('maps deleting a referenced color to ColorInUseFailure', () async {
+    api.deleteFailure = ApiException.conflict(errorCode: '23503');
+    final result = await repository.deleteColor(7);
+    expect(result.fold((failure) => failure, (_) => null), isA<ColorInUseFailure>());
+    expect(api.lastPath, '/rest/v1/colors');
+    expect(api.lastQueryParameters, {'id': 'eq.7'});
   });
 
   test('other conflicts are not reported as duplicates', () async {

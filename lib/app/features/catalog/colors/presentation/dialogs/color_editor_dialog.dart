@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/foundation/color/color_name_resolver.dart';
+import 'package:accounting_software/app/core/foundation/validation/hex_color.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
@@ -10,6 +12,7 @@ import 'package:accounting_software/app/features/catalog/colors/domain/entity/ca
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_form/color_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_form/color_form_effect.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
+import 'package:accounting_software/app/core/foundation/color/color_name_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/sections/color_appearance_section.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/sections/color_identity_section.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_field_validators.dart';
@@ -42,6 +45,9 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
   late final TextEditingController _sortOrder;
   late final List<String> _initial;
   AppKey? _failure;
+  String? _lastAutoName;
+  bool _manualName = false;
+  bool _updatingName = false;
 
   List<TextEditingController> get _controllers => [
     _name,
@@ -72,6 +78,13 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
     _code = TextEditingController(text: _initial[1]);
     _hex = TextEditingController(text: _initial[2]);
     _sortOrder = TextEditingController(text: _initial[3]);
+    _lastAutoName = _suggestedName(context, color?.hexCode);
+    if (_name.text.trim().isEmpty && _lastAutoName != null) {
+      _setAutoName(_lastAutoName!);
+    } else {
+      _manualName = _name.text.trim().isNotEmpty &&
+          _name.text.trim() != _lastAutoName;
+    }
   }
 
   @override
@@ -80,6 +93,40 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  String? _suggestedName(BuildContext context, String? hex) {
+    final resolved = ColorNameResolver.resolve(hex);
+    if (resolved == null) return null;
+    return ColorNameKeys.values
+        .firstWhere((key) => key.name == resolved.name)
+        .tr(context: context);
+  }
+
+  void _setAutoName(String value) {
+    _updatingName = true;
+    _name.value = TextEditingValue(
+      text: value,
+      selection: TextSelection.collapsed(offset: value.length),
+    );
+    _updatingName = false;
+  }
+
+  void _onNameChanged() {
+    if (_updatingName) return;
+    _manualName = _name.text.trim().isNotEmpty &&
+        _name.text.trim() != _lastAutoName;
+  }
+
+  void _onHexChanged() {
+    final suggestion = _suggestedName(context, _hex.text);
+    if (!_manualName &&
+        (_name.text.trim().isEmpty || _name.text.trim() == _lastAutoName) &&
+        suggestion != null) {
+      _setAutoName(suggestion);
+    }
+    if (suggestion != null) _lastAutoName = suggestion;
+    _onChanged();
   }
 
   void _onChanged() {
@@ -94,7 +141,7 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
       draft: CatalogColorDraft(
         name: _name.text.trim(),
         code: _code.text.trim(),
-        hexCode: ColorFieldValidators.withHash(_hex.text),
+        hexCode: HexColor.normalize(ColorFieldValidators.withHash(_hex.text)),
         sortOrder: int.tryParse(_sortOrder.text.trim()) ?? 0,
       ),
     );
@@ -133,10 +180,12 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
                       name: _name,
                       code: _code,
                       sortOrder: _sortOrder,
+                      suggestedName: _lastAutoName,
                       onChanged: _onChanged,
+                      onNameChanged: _onNameChanged,
                     ),
                     context.ui.spacing.gap(AppSpacing.md),
-                    ColorAppearanceSection(hex: _hex, onChanged: _onChanged),
+                    ColorAppearanceSection(hex: _hex, onChanged: _onHexChanged),
                   ],
                 ),
               ),

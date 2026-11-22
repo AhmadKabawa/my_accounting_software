@@ -31,7 +31,7 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
         'select': ColorsEndpoint.select,
         'order': _order(query),
         if (searchTerm.isNotEmpty)
-          'or': '(name.ilike."*$searchTerm*",code.ilike."*$searchTerm*")',
+          'or': '(name.ilike."*$searchTerm*",code.ilike."*$searchTerm*",hex_code.ilike."*$searchTerm*")',
         if (query.status == ColorStatusFilter.active) 'is_active': 'eq.true',
         if (query.status == ColorStatusFilter.inactive) 'is_active': 'eq.false',
       },
@@ -57,6 +57,12 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
     data: _draftJson(draft),
     options: Options(headers: {'Prefer': 'return=representation'}),
     fromJsonList: _single,
+  );
+
+  @override
+  Future<ApiResult<Unit>> deleteColor(int id) => _apiClient.delete(
+    ColorsEndpoint.collection,
+    queryParameters: {'id': 'eq.$id'},
   );
 
   @override

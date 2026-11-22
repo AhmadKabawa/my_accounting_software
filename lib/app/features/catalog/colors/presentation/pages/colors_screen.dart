@@ -8,15 +8,20 @@ import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.d
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_state.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_stats/color_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/dialogs/color_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/sections/colors_table_section.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/sections/color_stats_section.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/sections/colors_grid_section.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/colors_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
@@ -24,8 +29,11 @@ class ColorsScreen extends StatelessWidget {
   const ColorsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-    create: (_) => sl<ColorsListCubit>()..load(),
+  Widget build(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => sl<ColorsListCubit>()..load()),
+      BlocProvider(create: (_) => sl<ColorStatsCubit>()..load()),
+    ],
     child: BlocBuilder<ColorsListCubit, ColorsListState>(
       builder: (context, state) {
         final cubit = context.read<ColorsListCubit>();
@@ -71,6 +79,19 @@ class ColorsScreen extends StatelessWidget {
           dataTable: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              ColorStatsSection(onStatusSelected: cubit.setStatus),
+              context.ui.spacing.gap(AppSpacing.md),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: AppIconButton(
+                  state.isGridView ? AppIcons.tableView : AppIcons.gridView,
+                  tooltipKey: state.isGridView
+                      ? ColorsKeys.tableView
+                      : ColorsKeys.gridView,
+                  onPressed: cubit.toggleView,
+                ),
+              ),
+              context.ui.spacing.gap(AppSpacing.sm),
               if (refreshFailure != null) ...[
                 InlineBanner(
                   messageKey: refreshFailure.messageKey,
@@ -85,8 +106,24 @@ class ColorsScreen extends StatelessWidget {
                   ),
                 ),
               ],
-              ColorsTableSection(
-                query: query,
+              if (state.isGridView)
+                ColorsGridSection(
+                  query: query,
+                  rows: rows,
+                  total: total,
+                  loading: loading,
+                  refreshing: state.isRefreshing,
+                  failure: failure,
+                  onRetry: cubit.refresh,
+                  onAdd: () => _edit(context),
+                  onEdit: (color) => _edit(context, color),
+                  onToggleStatus: (color) => _status(context, color),
+                  onDelete: (color) => _delete(context, color),
+                  onPageChanged: cubit.setPage,
+                )
+              else
+                ColorsTableSection(
+                  query: query,
                 onRetry: cubit.refresh,
                 onSort: (sort) => cubit.setSort(
                   ColorSortKeys.field(sort.key),
@@ -101,7 +138,8 @@ class ColorsScreen extends StatelessWidget {
                 onAdd: () => _edit(context),
                 onEdit: (color) => _edit(context, color),
                 onToggleStatus: (color) => _status(context, color),
-              ),
+                onDelete: (color) => _delete(context, color),
+                ),
             ],
           ),
         );
@@ -113,13 +151,36 @@ class ColorsScreen extends StatelessWidget {
     final saved = await showColorEditor(context, color: color);
     if (saved == true && context.mounted) {
       await context.read<ColorsListCubit>().onColorSaved(isNew: color == null);
+      await context.read<ColorStatsCubit>().refresh();
     }
+  }
+
+  Future<void> _delete(BuildContext context, CatalogColor color) async {
+    final cubit = context.read<ColorsListCubit>();
+    await showConfirmDialog(
+      context,
+      titleKey: ColorsKeys.deleteTitle,
+      messageKey: ColorsKeys.deleteMessage,
+      messageArgs: {'name': color.name},
+      severity: ConfirmDialogSeverity.critical,
+      targetName: color.name,
+      onConfirm: () async {
+        final result = await cubit.delete(color.id);
+        if (result.isRight() && context.mounted) {
+          await context.read<ColorStatsCubit>().refresh();
+        }
+        return result.fold((failure) => failure.messageKey, (_) => null);
+      },
+    );
   }
 
   Future<void> _status(BuildContext context, CatalogColor color) async {
     final cubit = context.read<ColorsListCubit>();
     if (!color.isActive) {
-      await cubit.activate(color.id);
+      final result = await cubit.activate(color.id);
+      if (result.isRight() && context.mounted) {
+        await context.read<ColorStatsCubit>().refresh();
+      }
       return;
     }
 
@@ -131,6 +192,9 @@ class ColorsScreen extends StatelessWidget {
       targetName: color.name,
       onConfirm: () async {
         final result = await cubit.deactivate(color.id);
+        if (result.isRight() && context.mounted) {
+          await context.read<ColorStatsCubit>().refresh();
+        }
         return result.fold((failure) => failure.messageKey, (_) => null);
       },
     );
