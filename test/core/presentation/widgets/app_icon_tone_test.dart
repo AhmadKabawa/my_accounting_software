@@ -3,8 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/app_semantic_colors.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icons.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon_tone.dart';
 import '../../../helpers/localized_app.dart';
 
 void main() {
