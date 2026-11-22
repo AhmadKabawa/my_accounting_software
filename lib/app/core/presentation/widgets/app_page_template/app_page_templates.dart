@@ -5,6 +5,8 @@ import 'package:accounting_software/app/core/routing/unsaved_changes_guard.dart'
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
@@ -249,47 +251,80 @@ class DashboardTemplate extends StatelessWidget {
   );
 }
 
-/// T1 list frame. The feature supplies the page state and the already-wired
-/// FilterBar/DataTable; neither data access nor business rules live here.
+/// T1 list frame: the page header, optional stats, then ONE surface card that
+/// holds the toolbar/filters, the data and its footer.
 ///
-/// Error contract: unlike [FormPageTemplate] and [DashboardTemplate], this
-/// template draws no error banner or retry of its own. [AppDataTable] owns
-/// them, so [AppPageState.error] only keeps the table on screen. A screen
-/// that reports `state: AppPageState.error` MUST also pass `errorKey` (and
-/// `onRetry`) to its [AppDataTable]; otherwise the failure is invisible.
+/// Slots (all optional except [titleKey] and [dataTable]):
+/// * [stats]: summary cards above the surface card (on the canvas).
+/// * [filterBar]: the toolbar + filters (`FilterBar`), inside the card.
+/// * [activeFilters]: only for a screen that does not use `FilterBar`'s own
+///   chip row; shown under the toolbar.
+/// * [viewModeSwitcher]: shown above the data when the screen does not pass
+///   it to `FilterBar.leading`. Never pass it to both.
+/// * [dataTable]: the data area (normally `AppDataView`), including its
+///   footer.
+/// * [actions]: kept for older screens; same place as [stats].
+///
+/// Error contract (one place): with [state] == [AppPageState.error] and an
+/// [errorKey], this template shows the banner and the retry button instead of
+/// the data. A failure while stale data is still shown is [refreshErrorKey]:
+/// the banner appears above the data and the data stays. Without [errorKey]
+/// the old behavior stays: the [dataTable] draws its own error.
+///
+/// Loading shows placeholders that match [loadingViewMode].
+///
+/// Scroll: the whole page is one scroll inside [AppPageBody] (padding, max
+/// width). The body has unbounded height, so nothing below uses `Expanded`.
+/// Slots keep fixed positions, so state in the toolbar (search text) survives
+/// the others appearing or disappearing.
 class ListPageTemplate extends StatelessWidget {
   static const _loadingPlaceholderCount = 5;
 
   const ListPageTemplate({
     super.key,
     required this.titleKey,
-    required this.filterBar,
     required this.dataTable,
+    this.filterBar,
     this.state = AppPageState.content,
     this.count,
     this.primaryAction,
     this.actions,
+    this.stats,
+    this.activeFilters,
+    this.viewModeSwitcher,
     this.emptyState,
     this.breadcrumb,
+    this.errorKey,
+    this.onRetry,
+    this.refreshErrorKey,
+    this.loadingViewMode = AppViewMode.table,
   });
 
   final AppKey titleKey;
   final Widget? breadcrumb;
-  final Widget filterBar;
+  final Widget? filterBar;
   final Widget dataTable;
 
-  /// `error` renders [dataTable]; see the error contract on the class.
+  /// `error` renders [dataTable] unless [errorKey] is given.
   final AppPageState state;
   final int? count;
   final Widget? primaryAction;
   final Widget? actions;
+  final Widget? stats;
+  final Widget? activeFilters;
+  final Widget? viewModeSwitcher;
   final Widget? emptyState;
+  final AppKey? errorKey;
+  final VoidCallback? onRetry;
+  final AppKey? refreshErrorKey;
+  final AppViewMode loadingViewMode;
 
-  /// The whole page is one scroll (header, filters and table together) inside
-  /// [AppPageBody], which also owns the page padding and maximum width. The
-  /// body is laid out with unbounded height, so nothing below uses `Expanded`.
+  static const _none = SizedBox.shrink();
+
   @override
   Widget build(BuildContext context) {
+    final above = stats ?? actions;
+    final gap = context.ui.spacing.md;
     return AppPageBody(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -301,40 +336,109 @@ class ListPageTemplate extends StatelessWidget {
             primaryAction: primaryAction,
             breadcrumb: breadcrumb,
           ),
-          actions != null
+          above != null
               ? Padding(
                   padding: context.ui.padding.symmetric(
                     vertical: AppSpacing.sm,
                   ),
-                  child: actions!,
+                  child: above,
                 )
-              : const SizedBox.shrink(),
-          filterBar,
-          context.ui.spacing.gap(AppSpacing.md),
-          switch (state) {
-            AppPageState.loading => Column(
+              : _none,
+          AppCard(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (var index = 0; index < _loadingPlaceholderCount; index++)
-                  const AppSkeleton.tableRow(),
+                filterBar ?? _none,
+                activeFilters != null
+                    ? Padding(
+                        padding: EdgeInsets.only(top: gap),
+                        child: activeFilters,
+                      )
+                    : _none,
+                viewModeSwitcher != null
+                    ? Padding(
+                        padding: EdgeInsets.only(top: gap),
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: viewModeSwitcher,
+                        ),
+                      )
+                    : _none,
+                SizedBox(height: gap),
+                refreshErrorKey != null
+                    ? Padding(
+                        padding: EdgeInsets.only(bottom: gap),
+                        child: _PageError(
+                          messageKey: refreshErrorKey!,
+                          onRetry: onRetry,
+                        ),
+                      )
+                    : _none,
+                _body(context),
               ],
             ),
-            AppPageState.empty => Padding(
-              padding: context.ui.padding.symmetric(vertical: AppSpacing.xl),
-              child:
-                  emptyState ??
-                  AppEmptyState(
-                    icon: AppIcons.info,
-                    titleKey: CatalogUiKeys.emptyTitle,
-                    descriptionKey: CatalogUiKeys.emptyDescription,
-                  ),
-            ),
-            // AppDataTable owns its error banner and retry action. Do not
-            // render a second page-level error/retry pair here.
-            AppPageState.content || AppPageState.error => dataTable,
-          },
+          ),
         ],
       ),
     );
   }
+
+  Widget _body(BuildContext context) => switch (state) {
+    AppPageState.loading => _loading(context),
+    AppPageState.empty => Padding(
+      padding: context.ui.padding.symmetric(vertical: AppSpacing.xl),
+      child:
+          emptyState ??
+          AppEmptyState(
+            icon: AppIcons.info,
+            titleKey: CatalogUiKeys.emptyTitle,
+            descriptionKey: CatalogUiKeys.emptyDescription,
+          ),
+    ),
+    AppPageState.error when errorKey != null => _PageError(
+      messageKey: errorKey!,
+      onRetry: onRetry,
+    ),
+    AppPageState.content || AppPageState.error => dataTable,
+  };
+
+  Widget _loading(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      for (var index = 0; index < _loadingPlaceholderCount; index++)
+        loadingViewMode == AppViewMode.table
+            ? const AppSkeleton.tableRow()
+            : Padding(
+                padding: EdgeInsets.only(bottom: context.ui.spacing.md),
+                child: const AppSkeleton.card(),
+              ),
+    ],
+  );
+}
+
+/// The page-level failure: the banner plus a retry action.
+class _PageError extends StatelessWidget {
+  const _PageError({required this.messageKey, this.onRetry});
+
+  final AppKey messageKey;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      InlineBanner(messageKey: messageKey, variant: InlineBannerVariant.error),
+      if (onRetry != null)
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: AppButton(
+            CatalogUiKeys.retry,
+            variant: AppButtonVariant.text,
+            onPressed: onRetry,
+          ),
+        ),
+    ],
+  );
 }

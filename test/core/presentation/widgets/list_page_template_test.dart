@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
@@ -21,7 +25,7 @@ void main() {
           activeFilters: const [],
           onClearAll: () {},
         ),
-        dataTable: AppDataTable<String>(
+        dataTable: AppDataView<String>(
           columns: [
             DataTableColumn<String>(
               labelKey: CatalogUiKeys.search,
@@ -145,5 +149,155 @@ void main() {
           .text,
       'search survives',
     );
+  });
+
+  group('single surface, optional slots and one error contract', () {
+    Widget page({
+      AppPageState state = AppPageState.content,
+      Widget? filterBar,
+      Widget? stats,
+      Widget? activeFilters,
+      Widget? viewModeSwitcher,
+      AppKey? errorKey,
+      AppKey? refreshErrorKey,
+      VoidCallback? onRetry,
+      AppViewMode loadingViewMode = AppViewMode.table,
+    }) => Scaffold(
+      body: ListPageTemplate(
+        titleKey: CatalogUiKeys.filters,
+        filterBar: filterBar,
+        stats: stats,
+        activeFilters: activeFilters,
+        viewModeSwitcher: viewModeSwitcher,
+        state: state,
+        errorKey: errorKey,
+        refreshErrorKey: refreshErrorKey,
+        onRetry: onRetry,
+        loadingViewMode: loadingViewMode,
+        dataTable: const Text('DATA'),
+      ),
+    );
+
+    testWidgets('filterBar is optional', (tester) async {
+      await tester.pumpWidget(buildTestApp(home: page()));
+      expect(find.text('DATA'), findsOneWidget);
+      expect(find.byType(FilterBar), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('toolbar, filters and data share one AppCard', (tester) async {
+      await tester.pumpWidget(
+        buildTestApp(
+          home: page(
+            filterBar: FilterBar(
+              onSearchChanged: (_) {},
+              activeFilters: const [],
+              onClearAll: () {},
+            ),
+            stats: const Text('STATS'),
+          ),
+        ),
+      );
+      expect(find.byType(AppCard), findsOneWidget);
+      final card = find.byType(AppCard);
+      expect(
+        find.descendant(of: card, matching: find.byType(FilterBar)),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: card, matching: find.text('DATA')),
+        findsOneWidget,
+      );
+      // Stats sit outside the card, on the canvas.
+      expect(
+        find.descendant(of: card, matching: find.text('STATS')),
+        findsNothing,
+      );
+      expect(find.text('STATS'), findsOneWidget);
+    });
+
+    testWidgets('errorKey: banner and retry replace the data', (tester) async {
+      var retries = 0;
+      await tester.pumpWidget(
+        buildTestApp(
+          home: page(
+            state: AppPageState.error,
+            errorKey: CatalogUiKeys.emptyDescription,
+            onRetry: () => retries++,
+          ),
+        ),
+      );
+      expect(find.text('DATA'), findsNothing);
+      expect(find.text('Retry'), findsOneWidget);
+      await tester.tap(find.text('Retry'));
+      expect(retries, 1);
+    });
+
+    testWidgets('refreshErrorKey keeps the data and shows the banner', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(
+          home: page(
+            refreshErrorKey: CatalogUiKeys.emptyDescription,
+            onRetry: () {},
+          ),
+        ),
+      );
+      expect(find.text('DATA'), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
+    });
+
+    testWidgets('loading placeholders follow the view mode', (tester) async {
+      await tester.pumpWidget(
+        buildTestApp(
+          home: page(state: AppPageState.loading),
+        ),
+      );
+      final rows = tester
+          .widgetList<AppSkeleton>(find.byType(AppSkeleton))
+          .where((s) => s.variant == AppSkeletonVariant.tableRow)
+          .length;
+      expect(rows, greaterThan(0));
+      await tester.pumpWidget(
+        buildTestApp(
+          home: page(
+            state: AppPageState.loading,
+            loadingViewMode: AppViewMode.cards,
+          ),
+        ),
+      );
+      final cards = tester
+          .widgetList<AppSkeleton>(find.byType(AppSkeleton))
+          .where((s) => s.variant == AppSkeletonVariant.card)
+          .length;
+      expect(cards, greaterThan(0));
+    });
+
+    testWidgets('search text survives slots appearing', (tester) async {
+      var showStats = false;
+      late StateSetter update;
+      await tester.pumpWidget(
+        buildTestApp(
+          home: StatefulBuilder(
+            builder: (context, setState) {
+              update = setState;
+              return page(
+                stats: showStats ? const Text('STATS') : null,
+                filterBar: FilterBar(
+                  onSearchChanged: (_) {},
+                  activeFilters: const [],
+                  onClearAll: () {},
+                ),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.enterText(find.byType(TextField).first, 'kept');
+      update(() => showStats = true);
+      await tester.pumpAndSettle();
+      expect(find.text('kept'), findsOneWidget);
+    });
   });
 }

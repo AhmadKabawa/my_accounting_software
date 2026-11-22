@@ -9,7 +9,7 @@ class AppCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = AppSpacing.md,
-    this.radius = AppRadius.lg,
+    this.radius = AppSurfaceShape.card,
     this.onTap,
     this.semanticsLabel,
     this.selected = false,
