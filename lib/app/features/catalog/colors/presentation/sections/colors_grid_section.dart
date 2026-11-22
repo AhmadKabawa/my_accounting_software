@@ -133,7 +133,9 @@ class ColorsGridSection extends StatelessWidget {
                             labelKey: color.isActive
                                 ? ColorsKeys.deactivate
                                 : ColorsKeys.activate,
-                            destructive: color.isActive,
+                            iconColor: color.isActive
+                                ? context.ui.theme.colors.error
+                                : null,
                             onPressed: () => onToggleStatus(color),
                           ),
                         ],
