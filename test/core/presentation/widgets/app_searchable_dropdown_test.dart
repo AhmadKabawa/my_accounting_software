@@ -122,6 +122,7 @@ void main() {
 
     final allOption = find.text('All options');
     expect(allOption, findsOneWidget);
+    expect(find.byIcon(Icons.check), findsOneWidget);
     await tester.tap(allOption);
     await tester.pumpAndSettle();
     expect(changes, [null]);
