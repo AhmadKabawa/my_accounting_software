@@ -18,7 +18,7 @@ void main() {
     );
     expect(
       registered.map((key) => key.key).toSet(),
-      hasLength(ColorsKeys.values.length),
+      hasLength(ColorsKeys.values.length + ColorFailureKeys.values.length),
     );
     expect(english['colors.title'], 'Colors');
     expect(english['colors.name'], 'Color name');
