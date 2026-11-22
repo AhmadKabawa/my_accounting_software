@@ -268,7 +268,7 @@
 
 ## AppColorPicker وColorNameResolver وAppIconTone
 
-- AppColorPicker: `presentation/widgets/app_color_picker/` (تحديد لون HSV، HEX، Presets، swatch، copy).
-- ColorNameResolver: `foundation/color/` (مطابقة CIELAB/ΔE76 محلية، اقتراح اسم لون فقط).
+- AppColorPicker: `presentation/widgets/app_color_picker/` (تحديد HSV/SV، Hue، تحرير HEX، Presets صالحة فقط، swatch، copy؛ مزامنة القيمة الخارجية؛ تعديل HEX اليدوي يسقط alpha، والتعديل عبر HSV يحافظ عليه).
+- ColorNameResolver: `foundation/color/` (مطابقة CIELAB/ΔE76 محلية، اقتراح اسم لون فقط؛ القيم المرجعية تشمل forestGreen `#228B22` وorange `#F57C21` وturquoise `#05AD9D`).
 - AppIconTone: `presentation/widgets/app_icon/` (لون دلالي عبر ColorScheme وAppSemanticColors؛ لا نظام ألوان مستقل).
-- SearchableDropdown: `presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart`؛ يظل autocomplete الحالي متوافقاً، ويضاف نمط panel عند اكتمال التنفيذ.
+- SearchableDropdown: `presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart`؛ `SearchableDropdownMode.autocomplete` هو الافتراضي ويحافظ على RawAutocomplete والبحث البعيد، و`SearchableDropdownMode.panel` نمط trigger يفتح لوحة بحث مستقلة على desktop وحقل بحث داخل BottomSheet على الهاتف. يبدأ البحث فارغاً، وتظهر «الكل» أولاً إن مررت `allOptionLabel`، وتظهر ✓ للقيمة المختارة، وتغلق اللوحة عند الاختيار. يدعم أسهم/Enter/Esc وSemantics وحالة لا نتائج.
