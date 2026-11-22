@@ -44,6 +44,8 @@ void main() {
   testWidgets('active search and status are represented as removable chips', (
     tester,
   ) async {
+    var searchCleared = false;
+    var statusCleared = false;
     await tester.pumpWidget(
       buildTestApp(
         home: Scaffold(
@@ -52,8 +54,8 @@ void main() {
               search: 'navy',
               status: ColorStatusFilter.active,
             ),
-            onSearchChanged: (_) {},
-            onStatusChanged: (_) {},
+            onSearchChanged: (value) => searchCleared = value.isEmpty,
+            onStatusChanged: (value) => statusCleared = value == ColorStatusFilter.all,
             onClearAll: () {},
           ),
         ),
@@ -63,5 +65,9 @@ void main() {
     expect(find.text('Search by color name or code: navy'), findsOneWidget);
     expect(find.text('Status: Active'), findsOneWidget);
     expect(find.byType(AppBadge), findsNWidgets(2));
+    await tester.tap(find.descendant(of: find.byType(AppBadge).first, matching: find.byType(InkWell)));
+    expect(searchCleared, isTrue);
+    await tester.tap(find.descendant(of: find.byType(AppBadge).last, matching: find.byType(InkWell)));
+    expect(statusCleared, isTrue);
   });
 }
