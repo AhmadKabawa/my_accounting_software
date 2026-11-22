@@ -85,7 +85,6 @@ class _SearchableDropdownState<T extends Object>
   late final FocusNode _desktopFocusNode;
   final _panelTriggerKey = GlobalKey();
   final _panelLayerLink = LayerLink();
-  bool _hasInitializedPanelLabel = false;
   OverlayEntry? _desktopPanelEntry;
   Completer<_PickerSelection<T>?>? _desktopPanelCompleter;
 
@@ -168,22 +167,6 @@ class _SearchableDropdownState<T extends Object>
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (widget.mode != SearchableDropdownMode.panel) return;
-    if (!_hasInitializedPanelLabel) {
-      _hasInitializedPanelLabel = true;
-      _setText(_panelDisplayLabel(context));
-      return;
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _desktopFocusNode.hasFocus) return;
-      _setText(_panelDisplayLabel(context));
-      setState(() {});
-    });
-  }
-
-  @override
   void didUpdateWidget(covariant SearchableDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
@@ -217,20 +200,6 @@ class _SearchableDropdownState<T extends Object>
       });
     }
 
-    final panelLabelChanged =
-        oldWidget.value != widget.value ||
-        oldWidget.allOptionLabel != widget.allOptionLabel ||
-        oldWidget.mode != widget.mode;
-    if (panelLabelChanged && !_desktopFocusNode.hasFocus) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || _desktopFocusNode.hasFocus) return;
-        final label = widget.mode == SearchableDropdownMode.panel
-            ? _panelDisplayLabel(context)
-            : _selectedLabel;
-        _setText(label);
-        setState(() {});
-      });
-    }
     _desktopPanelEntry?.markNeedsBuild();
   }
 
@@ -413,36 +382,16 @@ class _SearchableDropdownState<T extends Object>
 
   Widget _panelTrigger(BuildContext context, SearchableDropdownStyle style) {
     final label = _panelDisplayLabel(context);
-    return Semantics(
-      button: true,
-      enabled: widget.enabled && !widget.readOnly,
-      label: widget.labelKey.tr(context: context),
-      value: label,
-      excludeSemantics: true,
+    return _PanelTrigger(
+      key: ValueKey(label),
+      label: label,
+      labelKey: widget.labelKey,
+      enabled: widget.enabled,
+      readOnly: widget.readOnly,
+      style: style,
       onTap: widget.enabled && !widget.readOnly
           ? () => _openPanelPicker(context)
           : null,
-      child: CompositedTransformTarget(
-        key: _panelTriggerKey,
-        link: _panelLayerLink,
-        child: InkWell(
-          onTap: widget.enabled && !widget.readOnly
-              ? () => _openPanelPicker(context)
-              : null,
-          borderRadius: style.radius,
-          child: ExcludeFocus(
-            child: IgnorePointer(
-              child: AppTextField(
-                controller: _desktopController,
-                labelKey: widget.labelKey,
-                readOnly: true,
-                enabled: widget.enabled,
-                suffix: const AppIcon(AppIcons.expand),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -1127,4 +1076,73 @@ class _PanelSearchPickerState<T extends Object>
       ),
     );
   }
+}
+
+
+/// Owns the read-only panel trigger controller. The parent keys this widget by
+/// the label derived during build, so a changed selection rebuilds the field
+/// without lifecycle callbacks or post-frame controller mutations.
+class _PanelTrigger extends StatefulWidget {
+  const _PanelTrigger({
+    super.key,
+    required this.label,
+    required this.labelKey,
+    required this.enabled,
+    required this.readOnly,
+    required this.style,
+    required this.onTap,
+  });
+
+  final String label;
+  final AppKey labelKey;
+  final bool enabled;
+  final bool readOnly;
+  final SearchableDropdownStyle style;
+  final VoidCallback? onTap;
+
+  @override
+  State<_PanelTrigger> createState() => _PanelTriggerState();
+}
+
+class _PanelTriggerState extends State<_PanelTrigger> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.label);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    enabled: widget.enabled && !widget.readOnly,
+    label: widget.labelKey.tr(context: context),
+    value: widget.label,
+    excludeSemantics: true,
+    onTap: widget.onTap,
+    child: CompositedTransformTarget(
+      child: InkWell(
+        onTap: widget.onTap,
+        borderRadius: widget.style.radius,
+        child: ExcludeFocus(
+          child: IgnorePointer(
+            child: AppTextField(
+              controller: _controller,
+              labelKey: widget.labelKey,
+              readOnly: true,
+              enabled: widget.enabled,
+              suffix: const AppIcon(AppIcons.expand),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
