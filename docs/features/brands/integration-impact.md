@@ -11,7 +11,7 @@ DATA_MODEL/API source: docs/backend/DATA_MODEL.md snapshot 2026-11-15; docs/back
 ## 2. Create/select from this flow
 - Brands CRUD remains the only flow in scope.
 - Do not add «عرض المنتجات», a Slot, placeholder action, or feature abstraction: Products does not exist.
-- Product count is display/filter data only after PostgREST embedded count and RLS are verified.
+- The existing product-count column and BrandProductsBadge continue to use the pre-existing products(count) request; live PostgREST/RLS behavior is NOT_VERIFIED but this does not justify removing existing UI. New product-presence filters and with/without-products cards remain hidden until verified.
 
 ## 3. Navigation
 - No cross-feature navigation is added. Future Brands-to-Products navigation is designed when Products exists and follows ADR-0007. ADR-0004 permits importing another feature's routes for navigation only.
@@ -32,7 +32,7 @@ DATA_MODEL/API source: docs/backend/DATA_MODEL.md snapshot 2026-11-15; docs/back
 
 ## 7. Search/filter/sort and aggregation
 - Current search is name/slug; status maps to is_active.
-- Product-presence filter and with/without-products stats require verified server-side relation count. B-10 asks for SECURITY INVOKER RPC; B-12 asks for products(brand_id) index; B-13 optionally supplies list View/RPC for count sorting.
+- The existing product count remains sourced from products(count), without loading product rows. New product-presence filter (all/with/without) and with/without-products stats use PostgREST count requests with an embedded products relation, but stay hidden while live semantics/RLS are NOT_VERIFIED. B-10 asks for SECURITY INVOKER RPC; B-12 asks for products(brand_id) index; B-13 optionally supplies list View/RPC for count sorting.
 - Never calculate counts from loaded page or download products into Flutter.
 
 ## 8. Lifecycle
