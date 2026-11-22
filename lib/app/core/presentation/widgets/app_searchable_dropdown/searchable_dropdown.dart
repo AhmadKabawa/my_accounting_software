@@ -62,8 +62,8 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   final bool clearable;
   final WidgetBuilder? onAddNew;
 
-  /// Optional localized label for an explicit null selection (for example,
-  /// “All statuses”). It is rendered as a first-class panel option.
+  /// Optional localized label for the null selection. Panel mode defaults to
+  /// [CatalogUiKeys.allOptions] when this override is omitted.
   final AppKey? allOptionLabel;
 
   /// `autocomplete` preserves the original editable/remote-search contract.
@@ -364,7 +364,8 @@ class _SearchableDropdownState<T extends Object>
 
 
   String _panelDisplayLabel(BuildContext context) {
-    if (widget.value != null) return widget.optionLabel(widget.value as T);
+    final value = widget.value;
+    if (value != null) return widget.optionLabel(value);
     return (widget.allOptionLabel ?? CatalogUiKeys.allOptions).tr(context: context);
   }
 
