@@ -34,7 +34,7 @@ enum ColorName {
   royalBlue(0x4169E1),
   skyBlue(0x87CEEB),
   babyBlue(0x89CFF0),
-  turquoise(0x40E0D0),
+  turquoise(0x05AD9D),
   teal(0x008080),
   aqua(0x00FFFF),
   mint(0x98FF98),
