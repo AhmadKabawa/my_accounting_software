@@ -61,9 +61,9 @@ class _AccessRepository implements AccessRepository {
 }
 
 Widget _withAccess(Widget child) => BlocProvider<AccessCubit>(
-  create: (_) => AccessCubit(
-    getMyAccess: GetMyAccessUseCase(_AccessRepository()),
-  )..load(),
+  create: (_) =>
+      AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))
+        ..load(),
   child: Scaffold(body: child),
 );
 
