@@ -106,10 +106,10 @@
 
 ## تغطية مكونات UX Foundation (هذه المجموعة) — تحديث 2026-11-22
 
-- `app_searchable_dropdown_test.dart`: فتح/اختيار/إعادة فتح/اختيار قيمة أخرى، nullable all option في لوحة سطح المكتب، واختبار تنقل لوحة المفاتيح عبر ArrowDown/Enter. لوحة RawAutocomplete تدير إبراز الخيار والتنقل الافتراضي؛ علامة check وSemantics.selected تعكسان القيمة الحالية. لم يُشغّل.
+- `app_searchable_dropdown_test.dart`: اختبار إعادة الخلل لاختيار «الكل» مع بقاء التركيز، autocomplete القديم، ونمط `panel` على desktop والهاتف: فتح/اختيار/إعادة فتح/اختيار آخر، «الكل» و✓، إغلاق الاختيار، البحث ثم الإغلاق وإعادة الفتح باستعلام فارغ، ArrowUp/ArrowDown/Enter/Esc، وحالة لا نتائج. الاختبار التمهيدي أضيف قبل إصلاح callback؛ لم يُشغّل في بيئة التعديل (Flutter SDK غير متاح)، ونتيجته `NOT_VERIFIED` حتى التشغيل المحلي.
 - `brands_filter_bar_test.dart` و`colors_filter_bar_test.dart`: ربط البحث وتغيير الحالة إلى inactive، وتمثيل البحث والحالة النشطين كشرائح قابلة للإزالة. تدفق المصدر: FilterBar يرسل البحث فوراً، وBrandsListCubit/ColorsListCubit يملكان debounce (300ms)؛ تغيير الحالة يستدعي setStatus ثم load، ومسح الكل يعيد البحث والحالة والصفحة. لم يُشغّل.
 - `app_filter_bar_test.dart`: مسح البحث، إزالة شريحة البحث، مسح الكل، تخطيط responsive، محرر الهاتف/سطح المكتب.
 - `app_color_picker_test.dart`: null، HEX صالح/غير صالح، حفظ alpha عند السحب، إسقاط alpha عند إدخال HEX يدوياً، تجاهل preset غير صالح، اختيار preset صالح، ومزامنة قيمة خارجية. لم يُشغّل.
-- `app_icon_tone_test.dart`: تباين ≥3:1 لكل tone على surface في light/dark. أضيفت بوابة `feature_imports_test.dart` لمنع `AppIcon(color: ...)` في Features مع قائمة `_iconColorKnownDebt` (فارغة حالياً). لم يُشغّل؛ يجب التأكد من نتائج المسح محلياً.
-- `ColorNameResolver`: اختبارات المطابقة ΔE76 والحالات الحدية موجودة من التغييرات السابقة؛ لم تُشغّل.
-- **حالة التحقق:** كل الاختبارات الجديدة مكتوبة فقط. `dart format`, `flutter analyze` و`flutter test` غير منفذة من هذه الجلسة، ولا تُعد أي نتيجة ناجحة قبل تشغيلها محلياً.
+- `app_icon_tone_test.dart`: تغطية تباين النغمات؛ `test/architecture/icon_tone_test.dart` يمنع تمرير `color:` مباشرة إلى AppIcon داخل Features، ويقارن المخالفات مع `_knownDebt` التي يجب أن تتقلص. قائمة الدين في الاختبار الجديد فارغة؛ لم يُشغّل.
+- `test/core/foundation/color_name_resolver_test.dart`: يثبت `#228B22` = forestGreen (أخضر غامق)، `#F57C21` = orange، و`#05AD9D` = turquoise، إضافة إلى RGB/RGBA والمدخلات غير الصالحة؛ لم يُشغّل.
+- **حالة التحقق لهذه المجموعة:** أضيفت الاختبارات والتعديلات فقط. `dart format`, `flutter analyze` و`flutter test` لم تُشغّل من بيئة التعديل لعدم توفر Flutter SDK. نتائج التشغيل السابقة التي أرسلها المستخدم محفوظة في المحادثة ولا تثبت نجاح الكود بعد هذه التعديلات.
