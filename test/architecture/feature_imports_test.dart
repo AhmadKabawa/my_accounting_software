@@ -78,16 +78,16 @@ const _iconColorKnownDebt = <String>{};
 
 Set<String> featureIconColorViolations(Map<String, String> sources) {
   final violations = <String>{};
-  final invocation = RegExp(r'AppIcon(?:\\.fixed)?\\s*\\(');
+  final invocation = RegExp(r'AppIcon(?:\.fixed)?\s*\(');
   sources.forEach((path, content) {
     if (!path.startsWith('lib/app/features/')) return;
-    final lines = content.split('\\n');
+    final lines = content.split('\n');
     for (var index = 0; index < lines.length; index++) {
       if (!invocation.hasMatch(lines[index])) continue;
-      final window = lines.skip(index).take(24).join('\\n');
+      final window = lines.skip(index).take(24).join('\n');
       final end = window.indexOf(')');
       final call = end < 0 ? window : window.substring(0, end + 1);
-      if (RegExp(r'\\bcolor\\s*:').hasMatch(call)) {
+      if (RegExp(r'\bcolor\s*:').hasMatch(call)) {
         violations.add('$path:${index + 1}');
       }
     }
