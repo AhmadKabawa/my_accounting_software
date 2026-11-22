@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/foundation/base/repository_executor
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source.dart';
+import 'package:accounting_software/app/features/catalog/brands/data/datasources/brand_stats_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/models/brand_model.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
@@ -17,8 +18,9 @@ import 'package:accounting_software/app/features/catalog/brands/domain/failures/
 import 'package:accounting_software/app/features/catalog/brands/domain/repositories/brands_repository.dart';
 
 class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
-  const BrandsRepositoryImpl(this._remote);
+  const BrandsRepositoryImpl(this._remote, this._statsRemote);
   final BrandsRemoteDataSource _remote;
+  final BrandStatsRemoteDataSource _statsRemote;
 
   @override
   Future<Either<Failure, PaginatedResult<Brand>>> getBrands(
@@ -43,7 +45,7 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
 
   @override
   Future<Either<Failure, BrandStats>> getBrandStats() => execute(() async {
-    final result = await _remote.getBrandStats();
+    final result = await _statsRemote.getBrandStats();
     return switch (result) {
       ApiSuccess<BrandStats>(:final data) => Right(data),
       ApiFailure<BrandStats>(:final exception) => Left(
