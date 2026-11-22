@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_stats.dart';
 import 'package:accounting_software/app/features/catalog/colors/data/datasources/color_stats_remote_data_source_impl.dart';
 import '../../support/fake_colors_api_client.dart';
 
@@ -11,7 +13,7 @@ void main() {
 
     final result = await source.getColorStats();
 
-    expect(result.isSuccess, isTrue);
+    expect(result, isA<ApiSuccess<ColorStats>>());
     result.when(
       success: (stats) {
         expect(stats.total, 8);
