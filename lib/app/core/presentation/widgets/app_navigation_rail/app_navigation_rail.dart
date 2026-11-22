@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_rail/app_navigation_rail_style.dart';
@@ -14,11 +16,16 @@ class AppNavigationRail extends StatelessWidget {
   final int activeIndex;
   final ValueChanged<int> onIndexChanged;
 
+  /// Not null = a clear button at the top that expands the rail (the owner
+  /// shows the labelled tree; the rail itself stays compact).
+  final VoidCallback? onExpand;
+
   const AppNavigationRail({
     super.key,
     required this.items,
     required this.activeIndex,
     required this.onIndexChanged,
+    this.onExpand,
   });
 
   @override
@@ -30,16 +37,31 @@ class AppNavigationRail extends StatelessWidget {
       child: SafeArea(
         child: SizedBox(
           width: style.width,
-          child: ListView.separated(
-            padding: style.padding,
-            itemCount: items.length,
-            separatorBuilder: (_, _) => SizedBox(height: style.itemGap),
-            itemBuilder: (context, index) => _RailItem(
-              item: items[index],
-              selected: index == activeIndex,
-              style: style,
-              onTap: () => onIndexChanged(index),
-            ),
+          child: Column(
+            children: [
+              if (onExpand != null)
+                Padding(
+                  padding: style.padding,
+                  child: AppIconButton(
+                    AppIcons.sidebarExpand,
+                    tooltipKey: ShellKeys.expandSidebar,
+                    onPressed: onExpand,
+                  ),
+                ),
+              Expanded(
+                child: ListView.separated(
+                  padding: style.padding,
+                  itemCount: items.length,
+                  separatorBuilder: (_, _) => SizedBox(height: style.itemGap),
+                  itemBuilder: (context, index) => _RailItem(
+                    item: items[index],
+                    selected: index == activeIndex,
+                    style: style,
+                    onTap: () => onIndexChanged(index),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

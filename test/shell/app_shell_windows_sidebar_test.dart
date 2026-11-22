@@ -69,8 +69,12 @@ class _MemoryStorage implements StorageService {
   Future<bool> containsKey(StorageKey key) async => values.containsKey(key);
 }
 
-Future<void> _pump(WidgetTester tester, AppSettingsManager settings) async {
-  tester.view.physicalSize = const Size(1400, 900);
+Future<void> _pump(
+  WidgetTester tester,
+  AppSettingsManager settings, {
+  Size size = const Size(1400, 900),
+}) async {
+  tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
@@ -150,5 +154,29 @@ void main() {
       isTrue,
     );
     expect(find.byTooltip(ShellKeys.expandSidebar.en), findsOneWidget);
+  });
+
+  testWidgets('open sections are saved and restored', (tester) async {
+    final settings = AppSettingsManager(storage: _MemoryStorage());
+    await settings.setSidebarOpenSections({'nav.home'});
+    expect(await settings.getSidebarOpenSections(), {'nav.home'});
+    await _pump(tester, settings);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tablet rail expands into the labelled sidebar and closes', (
+    tester,
+  ) async {
+    final settings = AppSettingsManager(storage: _MemoryStorage());
+    await _pump(tester, settings, size: const Size(800, 900));
+    expect(find.byType(AppSidebar), findsNothing);
+
+    await tester.tap(find.byTooltip(ShellKeys.expandSidebar.en));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppSidebar), findsOneWidget);
+
+    await tester.tap(find.byTooltip(ShellKeys.collapseSidebar.en));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppSidebar), findsNothing);
   });
 }

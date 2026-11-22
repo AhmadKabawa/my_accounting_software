@@ -52,12 +52,22 @@ class AppShellTopBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       leading: leading,
       automaticallyImplyLeading: false,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+      // One line at one height: the title, and beside it the trail on wider
+      // screens. A phone shows the title only so the actions never crowd it.
+      title: Row(
         children: [
-          AppText(titleKey, type: AppTextType.titleMedium),
-          if (breadcrumbs.isNotEmpty) AppBreadcrumb(items: breadcrumbs),
+          Flexible(
+            child: AppText(
+              titleKey,
+              type: AppTextType.titleMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (breadcrumbs.isNotEmpty && !context.ui.screen.isMobile) ...[
+            SizedBox(width: context.ui.spacing.md),
+            Flexible(flex: 2, child: AppBreadcrumb(items: breadcrumbs)),
+          ],
         ],
       ),
       actions: [

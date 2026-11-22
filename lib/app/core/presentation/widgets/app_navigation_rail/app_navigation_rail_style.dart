@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/helper/responsive_helper.dart';
 
 /// Every visual value of `AppNavigationRail`, resolved for the current context.
@@ -34,17 +35,17 @@ class AppNavigationRailStyle {
     vertical: AppSpacing.sm,
   );
 
-  BorderRadius get itemRadius => Rh.radius(context, AppRadius.md);
+  BorderRadius get itemRadius => AppSurfaceShape.pill.circular(context);
 
   // ═══════════════════════════════════════════
   // 🔹 COLORS
   // ═══════════════════════════════════════════
 
-  Color get background => _scheme.surfaceContainer;
+  Color get background => _scheme.surface;
 
-  Color get selectedBackground => _scheme.primaryContainer;
+  Color get selectedBackground => context.ui.theme.saasColors.selected;
 
-  Color get selectedForeground => _scheme.onPrimaryContainer;
+  Color get selectedForeground => context.ui.theme.saasColors.onSelected;
 
   Color get foreground => _scheme.onSurfaceVariant;
 

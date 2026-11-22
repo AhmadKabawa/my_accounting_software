@@ -84,34 +84,32 @@ class AppShell extends StatelessWidget {
     this.beforeDestinationChange,
   });
 
+  /// "More" on a phone: the overflow destinations as a main/sub tree (each
+  /// destination followed by its children), not a flat list.
   Future<void> _showMore(
     BuildContext context,
     List<AppDestination> overflow,
   ) async {
-    final selectedBranch = await showModalBottomSheet<int>(
+    final picked = await showModalBottomSheet<_MoreChoice>(
       context: context,
       useSafeArea: true,
-      builder: (sheetContext) => ListView(
-        padding: EdgeInsets.all(AppSpacing.md.of(sheetContext)),
-        shrinkWrap: true,
-        children: [
-          for (final destination in overflow)
-            ListTile(
-              leading: AppIcon(destination.item.icon),
-              title: AppText(destination.item.label),
-              onTap: () =>
-                  Navigator.of(sheetContext).pop(destination.branchIndex),
-            ),
-        ],
+      isScrollControlled: true,
+      builder: (sheetContext) => _MoreTree(
+        destinations: overflow,
+        activePath: _activePath(context),
+        activeBranch: navigationShell.currentIndex,
       ),
     );
-    if (selectedBranch == null || !context.mounted) return;
-    final isActiveBranch = selectedBranch == navigationShell.currentIndex;
-    if (!await _canNavigateTo(context, selectedBranch) || !context.mounted) {
+    if (picked == null || !context.mounted) return;
+    final branch = picked.branch;
+    final isActiveBranch = branch == navigationShell.currentIndex;
+    if (!await _canNavigateTo(context, branch) || !context.mounted) return;
+    if (picked.path != null) {
+      context.go(picked.path!);
       return;
     }
-    navigationShell.goBranch(selectedBranch, initialLocation: isActiveBranch);
-    if (isActiveBranch) unsavedChangesGuard?.discardBranch(selectedBranch);
+    navigationShell.goBranch(branch, initialLocation: isActiveBranch);
+    if (isActiveBranch) unsavedChangesGuard?.discardBranch(branch);
   }
 
   Future<bool> _canNavigateTo(
@@ -302,20 +300,25 @@ class AppShell extends StatelessWidget {
                     ),
             );
           },
-          tablet: (_) => withSideNav(
-            AppNavigationRail(
+          tablet: (_) => Scaffold(
+            appBar: topBar,
+            body: _TabletNavigation(
               items: items,
               activeIndex: current < 0 ? 0 : current,
               onIndexChanged: onSelect,
+              activePath: _activePath(context),
+              onChildSelected: (path) => context.go(path),
+              content: shellContent,
             ),
           ),
           desktop: (_) => withSideNav(
-            supportsCollapsibleSidebar && settingsManager != null
-                ? _PersistedWindowsSidebar(
+            settingsManager != null
+                ? _PersistedSidebar(
                     items: items,
                     activeIndex: current < 0 ? 0 : current,
                     onIndexChanged: onSelect,
                     settingsManager: settingsManager!,
+                    collapsible: supportsCollapsibleSidebar,
                     activePath: _activePath(context),
                     onChildSelected: (path) => context.go(path),
                   )
@@ -333,12 +336,15 @@ class AppShell extends StatelessWidget {
   }
 }
 
-class _PersistedWindowsSidebar extends StatefulWidget {
-  const _PersistedWindowsSidebar({
+/// The desktop sidebar with its preferences: the open sections are always
+/// restored and saved; collapsing is offered only where [collapsible].
+class _PersistedSidebar extends StatefulWidget {
+  const _PersistedSidebar({
     required this.items,
     required this.activeIndex,
     required this.onIndexChanged,
     required this.settingsManager,
+    required this.collapsible,
     this.activePath,
     this.onChildSelected,
   });
@@ -349,15 +355,16 @@ class _PersistedWindowsSidebar extends StatefulWidget {
   final int activeIndex;
   final ValueChanged<int> onIndexChanged;
   final AppSettingsManager settingsManager;
+  final bool collapsible;
 
   @override
-  State<_PersistedWindowsSidebar> createState() =>
-      _PersistedWindowsSidebarState();
+  State<_PersistedSidebar> createState() => _PersistedSidebarState();
 }
 
-class _PersistedWindowsSidebarState extends State<_PersistedWindowsSidebar> {
+class _PersistedSidebarState extends State<_PersistedSidebar> {
   bool _collapsed = false;
   bool _restored = false;
+  Set<String> _openSections = const {};
 
   @override
   void initState() {
@@ -366,10 +373,14 @@ class _PersistedWindowsSidebarState extends State<_PersistedWindowsSidebar> {
   }
 
   Future<void> _restore() async {
-    final collapsed = await widget.settingsManager.getSidebarCollapsed();
+    final collapsed = widget.collapsible
+        ? await widget.settingsManager.getSidebarCollapsed()
+        : false;
+    final open = await widget.settingsManager.getSidebarOpenSections();
     if (!mounted) return;
     setState(() {
       _collapsed = collapsed;
+      _openSections = open;
       _restored = true;
     });
   }
@@ -386,10 +397,170 @@ class _PersistedWindowsSidebarState extends State<_PersistedWindowsSidebar> {
     activeIndex: widget.activeIndex,
     onIndexChanged: widget.onIndexChanged,
     collapsed: _collapsed,
-    onToggle: _restored ? _toggle : null,
+    onToggle: _restored && widget.collapsible ? _toggle : null,
     activePath: widget.activePath,
     onChildSelected: widget.onChildSelected,
+    initialOpenSections: _openSections,
+    onOpenSectionsChanged: (open) =>
+        widget.settingsManager.setSidebarOpenSections(open),
   );
+}
+
+/// Tablet: a compact rail beside the content with a clear button that expands
+/// it into the labelled tree, laid over the content (the content does not
+/// move). Choosing a destination or a child returns it to compact.
+class _TabletNavigation extends StatefulWidget {
+  const _TabletNavigation({
+    required this.items,
+    required this.activeIndex,
+    required this.onIndexChanged,
+    required this.content,
+    this.activePath,
+    this.onChildSelected,
+  });
+
+  final List<NavBarItem> items;
+  final int activeIndex;
+  final ValueChanged<int> onIndexChanged;
+  final String? activePath;
+  final ValueChanged<String>? onChildSelected;
+  final Widget content;
+
+  @override
+  State<_TabletNavigation> createState() => _TabletNavigationState();
+}
+
+class _TabletNavigationState extends State<_TabletNavigation> {
+  bool _expanded = false;
+
+  void _setExpanded(bool value) => setState(() => _expanded = value);
+
+  @override
+  Widget build(BuildContext context) {
+    final rail = AppNavigationRail(
+      items: widget.items,
+      activeIndex: widget.activeIndex,
+      onIndexChanged: widget.onIndexChanged,
+      onExpand: () => _setExpanded(true),
+    );
+    return Stack(
+      children: [
+        Row(
+          children: [
+            rail,
+            Expanded(child: widget.content),
+          ],
+        ),
+        if (_expanded) ...[
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _setExpanded(false),
+              child: ColoredBox(color: Theme.of(context).colorScheme.scrim),
+            ),
+          ),
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            child: Material(
+              elevation: AppElevation.lg.of(context),
+              child: AppSidebar(
+                items: widget.items,
+                activeIndex: widget.activeIndex,
+                activePath: widget.activePath,
+                onToggle: () => _setExpanded(false),
+                onIndexChanged: (index) {
+                  _setExpanded(false);
+                  widget.onIndexChanged(index);
+                },
+                onChildSelected: (path) {
+                  _setExpanded(false);
+                  widget.onChildSelected?.call(path);
+                },
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// What the phone "More" sheet returns: a branch, and the child path when a
+/// child of it was chosen.
+class _MoreChoice {
+  const _MoreChoice(this.branch, [this.path]);
+  final int branch;
+  final String? path;
+}
+
+/// The overflow destinations as a main/sub tree (children indented under
+/// their parent with a connecting line).
+class _MoreTree extends StatelessWidget {
+  const _MoreTree({
+    required this.destinations,
+    required this.activePath,
+    required this.activeBranch,
+  });
+
+  final List<AppDestination> destinations;
+  final String? activePath;
+  final int activeBranch;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return ListView(
+      padding: EdgeInsets.all(AppSpacing.md.of(context)),
+      shrinkWrap: true,
+      children: [
+        for (final destination in destinations) ...[
+          ListTile(
+            selected:
+                destination.branchIndex == activeBranch &&
+                !destination.item.children.any(
+                  (c) => AppSidebar.isChildActive(c, activePath),
+                ),
+            leading: AppIcon(destination.item.icon),
+            title: AppText(destination.item.label),
+            onTap: () => Navigator.of(
+              context,
+            ).pop(_MoreChoice(destination.branchIndex)),
+          ),
+          if (destination.item.children.isNotEmpty)
+            Padding(
+              padding: EdgeInsetsDirectional.only(
+                start: AppSpacing.xl.of(context),
+              ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  border: BorderDirectional(
+                    start: BorderSide(
+                      color: colors.outlineVariant,
+                      width: AppBorderWidth.thin.of(context),
+                    ),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    for (final child in destination.item.children)
+                      ListTile(
+                        selected: AppSidebar.isChildActive(child, activePath),
+                        leading: AppIcon(child.icon),
+                        title: AppText(child.label),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).pop(_MoreChoice(destination.branchIndex, child.path)),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ],
+    );
+  }
 }
 
 class _ShellMobileNavigation extends StatefulWidget {

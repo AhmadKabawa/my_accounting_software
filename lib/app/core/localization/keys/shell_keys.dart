@@ -10,6 +10,8 @@ enum ShellKeys implements AppKey {
   more(ar: 'المزيد', en: 'More'),
   collapseSidebar(ar: 'طي الشريط الجانبي', en: 'Collapse sidebar'),
   expandSidebar(ar: 'توسيع الشريط الجانبي', en: 'Expand sidebar'),
+  expandSection(ar: 'فتح القسم', en: 'Expand section'),
+  collapseSection(ar: 'إغلاق القسم', en: 'Collapse section'),
   back(ar: 'رجوع', en: 'Back');
 
   const ShellKeys({required this.ar, required this.en});
