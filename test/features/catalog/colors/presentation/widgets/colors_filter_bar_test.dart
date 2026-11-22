@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/colors_filter_bar.dart';
-import '../../../../helpers/localized_app.dart';
+import '../../../../../helpers/localized_app.dart';
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
