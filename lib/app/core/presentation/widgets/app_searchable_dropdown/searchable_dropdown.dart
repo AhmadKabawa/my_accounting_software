@@ -367,7 +367,9 @@ class _SearchableDropdownState<T extends Object>
   String _panelDisplayLabel(BuildContext context) {
     final value = widget.value;
     if (value != null) return widget.optionLabel(value);
-    return (widget.allOptionLabel ?? CatalogUiKeys.allOptions).tr(context: context);
+    return (widget.allOptionLabel ?? CatalogUiKeys.allOptions).tr(
+      context: context,
+    );
   }
 
   Widget _panelTrigger(BuildContext context, SearchableDropdownStyle style) {
@@ -417,7 +419,8 @@ class _SearchableDropdownState<T extends Object>
                 optionLabel: widget.optionLabel,
                 optionSubtitle: widget.optionSubtitle,
                 emptyKey: widget.emptyKey,
-                allOptionLabel: widget.allOptionLabel ?? CatalogUiKeys.allOptions,
+                allOptionLabel:
+                    widget.allOptionLabel ?? CatalogUiKeys.allOptions,
                 selectedValue: widget.value,
                 filterLocally: widget.filterLocally,
                 onQueryChanged: widget.onQueryChanged == null ? null : _query,
@@ -440,7 +443,8 @@ class _SearchableDropdownState<T extends Object>
                   optionLabel: widget.optionLabel,
                   optionSubtitle: widget.optionSubtitle,
                   emptyKey: widget.emptyKey,
-                  allOptionLabel: widget.allOptionLabel ?? CatalogUiKeys.allOptions,
+                  allOptionLabel:
+                      widget.allOptionLabel ?? CatalogUiKeys.allOptions,
                   selectedValue: widget.value,
                   filterLocally: widget.filterLocally,
                   onQueryChanged: widget.onQueryChanged == null ? null : _query,
@@ -844,8 +848,13 @@ class _PanelSearchPickerState<T extends Object>
         final normalized = _query.trim().toLowerCase();
         final options = widget.filterLocally && normalized.isNotEmpty
             ? data.options.where((option) {
-                return widget.optionLabel(option).toLowerCase().contains(normalized) ||
-                    (widget.optionSubtitle?.call(option)?.toLowerCase().contains(normalized) ?? false);
+                return widget.optionLabel(option).toLowerCase().contains(
+                      normalized,
+                    ) ||
+                    (widget.optionSubtitle?.call(option)?.toLowerCase().contains(
+                          normalized,
+                        ) ??
+                        false);
               }).toList(growable: false)
             : data.options;
         const allCount = 1;
@@ -893,33 +902,46 @@ class _PanelSearchPickerState<T extends Object>
                   context.ui.spacing.gap(AppSpacing.md),
                   Expanded(
                     child: data.errorKey != null
-                        ? InlineBanner(messageKey: data.errorKey!, variant: InlineBannerVariant.error)
+                        ? InlineBanner(
+                            messageKey: data.errorKey!,
+                            variant: InlineBannerVariant.error,
+                          )
                         : data.loading
                         ? const AppSkeleton.block()
                         : ListView(
                             children: [
                               _tile(
-                                  context,
-                                  widget.allOptionLabel.tr(context: context),
-                                  selected: widget.selectedValue == null,
-                                  active: _activeIndex == 0,
-                                  onTap: () => widget.onSelect(null),
-                                ),
+                                context,
+                                widget.allOptionLabel.tr(context: context),
+                                selected: widget.selectedValue == null,
+                                active: _activeIndex == 0,
+                                onTap: () => widget.onSelect(null),
+                              ),
                               if (options.isEmpty && _query.trim().isNotEmpty)
                                 Padding(
-                                  padding: context.ui.padding.all(AppSpacing.md),
+                                  padding: context.ui.padding.all(
+                                    AppSpacing.md,
+                                  ),
                                   child: AppText(widget.emptyKey),
                                 ),
-                              for (var index = 0; index < options.length; index++)
+                              for (
+                                var index = 0;
+                                index < options.length;
+                                index++
+                              )
                                 _tile(
                                   context,
                                   widget.optionLabel(options[index]),
-                                  subtitle: widget.optionSubtitle?.call(options[index]),
-                                  selected: widget.selectedValue == options[index],
+                                  subtitle: widget.optionSubtitle?.call(
+                                    options[index],
+                                  ),
+                                  selected:
+                                      widget.selectedValue == options[index],
                                   active: _activeIndex == index + allCount,
                                   onTap: () => widget.onSelect(options[index]),
                                 ),
-                              if (widget.onAddNew != null) widget.onAddNew!(context),
+                              if (widget.onAddNew != null)
+                                widget.onAddNew!(context),
                             ],
                           ),
                   ),
@@ -946,7 +968,9 @@ class _PanelSearchPickerState<T extends Object>
       child: InkWell(
         onTap: onTap,
         child: Container(
-          color: active ? context.ui.theme.colors.surfaceContainerHighest : null,
+          color: active
+              ? context.ui.theme.colors.surfaceContainerHighest
+              : null,
           padding: context.ui.padding.symmetric(vertical: AppSpacing.sm),
           child: Row(
             children: [
@@ -965,7 +989,8 @@ class _PanelSearchPickerState<T extends Object>
                   ],
                 ),
               ),
-              if (selected) const AppIcon(AppIcons.check, tone: AppIconTone.primary),
+              if (selected)
+                const AppIcon(AppIcons.check, tone: AppIconTone.primary),
             ],
           ),
         ),
