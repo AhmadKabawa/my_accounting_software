@@ -61,6 +61,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
     final link = find.byType(TextButton);
     final size = tester.getSize(link);
     final minimum = AppComponentSize.hitArea.of(tester.element(link));
