@@ -26,7 +26,7 @@
 - UI permission gates are usability only, not authorization.
 
 ## 5. Main scenarios
-- Search by name/slug and filter by active state or product presence.
+- Search by name/slug and filter by active state. Product-presence filtering is deferred until relation-count behavior is verified.
 - Click a statistics card to apply its corresponding filter and show a chip.
 - Create/update/delete/toggle; refresh stats after each successful mutation.
 - Stats failure must not block list loading; list failure must not hide stats.
@@ -69,7 +69,7 @@ Do not display id, uuid, origin_node_id, updated_at, or invented created_at.
 ## 10. Search, filters, sort
 - Search: name and slug; server ilike with escaped values; debounce only in BrandsListCubit.
 - Status options: active/inactive; null means all; all is allOptionLabel, not an option.
-- Product filter: all/with products/without products; null means all.
+- Product-presence filter: NOT_IMPLEMENTED / hidden until B-10 and live PostgREST/RLS behavior are verified; do not render an unverified filter.
 - Chips represent active filters; clear-all resets search and both filters.
 - Sort remains name only. created_at sort waits for B-11. Product-count sort waits for B-13 if unsupported by PostgREST.
 - Counts never depend on loaded page.
