@@ -66,9 +66,7 @@ class BrandStatsBar extends StatelessWidget {
       borderRadius: AppRadius.lg.circular(context),
     ),
     child: Padding(
-      padding: EdgeInsets.all(
-        selected ? AppBorderWidth.thick.of(context) : 0,
-      ),
+      padding: EdgeInsets.all(selected ? AppBorderWidth.thick.of(context) : 0),
       child: AppCard(
         onTap: () => onFilterSelected(filter),
         padding: AppSpacing.md,
