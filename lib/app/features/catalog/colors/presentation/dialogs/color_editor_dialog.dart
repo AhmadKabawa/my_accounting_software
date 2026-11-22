@@ -48,6 +48,7 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
   String? _lastAutoName;
   bool _manualName = false;
   bool _updatingName = false;
+  bool _resolvedInitialName = false;
 
   List<TextEditingController> get _controllers => [
     _name,
@@ -78,7 +79,14 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
     _code = TextEditingController(text: _initial[1]);
     _hex = TextEditingController(text: _initial[2]);
     _sortOrder = TextEditingController(text: _initial[3]);
-    _lastAutoName = _suggestedName(context, color?.hexCode);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_resolvedInitialName) return;
+    _resolvedInitialName = true;
+    _lastAutoName = _suggestedName(context, widget.color?.hexCode);
     if (_name.text.trim().isEmpty && _lastAutoName != null) {
       _setAutoName(_lastAutoName!);
     } else {
