@@ -232,27 +232,6 @@ class _SearchableDropdownState<T extends Object>
   /// still equals the selected label it is just the shown value, so the full
   /// option list is offered (otherwise re-opening after a choice would list
   /// only the chosen option).
-  void _refreshAutocompleteOptions(
-    TextEditingController controller,
-    FocusNode focusNode,
-  ) {
-    void refresh() {
-      if (!mounted || !focusNode.hasFocus) return;
-      final current = controller.value;
-      controller.value = current.copyWith(
-        text: '${current.text} ',
-        selection: TextSelection.collapsed(offset: current.text.length + 1),
-        composing: TextRange.empty,
-      );
-      controller.value = current;
-    }
-
-    if (focusNode.hasFocus) {
-      refresh();
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) => refresh());
-    }
-  }
 
   String _effectiveQuery(String text) =>
       widget.value != null && text == _selectedLabel ? '' : text;
@@ -341,7 +320,11 @@ class _SearchableDropdownState<T extends Object>
               hintKey: CatalogUiKeys.search,
               textInputAction: TextInputAction.search,
               onChanged: _query,
-              onTap: () => _refreshAutocompleteOptions(controller, focusNode),
+              onTap: () {
+                if (widget.value != null && controller.text == _selectedLabel) {
+                  controller.clear();
+                }
+              },
               onSubmitted: onFieldSubmitted,
               suffix: !_showClear(controller.text)
                   ? null
