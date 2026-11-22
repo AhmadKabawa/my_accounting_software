@@ -802,6 +802,7 @@ class _PanelSearchPickerState<T extends Object>
   final _searchFocus = FocusNode();
   String _query = '';
   int _activeIndex = 0;
+  bool _selectionMade = false;
 
   @override
   void dispose() {
@@ -811,13 +812,16 @@ class _PanelSearchPickerState<T extends Object>
   }
 
   void _selectActive(List<T> options) {
+    if (_selectionMade) return;
     const allCount = 1;
     if (_activeIndex == 0) {
+      _selectionMade = true;
       widget.onSelect(null);
       return;
     }
     final index = _activeIndex - allCount;
     if (index >= 0 && index < options.length) {
+      _selectionMade = true;
       widget.onSelect(options[index]);
     }
   }
@@ -887,6 +891,7 @@ class _PanelSearchPickerState<T extends Object>
                       setState(() {
                         _query = value;
                         _activeIndex = 0;
+                        _selectionMade = false;
                       });
                       widget.onQueryChanged?.call(value);
                     },
@@ -900,6 +905,7 @@ class _PanelSearchPickerState<T extends Object>
                               setState(() {
                                 _query = '';
                                 _activeIndex = 0;
+                                _selectionMade = false;
                               });
                               widget.onQueryChanged?.call('');
                             },
