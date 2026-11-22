@@ -116,7 +116,7 @@ Do not display id, uuid, origin_node_id, updated_at, or invented created_at.
 - Verify panel, chips, cards and empty states in both themes.
 
 ## 18. Core and design system
-- Reuse SearchableDropdown panel mode, FilterBar, AppIcon(tone:), AppBadge, AppCard, ListPageTemplate, AppEmptyState and tokens.
+- Reuse SearchableDropdown panel mode, FilterBar, AppIcon(tone:), AppBadge, AppCard, ListPageTemplate, AppEmptyState and tokens. Panel trigger labels are derived during build; a keyed trigger owns its controller, with no label-sync setState/post-frame callback in didChangeDependencies or didUpdateWidget. Autocomplete's separate option-refresh behavior is retained.
 - No Core expansion requested.
 - AppIconTone meanings are in DESIGN_SYSTEM.md; _knownDebt in icon_tone_test remains empty.
 
