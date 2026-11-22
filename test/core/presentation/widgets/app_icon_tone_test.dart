@@ -26,7 +26,7 @@ void main() {
         await tester.pumpWidget(buildTestApp(theme: theme, home: Scaffold(body: AppIcon(AppIcons.add, tone: tone))));
         final icon = tester.widget<Icon>(find.byType(Icon).first);
         final surface = theme.colorScheme.surface;
-        expect(_ratio(icon.color!, surface), greaterThanOrEqualTo(3, reason: tone.name));
+        expect(_ratio(icon.color!, surface), greaterThanOrEqualTo(3), reason: tone.name);
       }
     }
   });
