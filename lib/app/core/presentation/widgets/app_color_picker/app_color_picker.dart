@@ -106,16 +106,16 @@ class _AppColorPickerState extends State<AppColorPicker> {
     widget.onChanged(_output());
   }
 
-  void _sv(Offset p) {
+  void _sv(Offset p, double size) {
     setState(() {
-      _sat = (p.dx / _size).clamp(0.0, 1.0);
-      _val = (1 - p.dy / _size).clamp(0.0, 1.0);
+      _sat = (p.dx / size).clamp(0.0, 1.0);
+      _val = (1 - p.dy / size).clamp(0.0, 1.0);
     });
     _emit();
   }
 
-  void _setHue(double x) {
-    setState(() => _hue = (x / _size * 360).clamp(0.0, 360.0));
+  void _setHue(double x, double width) {
+    setState(() => _hue = (x / width * 360).clamp(0.0, 360.0));
     _emit();
   }
 
@@ -136,38 +136,58 @@ class _AppColorPickerState extends State<AppColorPicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Semantics(
-          label: AppColorPickerKeys.sv.tr(context: context),
-          slider: true,
-          child: GestureDetector(
-            onPanDown: (e) => _sv(e.localPosition),
-            onPanUpdate: (e) => _sv(e.localPosition),
-            child: SizedBox(
-              width: _size,
-              height: _size,
-              child: CustomPaint(
-                painter: _SvPainter(_hue, _sat, _val),
-                child: const SizedBox.expand(),
-              ),
-            ),
-          ),
-        ),
-        ui.spacing.gap(AppSpacing.md),
-        Semantics(
-          label: AppColorPickerKeys.hue.tr(context: context),
-          slider: true,
-          child: GestureDetector(
-            onPanDown: (e) => _setHue(e.localPosition.dx),
-            onPanUpdate: (e) => _setHue(e.localPosition.dx),
-            child: SizedBox(
-              width: _size,
-              height: _hueHeight,
-              child: CustomPaint(
-                painter: _HuePainter(_hue),
-                child: const SizedBox.expand(),
-              ),
-            ),
-          ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final pickerSize = constraints.maxWidth.isFinite
+                ? constraints.maxWidth.clamp(0.0, _size).toDouble()
+                : _size;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: SizedBox(
+                    width: pickerSize,
+                    height: pickerSize,
+                    child: Semantics(
+                      label: AppColorPickerKeys.sv.tr(context: context),
+                      slider: true,
+                      child: GestureDetector(
+                        onPanDown: (e) => _sv(e.localPosition, pickerSize),
+                        onPanUpdate: (e) => _sv(e.localPosition, pickerSize),
+                        child: CustomPaint(
+                          painter: _SvPainter(_hue, _sat, _val),
+                          child: const SizedBox.expand(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                ui.spacing.gap(AppSpacing.md),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: SizedBox(
+                    width: pickerSize,
+                    height: _hueHeight,
+                    child: Semantics(
+                      label: AppColorPickerKeys.hue.tr(context: context),
+                      slider: true,
+                      child: GestureDetector(
+                        onPanDown: (e) =>
+                            _setHue(e.localPosition.dx, pickerSize),
+                        onPanUpdate: (e) =>
+                            _setHue(e.localPosition.dx, pickerSize),
+                        child: CustomPaint(
+                          painter: _HuePainter(_hue),
+                          child: const SizedBox.expand(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
         ui.spacing.gap(AppSpacing.md),
         Row(
