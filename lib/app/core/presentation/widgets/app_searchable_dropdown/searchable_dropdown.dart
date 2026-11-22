@@ -85,6 +85,7 @@ class _SearchableDropdownState<T extends Object>
   late final FocusNode _desktopFocusNode;
   final _panelTriggerKey = GlobalKey();
   final _panelLayerLink = LayerLink();
+  bool _hasInitializedPanelLabel = false;
   OverlayEntry? _desktopPanelEntry;
   Completer<_PickerSelection<T>?>? _desktopPanelCompleter;
 
@@ -170,6 +171,11 @@ class _SearchableDropdownState<T extends Object>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (widget.mode != SearchableDropdownMode.panel) return;
+    if (!_hasInitializedPanelLabel) {
+      _hasInitializedPanelLabel = true;
+      _setText(_panelDisplayLabel(context));
+      return;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _desktopFocusNode.hasFocus) return;
       _setText(_panelDisplayLabel(context));
