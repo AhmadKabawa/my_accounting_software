@@ -232,6 +232,16 @@ class _SearchableDropdownState<T extends Object>
   /// still equals the selected label it is just the shown value, so the full
   /// option list is offered (otherwise re-opening after a choice would list
   /// only the chosen option).
+  void _refreshAutocompleteOptions(TextEditingController controller) {
+    final current = controller.value;
+    controller.value = current.copyWith(
+      text: '${current.text} ',
+      selection: TextSelection.collapsed(offset: current.text.length + 1),
+      composing: TextRange.empty,
+    );
+    controller.value = current;
+  }
+
   String _effectiveQuery(String text) =>
       widget.value != null && text == _selectedLabel ? '' : text;
 
@@ -319,6 +329,7 @@ class _SearchableDropdownState<T extends Object>
               hintKey: CatalogUiKeys.search,
               textInputAction: TextInputAction.search,
               onChanged: _query,
+              onTap: () => _refreshAutocompleteOptions(controller),
               onSubmitted: onFieldSubmitted,
               suffix: !_showClear(controller.text)
                   ? null
@@ -460,13 +471,15 @@ class _SearchableDropdownState<T extends Object>
     final triggerTop =
         renderBox?.localToGlobal(Offset.zero).dy ?? 0;
     final screenHeight = MediaQuery.sizeOf(context).height;
-    final below = screenHeight - triggerTop - triggerSize.height - 16;
-    final above = triggerTop - 16;
-    final showAbove = below < 360 && above > below;
+    final gap = context.ui.padding.all(AppSpacing.md).top;
+    final below = screenHeight - triggerTop - triggerSize.height - gap;
+    final above = triggerTop - gap;
+    final style = SearchableDropdownStyle(context);
+    final showAbove = below < style.maxOptionsHeight && above > below;
     final availableHeight = (showAbove ? above : below)
-        .clamp(220.0, 560.0)
+        .clamp(0.0, style.maxOptionsHeight)
         .toDouble();
-    final panelWidth = triggerSize.width.clamp(320.0, 520.0).toDouble();
+    final panelWidth = triggerSize.width;
     final direction = Directionality.of(context);
     final targetAnchor = (showAbove
             ? AlignmentDirectional.topStart
@@ -479,7 +492,6 @@ class _SearchableDropdownState<T extends Object>
     final completer = Completer<_PickerSelection<T>?>();
     _desktopPanelCompleter = completer;
 
-    final style = SearchableDropdownStyle(context);
     final entry = OverlayEntry(
       builder: (overlayContext) => Stack(
         children: [
@@ -495,7 +507,7 @@ class _SearchableDropdownState<T extends Object>
             showWhenUnlinked: false,
             targetAnchor: targetAnchor,
             followerAnchor: followerAnchor,
-            offset: Offset(0, showAbove ? -8 : 8),
+            offset: Offset(0, showAbove ? -gap : gap),
             child: Material(
               elevation: overlayContext.ui.shadow.value(AppElevation.md),
               color: style.colors.surface,
