@@ -12,24 +12,57 @@ void main() {
     tester,
   ) async {
     for (final theme in [AppTheme.light(), AppTheme.dark()]) {
-      final semantic = theme.extension<AppSemanticColors>()!;
+      Color? expected;
+      await tester.pumpWidget(
+        buildTestApp(
+          theme: theme,
+          home: Builder(
+            builder: (context) {
+              final colors = Theme.of(context).colorScheme;
+              final semantic = Theme.of(context).extension<AppSemanticColors>()!;
+              expected = switch (AppIconTone.values.first) {
+                AppIconTone.neutral => colors.onSurface,
+                AppIconTone.primary => colors.primary,
+                AppIconTone.success => semantic.success,
+                AppIconTone.warning => semantic.warning,
+                AppIconTone.info => semantic.info,
+                AppIconTone.danger => colors.error,
+              };
+              return const Scaffold(
+                body: AppIcon(AppIcons.add, tone: AppIconTone.neutral),
+              );
+            },
+          ),
+        ),
+      );
+
       for (final tone in AppIconTone.values) {
+        Color? toneExpected;
         await tester.pumpWidget(
           buildTestApp(
             theme: theme,
-            home: Scaffold(body: AppIcon(AppIcons.add, tone: tone)),
+            home: Builder(
+              builder: (context) {
+                final colors = Theme.of(context).colorScheme;
+                final semantic =
+                    Theme.of(context).extension<AppSemanticColors>()!;
+                toneExpected = switch (tone) {
+                  AppIconTone.neutral => colors.onSurface,
+                  AppIconTone.primary => colors.primary,
+                  AppIconTone.success => semantic.success,
+                  AppIconTone.warning => semantic.warning,
+                  AppIconTone.info => semantic.info,
+                  AppIconTone.danger => colors.error,
+                };
+                return Scaffold(
+                  body: AppIcon(AppIcons.add, tone: tone),
+                );
+              },
+            ),
           ),
         );
         final icon = tester.widget<Icon>(find.byType(Icon).first);
-        final expected = switch (tone) {
-          AppIconTone.neutral => theme.colorScheme.onSurface,
-          AppIconTone.primary => theme.colorScheme.primary,
-          AppIconTone.success => semantic.success,
-          AppIconTone.warning => semantic.warning,
-          AppIconTone.info => semantic.info,
-          AppIconTone.danger => theme.colorScheme.error,
-        };
-        expect(icon.color, expected, reason: tone.name);
+        expect(icon.color, toneExpected, reason: tone.name);
       }
     }
   });
