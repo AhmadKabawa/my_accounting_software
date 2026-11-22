@@ -411,6 +411,25 @@ void main() {
       expect(find.text('Beta'), findsOneWidget);
     });
 
+
+    testWidgets('selects another value after reopening without clearing', (tester) async {
+      String? selected;
+      await pumpPicker(tester, onChanged: (v) => selected = v);
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Alpha'));
+      await tester.pumpAndSettle();
+      expect(selected, 'Alpha');
+
+      await pumpPicker(tester, value: 'Alpha', onChanged: (v) => selected = v);
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      expect(find.text('Beta'), findsOneWidget);
+      await tester.tap(find.text('Beta'));
+      await tester.pumpAndSettle();
+      expect(selected, 'Beta');
+    });
+
     testWidgets('a non-clearable field still has an x for typed text', (
       tester,
     ) async {
