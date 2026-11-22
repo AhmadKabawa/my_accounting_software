@@ -464,7 +464,7 @@ class _SearchableDropdownState<T extends Object>
   Future<_PickerSelection<T>?> _showDesktopPanel(BuildContext context) {
     final renderBox =
         _panelTriggerKey.currentContext?.findRenderObject() as RenderBox?;
-    final triggerSize = renderBox?.size ?? const Size(420, 48);
+    final triggerSize = renderBox?.size ?? Size.zero;
     final triggerTop = renderBox?.localToGlobal(Offset.zero).dy ?? 0;
     final screenHeight = MediaQuery.sizeOf(context).height;
     final gap = context.ui.padding.all(AppSpacing.md).top;
