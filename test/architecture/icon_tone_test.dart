@@ -18,7 +18,7 @@ bool _hasTopLevelColorArgument(String source, int openParen) {
     if (quote != null) {
       if (escaped) {
         escaped = false;
-      } else if (char == r'\\') {
+      } else if (char == String.fromCharCode(92)) {
         escaped = true;
       } else if (char == quote) {
         quote = null;
@@ -30,7 +30,7 @@ bool _hasTopLevelColorArgument(String source, int openParen) {
       continue;
     }
     if (char == '/' && i + 1 < source.length && source[i + 1] == '/') {
-      final end = source.indexOf('\\n', i);
+      final end = source.indexOf('\n', i);
       if (end == -1) return false;
       i = end;
       continue;
@@ -57,7 +57,7 @@ bool _hasTopLevelColorArgument(String source, int openParen) {
     }
     if (parens == 1 && brackets == 0 && braces == 0) {
       final rest = source.substring(i);
-      if (RegExp(r'^\\s*color\\s*:').hasMatch(rest)) return true;
+      if (RegExp(r'^\s*color\s*:').hasMatch(rest)) return true;
     }
   }
   return false;
@@ -65,7 +65,7 @@ bool _hasTopLevelColorArgument(String source, int openParen) {
 
 Set<String> featureIconColorViolations(Map<String, String> sources) {
   final violations = <String>{};
-  final invocation = RegExp(r'\\bAppIcon(?:\\.fixed)?\\s*\\(');
+  final invocation = RegExp(r'\bAppIcon(?:\.fixed)?\s*\(');
   for (final entry in sources.entries) {
     if (!entry.key.startsWith('lib/app/features/')) continue;
     for (final match in invocation.allMatches(entry.value)) {
@@ -84,7 +84,7 @@ Map<String, String> _readFeatureSources() => {
           .listSync(recursive: true)
           .whereType<File>()
           .where((file) => file.path.endsWith('.dart')))
-    entity.path.replaceAll(r'\\', '/'): entity.readAsStringSync(),
+    entity.path.replaceAll(String.fromCharCode(92), '/'): entity.readAsStringSync(),
 };
 
 void main() {
