@@ -12,6 +12,7 @@ class AppRowAction {
     required this.labelKey,
     required this.onPressed,
     this.destructive = false,
+    this.iconColor,
   });
 
   final AppIconData icon;
@@ -20,6 +21,9 @@ class AppRowAction {
 
   /// Drawn with the danger style (e.g. delete).
   final bool destructive;
+
+  /// Optional tint for the icon only; leaves the button surface unchanged.
+  final Color? iconColor;
 }
 
 /// Row/card actions as icon buttons (never text buttons).
@@ -48,6 +52,7 @@ class AppRowActions extends StatelessWidget {
               ? AppButtonVariant.danger
               : AppButtonVariant.text,
           size: AppButtonSize.small,
+          color: action.iconColor,
           onPressed: action.onPressed,
         ),
       if (overflow.isNotEmpty)
