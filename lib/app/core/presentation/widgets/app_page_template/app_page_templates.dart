@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_view/
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/view_mode_switcher.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
@@ -260,16 +261,15 @@ class DashboardTemplate extends StatelessWidget {
 /// T1 list frame: the page header, optional stats, then ONE surface card that
 /// holds the toolbar/filters, the data and its footer.
 ///
-/// Slots (all optional except [titleKey] and [dataTable]):
-/// * [stats]: summary cards above the surface card (on the canvas).
-/// * [filterBar]: the toolbar + filters (`FilterBar`), inside the card.
-/// * [activeFilters]: only for a screen that does not use `FilterBar`'s own
-///   chip row; shown under the toolbar.
-/// * [viewModeSwitcher]: shown above the data when the screen does not pass
-///   it to `FilterBar.leading`. Never pass it to both.
-/// * [dataTable]: the data area (normally `AppDataView`), including its
-///   footer.
-/// * [actions]: kept for older screens; same place as [stats].
+/// Preferred slots (all optional except [titleKey] and [dataTable]):
+/// | Need | Preferred | Alternative |
+/// | Toolbar and filters | [toolbar] ([ListToolbarConfig]) | Legacy: [filterBar], [activeFilters], [viewModeSwitcher] |
+/// | Summary cards | [stats] with [ListStatsBar] | Legacy: [actions] |
+/// | Create action | [addAction] | Legacy: [primaryAction] |
+/// | Header record count | [count] | No legacy alternative; still supported |
+///
+/// [dataTable] is the data area (normally `AppDataView`), including its
+/// footer. Use the preferred slot for all new list screens.
 ///
 /// Error contract (one place): with [state] == [AppPageState.error] and an
 /// [errorKey], this template shows the banner and the retry button instead of
@@ -295,6 +295,7 @@ class ListPageTemplate extends StatelessWidget {
     this.state = AppPageState.content,
     this.count,
     this.primaryAction,
+    this.addAction,
     this.actions,
     this.stats,
     this.activeFilters,
@@ -305,10 +306,14 @@ class ListPageTemplate extends StatelessWidget {
     this.onRetry,
     this.refreshErrorKey,
     this.loadingViewMode = AppViewMode.table,
-  });
+  }) : assert(
+         addAction == null || primaryAction == null,
+         'Pass either addAction or primaryAction, not both.',
+       );
 
   final AppKey titleKey;
   final Widget? breadcrumb;
+  /// Legacy: use [toolbar] to let the template build the filter toolbar.
   final Widget? filterBar;
 
   /// Preferred over [filterBar]: the template builds the toolbar itself.
@@ -318,10 +323,17 @@ class ListPageTemplate extends StatelessWidget {
   /// `error` renders [dataTable] unless [errorKey] is given.
   final AppPageState state;
   final int? count;
+  /// Legacy: use [addAction] to build the standard permission-gated action.
   final Widget? primaryAction;
+  final ListAddAction? addAction;
+
+  /// Legacy: use [stats] for summary cards.
   final Widget? actions;
   final Widget? stats;
+  /// Legacy: configure active filters through [toolbar].
   final Widget? activeFilters;
+
+  /// Legacy: configure view modes through [toolbar].
   final Widget? viewModeSwitcher;
   final Widget? emptyState;
   final AppKey? errorKey;
@@ -343,7 +355,9 @@ class ListPageTemplate extends StatelessWidget {
           AppPageHeader(
             titleKey: titleKey,
             count: count,
-            primaryAction: primaryAction,
+            primaryAction: addAction != null
+                ? ListAddButton(action: addAction!)
+                : primaryAction,
             breadcrumb: breadcrumb,
           ),
           above != null
