@@ -36,6 +36,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
     this.readOnly = false,
     this.clearable = true,
     this.onAddNew,
+    this.allOptionLabel,
   });
 
   final List<T> options;
@@ -56,6 +57,10 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   /// field that must always hold a value.
   final bool clearable;
   final WidgetBuilder? onAddNew;
+
+  /// Optional localized label for an explicit null selection (for example,
+  /// “All statuses”). It is rendered as a first-class panel option.
+  final AppKey? allOptionLabel;
 
   @override
   State<SearchableDropdown<T>> createState() => _SearchableDropdownState<T>();
@@ -386,26 +391,48 @@ class _SearchableDropdownState<T extends Object>
       padding: EdgeInsets.zero,
       shrinkWrap: true,
       children: [
+        if (widget.allOptionLabel != null)
+          _optionTile(
+            context,
+            widget.allOptionLabel!.tr(context: context),
+            () => widget.onChanged(null),
+            selected: widget.value == null,
+          ),
         for (final option in options)
-          _optionTile(context, option, () => select(option)),
+          _optionTile(
+            context,
+            widget.optionLabel(option),
+            () => select(option),
+            selected: widget.value == option,
+          ),
         if (widget.onAddNew != null) widget.onAddNew!(context),
       ],
     );
   }
 
-  Widget _optionTile(BuildContext context, T option, VoidCallback onTap) {
+  Widget _optionTile(
+    BuildContext context,
+    String label,
+    VoidCallback onTap, {
+    bool selected = false,
+  }) {
     final style = SearchableDropdownStyle(context);
-    final subtitle = widget.optionSubtitle?.call(option);
+    final subtitle = widget.optionSubtitle == null || widget.value == null
+        ? null
+        : widget.optionSubtitle!(widget.value as T);
     return Semantics(
       button: true,
       child: InkWell(
         onTap: onTap,
         child: Padding(
           padding: style.optionPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              AppText.raw(widget.optionLabel(option), maxLines: 2),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText.raw(label, maxLines: 2),
               if (subtitle != null && subtitle.isNotEmpty) ...[
                 context.ui.spacing.gap(AppSpacing.xs),
                 AppText.raw(
