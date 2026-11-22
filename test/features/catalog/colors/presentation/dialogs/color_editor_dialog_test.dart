@@ -58,7 +58,7 @@ TextEditingController _controller(WidgetTester tester, int index) => tester
 Future<void> _tapSave(WidgetTester tester) async {
   await tester.drag(find.byType(ListView).first, const Offset(0, -700));
   await tester.pumpAndSettle();
-  await _tapSave(tester);
+  await tester.tap(find.text(ColorsKeys.save.en));
   await tester.pumpAndSettle();
 }
 
