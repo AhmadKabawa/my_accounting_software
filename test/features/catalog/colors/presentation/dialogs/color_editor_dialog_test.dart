@@ -55,6 +55,13 @@ TextEditingController _controller(WidgetTester tester, int index) => tester
     .widget<TextFormField>(find.byType(TextFormField).at(index))
     .controller!;
 
+Future<void> _tapSave(WidgetTester tester) async {
+  await tester.drag(find.byType(ListView).first, const Offset(0, -700));
+  await tester.pumpAndSettle();
+  await _tapSave(tester);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
@@ -62,8 +69,7 @@ void main() {
     final repository = FakeColorsRepository();
     await _pumpEditor(tester, repository);
 
-    await tester.tap(find.text(ColorsKeys.save.en));
-    await tester.pumpAndSettle();
+    await _tapSave(tester);
 
     expect(find.text(ColorsKeys.required.en), findsNWidgets(2));
     expect(repository.created, isEmpty);
@@ -77,8 +83,7 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(0), 'Navy');
     await tester.enterText(find.byType(TextFormField).at(1), 'NAVY');
     await tester.enterText(find.byType(TextFormField).at(3), '12');
-    await tester.tap(find.text(ColorsKeys.save.en));
-    await tester.pumpAndSettle();
+    await _tapSave(tester);
 
     expect(find.text(ColorsKeys.hexFormat.en), findsOneWidget);
     expect(repository.created, isEmpty);
@@ -95,8 +100,7 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(1), 'NAVY');
     await tester.enterText(find.byType(TextFormField).at(3), '1e3a8a');
     await tester.enterText(find.byType(TextFormField).at(2), '5');
-    await tester.tap(find.text(ColorsKeys.save.en));
-    await tester.pumpAndSettle();
+    await _tapSave(tester);
 
     final draft = repository.created.single;
     expect(draft.name, 'Navy');
@@ -109,11 +113,12 @@ void main() {
   testWidgets('tapping a preset fills the HEX field', (tester) async {
     await _pumpEditor(tester, FakeColorsRepository());
 
-    await tester.tap(
-      find.byWidgetPredicate(
+    final preset = find.byWidgetPredicate(
         (w) => w is AppColorSwatch && w.hex == '#DC2626' && w.onTap != null,
-      ),
-    );
+      );
+    await tester.ensureVisible(preset);
+    await tester.pumpAndSettle();
+    await tester.tap(preset);
     await tester.pump();
 
     expect(_controller(tester, 3).text, '#DC2626');
@@ -130,8 +135,7 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Navy');
     await tester.enterText(find.byType(TextFormField).at(1), 'NAVY');
-    await tester.tap(find.text(ColorsKeys.save.en));
-    await tester.pumpAndSettle();
+    await _tapSave(tester);
 
     expect(find.text(ColorsKeys.duplicateError.en), findsOneWidget);
     expect(find.byType(ColorEditorDialog), findsOneWidget);
