@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/crud_empty_state.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -33,7 +33,7 @@ class BrandsTableSection extends StatelessWidget {
     required this.loading,
     this.refreshing = false,
     required this.failure,
-    required this.onAdd,
+    required this.addAction,
     required this.onEdit,
     required this.onDelete,
     required this.onToggleStatus,
@@ -49,7 +49,7 @@ class BrandsTableSection extends StatelessWidget {
   final bool loading;
   final bool refreshing;
   final Failure? failure;
-  final VoidCallback onAdd;
+  final ListAddAction addAction;
   final ValueChanged<Brand> onEdit;
   final ValueChanged<Brand> onDelete;
   final ValueChanged<Brand> onToggleStatus;
@@ -58,7 +58,10 @@ class BrandsTableSection extends StatelessWidget {
   final AppViewMode? mode;
 
   @override
-  Widget build(BuildContext context) => AppDataView<Brand>(
+  Widget build(BuildContext context) {
+    final hasActiveFilters =
+        query.search.isNotEmpty || query.status != BrandStatusFilter.all;
+    return AppDataView<Brand>(
     columns: [
       DataTableColumn(
         labelKey: BrandsKeys.brandName,
@@ -126,25 +129,14 @@ class BrandsTableSection extends StatelessWidget {
     refreshing: refreshing,
     errorKey: failure?.messageKey,
     onRetry: onRetry,
-    emptyState: AppEmptyState(
+    emptyState: CrudEmptyState(
       icon: AppIcons.brands,
-      titleKey: query.search.isEmpty && query.status == BrandStatusFilter.all
-          ? BrandsKeys.empty
-          : BrandsKeys.noResults,
-      descriptionKey:
-          query.search.isEmpty && query.status == BrandStatusFilter.all
-          ? BrandsKeys.emptyDescription
-          : BrandsKeys.noResultsDescription,
-      action: query.search.isEmpty && query.status == BrandStatusFilter.all
-          ? PermissionGate(
-              permission: Permissions.masterData.manage,
-              child: AppButton(
-                BrandsKeys.add,
-                icon: AppIcons.add,
-                onPressed: () => onAdd(),
-              ),
-            )
-          : null,
+      emptyTitleKey: BrandsKeys.empty,
+      emptyDescriptionKey: BrandsKeys.emptyDescription,
+      noResultsTitleKey: BrandsKeys.noResults,
+      noResultsDescriptionKey: BrandsKeys.noResultsDescription,
+      hasActiveFilters: hasActiveFilters,
+      addAction: addAction,
     ),
     cardBuilder: (_, b) => BrandCard(b),
     gridItemBuilder: (_, b) => BrandGridTile(b),
@@ -178,5 +170,6 @@ class BrandsTableSection extends StatelessWidget {
     totalCount: total,
     hasMore: query.page * query.pageSize < total,
     onPageChanged: onPageChanged,
-  );
+  )  );
+  }
 }
