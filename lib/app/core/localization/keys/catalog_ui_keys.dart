@@ -5,6 +5,7 @@ enum CatalogUiKeys implements AppKey {
   search(ar: 'بحث', en: 'Search'),
   clearSearch(ar: 'مسح البحث', en: 'Clear search'),
   chooseOption(ar: 'اختر قيمة', en: 'Choose an option'),
+  allOptions(ar: 'الكل', en: 'All'),
   clearSelection(ar: 'مسح الاختيار', en: 'Clear selection'),
   noOptions(ar: 'لا توجد خيارات مطابقة', en: 'No matching options'),
   filters(ar: 'الفلاتر', en: 'Filters'),
