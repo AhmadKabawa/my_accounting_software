@@ -19,23 +19,56 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/sec
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_logo_section.dart';
 
 /// Opens the shared brand editor and owns the form/upload Cubit lifetimes.
-Future<bool?> showBrandEditor(BuildContext context, {Brand? brand}) =>
-    showAppFormDialog<bool>(
-      context,
-      (_) => MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => sl<BrandFormCubit>()),
-          BlocProvider(create: (_) => sl<BrandLogoUploadCubit>()),
-        ],
-        child: BrandEditorDialog(brand: brand),
+Future<bool?> showBrandEditor(
+  BuildContext context, {
+  Brand? brand,
+  bool duplicate = false,
+}) {
+  final seed = duplicate && brand != null
+      ? brandDuplicateSeed(context, brand)
+      : null;
+  return showAppFormDialog<bool>(
+    context,
+    (_) => MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => sl<BrandFormCubit>()),
+        BlocProvider(create: (_) => sl<BrandLogoUploadCubit>()),
+      ],
+      child: BrandEditorDialog(
+        brand: duplicate ? null : brand,
+        seed: seed,
+        duplicate: duplicate,
       ),
-    );
+    ),
+  );
+}
+
+/// Copies editable fields from a source brand while generating a new unique
+/// name and slug. The logo URL is shared: this feature currently has no
+/// Storage deletion path, and removing a logo only clears the row's URL.
+BrandDraft brandDuplicateSeed(BuildContext context, Brand source) {
+  final name = '${source.name} ${BrandsKeys.duplicateSuffix.tr(context: context)}';
+  return BrandDraft(
+    name: name,
+    slug: brandSlugFrom(name),
+    logo: source.logo,
+    description: source.description,
+    isActive: source.isActive,
+  );
+}
 
 /// Add/edit dialog for one brand.
 class BrandEditorDialog extends StatefulWidget {
-  const BrandEditorDialog({super.key, this.brand});
+  const BrandEditorDialog({
+    super.key,
+    this.brand,
+    this.seed,
+    this.duplicate = false,
+  }) : assert(!duplicate || (brand == null && seed != null));
 
   final Brand? brand;
+  final BrandDraft? seed;
+  final bool duplicate;
 
   @override
   State<BrandEditorDialog> createState() => _BrandEditorDialogState();
@@ -51,6 +84,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   late final String _initialSlug;
   late final String _initialLogo;
   late final String _initialDescription;
+  late final bool _initialActive;
   AppKey? _failure;
   bool _active = true;
   bool _slugTouched = false;
@@ -59,19 +93,25 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   bool get _dirty =>
       _name.text != _initialName || _slug.text != _initialSlug ||
       _logo.text != _initialLogo || _description.text != _initialDescription ||
-      _active != (widget.brand?.isActive ?? true);
+      _active != _initialActive;
 
   @override
   void initState() {
     super.initState();
     final brand = widget.brand;
-    _initialName = brand?.name ?? '';
-    _initialSlug = brand?.slug ?? '';
-    _initialLogo = brand?.logo ?? '';
-    _initialDescription = brand?.description ?? '';
-    _active = brand?.isActive ?? true;
+    final seed = widget.seed;
+    _initialName = seed?.name ?? brand?.name ?? '';
+    _initialSlug = seed?.slug ?? brand?.slug ?? '';
+    _initialLogo = seed?.logo ?? brand?.logo ?? '';
+    _initialDescription = seed?.description ?? brand?.description ?? '';
+    _initialActive = seed?.isActive ?? brand?.isActive ?? true;
+    _active = _initialActive;
     _slugTouched = brand != null;
+
     _name = TextEditingController(text: _initialName);
+    if (widget.duplicate) {
+      _name.selection = TextSelection(baseOffset: 0, extentOffset: _name.text.length);
+    }
     _slug = TextEditingController(text: _initialSlug);
     _logo = TextEditingController(text: _initialLogo);
     _description = TextEditingController(text: _initialDescription);
@@ -158,7 +198,9 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
                     }
                   },
                   child: AppFormDialog(
-                    titleKey: widget.brand == null
+                    titleKey: widget.duplicate
+                        ? BrandsKeys.duplicateTitle
+                        : widget.brand == null
                         ? BrandsKeys.add
                         : BrandsKeys.edit,
                     subtitleKey: BrandsKeys.editorSubtitle,

@@ -111,6 +111,9 @@ enum BrandsKeys implements AppKey {
   bulkDeactivateMessage(ar: 'سيتم إيقاف {count} ماركة مع الاحتفاظ بسجلاتها.', en: '{count} brands will be deactivated and retained.'),
   bulkDeleteTitle(ar: 'حذف الماركات المحددة', en: 'Delete selected brands'),
   bulkDeleteMessage(ar: 'سيتم حذف {count} ماركة. الماركات المرتبطة بمنتجات لن تُحذف.', en: '{count} brands will be deleted. Brands linked to products will be skipped.'),
+  duplicate(ar: 'مضاعفة', en: 'Duplicate'),
+  duplicateTitle(ar: 'مضاعفة ماركة', en: 'Duplicate brand'),
+  duplicateSuffix(ar: '(نسخة)', en: '(Copy)'),
   statLabel(ar: '{label}: {value}', en: '{label}: {value}');
 
   const BrandsKeys({required this.ar, required this.en});

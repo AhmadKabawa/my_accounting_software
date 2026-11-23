@@ -236,6 +236,7 @@ class BrandsScreen extends StatelessWidget {
                                   refreshing: refreshing,
                                   failure: failure,
                                   addAction: addAction,
+                                  onDuplicate: (brand) => _duplicate(context, brand),
                                   selectedIds: canBulk ? selectedIds : const {},
                                   onSelectionChanged: canBulk ? cubit.selection.replace : null,
                                   onEdit: (brand) => _edit(context, brand),
@@ -292,6 +293,13 @@ class BrandsScreen extends StatelessWidget {
     final saved = await showBrandEditor(context, brand: brand);
     if (saved == true && context.mounted) {
       await context.read<BrandsListCubit>().onBrandSaved(isNew: brand == null);
+    }
+  }
+
+  Future<void> _duplicate(BuildContext context, Brand brand) async {
+    final saved = await showBrandEditor(context, brand: brand, duplicate: true);
+    if (saved == true && context.mounted) {
+      await context.read<BrandsListCubit>().onBrandSaved(isNew: true);
     }
   }
 

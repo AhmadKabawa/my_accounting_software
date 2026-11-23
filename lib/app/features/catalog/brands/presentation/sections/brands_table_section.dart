@@ -37,6 +37,7 @@ class BrandsTableSection extends StatelessWidget {
     required this.onDelete,
     required this.onToggleStatus,
     this.mode,
+    this.onDuplicate,
     this.selectedIds = const {},
     this.onSelectionChanged,
   });
@@ -57,6 +58,7 @@ class BrandsTableSection extends StatelessWidget {
 
   /// The user's chosen view; null = the screen's responsive default.
   final AppViewMode? mode;
+  final ValueChanged<Brand>? onDuplicate;
   final Set<Object> selectedIds;
   final ValueChanged<Set<Object>>? onSelectionChanged;
 
@@ -142,6 +144,8 @@ class BrandsTableSection extends StatelessWidget {
         onEdit: () => onEdit(b),
         deleteLabelKey: BrandsKeys.delete,
         onDelete: b.canDelete ? () => onDelete(b) : null,
+        duplicateLabelKey: onDuplicate == null ? null : BrandsKeys.duplicate,
+        onDuplicate: onDuplicate == null ? null : () => onDuplicate!(b),
         isActive: b.isActive,
         onToggleStatus: () => onToggleStatus(b),
         activateLabelKey: BrandsKeys.activate,
