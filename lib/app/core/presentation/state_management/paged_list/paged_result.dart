@@ -1,1 +1,3 @@
-export 'package:accounting_software/app/core/foundation/types/paged_result.dart';
+import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
+
+typedef PagedResult<T> = PaginatedResult<T>;
