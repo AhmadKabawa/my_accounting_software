@@ -427,11 +427,13 @@ class _SearchableDropdownState<T extends Object>
           )
         : await _showDesktopPanel(context);
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     if (selection != null) widget.onChanged(selection.value);
     _resetQuery();
-    _setText(_panelDisplayLabel(context));
-    if (mounted) setState(() {});
+    final displayLabel = _panelDisplayLabel(context);
+    if (!mounted) return;
+    _setText(displayLabel);
+    setState(() {});
   }
 
   Future<_PickerSelection<T>?> _showDesktopPanel(BuildContext context) {
