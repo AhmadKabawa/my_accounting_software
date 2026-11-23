@@ -201,9 +201,9 @@ void main() {
   });
 
 
-  testWidgets('authorized users can select the page and run a bulk action', (
-    tester,
-  ) async {
+  testWidgets(
+    'authorized users can select the page and run a bulk action',
+    (tester) async {
       final repository = FakeColorsRepository();
       _register(repository);
       await pumpScreenMatrix(
@@ -223,7 +223,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(repository.statusUpdates, [(sampleColor.id, true)]);
       expect(find.text(ColorsKeys.bulkActivate.en), findsNothing);
-  },
+    },
   );
 
   testWidgets('without manage permission there is no add action', (
