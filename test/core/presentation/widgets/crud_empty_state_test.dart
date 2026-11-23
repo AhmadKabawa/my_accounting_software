@@ -14,9 +14,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_page_templ
 import '../../../helpers/localized_app.dart';
 import '../../../helpers/test_key.dart';
 
-class _MockAccessCubit extends MockCubit<AccessState> implements AccessCubit {
-  _MockAccessCubit(super.initialState);
-}
+class _MockAccessCubit extends MockCubit<AccessState>
+    implements AccessCubit {}
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
@@ -48,7 +47,7 @@ void main() {
     ListAddAction? addAction,
     AccessState? accessState,
   }) async {
-    final cubit = _MockAccessCubit(accessState ?? readyState);
+    final cubit = _MockAccessCubit();
     whenListen(
       cubit,
       const Stream<AccessState>.empty(),
