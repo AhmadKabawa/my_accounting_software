@@ -227,11 +227,18 @@ class MessageViewWidgets {
         ),
         backgroundColor: style.background,
         behavior: SnackBarBehavior.floating,
-        // A phone: screen width minus margins. Larger: a limited width.
-        margin: mobile ? context.ui.padding.all(AppSpacing.md) : null,
-        width: mobile
-            ? null
-            : context.ui.size.width(AppComponentSize.snackBarWidth),
+        // Mobile: even margins. Desktop: a compact message aligned to
+        // the directional end of the viewport (right in LTR, left in RTL).
+        margin: mobile
+            ? context.ui.padding.all(AppSpacing.md)
+            : EdgeInsetsDirectional.only(
+                start: (MediaQuery.sizeOf(context).width -
+                        context.ui.size.width(AppComponentSize.snackBarWidth) -
+                        context.ui.spacing.md)
+                    .clamp(context.ui.spacing.md, double.infinity),
+                end: context.ui.spacing.md,
+                bottom: context.ui.spacing.md,
+              ),
         shape: shape,
         elevation: 0,
       ),

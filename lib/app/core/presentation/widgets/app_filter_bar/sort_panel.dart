@@ -79,60 +79,53 @@ class SortPanel extends StatelessWidget {
         sorts.map((sort) => sort.key).toSet().length != sorts.length;
     final limitExceeded = sorts.length > _limit;
     final rowCount = math.max(1, math.min(sorts.length, _limit));
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.hasBoundedWidth
-            ? constraints.maxWidth
-            : context.ui.size.width(AppComponentSize.filterControlWidth);
-        return SizedBox(
-          width: width,
-          child: Padding(
-            padding: context.ui.padding.all(AppSpacing.sm),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                for (var index = 0; index < rowCount; index++) ...[
-                  if (index > 0) context.ui.spacing.gap(AppSpacing.sm),
-                  SortCriterionRow(
-                    options: options,
-                    current: index < sorts.length ? sorts[index] : null,
-                    sortsLength: sorts.length,
-                    isUsedElsewhere: (key) => _usedElsewhere(key, index),
-                    onSelect: (key) => _selectField(index, key),
-                    onDirection: index < sorts.length
-                        ? () => _toggleDirection(index)
-                        : null,
-                    onMoveUp: index > 0 ? () => _moveField(index, -1) : null,
-                    onMoveDown: index < sorts.length - 1
-                        ? () => _moveField(index, 1)
-                        : null,
-                    onRemove: index > 0 ? () => _removeField(index) : null,
-                  ),
-                ],
-                if (sorts.isNotEmpty &&
-                    sorts.length < _limit &&
-                    options.any(
-                      (option) => !sorts.any((sort) => sort.key == option.key),
-                    )) ...[
-                  context.ui.spacing.gap(AppSpacing.sm),
-                  _addCriterionMenu(),
-                ],
-                if (hasDuplicate || limitExceeded) ...[
-                  context.ui.spacing.gap(AppSpacing.xs),
-                  AppText(
-                    hasDuplicate
-                        ? CatalogUiKeys.sortFieldAlreadySelected
-                        : CatalogUiKeys.sortLimitExceeded,
-                    type: AppTextType.bodySmall,
-                    color: context.ui.theme.colors.error,
-                  ),
-                ],
-              ],
-            ),
-          ),
-        );
-      },
+    return SizedBox(
+      width: context.ui.size.width(AppComponentSize.filterControlWidth),
+      child: Padding(
+        padding: context.ui.padding.all(AppSpacing.sm),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var index = 0; index < rowCount; index++) ...[
+              if (index > 0) context.ui.spacing.gap(AppSpacing.sm),
+              SortCriterionRow(
+                options: options,
+                current: index < sorts.length ? sorts[index] : null,
+                sortsLength: sorts.length,
+                isUsedElsewhere: (key) => _usedElsewhere(key, index),
+                onSelect: (key) => _selectField(index, key),
+                onDirection: index < sorts.length
+                    ? () => _toggleDirection(index)
+                    : null,
+                onMoveUp: index > 0 ? () => _moveField(index, -1) : null,
+                onMoveDown: index < sorts.length - 1
+                    ? () => _moveField(index, 1)
+                    : null,
+                onRemove: index > 0 ? () => _removeField(index) : null,
+              ),
+            ],
+            if (sorts.isNotEmpty &&
+                sorts.length < _limit &&
+                options.any(
+                  (option) => !sorts.any((sort) => sort.key == option.key),
+                )) ...[
+              context.ui.spacing.gap(AppSpacing.sm),
+              _addCriterionMenu(),
+            ],
+            if (hasDuplicate || limitExceeded) ...[
+              context.ui.spacing.gap(AppSpacing.xs),
+              AppText(
+                hasDuplicate
+                    ? CatalogUiKeys.sortFieldAlreadySelected
+                    : CatalogUiKeys.sortLimitExceeded,
+                type: AppTextType.bodySmall,
+                color: context.ui.theme.colors.error,
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 

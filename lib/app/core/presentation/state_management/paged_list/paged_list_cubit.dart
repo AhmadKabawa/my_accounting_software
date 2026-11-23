@@ -121,10 +121,6 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     final response = await deleteItem(item);
     if (isClosed || response.isLeft()) return response;
 
-    // The delete has succeeded at the server; report that immediately so a
-    // later refresh failure cannot make the mutation look like a failure.
-    _flashMessages.post(deletedMessageKey, MessageType.success);
-
     final wasLastRowOnLaterPage =
         (state.result?.items.length ?? 0) <= 1 && state.query.page > 1;
     if (wasLastRowOnLaterPage) {
@@ -142,6 +138,7 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     }
     if (isClosed) return response;
 
+    _flashMessages.post(deletedMessageKey, MessageType.success);
     emitEffect(buildMutationEffect(PagedMutationKind.deleted));
     return response;
   }
@@ -181,9 +178,9 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     final response = await action();
     if (isClosed) return response;
     if (response.isRight()) {
-      _flashMessages.post(successMessage, MessageType.success);
       publishMutation(kind);
       await load();
+      if (!isClosed) _flashMessages.post(successMessage, MessageType.success);
     } else if (flashFailure) {
       response.fold(
         (failure) => _flashMessages.post(failure.messageKey, MessageType.error),
@@ -208,11 +205,13 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     if (!isClosed && result.totalCount > 0) {
       // Report a fully successful mutation before the list refresh; a refresh
       // failure is a separate problem and must not hide the mutation result.
-      if (result.failureCount == 0) {
-        _flashMessages.post(successMessage, MessageType.success);
-      }
       await load();
-      if (!isClosed) publishMutation(kind);
+      if (!isClosed) {
+        publishMutation(kind);
+        if (result.failureCount == 0) {
+          _flashMessages.post(successMessage, MessageType.success);
+        }
+      }
     }
     return result;
   }
