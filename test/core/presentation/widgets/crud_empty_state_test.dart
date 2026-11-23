@@ -72,7 +72,6 @@ void main() {
         ),
       ),
     );
-    addTearDown(cubit.close);
   }
 
   testWidgets('empty state shows create action when supplied', (tester) async {
