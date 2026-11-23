@@ -161,13 +161,19 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text(CatalogUiKeys.viewGrid.en));
     await tester.pumpAndSettle();
-    expect(find.byWidgetPredicate((widget) => widget is AppDataGrid), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((widget) => widget is AppDataGrid),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byTooltip(CatalogUiKeys.viewMode.en));
     await tester.pumpAndSettle();
     await tester.tap(find.text(CatalogUiKeys.viewTable.en));
     await tester.pumpAndSettle();
-    expect(find.byWidgetPredicate((widget) => widget is AppDataGrid), findsNothing);
+    expect(
+      find.byWidgetPredicate((widget) => widget is AppDataGrid),
+      findsNothing,
+    );
   });
 
   testWidgets('grid view renders on a narrow RTL dark screen', (tester) async {
@@ -185,7 +191,10 @@ void main() {
     await tester.tap(find.text(CatalogUiKeys.viewGrid.en));
     await tester.pumpAndSettle();
 
-    expect(find.byWidgetPredicate((widget) => widget is AppDataGrid), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((widget) => widget is AppDataGrid),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 

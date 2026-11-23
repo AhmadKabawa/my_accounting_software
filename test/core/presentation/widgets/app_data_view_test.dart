@@ -409,14 +409,27 @@ void main() {
     testWidgets('Enter and Space toggle selection instead of activating', (
       tester,
     ) async {
+      Set<Object> selected = {};
       String? activated;
-      Set<Object>? selected;
-      await pump(
-        tester,
-        mode: AppViewMode.table,
-        onRowActivated: (value) => activated = value,
-        onSelectionChanged: (value) => selected = value,
+      setScreenSize(tester, const Size(1200, 900));
+      await tester.pumpWidget(
+        buildTestApp(
+          home: StatefulBuilder(
+            builder: (context, setState) => Scaffold(
+              body: AppDataView<String>(
+                columns: columns,
+                rows: const ['Alpha', 'Beta'],
+                rowId: (value) => value,
+                mode: AppViewMode.table,
+                selectedIds: selected,
+                onSelectionChanged: (next) => setState(() => selected = next),
+                onRowActivated: (value) => activated = value,
+              ),
+            ),
+          ),
+        ),
       );
+      await tester.pumpAndSettle();
       Focus.of(tester.element(find.text('Alpha'))).requestFocus();
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
