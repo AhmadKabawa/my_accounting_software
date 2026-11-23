@@ -168,7 +168,7 @@ class AppDataView<T> extends StatelessWidget {
             if (bounded) Expanded(child: content) else content,
             ?summaryBuilder,
             context.ui.spacing.gap(AppSpacing.sm),
-            _pagination(context),
+            _pagination(context, constraints.hasBoundedWidth ? constraints.maxWidth : null),
           ],
         );
       },
@@ -222,7 +222,7 @@ class AppDataView<T> extends StatelessWidget {
     );
   }
 
-  Widget _pagination(BuildContext context) {
+  Widget _pagination(BuildContext context, double? availableWidth) {
     final hasPaging =
         onPageChanged != null ||
         onPageSizeChanged != null ||
@@ -239,7 +239,10 @@ class AppDataView<T> extends StatelessWidget {
       onLoadMore: onLoadMore,
       // Phones page by "load more" only when the owner supports it; otherwise
       // they keep the numbered pages rather than lose paging.
-      mobile: ScreenEngine.isMobile(context) && onLoadMore != null,
+      mobile: onLoadMore != null &&
+          (availableWidth != null
+              ? availableWidth < compactContentBreakpoint
+              : ScreenEngine.isMobile(context)),
     );
   }
 

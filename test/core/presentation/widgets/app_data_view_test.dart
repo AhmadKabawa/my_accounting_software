@@ -356,6 +356,32 @@ void main() {
       expect(loaded, isTrue);
     });
 
+
+    testWidgets('narrow content uses compact pagination on a large screen', (tester) async {
+      tester.view.physicalSize = const Size(1400, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var loaded = false;
+      await tester.pumpWidget(buildTestApp(home: Scaffold(
+        body: Center(
+          child: SizedBox(
+            width: 400,
+            child: AppDataView<String>(
+              columns: columns,
+              rows: const ['Alpha', 'Beta'],
+              rowId: (value) => value,
+              hasMore: true,
+              onLoadMore: () => loaded = true,
+            ),
+          ),
+        ),
+      )));
+      expect(find.text('Load more'), findsOneWidget);
+      await tester.tap(find.text('Load more'));
+      expect(loaded, isTrue);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('Enter activates and Space selects a table row', (
       tester,
     ) async {
