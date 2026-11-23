@@ -493,6 +493,8 @@ void main() {
     expect(two, [const FilterBarSort('name', false), second]);
     expect(toggleSort(two, 'updated', true), two);
     expect(toggleSort(two, 'name', true), [const FilterBarSort('name', true), second]);
+    final overLimit = [...two, const FilterBarSort('third', true)];
+    expect(toggleSort(overLimit, 'fourth', true), overLimit);
   });
 
   testWidgets('multi-sort panel updates each criterion with one callback', (tester) async {
