@@ -106,7 +106,7 @@ When no view mode has been selected, loading placeholders follow the available c
 
 ### Multi-sort panel
 - Each criterion occupies one row: field selector, direction toggle, then move-up and remove actions for criteria after the first.
-- The field name opens the field menu; the direction icon toggles direction without opening the menu.
+- The field name opens the field menu; the direction icon toggles direction without opening the menu. Selecting from a nested field/add menu closes only that menu and keeps the sort panel open.
 - The add control is icon-only. There is no move-down control; moving the next criterion up changes priority.
 - Already-used fields are disabled in the menu. Duplicate and limit messages remain at the bottom of the panel.
 - The panel follows its content up to `AppComponentSize.filterControlWidth`; on a phone it fills the bottom sheet. Do not put `LayoutBuilder` inside the panel because `MenuAnchor` measures intrinsic dimensions.

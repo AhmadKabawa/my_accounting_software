@@ -95,6 +95,7 @@ class AppDropdownItem extends StatelessWidget {
           ? null
           : () {
               if (!closeOnActivate) {
+                // Close only this nested menu; keep its parent panel open.
                 MenuController.maybeOf(context)?.close();
               }
               onPressed!();

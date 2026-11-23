@@ -93,7 +93,7 @@ Core must receive permissions from the feature; do not hardcode feature permissi
 
 - Build grid cards at natural height. Do not apply a fixed height, `FittedBox`, or `IntrinsicHeight`; `LayoutBuilder` is valid inside tile content, and `EqualHeightRow` equalizes each row.
 - Reuse `AppLogoThumb`: `small` for table/horizontal identity rows and `large` for grid previews. Do not create another feature-specific logo image widget.
-- Configure multi-sort with one row per criterion. The field name opens the menu, the direction icon changes direction, later criteria expose move-up/remove, and the add action is icon-only. Used fields are disabled; there is no move-down action.
+- Configure multi-sort with one row per criterion. The field name opens the menu, the direction icon changes direction, later criteria expose move-up/remove, and the add action is icon-only. Used fields are disabled; there is no move-down action. Selecting an item from a nested field/add menu closes only that menu and keeps the sort panel open.
 - Keep the sort panel within `AppComponentSize.filterControlWidth` on desktop and fill the phone sheet. Avoid `LayoutBuilder` inside the panel.
 - Every create/edit dialog supplies its real `dirty` state. Desktop form dialogs keep Save/Cancel fixed while the center content scrolls. The mobile sheet disables drag dismissal because it bypasses the unsaved-changes guard.
 - In width-matrix widget tests, use a distinct `ValueKey(width)` when pumping the same stateful widget repeatedly, or dispose it between iterations.
