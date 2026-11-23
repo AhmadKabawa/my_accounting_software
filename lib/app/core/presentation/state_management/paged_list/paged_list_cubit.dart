@@ -185,18 +185,18 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
       action,
       shouldStop: () => isClosed,
     );
-    if (!isClosed && (succeeded > 0 || failures.isNotEmpty)) {
+    if (!isClosed && result.totalCount > 0) {
       await load();
       if (!isClosed) {
         publishMutation(kind);
-        final message = failures.isEmpty
+        final message = result.failureCount == 0
             ? successMessage
-            : failures.length == succeeded + failures.length
-            ? CatalogUiKeys.bulkFailed
-            : CatalogUiKeys.bulkPartiallyFailed;
+            : result.isFailure
+                ? CatalogUiKeys.bulkFailed
+                : CatalogUiKeys.bulkPartiallyFailed;
         _flashMessages.post(
           message,
-          failures.isEmpty ? MessageType.success : MessageType.error,
+          result.failureCount == 0 ? MessageType.success : MessageType.error,
         );
       }
     }
