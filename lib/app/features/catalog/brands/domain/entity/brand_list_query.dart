@@ -81,6 +81,9 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
     page: 1,
   );
 
+  BrandListQuery withStatus(BrandStatusFilter value) =>
+      copyWith(status: value, page: 1);
+
   BrandListQuery withSort({
     required BrandSortField field,
     required bool ascending,
