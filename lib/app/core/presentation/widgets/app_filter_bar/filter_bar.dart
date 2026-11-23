@@ -161,7 +161,7 @@ class _FilterBarState extends State<FilterBar> {
   }
 
   Widget _multiSortPanel({double? width}) =>
-      ValueListenableBuilder<List<FilterBarSort>>(
+    ValueListenableBuilder<List<FilterBarSort>>(
         valueListenable: _sortsNotifier,
         builder: (context, sorts, _) => SortPanel(
           options: widget.sortOptions,

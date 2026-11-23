@@ -24,7 +24,10 @@ Future<void> _pump(
           child: SizedBox(
             width: contentWidth,
             child: AppDataGrid<String>(
-              rows: const ['short', 'a very long record name\nwith\nthree\nlines'],
+              rows: const [
+                'short',
+                'a very long record name\nwith\nthree\nlines',
+              ],
               rowId: (row) => row,
               gridItemBuilder: (_, row) => Text(row),
               selectedIds: selected ?? const {},

@@ -24,7 +24,8 @@ class AppLogoThumb extends StatelessWidget {
   Widget build(BuildContext context) {
     final raw = url?.trim() ?? '';
     final uri = Uri.tryParse(raw);
-    final valid = uri != null &&
+    final valid =
+        uri != null &&
         (uri.scheme == 'http' || uri.scheme == 'https') &&
         uri.host.isNotEmpty;
     final dimension = context.ui.size.width(

@@ -5,10 +5,7 @@ void main() {
   group('PlatformCapabilities', () {
     test('native adapters support Dio request send timeouts', () {
       // flutter test runs on the Dart VM, which selects the dart:io adapter.
-      expect(
-        const PlatformRequestSendTimeoutCapability().isSupported,
-        isTrue,
-      );
+      expect(const PlatformRequestSendTimeoutCapability().isSupported, isTrue);
     });
 
     test('collapsible sidebar is a layout capability', () {

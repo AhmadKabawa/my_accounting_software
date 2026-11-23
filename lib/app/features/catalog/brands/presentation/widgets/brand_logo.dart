@@ -7,11 +7,7 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 
 /// Brand logo thumbnail backed by the shared core logo component.
 class BrandLogo extends StatelessWidget {
-  const BrandLogo(
-    this.brand, {
-    super.key,
-    this.size = AppLogoSize.small,
-  });
+  const BrandLogo(this.brand, {super.key, this.size = AppLogoSize.small});
 
   final Brand brand;
   final AppLogoSize size;
