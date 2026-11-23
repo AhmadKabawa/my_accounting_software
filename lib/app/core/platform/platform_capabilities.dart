@@ -5,4 +5,11 @@ import 'platform_capabilities_stub.dart'
 abstract final class PlatformCapabilities {
   static bool get supportsCollapsibleSidebar =>
       platform.supportsCollapsibleSidebar;
+
+  /// Whether the HTTP adapter supports a request-body send timeout.
+  ///
+  /// Browser XHR/fetch adapters do not support Dio's send timeout, while
+  /// dart:io adapters do. Keep this decision behind the platform boundary.
+  static bool get supportsRequestSendTimeout =>
+      platform.supportsRequestSendTimeout;
 }
