@@ -79,9 +79,9 @@ The exact folders depend on the feature. Keep feature-specific fields, labels, v
 
 - `ListPageTemplate`, `ListToolbarConfig`, `ListAddAction`
 - `ListStatsBar`, `StatItem`, `CrudEmptyState`
-- `PagedListCubit`, `PagedQuery`, `ListSelectionCubit`, `BulkResult`
+- `PagedListCubit`, `PagedQuery`, `ListSelectionCubit`, `BulkMutationUseCase`, `BulkResult`
 - `AppDataView`, `AppDataTable`, `AppRecordCard`, `AppDataGrid`
-- `BulkActionBar`, `CrudRowActions`, `crudStatusColumn`
+- `BulkActionBar`, `CrudBulkActions`, `BulkResultDialog`, `CrudRowActions`, `crudStatusColumn`
 - `AppSwitch`, `AppStatCard`, `AppFilterBar`
 
 Core must receive permissions from the feature; do not hardcode feature permissions such as `Permissions.masterData.manage` in `lib/app/core`.
