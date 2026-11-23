@@ -128,6 +128,35 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     emitEffect(buildMutationEffect(kind));
   }
 
+  @protected
+  Future<void> reloadAfterMutation(PagedMutationKind kind) async {
+    if (isClosed) return;
+    publishMutation(kind);
+    await load();
+  }
+
+  @protected
+  Future<Either<Failure, Unit>> runMutation(
+    Future<Either<Failure, Unit>> Function() action, {
+    required PagedMutationKind kind,
+    required AppKey successMessage,
+    bool flashFailure = false,
+  }) async {
+    final response = await action();
+    if (isClosed) return response;
+    if (response.isRight()) {
+      _flashMessages.post(successMessage, MessageType.success);
+      publishMutation(kind);
+      await load();
+    } else if (flashFailure) {
+      response.fold(
+        (failure) => _flashMessages.post(failure.messageKey, MessageType.error),
+        (_) {},
+      );
+    }
+    return response;
+  }
+
   @override
   Future<void> close() {
     _searchTimer?.cancel();
