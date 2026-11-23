@@ -114,7 +114,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-
   testWidgets('does not reserve a header without selection or actions', (
     tester,
   ) async {

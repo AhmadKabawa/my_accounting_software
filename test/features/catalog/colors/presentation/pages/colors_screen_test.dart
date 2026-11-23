@@ -247,9 +247,9 @@ void main() {
 
     expect(find.byType(Checkbox), findsNWidgets(3));
     expect(
-      tester.widgetList<Checkbox>(find.byType(Checkbox)).every(
-        (checkbox) => checkbox.value == false,
-      ),
+      tester
+          .widgetList<Checkbox>(find.byType(Checkbox))
+          .every((checkbox) => checkbox.value == false),
       isTrue,
     );
     expect(find.byTooltip(CatalogUiKeys.finishSelection.en), findsOneWidget);

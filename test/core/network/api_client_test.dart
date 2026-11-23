@@ -33,8 +33,7 @@ ApiClient clientFor(String body, {int status = 200}) {
     networkInfoImpl: _Online(),
     languageProvider: _Lang(),
     refreshEndpoint: _refreshEndpoint,
-    requestSendTimeoutCapability:
-        const PlatformRequestSendTimeoutCapability(),
+    requestSendTimeoutCapability: const PlatformRequestSendTimeoutCapability(),
   );
   service.dio.httpClientAdapter = RoutedAdapter(
     (_) async => RoutedAdapter.json(status, body),
@@ -113,7 +112,8 @@ void main() {
         languageProvider: _Lang(),
         refreshEndpoint: _refreshEndpoint,
 
-        requestSendTimeoutCapability: const PlatformRequestSendTimeoutCapability(),
+        requestSendTimeoutCapability:
+            const PlatformRequestSendTimeoutCapability(),
       );
       service.dio.httpClientAdapter = RoutedAdapter(
         (o) async => throw DioException(requestOptions: o, type: type),
@@ -159,7 +159,8 @@ void main() {
         languageProvider: _Lang(),
         refreshEndpoint: _refreshEndpoint,
 
-        requestSendTimeoutCapability: const PlatformRequestSendTimeoutCapability(),
+        requestSendTimeoutCapability:
+            const PlatformRequestSendTimeoutCapability(),
       );
       final adapter = RoutedAdapter((options) async {
         expect(options.headers['Prefer'], 'count=exact');

@@ -402,10 +402,7 @@ void main() {
     }
 
     const options = [
-      FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+      FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
       FilterBarSortOption(key: 'is_active', label: CatalogUiKeys.filters),
     ];
 
@@ -609,14 +606,8 @@ void main() {
             activeFilters: const [],
             onClearAll: () {},
             sortOptions: const [
-              FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
-              FilterBarSortOption(
-                    key: 'status',
-                    label: CatalogUiKeys.filters,
-                  ),
+              FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+              FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
             ],
             sorts: current,
             onSortsChanged: (next) {
@@ -659,10 +650,7 @@ void main() {
               activeFilters: const [],
               onClearAll: () {},
               sortOptions: const [
-                FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -708,14 +696,8 @@ void main() {
           activeFilters: const [],
           onClearAll: () {},
           sortOptions: const [
-            FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
-            FilterBarSortOption(
-                    key: 'status',
-                    label: CatalogUiKeys.filters,
-                  ),
+            FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+            FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
           ],
           sorts: sorts,
           onSortsChanged: (_) {},
@@ -754,10 +736,7 @@ void main() {
               width: 280,
               child: SortPanel(
                 options: const [
-                  FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                  FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
                   FilterBarSortOption(
                     key: 'status',
                     label: CatalogUiKeys.filters,
@@ -805,10 +784,7 @@ void main() {
             width: 280,
             child: SortPanel(
               options: const [
-                FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -846,10 +822,7 @@ void main() {
             width: 280,
             child: SortPanel(
               options: const [
-                FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -858,10 +831,7 @@ void main() {
                   key: 'updated',
                   label: CatalogUiKeys.refresh,
                 ),
-                FilterBarSortOption(
-                    key: 'created',
-                    label: CatalogUiKeys.retry,
-                  ),
+                FilterBarSortOption(key: 'created', label: CatalogUiKeys.retry),
               ],
               sorts: changed,
               onChanged: (next) => changed = next,
@@ -884,10 +854,7 @@ void main() {
               width: 280,
               child: SortPanel(
                 options: const [
-                  FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                  FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
                   FilterBarSortOption(
                     key: 'status',
                     label: CatalogUiKeys.filters,
@@ -941,10 +908,7 @@ void main() {
             width: 280,
             child: SortPanel(
               options: const [
-                FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -987,10 +951,7 @@ void main() {
               activeFilters: const [],
               onClearAll: () {},
               sortOptions: const [
-                FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -1048,10 +1009,7 @@ void main() {
                 activeFilters: const [],
                 onClearAll: () {},
                 sortOptions: const [
-                  FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                  FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
                   FilterBarSortOption(
                     key: 'status',
                     label: CatalogUiKeys.filters,
@@ -1110,17 +1068,17 @@ void main() {
                 child: SortPanel(
                   options: const [
                     FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                      key: 'name',
+                      label: CatalogUiKeys.search,
+                    ),
                     FilterBarSortOption(
-                    key: 'status',
-                    label: CatalogUiKeys.filters,
-                  ),
+                      key: 'status',
+                      label: CatalogUiKeys.filters,
+                    ),
                     FilterBarSortOption(
-                    key: 'updated',
-                    label: CatalogUiKeys.refresh,
-                  ),
+                      key: 'updated',
+                      label: CatalogUiKeys.refresh,
+                    ),
                   ],
                   sorts: current,
                   onChanged: (next) => setState(() => current = next),
@@ -1164,13 +1122,13 @@ void main() {
                 child: SortPanel(
                   options: const [
                     FilterBarSortOption(
-                    key: 'name',
-                    label: CatalogUiKeys.search,
-                  ),
+                      key: 'name',
+                      label: CatalogUiKeys.search,
+                    ),
                     FilterBarSortOption(
-                    key: 'status',
-                    label: CatalogUiKeys.filters,
-                  ),
+                      key: 'status',
+                      label: CatalogUiKeys.filters,
+                    ),
                   ],
                   sorts: current,
                   onChanged: (next) => setState(() => current = next),
@@ -1197,5 +1155,4 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
-
 }

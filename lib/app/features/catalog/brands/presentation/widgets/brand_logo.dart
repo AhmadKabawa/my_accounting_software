@@ -13,11 +13,8 @@ class BrandLogo extends StatelessWidget {
   final AppLogoSize size;
 
   @override
-  Widget build(BuildContext context) => BrandLogoImage(
-    url: brand.logo,
-    label: brand.name,
-    size: size,
-  );
+  Widget build(BuildContext context) =>
+      BrandLogoImage(url: brand.logo, label: brand.name, size: size);
 }
 
 /// URL-based logo wrapper, also used for the editor's live preview.

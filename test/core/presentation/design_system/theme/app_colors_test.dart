@@ -36,10 +36,7 @@ void main() {
         expect(scheme.onPrimary, AppColors.neutral0);
         expect(scheme.primaryContainer, AppColors.green100);
         expect(scheme.surface, AppColors.neutral0);
-        expect(
-          AppTheme.light().scaffoldBackgroundColor,
-          AppLightColors.canvas,
-        );
+        expect(AppTheme.light().scaffoldBackgroundColor, AppLightColors.canvas);
         expect(AppLightColors.canvas, AppColors.neutral100);
         expect(AppLightColors.background, AppColors.neutral50);
       },
@@ -78,9 +75,11 @@ void main() {
       ]) {
         for (final c in [semantic.debit, semantic.credit]) {
           // Neutral-ish: the channels stay close to each other.
-          final channels = [c.r, c.g, c.b].map(
-            (channel) => (channel * 255).round(),
-          );
+          final channels = [
+            c.r,
+            c.g,
+            c.b,
+          ].map((channel) => (channel * 255).round());
           final spread =
               channels.reduce((a, b) => a > b ? a : b) -
               channels.reduce((a, b) => a < b ? a : b);
