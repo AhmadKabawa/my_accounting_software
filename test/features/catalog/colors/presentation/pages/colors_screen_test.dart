@@ -233,19 +233,53 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(Checkbox), findsNWidgets(3));
 
-    repository.statusResult = const Left(_BulkFailure());
     await tester.tap(find.byType(Checkbox).at(1));
     await tester.pumpAndSettle();
     expect(find.text(ColorsKeys.bulkActivate.en), findsOneWidget);
 
     await tester.tap(find.text(ColorsKeys.bulkActivate.en));
     await tester.pumpAndSettle();
+
+    // A fully successful bulk action has no failure report dialog.
+    expect(find.text(CatalogUiKeys.bulkResultTitle.en), findsNothing);
+    expect(repository.statusUpdates, [(sampleColor.id, true)]);
+    expect(find.byType(Checkbox), findsNWidgets(3));
+    expect(
+      tester
+          .widgetList<Checkbox>(find.byType(Checkbox))
+          .every((checkbox) => checkbox.value == false),
+      isTrue,
+    );
+    expect(find.byTooltip(CatalogUiKeys.finishSelection.en), findsOneWidget);
+    expect(find.text(ColorsKeys.bulkActivate.en), findsOneWidget);
+  });
+
+  testWidgets('bulk action failure reports the failure and clears selection', (
+    tester,
+  ) async {
+    final repository = FakeColorsRepository()
+      ..statusResult = const Left(_BulkFailure());
+    _register(repository);
+    await pumpScreenMatrix(
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    await tester.tap(find.byTooltip(CatalogUiKeys.select.en));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(Checkbox).at(1));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(ColorsKeys.bulkActivate.en));
+    await tester.pumpAndSettle();
+
     expect(repository.statusUpdates, [(sampleColor.id, true)]);
     expect(find.text(CatalogUiKeys.bulkResultTitle.en), findsOneWidget);
     await tester.tap(find.text(CatalogUiKeys.done.en));
     await tester.pumpAndSettle();
 
-    expect(find.byType(Checkbox), findsNWidgets(3));
     expect(
       tester
           .widgetList<Checkbox>(find.byType(Checkbox))
