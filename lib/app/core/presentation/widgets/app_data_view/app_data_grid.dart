@@ -35,10 +35,12 @@ class AppDataGrid<T> extends StatelessWidget {
         final minTileWidth = context.ui.size.width(
           AppComponentSize.gridTileWidth,
         );
-        final columns = math.max(
-          1,
-          ((constraints.maxWidth + gap) / (minTileWidth + gap)).floor(),
-        );
+        final columns = math
+            .max(
+              1,
+              ((constraints.maxWidth + gap) / (minTileWidth + gap)).floor(),
+            )
+            .toInt();
         final rowCount = (rows.length + columns - 1) ~/ columns;
         return ListView.separated(
           shrinkWrap: !constraints.hasBoundedHeight,
@@ -49,7 +51,7 @@ class AppDataGrid<T> extends StatelessWidget {
           separatorBuilder: (_, _) => SizedBox(height: gap),
           itemBuilder: (context, rowIndex) {
             final start = rowIndex * columns;
-            final end = math.min(start + columns, rows.length);
+            final end = math.min(start + columns, rows.length).toInt();
             return IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
