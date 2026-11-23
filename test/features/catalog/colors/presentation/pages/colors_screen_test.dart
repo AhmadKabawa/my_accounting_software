@@ -204,26 +204,27 @@ void main() {
   testWidgets('authorized users can select the page and run a bulk action', (
     tester,
   ) async {
-    final repository = FakeColorsRepository();
-    _register(repository);
-    await pumpScreenMatrix(
-      tester,
-      width: 1200,
-      direction: TextDirection.ltr,
-      dark: false,
-      home: _home(canManage: true),
-    );
+      final repository = FakeColorsRepository();
+      _register(repository);
+      await pumpScreenMatrix(
+        tester,
+        width: 1200,
+        direction: TextDirection.ltr,
+        dark: false,
+        home: _home(canManage: true),
+      );
 
-    expect(find.byType(Checkbox), findsNWidgets(2));
-    await tester.tap(find.byType(Checkbox).first);
-    await tester.pumpAndSettle();
-    expect(find.text(ColorsKeys.bulkActivate.en), findsOneWidget);
+      expect(find.byType(Checkbox), findsNWidgets(2));
+      await tester.tap(find.byType(Checkbox).first);
+      await tester.pumpAndSettle();
+      expect(find.text(ColorsKeys.bulkActivate.en), findsOneWidget);
 
-    await tester.tap(find.text(ColorsKeys.bulkActivate.en));
-    await tester.pumpAndSettle();
-    expect(repository.statusUpdates, [(sampleColor.id, true)]);
-    expect(find.text(ColorsKeys.bulkActivate.en), findsNothing);
-  });
+      await tester.tap(find.text(ColorsKeys.bulkActivate.en));
+      await tester.pumpAndSettle();
+      expect(repository.statusUpdates, [(sampleColor.id, true)]);
+      expect(find.text(ColorsKeys.bulkActivate.en), findsNothing);
+  },
+  );
 
   testWidgets('without manage permission there is no add action', (
     tester,
