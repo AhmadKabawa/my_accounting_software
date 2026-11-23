@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_result.d
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
+import 'package:accounting_software/app/core/presentation/state_management/paged_list/bulk_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 
 enum TestPagedKey implements AppKey {
@@ -92,6 +93,16 @@ class TestPagedCubit
   final requests = <Completer<Either<Failure, PagedResult<int>>>>[];
   final requestedQueries = <TestPagedQuery>[];
   int deleteCalls = 0;
+
+  Future<BulkResult<int>> bulkItems(
+    Iterable<int> items,
+    Future<Either<Failure, Unit>> Function(int item) action,
+  ) => runBulk(
+    items: items,
+    action: action,
+    kind: PagedMutationKind.updated,
+    successMessage: TestPagedKey.deleted,
+  );
 
   @override
   Future<Either<Failure, PagedResult<int>>> fetch(TestPagedQuery query) {

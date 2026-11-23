@@ -6,6 +6,15 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/state_management/list_selection_cubit.dart';
+import 'package:accounting_software/app/core/presentation/state_management/paged_list/bulk_result.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
@@ -146,24 +155,95 @@ class BrandsScreen extends StatelessWidget {
                         errorKey: failure?.messageKey,
                         refreshErrorKey: refreshFailure?.messageKey,
                         onRetry: cubit.refresh,
-                        dataTable: BrandsTableSection(
-                          mode: mode,
-                          query: query,
-                          onRetry: cubit.refresh,
-                          onSort: (sort) => cubit.setSort(
-                            field: BrandSortField.tryParse(sort.key),
-                            ascending: sort.ascending,
-                          ),
-                          onPageChanged: cubit.setPage,
-                          rows: rows,
-                          total: total,
-                          loading: loading,
-                          refreshing: refreshing,
-                          failure: failure,
-                          addAction: addAction,
-                          onEdit: (brand) => _edit(context, brand),
-                          onDelete: (brand) => _delete(context, brand),
-                          onToggleStatus: (brand) => _status(context, brand),
+                        dataTable: BlocBuilder<ListSelectionCubit<Object>, Set<Object>>(
+                          bloc: cubit.selection,
+                          builder: (context, selectedIds) {
+                            final access = context.watch<AccessCubit>().state;
+                            final canBulk = access.isReady &&
+                                access.snapshot!.permissions.any(
+                                  (granted) => granted.covers(Permissions.masterData.manage),
+                                );
+                            final selectedBrands = rows
+                                .where((brand) => selectedIds.contains(brand.id))
+                                .toList(growable: false);
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                if (canBulk && selectedBrands.isNotEmpty)
+                                  BulkActionBar(
+                                    selectedCount: selectedBrands.length,
+                                    onClear: cubit.selection.clear,
+                                    actions: [
+                                      BulkAction(
+                                        labelKey: BrandsKeys.bulkActivate,
+                                        icon: AppIcons.refresh,
+                                        permission: Permissions.masterData.manage,
+                                        onRun: () async {
+                                          final result = await cubit.bulkActivate(selectedBrands);
+                                          await _showBulkResult(context, result);
+                                        },
+                                      ),
+                                      BulkAction(
+                                        labelKey: BrandsKeys.bulkDeactivate,
+                                        icon: AppIcons.refresh,
+                                        permission: Permissions.masterData.manage,
+                                        confirm: (confirmContext, count) => showConfirmDialog(
+                                          confirmContext,
+                                          titleKey: BrandsKeys.bulkDeactivateTitle,
+                                          messageKey: BrandsKeys.bulkDeactivateMessage,
+                                          messageArgs: {'count': count.toString()},
+                                          severity: ConfirmDialogSeverity.warning,
+                                        ),
+                                        onRun: () async {
+                                          final result = await cubit.bulkDeactivate(selectedBrands);
+                                          await _showBulkResult(context, result);
+                                        },
+                                      ),
+                                      BulkAction(
+                                        labelKey: BrandsKeys.bulkDelete,
+                                        icon: AppIcons.delete,
+                                        permission: Permissions.masterData.manage,
+                                        destructive: true,
+                                        confirm: (confirmContext, count) => showConfirmDialog(
+                                          confirmContext,
+                                          titleKey: BrandsKeys.bulkDeleteTitle,
+                                          messageKey: BrandsKeys.bulkDeleteMessage,
+                                          messageArgs: {'count': count.toString()},
+                                          severity: ConfirmDialogSeverity.critical,
+                                        ),
+                                        onRun: () async {
+                                          final result = await cubit.bulkDelete(selectedBrands);
+                                          await _showBulkResult(context, result);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                if (canBulk && selectedBrands.isNotEmpty)
+                                  context.ui.spacing.gap(AppSpacing.sm),
+                                BrandsTableSection(
+                                  mode: mode,
+                                  query: query,
+                                  onRetry: cubit.refresh,
+                                  onSort: (sort) => cubit.setSort(
+                                    field: BrandSortField.tryParse(sort.key),
+                                    ascending: sort.ascending,
+                                  ),
+                                  onPageChanged: cubit.setPage,
+                                  rows: rows,
+                                  total: total,
+                                  loading: loading,
+                                  refreshing: refreshing,
+                                  failure: failure,
+                                  addAction: addAction,
+                                  selectedIds: canBulk ? selectedIds : const {},
+                                  onSelectionChanged: canBulk ? cubit.selection.replace : null,
+                                  onEdit: (brand) => _edit(context, brand),
+                                  onDelete: (brand) => _delete(context, brand),
+                                  onToggleStatus: (brand) => _status(context, brand),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       );
                     },
@@ -172,6 +252,40 @@ class BrandsScreen extends StatelessWidget {
       ),
     ),
   );
+
+  Future<void> _showBulkResult(BuildContext context, BulkResult<Brand> result) async {
+    if (result.failureCount == 0 || !context.mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: AppText(CatalogUiKeys.bulkResultTitle),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppText.raw(CatalogUiKeys.bulkResultSummary.tr(
+                context: dialogContext,
+                namedArgs: {'success': result.successCount.toString(), 'failure': result.failureCount.toString()},
+              )),
+              for (final failure in result.failures)
+                Padding(
+                  padding: EdgeInsets.only(top: dialogContext.ui.spacing.xs),
+                  child: AppText.raw(CatalogUiKeys.bulkFailureLine.tr(
+                    context: dialogContext,
+                    namedArgs: {
+                      'name': failure.item.name,
+                      'reason': failure.reason.messageKey.tr(context: dialogContext),
+                    },
+                  )),
+                ),
+            ],
+          ),
+        ),
+        actions: [AppButton(CatalogUiKeys.done, onPressed: () => Navigator.of(dialogContext).pop())],
+      ),
+    );
+  }
 
   Future<void> _edit(BuildContext context, [Brand? brand]) async {
     final saved = await showBrandEditor(context, brand: brand);
