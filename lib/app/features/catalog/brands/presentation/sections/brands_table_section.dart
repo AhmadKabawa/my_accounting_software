@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
-import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
@@ -8,8 +7,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_view/
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/crud_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/crud_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -107,22 +105,15 @@ class BrandsTableSection extends StatelessWidget {
             color: c.ui.theme.colors.onSurfaceVariant,
           ),
         ),
-        DataTableColumn(
+        crudStatusColumn<Brand>(
           labelKey: BrandsKeys.status,
           sortKey: 'status',
-          priority: DataTableColumnPriority.secondary,
-          // A switch for who may manage brands; a plain badge for everyone else.
-          cellBuilder: (_, b) => PermissionGate(
-            permission: Permissions.masterData.manage,
-            fallback: BrandStatusBadge(b),
-            child: AppSwitch(
-              value: b.isActive,
-              semanticsKey: b.isActive
-                  ? BrandsKeys.deactivate
-                  : BrandsKeys.activate,
-              onChanged: (_) => onToggleStatus(b),
-            ),
-          ),
+          permission: Permissions.masterData.manage,
+          isActive: (brand) => brand.isActive,
+          onToggleStatus: onToggleStatus,
+          activateLabelKey: BrandsKeys.activate,
+          deactivateLabelKey: BrandsKeys.deactivate,
+          badgeBuilder: (_, brand) => BrandStatusBadge(brand),
         ),
       ],
       mode: mode,
@@ -145,27 +136,16 @@ class BrandsTableSection extends StatelessWidget {
       ),
       cardBuilder: (_, b) => BrandCard(b),
       gridItemBuilder: (_, b) => BrandGridTile(b),
-      rowActionsBuilder: (c, b) => PermissionGate(
+      rowActionsBuilder: (_, b) => CrudRowActions(
         permission: Permissions.masterData.manage,
-        child: AppRowActions(
-          primary: [
-            AppRowAction(
-              icon: AppIcons.edit,
-              labelKey: BrandsKeys.edit,
-              onPressed: () => onEdit(b),
-            ),
-          ],
-          // Status is the switch in its column; delete lives in the menu and is
-          // disabled (not hidden) while the brand still has products.
-          overflow: [
-            AppRowAction(
-              icon: AppIcons.delete,
-              labelKey: BrandsKeys.delete,
-              destructive: true,
-              onPressed: b.canDelete ? () => onDelete(b) : null,
-            ),
-          ],
-        ),
+        editLabelKey: BrandsKeys.edit,
+        onEdit: () => onEdit(b),
+        deleteLabelKey: BrandsKeys.delete,
+        onDelete: b.canDelete ? () => onDelete(b) : null,
+        isActive: b.isActive,
+        onToggleStatus: () => onToggleStatus(b),
+        activateLabelKey: BrandsKeys.activate,
+        deactivateLabelKey: BrandsKeys.deactivate,
       ),
       sortKey: query.sortField.name,
       sortAscending: query.sortAscending,
