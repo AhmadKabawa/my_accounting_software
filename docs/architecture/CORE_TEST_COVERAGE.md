@@ -125,3 +125,10 @@
 - `test/core/presentation/widgets/list_stats_bar_test.dart`: card counts 1–6 at widths 360/600/1200, equal widths, no full-row singleton, and loading placeholders preserving count.
 - `test/core/presentation/widgets/crud_empty_state_test.dart`: empty/no-results copy, optional create action, callback, and denied-permission visibility.
 - These tests were added in this change; they have not been run in a Flutter environment. Treat their runtime status as NOT_VERIFIED until the specified Flutter commands pass.
+
+
+## Paged list state management — 2026-11-22
+
+- `test/core/presentation/state_management/paged_list/paged_list_cubit_test.dart`: stale request protection, close safety, 300ms debounce, refresh failure retention, initial failure, both page-two delete recovery paths, clear-filter timer cancellation, and deletion flash-before-effect ordering.
+- `test/features/catalog/brands/presentation/cubit/brands_cubit_test.dart`: existing list lifecycle and mutation coverage plus public `setStatus` / `setSorts` behavior and deletion rejection for unknown/in-use product counts.
+- The tests were added but not run in the repository environment for this change. Verify with the commands in the task report.
