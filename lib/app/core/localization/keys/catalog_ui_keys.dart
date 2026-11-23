@@ -28,6 +28,7 @@ enum CatalogUiKeys implements AppKey {
   thenBy(ar: 'ثم حسب', en: 'Then by'),
   none(ar: 'بلا', en: 'None'),
   sortFieldAlreadySelected(ar: 'لا يمكن اختيار الحقل نفسه في معياري الفرز.', en: 'The same field cannot be selected for both sort criteria.'),
+  sortLimitExceeded(ar: 'يمكن اختيار معيارَي فرز كحد أقصى.', en: 'At most two sort criteria can be selected.'),
   sortDirection(ar: 'الاتجاه', en: 'Direction'),
   done(ar: 'تم', en: 'Done'),
   paginationLabel(

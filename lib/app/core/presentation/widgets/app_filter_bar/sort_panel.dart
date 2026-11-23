@@ -26,8 +26,8 @@ class FilterBarSort {
 /// Updates an existing criterion or adds one if capacity remains; never drops
 /// an older criterion or removes a sort when its direction is pressed.
 List<FilterBarSort> toggleSort(List<FilterBarSort> current, String key, bool ascending, {int maxSorts = 2}) {
-  if (maxSorts < 1) return const [];
-  final next = current.take(maxSorts).toList();
+  if (maxSorts < 1 || current.length > maxSorts) return current;
+  final next = current.toList();
   final index = next.indexWhere((sort) => sort.key == key);
   if (index >= 0) {
     next[index] = FilterBarSort(key, ascending);
@@ -50,12 +50,14 @@ class SortPanel extends StatelessWidget {
   FilterBarSort? get _second => maxSorts < 2 || sorts.length < 2 ? null : sorts[1];
 
   void _changeFirst(String? key) {
+    if (sorts.length > maxSorts) return;
     if (key == null || key.isEmpty || _first?.key == key || _second?.key == key) return;
     final second = _second;
     onChanged([FilterBarSort(key, true), if (second != null && second.key != key) second]);
   }
 
   void _changeSecond(String? key) {
+    if (sorts.length > maxSorts) return;
     final first = _first;
     if (first == null) return;
     if (key == null || key == _none) {
@@ -67,7 +69,8 @@ class SortPanel extends StatelessWidget {
   }
 
   void _toggle(int index) {
-    final next = sorts.take(maxSorts).toList();
+    if (sorts.length > maxSorts) return;
+    final next = sorts.toList();
     if (index >= next.length) return;
     final item = next[index];
     next[index] = FilterBarSort(item.key, !item.ascending);
@@ -79,6 +82,7 @@ class SortPanel extends StatelessWidget {
     final first = _first;
     final second = _second;
     final duplicate = first != null && second != null && first.key == second.key;
+    final overflow = sorts.length > maxSorts;
     return Padding(
       padding: context.ui.padding.all(AppSpacing.sm),
       child: Column(
@@ -96,11 +100,14 @@ class SortPanel extends StatelessWidget {
               ascending: second?.ascending ?? true, onField: _changeSecond,
               onDirection: second == null ? null : () => _toggle(1), allowNone: true,
               primaryKey: first?.key),
-            if (duplicate)
+            if (duplicate || overflow)
               Padding(
                 padding: context.ui.padding.only(top: AppSpacing.xs),
-                child: AppText(CatalogUiKeys.sortFieldAlreadySelected,
-                  type: AppTextType.bodySmall, color: context.ui.theme.colors.error),
+                child: AppText(
+                  duplicate ? CatalogUiKeys.sortFieldAlreadySelected : CatalogUiKeys.sortLimitExceeded,
+                  type: AppTextType.bodySmall,
+                  color: context.ui.theme.colors.error,
+                ),
               ),
           ],
         ],
