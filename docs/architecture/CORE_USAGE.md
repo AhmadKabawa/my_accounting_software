@@ -584,7 +584,7 @@ See [List page template](../ui/list_page_template.md) for the preferred-slot tab
 
 Use `PagedListCubit<T, Q, E>` when a list needs the shared request lifecycle, search debounce, pagination, refresh retention, and delete-page recovery. Implement the domain query with `PagedQuery<Q>` from `core/foundation/types/paged_query.dart`; it requires search, page, pageSize, hasActiveFilters, withSearch, withPage, and cleared. Keep this contract in Foundation so Domain does not depend on Presentation.
 
-Implement `PagedResult<T>` from `core/foundation/types/paged_result.dart` on the existing result type. The existing `PaginatedResult<T>` already implements it.
+`paged_list/paged_result.dart` exposes `PagedResult<T>` as an alias of the existing `core/foundation/types/paginated_result.dart` `PaginatedResult<T>`. Reuse that result type; do not create a parallel page model.
 
 A feature cubit supplies:
 - `fetch(query)` and `deleteItem(item)`
