@@ -3,7 +3,6 @@ import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 
 /// Localized, permission-scoped create action shared by list page slots.
 class ListAddAction {

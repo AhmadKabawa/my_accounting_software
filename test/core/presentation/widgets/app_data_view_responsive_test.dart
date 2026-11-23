@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import '../../../helpers/localized_app.dart';
 
@@ -133,7 +132,7 @@ void main() {
               onSelectionChanged: (next) => setState(() => selected = next),
               gridItemBuilder: (_, value) => LayoutBuilder(
                 builder: (context, constraints) =>
-                    Text(value + ' ' + constraints.maxWidth.toString()),
+                    Text('$value ${constraints.maxWidth}'),
               ),
             ),
           ),

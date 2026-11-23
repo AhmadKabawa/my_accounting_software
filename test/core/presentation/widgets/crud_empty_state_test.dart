@@ -8,7 +8,6 @@ import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/crud_empty_state.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import '../../../helpers/localized_app.dart';
 import '../../../helpers/test_key.dart';

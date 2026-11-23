@@ -398,34 +398,37 @@ class _SearchableDropdownState<T extends Object>
   }
 
   Future<void> _openPanelPicker(BuildContext context) async {
+    if (!context.mounted) return;
     final isMobile = ScreenEngine.isMobile(context);
-    final selection = isMobile
-        ? await showModalBottomSheet<_PickerSelection<T>>(
-            context: context,
-            isScrollControlled: true,
-            useSafeArea: true,
-            builder: (sheetContext) => FractionallySizedBox(
-              heightFactor: _mobileSheetHeightFactor,
-              child: _PanelSearchPicker<T>(
-                data: _pickerData,
-                labelKey: widget.labelKey,
-                optionLabel: widget.optionLabel,
-                optionSubtitle: widget.optionSubtitle,
-                emptyKey: widget.emptyKey,
-                allOptionLabel:
-                    widget.allOptionLabel ?? CatalogUiKeys.allOptions,
-                selectedValue: widget.value,
-                filterLocally: widget.filterLocally,
-                onQueryChanged: widget.onQueryChanged == null ? null : _query,
-                onAddNew: widget.onAddNew,
-                onDismiss: () => Navigator.of(sheetContext).maybePop(),
-                onSelect: (value) => Navigator.of(
-                  sheetContext,
-                ).pop(_PickerSelection<T>(value: value)),
-              ),
-            ),
-          )
-        : await _showDesktopPanel(context);
+    final _PickerSelection<T>? selection;
+    if (isMobile) {
+      selection = await showModalBottomSheet<_PickerSelection<T>>(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        builder: (sheetContext) => FractionallySizedBox(
+          heightFactor: _mobileSheetHeightFactor,
+          child: _PanelSearchPicker<T>(
+            data: _pickerData,
+            labelKey: widget.labelKey,
+            optionLabel: widget.optionLabel,
+            optionSubtitle: widget.optionSubtitle,
+            emptyKey: widget.emptyKey,
+            allOptionLabel: widget.allOptionLabel ?? CatalogUiKeys.allOptions,
+            selectedValue: widget.value,
+            filterLocally: widget.filterLocally,
+            onQueryChanged: widget.onQueryChanged == null ? null : _query,
+            onAddNew: widget.onAddNew,
+            onDismiss: () => Navigator.of(sheetContext).maybePop(),
+            onSelect: (value) => Navigator.of(
+              sheetContext,
+            ).pop(_PickerSelection<T>(value: value)),
+          ),
+        ),
+      );
+    } else {
+      selection = await _showDesktopPanel(context);
+    }
 
     if (!context.mounted) return;
     if (selection != null) widget.onChanged(selection.value);
