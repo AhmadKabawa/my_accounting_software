@@ -292,6 +292,6 @@
 
 ### Paged CRUD list state
 - `core/presentation/state_management/paged_list/` contains `PagedListCubit<T,Q,E>`, `PagedListState<T,Q>`, and the presentation exports for the query/result contracts.
-- The query and result contracts live in `core/foundation/types/` so Domain query/result models can implement them without importing Presentation.
+- The query contract lives in `core/foundation/types/` so Domain query models do not import Presentation. `paged_list/paged_result.dart` aliases the existing Foundation `PaginatedResult<T>`; no parallel result model is introduced.
 - `PagedListCubit` owns request-version protection, search debounce, paging, refresh/failure retention, deletion page recovery, mutation flashes/effects, and timer cleanup.
 - Feature cubits provide `fetch`, `deleteItem`, optional `beforeDelete`, `deletedMessageKey`, and `buildMutationEffect`. Feature-specific filters and sorting remain in the feature.
