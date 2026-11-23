@@ -25,9 +25,15 @@ abstract final class CrudBulkActions {
     required Future<BulkResult<T>> Function(List<T> selected) onDeactivate,
     required Future<BulkResult<T>> Function(List<T> selected) onDelete,
   }) {
+    final navigator = Navigator.of(context, rootNavigator: true);
     Future<void> report(Future<BulkResult<T>> Function(List<T>) action) async {
       final result = await action(selected);
-      await BulkResultDialog.show(context, result, itemLabel: itemLabel);
+      if (!navigator.mounted) return;
+      await BulkResultDialog.show(
+        navigator.context,
+        result,
+        itemLabel: itemLabel,
+      );
     }
 
     return [
