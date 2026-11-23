@@ -27,7 +27,7 @@ void _expectNonText(String label, Color fg, Color bg) =>
 void main() {
   group('role mapping', () {
     test(
-      'light: primary is green-600, page is neutral-50, cards are white',
+      'light: primary is green-600, SaaS canvas is neutral-100, cards are white',
       () {
         final scheme = AppTheme.light().colorScheme;
 
@@ -38,8 +38,9 @@ void main() {
         expect(scheme.surface, AppColors.neutral0);
         expect(
           AppTheme.light().scaffoldBackgroundColor,
-          AppLightColors.background,
+          AppLightColors.canvas,
         );
+        expect(AppLightColors.canvas, AppColors.neutral100);
         expect(AppLightColors.background, AppColors.neutral50);
       },
     );
