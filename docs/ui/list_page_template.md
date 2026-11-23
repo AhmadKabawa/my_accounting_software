@@ -62,3 +62,18 @@ return ListPageTemplate(
   dataTable: dataView,
 );
 ```
+
+## Shared selection and bulk CRUD actions
+
+CrudSelectionScope<T> owns the shared page-selection/access/action-bar composition. The feature passes its server-authoritative permission and mutation callbacks; Core contains no feature permission constants. The scope passes selected IDs and the selection callback to the feature table. CrudBulkActions.statusAndDelete<T> invokes the selected-items callback and opens BulkResultDialog once for partial or complete failure.
+
+- Complete success: success flash only.
+- Partial/complete failure: result dialog only; do not also emit an error flash for the same batch.
+- The operation is sequential per selected record, not atomic. Keep the selection page-scoped. Recommend a maximum of 50 records for ordinary bulk operations; 100 is the configured page-size ceiling and is suitable only for light operations.
+- On content narrower than compactContentBreakpoint (720 logical pixels), BulkActionBar shows icon-only actions with tooltips and semantics.
+
+## Sorting and loading
+
+Multi-sort criteria are kept in priority order and all available fields may be used once. Selecting a field already used by another criterion is disabled; changing a criterion's field preserves its direction; move-up/move-down controls change the priority order. The feature query model and remote order builder must retain the entire list, not truncate after the second criterion. A zero maxSorts means no artificial cap beyond the available fields.
+
+When no view mode has been selected, loading placeholders follow the available content width: cards below the shared compact breakpoint, table otherwise. An explicit saved view mode remains authoritative.

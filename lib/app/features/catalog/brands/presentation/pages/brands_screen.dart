@@ -6,13 +6,9 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
-import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/state_management/list_selection_cubit.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_bulk_actions.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_result_dialog.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_selection_scope.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
@@ -126,14 +122,13 @@ class BrandsScreen extends StatelessWidget {
                             for (final sort in query.sorts)
                               FilterBarSort(sort.field.name, sort.ascending),
                           ],
-                          onSortsChanged: (sorts) => cubit.setSorts([
-                            for (final sort in sorts)
-                              if (BrandSortField.tryParse(sort.key) != null)
-                                BrandSort(
-                                  BrandSortField.tryParse(sort.key)!,
-                                  sort.ascending,
-                                ),
-                          ]),
+                          onSortsChanged: (sorts) => cubit.setSorts(
+                            mapFilterBarSorts<BrandSortField, BrandSort>(
+                              sorts,
+                              parse: BrandSortField.tryParse,
+                              build: (field, ascending) => BrandSort(field, ascending),
+                            ),
+                          ),
                           viewModes: _modes,
                           viewMode: mode,
                           onViewModeChanged: context
@@ -143,7 +138,7 @@ class BrandsScreen extends StatelessWidget {
                           refreshing: state.isRefreshing,
                         ),
                         addAction: addAction,
-                        loadingViewMode: mode ?? AppViewMode.table,
+                        loadingViewMode: mode,
                         state: loading
                             ? AppPageState.loading
                             : failure != null
@@ -152,86 +147,51 @@ class BrandsScreen extends StatelessWidget {
                         errorKey: failure?.messageKey,
                         refreshErrorKey: refreshFailure?.messageKey,
                         onRetry: cubit.refresh,
-                        dataTable: BlocBuilder<ListSelectionCubit<Object>, Set<Object>>(
-                          bloc: cubit.selection,
-                          builder: (context, selectedIds) {
-                            final access = context.watch<AccessCubit>().state;
-                            final canBulk = access.isReady &&
-                                access.snapshot!.permissions.any(
-                                  (granted) => granted.covers(Permissions.masterData.manage),
-                                );
-                            final selectedBrands = rows
-                                .where((brand) => selectedIds.contains(brand.id))
-                                .toList(growable: false);
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                if (canBulk && selectedBrands.isNotEmpty)
-                                  BulkActionBar(
-                                    selectedCount: selectedBrands.length,
-                                    onClear: cubit.selection.clear,
-                                    actions: CrudBulkActions.statusAndDelete(
-                                      permission: Permissions.masterData.manage,
-                                      activateLabelKey: BrandsKeys.bulkActivate,
-                                      deactivateLabelKey: BrandsKeys.bulkDeactivate,
-                                      deleteLabelKey: BrandsKeys.bulkDelete,
-                                      deactivateTitleKey: BrandsKeys.bulkDeactivateTitle,
-                                      deactivateMessageKey: BrandsKeys.bulkDeactivateMessage,
-                                      deleteTitleKey: BrandsKeys.bulkDeleteTitle,
-                                      deleteMessageKey: BrandsKeys.bulkDeleteMessage,
-                                      onActivate: () async {
-                                        final result = await cubit.bulkActivate(selectedBrands);
-                                        await BulkResultDialog.show(
-                                          context,
-                                          result,
-                                          itemLabel: (brand) => brand.name,
-                                        );
-                                      },
-                                      onDeactivate: () async {
-                                        final result = await cubit.bulkDeactivate(selectedBrands);
-                                        await BulkResultDialog.show(
-                                          context,
-                                          result,
-                                          itemLabel: (brand) => brand.name,
-                                        );
-                                      },
-                                      onDelete: () async {
-                                        final result = await cubit.bulkDelete(selectedBrands);
-                                        await BulkResultDialog.show(
-                                          context,
-                                          result,
-                                          itemLabel: (brand) => brand.name,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                if (canBulk && selectedBrands.isNotEmpty)
-                                  context.ui.spacing.gap(AppSpacing.sm),
-                                BrandsTableSection(
-                                  mode: mode,
-                                  query: query,
-                                  onRetry: cubit.refresh,
-                                  onSort: (sort) => cubit.setSort(
-                                    field: BrandSortField.tryParse(sort.key),
-                                    ascending: sort.ascending,
-                                  ),
-                                  onPageChanged: cubit.setPage,
-                                  rows: rows,
-                                  total: total,
-                                  loading: loading,
-                                  refreshing: refreshing,
-                                  failure: failure,
-                                  addAction: addAction,
-                                  onDuplicate: (brand) => _duplicate(context, brand),
-                                  selectedIds: canBulk ? selectedIds : const {},
-                                  onSelectionChanged: canBulk ? cubit.selection.replace : null,
-                                  onEdit: (brand) => _edit(context, brand),
-                                  onDelete: (brand) => _delete(context, brand),
-                                  onToggleStatus: (brand) => _status(context, brand),
+                        dataTable: CrudSelectionScope<Brand>(
+                          rows: rows,
+                          rowId: (brand) => brand.id,
+                          selection: cubit.selection,
+                          permission: Permissions.masterData.manage,
+                          actionsBuilder: (selected) =>
+                              CrudBulkActions.statusAndDelete<Brand>(
+                                context: context,
+                                permission: Permissions.masterData.manage,
+                                selected: selected,
+                                itemLabel: (brand) => brand.name,
+                                activateLabelKey: BrandsKeys.bulkActivate,
+                                deactivateLabelKey: BrandsKeys.bulkDeactivate,
+                                deleteLabelKey: BrandsKeys.bulkDelete,
+                                deactivateTitleKey: BrandsKeys.bulkDeactivateTitle,
+                                deactivateMessageKey: BrandsKeys.bulkDeactivateMessage,
+                                deleteTitleKey: BrandsKeys.bulkDeleteTitle,
+                                deleteMessageKey: BrandsKeys.bulkDeleteMessage,
+                                onActivate: cubit.bulkActivate,
+                                onDeactivate: cubit.bulkDeactivate,
+                                onDelete: cubit.bulkDelete,
+                              ),
+                          builder: (context, selectedIds, onSelectionChanged) =>
+                              BrandsTableSection(
+                                mode: mode,
+                                query: query,
+                                onRetry: cubit.refresh,
+                                onSort: (sort) => cubit.setSort(
+                                  field: BrandSortField.tryParse(sort.key),
+                                  ascending: sort.ascending,
                                 ),
-                              ],
-                            );
-                          },
+                                onPageChanged: cubit.setPage,
+                                rows: rows,
+                                total: total,
+                                loading: loading,
+                                refreshing: refreshing,
+                                failure: failure,
+                                addAction: addAction,
+                                onDuplicate: (brand) => _duplicate(context, brand),
+                                selectedIds: selectedIds,
+                                onSelectionChanged: onSelectionChanged,
+                                onEdit: (brand) => _edit(context, brand),
+                                onDelete: (brand) => _delete(context, brand),
+                                onToggleStatus: (brand) => _status(context, brand),
+                              ),
                         ),
                       );
                     },
@@ -257,36 +217,25 @@ class BrandsScreen extends StatelessWidget {
 
   Future<void> _delete(BuildContext context, Brand brand) async {
     final cubit = context.read<BrandsListCubit>();
-    await showConfirmDialog(
+    await CrudConfirmations.delete(
       context,
       titleKey: BrandsKeys.delete,
       messageKey: BrandsKeys.confirmDelete,
-      severity: ConfirmDialogSeverity.warning,
       targetName: brand.name,
-      onConfirm: () async {
-        final result = await cubit.delete(brand);
-        return result.fold((failure) => failure.messageKey, (_) => null);
-      },
+      onDelete: () => cubit.delete(brand),
     );
   }
 
   Future<void> _status(BuildContext context, Brand brand) async {
     final cubit = context.read<BrandsListCubit>();
-    if (!brand.isActive) {
-      await cubit.activate(brand.id);
-      return;
-    }
-
-    await showConfirmDialog(
+    await CrudConfirmations.status(
       context,
+      isActive: brand.isActive,
+      targetName: brand.name,
       titleKey: BrandsKeys.deactivateTitle,
       messageKey: BrandsKeys.deactivateMessage,
-      severity: ConfirmDialogSeverity.warning,
-      targetName: brand.name,
-      onConfirm: () async {
-        final result = await cubit.deactivate(brand.id);
-        return result.fold((failure) => failure.messageKey, (_) => null);
-      },
+      onActivate: () => cubit.activate(brand.id),
+      onDeactivate: () => cubit.deactivate(brand.id),
     );
   }
 }

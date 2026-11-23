@@ -2,10 +2,11 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/compact_content_breakpoint.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_dropdown_menu/app_dropdown_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_panel.dart';
 export 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_panel.dart'
-    show FilterBarSortOption, FilterBarSort, toggleSort;
+    show FilterBarSortOption, FilterBarSort, toggleSort, mapFilterBarSorts;
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
@@ -79,7 +80,7 @@ class FilterBar extends StatefulWidget {
     this.onSort,
     this.sorts = const [],
     this.onSortsChanged,
-    this.maxSorts = 2,
+    this.maxSorts = 0,
     this.searchSuffix,
     this.resultCount,
   });
@@ -119,7 +120,6 @@ class FilterBar extends StatefulWidget {
 }
 
 class _FilterBarState extends State<FilterBar> {
-  static const double _compactBreakpoint = 720;
   static const double _minimumSearchWidth = 180;
   late final TextEditingController _ownedController;
   late final ValueNotifier<List<FilterBarSort>> _sortsNotifier;
@@ -356,7 +356,7 @@ class _FilterBarState extends State<FilterBar> {
       final width = constraints.hasBoundedWidth
           ? constraints.maxWidth
           : MediaQuery.sizeOf(context).width;
-      final compact = width < _compactBreakpoint;
+      final compact = width < compactContentBreakpoint;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

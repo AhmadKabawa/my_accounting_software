@@ -18,6 +18,9 @@ enum CatalogUiKeys implements AppKey {
   activeFilters(ar: 'الفلاتر النشطة', en: 'Active filters'),
   activeFilterLabel(ar: '{label}: {value}', en: '{label}: {value}'),
   removeFilter(ar: 'إزالة الفلتر', en: 'Remove filter'),
+  removeSort(ar: 'إزالة معيار الفرز', en: 'Remove sort criterion'),
+  moveSortUp(ar: 'رفع أولوية الفرز', en: 'Move sort up'),
+  moveSortDown(ar: 'خفض أولوية الفرز', en: 'Move sort down'),
   clearAll(ar: 'مسح الكل', en: 'Clear all'),
   apply(ar: 'تطبيق', en: 'Apply'),
   previousPage(ar: 'السابق', en: 'Previous'),
@@ -28,7 +31,7 @@ enum CatalogUiKeys implements AppKey {
   thenBy(ar: 'ثم حسب', en: 'Then by'),
   none(ar: 'بلا', en: 'None'),
   sortFieldAlreadySelected(ar: 'لا يمكن اختيار الحقل نفسه في معياري الفرز.', en: 'The same field cannot be selected for both sort criteria.'),
-  sortLimitExceeded(ar: 'يمكن اختيار معيارَي فرز كحد أقصى.', en: 'At most two sort criteria can be selected.'),
+  sortLimitExceeded(ar: 'تم الوصول إلى الحد المتاح لمعايير الفرز.', en: 'The available sort criteria limit has been reached.'),
   sortDirection(ar: 'الاتجاه', en: 'Direction'),
   done(ar: 'تم', en: 'Done'),
   paginationLabel(

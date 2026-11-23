@@ -564,10 +564,10 @@ void main() {
     expect(reversed, [const FilterBarSort('name', false)]);
     final two = toggleSort(reversed, 'status', false);
     expect(two, [const FilterBarSort('name', false), second]);
-    expect(toggleSort(two, 'updated', true), two);
+    expect(toggleSort(two, 'updated', true), [...two, const FilterBarSort('updated', true)]);
     expect(toggleSort(two, 'name', true), [const FilterBarSort('name', true), second]);
     final overLimit = [...two, const FilterBarSort('third', true)];
-    expect(toggleSort(overLimit, 'fourth', true), overLimit);
+    expect(toggleSort(overLimit, 'fourth', true), [...overLimit, const FilterBarSort('fourth', true)]);
   });
 
   testWidgets(
@@ -601,12 +601,12 @@ void main() {
       await tester.tap(find.text('Sort by'));
       await tester.pumpAndSettle();
       expect(find.byType(BottomSheet), findsOneWidget);
-      await tester.tap(find.text('Ascending'));
+      await tester.tap(find.byTooltip('Ascending'));
       await tester.pumpAndSettle();
       expect(calls, 1);
       expect(current.single.ascending, isFalse);
-      expect(find.text('Descending'), findsOneWidget);
-      await tester.tap(find.byType(DropdownButtonFormField<String>).at(1));
+      expect(find.byTooltip('Descending'), findsOneWidget);
+      await tester.tap(find.text('Then by'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Filters').last);
       await tester.pumpAndSettle();
@@ -640,14 +640,14 @@ void main() {
       ))));
       await tester.tap(find.text('Sort by'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(DropdownButtonFormField<String>).first);
+      await tester.tap(find.text('Choose an option'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Filters').last);
       await tester.pumpAndSettle();
       expect(current, [const FilterBarSort('status', true)]);
       expect(calls, 1);
 
-      await tester.tap(find.text('Ascending'));
+      await tester.tap(find.byTooltip('Ascending'));
       await tester.pumpAndSettle();
       expect(current, [const FilterBarSort('status', false)]);
       expect(calls, 2);
@@ -682,17 +682,21 @@ void main() {
       await tester.pumpWidget(app());
       await tester.pumpAndSettle();
       expect(find.text('Filters'), findsOneWidget);
-      expect(find.text('Descending'), findsOneWidget);
+      expect(find.byTooltip('Descending'), findsOneWidget);
     },
   );
 
   testWidgets(
-    'sort panel prevents duplicate fields and fits 280 logical pixels',
+    'a field already used by another criterion is disabled and keeps both sorts',
     (tester) async {
       tester.view.physicalSize = const Size(280, 800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      List<FilterBarSort> changed = const [FilterBarSort('name', true)];
+      const initial = [
+        FilterBarSort('name', true),
+        FilterBarSort('status', false),
+      ];
+      var changed = initial;
       await tester.pumpWidget(buildTestApp(home: Scaffold(
         body: SizedBox(
           width: 280,
@@ -700,6 +704,90 @@ void main() {
             options: const [
               FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
               FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+              FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+            ],
+            sorts: initial,
+            onChanged: (next) => changed = next,
+          ),
+        ),
+      )));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Search'));
+      await tester.pumpAndSettle();
+      expect(find.text(CatalogUiKeys.sortFieldAlreadySelected.en), findsOneWidget);
+      final disabled = find.ancestor(
+        of: find.text('Filters').last,
+        matching: find.byType(MenuItemButton),
+      );
+      expect(tester.widget<MenuItemButton>(disabled).onPressed, isNull);
+      expect(changed, initial);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('changing a field preserves that criterion direction', (tester) async {
+    tester.view.physicalSize = const Size(280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var changed = const [FilterBarSort('name', false)];
+    await tester.pumpWidget(buildTestApp(home: Scaffold(
+      body: SizedBox(
+        width: 280,
+        child: SortPanel(
+          options: const [
+            FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+            FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+          ],
+          sorts: changed,
+          onChanged: (next) => changed = next,
+        ),
+      ),
+    )));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Search'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Filters').last);
+    await tester.pumpAndSettle();
+    expect(changed, [const FilterBarSort('status', false)]);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('can add every available sort field in priority order', (tester) async {
+    tester.view.physicalSize = const Size(280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var changed = const [FilterBarSort('name', true)];
+    await tester.pumpWidget(buildTestApp(home: Scaffold(
+      body: SizedBox(
+        width: 280,
+        child: SortPanel(
+          options: const [
+            FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+            FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+            FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+            FilterBarSortOption(key: 'created', label: CatalogUiKeys.retry),
+          ],
+          sorts: changed,
+          onChanged: (next) => changed = next,
+        ),
+      ),
+    )));
+    await tester.pumpAndSettle();
+
+    for (final label in ['Filters', 'Refresh data', 'Retry']) {
+      await tester.tap(find.text('Then by'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(label).last);
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(buildTestApp(home: Scaffold(
+        body: SizedBox(
+          width: 280,
+          child: SortPanel(
+            options: const [
+              FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+              FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+              FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+              FilterBarSortOption(key: 'created', label: CatalogUiKeys.retry),
             ],
             sorts: changed,
             onChanged: (next) => changed = next,
@@ -707,13 +795,78 @@ void main() {
         ),
       )));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(DropdownButtonFormField<String>).at(1));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Search').last);
-      await tester.pumpAndSettle();
-      expect(changed, [const FilterBarSort('name', true)]);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    }
+
+    expect(changed.map((sort) => sort.key), ['name', 'status', 'updated', 'created']);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('sort criteria can be reordered to change priority', (tester) async {
+    tester.view.physicalSize = const Size(280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    const initial = [
+      FilterBarSort('name', true),
+      FilterBarSort('status', false),
+      FilterBarSort('updated', true),
+    ];
+    var changed = initial;
+    await tester.pumpWidget(buildTestApp(home: Scaffold(
+      body: SizedBox(
+        width: 280,
+        child: SortPanel(
+          options: const [
+            FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+            FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+            FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+          ],
+          sorts: initial,
+          onChanged: (next) => changed = next,
+        ),
+      ),
+    )));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Move sort up').first);
+    await tester.pumpAndSettle();
+    expect(changed, [
+      const FilterBarSort('status', false),
+      const FilterBarSort('name', true),
+      const FilterBarSort('updated', true),
+    ]);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('wide multi-sort menu remains open and lays out without exceptions', (tester) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var changed = const [FilterBarSort('name', true)];
+    await tester.pumpWidget(buildTestApp(home: Scaffold(body: FilterBar(
+      onSearchChanged: (_) {},
+      activeFilters: const [],
+      onClearAll: () {},
+      sortOptions: const [
+        FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+        FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+        FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+      ],
+      sorts: changed,
+      onSortsChanged: (next) => changed = next,
+    ))));
+    await tester.tap(find.text('Sort by'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SortPanel), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Then by'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Filters').last);
+    await tester.pumpAndSettle();
+    expect(changed, [
+      const FilterBarSort('name', true),
+      const FilterBarSort('status', true),
+    ]);
+    expect(find.byType(SortPanel), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
 }

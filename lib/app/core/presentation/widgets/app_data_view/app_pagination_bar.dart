@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/compact_content_breakpoint.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
@@ -40,6 +41,7 @@ class AppPaginationBar extends StatelessWidget {
     this.hasMore = false,
     this.onLoadMore,
     this.mobile = false,
+    this.availableWidth,
   });
 
   final int page;
@@ -51,6 +53,7 @@ class AppPaginationBar extends StatelessWidget {
   final bool hasMore;
   final VoidCallback? onLoadMore;
   final bool mobile;
+  final double? availableWidth;
 
   int get _lastPage => totalCount == 0 ? 1 : (totalCount / pageSize).ceil();
 
@@ -67,7 +70,10 @@ class AppPaginationBar extends StatelessWidget {
       type: AppTextType.bodySmall,
       color: context.ui.theme.colors.onSurfaceVariant,
     );
-    if (mobile) {
+    final compact = availableWidth != null
+        ? availableWidth! < compactContentBreakpoint
+        : mobile;
+    if (compact) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

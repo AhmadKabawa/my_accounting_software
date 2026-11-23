@@ -79,7 +79,7 @@ class ColorListQuery extends Equatable implements PagedQuery<ColorListQuery> {
     return copyWith(
       sortField: primary.field,
       sortAscending: primary.ascending,
-      thenSorts: values.skip(1).take(1).toList(),
+      thenSorts: values.skip(1).toList(),
       page: 1,
     );
   }
@@ -87,11 +87,11 @@ class ColorListQuery extends Equatable implements PagedQuery<ColorListQuery> {
   bool hasSameSorts(List<ColorSort> values) {
     if (values.isEmpty) return false;
     final primary = values.first;
-    final secondary = values.skip(1).take(1).toList();
+    final secondary = values.skip(1).toList();
     return sortField == primary.field &&
         sortAscending == primary.ascending &&
         thenSorts.length == secondary.length &&
-        (secondary.isEmpty || thenSorts.single == secondary.single);
+        thenSorts.asMap().entries.every((entry) => entry.value == secondary[entry.key]);
   }
 
   ColorListQuery copyWith({

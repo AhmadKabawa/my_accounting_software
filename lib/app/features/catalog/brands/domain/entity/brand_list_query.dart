@@ -50,7 +50,7 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
   final BrandSortField sortField;
   final bool sortAscending;
 
-  /// Further criteria applied after the primary one (at most one more).
+  /// Further criteria applied after the primary one, in priority order.
   final List<BrandSort> thenSorts;
 
   /// All criteria in priority order; sent to the database as one `order`.
@@ -98,7 +98,7 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
     return copyWith(
       sortField: primary.field,
       sortAscending: primary.ascending,
-      thenSorts: values.skip(1).take(1).toList(),
+      thenSorts: values.skip(1).toList(),
       page: 1,
     );
   }
@@ -106,11 +106,11 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
   bool hasSameSorts(List<BrandSort> values) {
     if (values.isEmpty) return false;
     final primary = values.first;
-    final secondary = values.skip(1).take(1).toList();
+    final secondary = values.skip(1).toList();
     return sortField == primary.field &&
         sortAscending == primary.ascending &&
         thenSorts.length == secondary.length &&
-        (secondary.isEmpty || thenSorts.single == secondary.single);
+        thenSorts.asMap().entries.every((entry) => entry.value == secondary[entry.key]);
   }
 
   BrandListQuery copyWith({

@@ -593,3 +593,41 @@ A feature cubit supplies:
 - feature-specific filters/sorting and other mutations
 
 Use the protected `applyQueryAndLoad(query)` helper for filter/sort changes, `runMutation(...)` for status-like mutations that flash and reload, and `reloadAfterMutation(kind)` for create/update notifications. See `BrandsListCubit` for the feature adapter.
+
+
+## CRUD lists: selection, bulk actions and confirmations
+
+Import CrudSelectionScope, CrudBulkActions, and the feature's key enum. Use CrudSelectionScope<T> around the feature table. The feature supplies rows, row ID, ListSelectionCubit, server-authoritative permission, feature-specific bulk mutations, and table builder. Core owns page selection, access checking and the shared action bar:
+
+```dart
+CrudSelectionScope<Brand>(
+  rows: rows,
+  rowId: (brand) => brand.id,
+  selection: cubit.selection,
+  permission: Permissions.masterData.manage,
+  actionsBuilder: (selected) => CrudBulkActions.statusAndDelete<Brand>(
+    context: context,
+    permission: Permissions.masterData.manage,
+    selected: selected,
+    itemLabel: (brand) => brand.name,
+    activateLabelKey: BrandsKeys.bulkActivate,
+    deactivateLabelKey: BrandsKeys.bulkDeactivate,
+    deleteLabelKey: BrandsKeys.bulkDelete,
+    deactivateTitleKey: BrandsKeys.bulkDeactivateTitle,
+    deactivateMessageKey: BrandsKeys.bulkDeactivateMessage,
+    deleteTitleKey: BrandsKeys.bulkDeleteTitle,
+    deleteMessageKey: BrandsKeys.bulkDeleteMessage,
+    onActivate: cubit.bulkActivate,
+    onDeactivate: cubit.bulkDeactivate,
+    onDelete: cubit.bulkDelete,
+  ),
+  builder: (context, selectedIds, onSelectionChanged) => FeatureTable(
+    selectedIds: selectedIds,
+    onSelectionChanged: onSelectionChanged,
+  ),
+)
+```
+
+CrudBulkActions owns the single result-dialog call. Complete success shows only the success flash; partial or complete failure is reported by the result dialog only. Bulk requests are sequential, not a transaction. Keep selection limited to the current page; recommend at most 50 records per batch (100 is the configured page-size ceiling and should be reserved for light operations).
+
+CrudConfirmations.delete uses the shared critical delete confirmation; CrudConfirmations.status activates immediately and confirms deactivation. Feature Cubits own all mutations and failure mapping.

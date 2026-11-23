@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/compact_content_breakpoint.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
@@ -110,8 +111,6 @@ class AppDataView<T> extends StatelessWidget {
 
   /// The mode actually shown for [context] and the current width.
   /// Public so the owner can mark the matching switcher button.
-  static const double compactContentBreakpoint = 720;
-
   static AppViewMode defaultModeFor(
     BuildContext context, {
     double? availableWidth,
@@ -127,7 +126,14 @@ class AppDataView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (errorKey != null) return _error();
-    if (loading) return _loading(context);
+    if (loading) {
+      return LayoutBuilder(
+        builder: (context, constraints) => _loading(
+          context,
+          availableWidth: constraints.hasBoundedWidth ? constraints.maxWidth : null,
+        ),
+      );
+    }
     if (rows.isEmpty) return emptyState ?? _defaultEmpty(context);
 
     return LayoutBuilder(
@@ -246,6 +252,7 @@ class AppDataView<T> extends StatelessWidget {
           (availableWidth != null
               ? availableWidth < compactContentBreakpoint
               : ScreenEngine.isMobile(context)),
+      availableWidth: onLoadMore != null ? availableWidth : null,
     );
   }
 
@@ -262,8 +269,11 @@ class AppDataView<T> extends StatelessWidget {
   );
 
   /// Loading respects the view mode: rows for the table, tiles otherwise.
-  Widget _loading(BuildContext context) {
-    final effective = _effectiveMode(context, double.infinity);
+  Widget _loading(BuildContext context, {double? availableWidth}) {
+    final selected = mode;
+    final effective = selected != null && supportedModes.contains(selected)
+        ? selected
+        : defaultModeFor(context, availableWidth: availableWidth);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,

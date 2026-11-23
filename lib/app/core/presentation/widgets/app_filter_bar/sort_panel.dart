@@ -1,159 +1,158 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_dropdown_menu/app_dropdown_menu.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar_sort.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_criterion_row.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
-class FilterBarSortOption {
-  const FilterBarSortOption({required this.key, required this.label});
-  final String key;
-  final AppKey label;
-}
+export 'filter_bar_sort.dart';
 
-class FilterBarSort {
-  const FilterBarSort(this.key, this.ascending);
-  final String key;
-  final bool ascending;
-  @override
-  bool operator ==(Object other) =>
-      other is FilterBarSort && other.key == key && other.ascending == ascending;
-  @override
-  int get hashCode => Object.hash(key, ascending);
-}
-
-/// Updates an existing criterion or adds one if capacity remains; never drops
-/// an older criterion or removes a sort when its direction is pressed.
-List<FilterBarSort> toggleSort(
-  List<FilterBarSort> current,
-  String key,
-  bool ascending, {
-  int maxSorts = 2,
-}) {
-  if (maxSorts < 1 || current.length > maxSorts) return current;
-  final next = current.toList();
-  final index = next.indexWhere((sort) => sort.key == key);
-  if (index >= 0) {
-    next[index] = FilterBarSort(key, ascending);
-    return next;
-  }
-  if (next.length >= maxSorts) return next;
-  next.add(FilterBarSort(key, ascending));
-  return next;
-}
-
-/// Two-level server sort editor. The supplied [sorts] always drives the UI.
 class SortPanel extends StatelessWidget {
   const SortPanel({
     super.key,
     required this.options,
     required this.sorts,
     required this.onChanged,
-    this.maxSorts = 2,
+    this.maxSorts = 0,
   });
-  static const _none = '__none__';
+
   final List<FilterBarSortOption> options;
   final List<FilterBarSort> sorts;
   final ValueChanged<List<FilterBarSort>> onChanged;
+
   final int maxSorts;
-  FilterBarSort? get _first => sorts.isEmpty ? null : sorts.first;
-  FilterBarSort? get _second => maxSorts < 2 || sorts.length < 2 ? null : sorts[1];
 
-  void _changeFirst(String? key) {
-    if (sorts.length > maxSorts) return;
-    if (key == null || key.isEmpty || _first?.key == key || _second?.key == key) return;
-    final second = _second;
-    onChanged([FilterBarSort(key, true), if (second != null && second.key != key) second]);
-  }
+  int get _limit => maxSorts > 0 && maxSorts < options.length
+      ? maxSorts
+      : options.length;
 
-  void _changeSecond(String? key) {
-    if (sorts.length > maxSorts) return;
-    final first = _first;
-    if (first == null) return;
-    if (key == null || key == _none) {
-      if (_second != null) onChanged([first]);
+  bool _usedElsewhere(String key, int index) => sorts.indexed.any(
+    (entry) => entry.$1 != index && entry.$2.key == key,
+  );
+
+  void _selectField(int index, String key) {
+    if (_usedElsewhere(key, index)) return;
+    final next = sorts.toList();
+    if (index < next.length) {
+      next[index] = FilterBarSort(key, next[index].ascending);
+    } else if (index == next.length) {
+      next.add(FilterBarSort(key, true));
+    } else {
       return;
     }
-    if (key == first.key || _second?.key == key) return;
-    onChanged([first, FilterBarSort(key, true)]);
+    onChanged(next);
   }
 
-  void _toggle(int index) {
-    if (sorts.length > maxSorts) return;
+  void _addField(String key) {
+    if (sorts.length >= _limit || sorts.any((sort) => sort.key == key)) return;
+    onChanged([...sorts, FilterBarSort(key, true)]);
+  }
+
+  void _removeField(int index) {
+    if (index <= 0 || index >= sorts.length) return;
+    onChanged(sorts.toList()..removeAt(index));
+  }
+
+  void _toggleDirection(int index) {
+    if (index >= sorts.length) return;
     final next = sorts.toList();
-    if (index >= next.length) return;
-    final item = next[index];
-    next[index] = FilterBarSort(item.key, !item.ascending);
+    next[index] = FilterBarSort(next[index].key, !next[index].ascending);
+    onChanged(next);
+  }
+
+  void _moveField(int index, int offset) {
+    final target = index + offset;
+    if (target < 0 || target >= sorts.length) return;
+    final next = sorts.toList();
+    final current = next[index];
+    next[index] = next[target];
+    next[target] = current;
     onChanged(next);
   }
 
   @override
   Widget build(BuildContext context) {
-    final first = _first;
-    final second = _second;
-    final duplicate = first != null && second != null && first.key == second.key;
-    final overflow = sorts.length > maxSorts;
-    return Padding(
-      padding: context.ui.padding.all(AppSpacing.sm),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _row(context, label: CatalogUiKeys.sortBy, selected: first?.key,
-            ascending: first?.ascending ?? true, onField: _changeFirst,
-            onDirection: first == null ? null : () => _toggle(0), allowNone: false,
-            secondaryKey: second?.key),
-          if (maxSorts > 1) ...[
-            context.ui.spacing.gap(AppSpacing.sm),
-            _row(context, label: CatalogUiKeys.thenBy,
-              selected: duplicate ? _none : second?.key ?? _none,
-              ascending: second?.ascending ?? true, onField: _changeSecond,
-              onDirection: second == null ? null : () => _toggle(1), allowNone: true,
-              primaryKey: first?.key),
-            if (duplicate || overflow)
-              Padding(
-                padding: context.ui.padding.only(top: AppSpacing.xs),
-                child: AppText(
-                  duplicate
-                      ? CatalogUiKeys.sortFieldAlreadySelected
-                      : CatalogUiKeys.sortLimitExceeded,
-                  type: AppTextType.bodySmall,
-                  color: context.ui.theme.colors.error,
-                ),
-              ),
-          ],
-        ],
-      ),
+    final hasDuplicate =
+        sorts.map((sort) => sort.key).toSet().length != sorts.length;
+    final limitExceeded = sorts.length > _limit;
+    final rowCount = math.max(1, math.min(sorts.length, _limit));
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.hasBoundedWidth
+            ? constraints.maxWidth
+            : context.ui.size.width(AppComponentSize.filterControlWidth);
+        return SizedBox(
+          width: width,
+          child: Padding(
+            padding: context.ui.padding.all(AppSpacing.sm),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var index = 0; index < rowCount; index++) ...[
+                  if (index > 0) context.ui.spacing.gap(AppSpacing.sm),
+                  SortCriterionRow(
+                    options: options,
+                    current: index < sorts.length ? sorts[index] : null,
+                    sortsLength: sorts.length,
+                    isUsedElsewhere: (key) => _usedElsewhere(key, index),
+                    onSelect: (key) => _selectField(index, key),
+                    onDirection: index < sorts.length ? () => _toggleDirection(index) : null,
+                    onMoveUp: index > 0 ? () => _moveField(index, -1) : null,
+                    onMoveDown: index < sorts.length - 1
+                        ? () => _moveField(index, 1)
+                        : null,
+                    onRemove: index > 0 ? () => _removeField(index) : null,
+                  ),
+                ],
+                if (sorts.isNotEmpty && sorts.length < _limit &&
+                    options.any(
+                      (option) => !sorts.any((sort) => sort.key == option.key),
+                    )) ...[
+                  context.ui.spacing.gap(AppSpacing.sm),
+                  _addCriterionMenu(),
+                ],
+                if (hasDuplicate || limitExceeded) ...[
+                  context.ui.spacing.gap(AppSpacing.xs),
+                  AppText(
+                    hasDuplicate
+                        ? CatalogUiKeys.sortFieldAlreadySelected
+                        : CatalogUiKeys.sortLimitExceeded,
+                    type: AppTextType.bodySmall,
+                    color: context.ui.theme.colors.error,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _row(BuildContext context, {required AppKey label, required String? selected,
-    required bool ascending, required ValueChanged<String?> onField,
-    required VoidCallback? onDirection, required bool allowNone,
-    String? primaryKey, String? secondaryKey}) {
-    final items = <DropdownMenuItem<String>>[
-      if (allowNone) DropdownMenuItem(value: _none, child: AppText(CatalogUiKeys.none)),
-      for (final option in options)
-        DropdownMenuItem(
-          value: option.key,
-          enabled: option.key != primaryKey && option.key != secondaryKey,
-          child: AppText(option.label),
-        ),
-    ];
-    final value = selected != null && items.any((item) => item.value == selected)
-        ? selected : (allowNone ? _none : null);
-    return Row(children: [
-      Expanded(child: DropdownButtonFormField<String>(
-        value: value, isExpanded: true,
-        decoration: InputDecoration(labelText: label.tr(context: context), isDense: true),
-        items: items, onChanged: onField,
-      )),
-      context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
-      AppButton(ascending ? CatalogUiKeys.sortAscendingLabel : CatalogUiKeys.sortDescendingLabel,
-        icon: ascending ? AppIcons.sortAscending : AppIcons.sortDescending,
-        size: AppButtonSize.medium, variant: AppButtonVariant.outlined,
-        onPressed: onDirection),
-    ]);
+  Widget _addCriterionMenu() {
+    final available = options
+        .where((option) => !sorts.any((sort) => sort.key == option.key))
+        .toList(growable: false);
+    return AppDropdownMenu(
+      minWidth: AppComponentSize.filterControlWidth,
+      anchorBuilder: (context, toggle, open) => AppButton(
+        CatalogUiKeys.thenBy,
+        icon: AppIcons.add,
+        variant: AppButtonVariant.text,
+        onPressed: toggle,
+      ),
+      children: [
+        for (final option in available)
+          AppDropdownItem(
+            label: option.label,
+            onPressed: () => _addField(option.key),
+          ),
+      ],
+    );
   }
 }

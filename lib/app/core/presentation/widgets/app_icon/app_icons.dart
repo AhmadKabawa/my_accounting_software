@@ -63,6 +63,8 @@ abstract final class AppIcons {
   static const sortNeutral = AppIconData.material(Icons.unfold_more);
   static const sortAscending = AppIconData.material(Icons.arrow_upward);
   static const sortDescending = AppIconData.material(Icons.arrow_downward);
+  static const moveSortUp = AppIconData.material(Icons.keyboard_arrow_up);
+  static const moveSortDown = AppIconData.material(Icons.keyboard_arrow_down);
   static const check = AppIconData.material(Icons.check);
 
   // Row / record actions.

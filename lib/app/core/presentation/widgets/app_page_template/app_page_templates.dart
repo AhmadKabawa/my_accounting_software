@@ -305,7 +305,7 @@ class ListPageTemplate extends StatelessWidget {
     this.errorKey,
     this.onRetry,
     this.refreshErrorKey,
-    this.loadingViewMode = AppViewMode.table,
+    this.loadingViewMode,
   }) : assert(
          addAction == null || primaryAction == null,
          'Pass either addAction or primaryAction, not both.',
@@ -344,7 +344,7 @@ class ListPageTemplate extends StatelessWidget {
   final AppKey? errorKey;
   final VoidCallback? onRetry;
   final AppKey? refreshErrorKey;
-  final AppViewMode loadingViewMode;
+  final AppViewMode? loadingViewMode;
 
   static const _none = SizedBox.shrink();
 
@@ -472,18 +472,29 @@ class ListPageTemplate extends StatelessWidget {
     AppPageState.content || AppPageState.error => dataTable,
   };
 
-  Widget _loading(BuildContext context) => Column(
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      for (var index = 0; index < _loadingPlaceholderCount; index++)
-        loadingViewMode == AppViewMode.table
-            ? const AppSkeleton.tableRow()
-            : Padding(
-                padding: EdgeInsets.only(bottom: context.ui.spacing.md),
-                child: const AppSkeleton.card(),
-              ),
-    ],
+  Widget _loading(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final effectiveMode = loadingViewMode ??
+          AppDataView.defaultModeFor(
+            context,
+            availableWidth: constraints.hasBoundedWidth
+                ? constraints.maxWidth
+                : null,
+          );
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var index = 0; index < _loadingPlaceholderCount; index++)
+            effectiveMode == AppViewMode.table
+                ? const AppSkeleton.tableRow()
+                : Padding(
+                    padding: EdgeInsets.only(bottom: context.ui.spacing.md),
+                    child: const AppSkeleton.card(),
+                  ),
+        ],
+      );
+    },
   );
 }
 

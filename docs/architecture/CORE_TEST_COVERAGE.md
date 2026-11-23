@@ -132,3 +132,14 @@
 - `test/core/presentation/state_management/paged_list/paged_list_cubit_test.dart`: stale request protection (including search invalidation), close safety, 300ms debounce and timer cancellation on load/clear/close, page no-op behavior, refresh failure retention, initial failure, both page-two delete recovery paths, and deletion flash-before-effect ordering.
 - `test/features/catalog/brands/presentation/cubit/brands_cubit_test.dart`: existing list lifecycle and mutation coverage plus public `setStatus` / `setSorts` behavior and deletion rejection for unknown/in-use product counts.
 - The tests were added but not run in the repository environment for this change. Verify with the commands in the task report.
+
+## Shared CRUD list additions — 2026-11-22
+
+- test/core/presentation/widgets/app_filter_bar_test.dart covers all available sort options, duplicate-field disabling, visible conflict guidance, direction preservation when changing a field, priority reordering, and the wide AppDropdownMenu nesting path.
+- test/core/presentation/widgets/app_data_view_responsive_test.dart covers card-shaped loading placeholders for narrow content on a wide viewport; list_page_template_test.dart covers the same fallback in the page template.
+- test/core/presentation/widgets/app_bulk_action_bar_test.dart covers icon-only compact actions at 280 logical pixels.
+- test/core/presentation/state_management/paged_list/paged_list_bulk_test.dart verifies success-only flash delivery and no flash on partial/complete failure (the result dialog owns failure reporting).
+- New query tests test/features/catalog/brands/domain/entity/brand_list_query_test.dart and test/features/catalog/colors/domain/entity/color_list_query_test.dart verify every criterion is preserved in priority order.
+- These tests and dart format/flutter analyze/flutter test have not been run in this environment (Flutter/Dart SDK unavailable). Runtime status: NOT_VERIFIED.
+
+- test/core/presentation/state_management/paged_list/paged_list_cubit_test.dart additionally verifies that the delete-success flash is emitted immediately after the successful mutation response, before the subsequent list refresh completes. This distinguishes a successful delete from a later refresh failure.

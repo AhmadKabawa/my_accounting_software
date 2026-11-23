@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
 import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
@@ -112,6 +111,10 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     final response = await deleteItem(item);
     if (isClosed || response.isLeft()) return response;
 
+    // The delete has succeeded at the server; report that immediately so a
+    // later refresh failure cannot make the mutation look like a failure.
+    _flashMessages.post(deletedMessageKey, MessageType.success);
+
     final wasLastRowOnLaterPage =
         (state.result?.items.length ?? 0) <= 1 && state.query.page > 1;
     if (wasLastRowOnLaterPage) {
@@ -129,7 +132,6 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     }
     if (isClosed) return response;
 
-    _flashMessages.post(deletedMessageKey, MessageType.success);
     emitEffect(buildMutationEffect(PagedMutationKind.deleted));
     return response;
   }
@@ -194,19 +196,13 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
       shouldStop: () => isClosed,
     );
     if (!isClosed && result.totalCount > 0) {
-      await load();
-      if (!isClosed) {
-        publishMutation(kind);
-        final message = result.failureCount == 0
-            ? successMessage
-            : result.isFailure
-                ? CatalogUiKeys.bulkFailed
-                : CatalogUiKeys.bulkPartiallyFailed;
-        _flashMessages.post(
-          message,
-          result.failureCount == 0 ? MessageType.success : MessageType.error,
-        );
+      // Report a fully successful mutation before the list refresh; a refresh
+      // failure is a separate problem and must not hide the mutation result.
+      if (result.failureCount == 0) {
+        _flashMessages.post(successMessage, MessageType.success);
       }
+      await load();
+      if (!isClosed) publishMutation(kind);
     }
     return result;
   }

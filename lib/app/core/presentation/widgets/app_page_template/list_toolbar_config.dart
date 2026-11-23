@@ -24,7 +24,7 @@ class ListToolbarConfig {
     this.onSort,
     this.sorts = const [],
     this.onSortsChanged,
-    this.maxSorts = 2,
+    this.maxSorts = 0,
     this.viewModes = const [],
     this.viewMode,
     this.onViewModeChanged,
@@ -45,8 +45,9 @@ class ListToolbarConfig {
   final bool sortAscending;
   final void Function(String key, bool ascending)? onSort;
 
-  /// Multi-sort (preferred): the active criteria in priority order, changed
-  /// from the sort menu's up/down arrows. Replaces [sortKey]/[onSort].
+  /// Multi-sort (preferred): all selected criteria in priority order.
+  /// Zero [maxSorts] means all distinct [sortOptions] may be used.
+  /// Replaces [sortKey]/[onSort].
   final List<FilterBarSort> sorts;
   final ValueChanged<List<FilterBarSort>>? onSortsChanged;
   final int maxSorts;

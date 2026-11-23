@@ -295,3 +295,11 @@
 - The query contract lives in `core/foundation/types/` so Domain query models do not import Presentation. `paged_list/paged_result.dart` aliases the existing Foundation `PaginatedResult<T>`; no parallel result model is introduced.
 - `PagedListCubit` owns request-version protection, search debounce, paging, refresh/failure retention, deletion page recovery, mutation flashes/effects, and timer cleanup.
 - Feature cubits provide `fetch`, `deleteItem`, optional `beforeDelete`, `deletedMessageKey`, and `buildMutationEffect`. Feature-specific filters and sorting remain in the feature.
+
+### Shared CRUD list behavior — 2026-11-22
+- presentation/widgets/app_bulk_action_bar/crud_selection_scope.dart: CrudSelectionScope<T> composes current-page selection through ListSelectionCubit, permission checks through AccessCubit.can(permission), selected-row extraction, BulkActionBar, and selectedIds/onSelectionChanged passed to the feature table. Permission is supplied by the feature; Core contains no feature permission constants.
+- CrudBulkActions.statusAndDelete<T> builds activate/deactivate/delete actions and shows BulkResultDialog once when failures exist; shared status icons are restore/block and delete severity is critical.
+- presentation/widgets/app_confirm_dialog/crud_confirmations.dart: common delete confirmation and deactivate-confirm/activate-immediately flows, with callbacks supplied by feature Cubits.
+- presentation/design_system/responsive/compact_content_breakpoint.dart: one shared breakpoint for FilterBar, AppDataView, AppPaginationBar and BulkActionBar.
+- BulkResultDialog is a detailed bulk-failure report, not a replacement for MessageViewWidgets for transient messages.
+- presentation/widgets/app_filter_bar/filter_bar_sort.dart and sort_criterion_row.dart: shared sort-value mapping, field selection, disabled duplicate options, direction, and priority movement controls.

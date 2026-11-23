@@ -218,6 +218,7 @@ void main() {
 
     final deletion = cubit.delete(4);
     await Future<void>.delayed(Duration.zero);
+    expect(events, ['flash']);
     cubit.requests[1].complete(Right(TestPagedPage([])));
     await deletion;
     await Future<void>.delayed(Duration.zero);

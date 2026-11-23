@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
-import 'package:accounting_software/app/core/presentation/state_management/list_selection_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_bulk_actions.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_result_dialog.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_selection_scope.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
@@ -112,11 +108,13 @@ class ColorsScreen extends StatelessWidget {
                     for (final sort in state.query.sorts)
                       FilterBarSort(sort.field.name, sort.ascending),
                   ],
-                  onSortsChanged: (sorts) => cubit.setSorts([
-                    for (final sort in sorts)
-                      if (ColorSortField.tryParse(sort.key) != null)
-                        ColorSort(ColorSortField.tryParse(sort.key)!, sort.ascending),
-                  ]),
+                  onSortsChanged: (sorts) => cubit.setSorts(
+                    mapFilterBarSorts<ColorSortField, ColorSort>(
+                      sorts,
+                      parse: ColorSortField.tryParse,
+                      build: (field, ascending) => ColorSort(field, ascending),
+                    ),
+                  ),
                   viewModes: _modes,
                   viewMode: mode,
                   onViewModeChanged: context.read<ViewModeCubit>().select,
@@ -124,7 +122,7 @@ class ColorsScreen extends StatelessWidget {
                   refreshing: state.isRefreshing,
                 ),
                 addAction: addAction,
-                loadingViewMode: mode ?? AppViewMode.table,
+                loadingViewMode: mode,
                 state: loading
                     ? AppPageState.loading
                     : failure != null
@@ -133,88 +131,52 @@ class ColorsScreen extends StatelessWidget {
                 errorKey: failure?.messageKey,
                 refreshErrorKey: refreshFailure?.messageKey,
                 onRetry: cubit.refresh,
-                dataTable: BlocBuilder<ListSelectionCubit<Object>, Set<Object>>(
-                  bloc: cubit.selection,
-                  builder: (context, selectedIds) {
-                    final access = context.watch<AccessCubit>().state;
-                    final canBulk = access.isReady &&
-                        access.snapshot!.permissions.any(
-                          (granted) => granted.covers(Permissions.masterData.manage),
-                        );
-                    final selectedColors = rows
-                        .where((color) => selectedIds.contains(color.id))
-                        .toList(growable: false);
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (canBulk && selectedColors.isNotEmpty)
-                          BulkActionBar(
-                            selectedCount: selectedColors.length,
-                            onClear: cubit.selection.clear,
-                            actions: CrudBulkActions.statusAndDelete(
-                              permission: Permissions.masterData.manage,
-                              activateLabelKey: ColorsKeys.bulkActivate,
-                              deactivateLabelKey: ColorsKeys.bulkDeactivate,
-                              deleteLabelKey: ColorsKeys.bulkDelete,
-                              deactivateTitleKey: ColorsKeys.bulkDeactivateTitle,
-                              deactivateMessageKey: ColorsKeys.bulkDeactivateMessage,
-                              deleteTitleKey: ColorsKeys.bulkDeleteTitle,
-                              deleteMessageKey: ColorsKeys.bulkDeleteMessage,
-                              onActivate: () async {
-                                final result = await cubit.bulkActivate(selectedColors);
-                                await BulkResultDialog.show(
-                                  context,
-                                  result,
-                                  itemLabel: (color) => color.name,
-                                );
-                              },
-                              onDeactivate: () async {
-                                final result = await cubit.bulkDeactivate(selectedColors);
-                                await BulkResultDialog.show(
-                                  context,
-                                  result,
-                                  itemLabel: (color) => color.name,
-                                );
-                              },
-                              onDelete: () async {
-                                final result = await cubit.bulkDelete(selectedColors);
-                                await BulkResultDialog.show(
-                                  context,
-                                  result,
-                                  itemLabel: (color) => color.name,
-                                );
-                              },
-                            ),
-                          ),
-                        if (canBulk && selectedColors.isNotEmpty)
-                          context.ui.spacing.gap(AppSpacing.sm),
-                        ColorsTableSection(
-                          mode: mode,
-                          onRetry: cubit.refresh,
-                          onSort: (sort) {
-                            final field = ColorSortField.tryParse(sort.key);
-                            if (field != null) {
-                              cubit.setSorts([ColorSort(field, sort.ascending)]);
-                            }
-                          },
-                          onPageChanged: cubit.setPage,
-                          query: state.query,
-                          rows: rows,
-                          total: total,
-                          loading: loading,
-                          refreshing: state.isRefreshing,
-                          failure: failure,
-                          addAction: addAction,
-                          onEdit: (color) => _edit(context, color),
-                          onDuplicate: (color) => _duplicate(context, color),
-                          onToggleStatus: (color) => _status(context, color),
-                          onDelete: (color) => _delete(context, color),
-                          selectedIds: canBulk ? selectedIds : const {},
-                          onSelectionChanged: canBulk ? cubit.selection.replace : null,
-                        ),
-                      ],
-                    );
-                  },
+                dataTable: CrudSelectionScope<CatalogColor>(
+                  rows: rows,
+                  rowId: (color) => color.id,
+                  selection: cubit.selection,
+                  permission: Permissions.masterData.manage,
+                  actionsBuilder: (selected) =>
+                      CrudBulkActions.statusAndDelete<CatalogColor>(
+                        context: context,
+                        permission: Permissions.masterData.manage,
+                        selected: selected,
+                        itemLabel: (color) => color.name,
+                        activateLabelKey: ColorsKeys.bulkActivate,
+                        deactivateLabelKey: ColorsKeys.bulkDeactivate,
+                        deleteLabelKey: ColorsKeys.bulkDelete,
+                        deactivateTitleKey: ColorsKeys.bulkDeactivateTitle,
+                        deactivateMessageKey: ColorsKeys.bulkDeactivateMessage,
+                        deleteTitleKey: ColorsKeys.bulkDeleteTitle,
+                        deleteMessageKey: ColorsKeys.bulkDeleteMessage,
+                        onActivate: cubit.bulkActivate,
+                        onDeactivate: cubit.bulkDeactivate,
+                        onDelete: cubit.bulkDelete,
+                      ),
+                  builder: (context, selectedIds, onSelectionChanged) =>
+                      ColorsTableSection(
+                        mode: mode,
+                        onSort: (sort) {
+                          final field = ColorSortField.tryParse(sort.key);
+                          if (field != null) {
+                            cubit.setSorts([ColorSort(field, sort.ascending)]);
+                          }
+                        },
+                        onPageChanged: cubit.setPage,
+                        query: state.query,
+                        rows: rows,
+                        total: total,
+                        loading: loading,
+                        refreshing: state.isRefreshing,
+                        failure: failure,
+                        addAction: addAction,
+                        onEdit: (color) => _edit(context, color),
+                        onDuplicate: (color) => _duplicate(context, color),
+                        onToggleStatus: (color) => _status(context, color),
+                        onDelete: (color) => _delete(context, color),
+                        selectedIds: selectedIds,
+                        onSelectionChanged: onSelectionChanged,
+                      ),
                 ),
               );
             },
@@ -240,36 +202,26 @@ class ColorsScreen extends StatelessWidget {
 
   Future<void> _delete(BuildContext context, CatalogColor color) async {
     final cubit = context.read<ColorsListCubit>();
-    await showConfirmDialog(
+    await CrudConfirmations.delete(
       context,
       titleKey: ColorsKeys.deleteTitle,
       messageKey: ColorsKeys.deleteMessage,
       messageArgs: {'name': color.name},
-      severity: ConfirmDialogSeverity.critical,
       targetName: color.name,
-      onConfirm: () async {
-        final result = await cubit.delete(color);
-        return result.fold((failure) => failure.messageKey, (_) => null);
-      },
+      onDelete: () => cubit.delete(color),
     );
   }
 
   Future<void> _status(BuildContext context, CatalogColor color) async {
     final cubit = context.read<ColorsListCubit>();
-    if (!color.isActive) {
-      await cubit.activate(color.id);
-      return;
-    }
-    await showConfirmDialog(
+    await CrudConfirmations.status(
       context,
+      isActive: color.isActive,
+      targetName: color.name,
       titleKey: ColorsKeys.deactivateTitle,
       messageKey: ColorsKeys.deactivateMessage,
-      severity: ConfirmDialogSeverity.warning,
-      targetName: color.name,
-      onConfirm: () async {
-        final result = await cubit.deactivate(color.id);
-        return result.fold((failure) => failure.messageKey, (_) => null);
-      },
+      onActivate: () => cubit.activate(color.id),
+      onDeactivate: () => cubit.deactivate(color.id),
     );
   }
 }

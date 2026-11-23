@@ -114,3 +114,9 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 ## مفاتيح لوحة التحكم AUTH-04 — 2026-11-20
 
 أُبقي `HomeKeys` في قسم home وسُجّلت قيمه مسبقاً ضمن `allKeys` في `key_registry.dart`. أصبحت مفاتيحه `dashboardTitle` و`noAvailableCardsTitle` و`noAvailableCardsDescription`؛ لكل منها نص عربي وإنجليزي. استُخدمت مفاتيح الحالة الفارغة في AUTH-04، ولا توجد نصوص واجهة ثابتة خارج AppKey.
+
+## إضافة مفاتيح فرز CRUD — 2026-11-22
+
+أضيف CatalogUiKeys.removeSort لوصف إزالة معيار فرز مستقل عن إزالة شارة الفلتر. بقي تسجيل CatalogUiKeys.values عبر key_registry.dart.
+
+أضيف CatalogUiKeys.moveSortUp وCatalogUiKeys.moveSortDown لتوضيح تغيير أولوية معيار الفرز في أدوات إعادة الترتيب.
