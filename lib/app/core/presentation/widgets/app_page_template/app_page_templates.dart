@@ -414,35 +414,42 @@ class ListPageTemplate extends StatelessWidget {
   Widget _toolbar(BuildContext context) {
     final config = toolbar;
     if (config == null) return _none;
-    final hasModes = config.viewModes.length > 1;
-    return FilterBar(
-      searchHintKey: config.searchHintKey,
-      debounce: config.searchDebounce,
-      onSearchChanged: config.onSearchChanged,
-      onClearAll: config.onClearAll,
-      activeFilters: config.activeFilters,
-      filterControls: config.filterControls,
-      sortOptions: config.sortOptions,
-      sortKey: config.sortKey,
-      sortAscending: config.sortAscending,
-      onSort: config.onSort,
-      sorts: config.sorts,
-      onSortsChanged: config.onSortsChanged,
-      maxSorts: config.maxSorts,
-      leading: hasModes && config.onViewModeChanged != null
-          ? ViewModeSwitcher(
-              modes: config.viewModes,
-              selected: config.viewMode ?? AppDataView.defaultModeFor(context),
-              onChanged: config.onViewModeChanged!,
-            )
-          : null,
-      searchSuffix: config.onRefresh == null
-          ? null
-          : AppIconButton(
-              AppIcons.refresh,
-              tooltipKey: CatalogUiKeys.refresh,
-              onPressed: config.refreshing ? null : config.onRefresh,
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final hasModes = config.viewModes.length > 1;
+        return FilterBar(
+          searchHintKey: config.searchHintKey,
+          debounce: config.searchDebounce,
+          onSearchChanged: config.onSearchChanged,
+          onClearAll: config.onClearAll,
+          activeFilters: config.activeFilters,
+          filterControls: config.filterControls,
+          sortOptions: config.sortOptions,
+          sortKey: config.sortKey,
+          sortAscending: config.sortAscending,
+          onSort: config.onSort,
+          sorts: config.sorts,
+          onSortsChanged: config.onSortsChanged,
+          maxSorts: config.maxSorts,
+          leading: hasModes && config.onViewModeChanged != null
+              ? ViewModeSwitcher(
+                  modes: config.viewModes,
+                  selected: config.viewMode ?? AppDataView.defaultModeFor(
+                    context,
+                    availableWidth: constraints.maxWidth,
+                  ),
+                  onChanged: config.onViewModeChanged!,
+                )
+              : null,
+          searchSuffix: config.onRefresh == null
+              ? null
+              : AppIconButton(
+                  AppIcons.refresh,
+                  tooltipKey: CatalogUiKeys.refresh,
+                  onPressed: config.refreshing ? null : config.onRefresh,
+                ),
+        );
+      },
     );
   }
 

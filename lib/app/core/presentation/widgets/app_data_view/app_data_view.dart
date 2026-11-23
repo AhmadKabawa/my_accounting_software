@@ -111,8 +111,17 @@ class AppDataView<T> extends StatelessWidget {
 
   /// The mode actually shown for [context] and the current width.
   /// Public so the owner can mark the matching switcher button.
-  static AppViewMode defaultModeFor(BuildContext context) =>
-      ScreenEngine.isMobile(context) ? AppViewMode.cards : AppViewMode.table;
+  static const double compactContentBreakpoint = 720;
+
+  static AppViewMode defaultModeFor(
+    BuildContext context, {
+    double? availableWidth,
+  }) {
+    if (availableWidth != null && availableWidth < compactContentBreakpoint) {
+      return AppViewMode.cards;
+    }
+    return ScreenEngine.isMobile(context) ? AppViewMode.cards : AppViewMode.table;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +178,7 @@ class AppDataView<T> extends StatelessWidget {
     final supported = supportedModes;
     final chosen = mode;
     if (chosen != null && supported.contains(chosen)) return chosen;
-    final fallback = defaultModeFor(context);
+    final fallback = defaultModeFor(context, availableWidth: width);
     if (fallback == AppViewMode.table && columns.length > 1) {
       final fit = AppDataTable.visibleFor<T>(
         context,
