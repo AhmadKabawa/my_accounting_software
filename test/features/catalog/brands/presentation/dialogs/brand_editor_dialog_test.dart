@@ -11,6 +11,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
@@ -490,5 +491,27 @@ void main() {
     expect(created?.isActive, isFalse);
   });
 
+
+  testWidgets('edit mode shows status switch and saves the changed status in the draft', (tester) async {
+    BrandDraft? updated;
+    final repository = FakeBrandsRepository()
+      ..onUpdateBrand = (id, draft) async {
+        updated = draft;
+        return Right(FakeBrandsRepository.brand);
+      };
+    await _pumpEditor(
+      tester,
+      repository,
+      brand: FakeBrandsRepository.brand,
+    );
+    expect(find.byType(AppSwitch), findsOneWidget);
+    expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isTrue);
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isFalse);
+    await tester.tap(find.text(BrandsKeys.save.en));
+    await tester.pumpAndSettle();
+    expect(updated?.isActive, isFalse);
+  });
 
 }
