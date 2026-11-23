@@ -203,8 +203,8 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
       shouldStop: () => isClosed,
     );
     if (!isClosed && result.totalCount > 0) {
-      // Report a fully successful mutation before the list refresh; a refresh
-      // failure is a separate problem and must not hide the mutation result.
+      // Finish refreshing before showing success, so the user does not see
+      // a completed message while the list is still displaying its loader.
       await load();
       if (!isClosed) {
         publishMutation(kind);

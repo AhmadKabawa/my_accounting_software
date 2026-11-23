@@ -235,7 +235,8 @@ class MessageViewWidgets {
                 start: (MediaQuery.sizeOf(context).width -
                         context.ui.size.width(AppComponentSize.snackBarWidth) -
                         context.ui.spacing.md)
-                    .clamp(context.ui.spacing.md, double.infinity),
+                    .clamp(context.ui.spacing.md, double.infinity)
+                    .toDouble(),
                 end: context.ui.spacing.md,
                 bottom: context.ui.spacing.md,
               ),
