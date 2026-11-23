@@ -88,9 +88,10 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
   ];
 
   bool get _dirty {
-    final now = [for (final c in _controllers) c.text];
+    // _save() trims every field, so whitespace-only edits are not dirty.
+    final now = [for (final c in _controllers) c.text.trim()];
     for (var i = 0; i < now.length; i++) {
-      if (now[i] != _initial[i]) return true;
+      if (now[i] != _initial[i].trim()) return true;
     }
     return false;
   }

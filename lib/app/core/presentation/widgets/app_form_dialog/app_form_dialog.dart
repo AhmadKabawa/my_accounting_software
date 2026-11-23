@@ -175,15 +175,15 @@ class _AppFormDialogState extends State<AppFormDialog> {
 }
 
 /// Opens the shared form shell as a centered dialog or a full-height mobile
-/// sheet. Both presentations are intentionally non-dismissible by the barrier.
+/// sheet. The PopScope allows safe dismissal and intercepts dirty or busy forms.
 Future<T?> showAppFormDialog<T>(BuildContext context, WidgetBuilder builder) {
   if (context.ui.screen.isMobile) {
     return showModalBottomSheet<T>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      isDismissible: false,
-      enableDrag: false,
+      isDismissible: true,
+      enableDrag: true,
       builder: (sheetContext) => AnimatedPadding(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.only(
@@ -196,7 +196,7 @@ Future<T?> showAppFormDialog<T>(BuildContext context, WidgetBuilder builder) {
 
   return showDialog<T>(
     context: context,
-    barrierDismissible: false,
+    barrierDismissible: true,
     useSafeArea: true,
     builder: (dialogContext) => Dialog(
       insetPadding: EdgeInsets.all(dialogContext.ui.spacing.lg),

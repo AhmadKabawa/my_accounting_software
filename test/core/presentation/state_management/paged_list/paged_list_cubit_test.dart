@@ -242,4 +242,22 @@ void main() {
     expect(emissions, atClose);
     await subscription.cancel();
   });
+
+  test('selection mode survives query changes and exit clears selected IDs', () async {
+    final cubit = TestPagedCubit();
+    cubit.setSelectionMode(true);
+    cubit.selection.toggle(1);
+    expect(cubit.state.selectionMode, isTrue);
+    expect(cubit.selection.state, {1});
+
+    cubit.searchChanged('updated');
+    expect(cubit.state.selectionMode, isTrue);
+    expect(cubit.selection.state, isEmpty);
+
+    cubit.selection.toggle(2);
+    cubit.setSelectionMode(false);
+    expect(cubit.state.selectionMode, isFalse);
+    expect(cubit.selection.state, isEmpty);
+    await cubit.close();
+  });
 }

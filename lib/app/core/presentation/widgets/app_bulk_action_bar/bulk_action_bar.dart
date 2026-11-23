@@ -99,7 +99,9 @@ class _BulkActionBarState extends State<BulkActionBar> {
                     },
                     onChanged: _running
                         ? null
-                        : (value) => widget.onSelectPage!(value ?? true),
+                        : (_) => widget.onSelectPage!(
+                            widget.pageSelectionState != PageSelectionState.all,
+                          ),
                   ),
                 ),
               ],
