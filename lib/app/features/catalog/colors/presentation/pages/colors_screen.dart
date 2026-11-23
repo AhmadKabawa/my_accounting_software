@@ -11,6 +11,7 @@ import 'package:accounting_software/app/core/presentation/state_management/list_
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_bulk_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_result_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
@@ -151,50 +152,28 @@ class ColorsScreen extends StatelessWidget {
                           BulkActionBar(
                             selectedCount: selectedColors.length,
                             onClear: cubit.selection.clear,
-                            actions: [
-                              BulkAction(
-                                labelKey: ColorsKeys.bulkActivate,
-                                icon: AppIcons.refresh,
-                                permission: Permissions.masterData.manage,
-                                onRun: () async {
-                                  final result = await cubit.bulkActivate(selectedColors);
-                                  await BulkResultDialog.show(context, result, itemLabel: (color) => color.name);
-                                },
-                              ),
-                              BulkAction(
-                                labelKey: ColorsKeys.bulkDeactivate,
-                                icon: AppIcons.refresh,
-                                permission: Permissions.masterData.manage,
-                                confirm: (ctx, count) => showConfirmDialog(
-                                  ctx,
-                                  titleKey: ColorsKeys.bulkDeactivateTitle,
-                                  messageKey: ColorsKeys.bulkDeactivateMessage,
-                                  messageArgs: {'count': count.toString()},
-                                  severity: ConfirmDialogSeverity.warning,
-                                ),
-                                onRun: () async {
-                                  final result = await cubit.bulkDeactivate(selectedColors);
-                                  await _showBulkResult(context, result);
-                                },
-                              ),
-                              BulkAction(
-                                labelKey: ColorsKeys.bulkDelete,
-                                icon: AppIcons.delete,
-                                permission: Permissions.masterData.manage,
-                                destructive: true,
-                                confirm: (ctx, count) => showConfirmDialog(
-                                  ctx,
-                                  titleKey: ColorsKeys.bulkDeleteTitle,
-                                  messageKey: ColorsKeys.bulkDeleteMessage,
-                                  messageArgs: {'count': count.toString()},
-                                  severity: ConfirmDialogSeverity.critical,
-                                ),
-                                onRun: () async {
-                                  final result = await cubit.bulkDelete(selectedColors);
-                                  await _showBulkResult(context, result);
-                                },
-                              ),
-                            ],
+                            actions: CrudBulkActions.statusAndDelete(
+                              permission: Permissions.masterData.manage,
+                              activateLabelKey: ColorsKeys.bulkActivate,
+                              deactivateLabelKey: ColorsKeys.bulkDeactivate,
+                              deleteLabelKey: ColorsKeys.bulkDelete,
+                              deactivateTitleKey: ColorsKeys.bulkDeactivateTitle,
+                              deactivateMessageKey: ColorsKeys.bulkDeactivateMessage,
+                              deleteTitleKey: ColorsKeys.bulkDeleteTitle,
+                              deleteMessageKey: ColorsKeys.bulkDeleteMessage,
+                              onActivate: () async {
+                                final result = await cubit.bulkActivate(selectedColors);
+                                await BulkResultDialog.show(context, result, itemLabel: (color) => color.name);
+                              },
+                              onDeactivate: () async {
+                                final result = await cubit.bulkDeactivate(selectedColors);
+                                await BulkResultDialog.show(context, result, itemLabel: (color) => color.name);
+                              },
+                              onDelete: () async {
+                                final result = await cubit.bulkDelete(selectedColors);
+                                await BulkResultDialog.show(context, result, itemLabel: (color) => color.name);
+                              },
+                            ),
                           ),
                         if (canBulk && selectedColors.isNotEmpty)
                           context.ui.spacing.gap(AppSpacing.sm),

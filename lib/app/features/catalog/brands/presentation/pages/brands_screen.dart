@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/state_management/list_selection_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_bulk_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_result_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
@@ -170,50 +171,28 @@ class BrandsScreen extends StatelessWidget {
                                   BulkActionBar(
                                     selectedCount: selectedBrands.length,
                                     onClear: cubit.selection.clear,
-                                    actions: [
-                                      BulkAction(
-                                        labelKey: BrandsKeys.bulkActivate,
-                                        icon: AppIcons.refresh,
-                                        permission: Permissions.masterData.manage,
-                                        onRun: () async {
-                                          final result = await cubit.bulkActivate(selectedBrands);
-                                          await BulkResultDialog.show(context, result, itemLabel: (brand) => brand.name);
-                                        },
-                                      ),
-                                      BulkAction(
-                                        labelKey: BrandsKeys.bulkDeactivate,
-                                        icon: AppIcons.refresh,
-                                        permission: Permissions.masterData.manage,
-                                        confirm: (confirmContext, count) => showConfirmDialog(
-                                          confirmContext,
-                                          titleKey: BrandsKeys.bulkDeactivateTitle,
-                                          messageKey: BrandsKeys.bulkDeactivateMessage,
-                                          messageArgs: {'count': count.toString()},
-                                          severity: ConfirmDialogSeverity.warning,
-                                        ),
-                                        onRun: () async {
-                                          final result = await cubit.bulkDeactivate(selectedBrands);
-                                          await _showBulkResult(context, result);
-                                        },
-                                      ),
-                                      BulkAction(
-                                        labelKey: BrandsKeys.bulkDelete,
-                                        icon: AppIcons.delete,
-                                        permission: Permissions.masterData.manage,
-                                        destructive: true,
-                                        confirm: (confirmContext, count) => showConfirmDialog(
-                                          confirmContext,
-                                          titleKey: BrandsKeys.bulkDeleteTitle,
-                                          messageKey: BrandsKeys.bulkDeleteMessage,
-                                          messageArgs: {'count': count.toString()},
-                                          severity: ConfirmDialogSeverity.critical,
-                                        ),
-                                        onRun: () async {
-                                          final result = await cubit.bulkDelete(selectedBrands);
-                                          await _showBulkResult(context, result);
-                                        },
-                                      ),
-                                    ],
+                                    actions: CrudBulkActions.statusAndDelete(
+                                      permission: Permissions.masterData.manage,
+                                      activateLabelKey: BrandsKeys.bulkActivate,
+                                      deactivateLabelKey: BrandsKeys.bulkDeactivate,
+                                      deleteLabelKey: BrandsKeys.bulkDelete,
+                                      deactivateTitleKey: BrandsKeys.bulkDeactivateTitle,
+                                      deactivateMessageKey: BrandsKeys.bulkDeactivateMessage,
+                                      deleteTitleKey: BrandsKeys.bulkDeleteTitle,
+                                      deleteMessageKey: BrandsKeys.bulkDeleteMessage,
+                                      onActivate: () async {
+                                        final result = await cubit.bulkActivate(selectedBrands);
+                                        await BulkResultDialog.show(context, result, itemLabel: (brand) => brand.name);
+                                      },
+                                      onDeactivate: () async {
+                                        final result = await cubit.bulkDeactivate(selectedBrands);
+                                        await BulkResultDialog.show(context, result, itemLabel: (brand) => brand.name);
+                                      },
+                                      onDelete: () async {
+                                        final result = await cubit.bulkDelete(selectedBrands);
+                                        await BulkResultDialog.show(context, result, itemLabel: (brand) => brand.name);
+                                      },
+                                    ),
                                   ),
                                 if (canBulk && selectedBrands.isNotEmpty)
                                   context.ui.spacing.gap(AppSpacing.sm),
