@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_logo_thumb/app_logo_thumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'brand_logo.dart';
@@ -16,7 +17,7 @@ class BrandGridTile extends StatelessWidget {
   Widget _content(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      BrandLogo(brand),
+      BrandLogo(brand, size: AppLogoSize.large),
       context.ui.spacing.gap(AppSpacing.sm),
       AppText.raw(
         brand.name,

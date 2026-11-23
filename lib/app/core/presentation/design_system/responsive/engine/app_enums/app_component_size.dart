@@ -81,6 +81,10 @@ class AppComponentSize extends ResponsiveToken {
   /// Mobile: 64px | Tablet: 72px | Desktop: 80px
   static const avatarLarge = AppComponentSize(64, 72, 80);
 
+  /// Large logo preview for feature grid tiles.
+  /// Mobile: 72px | Tablet: 80px | Desktop: 88px
+  static const logoPreview = AppComponentSize(72, 80, 88);
+
   /// Minimum width of a secondary table column before it is hidden.
   /// Mobile: 96px | Tablet: 112px | Desktop: 120px
   static const tableColumnMin = AppComponentSize(96, 112, 120);
