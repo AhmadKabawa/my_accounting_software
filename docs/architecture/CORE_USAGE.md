@@ -578,3 +578,18 @@ Use the shared list-page building blocks instead of recreating statistics, add b
 - Keep every user-visible label as an `AppKey`; the feature owns its permission and callbacks.
 
 See [List page template](../ui/list_page_template.md) for the preferred-slot table and a compact example.
+
+
+## Paged CRUD list cubit
+
+Use `PagedListCubit<T, Q, E>` when a list needs the shared request lifecycle, search debounce, pagination, refresh retention, and delete-page recovery. Implement the domain query with `PagedQuery<Q>` from `core/foundation/types/paged_query.dart`; it requires search, page, pageSize, hasActiveFilters, withSearch, withPage, and cleared. Keep this contract in Foundation so Domain does not depend on Presentation.
+
+Implement `PagedResult<T>` from `core/foundation/types/paged_result.dart` on the existing result type. The existing `PaginatedResult<T>` already implements it.
+
+A feature cubit supplies:
+- `fetch(query)` and `deleteItem(item)`
+- optional `beforeDelete(item)` for feature-specific validation
+- `deletedMessageKey` and `buildMutationEffect(kind)`
+- feature-specific filters/sorting and other mutations
+
+Use the protected `applyQueryAndLoad(query)` helper for filter/sort changes, `runMutation(...)` for status-like mutations that flash and reload, and `reloadAfterMutation(kind)` for create/update notifications. See `BrandsListCubit` for the feature adapter.
