@@ -70,6 +70,35 @@ void main() {
     });
   });
 
+  test('manual load cancels the pending debounce timer', () {
+    fakeAsync((async) {
+      final cubit = TestPagedCubit();
+      cubit.searchChanged('typed');
+      final load = cubit.load();
+      expect(cubit.requests, hasLength(1));
+      cubit.requests.single.complete(const Right(TestPagedPage([1])));
+      async.flushMicrotasks();
+      async.elapse(const Duration(milliseconds: 300));
+      async.flushMicrotasks();
+      expect(cubit.requests, hasLength(1));
+      load.then((_) {});
+      cubit.close();
+      async.flushMicrotasks();
+    });
+  });
+
+  test('close cancels the pending debounce timer', () {
+    fakeAsync((async) {
+      final cubit = TestPagedCubit();
+      cubit.searchChanged('typed');
+      cubit.close();
+      async.flushMicrotasks();
+      async.elapse(const Duration(milliseconds: 300));
+      async.flushMicrotasks();
+      expect(cubit.requests, isEmpty);
+    });
+  });
+
   test('refresh failure retains previous data and records failure', () async {
     final cubit = TestPagedCubit();
     final firstLoad = cubit.load();
