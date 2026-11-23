@@ -4,24 +4,20 @@ import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
-import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
 import 'package:accounting_software/app/core/presentation/state_management/list_selection_cubit.dart';
-import 'package:accounting_software/app/core/presentation/state_management/paged_list/bulk_result.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_result_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
@@ -162,7 +158,7 @@ class ColorsScreen extends StatelessWidget {
                                 permission: Permissions.masterData.manage,
                                 onRun: () async {
                                   final result = await cubit.bulkActivate(selectedColors);
-                                  await _showBulkResult(context, result);
+                                  await BulkResultDialog.show(context, result, itemLabel: (color) => color.name);
                                 },
                               ),
                               BulkAction(
@@ -237,48 +233,6 @@ class ColorsScreen extends StatelessWidget {
       ),
     ),
   );
-
-  Future<void> _showBulkResult(
-    BuildContext context,
-    BulkResult<CatalogColor> result,
-  ) async {
-    if (result.failureCount == 0 || !context.mounted) return;
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: AppText(CatalogUiKeys.bulkResultTitle),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppText.raw(CatalogUiKeys.bulkResultSummary.tr(
-                context: dialogContext,
-                namedArgs: {
-                  'success': result.successCount.toString(),
-                  'failure': result.failureCount.toString(),
-                },
-              )),
-              for (final failure in result.failures)
-                Padding(
-                  padding: EdgeInsets.only(top: dialogContext.ui.spacing.xs),
-                  child: AppText.raw(CatalogUiKeys.bulkFailureLine.tr(
-                    context: dialogContext,
-                    namedArgs: {
-                      'name': failure.item.name,
-                      'reason': failure.reason.messageKey.tr(context: dialogContext),
-                    },
-                  )),
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          AppButton(CatalogUiKeys.done, onPressed: () => Navigator.of(dialogContext).pop()),
-        ],
-      ),
-    );
-  }
 
   Future<void> _edit(BuildContext context, [CatalogColor? color]) async {
     final saved = await showColorEditor(context, color: color);
