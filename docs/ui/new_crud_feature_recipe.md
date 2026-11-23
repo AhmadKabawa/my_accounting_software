@@ -70,7 +70,7 @@ The exact folders depend on the feature. Keep feature-specific fields, labels, v
 9. Implement the table/data section with `AppDataView`, `CrudEmptyState`, `crudStatusColumn` and `CrudRowActions`. Supply the same row ID for table, card and grid selection.
 10. Connect the page with `ListPageTemplate` using `toolbar`, `stats`, `addAction` and `count`. Use `ViewModeCubit` for table/cards/grid.
 11. Show selection controls only when at least one bulk action is authorized. Selection is page-scoped and must clear on search, filter, sort, page, refresh and after a bulk operation.
-12. Add `BulkActionBar` actions with feature permissions and count-aware confirmations. Keep the operation in the cubit/use-case layer, not in widget loops. Return a `BulkResult` with every failed row and its reason; do not report partial success as full success.
+12. Add `BulkActionBar` actions with feature permissions and count-aware confirmations. Keep the operation in the cubit/use-case layer, not in widget loops. Return a `BulkResult` with every failed row and its reason; do not report partial success as full success. When no server bulk endpoint exists, `BulkMutationUseCase` executes mutations sequentially; this is not one database transaction, so document the partial-completion behavior.
 13. For bulk delete, reject or skip rows that cannot be deleted while continuing the remaining rows.
 14. Add widget and unit tests for query behavior, sort synchronization, selection tri-state, permissions, bulk success/partial/full failure, duplicate seeds and editor dirty state.
 15. Review all three view modes, phone/tablet/desktop widths, RTL/LTR, light/dark, empty/error/loading states and users without permissions.
