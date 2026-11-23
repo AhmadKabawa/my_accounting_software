@@ -51,7 +51,9 @@ void main() {
 
   test('search debounce combines rapid changes into one request', () {
     fakeAsync((async) {
-      final cubit = TestPagedCubit();
+      final cubit = TestPagedCubit(
+        query: const TestPagedQuery(page: 3, sort: 4),
+      );
       cubit.searchChanged('a');
       cubit.searchChanged('ab');
       cubit.searchChanged('abc');
@@ -63,6 +65,8 @@ void main() {
 
       expect(cubit.requests, hasLength(1));
       expect(cubit.requestedQueries.single.search, 'abc');
+      expect(cubit.requestedQueries.single.page, 1);
+      expect(cubit.requestedQueries.single.sort, 4);
       cubit.requests.single.complete(const Right(TestPagedPage([1])));
       async.flushMicrotasks();
       cubit.close();
