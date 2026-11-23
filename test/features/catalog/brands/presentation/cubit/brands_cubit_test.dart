@@ -315,6 +315,52 @@ void main() {
     },
   );
 
+  test('status and multi-sort public API remains available', () async {
+    final repository = FakeBrandsRepository();
+    final cubit = _listCubit(repository);
+
+    await cubit.setStatus(BrandStatusFilter.active);
+    expect(cubit.state.query.status, BrandStatusFilter.active);
+    expect(cubit.state.query.hasActiveFilters, isTrue);
+    expect(repository.queries, hasLength(1));
+
+    await cubit.setStatus(BrandStatusFilter.active);
+    expect(repository.queries, hasLength(1));
+
+    const primary = BrandSort(BrandSortField.name, true);
+    const secondary = BrandSort(BrandSortField.updated, false);
+    await cubit.setSorts([primary]);
+    expect(repository.queries, hasLength(2));
+    expect(cubit.state.query.thenSorts, isEmpty);
+
+    await cubit.setSorts([primary, secondary]);
+    expect(repository.queries, hasLength(3));
+    expect(cubit.state.query.thenSorts, [secondary]);
+
+    await cubit.setSorts([]);
+    await cubit.setSorts([primary, secondary]);
+    expect(repository.queries, hasLength(3));
+
+    const unknown = Brand(
+      id: 90,
+      name: 'Unknown',
+      slug: 'unknown',
+      isActive: true,
+    );
+    const inUse = Brand(
+      id: 91,
+      name: 'In use',
+      slug: 'in-use',
+      isActive: true,
+      productCount: 1,
+    );
+    expect((await cubit.delete(unknown)).isLeft(), isTrue);
+    expect((await cubit.delete(inUse)).isLeft(), isTrue);
+    expect(repository.deletedIds, isEmpty);
+
+    await cubit.close();
+  });
+
   test('form save emits BrandSavedEffect and returns to idle', () async {
     final repository = FakeBrandsRepository();
     final messages = FlashMessages();
