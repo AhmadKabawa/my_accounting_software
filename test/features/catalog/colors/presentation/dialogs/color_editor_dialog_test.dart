@@ -233,6 +233,7 @@ void main() {
       code: 'NAVY-COPY',
       hexCode: '#1E3A8A',
       sortOrder: 2,
+      isActive: false,
     );
     final repository = FakeColorsRepository();
     await _pumpEditor(tester, repository, seed: seed, duplicate: true);
@@ -241,6 +242,7 @@ void main() {
     expect(repository.created.single.name, 'New navy');
     expect(repository.created.single.code, 'NAVY-COPY');
     expect(repository.created.single.hexCode, '#1E3A8A');
+    expect(repository.created.single.isActive, isFalse);
     expect(repository.updated, isEmpty);
   });
 
