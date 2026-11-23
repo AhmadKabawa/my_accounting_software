@@ -65,16 +65,21 @@ void main() {
     expect(find.byType(SingleChildScrollView), findsOneWidget);
     final cancel = tester.getRect(find.text('Cancel'));
     final save = tester.getRect(find.text('Save').last);
+    final endOfForm = find.text('End of long form');
     expect(cancel.top, greaterThanOrEqualTo(0));
     expect(save.bottom, lessThanOrEqualTo(400));
+    expect(tester.getRect(endOfForm).top, greaterThan(400));
+
     await tester.drag(
       find.byType(SingleChildScrollView),
-      const Offset(0, -500),
+      const Offset(0, -1000),
     );
     await tester.pumpAndSettle();
+
+    expect(tester.getRect(endOfForm).bottom, lessThanOrEqualTo(400));
+    expect(tester.getRect(find.text('Save').last), save);
     expect(tester.takeException(), isNull);
   });
-
 }
 
 Widget _appWithDialogContent(Widget content) => buildTestApp(

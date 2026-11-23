@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_logo_thumb/app_logo_thumb.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_grid_tile.dart';
-import '../../../../helpers/localized_app.dart';
+import '../../../../../helpers/localized_app.dart';
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
