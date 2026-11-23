@@ -108,12 +108,24 @@ enum ColorsKeys implements AppKey {
   bulkActivate(ar: 'تفعيل المحدد', en: 'Activate selected'),
   bulkDeactivate(ar: 'إيقاف المحدد', en: 'Deactivate selected'),
   bulkDelete(ar: 'حذف المحدد', en: 'Delete selected'),
-  bulkDeactivateTitle(ar: 'إيقاف الألوان المحددة', en: 'Deactivate selected colors'),
-  bulkDeactivateMessage(ar: 'سيتم إيقاف {count} لون مع الاحتفاظ بسجلاتها.', en: '{count} colors will be deactivated and retained.'),
+  bulkDeactivateTitle(
+    ar: 'إيقاف الألوان المحددة',
+    en: 'Deactivate selected colors',
+  ),
+  bulkDeactivateMessage(
+    ar: 'سيتم إيقاف {count} لون مع الاحتفاظ بسجلاتها.',
+    en: '{count} colors will be deactivated and retained.',
+  ),
   bulkDeleteTitle(ar: 'حذف الألوان المحددة', en: 'Delete selected colors'),
-  bulkDeleteMessage(ar: 'سيتم حذف {count} لون.', en: '{count} colors will be deleted.'),
+  bulkDeleteMessage(
+    ar: 'سيتم حذف {count} لون.',
+    en: '{count} colors will be deleted.',
+  ),
   bulkResultTitle(ar: 'نتيجة العملية الجماعية', en: 'Bulk operation result'),
-  bulkResultSummary(ar: 'نجح {success} سجل وفشل {failure} سجل.', en: '{success} records succeeded and {failure} failed.'),
+  bulkResultSummary(
+    ar: 'نجح {success} سجل وفشل {failure} سجل.',
+    en: '{success} records succeeded and {failure} failed.',
+  ),
   bulkFailureLine(ar: '{name}: {reason}', en: '{name}: {reason}');
 
   const ColorsKeys({required this.ar, required this.en});

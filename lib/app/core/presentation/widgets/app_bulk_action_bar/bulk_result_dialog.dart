@@ -21,7 +21,8 @@ abstract final class BulkResultDialog {
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: AppComponentSize.formDialogWidth.of(dialogContext),
-            maxHeight: MediaQuery.sizeOf(dialogContext).height -
+            maxHeight:
+                MediaQuery.sizeOf(dialogContext).height -
                 dialogContext.ui.spacing.lg * 2,
           ),
           child: SingleChildScrollView(
@@ -35,23 +36,29 @@ abstract final class BulkResultDialog {
                   type: AppTextType.titleLarge,
                 ),
                 dialogContext.ui.spacing.gap(AppSpacing.md),
-                AppText.raw(CatalogUiKeys.bulkResultSummary.tr(
-                  context: dialogContext,
-                  namedArgs: {
-                    'success': result.successCount.toString(),
-                    'failure': result.failureCount.toString(),
-                  },
-                )),
+                AppText.raw(
+                  CatalogUiKeys.bulkResultSummary.tr(
+                    context: dialogContext,
+                    namedArgs: {
+                      'success': result.successCount.toString(),
+                      'failure': result.failureCount.toString(),
+                    },
+                  ),
+                ),
                 for (final failure in result.failures)
                   Padding(
                     padding: EdgeInsets.only(top: dialogContext.ui.spacing.xs),
-                    child: AppText.raw(CatalogUiKeys.bulkFailureLine.tr(
-                      context: dialogContext,
-                      namedArgs: {
-                        'name': itemLabel(failure.item),
-                        'reason': failure.reason.messageKey.tr(context: dialogContext),
-                      },
-                    )),
+                    child: AppText.raw(
+                      CatalogUiKeys.bulkFailureLine.tr(
+                        context: dialogContext,
+                        namedArgs: {
+                          'name': itemLabel(failure.item),
+                          'reason': failure.reason.messageKey.tr(
+                            context: dialogContext,
+                          ),
+                        },
+                      ),
+                    ),
                   ),
                 dialogContext.ui.spacing.gap(AppSpacing.lg),
                 Align(

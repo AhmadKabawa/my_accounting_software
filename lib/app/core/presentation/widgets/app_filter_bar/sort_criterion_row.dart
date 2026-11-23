@@ -41,7 +41,8 @@ class SortCriterionRow extends StatelessWidget {
         : selected.first.label;
     return LayoutBuilder(
       builder: (context, constraints) {
-        final compact = !constraints.hasBoundedWidth ||
+        final compact =
+            !constraints.hasBoundedWidth ||
             constraints.maxWidth < compactContentBreakpoint;
         final fieldPicker = AppDropdownMenu(
           minWidth: AppComponentSize.filterControlWidth,

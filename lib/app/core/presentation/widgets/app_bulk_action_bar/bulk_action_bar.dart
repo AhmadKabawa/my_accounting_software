@@ -54,8 +54,7 @@ class _BulkActionBarState extends State<BulkActionBar> {
     setState(() => _running = true);
     try {
       final confirm = action.confirm;
-      if (confirm != null &&
-          !await confirm(context, widget.selectedCount)) {
+      if (confirm != null && !await confirm(context, widget.selectedCount)) {
         return;
       }
       await action.onRun();

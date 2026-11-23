@@ -8,10 +8,19 @@ enum CatalogUiKeys implements AppKey {
   allOptions(ar: 'الكل', en: 'All'),
   clearSelection(ar: 'مسح الاختيار', en: 'Clear selection'),
   selectedCount(ar: 'تم تحديد {count} سجل', en: '{count} selected'),
-  bulkFailed(ar: 'فشلت العملية الجماعية لكل السجلات المحددة.', en: 'The bulk operation failed for all selected records.'),
-  bulkPartiallyFailed(ar: 'نجحت العملية لبعض السجلات وفشلت لسجلات أخرى.', en: 'The bulk operation partially failed.'),
+  bulkFailed(
+    ar: 'فشلت العملية الجماعية لكل السجلات المحددة.',
+    en: 'The bulk operation failed for all selected records.',
+  ),
+  bulkPartiallyFailed(
+    ar: 'نجحت العملية لبعض السجلات وفشلت لسجلات أخرى.',
+    en: 'The bulk operation partially failed.',
+  ),
   bulkResultTitle(ar: 'نتيجة العملية الجماعية', en: 'Bulk operation result'),
-  bulkResultSummary(ar: 'نجح {success} سجل وفشل {failure} سجل.', en: '{success} records succeeded and {failure} failed.'),
+  bulkResultSummary(
+    ar: 'نجح {success} سجل وفشل {failure} سجل.',
+    en: '{success} records succeeded and {failure} failed.',
+  ),
   bulkFailureLine(ar: '{name}: {reason}', en: '{name}: {reason}'),
   noOptions(ar: 'لا توجد خيارات مطابقة', en: 'No matching options'),
   filters(ar: 'الفلاتر', en: 'Filters'),
@@ -30,8 +39,14 @@ enum CatalogUiKeys implements AppKey {
   sortBy(ar: 'ترتيب حسب', en: 'Sort by'),
   thenBy(ar: 'ثم حسب', en: 'Then by'),
   none(ar: 'بلا', en: 'None'),
-  sortFieldAlreadySelected(ar: 'لا يمكن اختيار الحقل نفسه في معياري الفرز.', en: 'The same field cannot be selected for both sort criteria.'),
-  sortLimitExceeded(ar: 'تم الوصول إلى الحد المتاح لمعايير الفرز.', en: 'The available sort criteria limit has been reached.'),
+  sortFieldAlreadySelected(
+    ar: 'لا يمكن اختيار الحقل نفسه في معياري الفرز.',
+    en: 'The same field cannot be selected for both sort criteria.',
+  ),
+  sortLimitExceeded(
+    ar: 'تم الوصول إلى الحد المتاح لمعايير الفرز.',
+    en: 'The available sort criteria limit has been reached.',
+  ),
   sortDirection(ar: 'الاتجاه', en: 'Direction'),
   done(ar: 'تم', en: 'Done'),
   paginationLabel(

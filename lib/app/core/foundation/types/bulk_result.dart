@@ -7,8 +7,10 @@ class BulkFailure<T> {
 }
 
 class BulkResult<T> {
-  BulkResult({required this.successCount, required List<BulkFailure<T>> failures})
-    : failures = List.unmodifiable(failures);
+  BulkResult({
+    required this.successCount,
+    required List<BulkFailure<T>> failures,
+  }) : failures = List.unmodifiable(failures);
 
   final int successCount;
   final List<BulkFailure<T>> failures;

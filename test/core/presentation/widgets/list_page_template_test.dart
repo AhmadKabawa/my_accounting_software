@@ -274,33 +274,41 @@ void main() {
       expect(cards, greaterThan(0));
     });
 
-    testWidgets('unspecified loading mode follows narrow content width', (tester) async {
+    testWidgets('unspecified loading mode follows narrow content width', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1600, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      await tester.pumpWidget(buildTestApp(home: Scaffold(
-        body: Align(
-          alignment: AlignmentDirectional.topStart,
-          child: SizedBox(
-            width: 360,
-            child: ListPageTemplate(
-              titleKey: CatalogUiKeys.filters,
-              state: AppPageState.loading,
-              dataTable: const Text('DATA'),
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: SizedBox(
+                width: 360,
+                child: ListPageTemplate(
+                  titleKey: CatalogUiKeys.filters,
+                  state: AppPageState.loading,
+                  dataTable: const Text('DATA'),
+                ),
+              ),
             ),
           ),
         ),
-      )));
+      );
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is AppSkeleton &&
+          (widget) =>
+              widget is AppSkeleton &&
               widget.variant == AppSkeletonVariant.card,
         ),
         findsNWidgets(5),
       );
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is AppSkeleton &&
+          (widget) =>
+              widget is AppSkeleton &&
               widget.variant == AppSkeletonVariant.tableRow,
         ),
         findsNothing,

@@ -35,11 +35,18 @@ class ColorStatsSection extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InlineBanner(messageKey: failure!, variant: InlineBannerVariant.error),
+          InlineBanner(
+            messageKey: failure!,
+            variant: InlineBannerVariant.error,
+          ),
           if (onRetry != null)
             Align(
               alignment: AlignmentDirectional.centerEnd,
-              child: AppButton(CatalogUiKeys.retry, variant: AppButtonVariant.text, onPressed: onRetry),
+              child: AppButton(
+                CatalogUiKeys.retry,
+                variant: AppButtonVariant.text,
+                onPressed: onRetry,
+              ),
             ),
         ],
       );

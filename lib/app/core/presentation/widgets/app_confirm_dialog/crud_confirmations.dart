@@ -45,8 +45,10 @@ abstract final class CrudConfirmations {
       messageKey: messageKey,
       targetName: targetName,
       severity: ConfirmDialogSeverity.warning,
-      onConfirm: () async => (await onDeactivate())
-          .fold((failure) => failure.messageKey, (_) => null),
+      onConfirm: () async => (await onDeactivate()).fold(
+        (failure) => failure.messageKey,
+        (_) => null,
+      ),
     );
   }
 }

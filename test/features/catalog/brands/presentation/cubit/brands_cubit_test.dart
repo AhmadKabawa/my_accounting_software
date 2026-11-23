@@ -397,7 +397,6 @@ void main() {
     await cubit.close();
   });
 
-
   test(
     'bulk delete skips brands with products and deletes eligible brands',
     () async {

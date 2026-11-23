@@ -396,7 +396,6 @@ void main() {
     expect(savedDraft?.isActive, isFalse);
   });
 
-
   testWidgets('editor renders without overflow at phone, tablet and desktop', (
     tester,
   ) async {
@@ -412,7 +411,9 @@ void main() {
       await tester.pumpAndSettle();
     }
   });
-  testWidgets('duplicate seed copies editable fields and builds a new slug', (tester) async {
+  testWidgets('duplicate seed copies editable fields and builds a new slug', (
+    tester,
+  ) async {
     const source = Brand(
       id: 9,
       name: 'Original',
@@ -423,7 +424,10 @@ void main() {
       productCount: 3,
     );
     await _pumpEditor(tester, FakeBrandsRepository());
-    final seed = brandDuplicateSeed(tester.element(find.byType(Scaffold).first), source);
+    final seed = brandDuplicateSeed(
+      tester.element(find.byType(Scaffold).first),
+      source,
+    );
     expect(seed.name, 'Original (Copy)');
     expect(seed.slug, 'original-copy');
     expect(seed.description, 'Source description');
@@ -431,41 +435,79 @@ void main() {
     expect(seed.isActive, isFalse);
   });
 
-  testWidgets('duplicate editor starts clean with name selected and auto-generates slug', (tester) async {
-    const seed = BrandDraft(
-      name: 'Original (Copy)',
-      slug: 'original-copy',
-      logo: 'https://cdn.test/shared.png',
-      description: 'Source description',
-      isActive: false,
-    );
-    await _pumpEditor(tester, FakeBrandsRepository(), seed: seed, duplicate: true);
-    final nameField = tester.widget<TextFormField>(find.byType(TextFormField).at(0));
-    expect(nameField.controller!.selection.baseOffset, 0);
-    expect(nameField.controller!.selection.extentOffset, 'Original (Copy)'.length);
-    expect(tester.widget<EditableText>(find.byType(EditableText).first).autofocus, isTrue);
-    expect(nameField.controller!.text, 'Original (Copy)');
-    expect(tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text, 'original-copy');
-    await tester.enterText(find.byType(TextFormField).at(0), 'New brand');
-    await tester.pump();
-    expect(tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text, 'new-brand');
-  });
+  testWidgets(
+    'duplicate editor starts clean with name selected and auto-generates slug',
+    (tester) async {
+      const seed = BrandDraft(
+        name: 'Original (Copy)',
+        slug: 'original-copy',
+        logo: 'https://cdn.test/shared.png',
+        description: 'Source description',
+        isActive: false,
+      );
+      await _pumpEditor(
+        tester,
+        FakeBrandsRepository(),
+        seed: seed,
+        duplicate: true,
+      );
+      final nameField = tester.widget<TextFormField>(
+        find.byType(TextFormField).at(0),
+      );
+      expect(nameField.controller!.selection.baseOffset, 0);
+      expect(
+        nameField.controller!.selection.extentOffset,
+        'Original (Copy)'.length,
+      );
+      expect(
+        tester.widget<EditableText>(find.byType(EditableText).first).autofocus,
+        isTrue,
+      );
+      expect(nameField.controller!.text, 'Original (Copy)');
+      expect(
+        tester
+            .widget<TextFormField>(find.byType(TextFormField).at(1))
+            .controller!
+            .text,
+        'original-copy',
+      );
+      await tester.enterText(find.byType(TextFormField).at(0), 'New brand');
+      await tester.pump();
+      expect(
+        tester
+            .widget<TextFormField>(find.byType(TextFormField).at(1))
+            .controller!
+            .text,
+        'new-brand',
+      );
+    },
+  );
 
-  testWidgets('closing an untouched duplicate does not ask for unsaved confirmation', (tester) async {
-    const seed = BrandDraft(
-      name: 'Original (Copy)',
-      slug: 'original-copy',
-      description: 'Source description',
-      isActive: false,
-    );
-    await _pumpEditor(tester, FakeBrandsRepository(), seed: seed, duplicate: true);
-    await tester.tap(find.text(BrandsKeys.cancel.en));
-    await tester.pumpAndSettle();
-    expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
-    expect(find.byType(AppFormDialog), findsNothing);
-  });
+  testWidgets(
+    'closing an untouched duplicate does not ask for unsaved confirmation',
+    (tester) async {
+      const seed = BrandDraft(
+        name: 'Original (Copy)',
+        slug: 'original-copy',
+        description: 'Source description',
+        isActive: false,
+      );
+      await _pumpEditor(
+        tester,
+        FakeBrandsRepository(),
+        seed: seed,
+        duplicate: true,
+      );
+      await tester.tap(find.text(BrandsKeys.cancel.en));
+      await tester.pumpAndSettle();
+      expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
+      expect(find.byType(AppFormDialog), findsNothing);
+    },
+  );
 
-  testWidgets('duplicate saves through create and copies non-unique values', (tester) async {
+  testWidgets('duplicate saves through create and copies non-unique values', (
+    tester,
+  ) async {
     const seed = BrandDraft(
       name: 'Original (Copy)',
       slug: 'original-copy',
@@ -490,27 +532,24 @@ void main() {
     expect(created?.isActive, isFalse);
   });
 
-
-  testWidgets('edit mode shows status switch and saves the changed status in the draft', (tester) async {
-    BrandDraft? updated;
-    final repository = FakeBrandsRepository()
-      ..onUpdateBrand = (id, draft) async {
-        updated = draft;
-        return Right(FakeBrandsRepository.brand);
-      };
-    await _pumpEditor(
-      tester,
-      repository,
-      brand: FakeBrandsRepository.brand,
-    );
-    expect(find.byType(AppSwitch), findsOneWidget);
-    expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isTrue);
-    await tester.tap(find.byType(Switch));
-    await tester.pump();
-    expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isFalse);
-    await tester.tap(find.text(BrandsKeys.save.en));
-    await tester.pumpAndSettle();
-    expect(updated?.isActive, isFalse);
-  });
-
+  testWidgets(
+    'edit mode shows status switch and saves the changed status in the draft',
+    (tester) async {
+      BrandDraft? updated;
+      final repository = FakeBrandsRepository()
+        ..onUpdateBrand = (id, draft) async {
+          updated = draft;
+          return Right(FakeBrandsRepository.brand);
+        };
+      await _pumpEditor(tester, repository, brand: FakeBrandsRepository.brand);
+      expect(find.byType(AppSwitch), findsOneWidget);
+      expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isTrue);
+      await tester.tap(find.byType(Switch));
+      await tester.pump();
+      expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isFalse);
+      await tester.tap(find.text(BrandsKeys.save.en));
+      await tester.pumpAndSettle();
+      expect(updated?.isActive, isFalse);
+    },
+  );
 }

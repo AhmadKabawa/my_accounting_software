@@ -59,23 +59,24 @@ class ColorsTableSection extends StatelessWidget {
   final Set<Object> selectedIds;
   final ValueChanged<Set<Object>>? onSelectionChanged;
 
-  Widget _card(BuildContext context, CatalogColor color, AppIconSize size) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      ColorIdentity(color, size: size),
-      context.ui.spacing.gap(AppSpacing.xs),
-      AppText.raw(color.code, type: AppTextType.bodySmall),
-      if (color.hexCode != null) ...[
-        context.ui.spacing.gap(AppSpacing.xs),
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: AppText.raw(color.hexCode!, type: AppTextType.bodySmall),
-        ),
-      ],
-      context.ui.spacing.gap(AppSpacing.sm),
-      ColorStatusBadge(color),
-    ],
-  );
+  Widget _card(BuildContext context, CatalogColor color, AppIconSize size) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ColorIdentity(color, size: size),
+          context.ui.spacing.gap(AppSpacing.xs),
+          AppText.raw(color.code, type: AppTextType.bodySmall),
+          if (color.hexCode != null) ...[
+            context.ui.spacing.gap(AppSpacing.xs),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: AppText.raw(color.hexCode!, type: AppTextType.bodySmall),
+            ),
+          ],
+          context.ui.spacing.gap(AppSpacing.sm),
+          ColorStatusBadge(color),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) => AppDataView<CatalogColor>(
@@ -117,7 +118,8 @@ class ColorsTableSection extends StatelessWidget {
                     AppIcons.copy,
                     tooltipKey: ColorsKeys.copyHex,
                     size: AppButtonSize.small,
-                    onPressed: () => Clipboard.setData(ClipboardData(text: color.hexCode!)),
+                    onPressed: () =>
+                        Clipboard.setData(ClipboardData(text: color.hexCode!)),
                   ),
                 ],
               ),

@@ -306,7 +306,9 @@ class AppDataTable<T> extends StatelessWidget {
 
   bool? get _pageSelectionValue {
     if (rows.isEmpty) return false;
-    final selectedCount = rows.where((row) => selectedIds.contains(rowId(row))).length;
+    final selectedCount = rows
+        .where((row) => selectedIds.contains(rowId(row)))
+        .length;
     if (selectedCount == 0) return false;
     if (selectedCount == rows.length) return true;
     return null;

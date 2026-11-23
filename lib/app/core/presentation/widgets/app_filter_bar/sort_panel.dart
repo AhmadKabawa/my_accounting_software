@@ -26,13 +26,11 @@ class SortPanel extends StatelessWidget {
 
   final int maxSorts;
 
-  int get _limit => maxSorts > 0 && maxSorts < options.length
-      ? maxSorts
-      : options.length;
+  int get _limit =>
+      maxSorts > 0 && maxSorts < options.length ? maxSorts : options.length;
 
-  bool _usedElsewhere(String key, int index) => sorts.indexed.any(
-    (entry) => entry.$1 != index && entry.$2.key == key,
-  );
+  bool _usedElsewhere(String key, int index) =>
+      sorts.indexed.any((entry) => entry.$1 != index && entry.$2.key == key);
 
   void _selectField(int index, String key) {
     if (_usedElsewhere(key, index)) return;
@@ -101,7 +99,9 @@ class SortPanel extends StatelessWidget {
                     sortsLength: sorts.length,
                     isUsedElsewhere: (key) => _usedElsewhere(key, index),
                     onSelect: (key) => _selectField(index, key),
-                    onDirection: index < sorts.length ? () => _toggleDirection(index) : null,
+                    onDirection: index < sorts.length
+                        ? () => _toggleDirection(index)
+                        : null,
                     onMoveUp: index > 0 ? () => _moveField(index, -1) : null,
                     onMoveDown: index < sorts.length - 1
                         ? () => _moveField(index, 1)
@@ -109,7 +109,8 @@ class SortPanel extends StatelessWidget {
                     onRemove: index > 0 ? () => _removeField(index) : null,
                   ),
                 ],
-                if (sorts.isNotEmpty && sorts.length < _limit &&
+                if (sorts.isNotEmpty &&
+                    sorts.length < _limit &&
                     options.any(
                       (option) => !sorts.any((sort) => sort.key == option.key),
                     )) ...[

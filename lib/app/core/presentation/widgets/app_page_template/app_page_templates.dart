@@ -434,10 +434,12 @@ class ListPageTemplate extends StatelessWidget {
           leading: hasModes && config.onViewModeChanged != null
               ? ViewModeSwitcher(
                   modes: config.viewModes,
-                  selected: config.viewMode ?? AppDataView.defaultModeFor(
-                    context,
-                    availableWidth: constraints.maxWidth,
-                  ),
+                  selected:
+                      config.viewMode ??
+                      AppDataView.defaultModeFor(
+                        context,
+                        availableWidth: constraints.maxWidth,
+                      ),
                   onChanged: config.onViewModeChanged!,
                 )
               : null,
@@ -474,7 +476,8 @@ class ListPageTemplate extends StatelessWidget {
 
   Widget _loading(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final effectiveMode = loadingViewMode ??
+      final effectiveMode =
+          loadingViewMode ??
           AppDataView.defaultModeFor(
             context,
             availableWidth: constraints.hasBoundedWidth

@@ -93,14 +93,16 @@ class BrandsListCubit
 
   Future<BulkResult<Brand>> bulkActivate(Iterable<Brand> brands) => runBulk(
     items: brands,
-    action: (brand) => _setBrandActive(SetBrandActiveParams(id: brand.id, isActive: true)),
+    action: (brand) =>
+        _setBrandActive(SetBrandActiveParams(id: brand.id, isActive: true)),
     kind: PagedMutationKind.statusChanged,
     successMessage: BrandsKeys.statusUpdated,
   );
 
   Future<BulkResult<Brand>> bulkDeactivate(Iterable<Brand> brands) => runBulk(
     items: brands,
-    action: (brand) => _setBrandActive(SetBrandActiveParams(id: brand.id, isActive: false)),
+    action: (brand) =>
+        _setBrandActive(SetBrandActiveParams(id: brand.id, isActive: false)),
     kind: PagedMutationKind.statusChanged,
     successMessage: BrandsKeys.statusUpdated,
   );

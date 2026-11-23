@@ -110,7 +110,9 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
     return sortField == primary.field &&
         sortAscending == primary.ascending &&
         thenSorts.length == secondary.length &&
-        thenSorts.asMap().entries.every((entry) => entry.value == secondary[entry.key]);
+        thenSorts.asMap().entries.every(
+          (entry) => entry.value == secondary[entry.key],
+        );
   }
 
   BrandListQuery copyWith({

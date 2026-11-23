@@ -33,7 +33,11 @@ class ColorsScreen extends StatelessWidget {
   const ColorsScreen({super.key});
 
   static const screenId = 'catalog.colors';
-  static const _modes = [AppViewMode.table, AppViewMode.cards, AppViewMode.grid];
+  static const _modes = [
+    AppViewMode.table,
+    AppViewMode.cards,
+    AppViewMode.grid,
+  ];
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
@@ -54,134 +58,155 @@ class ColorsScreen extends StatelessWidget {
         }
       },
       child: BlocBuilder<ViewModeCubit, AppViewMode?>(
-        builder: (context, mode) => BlocBuilder<ColorStatsCubit, ColorStatsState>(
-          builder: (context, statsState) =>
-              BlocBuilder<ColorsListCubit, PagedListState<CatalogColor, ColorListQuery>>(
-            builder: (context, state) {
-              final cubit = context.read<ColorsListCubit>();
-              final rows = state.result?.items ?? const <CatalogColor>[];
-              final total = state.result?.totalCount ?? 0;
-              final loading = state.isInitialLoading;
-              final failure = state.hasData ? null : state.failure;
-              final refreshFailure = state.hasData ? state.failure : null;
-              final addAction = ListAddAction(
-                labelKey: ColorsKeys.add,
-                permission: Permissions.masterData.manage,
-                onPressed: () => _edit(context),
-              );
-              return ListPageTemplate(
-                titleKey: ColorsKeys.title,
-                breadcrumb: AppBreadcrumb(items: [
-                  AppBreadcrumbItem(
-                    label: NavKeys.catalog,
-                    onTap: () => context.go(CatalogRoutes.hub.path),
-                  ),
-                  const AppBreadcrumbItem(label: ColorsKeys.title),
-                ]),
-                count: total,
-                stats: ColorStatsSection(
-                  stats: statsState.stats,
-                  selectedFilter: state.query.status,
-                  onStatusSelected: cubit.setStatus,
-                  loading: statsState.status == ColorStatsStatus.loading ||
-                      statsState.status == ColorStatsStatus.initial,
-                  failure: statsState.failure?.messageKey,
-                  onRetry: context.read<ColorStatsCubit>().refresh,
-                ),
-                toolbar: ListToolbarConfig(
-                  searchHintKey: ColorsKeys.searchHint,
-                  onSearchChanged: cubit.searchChanged,
-                  onClearAll: cubit.clearFilters,
-                  activeFilters: ColorsFilterBar.activeFilters(
-                    context,
-                    state.query,
-                    onSearchChanged: cubit.searchChanged,
-                    onStatusChanged: cubit.setStatus,
-                  ),
-                  filterControls: ColorsFilterBar.controls(
-                    context,
-                    state.query,
-                    onStatusChanged: cubit.setStatus,
-                  ),
-                  sortOptions: ColorsFilterBar.sortOptions,
-                  sorts: [
-                    for (final sort in state.query.sorts)
-                      FilterBarSort(sort.field.name, sort.ascending),
-                  ],
-                  onSortsChanged: (sorts) => cubit.setSorts(
-                    mapFilterBarSorts<ColorSortField, ColorSort>(
-                      sorts,
-                      parse: ColorSortField.tryParse,
-                      build: (field, ascending) => ColorSort(field, ascending),
-                    ),
-                  ),
-                  viewModes: _modes,
-                  viewMode: mode,
-                  onViewModeChanged: context.read<ViewModeCubit>().select,
-                  onRefresh: cubit.refresh,
-                  refreshing: state.isRefreshing,
-                ),
-                addAction: addAction,
-                loadingViewMode: mode,
-                state: loading
-                    ? AppPageState.loading
-                    : failure != null
-                        ? AppPageState.error
-                        : AppPageState.content,
-                errorKey: failure?.messageKey,
-                refreshErrorKey: refreshFailure?.messageKey,
-                onRetry: cubit.refresh,
-                dataTable: CrudSelectionScope<CatalogColor>(
-                  rows: rows,
-                  rowId: (color) => color.id,
-                  selection: cubit.selection,
-                  permission: Permissions.masterData.manage,
-                  actionsBuilder: (selected) =>
-                      CrudBulkActions.statusAndDelete<CatalogColor>(
-                        context: context,
+        builder: (context, mode) =>
+            BlocBuilder<ColorStatsCubit, ColorStatsState>(
+              builder: (context, statsState) =>
+                  BlocBuilder<
+                    ColorsListCubit,
+                    PagedListState<CatalogColor, ColorListQuery>
+                  >(
+                    builder: (context, state) {
+                      final cubit = context.read<ColorsListCubit>();
+                      final rows =
+                          state.result?.items ?? const <CatalogColor>[];
+                      final total = state.result?.totalCount ?? 0;
+                      final loading = state.isInitialLoading;
+                      final failure = state.hasData ? null : state.failure;
+                      final refreshFailure = state.hasData
+                          ? state.failure
+                          : null;
+                      final addAction = ListAddAction(
+                        labelKey: ColorsKeys.add,
                         permission: Permissions.masterData.manage,
-                        selected: selected,
-                        itemLabel: (color) => color.name,
-                        activateLabelKey: ColorsKeys.bulkActivate,
-                        deactivateLabelKey: ColorsKeys.bulkDeactivate,
-                        deleteLabelKey: ColorsKeys.bulkDelete,
-                        deactivateTitleKey: ColorsKeys.bulkDeactivateTitle,
-                        deactivateMessageKey: ColorsKeys.bulkDeactivateMessage,
-                        deleteTitleKey: ColorsKeys.bulkDeleteTitle,
-                        deleteMessageKey: ColorsKeys.bulkDeleteMessage,
-                        onActivate: cubit.bulkActivate,
-                        onDeactivate: cubit.bulkDeactivate,
-                        onDelete: cubit.bulkDelete,
-                      ),
-                  builder: (context, selectedIds, onSelectionChanged) =>
-                      ColorsTableSection(
-                        mode: mode,
-                        onSort: (sort) {
-                          final field = ColorSortField.tryParse(sort.key);
-                          if (field != null) {
-                            cubit.setSorts([ColorSort(field, sort.ascending)]);
-                          }
-                        },
-                        onPageChanged: cubit.setPage,
-                        query: state.query,
-                        rows: rows,
-                        total: total,
-                        loading: loading,
-                        refreshing: state.isRefreshing,
-                        failure: failure,
+                        onPressed: () => _edit(context),
+                      );
+                      return ListPageTemplate(
+                        titleKey: ColorsKeys.title,
+                        breadcrumb: AppBreadcrumb(
+                          items: [
+                            AppBreadcrumbItem(
+                              label: NavKeys.catalog,
+                              onTap: () => context.go(CatalogRoutes.hub.path),
+                            ),
+                            const AppBreadcrumbItem(label: ColorsKeys.title),
+                          ],
+                        ),
+                        count: total,
+                        stats: ColorStatsSection(
+                          stats: statsState.stats,
+                          selectedFilter: state.query.status,
+                          onStatusSelected: cubit.setStatus,
+                          loading:
+                              statsState.status == ColorStatsStatus.loading ||
+                              statsState.status == ColorStatsStatus.initial,
+                          failure: statsState.failure?.messageKey,
+                          onRetry: context.read<ColorStatsCubit>().refresh,
+                        ),
+                        toolbar: ListToolbarConfig(
+                          searchHintKey: ColorsKeys.searchHint,
+                          onSearchChanged: cubit.searchChanged,
+                          onClearAll: cubit.clearFilters,
+                          activeFilters: ColorsFilterBar.activeFilters(
+                            context,
+                            state.query,
+                            onSearchChanged: cubit.searchChanged,
+                            onStatusChanged: cubit.setStatus,
+                          ),
+                          filterControls: ColorsFilterBar.controls(
+                            context,
+                            state.query,
+                            onStatusChanged: cubit.setStatus,
+                          ),
+                          sortOptions: ColorsFilterBar.sortOptions,
+                          sorts: [
+                            for (final sort in state.query.sorts)
+                              FilterBarSort(sort.field.name, sort.ascending),
+                          ],
+                          onSortsChanged: (sorts) => cubit.setSorts(
+                            mapFilterBarSorts<ColorSortField, ColorSort>(
+                              sorts,
+                              parse: ColorSortField.tryParse,
+                              build: (field, ascending) =>
+                                  ColorSort(field, ascending),
+                            ),
+                          ),
+                          viewModes: _modes,
+                          viewMode: mode,
+                          onViewModeChanged: context
+                              .read<ViewModeCubit>()
+                              .select,
+                          onRefresh: cubit.refresh,
+                          refreshing: state.isRefreshing,
+                        ),
                         addAction: addAction,
-                        onEdit: (color) => _edit(context, color),
-                        onDuplicate: (color) => _duplicate(context, color),
-                        onToggleStatus: (color) => _status(context, color),
-                        onDelete: (color) => _delete(context, color),
-                        selectedIds: selectedIds,
-                        onSelectionChanged: onSelectionChanged,
-                      ),
-                ),
-              );
-            },
-          ),
-        ),
+                        loadingViewMode: mode,
+                        state: loading
+                            ? AppPageState.loading
+                            : failure != null
+                            ? AppPageState.error
+                            : AppPageState.content,
+                        errorKey: failure?.messageKey,
+                        refreshErrorKey: refreshFailure?.messageKey,
+                        onRetry: cubit.refresh,
+                        dataTable: CrudSelectionScope<CatalogColor>(
+                          rows: rows,
+                          rowId: (color) => color.id,
+                          selection: cubit.selection,
+                          permission: Permissions.masterData.manage,
+                          actionsBuilder: (selected) =>
+                              CrudBulkActions.statusAndDelete<CatalogColor>(
+                                context: context,
+                                permission: Permissions.masterData.manage,
+                                selected: selected,
+                                itemLabel: (color) => color.name,
+                                activateLabelKey: ColorsKeys.bulkActivate,
+                                deactivateLabelKey: ColorsKeys.bulkDeactivate,
+                                deleteLabelKey: ColorsKeys.bulkDelete,
+                                deactivateTitleKey:
+                                    ColorsKeys.bulkDeactivateTitle,
+                                deactivateMessageKey:
+                                    ColorsKeys.bulkDeactivateMessage,
+                                deleteTitleKey: ColorsKeys.bulkDeleteTitle,
+                                deleteMessageKey: ColorsKeys.bulkDeleteMessage,
+                                onActivate: cubit.bulkActivate,
+                                onDeactivate: cubit.bulkDeactivate,
+                                onDelete: cubit.bulkDelete,
+                              ),
+                          builder: (context, selectedIds, onSelectionChanged) =>
+                              ColorsTableSection(
+                                mode: mode,
+                                onSort: (sort) {
+                                  final field = ColorSortField.tryParse(
+                                    sort.key,
+                                  );
+                                  if (field != null) {
+                                    cubit.setSorts([
+                                      ColorSort(field, sort.ascending),
+                                    ]);
+                                  }
+                                },
+                                onPageChanged: cubit.setPage,
+                                query: state.query,
+                                rows: rows,
+                                total: total,
+                                loading: loading,
+                                refreshing: state.isRefreshing,
+                                failure: failure,
+                                addAction: addAction,
+                                onEdit: (color) => _edit(context, color),
+                                onDuplicate: (color) =>
+                                    _duplicate(context, color),
+                                onToggleStatus: (color) =>
+                                    _status(context, color),
+                                onDelete: (color) => _delete(context, color),
+                                selectedIds: selectedIds,
+                                onSelectionChanged: onSelectionChanged,
+                              ),
+                        ),
+                      );
+                    },
+                  ),
+            ),
       ),
     ),
   );

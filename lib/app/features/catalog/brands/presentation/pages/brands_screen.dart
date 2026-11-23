@@ -126,7 +126,8 @@ class BrandsScreen extends StatelessWidget {
                             mapFilterBarSorts<BrandSortField, BrandSort>(
                               sorts,
                               parse: BrandSortField.tryParse,
-                              build: (field, ascending) => BrandSort(field, ascending),
+                              build: (field, ascending) =>
+                                  BrandSort(field, ascending),
                             ),
                           ),
                           viewModes: _modes,
@@ -161,8 +162,10 @@ class BrandsScreen extends StatelessWidget {
                                 activateLabelKey: BrandsKeys.bulkActivate,
                                 deactivateLabelKey: BrandsKeys.bulkDeactivate,
                                 deleteLabelKey: BrandsKeys.bulkDelete,
-                                deactivateTitleKey: BrandsKeys.bulkDeactivateTitle,
-                                deactivateMessageKey: BrandsKeys.bulkDeactivateMessage,
+                                deactivateTitleKey:
+                                    BrandsKeys.bulkDeactivateTitle,
+                                deactivateMessageKey:
+                                    BrandsKeys.bulkDeactivateMessage,
                                 deleteTitleKey: BrandsKeys.bulkDeleteTitle,
                                 deleteMessageKey: BrandsKeys.bulkDeleteMessage,
                                 onActivate: cubit.bulkActivate,
@@ -185,12 +188,14 @@ class BrandsScreen extends StatelessWidget {
                                 refreshing: refreshing,
                                 failure: failure,
                                 addAction: addAction,
-                                onDuplicate: (brand) => _duplicate(context, brand),
+                                onDuplicate: (brand) =>
+                                    _duplicate(context, brand),
                                 selectedIds: selectedIds,
                                 onSelectionChanged: onSelectionChanged,
                                 onEdit: (brand) => _edit(context, brand),
                                 onDelete: (brand) => _delete(context, brand),
-                                onToggleStatus: (brand) => _status(context, brand),
+                                onToggleStatus: (brand) =>
+                                    _status(context, brand),
                               ),
                         ),
                       );

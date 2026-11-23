@@ -23,7 +23,9 @@ Future<bool?> showColorEditor(
   CatalogColor? color,
   bool duplicate = false,
 }) {
-  final seed = duplicate && color != null ? colorDuplicateSeed(context, color) : null;
+  final seed = duplicate && color != null
+      ? colorDuplicateSeed(context, color)
+      : null;
   return showAppFormDialog<bool>(
     context,
     (_) => BlocProvider(
@@ -37,14 +39,16 @@ Future<bool?> showColorEditor(
   );
 }
 
-CatalogColorDraft colorDuplicateSeed(BuildContext context, CatalogColor source) =>
-    CatalogColorDraft(
-      name: '${source.name} ${ColorsKeys.duplicateSuffix.tr(context: context)}',
-      code: '${source.code}${ColorsKeys.duplicateCodeSuffix.tr(context: context)}',
-      hexCode: source.hexCode,
-      sortOrder: source.sortOrder,
-      isActive: source.isActive,
-    );
+CatalogColorDraft colorDuplicateSeed(
+  BuildContext context,
+  CatalogColor source,
+) => CatalogColorDraft(
+  name: '${source.name} ${ColorsKeys.duplicateSuffix.tr(context: context)}',
+  code: '${source.code}${ColorsKeys.duplicateCodeSuffix.tr(context: context)}',
+  hexCode: source.hexCode,
+  sortOrder: source.sortOrder,
+  isActive: source.isActive,
+);
 
 /// Add/edit dialog for one color.
 class ColorEditorDialog extends StatefulWidget {
@@ -100,15 +104,25 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
       seed?.name ?? color?.name ?? '',
       seed?.code ?? color?.code ?? '',
       seed?.hexCode ?? color?.hexCode ?? '',
-      seed != null ? '${seed.sortOrder}' : color == null ? '0' : '${color.sortOrder}',
+      seed != null
+          ? '${seed.sortOrder}'
+          : color == null
+          ? '0'
+          : '${color.sortOrder}',
     ];
     _name = TextEditingController(text: _initial[0]);
     _code = TextEditingController(text: _initial[1]);
     _hex = TextEditingController(text: _initial[2]);
     _sortOrder = TextEditingController(text: _initial[3]);
     if (widget.duplicate) {
-      _name.selection = TextSelection(baseOffset: 0, extentOffset: _name.text.length);
-      _code.selection = TextSelection(baseOffset: 0, extentOffset: _code.text.length);
+      _name.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _name.text.length,
+      );
+      _code.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _code.text.length,
+      );
     }
   }
 
@@ -205,8 +219,8 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
               titleKey: widget.duplicate
                   ? ColorsKeys.duplicateTitle
                   : widget.color == null
-                      ? ColorsKeys.add
-                      : ColorsKeys.edit,
+                  ? ColorsKeys.add
+                  : ColorsKeys.edit,
               subtitleKey: ColorsKeys.editorSubtitle,
               saveLabelKey: ColorsKeys.save,
               cancelLabelKey: ColorsKeys.cancel,

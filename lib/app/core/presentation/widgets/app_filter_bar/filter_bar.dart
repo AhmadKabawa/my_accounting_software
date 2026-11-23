@@ -384,48 +384,58 @@ class _FilterBarState extends State<FilterBar> {
   );
 
   /// Phone: search; then view switcher, sort and filters; then the action.
-  Widget _mobileToolbar(BuildContext context, {required bool compact}) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Row(
+  Widget _mobileToolbar(BuildContext context, {required bool compact}) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: _searchField()),
-          if (widget.searchSuffix != null) ...[
-            context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
-            widget.searchSuffix!,
+          Row(
+            children: [
+              Expanded(child: _searchField()),
+              if (widget.searchSuffix != null) ...[
+                context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
+                widget.searchSuffix!,
+              ],
+            ],
+          ),
+          if (widget.leading != null ||
+              _hasSort ||
+              _hasFilterEditor ||
+              widget.trailing != null) ...[
+            context.ui.spacing.gap(AppSpacing.sm),
+            Wrap(
+              spacing: context.ui.spacing.sm,
+              runSpacing: context.ui.spacing.sm,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                ?widget.leading,
+                if (_hasSort) _sortButton(compact: compact),
+                if (_hasFilterEditor) _filtersButton(compact: compact),
+                ?widget.trailing,
+              ],
+            ),
           ],
         ],
-      ),
-      if (widget.leading != null ||
-          _hasSort ||
-          _hasFilterEditor ||
-          widget.trailing != null) ...[
-        context.ui.spacing.gap(AppSpacing.sm),
-        Wrap(
-          spacing: context.ui.spacing.sm,
-          runSpacing: context.ui.spacing.sm,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            ?widget.leading,
-            if (_hasSort) _sortButton(compact: compact),
-            if (_hasFilterEditor) _filtersButton(compact: compact),
-            ?widget.trailing,
-          ],
-        ),
-      ],
-    ],
-  );
+      );
 
   /// One wrapping row, in this order: view switcher, search pill, sort,
   /// filters, result count, primary action (at the end).
-  Widget _wideToolbar(BuildContext context, FilterBarStyle style, double availableWidth) {
-    final searchWidth = context.ui.size.width(AppComponentSize.searchFieldWidth);
-    final suffixWidth = widget.searchSuffix == null ? 0.0 :
-        context.ui.size.width(AppComponentSize.hitArea) + style.gap;
-    final searchGroupWidth = math.min(
-      searchWidth,
-      math.max(_minimumSearchWidth, availableWidth - suffixWidth),
-    ).toDouble();
+  Widget _wideToolbar(
+    BuildContext context,
+    FilterBarStyle style,
+    double availableWidth,
+  ) {
+    final searchWidth = context.ui.size.width(
+      AppComponentSize.searchFieldWidth,
+    );
+    final suffixWidth = widget.searchSuffix == null
+        ? 0.0
+        : context.ui.size.width(AppComponentSize.hitArea) + style.gap;
+    final searchGroupWidth = math
+        .min(
+          searchWidth,
+          math.max(_minimumSearchWidth, availableWidth - suffixWidth),
+        )
+        .toDouble();
     final count = widget.resultCount;
     return Wrap(
       spacing: style.gap,

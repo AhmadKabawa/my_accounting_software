@@ -85,7 +85,9 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
       for (final sort in query.sorts)
         '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
     ];
-    final hasName = query.sorts.any((sort) => sort.field == ColorSortField.name);
+    final hasName = query.sorts.any(
+      (sort) => sort.field == ColorSortField.name,
+    );
     return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
   }
 

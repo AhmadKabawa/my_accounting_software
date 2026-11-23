@@ -29,6 +29,7 @@ class CrudRowActions extends StatelessWidget {
   final AppKey editLabelKey;
   final VoidCallback onEdit;
   final AppKey deleteLabelKey;
+
   /// Null disables deletion but keeps its menu item visible.
   final VoidCallback? onDelete;
   final AppKey? duplicateLabelKey;
@@ -44,18 +45,28 @@ class CrudRowActions extends StatelessWidget {
     permission: permission,
     child: AppRowActions(
       primary: [
-        AppRowAction(icon: AppIcons.edit, labelKey: editLabelKey, onPressed: onEdit),
+        AppRowAction(
+          icon: AppIcons.edit,
+          labelKey: editLabelKey,
+          onPressed: onEdit,
+        ),
       ],
       overflow: [
-        if (isActive != null && onToggleStatus != null &&
-            activateLabelKey != null && deactivateLabelKey != null)
+        if (isActive != null &&
+            onToggleStatus != null &&
+            activateLabelKey != null &&
+            deactivateLabelKey != null)
           AppRowAction(
             icon: isActive! ? AppIcons.block : AppIcons.restore,
             labelKey: isActive! ? deactivateLabelKey! : activateLabelKey!,
             onPressed: onToggleStatus,
           ),
         if (onDuplicate != null && duplicateLabelKey != null)
-          AppRowAction(icon: AppIcons.copy, labelKey: duplicateLabelKey!, onPressed: onDuplicate),
+          AppRowAction(
+            icon: AppIcons.copy,
+            labelKey: duplicateLabelKey!,
+            onPressed: onDuplicate,
+          ),
         ...extraOverflow,
         AppRowAction(
           icon: AppIcons.delete,

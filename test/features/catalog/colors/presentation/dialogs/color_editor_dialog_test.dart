@@ -198,36 +198,50 @@ void main() {
     expect(repository.updated.single.$1, 7);
     expect(repository.updated.single.$2.name, 'Dark navy');
   });
-  testWidgets('duplicate seed creates unique name and code and preserves appearance', (tester) async {
-    await _pumpEditor(tester, FakeColorsRepository());
-    final seed = colorDuplicateSeed(tester.element(find.byType(Scaffold).first), sampleColor);
-    expect(seed.name, 'Navy (Copy)');
-    expect(seed.code, 'NAVY-COPY');
-    expect(seed.hexCode, sampleColor.hexCode);
-    expect(seed.sortOrder, sampleColor.sortOrder);
-  });
+  testWidgets(
+    'duplicate seed creates unique name and code and preserves appearance',
+    (tester) async {
+      await _pumpEditor(tester, FakeColorsRepository());
+      final seed = colorDuplicateSeed(
+        tester.element(find.byType(Scaffold).first),
+        sampleColor,
+      );
+      expect(seed.name, 'Navy (Copy)');
+      expect(seed.code, 'NAVY-COPY');
+      expect(seed.hexCode, sampleColor.hexCode);
+      expect(seed.sortOrder, sampleColor.sortOrder);
+    },
+  );
 
-  testWidgets('duplicate editor starts clean, selects the unique fields and saves via create', (tester) async {
-    const seed = CatalogColorDraft(
-      name: 'Navy (Copy)',
-      code: 'NAVY-COPY',
-      hexCode: '#1E3A8A',
-      sortOrder: 2,
-    );
-    final repository = FakeColorsRepository();
-    await _pumpEditor(tester, repository, seed: seed, duplicate: true);
-    expect(_controller(tester, 0).selection.baseOffset, 0);
-    expect(_controller(tester, 0).selection.extentOffset, 'Navy (Copy)'.length);
-    expect(_controller(tester, 1).selection.baseOffset, 0);
-    expect(_controller(tester, 1).text, 'NAVY-COPY');
-    await tester.tap(find.text(ColorsKeys.cancel.en));
-    await tester.pumpAndSettle();
-    expect(find.text(ColorsKeys.editorSubtitle.en), findsNothing);
-    expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
-    expect(repository.created, isEmpty);
-  });
+  testWidgets(
+    'duplicate editor starts clean, selects the unique fields and saves via create',
+    (tester) async {
+      const seed = CatalogColorDraft(
+        name: 'Navy (Copy)',
+        code: 'NAVY-COPY',
+        hexCode: '#1E3A8A',
+        sortOrder: 2,
+      );
+      final repository = FakeColorsRepository();
+      await _pumpEditor(tester, repository, seed: seed, duplicate: true);
+      expect(_controller(tester, 0).selection.baseOffset, 0);
+      expect(
+        _controller(tester, 0).selection.extentOffset,
+        'Navy (Copy)'.length,
+      );
+      expect(_controller(tester, 1).selection.baseOffset, 0);
+      expect(_controller(tester, 1).text, 'NAVY-COPY');
+      await tester.tap(find.text(ColorsKeys.cancel.en));
+      await tester.pumpAndSettle();
+      expect(find.text(ColorsKeys.editorSubtitle.en), findsNothing);
+      expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
+      expect(repository.created, isEmpty);
+    },
+  );
 
-  testWidgets('saving a duplicate creates a new color with copied values', (tester) async {
+  testWidgets('saving a duplicate creates a new color with copied values', (
+    tester,
+  ) async {
     const seed = CatalogColorDraft(
       name: 'Navy (Copy)',
       code: 'NAVY-COPY',
@@ -245,6 +259,4 @@ void main() {
     expect(repository.created.single.isActive, isFalse);
     expect(repository.updated, isEmpty);
   });
-
-
 }

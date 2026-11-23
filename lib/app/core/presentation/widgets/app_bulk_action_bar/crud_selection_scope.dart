@@ -28,7 +28,8 @@ class CrudSelectionScope<T> extends StatelessWidget {
     BuildContext context,
     Set<Object> selectedIds,
     ValueChanged<Set<Object>>? onSelectionChanged,
-  ) builder;
+  )
+  builder;
 
   @override
   Widget build(BuildContext context) =>

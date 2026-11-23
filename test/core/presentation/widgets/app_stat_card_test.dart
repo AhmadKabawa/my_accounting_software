@@ -134,57 +134,57 @@ void main() {
     );
   });
 
+  testWidgets(
+    'StatItem without a filter is informational while a filtered card responds',
+    (tester) async {
+      var taps = 0;
+      await pump(
+        tester,
+        ListStatsBar<String>(
+          items: const [
+            StatItem(
+              labelKey: CatalogUiKeys.search,
+              value: '42',
+              icon: AppIcons.info,
+              tone: AppBadgeTone.info,
+              filter: null,
+            ),
+          ],
+          selected: 'active',
+          onSelected: (_) => taps++,
+        ),
+      );
+      expect(tester.widget<AppCard>(find.byType(AppCard)).selected, isFalse);
+      expect(find.byType(InkWell), findsNothing);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Semantics && widget.properties.button == true,
+        ),
+        findsNothing,
+      );
+      await tester.tap(find.byType(AppStatCard), warnIfMissed: false);
+      expect(taps, 0);
 
-
-  testWidgets('StatItem without a filter is informational while a filtered card responds', (tester) async {
-    var taps = 0;
-    await pump(
-      tester,
-      ListStatsBar<String>(
-        items: const [
-          StatItem(
-            labelKey: CatalogUiKeys.search,
-            value: '42',
-            icon: AppIcons.info,
-            tone: AppBadgeTone.info,
-            filter: null,
-          ),
-        ],
-        selected: 'active',
-        onSelected: (_) => taps++,
-      ),
-    );
-    expect(tester.widget<AppCard>(find.byType(AppCard)).selected, isFalse);
-    expect(find.byType(InkWell), findsNothing);
-    expect(
-      find.byWidgetPredicate(
-        (widget) => widget is Semantics && widget.properties.button == true,
-      ),
-      findsNothing,
-    );
-    await tester.tap(find.byType(AppStatCard), warnIfMissed: false);
-    expect(taps, 0);
-
-    await pump(
-      tester,
-      ListStatsBar<String>(
-        items: const [
-          StatItem(
-            labelKey: CatalogUiKeys.search,
-            value: '42',
-            icon: AppIcons.info,
-            tone: AppBadgeTone.info,
-            filter: 'active',
-          ),
-        ],
-        selected: null,
-        onSelected: (_) => taps++,
-      ),
-    );
-    await tester.tap(find.byType(AppStatCard));
-    expect(taps, 1);
-  });
-
+      await pump(
+        tester,
+        ListStatsBar<String>(
+          items: const [
+            StatItem(
+              labelKey: CatalogUiKeys.search,
+              value: '42',
+              icon: AppIcons.info,
+              tone: AppBadgeTone.info,
+              filter: 'active',
+            ),
+          ],
+          selected: null,
+          onSelected: (_) => taps++,
+        ),
+      );
+      await tester.tap(find.byType(AppStatCard));
+      expect(taps, 1);
+    },
+  );
 
   testWidgets('renders in every tone, theme and direction without errors', (
     tester,

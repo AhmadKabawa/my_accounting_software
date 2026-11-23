@@ -86,9 +86,8 @@ class ColorsListCubit
     Iterable<CatalogColor> colors,
   ) => runBulk(
     items: colors,
-    action: (color) => _setColorActive(
-      SetColorActiveParams(id: color.id, isActive: true),
-    ),
+    action: (color) =>
+        _setColorActive(SetColorActiveParams(id: color.id, isActive: true)),
     kind: PagedMutationKind.statusChanged,
     successMessage: ColorsKeys.statusUpdated,
   );
@@ -97,21 +96,19 @@ class ColorsListCubit
     Iterable<CatalogColor> colors,
   ) => runBulk(
     items: colors,
-    action: (color) => _setColorActive(
-      SetColorActiveParams(id: color.id, isActive: false),
-    ),
+    action: (color) =>
+        _setColorActive(SetColorActiveParams(id: color.id, isActive: false)),
     kind: PagedMutationKind.statusChanged,
     successMessage: ColorsKeys.statusUpdated,
   );
 
-  Future<BulkResult<CatalogColor>> bulkDelete(
-    Iterable<CatalogColor> colors,
-  ) => runBulk(
-    items: colors,
-    action: (color) => _deleteColor(DeleteColorParams(color.id)),
-    kind: PagedMutationKind.deleted,
-    successMessage: ColorsKeys.deleted,
-  );
+  Future<BulkResult<CatalogColor>> bulkDelete(Iterable<CatalogColor> colors) =>
+      runBulk(
+        items: colors,
+        action: (color) => _deleteColor(DeleteColorParams(color.id)),
+        kind: PagedMutationKind.deleted,
+        successMessage: ColorsKeys.deleted,
+      );
 
   Future<void> onColorSaved({required bool isNew}) => reloadAfterMutation(
     isNew ? PagedMutationKind.created : PagedMutationKind.updated,

@@ -13,7 +13,9 @@ class FilterBarSort {
 
   @override
   bool operator ==(Object other) =>
-      other is FilterBarSort && other.key == key && other.ascending == ascending;
+      other is FilterBarSort &&
+      other.key == key &&
+      other.ascending == ascending;
 
   @override
   int get hashCode => Object.hash(key, ascending);
@@ -40,7 +42,10 @@ List<FilterBarSort> toggleSort(
 }) {
   final next = current.toList();
   final index = next.indexWhere((sort) => sort.key == key);
-  if (index >= 0) { next[index] = FilterBarSort(key, ascending); return next; }
+  if (index >= 0) {
+    next[index] = FilterBarSort(key, ascending);
+    return next;
+  }
   final limit = maxSorts > 0 ? maxSorts : next.length + 1;
   if (next.length >= limit) return next;
   return [...next, FilterBarSort(key, ascending)];

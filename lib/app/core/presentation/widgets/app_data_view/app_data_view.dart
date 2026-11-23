@@ -120,7 +120,9 @@ class AppDataView<T> extends StatelessWidget {
           ? AppViewMode.cards
           : AppViewMode.table;
     }
-    return ScreenEngine.isMobile(context) ? AppViewMode.cards : AppViewMode.table;
+    return ScreenEngine.isMobile(context)
+        ? AppViewMode.cards
+        : AppViewMode.table;
   }
 
   @override
@@ -130,7 +132,9 @@ class AppDataView<T> extends StatelessWidget {
       return LayoutBuilder(
         builder: (context, constraints) => _loading(
           context,
-          availableWidth: constraints.hasBoundedWidth ? constraints.maxWidth : null,
+          availableWidth: constraints.hasBoundedWidth
+              ? constraints.maxWidth
+              : null,
         ),
       );
     }
@@ -248,7 +252,8 @@ class AppDataView<T> extends StatelessWidget {
       onLoadMore: onLoadMore,
       // Phones page by "load more" only when the owner supports it; otherwise
       // they keep the numbered pages rather than lose paging.
-      mobile: onLoadMore != null &&
+      mobile:
+          onLoadMore != null &&
           (availableWidth != null
               ? availableWidth < compactContentBreakpoint
               : ScreenEngine.isMobile(context)),

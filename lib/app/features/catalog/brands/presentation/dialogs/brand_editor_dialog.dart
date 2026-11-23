@@ -47,7 +47,8 @@ Future<bool?> showBrandEditor(
 /// name and slug. The logo URL is shared: this feature currently has no
 /// Storage deletion path, and removing a logo only clears the row's URL.
 BrandDraft brandDuplicateSeed(BuildContext context, Brand source) {
-  final name = '${source.name} ${BrandsKeys.duplicateSuffix.tr(context: context)}';
+  final name =
+      '${source.name} ${BrandsKeys.duplicateSuffix.tr(context: context)}';
   return BrandDraft(
     name: name,
     slug: brandSlugFrom(name),
@@ -91,8 +92,10 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   bool _settingSlug = false;
 
   bool get _dirty =>
-      _name.text != _initialName || _slug.text != _initialSlug ||
-      _logo.text != _initialLogo || _description.text != _initialDescription ||
+      _name.text != _initialName ||
+      _slug.text != _initialSlug ||
+      _logo.text != _initialLogo ||
+      _description.text != _initialDescription ||
       _active != _initialActive;
 
   @override
@@ -110,7 +113,10 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
 
     _name = TextEditingController(text: _initialName);
     if (widget.duplicate) {
-      _name.selection = TextSelection(baseOffset: 0, extentOffset: _name.text.length);
+      _name.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _name.text.length,
+      );
     }
     _slug = TextEditingController(text: _initialSlug);
     _logo = TextEditingController(text: _initialLogo);
@@ -174,7 +180,9 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
             ? null
             : _description.text.trim(),
         // PATCH sends status only when it changed in the editor.
-        isActive: widget.brand == null || _active != widget.brand!.isActive ? _active : null,
+        isActive: widget.brand == null || _active != widget.brand!.isActive
+            ? _active
+            : null,
       ),
     );
   }
@@ -236,8 +244,12 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
                           context.ui.spacing.gap(AppSpacing.md),
                           AppSwitch(
                             value: _active,
-                            labelKey: widget.brand == null ? BrandsKeys.activeOnCreate : BrandsKeys.active,
-                            onChanged: busy ? null : (value) => setState(() => _active = value),
+                            labelKey: widget.brand == null
+                                ? BrandsKeys.activeOnCreate
+                                : BrandsKeys.active,
+                            onChanged: busy
+                                ? null
+                                : (value) => setState(() => _active = value),
                           ),
                         ],
                       ),

@@ -50,7 +50,10 @@ class ColorListQuery extends Equatable implements PagedQuery<ColorListQuery> {
   @override
   final int pageSize;
 
-  List<ColorSort> get sorts => [ColorSort(sortField, sortAscending), ...thenSorts];
+  List<ColorSort> get sorts => [
+    ColorSort(sortField, sortAscending),
+    ...thenSorts,
+  ];
 
   bool get isFiltered => hasActiveFilters;
   @override
@@ -64,11 +67,8 @@ class ColorListQuery extends Equatable implements PagedQuery<ColorListQuery> {
   ColorListQuery withPage(int value) => copyWith(page: value);
 
   @override
-  ColorListQuery cleared() => copyWith(
-    search: '',
-    status: ColorStatusFilter.all,
-    page: 1,
-  );
+  ColorListQuery cleared() =>
+      copyWith(search: '', status: ColorStatusFilter.all, page: 1);
 
   ColorListQuery withStatus(ColorStatusFilter value) =>
       status == value ? this : copyWith(status: value, page: 1);
@@ -91,7 +91,9 @@ class ColorListQuery extends Equatable implements PagedQuery<ColorListQuery> {
     return sortField == primary.field &&
         sortAscending == primary.ascending &&
         thenSorts.length == secondary.length &&
-        thenSorts.asMap().entries.every((entry) => entry.value == secondary[entry.key]);
+        thenSorts.asMap().entries.every(
+          (entry) => entry.value == secondary[entry.key],
+        );
   }
 
   ColorListQuery copyWith({
@@ -114,6 +116,12 @@ class ColorListQuery extends Equatable implements PagedQuery<ColorListQuery> {
 
   @override
   List<Object?> get props => [
-    search, status, sortField, sortAscending, thenSorts, page, pageSize,
+    search,
+    status,
+    sortField,
+    sortAscending,
+    thenSorts,
+    page,
+    pageSize,
   ];
 }
