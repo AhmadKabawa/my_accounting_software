@@ -68,7 +68,7 @@ void main() {
       await cubit.load();
       repository.onGetColors = (_) async => const Left(_Failure());
       await cubit.refresh();
-      expect(cubit.state.status, ColorsListStatus.failed);
+      expect(cubit.state.status, PagedListStatus.failed);
       expect(cubit.state.result?.items, [sampleColor]);
       await cubit.close();
     });
