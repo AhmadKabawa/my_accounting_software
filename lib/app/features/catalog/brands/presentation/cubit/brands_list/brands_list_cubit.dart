@@ -59,10 +59,12 @@ class BrandsListCubit
       _loadIfChanged(state.query.withStatus(status));
 
   Future<void> setSort({BrandSortField? field, required bool ascending}) =>
-      _loadIfChanged(state.query.withSort(
-        field: field ?? state.query.sortField,
-        ascending: ascending,
-      ));
+      _loadIfChanged(
+        state.query.withSort(
+          field: field ?? state.query.sortField,
+          ascending: ascending,
+        ),
+      );
 
   Future<void> setSorts(List<BrandSort> sorts) =>
       _loadIfChanged(state.query.withSorts(sorts));

@@ -151,31 +151,38 @@ void main() {
     await cubit.close();
   });
 
-  test('an emptied later page after reload triggers a previous-page load',
-      () async {
-    final cubit = TestPagedCubit(query: const TestPagedQuery(page: 2));
-    final initialLoad = cubit.load();
-    cubit.requests[0].complete(Right(TestPagedPage([21, 22])));
-    await initialLoad;
+  test(
+    'an emptied later page after reload triggers a previous-page load',
+    () async {
+      final cubit = TestPagedCubit(query: const TestPagedQuery(page: 2));
+      final initialLoad = cubit.load();
+      cubit.requests[0].complete(Right(TestPagedPage([21, 22])));
+      await initialLoad;
 
-    final deletion = cubit.delete(21);
-    await Future<void>.delayed(Duration.zero);
-    expect(cubit.requestedQueries.last.page, 2);
-    cubit.requests[1].complete(Right(TestPagedPage([])));
-    await Future<void>.delayed(Duration.zero);
+      final deletion = cubit.delete(21);
+      await Future<void>.delayed(Duration.zero);
+      expect(cubit.requestedQueries.last.page, 2);
+      cubit.requests[1].complete(Right(TestPagedPage([])));
+      await Future<void>.delayed(Duration.zero);
 
-    expect(cubit.requestedQueries, hasLength(3));
-    expect(cubit.requestedQueries.last.page, 1);
-    cubit.requests[2].complete(Right(TestPagedPage([10])));
-    await deletion;
-    expect(cubit.state.query.page, 1);
-    await cubit.close();
-  });
+      expect(cubit.requestedQueries, hasLength(3));
+      expect(cubit.requestedQueries.last.page, 1);
+      cubit.requests[2].complete(Right(TestPagedPage([10])));
+      await deletion;
+      expect(cubit.state.query.page, 1);
+      await cubit.close();
+    },
+  );
 
   test('clearFilters cancels the pending search timer and preserves sort', () {
     fakeAsync((async) {
       final cubit = TestPagedCubit(
-        query: const TestPagedQuery(search: 'old', page: 3, filtered: true, sort: 4),
+        query: const TestPagedQuery(
+          search: 'old',
+          page: 3,
+          filtered: true,
+          sort: 4,
+        ),
       );
       cubit.searchChanged('pending');
       final clear = cubit.clearFilters();

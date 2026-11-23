@@ -68,18 +68,14 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
       search.isNotEmpty || status != BrandStatusFilter.all;
 
   @override
-  BrandListQuery withSearch(String value) =>
-      copyWith(search: value, page: 1);
+  BrandListQuery withSearch(String value) => copyWith(search: value, page: 1);
 
   @override
   BrandListQuery withPage(int value) => copyWith(page: value);
 
   @override
-  BrandListQuery cleared() => copyWith(
-    search: '',
-    status: BrandStatusFilter.all,
-    page: 1,
-  );
+  BrandListQuery cleared() =>
+      copyWith(search: '', status: BrandStatusFilter.all, page: 1);
 
   BrandListQuery withStatus(BrandStatusFilter value) =>
       status == value ? this : copyWith(status: value, page: 1);
@@ -87,9 +83,7 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
   BrandListQuery withSort({
     required BrandSortField field,
     required bool ascending,
-  }) => sortField == field &&
-          sortAscending == ascending &&
-          thenSorts.isEmpty
+  }) => sortField == field && sortAscending == ascending && thenSorts.isEmpty
       ? this
       : copyWith(
           sortField: field,

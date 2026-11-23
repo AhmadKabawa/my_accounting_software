@@ -19,8 +19,7 @@ class PagedListState<T, Q extends PagedQuery<Q>> extends Equatable {
   final Failure? failure;
 
   bool get hasData => result != null;
-  bool get isInitialLoading =>
-      status == PagedListStatus.loading && !hasData;
+  bool get isInitialLoading => status == PagedListStatus.loading && !hasData;
   bool get isRefreshing => status == PagedListStatus.refreshing;
 
   PagedListState<T, Q> copyWith({

@@ -360,10 +360,9 @@ void main() {
     expect(cubit.state.query.thenSorts, isEmpty);
     expect(cubit.state.query.page, 1);
 
-    final clearedQuery = cubit.state.query.copyWith(
-      search: 'needle',
-      status: BrandStatusFilter.inactive,
-    ).cleared();
+    final clearedQuery = cubit.state.query
+        .copyWith(search: 'needle', status: BrandStatusFilter.inactive)
+        .cleared();
     expect(clearedQuery.hasActiveFilters, isFalse);
     expect(clearedQuery.sorts, cubit.state.query.sorts);
     expect(clearedQuery.page, 1);
@@ -372,7 +371,10 @@ void main() {
     final subscription = cubit.effectStream.listen(effects.add);
     await cubit.onBrandSaved(isNew: true);
     await Future<void>.delayed(Duration.zero);
-    expect((effects.single as BrandsMutatedEffect).kind, BrandsMutationKind.created);
+    expect(
+      (effects.single as BrandsMutatedEffect).kind,
+      BrandsMutationKind.created,
+    );
     await subscription.cancel();
 
     const unknown = Brand(

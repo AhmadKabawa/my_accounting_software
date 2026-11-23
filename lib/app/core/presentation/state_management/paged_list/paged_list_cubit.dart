@@ -41,34 +41,42 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     final version = ++_requestVersion;
     final query = state.query;
     final previous = state.result;
-    emit(state.copyWith(
-      status: previous == null
-          ? PagedListStatus.loading
-          : PagedListStatus.refreshing,
-      clearFailure: true,
-    ));
+    emit(
+      state.copyWith(
+        status: previous == null
+            ? PagedListStatus.loading
+            : PagedListStatus.refreshing,
+        clearFailure: true,
+      ),
+    );
 
     final response = await fetch(query);
     if (isClosed || version != _requestVersion) return;
 
     response.fold(
-      (failure) => emit(state.copyWith(
-        status: PagedListStatus.failed,
-        result: previous,
-        failure: failure,
-      )),
-      (page) => emit(state.copyWith(
-        status: PagedListStatus.ready,
-        result: page,
-        clearFailure: true,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: PagedListStatus.failed,
+          result: previous,
+          failure: failure,
+        ),
+      ),
+      (page) => emit(
+        state.copyWith(
+          status: PagedListStatus.ready,
+          result: page,
+          clearFailure: true,
+        ),
+      ),
     );
   }
 
   void searchChanged(String value) {
     _requestVersion++;
     _searchTimer?.cancel();
-    emit(state.copyWith(query: state.query.withSearch(value), clearFailure: true));
+    emit(
+      state.copyWith(query: state.query.withSearch(value), clearFailure: true),
+    );
     _searchTimer = Timer(searchDebounceDuration, () {
       _searchTimer = null;
       if (!isClosed) load();
