@@ -108,10 +108,25 @@ void main() {
     expect(find.byType(Dialog), findsNothing);
   });
 
-  testWidgets('barrier tap does not dismiss the form', (tester) async {
+  testWidgets('barrier tap closes a clean form without saving', (tester) async {
     await _open(tester);
 
     await tester.tapAt(const Offset(4, 4));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Dialog), findsNothing);
+    expect(_result, isNull);
+  });
+
+  testWidgets('barrier tap asks before closing a dirty form', (tester) async {
+    await _open(tester, dirty: true);
+
+    await tester.tapAt(const Offset(4, 4));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Dialog), findsNWidgets(2));
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
+    await tester.tap(_button(CommonKeys.cancel).last);
     await tester.pumpAndSettle();
 
     expect(find.byType(Dialog), findsOneWidget);

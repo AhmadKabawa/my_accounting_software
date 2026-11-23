@@ -63,14 +63,28 @@ return ListPageTemplate(
 );
 ```
 
-## Shared selection and bulk CRUD actions
+## Selection mode and bulk CRUD actions
 
-CrudSelectionScope<T> owns the shared page-selection/access/action-bar composition. The feature passes its server-authoritative permission and mutation callbacks; Core contains no feature permission constants. The scope passes selected IDs and the selection callback to the feature table. CrudBulkActions.statusAndDelete<T> invokes the selected-items callback and opens BulkResultDialog once for partial or complete failure.
+Selection is opt-in. The feature supplies its server-authoritative bulk permission through ListToolbarConfig: set selectionModeActive from PagedListCubit and provide onSelectionModeToggle only while the permission is granted. The template places the icon-only toggle beside refresh/view controls. The active state is exposed to semantics and uses a filled visual variant.
+
+CrudSelectionScope<T> receives selectionModeActive and an exit callback. It passes selected IDs and the selection callback only when both permission and selection mode are active. It shows the compact BulkActionBar as soon as selection mode is active, including when zero records are selected. The page-level tri-state checkbox selects or clears the current page in every view. Exiting selection mode clears the selection; query/page changes and completed bulk actions clear IDs while preserving selection mode. If permission is revoked, the scope exits selection mode. Core must not contain feature permission constants.
+
+CrudBulkActions.statusAndDelete<T> invokes the selected-items callback and opens BulkResultDialog once for partial or complete failure.
 
 - Complete success: success flash only.
 - Partial/complete failure: result dialog only; do not also emit an error flash for the same batch.
 - The operation is sequential per selected record, not atomic. Keep the selection page-scoped. Recommend a maximum of 50 records for ordinary bulk operations; 100 is the configured page-size ceiling and is suitable only for light operations.
 - On content narrower than compactContentBreakpoint (720 logical pixels), BulkActionBar shows icon-only actions with tooltips and semantics.
+
+## Grid tile sizing
+
+AppDataGrid uses the available content width and the shared minimum tile-width token to determine columns. Each row uses intrinsic height so its tiles match the tallest tile in that row. Do not set a fixed mainAxisExtent and do not wrap grid content in FittedBox/scaleDown. Keep selection and row actions overlaid in the tile corner so enabling selection does not change content height. Grid content must allow natural height, constrain long names with maxLines and ellipsis, and keep logo/swatch previews at a stable size.
+
+## Form dialog dismissal
+
+Every AppFormDialog caller must pass a truthful dirty value comparing the current editable values with the initial create defaults, edit record, or duplicate seed. Compare normalized values consistently with save (the catalog editors trim surrounding whitespace); changing a field and restoring its original value is clean. A clean form may dismiss through the barrier, Escape, back, or sheet drag and returns false/null. A dirty form must route dismissal through the existing unsaved-changes confirmation; a busy form cannot dismiss. Never reload the list or show a success message unless the dialog result is true.
+
+Never use a screen BuildContext after await to show an operation result. Capture the root Navigator before awaiting and use its mounted state/context afterward.
 
 ## Sorting and loading
 

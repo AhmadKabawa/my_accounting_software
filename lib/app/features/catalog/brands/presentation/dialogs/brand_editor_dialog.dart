@@ -91,11 +91,13 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   bool _slugTouched = false;
   bool _settingSlug = false;
 
+  // Match the normalization applied by _save(): surrounding whitespace alone
+  // does not make the form dirty.
   bool get _dirty =>
-      _name.text != _initialName ||
-      _slug.text != _initialSlug ||
-      _logo.text != _initialLogo ||
-      _description.text != _initialDescription ||
+      _name.text.trim() != _initialName.trim() ||
+      _slug.text.trim() != _initialSlug.trim() ||
+      _logo.text.trim() != _initialLogo.trim() ||
+      _description.text.trim() != _initialDescription.trim() ||
       _active != _initialActive;
 
   @override
