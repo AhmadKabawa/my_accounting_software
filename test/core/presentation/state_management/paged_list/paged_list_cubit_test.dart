@@ -71,8 +71,13 @@ class _TestPage implements PagedResult<int> {
 }
 
 class _TestCubit extends PagedListCubit<int, _TestQuery, PagedMutationKind> {
-  _TestCubit({_TestQuery query = const _TestQuery()})
-    : super(initialQuery: query, flashMessages: FlashMessages());
+  _TestCubit({
+    _TestQuery query = const _TestQuery(),
+    FlashMessages? flashMessages,
+  }) : super(
+         initialQuery: query,
+         flashMessages: flashMessages ?? FlashMessages(),
+       );
 
   final requests = <Completer<Either<Failure, PagedResult<int>>>>[];
   final requestedQueries = <_TestQuery>[];
@@ -228,6 +233,28 @@ void main() {
       cubit.close();
       async.flushMicrotasks();
     });
+  });
+
+  test('successful deletion posts its flash before its effect', () async {
+    final messages = FlashMessages();
+    final events = <String>[];
+    final stopListening = messages.listen((_) => events.add('flash'));
+    final cubit = _TestCubit(flashMessages: messages);
+    final effects = cubit.effectStream.listen((_) => events.add('effect'));
+
+    final initialLoad = cubit.load();
+    cubit.requests[0].complete(const Right(_TestPage([4])));
+    await initialLoad;
+
+    final deletion = cubit.delete(4);
+    await Future<void>.delayed(Duration.zero);
+    cubit.requests[1].complete(const Right(_TestPage([])));
+    await deletion;
+
+    expect(events, ['flash', 'effect']);
+    await effects.cancel();
+    stopListening();
+    await cubit.close();
   });
 
   test('responses completing after close do not emit another state', () async {
