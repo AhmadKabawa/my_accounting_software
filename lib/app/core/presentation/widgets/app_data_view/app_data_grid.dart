@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 
-/// Records as tiles in a responsive grid. Rows size themselves to their
-/// tallest tile; selection and row actions are overlaid so they do not change
-/// the content's available height when selection mode is toggled.
+/// Records as tiles in a responsive grid. Each tile sizes to its own content;
+/// selection and row actions are overlaid so they do not change the content's
+/// available height when selection mode is toggled.
 class AppDataGrid<T> extends StatelessWidget {
   const AppDataGrid({
     super.key,
@@ -54,7 +54,7 @@ class AppDataGrid<T> extends StatelessWidget {
             final end = math.min(start + columns, rows.length).toInt();
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              children: [
                   for (var index = start; index < end; index++) ...[
                     if (index > start) SizedBox(width: gap),
                     Expanded(child: _tile(context, rows[index])),
@@ -63,8 +63,8 @@ class AppDataGrid<T> extends StatelessWidget {
                     if (empty > start) SizedBox(width: gap),
                     const Expanded(child: SizedBox.shrink()),
                   ],
-                ],
-              );
+              ],
+            );
           },
         );
       },
