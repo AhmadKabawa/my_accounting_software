@@ -7,6 +7,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_card/app_c
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_stat_card/app_stat_card.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_stats_bar/list_stats_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_stats_bar/stat_item.dart';
 import '../../../helpers/localized_app.dart';
 
 void main() {
@@ -130,6 +132,57 @@ void main() {
       ),
       findsNothing,
     );
+  });
+
+
+
+  testWidgets('StatItem without a filter is informational while a filtered card responds', (tester) async {
+    var taps = 0;
+    await pump(
+      tester,
+      ListStatsBar<String>(
+        items: const [
+          StatItem(
+            labelKey: CatalogUiKeys.search,
+            value: '42',
+            icon: AppIcons.info,
+            tone: AppBadgeTone.info,
+            filter: null,
+          ),
+        ],
+        selected: 'active',
+        onSelected: (_) => taps++,
+      ),
+    );
+    expect(tester.widget<AppCard>(find.byType(AppCard)).selected, isFalse);
+    expect(find.byType(InkWell), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.button == true,
+      ),
+      findsNothing,
+    );
+    await tester.tap(find.byType(AppStatCard), warnIfMissed: false);
+    expect(taps, 0);
+
+    await pump(
+      tester,
+      ListStatsBar<String>(
+        items: const [
+          StatItem(
+            labelKey: CatalogUiKeys.search,
+            value: '42',
+            icon: AppIcons.info,
+            tone: AppBadgeTone.info,
+            filter: 'active',
+          ),
+        ],
+        selected: null,
+        onSelected: (_) => taps++,
+      ),
+    );
+    await tester.tap(find.byType(AppStatCard));
+    expect(taps, 1);
   });
 
 
