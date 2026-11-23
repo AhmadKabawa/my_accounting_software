@@ -279,9 +279,10 @@ class AppDataView<T> extends StatelessWidget {
     final effective = selected != null && supportedModes.contains(selected)
         ? selected
         : defaultModeFor(context, availableWidth: availableWidth);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
       children: [
         for (var i = 0; i < _loadingPlaceholderCount; i++)
           effective == AppViewMode.table
