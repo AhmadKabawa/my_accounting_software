@@ -327,7 +327,7 @@ void main() {
     await cubit.setStatus(BrandStatusFilter.active);
     expect(repository.queries, hasLength(1));
 
-    const primary = BrandSort(BrandSortField.name, true);
+    const primary = BrandSort(BrandSortField.status, false);
     const secondary = BrandSort(BrandSortField.updated, false);
     await cubit.setSorts([primary]);
     expect(repository.queries, hasLength(2));
