@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_swatch/app_color_swatch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
+import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failures.dart';
@@ -221,7 +222,7 @@ void main() {
     await tester.tap(find.text(ColorsKeys.cancel.en));
     await tester.pumpAndSettle();
     expect(find.text(ColorsKeys.editorSubtitle.en), findsNothing);
-    expect(find.text('Unsaved changes'), findsNothing);
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
     expect(repository.created, isEmpty);
   });
 
