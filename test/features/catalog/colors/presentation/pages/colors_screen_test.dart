@@ -222,7 +222,7 @@ void main() {
     await tester.tap(find.text(ColorsKeys.bulkActivate.en));
     await tester.pumpAndSettle();
     expect(repository.statusUpdates, [(sampleColor.id, true)]);
-    expect(find.byType(Checkbox), findsNothing);
+    expect(find.text(ColorsKeys.bulkActivate.en), findsNothing);
   });
 
   testWidgets('without manage permission there is no add action', (
