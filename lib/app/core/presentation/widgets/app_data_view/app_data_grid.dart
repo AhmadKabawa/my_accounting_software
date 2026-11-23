@@ -53,12 +53,11 @@ class AppDataGrid<T> extends StatelessWidget {
           itemBuilder: (context, rowIndex) {
             final start = rowIndex * columns;
             final end = math.min(start + columns, rows.length).toInt();
-            // A row holds only a few tiles, so measuring its intrinsic height
-            // is cheap; it lets every tile stretch to the tallest one.
-            return IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            // Row stretches tiles to the tallest natural child. Avoid
+            // intrinsic measurement so grid content can use LayoutBuilder.
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                   for (var index = start; index < end; index++) ...[
                     if (index > start) SizedBox(width: gap),
                     Expanded(child: _tile(context, rows[index])),
@@ -68,7 +67,6 @@ class AppDataGrid<T> extends StatelessWidget {
                     const Expanded(child: SizedBox.shrink()),
                   ],
                 ],
-              ),
             );
           },
         );
@@ -114,13 +112,7 @@ class AppDataGrid<T> extends StatelessWidget {
                     Expanded(
                       child: Align(
                         alignment: AlignmentDirectional.centerEnd,
-                        // Scales down instead of overlapping the checkbox
-                        // when many actions meet a narrow tile.
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: AlignmentDirectional.centerEnd,
-                          child: rowActionsBuilder!(context, row),
-                        ),
+                        child: rowActionsBuilder!(context, row),
                       ),
                     )
                   else
