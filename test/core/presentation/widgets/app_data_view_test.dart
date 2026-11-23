@@ -332,9 +332,9 @@ void main() {
       expect(sort?.key, 'name');
       expect(sort?.ascending, isFalse); // already sorted ascending: flips
       final semantics = tester.ensureSemantics();
-      addTearDown(semantics.dispose);
       await tester.tap(find.bySemanticsLabel('Next'));
       expect(page, 2);
+      semantics.dispose();
     });
 
     testWidgets('footer shows "Showing X of Y" and the current page', (
@@ -342,10 +342,10 @@ void main() {
     ) async {
       await pump(tester, onPageChanged: (_) {});
       final semantics = tester.ensureSemantics();
-      addTearDown(semantics.dispose);
       expect(find.text('Showing 2 of 75'), findsOneWidget);
       expect(find.textContaining('{'), findsNothing);
       expect(find.bySemanticsLabel('Page 1'), findsOneWidget);
+      semantics.dispose();
     });
 
     testWidgets('phone with load-more shows the button', (tester) async {
