@@ -123,7 +123,9 @@ class _BulkActionBarState extends State<BulkActionBar> {
                           variant: action.destructive
                               ? AppButtonVariant.danger
                               : AppButtonVariant.outlined,
-                          onPressed: _running || widget.selectedCount == 0 ? null : () => _run(action),
+                          onPressed: _running || widget.selectedCount == 0
+                              ? null
+                              : () => _run(action),
                         )
                       : AppButton(
                           action.labelKey,
@@ -132,7 +134,9 @@ class _BulkActionBarState extends State<BulkActionBar> {
                           variant: action.destructive
                               ? AppButtonVariant.danger
                               : AppButtonVariant.outlined,
-                          onPressed: _running || widget.selectedCount == 0 ? null : () => _run(action),
+                          onPressed: _running || widget.selectedCount == 0
+                              ? null
+                              : () => _run(action),
                         ),
                 ),
               if (compact)

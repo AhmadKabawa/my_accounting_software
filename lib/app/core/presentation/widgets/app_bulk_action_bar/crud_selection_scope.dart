@@ -38,7 +38,8 @@ class CrudSelectionScope<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocListener<AccessCubit, AccessState>(
     listener: (context, accessState) {
-      final permitted = accessState.isReady &&
+      final permitted =
+          accessState.isReady &&
           accessState.snapshot!.permissions.any(
             (granted) => granted.covers(permission),
           );
@@ -47,41 +48,41 @@ class CrudSelectionScope<T> extends StatelessWidget {
       }
     },
     child: BlocBuilder<ListSelectionCubit<Object>, Set<Object>>(
-        bloc: selection,
-        builder: (context, selectedIds) {
-          final canBulk = context.watch<AccessCubit>().can(permission);
-          final active = canBulk && selectionModeActive;
-          final selected = rows
-              .where((row) => selectedIds.contains(rowId(row)))
-              .toList(growable: false);
-          final pageIds = rows.map(rowId).toSet();
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (active) ...[
-                BulkActionBar(
-                  selectedCount: selected.length,
-                  onClear: onSelectionModeExit ?? selection.clear,
-                  actions: actionsBuilder(selected),
-                  pageSelectionState: selection.pageState(pageIds),
-                  onSelectPage: (select) {
-                    if (select) {
-                      selection.selectPage(pageIds);
-                    } else {
-                      selection.replace(selectedIds.difference(pageIds));
-                    }
-                  },
-                ),
-                context.ui.spacing.gap(AppSpacing.sm),
-              ],
-              builder(
-                context,
-                active ? selectedIds : const <Object>{},
-                active ? selection.replace : null,
+      bloc: selection,
+      builder: (context, selectedIds) {
+        final canBulk = context.watch<AccessCubit>().can(permission);
+        final active = canBulk && selectionModeActive;
+        final selected = rows
+            .where((row) => selectedIds.contains(rowId(row)))
+            .toList(growable: false);
+        final pageIds = rows.map(rowId).toSet();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (active) ...[
+              BulkActionBar(
+                selectedCount: selected.length,
+                onClear: onSelectionModeExit ?? selection.clear,
+                actions: actionsBuilder(selected),
+                pageSelectionState: selection.pageState(pageIds),
+                onSelectPage: (select) {
+                  if (select) {
+                    selection.selectPage(pageIds);
+                  } else {
+                    selection.replace(selectedIds.difference(pageIds));
+                  }
+                },
               ),
+              context.ui.spacing.gap(AppSpacing.sm),
             ],
-          );
-        },
-      ),
-    );
+            builder(
+              context,
+              active ? selectedIds : const <Object>{},
+              active ? selection.replace : null,
+            ),
+          ],
+        );
+      },
+    ),
+  );
 }

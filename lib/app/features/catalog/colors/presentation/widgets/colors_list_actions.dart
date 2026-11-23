@@ -16,7 +16,10 @@ abstract final class ColorsListActions {
     }
   }
 
-  static Future<void> duplicate(BuildContext context, CatalogColor color) async {
+  static Future<void> duplicate(
+    BuildContext context,
+    CatalogColor color,
+  ) async {
     final saved = await showColorEditor(context, color: color, duplicate: true);
     if (saved == true && context.mounted) {
       await context.read<ColorsListCubit>().onColorSaved(isNew: true);

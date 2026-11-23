@@ -443,8 +443,8 @@ class ListPageTemplate extends StatelessWidget {
                   onChanged: config.onViewModeChanged!,
                 )
               : null,
-          searchSuffix: config.onRefresh == null &&
-                  config.onSelectionModeToggle == null
+          searchSuffix:
+              config.onRefresh == null && config.onSelectionModeToggle == null
               ? null
               : Row(
                   mainAxisSize: MainAxisSize.min,

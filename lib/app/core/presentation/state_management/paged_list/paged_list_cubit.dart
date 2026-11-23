@@ -38,6 +38,7 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     if (!enabled) selection.clear();
     emit(state.copyWith(selectionMode: enabled));
   }
+
   Timer? _searchTimer;
   int _requestVersion = 0;
 

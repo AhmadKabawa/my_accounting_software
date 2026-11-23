@@ -169,7 +169,11 @@ void main() {
     ) async {
       await _open(tester, size: _mobile, dirty: true);
 
-      await tester.fling(find.byType(AppFormDialog), const Offset(0, 600), 2000);
+      await tester.fling(
+        find.byType(AppFormDialog),
+        const Offset(0, 600),
+        2000,
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(BottomSheet), findsOneWidget);
@@ -181,7 +185,11 @@ void main() {
     ) async {
       await _open(tester, size: _mobile);
 
-      await tester.fling(find.byType(AppFormDialog), const Offset(0, 600), 2000);
+      await tester.fling(
+        find.byType(AppFormDialog),
+        const Offset(0, 600),
+        2000,
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(BottomSheet), findsOneWidget);

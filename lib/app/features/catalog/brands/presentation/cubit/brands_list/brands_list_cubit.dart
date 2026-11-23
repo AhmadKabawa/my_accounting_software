@@ -40,8 +40,7 @@ class BrandsListCubit
       _getBrands(query);
 
   @override
-  Future<Either<Failure, Unit>> deleteItem(Brand item) =>
-      _deleteBrand(item.id);
+  Future<Either<Failure, Unit>> deleteItem(Brand item) => _deleteBrand(item.id);
 
   @override
   Failure? beforeDelete(Brand item) => item.productCount == null

@@ -162,7 +162,8 @@ class BrandsScreen extends StatelessWidget {
                           selection: cubit.selection,
                           permission: Permissions.masterData.manage,
                           selectionModeActive: state.selectionMode,
-                          onSelectionModeExit: () => cubit.setSelectionMode(false),
+                          onSelectionModeExit: () =>
+                              cubit.setSelectionMode(false),
                           actionsBuilder: (selected) =>
                               CrudBulkActions.statusAndDelete<Brand>(
                                 context: context,

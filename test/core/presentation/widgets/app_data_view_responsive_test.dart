@@ -90,14 +90,13 @@ void main() {
             home: Scaffold(
               body: AppDataView<String>(
                 columns: const [],
-                rows: [for (var i = 0; i < 6; i++) i.isEven ? 'Short' : longName],
+                rows: [
+                  for (var i = 0; i < 6; i++) i.isEven ? 'Short' : longName,
+                ],
                 rowId: (value) => value,
                 mode: AppViewMode.grid,
-                gridItemBuilder: (_, value) => Text(
-                  value,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                gridItemBuilder: (_, value) =>
+                    Text(value, maxLines: 2, overflow: TextOverflow.ellipsis),
               ),
             ),
           ),
@@ -124,15 +123,17 @@ void main() {
           builder: (context, setState) => Scaffold(
             body: AppDataView<String>(
               columns: const [],
-              rows: const ['Short', 'A much longer name that wraps onto two lines'],
+              rows: const [
+                'Short',
+                'A much longer name that wraps onto two lines',
+              ],
               rowId: (value) => value,
               mode: AppViewMode.grid,
               selectedIds: selected,
               onSelectionChanged: (next) => setState(() => selected = next),
               gridItemBuilder: (_, value) => LayoutBuilder(
-                builder: (context, constraints) => Text(
-                  value + ' ' + constraints.maxWidth.toString(),
-                ),
+                builder: (context, constraints) =>
+                    Text(value + ' ' + constraints.maxWidth.toString()),
               ),
             ),
           ),

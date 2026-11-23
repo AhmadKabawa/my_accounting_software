@@ -147,19 +147,22 @@ void main() {
       await cubit.close();
     });
 
-    test('a row is busy during its status change; a repeat is ignored', () async {
-      final repository = FakeColorsRepository();
-      final cubit = _list(repository);
+    test(
+      'a row is busy during its status change; a repeat is ignored',
+      () async {
+        final repository = FakeColorsRepository();
+        final cubit = _list(repository);
 
-      final first = cubit.activate(7);
-      expect(cubit.state.busyIds, {7});
-      final second = cubit.activate(7);
-      await Future.wait([first, second]);
+        final first = cubit.activate(7);
+        expect(cubit.state.busyIds, {7});
+        final second = cubit.activate(7);
+        await Future.wait([first, second]);
 
-      expect(repository.statusUpdates, [(7, true)]);
-      expect(cubit.state.busyIds, isEmpty);
-      await cubit.close();
-    });
+        expect(repository.statusUpdates, [(7, true)]);
+        expect(cubit.state.busyIds, isEmpty);
+        await cubit.close();
+      },
+    );
 
     test('busy is cleared after a failed status change', () async {
       final repository = FakeColorsRepository()
