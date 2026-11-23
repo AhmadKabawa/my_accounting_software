@@ -102,13 +102,13 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
       seed != null ? '${seed.sortOrder}' : color == null ? '0' : '${color.sortOrder}',
     ];
     _name = TextEditingController(text: _initial[0]);
+    _code = TextEditingController(text: _initial[1]);
+    _hex = TextEditingController(text: _initial[2]);
+    _sortOrder = TextEditingController(text: _initial[3]);
     if (widget.duplicate) {
       _name.selection = TextSelection(baseOffset: 0, extentOffset: _name.text.length);
       _code.selection = TextSelection(baseOffset: 0, extentOffset: _code.text.length);
     }
-    _code = TextEditingController(text: _initial[1]);
-    _hex = TextEditingController(text: _initial[2]);
-    _sortOrder = TextEditingController(text: _initial[3]);
   }
 
   @override
