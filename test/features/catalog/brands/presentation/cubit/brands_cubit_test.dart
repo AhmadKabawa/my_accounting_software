@@ -395,6 +395,35 @@ void main() {
     await cubit.close();
   });
 
+
+  test('bulk delete skips brands with products and deletes eligible brands', () async {
+    final repository = FakeBrandsRepository();
+    final cubit = _listCubit(repository);
+    const used = Brand(
+      id: 21,
+      name: 'Used',
+      slug: 'used',
+      isActive: true,
+      productCount: 3,
+    );
+    const unused = Brand(
+      id: 22,
+      name: 'Unused',
+      slug: 'unused',
+      isActive: true,
+      productCount: 0,
+    );
+
+    final result = await cubit.bulkDelete([used, unused]);
+
+    expect(result.successCount, 1);
+    expect(result.failureCount, 1);
+    expect(result.failures.single.item.id, used.id);
+    expect(result.failures.single.reason, isA<BrandInUseFailure>());
+    expect(repository.deletedIds, [unused.id]);
+    await cubit.close();
+  });
+
   test('form save emits BrandSavedEffect and returns to idle', () async {
     final repository = FakeBrandsRepository();
     final messages = FlashMessages();
