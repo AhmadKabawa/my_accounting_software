@@ -98,6 +98,79 @@ void main() {
     addTearDown(tester.view.reset);
   });
 
+
+  testWidgets(
+    'search fits the available content width from 280 to 1400 with a large screen',
+    (tester) async {
+      tester.view.physicalSize = const Size(1800, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      for (final width in [280.0, 360.0, 480.0, 700.0, 1000.0, 1400.0]) {
+        var searched = '';
+        await tester.pumpWidget(
+          buildTestApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: width,
+                  child: FilterBar(
+                    onSearchChanged: (value) => searched = value,
+                    activeFilters: const [],
+                    onClearAll: () {},
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(TextField), findsOneWidget, reason: 'width=$width');
+        await tester.enterText(find.byType(TextField), 'brand');
+        await tester.pump();
+        expect(searched, 'brand', reason: 'width=$width');
+        expect(tester.takeException(), isNull, reason: 'width=$width');
+      }
+    },
+  );
+
+  testWidgets(
+    'search fits with both leading and suffix at narrow and wide content widths',
+    (tester) async {
+      tester.view.physicalSize = const Size(1800, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      for (final width in [280.0, 360.0, 480.0, 700.0, 1000.0, 1400.0]) {
+        var searched = '';
+        await tester.pumpWidget(
+          buildTestApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: width,
+                  child: FilterBar(
+                    onSearchChanged: (value) => searched = value,
+                    activeFilters: const [],
+                    onClearAll: () {},
+                    leading: const SizedBox(width: 40, height: 40),
+                    searchSuffix: const SizedBox(width: 40, height: 40),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(TextField), findsOneWidget, reason: 'width=$width');
+        await tester.enterText(find.byType(TextField), 'color');
+        await tester.pump();
+        expect(searched, 'color', reason: 'width=$width');
+        expect(tester.takeException(), isNull, reason: 'width=$width');
+      }
+    },
+  );
+
   testWidgets('wide layout reveals the caller filter editor inline', (
     tester,
   ) async {
