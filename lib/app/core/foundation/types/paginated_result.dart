@@ -12,7 +12,9 @@ class PaginatedResult<T> extends Equatable implements PagedResult<T> {
     this.isFromCache = false,
   });
 
+  @override
   final List<T> items;
+  @override
   final int totalCount;
   final int currentPage;
   final int totalPages;
