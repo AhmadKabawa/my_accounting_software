@@ -39,6 +39,8 @@ class BrandsTableSection extends StatelessWidget {
     required this.onDelete,
     required this.onToggleStatus,
     this.mode,
+    this.selectedIds = const {},
+    this.onSelectionChanged,
   });
 
   final VoidCallback onRetry;
@@ -57,6 +59,8 @@ class BrandsTableSection extends StatelessWidget {
 
   /// The user's chosen view; null = the screen's responsive default.
   final AppViewMode? mode;
+  final Set<Object> selectedIds;
+  final ValueChanged<Set<Object>>? onSelectionChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +128,8 @@ class BrandsTableSection extends StatelessWidget {
       mode: mode,
       rows: rows,
       rowId: (b) => b.id,
+      selectedIds: selectedIds,
+      onSelectionChanged: onSelectionChanged,
       loading: loading,
       refreshing: refreshing,
       errorKey: failure?.messageKey,
