@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
-import 'package:accounting_software/app/core/foundation/types/paged_result.dart';
+import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
+import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
@@ -68,13 +69,14 @@ class TestPagedQuery implements PagedQuery<TestPagedQuery> {
       TestPagedQuery(page: 1, pageSize: pageSize, sort: sort);
 }
 
-class TestPagedPage implements PagedResult<int> {
-  const TestPagedPage(this.items);
-
-  @override
-  final List<int> items;
-  @override
-  int get totalCount => items.length;
+class TestPagedPage extends PaginatedResult<int> {
+  TestPagedPage(List<int> items)
+    : super(
+        items: items,
+        totalCount: items.length,
+        currentPage: 1,
+        totalPages: 1,
+      );
 }
 
 class TestPagedCubit
