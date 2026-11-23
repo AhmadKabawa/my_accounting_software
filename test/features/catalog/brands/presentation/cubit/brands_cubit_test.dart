@@ -360,6 +360,14 @@ void main() {
     expect(cubit.state.query.thenSorts, isEmpty);
     expect(cubit.state.query.page, 1);
 
+    final clearedQuery = cubit.state.query.copyWith(
+      search: 'needle',
+      status: BrandStatusFilter.inactive,
+    ).cleared();
+    expect(clearedQuery.hasActiveFilters, isFalse);
+    expect(clearedQuery.sorts, cubit.state.query.sorts);
+    expect(clearedQuery.page, 1);
+
     const unknown = Brand(
       id: 90,
       name: 'Unknown',
