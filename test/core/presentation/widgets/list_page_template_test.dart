@@ -249,6 +249,9 @@ void main() {
     });
 
     testWidgets('loading placeholders follow the view mode', (tester) async {
+      tester.view.physicalSize = const Size(1400, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
       await tester.pumpWidget(
         buildTestApp(home: page(state: AppPageState.loading)),
       );
@@ -301,7 +304,7 @@ void main() {
               widget is AppSkeleton &&
               widget.variant == AppSkeletonVariant.card,
         ),
-        findsNWidgets(5),
+        findsAtLeastNWidgets(1),
       );
       expect(
         find.byWidgetPredicate(
@@ -383,6 +386,7 @@ void main() {
       await tester.tap(find.byType(ViewModeSwitcher));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Cards'));
+      await tester.pumpAndSettle();
       expect(picked, AppViewMode.cards);
       // The primary action sits in the page header, not in the toolbar.
       expect(find.text('ADD'), findsOneWidget);

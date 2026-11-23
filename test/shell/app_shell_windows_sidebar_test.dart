@@ -193,13 +193,18 @@ void main() {
       await tester.pumpAndSettle();
       expect(collapsed(), isFalse);
 
+      Finder sidebarHome() => find.descendant(
+        of: find.byType(AppSidebar),
+        matching: find.text('home'),
+      );
+
       // Another page: the sidebar stays open.
-      await tester.tap(find.text('home').last);
+      await tester.tap(sidebarHome().last);
       await tester.pumpAndSettle();
       expect(collapsed(), isFalse);
 
       // The page already shown, again: back to icons.
-      await tester.tap(find.text('home').last);
+      await tester.tap(sidebarHome().last);
       await tester.pumpAndSettle();
       expect(collapsed(), isTrue);
     },

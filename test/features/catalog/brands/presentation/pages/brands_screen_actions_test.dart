@@ -14,6 +14,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_menu/app_menu.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failure_keys.dart';
@@ -27,7 +28,6 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import '../../../../../helpers/localized_app.dart';
 import '../../support/fake_brands_repository.dart';
@@ -231,7 +231,7 @@ void main() {
 
     expect(statsRequests, 1);
     final cubit = BlocProvider.of<BrandsListCubit>(
-      tester.element(find.byType(BrandsFilterBar)),
+      tester.element(find.byType(ListPageTemplate)),
     );
 
     await cubit.onBrandSaved(isNew: true);

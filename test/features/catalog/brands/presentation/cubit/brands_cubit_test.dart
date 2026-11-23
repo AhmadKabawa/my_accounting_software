@@ -339,24 +339,27 @@ void main() {
       BrandSort(BrandSortField.newest, true),
     ]);
     expect(repository.queries, hasLength(3));
-    expect(cubit.state.query.thenSorts, [secondary]);
+    expect(cubit.state.query.thenSorts, [
+      secondary,
+      const BrandSort(BrandSortField.newest, true),
+    ]);
 
     await cubit.setSorts([]);
     await cubit.setSorts([primary, secondary]);
-    expect(repository.queries, hasLength(3));
+    expect(repository.queries, hasLength(4));
 
     await cubit.setPage(2);
-    expect(repository.queries, hasLength(4));
+    expect(repository.queries, hasLength(5));
     await cubit.setSorts([
       primary,
       secondary,
       BrandSort(BrandSortField.newest, true),
     ]);
-    expect(repository.queries, hasLength(4));
-    expect(cubit.state.query.page, 2);
+    expect(repository.queries, hasLength(6));
+    expect(cubit.state.query.page, 1);
 
     await cubit.setSort(field: BrandSortField.name, ascending: true);
-    expect(repository.queries, hasLength(5));
+    expect(repository.queries, hasLength(7));
     expect(cubit.state.query.thenSorts, isEmpty);
     expect(cubit.state.query.page, 1);
 

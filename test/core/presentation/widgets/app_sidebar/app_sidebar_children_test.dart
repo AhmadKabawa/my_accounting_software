@@ -81,10 +81,12 @@ void main() {
     final taps = <int>[];
     await _pump(tester, activeIndex: 0, onIndex: taps.add);
     await tester.tap(find.text('Catalog'));
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
     expect(taps, isEmpty);
     expect(find.text('Brands'), findsOneWidget);
     await tester.tap(find.text('Catalog'));
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
     expect(taps, isEmpty);
     expect(find.text('Brands'), findsNothing);

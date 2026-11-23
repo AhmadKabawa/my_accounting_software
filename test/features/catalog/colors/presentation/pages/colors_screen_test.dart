@@ -94,6 +94,10 @@ Widget _home({required bool canManage}) => BlocProvider<AccessCubit>(
   child: const Scaffold(body: ColorsScreen()),
 );
 
+class _BulkFailure extends Failure {
+  const _BulkFailure() : super(messageKey: CatalogUiKeys.bulkFailed);
+}
+
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
@@ -157,13 +161,13 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text(CatalogUiKeys.viewGrid.en));
     await tester.pumpAndSettle();
-    expect(find.byType(AppDataGrid), findsOneWidget);
+    expect(find.byWidgetPredicate((widget) => widget is AppDataGrid), findsOneWidget);
 
     await tester.tap(find.byTooltip(CatalogUiKeys.viewMode.en));
     await tester.pumpAndSettle();
     await tester.tap(find.text(CatalogUiKeys.viewTable.en));
     await tester.pumpAndSettle();
-    expect(find.byType(AppDataGrid), findsNothing);
+    expect(find.byWidgetPredicate((widget) => widget is AppDataGrid), findsNothing);
   });
 
   testWidgets('grid view renders on a narrow RTL dark screen', (tester) async {
@@ -181,7 +185,7 @@ void main() {
     await tester.tap(find.text(CatalogUiKeys.viewGrid.en));
     await tester.pumpAndSettle();
 
-    expect(find.byType(AppDataGrid), findsOneWidget);
+    expect(find.byWidgetPredicate((widget) => widget is AppDataGrid), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -215,7 +219,12 @@ void main() {
       home: _home(canManage: true),
     );
 
+    expect(find.byType(Checkbox), findsNothing);
+    await tester.tap(find.byTooltip(CatalogUiKeys.select.en));
+    await tester.pumpAndSettle();
     expect(find.byType(Checkbox), findsNWidgets(2));
+
+    repository.statusResult = const Left(_BulkFailure());
     await tester.tap(find.byType(Checkbox).first);
     await tester.pumpAndSettle();
     expect(find.text(ColorsKeys.bulkActivate.en), findsOneWidget);
@@ -223,7 +232,19 @@ void main() {
     await tester.tap(find.text(ColorsKeys.bulkActivate.en));
     await tester.pumpAndSettle();
     expect(repository.statusUpdates, [(sampleColor.id, true)]);
-    expect(find.text(ColorsKeys.bulkActivate.en), findsNothing);
+    expect(find.text(CatalogUiKeys.bulkResultTitle.en), findsOneWidget);
+    await tester.tap(find.text(CatalogUiKeys.done.en));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Checkbox), findsNWidgets(2));
+    expect(
+      tester.widgetList<Checkbox>(find.byType(Checkbox)).every(
+        (checkbox) => checkbox.value == false,
+      ),
+      isTrue,
+    );
+    expect(find.byTooltip(CatalogUiKeys.finishSelection.en), findsOneWidget);
+    expect(find.text(ColorsKeys.bulkActivate.en), findsOneWidget);
   });
 
   testWidgets('without manage permission there is no add action', (

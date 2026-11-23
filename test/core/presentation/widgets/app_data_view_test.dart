@@ -331,7 +331,9 @@ void main() {
       await tester.tap(find.text('test.table.name').first);
       expect(sort?.key, 'name');
       expect(sort?.ascending, isFalse); // already sorted ascending: flips
-      await tester.tap(find.byTooltip('Next'));
+      final semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
+      await tester.tap(find.bySemanticsLabel('Next'));
       expect(page, 2);
     });
 
@@ -339,9 +341,11 @@ void main() {
       tester,
     ) async {
       await pump(tester, onPageChanged: (_) {});
+      final semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
       expect(find.text('Showing 2 of 75'), findsOneWidget);
       expect(find.textContaining('{'), findsNothing);
-      expect(find.byTooltip('Page 1'), findsOneWidget);
+      expect(find.bySemanticsLabel('Page 1'), findsOneWidget);
     });
 
     testWidgets('phone with load-more shows the button', (tester) async {
@@ -387,7 +391,22 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('Enter activates and Space selects a table row', (
+    testWidgets('Enter activates a table row when selection is unavailable', (
+      tester,
+    ) async {
+      String? activated;
+      await pump(
+        tester,
+        mode: AppViewMode.table,
+        onRowActivated: (value) => activated = value,
+      );
+      Focus.of(tester.element(find.text('Alpha'))).requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      expect(activated, 'Alpha');
+    });
+
+    testWidgets('Enter and Space toggle selection instead of activating', (
       tester,
     ) async {
       String? activated;
@@ -395,15 +414,18 @@ void main() {
       await pump(
         tester,
         mode: AppViewMode.table,
-        onRowActivated: (v) => activated = v,
-        onSelectionChanged: (v) => selected = v,
+        onRowActivated: (value) => activated = value,
+        onSelectionChanged: (value) => selected = value,
       );
       Focus.of(tester.element(find.text('Alpha'))).requestFocus();
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-      expect(activated, 'Alpha');
-      await tester.sendKeyEvent(LogicalKeyboardKey.space);
       expect(selected, contains('Alpha'));
+      expect(activated, isNull);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      expect(selected, isEmpty);
+      expect(activated, isNull);
     });
 
     testWidgets('loading respects the mode', (tester) async {

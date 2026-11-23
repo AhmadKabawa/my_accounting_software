@@ -26,7 +26,7 @@ void main() {
     final result = await repository.getColors(const ColorListQuery());
 
     expect(api.lastPath, '/rest/v1/colors');
-    expect(api.lastQueryParameters['order'], 'sort_order.asc,name.asc');
+    expect(api.lastQueryParameters['order'], 'sort_order.asc,name.asc,id.asc');
     expect(api.lastQueryParameters.containsKey('or'), isFalse);
     expect(api.lastQueryParameters.containsKey('is_active'), isFalse);
     expect(result.isRight(), isTrue);
@@ -44,7 +44,7 @@ void main() {
       ),
     );
 
-    expect(api.lastQueryParameters['order'], 'code.desc,name.asc');
+    expect(api.lastQueryParameters['order'], 'code.desc,name.asc,id.asc');
     expect(api.lastQueryParameters['is_active'], 'eq.false');
     expect(api.lastQueryParameters['or'], contains(r'Na\"vy'));
     expect(api.lastQueryParameters['or'], contains('code.ilike'));
@@ -68,6 +68,7 @@ void main() {
       'code': 'NAVY',
       'hex_code': '#1E3A8A',
       'sort_order': 4,
+      'is_active': true,
     });
     expect(api.lastOptions?.headers?['Prefer'], 'return=representation');
     expect(result.isRight(), isTrue);
