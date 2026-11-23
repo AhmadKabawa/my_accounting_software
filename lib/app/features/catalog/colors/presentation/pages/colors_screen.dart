@@ -192,6 +192,7 @@ class ColorsScreen extends StatelessWidget {
                                 loading: loading,
                                 refreshing: state.isRefreshing,
                                 failure: failure,
+                                onRetry: cubit.refresh,
                                 addAction: addAction,
                                 onEdit: (color) => _edit(context, color),
                                 onDuplicate: (color) =>
