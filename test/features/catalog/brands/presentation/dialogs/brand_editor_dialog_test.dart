@@ -443,6 +443,7 @@ void main() {
     final nameField = tester.widget<TextFormField>(find.byType(TextFormField).at(0));
     expect(nameField.controller!.selection.baseOffset, 0);
     expect(nameField.controller!.selection.extentOffset, 'Original (Copy)'.length);
+    expect(nameField.autofocus, isTrue);
     expect(nameField.controller!.text, 'Original (Copy)');
     expect(tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text, 'original-copy');
     await tester.enterText(find.byType(TextFormField).at(0), 'New brand');
