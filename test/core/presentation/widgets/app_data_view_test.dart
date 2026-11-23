@@ -435,9 +435,11 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       expect(selected, contains('Alpha'));
       expect(activated, isNull);
+      await tester.pump();
 
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
       expect(selected, isEmpty);
+      await tester.pump();
       expect(activated, isNull);
     });
 
