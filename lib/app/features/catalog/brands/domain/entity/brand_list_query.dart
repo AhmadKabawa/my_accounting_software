@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 
 enum BrandStatusFilter { all, active, inactive }
 
@@ -32,7 +33,7 @@ class BrandSort extends Equatable {
   List<Object?> get props => [field, ascending];
 }
 
-class BrandListQuery extends Equatable {
+class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
   const BrandListQuery({
     this.search = '',
     this.status = BrandStatusFilter.all,
@@ -58,6 +59,24 @@ class BrandListQuery extends Equatable {
   ];
   final int page;
   final int pageSize;
+
+  @override
+  bool get hasActiveFilters =>
+      search.isNotEmpty || status != BrandStatusFilter.all;
+
+  @override
+  BrandListQuery withSearch(String value) =>
+      copyWith(search: value, page: 1);
+
+  @override
+  BrandListQuery withPage(int value) => copyWith(page: value);
+
+  @override
+  BrandListQuery cleared() => copyWith(
+    search: '',
+    status: BrandStatusFilter.all,
+    page: 1,
+  );
 
   BrandListQuery copyWith({
     String? search,
