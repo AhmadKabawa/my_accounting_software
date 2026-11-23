@@ -1,8 +1,9 @@
 // core/domain/base/paginated_result.dart
 
 import 'package:equatable/equatable.dart';
+import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 
-class PaginatedResult<T> extends Equatable {
+class PaginatedResult<T> extends Equatable implements PagedResult<T> {
   const PaginatedResult({
     required this.items,
     required this.totalCount,
