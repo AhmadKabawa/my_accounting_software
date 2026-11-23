@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
-import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/crud_empty_state.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/crud_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
@@ -17,30 +16,13 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/loc
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_card.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_identity.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_status_badge.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 
-/// Table sort keys (also the column `sortKey`s).
-abstract final class ColorSortKeys {
-  static const name = 'name';
-  static const code = 'code';
-
-  static String? of(ColorSortField field) => switch (field) {
-    ColorSortField.order => null,
-    ColorSortField.name => name,
-    ColorSortField.code => code,
-  };
-
-  static ColorSortField field(String key) => switch (key) {
-    name => ColorSortField.name,
-    code => ColorSortField.code,
-    _ => ColorSortField.order,
-  };
-}
-
-/// The colors table: columns, empty/error states, icon row actions, paging.
-/// Pure presentation: every action is a callback owned by the screen.
 class ColorsTableSection extends StatelessWidget {
   const ColorsTableSection({
     super.key,
+    required this.mode,
     required this.onRetry,
     required this.onSort,
     required this.onPageChanged,
@@ -48,14 +30,18 @@ class ColorsTableSection extends StatelessWidget {
     required this.rows,
     required this.total,
     required this.loading,
-    this.refreshing = false,
+    required this.refreshing,
     required this.failure,
-    required this.onAdd,
+    required this.addAction,
     required this.onEdit,
+    required this.onDuplicate,
     required this.onToggleStatus,
     required this.onDelete,
+    required this.selectedIds,
+    required this.onSelectionChanged,
   });
 
+  final AppViewMode? mode;
   final VoidCallback onRetry;
   final ValueChanged<DataTableSort> onSort;
   final ValueChanged<int> onPageChanged;
@@ -65,128 +51,108 @@ class ColorsTableSection extends StatelessWidget {
   final bool loading;
   final bool refreshing;
   final Failure? failure;
-  final VoidCallback onAdd;
+  final ListAddAction addAction;
   final ValueChanged<CatalogColor> onEdit;
+  final ValueChanged<CatalogColor> onDuplicate;
   final ValueChanged<CatalogColor> onToggleStatus;
   final ValueChanged<CatalogColor> onDelete;
+  final Set<Object> selectedIds;
+  final ValueChanged<Set<Object>>? onSelectionChanged;
 
   @override
-  Widget build(BuildContext context) {
-    final unfiltered = !query.isFiltered;
-    return AppDataView<CatalogColor>(
-      columns: [
-        DataTableColumn(
-          labelKey: ColorsKeys.colorName,
-          sortKey: ColorSortKeys.name,
-          priority: DataTableColumnPriority.primary,
-          flex: 3,
-          cellBuilder: (_, c) => ColorIdentity(c),
-        ),
-        DataTableColumn(
-          labelKey: ColorsKeys.code,
-          sortKey: ColorSortKeys.code,
-          priority: DataTableColumnPriority.secondary,
-          flex: 2,
-          cellBuilder: (_, c) => Directionality(
-            textDirection: TextDirection.ltr,
-            child: AppText.raw(c.code),
-          ),
-        ),
-        DataTableColumn(
-          labelKey: ColorsKeys.hexCode,
-          priority: DataTableColumnPriority.secondary,
-          flex: 2,
-          cellBuilder: (ctx, c) => c.hexCode == null
-              ? AppText(
-                  ColorsKeys.noSampleLabel,
-                  type: AppTextType.bodySmall,
-                  color: ctx.ui.theme.colors.onSurfaceVariant,
-                )
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: Directionality(
-                        textDirection: TextDirection.ltr,
-                        child: AppText.raw(c.hexCode!),
-                      ),
-                    ),
-                    AppIconButton(
-                      AppIcons.copy,
-                      tooltipKey: ColorsKeys.copyHex,
-                      size: AppButtonSize.small,
-                      onPressed: () =>
-                          Clipboard.setData(ClipboardData(text: c.hexCode!)),
-                    ),
-                  ],
-                ),
-        ),
-        DataTableColumn(
-          labelKey: ColorsKeys.status,
-          priority: DataTableColumnPriority.secondary,
-          cellBuilder: (_, c) => ColorStatusBadge(c),
-        ),
-      ],
-      rows: rows,
-      rowId: (c) => c.id,
-      loading: loading,
-      refreshing: refreshing,
-      errorKey: failure?.messageKey,
-      onRetry: onRetry,
-      emptyState: AppEmptyState(
-        icon: AppIcons.colors,
-        titleKey: unfiltered ? ColorsKeys.empty : ColorsKeys.noResults,
-        descriptionKey: unfiltered
-            ? ColorsKeys.emptyDescription
-            : ColorsKeys.noResultsDescription,
-        action: unfiltered
-            ? PermissionGate(
-                permission: Permissions.masterData.manage,
-                child: AppButton(
-                  ColorsKeys.add,
-                  icon: AppIcons.add,
-                  onPressed: onAdd,
-                ),
-              )
-            : null,
+  Widget build(BuildContext context) => AppDataView<CatalogColor>(
+    mode: mode,
+    columns: [
+      DataTableColumn(
+        labelKey: ColorsKeys.colorName,
+        sortKey: 'name',
+        priority: DataTableColumnPriority.primary,
+        flex: 3,
+        cellBuilder: (_, color) => ColorIdentity(color),
       ),
-      cardBuilder: (_, c) => ColorCard(c),
-      rowActionsBuilder: (_, c) => PermissionGate(
+      DataTableColumn(
+        labelKey: ColorsKeys.code,
+        sortKey: 'code',
+        priority: DataTableColumnPriority.secondary,
+        flex: 2,
+        cellBuilder: (_, color) => Directionality(
+          textDirection: TextDirection.ltr,
+          child: AppText.raw(color.code),
+        ),
+      ),
+      DataTableColumn(
+        labelKey: ColorsKeys.hexCode,
+        priority: DataTableColumnPriority.secondary,
+        flex: 2,
+        cellBuilder: (_, color) => color.hexCode == null
+            ? AppText(ColorsKeys.noSampleLabel, type: AppTextType.bodySmall)
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: AppText.raw(color.hexCode!),
+                    ),
+                  ),
+                  AppIconButton(
+                    AppIcons.copy,
+                    tooltipKey: ColorsKeys.copyHex,
+                    size: AppButtonSize.small,
+                    onPressed: () => Clipboard.setData(ClipboardData(text: color.hexCode!)),
+                  ),
+                ],
+              ),
+      ),
+      crudStatusColumn<CatalogColor>(
+        labelKey: ColorsKeys.status,
         permission: Permissions.masterData.manage,
-        child: AppRowActions(
-          primary: [
-            AppRowAction(
-              icon: AppIcons.edit,
-              labelKey: ColorsKeys.edit,
-              onPressed: () => onEdit(c),
-            ),
-            AppRowAction(
-              icon: c.isActive ? AppIcons.block : AppIcons.restore,
-              labelKey: c.isActive
-                  ? ColorsKeys.deactivate
-                  : ColorsKeys.activate,
-              iconColor: c.isActive ? context.ui.theme.colors.error : null,
-              onPressed: () => onToggleStatus(c),
-            ),
-          ],
-          overflow: [
-            AppRowAction(
-              icon: AppIcons.delete,
-              labelKey: ColorsKeys.delete,
-              destructive: true,
-              onPressed: () => onDelete(c),
-            ),
-          ],
-        ),
+        isActive: (color) => color.isActive,
+        onToggleStatus: onToggleStatus,
+        activateLabelKey: ColorsKeys.activate,
+        deactivateLabelKey: ColorsKeys.deactivate,
+        badgeBuilder: (_, color) => ColorStatusBadge(color),
       ),
-      sortKey: ColorSortKeys.of(query.sortField),
-      sortAscending: query.sortAscending,
-      onSort: onSort,
-      page: query.page,
-      pageSize: query.pageSize,
-      totalCount: total,
-      hasMore: query.page * query.pageSize < total,
-      onPageChanged: onPageChanged,
-    );
-  }
+    ],
+    rows: rows,
+    rowId: (color) => color.id,
+    loading: loading,
+    refreshing: refreshing,
+    errorKey: failure?.messageKey,
+    onRetry: onRetry,
+    emptyState: CrudEmptyState(
+      icon: AppIcons.colors,
+      emptyTitleKey: ColorsKeys.empty,
+      emptyDescriptionKey: ColorsKeys.emptyDescription,
+      noResultsTitleKey: ColorsKeys.noResults,
+      noResultsDescriptionKey: ColorsKeys.noResultsDescription,
+      hasActiveFilters: query.hasActiveFilters,
+      addAction: addAction,
+    ),
+    cardBuilder: (_, color) => ColorCard(color),
+    gridItemBuilder: (_, color) => ColorCard(color, swatchSize: AppIconSize.xl),
+    selectedIds: selectedIds,
+    onSelectionChanged: onSelectionChanged,
+    rowActionsBuilder: (_, color) => CrudRowActions(
+      permission: Permissions.masterData.manage,
+      editLabelKey: ColorsKeys.edit,
+      onEdit: () => onEdit(color),
+      deleteLabelKey: ColorsKeys.delete,
+      onDelete: () => onDelete(color),
+      duplicateLabelKey: ColorsKeys.duplicate,
+      onDuplicate: () => onDuplicate(color),
+      isActive: color.isActive,
+      onToggleStatus: () => onToggleStatus(color),
+      activateLabelKey: ColorsKeys.activate,
+      deactivateLabelKey: ColorsKeys.deactivate,
+    ),
+    sortKey: query.sortField.name,
+    sortAscending: query.sortAscending,
+    onSort: onSort,
+    page: query.page,
+    pageSize: query.pageSize,
+    totalCount: total,
+    hasMore: query.page * query.pageSize < total,
+    onPageChanged: onPageChanged,
+  );
 }
