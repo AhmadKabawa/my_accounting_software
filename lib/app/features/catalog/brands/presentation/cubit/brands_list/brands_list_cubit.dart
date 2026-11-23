@@ -57,17 +57,21 @@ class BrandsListCubit
           ? Future.value()
           : applyQueryAndLoad(state.query.withStatus(status));
 
-  Future<void> setSort({BrandSortField? field, required bool ascending}) =>
-      _sort(state.query.withSort(
-        field: field ?? state.query.sortField,
-        ascending: ascending,
-      ));
+  Future<void> setSort({BrandSortField? field, required bool ascending}) {
+    final next = field ?? state.query.sortField;
+    final sort = [BrandSort(next, ascending)];
+    return state.query.hasSameSorts(sort)
+        ? Future.value()
+        : applyQueryAndLoad(state.query.withSort(
+            field: next,
+            ascending: ascending,
+          ));
+  }
 
   Future<void> setSorts(List<BrandSort> sorts) =>
-      sorts.isEmpty ? Future.value() : _sort(state.query.withSorts(sorts));
-
-  Future<void> _sort(BrandListQuery query) =>
-      state.query == query ? Future.value() : applyQueryAndLoad(query);
+      sorts.isEmpty || state.query.hasSameSorts(sorts)
+          ? Future.value()
+          : applyQueryAndLoad(state.query.withSorts(sorts));
 
   Future<void> activate(int id) async {
     await runMutation(
