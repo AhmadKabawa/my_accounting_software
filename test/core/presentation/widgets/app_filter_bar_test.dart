@@ -756,7 +756,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.text(CatalogUiKeys.sortFieldAlreadySelected.en),
-        findsOneWidget,
+        findsNothing,
       );
       final disabled = find.ancestor(
         of: find.text('Filters').last,
@@ -1038,4 +1038,96 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+  testWidgets(
+    'sort arrow toggles without opening the field menu and field selection preserves direction',
+    (tester) async {
+      tester.view.physicalSize = const Size(280, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var current = const [
+        FilterBarSort('name', true),
+        FilterBarSort('status', false),
+      ];
+      await tester.pumpWidget(
+        buildTestApp(
+          home: StatefulBuilder(
+            builder: (context, setState) => Scaffold(
+              body: SizedBox(
+                width: 280,
+                child: SortPanel(
+                  options: const [
+                    FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                    FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+                    FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+                  ],
+                  sorts: current,
+                  onChanged: (next) => setState(() => current = next),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byTooltip('Ascending').first);
+      await tester.pumpAndSettle();
+      expect(current.first.ascending, isFalse);
+      expect(find.byType(MenuItemButton), findsNothing);
+
+      await tester.tap(find.text('Search').first);
+      await tester.pumpAndSettle();
+      expect(find.byType(MenuItemButton), findsWidgets);
+      await tester.tap(find.text('Refresh data').last);
+      await tester.pumpAndSettle();
+      expect(current.first, const FilterBarSort('updated', false));
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'add criterion is icon-only and the first criterion has no move or remove actions',
+    (tester) async {
+      tester.view.physicalSize = const Size(280, 800);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      var current = const [FilterBarSort('name', true)];
+      await tester.pumpWidget(
+        buildTestApp(
+          home: StatefulBuilder(
+            builder: (context, setState) => Scaffold(
+              body: SizedBox(
+                width: 280,
+                child: SortPanel(
+                  options: const [
+                    FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                    FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+                  ],
+                  sorts: current,
+                  onChanged: (next) => setState(() => current = next),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byTooltip('Then by'), findsOneWidget);
+      expect(find.text('Then by'), findsNothing);
+      expect(find.byTooltip('Move sort up'), findsNothing);
+      expect(find.byTooltip('Move sort down'), findsNothing);
+      expect(find.byTooltip('Remove sort criterion'), findsNothing);
+      await tester.tap(find.byTooltip('Then by'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Filters').last);
+      await tester.pumpAndSettle();
+      expect(current, [
+        const FilterBarSort('name', true),
+        const FilterBarSort('status', true),
+      ]);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
 }
