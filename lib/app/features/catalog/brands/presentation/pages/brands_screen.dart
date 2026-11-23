@@ -136,9 +136,10 @@ class BrandsScreen extends StatelessWidget {
                           ),
                           viewModes: _modes,
                           viewMode: mode,
-                          onViewModeChanged: context
-                              .read<ViewModeCubit>()
-                              .select,
+                          onViewModeChanged: (nextMode) {
+                            cubit.selection.clear();
+                            context.read<ViewModeCubit>().select(nextMode);
+                          },
                           onRefresh: cubit.refresh,
                           refreshing: state.isRefreshing,
                           selectionModeActive: state.selectionMode,
