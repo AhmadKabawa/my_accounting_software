@@ -5,7 +5,6 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/get_colors_use_case.dart';
@@ -20,7 +19,7 @@ class ColorsListCubit
     required GetColorsUseCase getColors,
     required SetColorActiveUseCase setColorActive,
     required DeleteColorUseCase deleteColor,
-    required FlashMessages flashMessages,
+    required super.flashMessages,
   }) : _getColors = getColors,
        _setColorActive = setColorActive,
        _deleteColor = deleteColor,
@@ -29,7 +28,6 @@ class ColorsListCubit
            page: AppConfig.defaultPage,
            pageSize: AppConfig.defaultPageSize,
          ),
-         flashMessages: flashMessages,
        );
 
   final GetColorsUseCase _getColors;
@@ -42,8 +40,8 @@ class ColorsListCubit
   ) => _getColors(query);
 
   @override
-  Future<Either<Failure, Unit>> deleteItem(CatalogColor color) =>
-      _deleteColor(DeleteColorParams(color.id));
+  Future<Either<Failure, Unit>> deleteItem(CatalogColor item) =>
+      _deleteColor(DeleteColorParams(item.id));
 
   @override
   AppKey get deletedMessageKey => ColorsKeys.deleted;

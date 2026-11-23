@@ -10,7 +10,7 @@ void main() {
     cubit.selection.selectPage([1, 2]);
     final bulk = cubit.bulkItems([1, 2], (_) async => const Right(unit));
     await Future<void>.delayed(Duration.zero);
-    cubit.requests.single.complete(Right(TestPagedPage([3])));
+    cubit.requests.single.complete(Right(testPagedPage([3])));
     final result = await bulk;
     expect(result.successCount, 2);
     expect(result.failureCount, 0);
@@ -29,7 +29,7 @@ void main() {
           item == 2 ? const Left(TestPagedFailure()) : const Right(unit),
     );
     await Future<void>.delayed(Duration.zero);
-    cubit.requests.single.complete(Right(TestPagedPage([4])));
+    cubit.requests.single.complete(Right(testPagedPage([4])));
     final result = await bulk;
     expect(result.successCount, 2);
     expect(result.failureCount, 1);
@@ -49,7 +49,7 @@ void main() {
         2,
       ], (_) async => const Left(TestPagedFailure()));
       await Future<void>.delayed(Duration.zero);
-      cubit.requests.single.complete(Right(TestPagedPage([])));
+      cubit.requests.single.complete(Right(testPagedPage([])));
       final result = await bulk;
       expect(result.successCount, 0);
       expect(result.failureCount, 2);
