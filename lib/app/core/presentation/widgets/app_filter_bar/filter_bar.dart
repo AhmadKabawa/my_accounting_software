@@ -292,7 +292,7 @@ class _FilterBarState extends State<FilterBar> {
             useSafeArea: true,
             builder: (_) => Padding(
               padding: context.ui.padding.all(AppSpacing.md),
-              child: _multiSortPanel(),
+              child: _multiSortPanel(width: double.infinity),
             ),
           ),
         );
@@ -305,9 +305,7 @@ class _FilterBarState extends State<FilterBar> {
           onPressed: toggle,
         ),
         children: [
-          _multiSortPanel(
-            width: context.ui.size.width(AppComponentSize.filterControlWidth),
-          ),
+          _multiSortPanel(),
         ],
       );
     }

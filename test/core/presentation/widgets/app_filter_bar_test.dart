@@ -114,6 +114,7 @@ void main() {
                 child: SizedBox(
                   width: width,
                   child: FilterBar(
+                    key: ValueKey(width),
                     onSearchChanged: (value) => searched = value,
                     activeFilters: const [],
                     onClearAll: () {},
@@ -149,6 +150,7 @@ void main() {
                 child: SizedBox(
                   width: width,
                   child: FilterBar(
+                    key: ValueKey(width),
                     onSearchChanged: (value) => searched = value,
                     activeFilters: const [],
                     onClearAll: () {},
@@ -371,12 +373,14 @@ void main() {
       int? resultCount,
       List<Widget> filterControls = const [],
       VoidCallback? onApply,
+      TextDirection direction = TextDirection.ltr,
     }) async {
       tester.view.physicalSize = size;
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(
         buildTestApp(
+          direction: direction,
           home: Scaffold(
             body: FilterBar(
               onSearchChanged: (_) {},
@@ -409,6 +413,7 @@ void main() {
         tester,
         leading: const Text('LEAD'),
         trailing: const Text('TRAIL'),
+        direction: TextDirection.ltr,
       );
       final lead = tester.getTopLeft(find.text('LEAD')).dx;
       final search = tester.getTopLeft(find.byType(TextField)).dx;
@@ -536,6 +541,7 @@ void main() {
               child: SizedBox(
                 width: width,
                 child: FilterBar(
+                  key: ValueKey(width),
                   onSearchChanged: (_) {},
                   activeFilters: const [],
                   onClearAll: () {},
@@ -620,7 +626,7 @@ void main() {
     expect(calls, 1);
     expect(current.single.ascending, isFalse);
     expect(find.byTooltip('Descending'), findsOneWidget);
-    await tester.tap(find.text('Then by'));
+    await tester.tap(find.byTooltip('Then by'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Filters').last);
     await tester.pumpAndSettle();
@@ -833,7 +839,7 @@ void main() {
     await tester.pumpAndSettle();
 
     for (final label in ['Filters', 'Refresh data', 'Retry']) {
-      await tester.tap(find.text('Then by'));
+      await tester.tap(find.byTooltip('Then by'));
       await tester.pumpAndSettle();
       await tester.tap(find.text(label).last);
       await tester.pumpAndSettle();
@@ -959,7 +965,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(SortPanel), findsOneWidget);
       expect(tester.takeException(), isNull);
-      await tester.tap(find.text('Then by'));
+      await tester.tap(find.byTooltip('Then by'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Filters').last);
       await tester.pumpAndSettle();
