@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import '../../../helpers/localized_app.dart';
@@ -72,4 +73,79 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('grid rows fit long content at narrow and wide widths', (
+    tester,
+  ) async {
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    final longName = List.filled(12, 'BrandWithoutSpaces').join();
+    for (final width in [280.0, 360.0, 700.0, 1400.0]) {
+      for (final scale in [1.0, 1.5]) {
+        tester.view.physicalSize = Size(width, 1000);
+        tester.view.devicePixelRatio = 1;
+        tester.platformDispatcher.textScaleFactorTestValue = scale;
+        await tester.pumpWidget(
+          buildTestApp(
+            home: Scaffold(
+              body: AppDataView<String>(
+                columns: const [],
+                rows: [for (var i = 0; i < 6; i++) i.isEven ? 'Short' : longName],
+                rowId: (value) => value,
+                mode: AppViewMode.grid,
+                gridItemBuilder: (_, value) => Text(
+                  value,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ),
+        );
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'Grid overflow at width $width and text scale $scale',
+        );
+      }
+    }
+  });
+
+  testWidgets('tiles in the same grid row share the tallest tile height', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var selected = <Object>{};
+    await tester.pumpWidget(
+      buildTestApp(
+        home: StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: AppDataView<String>(
+              columns: const [],
+              rows: const ['Short', 'A much longer name that wraps onto two lines'],
+              rowId: (value) => value,
+              mode: AppViewMode.grid,
+              selectedIds: selected,
+              onSelectionChanged: (next) => setState(() => selected = next),
+              gridItemBuilder: (_, value) => Text(value),
+            ),
+          ),
+        ),
+      ),
+    );
+    final tiles = find.byType(AppCard);
+    expect(tiles, findsNWidgets(2));
+    final firstHeight = tester.getSize(tiles.at(0)).height;
+    final secondHeight = tester.getSize(tiles.at(1)).height;
+    expect(firstHeight, secondHeight);
+
+    await tester.tap(find.byType(Checkbox).first);
+    await tester.pump();
+    expect(selected, contains('Short'));
+    expect(tester.getSize(tiles.at(0)).height, firstHeight);
+    expect(tester.getSize(tiles.at(1)).height, secondHeight);
+    expect(tester.takeException(), isNull);
+  });
 }

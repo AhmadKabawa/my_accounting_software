@@ -216,6 +216,7 @@ class AppDataView<T> extends StatelessWidget {
       itemBuilder: (context, index) {
         final row = rows[index];
         final id = rowId(row);
+        final selected = selectedIds.contains(id);
         return AppRecordCard<T>(
           row: row,
           columns: columns,

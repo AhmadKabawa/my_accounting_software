@@ -11,9 +11,9 @@ void main() {
     final oldLoad = cubit.load();
     final newLoad = cubit.load();
 
-    cubit.requests[1].complete(Right(TestPagedPage([2])));
+    cubit.requests[1].complete(Right(testPagedPage([2])));
     await newLoad;
-    cubit.requests[0].complete(Right(TestPagedPage([1])));
+    cubit.requests[0].complete(Right(testPagedPage([1])));
     await oldLoad;
 
     expect(cubit.state.result!.items, [2]);
@@ -33,7 +33,7 @@ void main() {
       final cubit = TestPagedCubit();
       final oldLoad = cubit.load();
       cubit.searchChanged('fresh');
-      cubit.requests.first.complete(Right(TestPagedPage([1])));
+      cubit.requests.first.complete(Right(testPagedPage([1])));
       async.flushMicrotasks();
       expect(cubit.state.result, isNull);
 
@@ -41,7 +41,7 @@ void main() {
       async.flushMicrotasks();
       expect(cubit.requests, hasLength(2));
       expect(cubit.requestedQueries.last.search, 'fresh');
-      cubit.requests.last.complete(Right(TestPagedPage([2])));
+      cubit.requests.last.complete(Right(testPagedPage([2])));
       async.flushMicrotasks();
       oldLoad.then((_) {});
       cubit.close();
@@ -67,7 +67,7 @@ void main() {
       expect(cubit.requestedQueries.single.search, 'abc');
       expect(cubit.requestedQueries.single.page, 1);
       expect(cubit.requestedQueries.single.sort, 4);
-      cubit.requests.single.complete(Right(TestPagedPage([1])));
+      cubit.requests.single.complete(Right(testPagedPage([1])));
       async.flushMicrotasks();
       cubit.close();
       async.flushMicrotasks();
@@ -80,7 +80,7 @@ void main() {
       cubit.searchChanged('typed');
       final load = cubit.load();
       expect(cubit.requests, hasLength(1));
-      cubit.requests.single.complete(Right(TestPagedPage([1])));
+      cubit.requests.single.complete(Right(testPagedPage([1])));
       async.flushMicrotasks();
       async.elapse(const Duration(milliseconds: 300));
       async.flushMicrotasks();
@@ -106,7 +106,7 @@ void main() {
   test('refresh failure retains previous data and records failure', () async {
     final cubit = TestPagedCubit();
     final firstLoad = cubit.load();
-    cubit.requests[0].complete(Right(TestPagedPage([7])));
+    cubit.requests[0].complete(Right(testPagedPage([7])));
     await firstLoad;
 
     final refresh = cubit.refresh();
@@ -135,7 +135,7 @@ void main() {
   test('deleting the last item on page two returns to page one', () async {
     final cubit = TestPagedCubit(query: const TestPagedQuery(page: 2));
     final initialLoad = cubit.load();
-    cubit.requests[0].complete(Right(TestPagedPage([22])));
+    cubit.requests[0].complete(Right(testPagedPage([22])));
     await initialLoad;
 
     final deletion = cubit.delete(22);
@@ -144,7 +144,7 @@ void main() {
     expect(cubit.requestedQueries, hasLength(2));
     expect(cubit.requestedQueries.last.page, 1);
 
-    cubit.requests[1].complete(Right(TestPagedPage([11])));
+    cubit.requests[1].complete(Right(testPagedPage([11])));
     await deletion;
     expect(cubit.state.query.page, 1);
     expect(cubit.state.result!.items, [11]);
@@ -156,18 +156,18 @@ void main() {
     () async {
       final cubit = TestPagedCubit(query: const TestPagedQuery(page: 2));
       final initialLoad = cubit.load();
-      cubit.requests[0].complete(Right(TestPagedPage([21, 22])));
+      cubit.requests[0].complete(Right(testPagedPage([21, 22])));
       await initialLoad;
 
       final deletion = cubit.delete(21);
       await Future<void>.delayed(Duration.zero);
       expect(cubit.requestedQueries.last.page, 2);
-      cubit.requests[1].complete(Right(TestPagedPage([])));
+      cubit.requests[1].complete(Right(testPagedPage([])));
       await Future<void>.delayed(Duration.zero);
 
       expect(cubit.requestedQueries, hasLength(3));
       expect(cubit.requestedQueries.last.page, 1);
-      cubit.requests[2].complete(Right(TestPagedPage([10])));
+      cubit.requests[2].complete(Right(testPagedPage([10])));
       await deletion;
       expect(cubit.state.query.page, 1);
       await cubit.close();
@@ -197,7 +197,7 @@ void main() {
       async.flushMicrotasks();
       expect(cubit.requests, hasLength(1));
 
-      cubit.requests.single.complete(Right(TestPagedPage([1])));
+      cubit.requests.single.complete(Right(testPagedPage([1])));
       async.flushMicrotasks();
       clear.then((_) {});
       cubit.close();
@@ -213,13 +213,13 @@ void main() {
     final effects = cubit.effectStream.listen((_) => events.add('effect'));
 
     final initialLoad = cubit.load();
-    cubit.requests[0].complete(Right(TestPagedPage([4])));
+    cubit.requests[0].complete(Right(testPagedPage([4])));
     await initialLoad;
 
     final deletion = cubit.delete(4);
     await Future<void>.delayed(Duration.zero);
     expect(events, ['flash']);
-    cubit.requests[1].complete(Right(TestPagedPage([])));
+    cubit.requests[1].complete(Right(testPagedPage([])));
     await deletion;
     await Future<void>.delayed(Duration.zero);
 
@@ -236,7 +236,7 @@ void main() {
     final load = cubit.load();
     await cubit.close();
     final atClose = emissions;
-    cubit.requests.single.complete(Right(TestPagedPage([1])));
+    cubit.requests.single.complete(Right(testPagedPage([1])));
     await load;
 
     expect(emissions, atClose);
