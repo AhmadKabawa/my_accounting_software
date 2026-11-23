@@ -149,3 +149,8 @@ catalog/brands/
 - فجوات Core ظهرت وأُغلقت داخل Core لا في الميزة: عيّنة اللون، حقل نص بمنسّقات واتجاه، ومساعد PostgREST.
 - فخ تعلّمناه: ترتيب حقول `TextFormField` في اختبارات النماذج يتبع ترتيب الأقسام في الشاشة لا ترتيب الأعمدة في الجدول.
 - التنسيق: لا يوجد Dart محلياً؛ مُنسّق CI يفصل استدعاءات متداخلة حتى لو كانت تتسع في 80 عموداً، فإذا فشل `dart format` فاطبع الفرق من CI بدل التخمين.
+
+
+### Shared paged list lifecycle
+
+The common list lifecycle has since been extracted to `core/presentation/state_management/paged_list/` because Brands and Colors had a second real consumer. New CRUD list cubits should implement the shared `PagedQuery` and `PagedResult` contracts and extend `PagedListCubit<T,Q,E>`. Keep feature-specific validation, filters, sorting, mutation effects, and use-case wiring in the feature. Brands retains its one/two-criterion sort API as a feature hook; Colors is not migrated by this change.
