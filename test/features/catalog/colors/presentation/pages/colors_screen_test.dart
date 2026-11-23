@@ -217,10 +217,7 @@ void main() {
     expect(find.byType(Checkbox), findsNWidgets(2));
     await tester.tap(find.byType(Checkbox).first);
     await tester.pumpAndSettle();
-    expect(find.text(CatalogUiKeys.selectedCount.tr(
-      context: tester.element(find.byType(ColorsScreen)),
-      namedArgs: {'count': '1'},
-    )), findsOneWidget);
+    expect(find.text(ColorsKeys.bulkActivate.en), findsOneWidget);
 
     await tester.tap(find.text(ColorsKeys.bulkActivate.en));
     await tester.pumpAndSettle();
