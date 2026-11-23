@@ -31,10 +31,9 @@ export 'view_mode_switcher.dart';
 /// [gridItemBuilder] (optional; the grid mode exists only when given).
 ///
 /// [mode] is the user's choice (`null` = none yet). With no choice the device
-/// default applies: cards on a phone, table elsewhere. A table that cannot
-/// show two columns in the available width falls back to cards, unless the
-/// user chose the table. The device is read from `ScreenEngine`, the single
-/// source of the screen type.
+/// default follows the available content width when supplied by the page:
+/// cards below [compactContentBreakpoint], table otherwise. Without a local
+/// width, the device default from `ScreenEngine` is used.
 ///
 /// Sorting and paging are server-driven callbacks; nothing is sorted or sliced
 /// locally.
@@ -117,8 +116,10 @@ class AppDataView<T> extends StatelessWidget {
     BuildContext context, {
     double? availableWidth,
   }) {
-    if (availableWidth != null && availableWidth < compactContentBreakpoint) {
-      return AppViewMode.cards;
+    if (availableWidth != null) {
+      return availableWidth < compactContentBreakpoint
+          ? AppViewMode.cards
+          : AppViewMode.table;
     }
     return ScreenEngine.isMobile(context) ? AppViewMode.cards : AppViewMode.table;
   }

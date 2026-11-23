@@ -96,7 +96,11 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    if (loading || refreshing) {
+      await tester.pump();
+    } else {
+      await tester.pumpAndSettle();
+    }
   }
 
   group('DataTableLayout', () {
@@ -191,12 +195,11 @@ void main() {
               direction: dir,
             );
             expect(tester.takeException(), isNull);
-            if (width < 600) {
-              // Phone default: cards.
+            final contentWidth = width - (width >= 600 ? _sidebar : 0);
+            if (contentWidth < AppDataView.compactContentBreakpoint) {
+              // Compact content (including a laptop/tablet with sidebar): cards.
               expect(find.byType(AppCard), findsNWidgets(2));
             } else {
-              // The regression: with the sidebar present the table must still
-              // show more than the name column.
               expect(find.byType(AppCard), findsNothing);
               expect(find.text('Status: Alpha'), findsOneWidget);
               expect(find.text('test.table.status'), findsOneWidget);

@@ -9,6 +9,7 @@ import 'package:accounting_software/app/core/access/models/access_snapshot.dart'
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
@@ -36,7 +37,11 @@ Widget _section({
   total: total,
   loading: false,
   failure: null,
-  onAdd: () {},
+  addAction: ListAddAction(
+    labelKey: BrandsKeys.add,
+    permission: Permissions.masterData.manage,
+    onPressed: () {},
+  ),
   onEdit: (_) {},
   onDelete: (_) {},
   onToggleStatus: (_) {},

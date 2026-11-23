@@ -11,7 +11,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
@@ -444,7 +443,7 @@ void main() {
     final nameField = tester.widget<TextFormField>(find.byType(TextFormField).at(0));
     expect(nameField.controller!.selection.baseOffset, 0);
     expect(nameField.controller!.selection.extentOffset, 'Original (Copy)'.length);
-    expect(nameField.autofocus, isTrue);
+    expect(tester.widget<EditableText>(find.byType(EditableText).first).autofocus, isTrue);
     expect(nameField.controller!.text, 'Original (Copy)');
     expect(tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text, 'original-copy');
     await tester.enterText(find.byType(TextFormField).at(0), 'New brand');

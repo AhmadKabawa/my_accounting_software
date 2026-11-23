@@ -148,7 +148,7 @@ class AppDataTable<T> extends StatelessWidget {
                 ? Checkbox(
                     tristate: true,
                     value: _pageSelectionValue,
-                    onChanged: (value) => _toggleAll(value == true),
+                    onChanged: (_) => _toggleAll(_pageSelectionValue != true),
                   )
                 : Checkbox(
                     value: selectedIds.contains(rowId(row as T)),
