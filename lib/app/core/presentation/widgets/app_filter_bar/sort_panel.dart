@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_dropdown_m
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar_sort.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_criterion_row.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 
 export 'filter_bar_sort.dart';
 
