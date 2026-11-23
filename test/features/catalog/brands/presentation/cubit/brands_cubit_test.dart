@@ -341,6 +341,12 @@ void main() {
     await cubit.setSorts([primary, secondary]);
     expect(repository.queries, hasLength(3));
 
+    await cubit.setPage(2);
+    expect(repository.queries, hasLength(4));
+    await cubit.setSorts([primary, secondary]);
+    expect(repository.queries, hasLength(4));
+    expect(cubit.state.query.page, 2);
+
     const unknown = Brand(
       id: 90,
       name: 'Unknown',
