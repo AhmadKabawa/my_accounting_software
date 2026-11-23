@@ -20,6 +20,35 @@ void main() {
     await cubit.close();
   });
 
+  test('invalid and current page changes do not fetch', () async {
+    final cubit = TestPagedCubit();
+    await cubit.setPage(1);
+    await cubit.setPage(0);
+    expect(cubit.requests, isEmpty);
+    await cubit.close();
+  });
+
+  test('search change invalidates an in-flight request immediately', () {
+    fakeAsync((async) {
+      final cubit = TestPagedCubit();
+      final oldLoad = cubit.load();
+      cubit.searchChanged('fresh');
+      cubit.requests.first.complete(const Right(TestPagedPage([1])));
+      async.flushMicrotasks();
+      expect(cubit.state.result, isNull);
+
+      async.elapse(const Duration(milliseconds: 300));
+      async.flushMicrotasks();
+      expect(cubit.requests, hasLength(2));
+      expect(cubit.requestedQueries.last.search, 'fresh');
+      cubit.requests.last.complete(const Right(TestPagedPage([2])));
+      async.flushMicrotasks();
+      oldLoad.then((_) {});
+      cubit.close();
+      async.flushMicrotasks();
+    });
+  });
+
   test('search debounce combines rapid changes into one request', () {
     fakeAsync((async) {
       final cubit = TestPagedCubit();
