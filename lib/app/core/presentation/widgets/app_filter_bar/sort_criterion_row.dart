@@ -16,6 +16,7 @@ class SortCriterionRow extends StatelessWidget {
     required this.isUsedElsewhere,
     required this.onSelect,
     required this.onDirection,
+    required this.expandField,
     required this.onMoveUp,
     required this.onRemove,
   });
@@ -25,21 +26,37 @@ class SortCriterionRow extends StatelessWidget {
   final bool Function(String key) isUsedElsewhere;
   final ValueChanged<String> onSelect;
   final VoidCallback? onDirection;
+  final bool expandField;
   final VoidCallback? onMoveUp;
   final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
     children: [
-      Expanded(
-        child: SortFieldButton(
+      if (expandField)
+        Expanded(
+          child: SortFieldButton(
+            expandField: true,
           options: options,
           current: current,
           isUsedElsewhere: isUsedElsewhere,
           onSelect: onSelect,
-          onDirection: onDirection,
+            onDirection: onDirection,
+          ),
+        )
+      else
+        Flexible(
+          fit: FlexFit.loose,
+          child: SortFieldButton(
+            expandField: false,
+            options: options,
+            current: current,
+            isUsedElsewhere: isUsedElsewhere,
+            onSelect: onSelect,
+            onDirection: onDirection,
+          ),
         ),
-      ),
       if (onMoveUp != null)
         AppIconButton(
           AppIcons.moveSortUp,

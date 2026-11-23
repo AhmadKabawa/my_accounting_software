@@ -80,17 +80,20 @@ class SortPanel extends StatelessWidget {
     final rowCount = sorts.isEmpty ? 1 : sorts.length;
     final maxWidth = context.ui.size.width(AppComponentSize.filterControlWidth);
 
+    final fillWidth = width == double.infinity;
     return SizedBox(
       width: width,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: width == double.infinity ? double.infinity : maxWidth,
+          maxWidth: fillWidth ? double.infinity : maxWidth,
         ),
         child: Padding(
           padding: context.ui.padding.all(AppSpacing.sm),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: fillWidth
+                ? CrossAxisAlignment.stretch
+                : CrossAxisAlignment.start,
             children: [
               for (var index = 0; index < rowCount; index++) ...[
                 if (index > 0) context.ui.spacing.gap(AppSpacing.sm),
@@ -102,6 +105,7 @@ class SortPanel extends StatelessWidget {
                   onDirection: index < sorts.length
                       ? () => _toggleDirection(index)
                       : null,
+                  expandField: fillWidth,
                   onMoveUp: index > 0 ? () => _moveFieldUp(index) : null,
                   onRemove: index > 0 ? () => _removeField(index) : null,
                 ),
