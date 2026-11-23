@@ -4,7 +4,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_button/app
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar_sort.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_field_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 
 /// One compact, single-line sort criterion.
 class SortCriterionRow extends StatelessWidget {
