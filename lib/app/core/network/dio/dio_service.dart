@@ -1,9 +1,9 @@
 // lib/core/network/dio_service.dart
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/network/api_end_points.dart';
+import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/connectivity_interceptor.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
@@ -30,11 +30,11 @@ class DioService {
         baseUrl: AppConfig.baseUrl,
         connectTimeout: const Duration(milliseconds: AppConfig.connectTimeout),
         receiveTimeout: const Duration(milliseconds: AppConfig.receiveTimeout),
-        // On the web a send timeout forces a CORS preflight and is not
-        // supported without a body, so it is only set on other platforms.
-        sendTimeout: kIsWeb
-            ? null
-            : const Duration(milliseconds: AppConfig.sendTimeout),
+        // Browser adapters do not support sendTimeout. The capability is
+        // selected through a conditional import in core/platform.
+        sendTimeout: PlatformCapabilities.supportsRequestSendTimeout
+            ? const Duration(milliseconds: AppConfig.sendTimeout)
+            : null,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
