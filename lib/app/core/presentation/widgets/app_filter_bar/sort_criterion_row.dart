@@ -31,46 +31,38 @@ class SortCriterionRow extends StatelessWidget {
   final VoidCallback? onRemove;
 
   @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      if (expandField)
-        Expanded(
-          child: SortFieldButton(
-            expandField: true,
-          options: options,
-          current: current,
-          isUsedElsewhere: isUsedElsewhere,
-          onSelect: onSelect,
-            onDirection: onDirection,
+  Widget build(BuildContext context) {
+    final field = SortFieldButton(
+      options: options,
+      current: current,
+      isUsedElsewhere: isUsedElsewhere,
+      onSelect: onSelect,
+      onDirection: onDirection,
+      expandField: expandField,
+    );
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (expandField)
+          Expanded(child: field)
+        else
+          Flexible(fit: FlexFit.loose, child: field),
+        if (onMoveUp != null)
+          AppIconButton(
+            AppIcons.moveSortUp,
+            tooltipKey: CatalogUiKeys.moveSortUp,
+            size: AppButtonSize.small,
+            onPressed: onMoveUp,
           ),
-        )
-      else
-        Flexible(
-          fit: FlexFit.loose,
-          child: SortFieldButton(
-            expandField: false,
-            options: options,
-            current: current,
-            isUsedElsewhere: isUsedElsewhere,
-            onSelect: onSelect,
-            onDirection: onDirection,
+        if (onRemove != null)
+          AppIconButton(
+            AppIcons.close,
+            tooltipKey: CatalogUiKeys.removeSort,
+            size: AppButtonSize.small,
+            onPressed: onRemove,
           ),
-        ),
-      if (onMoveUp != null)
-        AppIconButton(
-          AppIcons.moveSortUp,
-          tooltipKey: CatalogUiKeys.moveSortUp,
-          size: AppButtonSize.small,
-          onPressed: onMoveUp,
-        ),
-      if (onRemove != null)
-        AppIconButton(
-          AppIcons.close,
-          tooltipKey: CatalogUiKeys.removeSort,
-          size: AppButtonSize.small,
-          onPressed: onRemove,
-        ),
-    ],
-  );
+      ],
+    );
+  }
 }
