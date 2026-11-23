@@ -88,7 +88,7 @@ class SortPanel extends StatelessWidget {
           maxWidth: fillWidth ? double.infinity : maxWidth,
         ),
         child: Padding(
-          padding: context.ui.padding.all(AppSpacing.sm),
+          padding: context.ui.padding.all(AppSpacing.xs),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: fillWidth

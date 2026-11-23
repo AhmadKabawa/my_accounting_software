@@ -1043,7 +1043,9 @@ void main() {
     (tester) async {
       tester.view.physicalSize = const Size(280, 800);
       tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.5;
       addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       var current = const [
         FilterBarSort('name', true),
         FilterBarSort('status', false),
