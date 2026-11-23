@@ -43,9 +43,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
-  testWidgets('800x400 landscape keeps sheet actions fixed while content scrolls', (
-    tester,
-  ) async {
+
+  testWidgets(
+    '800x400 landscape keeps sheet actions fixed while content scrolls',
+    (tester) async {
     setScreenSize(tester, const Size(800, 400));
     await tester.pumpWidget(
       _appWithDialogContent(
@@ -80,9 +81,9 @@ void main() {
     expect(tester.getRect(find.text('Save').last), save);
     expect(tester.takeException(), isNull);
   });
-  testWidgets('short desktop dialog keeps actions fixed while content scrolls', (
-    tester,
-  ) async {
+  testWidgets(
+    'short desktop dialog keeps actions fixed while content scrolls',
+    (tester) async {
     setScreenSize(tester, const Size(1200, 400));
     await tester.pumpWidget(
       _appWithDialogContent(
@@ -117,7 +118,6 @@ void main() {
     expect(tester.getRect(find.text('Save').last), save);
     expect(tester.takeException(), isNull);
   });
-
 }
 
 Widget _appWithDialogContent(Widget content) => buildTestApp(
