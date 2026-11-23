@@ -129,6 +129,6 @@
 
 ## Paged list state management — 2026-11-22
 
-- `test/core/presentation/state_management/paged_list/paged_list_cubit_test.dart`: stale request protection, close safety, 300ms debounce, refresh failure retention, initial failure, both page-two delete recovery paths, clear-filter timer cancellation, and deletion flash-before-effect ordering.
+- `test/core/presentation/state_management/paged_list/paged_list_cubit_test.dart`: stale request protection (including search invalidation), close safety, 300ms debounce and timer cancellation on load/clear/close, page no-op behavior, refresh failure retention, initial failure, both page-two delete recovery paths, and deletion flash-before-effect ordering.
 - `test/features/catalog/brands/presentation/cubit/brands_cubit_test.dart`: existing list lifecycle and mutation coverage plus public `setStatus` / `setSorts` behavior and deletion rejection for unknown/in-use product counts.
 - The tests were added but not run in the repository environment for this change. Verify with the commands in the task report.
