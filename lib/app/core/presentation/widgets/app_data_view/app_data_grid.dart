@@ -3,11 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_data_view/equal_height_row.dart';
 
 /// Records as tiles in a responsive grid. Tiles in one grid row share the
-/// height of the tallest one. Selection and row actions sit in a header row
-/// inside the card (never over the content), so they cannot overlap each other
-/// and toggling selection mode does not change a tile's height.
+/// height of the tallest one without intrinsic measurement.
 class AppDataGrid<T> extends StatelessWidget {
   const AppDataGrid({
     super.key,
@@ -53,20 +52,14 @@ class AppDataGrid<T> extends StatelessWidget {
           itemBuilder: (context, rowIndex) {
             final start = rowIndex * columns;
             final end = math.min(start + columns, rows.length).toInt();
-            // Row stretches tiles to the tallest natural child. Avoid
-            // intrinsic measurement so grid content can use LayoutBuilder.
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            return EqualHeightRow(
+              gap: gap,
               children: [
-                  for (var index = start; index < end; index++) ...[
-                    if (index > start) SizedBox(width: gap),
-                    Expanded(child: _tile(context, rows[index])),
-                  ],
-                  for (var empty = end; empty < start + columns; empty++) ...[
-                    if (empty > start) SizedBox(width: gap),
-                    const Expanded(child: SizedBox.shrink()),
-                  ],
-                ],
+                for (var index = start; index < end; index++)
+                  _tile(context, rows[index]),
+                for (var empty = end; empty < start + columns; empty++)
+                  const SizedBox.shrink(),
+              ],
             );
           },
         );

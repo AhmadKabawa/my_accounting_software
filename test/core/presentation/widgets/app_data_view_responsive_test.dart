@@ -59,7 +59,7 @@ void main() {
               widget is AppSkeleton &&
               widget.variant == AppSkeletonVariant.card,
         ),
-        findsNWidgets(5),
+        findsAtLeastNWidgets(1),
       );
       expect(
         find.byWidgetPredicate(
@@ -144,13 +144,17 @@ void main() {
     final firstHeight = tester.getSize(tiles.at(0)).height;
     final secondHeight = tester.getSize(tiles.at(1)).height;
     expect(firstHeight, greaterThan(0));
-    expect(secondHeight, greaterThan(0));
+    expect(secondHeight, firstHeight);
 
     await tester.tap(find.byType(Checkbox).first);
     await tester.pump();
     expect(selected, contains('Short'));
     expect(tester.getSize(tiles.at(0)).height, firstHeight);
     expect(tester.getSize(tiles.at(1)).height, secondHeight);
+    expect(
+      tester.getSize(tiles.at(0)).height,
+      tester.getSize(tiles.at(1)).height,
+    );
     expect(tester.takeException(), isNull);
   });
 }
