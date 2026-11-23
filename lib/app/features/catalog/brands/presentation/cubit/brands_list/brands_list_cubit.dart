@@ -40,21 +40,19 @@ class BrandsListCubit
   final FlashMessages _flashMessages;
 
   @override
-  Future<Either<Failure, PagedResult<Brand>>> fetch(BrandListQuery query) async {
-    final result = await _getBrands(query);
-    return result.map<PagedResult<Brand>>((page) => page);
-  }
+  Future<Either<Failure, PagedResult<Brand>>> fetch(BrandListQuery query) async =>
+      (await _getBrands(query)).map<PagedResult<Brand>>((page) => page);
 
   @override
   Future<Either<Failure, Unit>> deleteItem(Brand brand) =>
       _deleteBrand(brand.id);
 
   @override
-  Failure? beforeDelete(Brand brand) {
-    if (brand.productCount == null) return const BrandUsageUnknownFailure();
-    if (brand.hasProducts) return const BrandInUseFailure();
-    return null;
-  }
+  Failure? beforeDelete(Brand brand) => brand.productCount == null
+      ? const BrandUsageUnknownFailure()
+      : brand.hasProducts
+      ? const BrandInUseFailure()
+      : null;
 
   @override
   AppKey get deletedMessageKey => BrandsKeys.deleted;
@@ -74,74 +72,53 @@ class BrandsListCubit
     return load();
   }
 
-  /// A column-header click replaces any existing multi-sort.
   Future<void> setSort({BrandSortField? field, required bool ascending}) {
-    final query = state.query;
-    final next = field ?? query.sortField;
-    if (query.sortField == next &&
-        query.sortAscending == ascending &&
-        query.thenSorts.isEmpty) {
+    final query = state.query.withSort(
+      field: field ?? state.query.sortField,
+      ascending: ascending,
+    );
+    if (query.sortField == state.query.sortField &&
+        query.sortAscending == state.query.sortAscending &&
+        state.query.thenSorts.isEmpty) {
       return Future.value();
     }
-    applyQuery(query.copyWith(
-      sortField: next,
-      sortAscending: ascending,
-      thenSorts: const [],
-      page: 1,
-    ));
+    applyQuery(query);
     return load();
   }
 
-  /// The sort menu supports a primary and one secondary database criterion.
   Future<void> setSorts(List<BrandSort> sorts) {
-    if (sorts.isEmpty) return Future.value();
-    final primary = sorts.first;
-    final secondary = sorts.skip(1).take(1).toList();
-    if (primary.field == state.query.sortField &&
-        primary.ascending == state.query.sortAscending &&
-        _sameSorts(secondary, state.query.thenSorts)) {
+    if (sorts.isEmpty || state.query.hasSameSorts(sorts)) {
       return Future.value();
     }
-    applyQuery(state.query.copyWith(
-      sortField: primary.field,
-      sortAscending: primary.ascending,
-      thenSorts: secondary,
-      page: 1,
-    ));
+    applyQuery(state.query.withSorts(sorts));
     return load();
   }
-
-  bool _sameSorts(List<BrandSort> a, List<BrandSort> b) =>
-      a.length == b.length &&
-      [for (var i = 0; i < a.length; i++) a[i] == b[i]].every((same) => same);
 
   Future<void> activate(int id) async {
-    final result = await _setBrandActive(
-      SetBrandActiveParams(id: id, isActive: true),
-    );
-    if (isClosed) return;
-    if (result.isLeft()) {
-      final failure = result.fold<Failure?>((value) => value, (_) => null);
-      if (failure != null) {
-        // Activation failures are flashed; deactivation failures go to the dialog.
-        _postFailure(failure);
-      }
-      return;
-    }
-    _postStatusUpdated();
-    publishMutation(PagedMutationKind.statusChanged);
-    await load();
+    await _changeStatus(id, true, flashFailure: true);
   }
 
-  Future<Either<Failure, Unit>> deactivate(int id) async {
+  Future<Either<Failure, Unit>> deactivate(int id) =>
+      _changeStatus(id, false);
+
+  Future<Either<Failure, Unit>> _changeStatus(
+    int id,
+    bool active, {
+    bool flashFailure = false,
+  }) async {
     final result = await _setBrandActive(
-      SetBrandActiveParams(id: id, isActive: false),
+      SetBrandActiveParams(id: id, isActive: active),
     );
     if (isClosed) return result;
     if (result.isRight()) {
-      _postStatusUpdated();
+      _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);
       publishMutation(PagedMutationKind.statusChanged);
       await load();
+    } else if (flashFailure) {
+      result.fold(
+        (failure) => _flashMessages.post(failure.messageKey, MessageType.error),
+        (_) {},
+      );
     }
     return result;
   }
@@ -153,10 +130,4 @@ class BrandsListCubit
     );
     await load();
   }
-
-  void _postFailure(Failure failure) =>
-      _flashMessages.post(failure.messageKey, MessageType.error);
-
-  void _postStatusUpdated() =>
-      _flashMessages.post(BrandsKeys.statusUpdated, MessageType.success);
 }
