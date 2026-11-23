@@ -38,6 +38,7 @@ class SortFieldButton extends StatelessWidget {
 
     final fieldMenu = AppDropdownMenu(
       minWidth: AppComponentSize.none,
+      consumeOutsideTap: true,
       anchorBuilder: (context, toggle, open) => Semantics(
         button: true,
         label: CatalogUiKeys.sortChooseField.tr(context: context),

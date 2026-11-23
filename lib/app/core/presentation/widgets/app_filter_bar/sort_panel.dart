@@ -140,6 +140,7 @@ class SortPanel extends StatelessWidget {
         .toList(growable: false);
     return AppDropdownMenu(
       minWidth: AppComponentSize.none,
+      consumeOutsideTap: true,
       anchorBuilder: (context, toggle, open) => AppIconButton(
         AppIcons.add,
         tooltipKey: CatalogUiKeys.thenBy,

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../../helpers/localized_app.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/extensions/app_saas_colors.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar_style.dart';
@@ -78,11 +79,13 @@ void main() {
   group('AppSidebarStyle', () {
     testWidgets('colors come from the theme', (tester) async {
       final styles = await _styleAt(tester, desktop);
-      final scheme = AppTheme.light().colorScheme;
+      final theme = AppTheme.light();
+      final scheme = theme.colorScheme;
+      final saas = theme.extension<AppSaasColors>()!;
 
       expect(styles.background, scheme.surface);
-      expect(styles.selectedBackground, scheme.primaryContainer);
-      expect(styles.selectedForeground, scheme.onPrimaryContainer);
+      expect(styles.selectedBackground, saas.selected);
+      expect(styles.selectedForeground, saas.onSelected);
       expect(styles.foreground, scheme.onSurfaceVariant);
     });
 

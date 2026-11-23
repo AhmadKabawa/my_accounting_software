@@ -18,6 +18,7 @@ class AppDropdownMenu extends StatelessWidget {
     required this.children,
     this.minWidth,
     this.alignment = AlignmentDirectional.bottomStart,
+    this.consumeOutsideTap = false,
   });
 
   /// Builds the anchor; call [toggle] to open or close the menu.
@@ -26,6 +27,7 @@ class AppDropdownMenu extends StatelessWidget {
   final List<Widget> children;
   final AppComponentSize? minWidth;
   final AlignmentGeometry alignment;
+  final bool consumeOutsideTap;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class AppDropdownMenu extends StatelessWidget {
       minWidth ?? AppComponentSize.filterControlWidth,
     );
     return MenuAnchor(
+      consumeOutsideTap: consumeOutsideTap,
       alignmentOffset: Offset(0, context.ui.spacing.xs),
       style: MenuStyle(
         backgroundColor: WidgetStatePropertyAll(colors.surface),
