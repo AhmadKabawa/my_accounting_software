@@ -78,6 +78,34 @@ class ColorsTableSection extends StatelessWidget {
         ],
       );
 
+  Widget _gridItem(BuildContext context, CatalogColor color) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      ColorIdentity(color, size: AppIconSize.xl, maxNameLines: 2),
+      context.ui.spacing.gap(AppSpacing.xs),
+      AppText.raw(
+        color.code,
+        type: AppTextType.bodySmall,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      if (color.hexCode != null) ...[
+        context.ui.spacing.gap(AppSpacing.xs),
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: AppText.raw(
+            color.hexCode!,
+            type: AppTextType.bodySmall,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+      context.ui.spacing.gap(AppSpacing.sm),
+      ColorStatusBadge(color),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) => AppDataView<CatalogColor>(
     mode: mode,
@@ -150,7 +178,7 @@ class ColorsTableSection extends StatelessWidget {
       addAction: addAction,
     ),
     cardBuilder: (context, color) => _card(context, color, AppIconSize.lg),
-    gridItemBuilder: (context, color) => _card(context, color, AppIconSize.xl),
+    gridItemBuilder: (context, color) => _gridItem(context, color),
     selectedIds: selectedIds,
     onSelectionChanged: onSelectionChanged,
     rowActionsBuilder: (_, color) => CrudRowActions(
