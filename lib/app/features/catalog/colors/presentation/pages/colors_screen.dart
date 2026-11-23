@@ -162,15 +162,27 @@ class ColorsScreen extends StatelessWidget {
                               deleteMessageKey: ColorsKeys.bulkDeleteMessage,
                               onActivate: () async {
                                 final result = await cubit.bulkActivate(selectedColors);
-                                await BulkResultDialog.show(context, result, itemLabel: (color) => color.name);
+                                await BulkResultDialog.show(
+                                  context,
+                                  result,
+                                  itemLabel: (color) => color.name,
+                                );
                               },
                               onDeactivate: () async {
                                 final result = await cubit.bulkDeactivate(selectedColors);
-                                await BulkResultDialog.show(context, result, itemLabel: (color) => color.name);
+                                await BulkResultDialog.show(
+                                  context,
+                                  result,
+                                  itemLabel: (color) => color.name,
+                                );
                               },
                               onDelete: () async {
                                 final result = await cubit.bulkDelete(selectedColors);
-                                await BulkResultDialog.show(context, result, itemLabel: (color) => color.name);
+                                await BulkResultDialog.show(
+                                  context,
+                                  result,
+                                  itemLabel: (color) => color.name,
+                                );
                               },
                             ),
                           ),

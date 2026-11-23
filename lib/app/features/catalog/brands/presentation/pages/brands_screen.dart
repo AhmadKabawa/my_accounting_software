@@ -181,15 +181,27 @@ class BrandsScreen extends StatelessWidget {
                                       deleteMessageKey: BrandsKeys.bulkDeleteMessage,
                                       onActivate: () async {
                                         final result = await cubit.bulkActivate(selectedBrands);
-                                        await BulkResultDialog.show(context, result, itemLabel: (brand) => brand.name);
+                                        await BulkResultDialog.show(
+                                          context,
+                                          result,
+                                          itemLabel: (brand) => brand.name,
+                                        );
                                       },
                                       onDeactivate: () async {
                                         final result = await cubit.bulkDeactivate(selectedBrands);
-                                        await BulkResultDialog.show(context, result, itemLabel: (brand) => brand.name);
+                                        await BulkResultDialog.show(
+                                          context,
+                                          result,
+                                          itemLabel: (brand) => brand.name,
+                                        );
                                       },
                                       onDelete: () async {
                                         final result = await cubit.bulkDelete(selectedBrands);
-                                        await BulkResultDialog.show(context, result, itemLabel: (brand) => brand.name);
+                                        await BulkResultDialog.show(
+                                          context,
+                                          result,
+                                          itemLabel: (brand) => brand.name,
+                                        );
                                       },
                                     ),
                                   ),

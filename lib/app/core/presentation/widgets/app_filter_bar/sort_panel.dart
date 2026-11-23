@@ -25,7 +25,12 @@ class FilterBarSort {
 
 /// Updates an existing criterion or adds one if capacity remains; never drops
 /// an older criterion or removes a sort when its direction is pressed.
-List<FilterBarSort> toggleSort(List<FilterBarSort> current, String key, bool ascending, {int maxSorts = 2}) {
+List<FilterBarSort> toggleSort(
+  List<FilterBarSort> current,
+  String key,
+  bool ascending, {
+  int maxSorts = 2,
+}) {
   if (maxSorts < 1 || current.length > maxSorts) return current;
   final next = current.toList();
   final index = next.indexWhere((sort) => sort.key == key);
@@ -40,7 +45,13 @@ List<FilterBarSort> toggleSort(List<FilterBarSort> current, String key, bool asc
 
 /// Two-level server sort editor. The supplied [sorts] always drives the UI.
 class SortPanel extends StatelessWidget {
-  const SortPanel({super.key, required this.options, required this.sorts, required this.onChanged, this.maxSorts = 2});
+  const SortPanel({
+    super.key,
+    required this.options,
+    required this.sorts,
+    required this.onChanged,
+    this.maxSorts = 2,
+  });
   static const _none = '__none__';
   final List<FilterBarSortOption> options;
   final List<FilterBarSort> sorts;
@@ -104,7 +115,9 @@ class SortPanel extends StatelessWidget {
               Padding(
                 padding: context.ui.padding.only(top: AppSpacing.xs),
                 child: AppText(
-                  duplicate ? CatalogUiKeys.sortFieldAlreadySelected : CatalogUiKeys.sortLimitExceeded,
+                  duplicate
+                      ? CatalogUiKeys.sortFieldAlreadySelected
+                      : CatalogUiKeys.sortLimitExceeded,
                   type: AppTextType.bodySmall,
                   color: context.ui.theme.colors.error,
                 ),
@@ -122,8 +135,11 @@ class SortPanel extends StatelessWidget {
     final items = <DropdownMenuItem<String>>[
       if (allowNone) DropdownMenuItem(value: _none, child: AppText(CatalogUiKeys.none)),
       for (final option in options)
-        DropdownMenuItem(value: option.key, enabled: option.key != primaryKey && option.key != secondaryKey,
-          child: AppText(option.label)),
+        DropdownMenuItem(
+          value: option.key,
+          enabled: option.key != primaryKey && option.key != secondaryKey,
+          child: AppText(option.label),
+        ),
     ];
     final value = selected != null && items.any((item) => item.value == selected)
         ? selected : (allowNone ? _none : null);
