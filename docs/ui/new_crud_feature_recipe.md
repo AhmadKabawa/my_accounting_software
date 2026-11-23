@@ -88,3 +88,13 @@ The exact folders depend on the feature. Keep feature-specific fields, labels, v
 - `AppSwitch`, `AppStatCard`, `AppFilterBar`
 
 Core must receive permissions from the feature; do not hardcode feature permissions such as `Permissions.masterData.manage` in `lib/app/core`.
+
+## Shared list and editor rules
+
+- Build grid cards at natural height. Do not apply a fixed height, `FittedBox`, or `IntrinsicHeight`; `LayoutBuilder` is valid inside tile content, and `EqualHeightRow` equalizes each row.
+- Reuse `AppLogoThumb`: `small` for table/horizontal identity rows and `large` for grid previews. Do not create another feature-specific logo image widget.
+- Configure multi-sort with one row per criterion. The field name opens the menu, the direction icon changes direction, later criteria expose move-up/remove, and the add action is icon-only. Used fields are disabled; there is no move-down action.
+- Keep the sort panel within `AppComponentSize.filterControlWidth` on desktop and fill the phone sheet. Avoid `LayoutBuilder` inside the panel.
+- Every create/edit dialog supplies its real `dirty` state. Desktop form dialogs keep Save/Cancel fixed while the center content scrolls. The mobile sheet disables drag dismissal because it bypasses the unsaved-changes guard.
+- In width-matrix widget tests, use a distinct `ValueKey(width)` when pumping the same stateful widget repeatedly, or dispose it between iterations.
+

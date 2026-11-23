@@ -25,7 +25,7 @@
 ### الألوان
 - أخضر فيروزي واحد (`green-600`) + محايدات بميل أخضر؛ حُذف الأصفر (secondary) والبرتقالي (tertiary) وأي أزرق/تدرجات موروثة.
 - الداكن تصميم مستقل (`AppDarkColors`) بالأسماء نفسها.
-- `surface` = البطاقات والجداول (أبيض/#1C1C1C)، و`scaffoldBackgroundColor` = `background` (#F7F8F7/#171717) عبر معامل `background` الجديد في `buildTheme`.
+- `surface` = البطاقات والجداول (أبيض/#1C1C1C)، و`scaffoldBackgroundColor` = SaaS `canvas` (#F0F2F1/#171717) عبر معامل `background` في `buildTheme`. في الفاتح يبقى `AppLightColors.background` = neutral-50 (#F7F8F7)، بينما `AppLightColors.canvas` = neutral-100 (#F0F2F1) وفق قرار توكنات SaaS في commit 0609028 واختبار `app_colors_test` في commit 1ee9d17.
 - `ColorScheme.outline` = `outline-control` (حدود الحقول، تباين 3:1)، و`outlineVariant` = `outline` (حدود البطاقات والفواصل). `surfaceTint` شفاف.
 - `AppSemanticColors` توسّع: `x/onX/xContainer` لـ success/warning/info، `debit/credit` محايدان، `balancePositive/Negative`، خمس حالات مستندات (`StatusColor`)، 8 سلاسل رسوم (`chartColor(i)`)، و`onSurfaceMuted/outlineStrong/focusRing`.
 - `onSuccess/onWarning/onInfo` في الداكن مشتقة من `background` (غير واردة في ملف التصميم) لضمان تباين ≥ 4.5.
@@ -43,7 +43,7 @@
 |---|---|
 | `AppRadius` | سلم التصميم (4/6/8/12/16)؛ أُضيف `xxl` خارج السلم لشريط pill فقط؛ `full` للشارات |
 | `AppFontSize` | حذف `tiny`، رفع `xs` و`sm` |
-| `AppSpacing` / `AppElevation` / `AppIconSize` / `AppBorderWidth` / `AppComponentSize` / breakpoints (600/1200) / أقصى عرض محتوى (720/1200) | **مطابقة أصلاً لملف التصميم، لم تتغير** (تحقق منها `design_tokens_test`) |
+| `AppSpacing` / `AppElevation` / `AppIconSize` / `AppBorderWidth` / `AppComponentSize` / breakpoints (600/1200) / أقصى عرض محتوى (720/1200) | **مطابقة أصلاً لملف التصميم، لم تتغير** (تحقق منها `design_tokens_test`)؛ أُضيف `AppComponentSize.logoPreview` (72/80/88) لمعاينات الشعارات في الشبكة |
 | `AppGrid` **جديد** | أعمدة/هامش/فاصل: 4/16/12 · 8/24/16 · 12/32/24 |
 | `AppDensity` **جديد** | comfortable (صف 48، رأس 40، حقل 44) وcompact (36/32/36) مع حد لمس 44 على الهاتف |
 | `AppMotionDuration` + `AppMotion` **جديد** | 150/200/300ms، ثلاثة منحنيات، وتصير المدة 0 مع «تقليل الحركة» |

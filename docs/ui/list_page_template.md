@@ -91,3 +91,30 @@ Never use a screen BuildContext after await to show an operation result. Capture
 Multi-sort criteria are kept in priority order and all available fields may be used once. Selecting a field already used by another criterion is disabled; changing a criterion's field preserves its direction; move-up/move-down controls change the priority order. The feature query model and remote order builder must retain the entire list, not truncate after the second criterion. A zero maxSorts means no artificial cap beyond the available fields.
 
 When no view mode has been selected, loading placeholders follow the available content width: cards below the shared compact breakpoint, table otherwise. An explicit saved view mode remains authoritative.
+
+## Grid, sort, and editor invariants
+
+### Grid cards
+- Grid tiles use their natural content height. Do not set a fixed tile height or use `FittedBox` or `IntrinsicHeight`.
+- Tile content may use `LayoutBuilder`; row-height equality is provided by the shared `EqualHeightRow` RenderBox without intrinsic queries.
+- The grid reserves a header only when selection or row actions exist. When neither exists, no empty header row is rendered. Brands and Colors keep their row actions present in both selection states, so toggling selection does not move the tile content.
+
+### Shared logos
+- Use `AppLogoThumb` instead of feature-specific logo/image implementations.
+- Use `AppLogoSize.small` (`AppComponentSize.avatarSmall`) for tables and horizontal rows.
+- Use `AppLogoSize.large` (`AppComponentSize.logoPreview`) for grid previews. The component validates HTTP(S) URLs, contains the image without cropping, and provides the shared fallback.
+
+### Multi-sort panel
+- Each criterion occupies one row: field selector, direction toggle, then move-up and remove actions for criteria after the first.
+- The field name opens the field menu; the direction icon toggles direction without opening the menu.
+- The add control is icon-only. There is no move-down control; moving the next criterion up changes priority.
+- Already-used fields are disabled in the menu. Duplicate and limit messages remain at the bottom of the panel.
+- The panel follows its content up to `AppComponentSize.filterControlWidth`; on a phone it fills the bottom sheet. Do not put `LayoutBuilder` inside the panel because `MenuAnchor` measures intrinsic dimensions.
+
+### Form dialogs
+- Desktop dialogs keep the header and footer outside the scrollable body. Only the middle form content scrolls, so Save and Cancel remain visible on short screens.
+- Every editor must provide its actual `dirty` state to `AppFormDialog`; this is required for the shared close guard.
+- The mobile sheet keeps `enableDrag: false`: dragging would dismiss the route outside the dirty-form guard and conflicts with scrolling the form.
+
+### Widget-test state
+- Do not repeatedly `pumpWidget` the same stateful widget inside a width loop without resetting its state. Give each iteration a distinct `ValueKey(width)`, or pump an empty widget between iterations, so controllers and state are not reused accidentally.
