@@ -315,6 +315,14 @@ void main() {
     },
   );
 
+  // Request count and query progression:
+  // 1) active status changes the initial query (page 1): request 1.
+  // 2) the same status produces an equal query: no request.
+  // 3) primary sort, then three sorts, each change the query: requests 2 and 3.
+  // 4) an empty sort list is ignored; two sorts change the query: request 4.
+  // 5) repeating those same two sorts is equal: no request.
+  // 6) page 2 is request 5; changing to three sorts resets page to 1: request 6.
+  // 7) changing to name/ascending clears thenSorts and resets page 1: request 7.
   test('status and multi-sort public API remains available', () async {
     final repository = FakeBrandsRepository();
     final cubit = _listCubit(repository);
@@ -345,6 +353,10 @@ void main() {
     ]);
 
     await cubit.setSorts([]);
+    await cubit.setSorts([primary, secondary]);
+    expect(repository.queries, hasLength(4));
+    expect(cubit.state.query.thenSorts, [secondary]);
+
     await cubit.setSorts([primary, secondary]);
     expect(repository.queries, hasLength(4));
 
