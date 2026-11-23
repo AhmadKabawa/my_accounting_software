@@ -52,15 +52,10 @@ class BrandsListCubit
   BrandsListEffect buildMutationEffect(PagedMutationKind kind) =>
       BrandsMutatedEffect.fromPaged(kind);
 
-  Future<void> _loadQuery(BrandListQuery query) {
-    applyQuery(query);
-    return load();
-  }
-
   Future<void> setStatus(BrandStatusFilter status) =>
       state.query.status == status
           ? Future.value()
-          : _loadQuery(state.query.withStatus(status));
+          : applyQueryAndLoad(state.query.withStatus(status));
 
   Future<void> setSort({BrandSortField? field, required bool ascending}) =>
       _sort(state.query.withSort(
@@ -72,7 +67,7 @@ class BrandsListCubit
       sorts.isEmpty ? Future.value() : _sort(state.query.withSorts(sorts));
 
   Future<void> _sort(BrandListQuery query) =>
-      state.query == query ? Future.value() : _loadQuery(query);
+      state.query == query ? Future.value() : applyQueryAndLoad(query);
 
   Future<void> activate(int id) async {
     await runMutation(
