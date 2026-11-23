@@ -13,6 +13,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_message/me
 
 enum PagedMutationKind { created, updated, statusChanged, deleted }
 
+const searchDebounceDuration = Duration(milliseconds: 300);
+
 abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     extends BaseCubit<PagedListState<T, Q>, E> {
   PagedListCubit({
@@ -67,7 +69,7 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     _requestVersion++;
     _searchTimer?.cancel();
     emit(state.copyWith(query: state.query.withSearch(value), clearFailure: true));
-    _searchTimer = Timer(const Duration(milliseconds: 300), () {
+    _searchTimer = Timer(searchDebounceDuration, () {
       _searchTimer = null;
       if (!isClosed) load();
     });
