@@ -570,7 +570,9 @@ void main() {
     expect(toggleSort(overLimit, 'fourth', true), overLimit);
   });
 
-  testWidgets('multi-sort panel updates each criterion with one callback', (tester) async {
+  testWidgets(
+    'multi-sort panel updates each criterion with one callback',
+    (tester) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -613,7 +615,9 @@ void main() {
   });
 
 
-  testWidgets('multi-sort selects the primary field and toggles its direction', (tester) async {
+  testWidgets(
+    'multi-sort selects the primary field and toggles its direction',
+    (tester) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -649,7 +653,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('external sort changes rebuild an already-open phone sheet', (tester) async {
+  testWidgets(
+    'external sort changes rebuild an already-open phone sheet',
+    (tester) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -677,7 +683,9 @@ void main() {
     expect(find.text('Descending'), findsOneWidget);
   });
 
-  testWidgets('sort panel prevents duplicate fields and fits 280 logical pixels', (tester) async {
+  testWidgets(
+    'sort panel prevents duplicate fields and fits 280 logical pixels',
+    (tester) async {
     tester.view.physicalSize = const Size(280, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

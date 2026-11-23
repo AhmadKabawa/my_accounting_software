@@ -357,7 +357,9 @@ void main() {
     });
 
 
-    testWidgets('narrow content uses compact pagination on a large screen', (tester) async {
+    testWidgets(
+      'narrow content uses compact pagination on a large screen',
+      (tester) async {
       tester.view.physicalSize = const Size(1400, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -380,7 +382,8 @@ void main() {
       await tester.tap(find.text('Load more'));
       expect(loaded, isTrue);
       expect(tester.takeException(), isNull);
-    });
+      },
+    );
 
     testWidgets('Enter activates and Space selects a table row', (
       tester,

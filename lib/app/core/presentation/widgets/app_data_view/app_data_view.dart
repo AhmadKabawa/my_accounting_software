@@ -168,7 +168,10 @@ class AppDataView<T> extends StatelessWidget {
             if (bounded) Expanded(child: content) else content,
             ?summaryBuilder,
             context.ui.spacing.gap(AppSpacing.sm),
-            _pagination(context, constraints.hasBoundedWidth ? constraints.maxWidth : null),
+            _pagination(
+              context,
+              constraints.hasBoundedWidth ? constraints.maxWidth : null,
+            ),
           ],
         );
       },

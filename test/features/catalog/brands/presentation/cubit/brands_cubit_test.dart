@@ -396,7 +396,9 @@ void main() {
   });
 
 
-  test('bulk delete skips brands with products and deletes eligible brands', () async {
+  test(
+    'bulk delete skips brands with products and deletes eligible brands',
+    () async {
     final repository = FakeBrandsRepository();
     final cubit = _listCubit(repository);
     const used = Brand(
