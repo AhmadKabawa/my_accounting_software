@@ -612,6 +612,43 @@ void main() {
     expect(current.map((sort) => sort.key), ['name', 'status']);
   });
 
+
+  testWidgets('multi-sort selects the primary field and toggles its direction', (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var calls = 0;
+    List<FilterBarSort> current = const [];
+    await tester.pumpWidget(buildTestApp(home: Scaffold(body: FilterBar(
+      onSearchChanged: (_) {},
+      activeFilters: const [],
+      onClearAll: () {},
+      sortOptions: const [
+        FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+        FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+      ],
+      sorts: current,
+      onSortsChanged: (next) {
+        calls++;
+        current = next;
+      },
+    ))));
+    await tester.tap(find.text('Sort by'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(DropdownButtonFormField<String>).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Filters').last);
+    await tester.pumpAndSettle();
+    expect(current, [const FilterBarSort('status', true)]);
+    expect(calls, 1);
+
+    await tester.tap(find.text('Ascending'));
+    await tester.pumpAndSettle();
+    expect(current, [const FilterBarSort('status', false)]);
+    expect(calls, 2);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('external sort changes rebuild an already-open phone sheet', (tester) async {
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
