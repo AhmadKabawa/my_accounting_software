@@ -231,10 +231,10 @@ void main() {
     expect(find.byType(Checkbox), findsNothing);
     await tester.tap(find.byTooltip(CatalogUiKeys.select.en));
     await tester.pumpAndSettle();
-    expect(find.byType(Checkbox), findsNWidgets(2));
+    expect(find.byType(Checkbox), findsNWidgets(3));
 
     repository.statusResult = const Left(_BulkFailure());
-    await tester.tap(find.byType(Checkbox).first);
+    await tester.tap(find.byType(Checkbox).at(1));
     await tester.pumpAndSettle();
     expect(find.text(ColorsKeys.bulkActivate.en), findsOneWidget);
 
@@ -245,7 +245,7 @@ void main() {
     await tester.tap(find.text(CatalogUiKeys.done.en));
     await tester.pumpAndSettle();
 
-    expect(find.byType(Checkbox), findsNWidgets(2));
+    expect(find.byType(Checkbox), findsNWidgets(3));
     expect(
       tester.widgetList<Checkbox>(find.byType(Checkbox)).every(
         (checkbox) => checkbox.value == false,

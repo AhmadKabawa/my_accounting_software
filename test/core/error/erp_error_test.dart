@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/localization/translations/asset_loa
 import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/network/dio/api_client.dart';
 import 'package:accounting_software/app/core/network/dio/dio_service.dart';
+import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
 import 'package:accounting_software/app/core/network/network_info/network_info.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
@@ -42,6 +43,7 @@ ApiClient _clientFor(int status, String body) {
     networkInfoImpl: _Online(),
     languageProvider: _Lang(),
     refreshEndpoint: const AppEndpoint('/auth/v1/token'),
+    requestSendTimeoutCapability: const PlatformRequestSendTimeoutCapability(),
   );
   service.dio.httpClientAdapter = RoutedAdapter(
     (_) async => RoutedAdapter.json(status, body),

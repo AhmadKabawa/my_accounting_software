@@ -80,7 +80,7 @@ void main() {
       final styles = await _styleAt(tester, desktop);
       final scheme = AppTheme.light().colorScheme;
 
-      expect(styles.background, scheme.surfaceContainer);
+      expect(styles.background, scheme.surface);
       expect(styles.selectedBackground, scheme.primaryContainer);
       expect(styles.selectedForeground, scheme.onPrimaryContainer);
       expect(styles.foreground, scheme.onSurfaceVariant);

@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_result.d
 import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/core/network/dio/api_client.dart';
 import 'package:accounting_software/app/core/network/dio/dio_service.dart';
+import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
 import 'package:accounting_software/app/core/network/network_info/network_info.dart';
 import 'package:accounting_software/app/core/storage/secure/token_manager.dart';
@@ -32,6 +33,8 @@ ApiClient clientFor(String body, {int status = 200}) {
     networkInfoImpl: _Online(),
     languageProvider: _Lang(),
     refreshEndpoint: _refreshEndpoint,
+
+    requestSendTimeoutCapability: const PlatformRequestSendTimeoutCapability(),
   );
   service.dio.httpClientAdapter = RoutedAdapter(
     (_) async => RoutedAdapter.json(status, body),
@@ -109,6 +112,8 @@ void main() {
         networkInfoImpl: _Online(),
         languageProvider: _Lang(),
         refreshEndpoint: _refreshEndpoint,
+
+        requestSendTimeoutCapability: const PlatformRequestSendTimeoutCapability(),
       );
       service.dio.httpClientAdapter = RoutedAdapter(
         (o) async => throw DioException(requestOptions: o, type: type),
@@ -153,6 +158,8 @@ void main() {
         networkInfoImpl: _Online(),
         languageProvider: _Lang(),
         refreshEndpoint: _refreshEndpoint,
+
+        requestSendTimeoutCapability: const PlatformRequestSendTimeoutCapability(),
       );
       final adapter = RoutedAdapter((options) async {
         expect(options.headers['Prefer'], 'count=exact');
