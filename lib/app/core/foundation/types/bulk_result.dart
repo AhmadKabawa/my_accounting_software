@@ -7,7 +7,9 @@ class BulkFailure<T> {
 }
 
 class BulkResult<T> {
-  const BulkResult({required this.successCount, required this.failures});
+  BulkResult({required this.successCount, required List<BulkFailure<T>> failures})
+    : failures = List.unmodifiable(failures);
+
   final int successCount;
   final List<BulkFailure<T>> failures;
   int get failureCount => failures.length;

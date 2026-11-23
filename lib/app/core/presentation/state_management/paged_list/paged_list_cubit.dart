@@ -8,7 +8,8 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
-import 'package:accounting_software/app/core/presentation/state_management/paged_list/bulk_result.dart';
+import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
+import 'package:accounting_software/app/core/foundation/base/bulk_mutation_use_case.dart';
 import 'package:accounting_software/app/core/presentation/state_management/list_selection_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
@@ -179,18 +180,11 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     required PagedMutationKind kind,
     required AppKey successMessage,
   }) async {
-    final failures = <BulkFailure<T>>[];
-    var succeeded = 0;
-    for (final item in items) {
-      if (isClosed) break;
-      final result = await action(item);
-      if (isClosed) break;
-      result.fold(
-        (failure) => failures.add(BulkFailure(item: item, reason: failure)),
-        (_) => succeeded++,
-      );
-    }
-    final result = BulkResult<T>(successCount: succeeded, failures: failures);
+    final result = await BulkMutationUseCase<T>().execute(
+      items,
+      action,
+      shouldStop: () => isClosed,
+    );
     if (!isClosed && (succeeded > 0 || failures.isNotEmpty)) {
       await load();
       if (!isClosed) {

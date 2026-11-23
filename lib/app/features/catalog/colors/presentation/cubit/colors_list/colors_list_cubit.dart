@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
-import 'package:accounting_software/app/core/presentation/state_management/paged_list/bulk_result.dart';
+import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
