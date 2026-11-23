@@ -119,8 +119,13 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
 
   /// Updates the query and clears any previously displayed failure.
   @protected
-  Future<void> applyQueryAndLoad(Q query) async {
+  void applyQuery(Q query) {
     emit(state.copyWith(query: query, clearFailure: true));
+  }
+
+  @protected
+  Future<void> applyQueryAndLoad(Q query) async {
+    applyQuery(query);
     await load();
   }
 
