@@ -180,6 +180,7 @@ void main() {
     await Future<void>.delayed(Duration.zero);
     cubit.requests[1].complete(const Right(TestPagedPage([])));
     await deletion;
+    await Future<void>.delayed(Duration.zero);
 
     expect(events, ['flash', 'effect']);
     await effects.cancel();
