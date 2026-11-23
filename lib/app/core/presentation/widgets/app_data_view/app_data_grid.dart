@@ -1,11 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 
-/// Records as tiles in a responsive grid. Each tile's content comes from the
-/// screen's `gridItemBuilder`; selection and actions are added here, so the
-/// builder never repeats them. Natural height inside a page scroll, own
-/// scroll when the height is bounded.
+/// Records as tiles in a responsive grid. Rows size themselves to their
+/// tallest tile; selection and row actions are overlaid so they do not change
+/// the content's available height when selection mode is toggled.
 class AppDataGrid<T> extends StatelessWidget {
   const AppDataGrid({
     super.key,
@@ -29,30 +30,51 @@ class AppDataGrid<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) => GridView.builder(
-        shrinkWrap: !constraints.hasBoundedHeight,
-        physics: constraints.hasBoundedHeight
-            ? null
-            : const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: context.ui.size.width(
-            AppComponentSize.gridTileWidth,
-          ),
-          mainAxisExtent: context.ui.size.height(
-            AppComponentSize.gridTileHeight,
-          ),
-          crossAxisSpacing: context.ui.spacing.md,
-          mainAxisSpacing: context.ui.spacing.md,
-        ),
-        itemCount: rows.length,
-        itemBuilder: (context, index) => _tile(context, rows[index]),
-      ),
+      builder: (context, constraints) {
+        final gap = context.ui.spacing.md;
+        final minTileWidth = context.ui.size.width(
+          AppComponentSize.gridTileWidth,
+        );
+        final columns = math.max(
+          1,
+          ((constraints.maxWidth + gap) / (minTileWidth + gap)).floor(),
+        );
+        final rowCount = (rows.length + columns - 1) ~/ columns;
+        return ListView.separated(
+          shrinkWrap: !constraints.hasBoundedHeight,
+          physics: constraints.hasBoundedHeight
+              ? null
+              : const NeverScrollableScrollPhysics(),
+          itemCount: rowCount,
+          separatorBuilder: (_, _) => SizedBox(height: gap),
+          itemBuilder: (context, rowIndex) {
+            final start = rowIndex * columns;
+            final end = math.min(start + columns, rows.length);
+            return IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var index = start; index < end; index++) ...[
+                    if (index > start) SizedBox(width: gap),
+                    Expanded(child: _tile(context, rows[index])),
+                  ],
+                  for (var empty = end; empty < start + columns; empty++) ...[
+                    if (empty > start) SizedBox(width: gap),
+                    const Expanded(child: SizedBox.shrink()),
+                  ],
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
   Widget _tile(BuildContext context, T row) {
     final id = rowId(row);
     final selected = selectedIds.contains(id);
+    final hitArea = context.ui.size.height(AppComponentSize.hitArea);
     return AppCard(
       padding: AppSpacing.sm,
       selected: selected,
@@ -65,12 +87,16 @@ class AppDataGrid<T> extends StatelessWidget {
           : onRowActivated == null
           ? null
           : () => onRowActivated!(row),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Stack(
         children: [
+          Padding(
+            padding: EdgeInsets.only(top: hitArea),
+            child: gridItemBuilder(context, row),
+          ),
           if (onSelectionChanged != null)
-            Align(
-              alignment: AlignmentDirectional.centerStart,
+            PositionedDirectional(
+              top: 0,
+              start: 0,
               child: Checkbox(
                 value: selected,
                 onChanged: (checked) {
@@ -80,10 +106,10 @@ class AppDataGrid<T> extends StatelessWidget {
                 },
               ),
             ),
-          Expanded(child: gridItemBuilder(context, row)),
           if (rowActionsBuilder != null)
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
+            PositionedDirectional(
+              top: 0,
+              end: 0,
               child: rowActionsBuilder!(context, row),
             ),
         ],

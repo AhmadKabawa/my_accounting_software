@@ -6,16 +6,29 @@ import 'package:accounting_software/app/features/catalog/colors/domain/entity/ca
 
 /// Swatch + name (+ HEX): the primary cell of the table and the card header.
 class ColorIdentity extends StatelessWidget {
-  const ColorIdentity(this.color, {super.key, this.size = AppIconSize.lg});
+  const ColorIdentity(
+    this.color, {
+    super.key,
+    this.size = AppIconSize.lg,
+    this.maxNameLines,
+  });
   final CatalogColor color;
   final AppIconSize size;
+  final int? maxNameLines;
 
   @override
   Widget build(BuildContext context) => Row(
     children: [
       AppColorSwatch(hex: color.hexCode, size: size),
       context.ui.spacing.gap(AppSpacing.smMd, axis: Axis.horizontal),
-      Expanded(child: AppText.raw(color.name, type: AppTextType.titleSmall)),
+      Expanded(
+        child: AppText.raw(
+          color.name,
+          type: AppTextType.titleSmall,
+          maxLines: maxNameLines,
+          overflow: maxNameLines == null ? null : TextOverflow.ellipsis,
+        ),
+      ),
     ],
   );
 }
