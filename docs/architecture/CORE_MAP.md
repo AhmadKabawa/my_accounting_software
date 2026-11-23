@@ -288,3 +288,10 @@
 - `ListStatsBar<F>` and `StatItem<F>` compose responsive, wrapping `AppStatCard` tiles.
 - `ListAddAction` / `ListAddButton` centralize the permission-gated list create action; the feature supplies the permission, label key, and callback.
 - `CrudEmptyState` composes `AppEmptyState` with the empty-vs-no-results distinction and optional create action.
+
+
+### Paged CRUD list state
+- `core/presentation/state_management/paged_list/` contains `PagedListCubit<T,Q,E>`, `PagedListState<T,Q>`, and the presentation exports for the query/result contracts.
+- The query and result contracts live in `core/foundation/types/` so Domain query/result models can implement them without importing Presentation.
+- `PagedListCubit` owns request-version protection, search debounce, paging, refresh/failure retention, deletion page recovery, mutation flashes/effects, and timer cleanup.
+- Feature cubits provide `fetch`, `deleteItem`, optional `beforeDelete`, `deletedMessageKey`, and `buildMutationEffect`. Feature-specific filters and sorting remain in the feature.
