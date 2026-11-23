@@ -835,7 +835,9 @@ void main() {
   ) async {
     tester.view.physicalSize = const Size(280, 900);
     tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.5;
     addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     var changed = const [FilterBarSort('name', true)];
     await tester.pumpWidget(
       buildTestApp(
@@ -923,7 +925,9 @@ void main() {
   ) async {
     tester.view.physicalSize = const Size(280, 900);
     tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.5;
     addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     const initial = [
       FilterBarSort('name', true),
       FilterBarSort('status', false),

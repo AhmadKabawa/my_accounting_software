@@ -118,7 +118,9 @@ void main() {
   testWidgets('does not reserve a header without selection or actions', (
     tester,
   ) async {
-    setScreenSize(tester, const Size(280, 800));
+    tester.view.physicalSize = const Size(280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(
       buildTestApp(
         home: Scaffold(
@@ -128,7 +130,7 @@ void main() {
               rows: const ['Alpha'],
               rowId: (row) => row,
               gridItemBuilder: (_, row) => Text(row),
-              selectedIds: const {},
+              selectedIds: const <Object>{},
             ),
           ),
         ),
