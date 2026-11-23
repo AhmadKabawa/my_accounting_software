@@ -29,6 +29,8 @@ class ListSelectionCubit<ID> extends Cubit<Set<ID>> {
     _emit(next);
   }
 
+  void replace(Set<ID> ids) => _emit(Set<ID>.of(ids));
+
   void clear() {
     if (state.isEmpty) return;
     _emit(<ID>{});

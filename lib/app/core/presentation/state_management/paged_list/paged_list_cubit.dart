@@ -210,11 +210,11 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
   }
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
     _searchTimer?.cancel();
     _searchTimer = null;
     _requestVersion++;
-    selection.close();
-    return super.close();
+    await selection.close();
+    await super.close();
   }
 }
