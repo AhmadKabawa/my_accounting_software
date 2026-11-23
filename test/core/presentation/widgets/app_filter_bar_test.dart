@@ -971,4 +971,65 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  group('multi-sort menu layout', () {
+    Future<void> pumpMulti(
+      WidgetTester tester, {
+      required Size size,
+      double textScale = 1,
+    }) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        buildTestApp(
+          home: MediaQuery(
+            data: MediaQueryData(
+              size: size,
+              textScaler: TextScaler.linear(textScale),
+            ),
+            child: Scaffold(
+              body: FilterBar(
+                onSearchChanged: (_) {},
+                activeFilters: const [],
+                onClearAll: () {},
+                sortOptions: const [
+                  FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                  FilterBarSortOption(
+                    key: 'status',
+                    label: CatalogUiKeys.filters,
+                  ),
+                ],
+                sorts: const [
+                  FilterBarSort('name', true),
+                  FilterBarSort('status', false),
+                ],
+                onSortsChanged: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('opens on desktop without a layout exception', (tester) async {
+      await pumpMulti(tester, size: const Size(1280, 800));
+      await tester.tap(find.text('Sort by'));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byTooltip('Ascending'), findsWidgets);
+    });
+
+    testWidgets('opens on a 280px phone at 1.5x text without overflow', (
+      tester,
+    ) async {
+      await pumpMulti(tester, size: const Size(280, 700), textScale: 1.5);
+      await tester.tap(find.text('Sort by'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BottomSheet), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  });
 }

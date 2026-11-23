@@ -175,7 +175,11 @@ class _AppFormDialogState extends State<AppFormDialog> {
 }
 
 /// Opens the shared form shell as a centered dialog or a full-height mobile
-/// sheet. The PopScope allows safe dismissal and intercepts dirty or busy forms.
+/// sheet. The PopScope intercepts back and barrier taps for dirty or busy forms.
+///
+/// Dragging the sheet down is disabled: a drag ends in `Navigator.pop`, which
+/// bypasses PopScope and would discard unsaved input. The sheet is full height
+/// and its content scrolls, so a drag gesture would fight the form anyway.
 Future<T?> showAppFormDialog<T>(BuildContext context, WidgetBuilder builder) {
   if (context.ui.screen.isMobile) {
     return showModalBottomSheet<T>(
@@ -183,7 +187,7 @@ Future<T?> showAppFormDialog<T>(BuildContext context, WidgetBuilder builder) {
       isScrollControlled: true,
       useSafeArea: true,
       isDismissible: true,
-      enableDrag: true,
+      enableDrag: false,
       builder: (sheetContext) => AnimatedPadding(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.only(

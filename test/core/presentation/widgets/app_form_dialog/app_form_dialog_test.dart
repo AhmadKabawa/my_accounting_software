@@ -162,4 +162,51 @@ void main() {
 
     expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
   });
+
+  group('mobile sheet dismissal', () {
+    testWidgets('dragging a dirty sheet down does not close it', (
+      tester,
+    ) async {
+      await _open(tester, size: _mobile, dirty: true);
+
+      await tester.fling(find.byType(AppFormDialog), const Offset(0, 600), 2000);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BottomSheet), findsOneWidget);
+      expect(_result, isNull);
+    });
+
+    testWidgets('dragging a clean sheet down does not close it either', (
+      tester,
+    ) async {
+      await _open(tester, size: _mobile);
+
+      await tester.fling(find.byType(AppFormDialog), const Offset(0, 600), 2000);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BottomSheet), findsOneWidget);
+    });
+
+    testWidgets('system back on a dirty sheet shows the unsaved prompt', (
+      tester,
+    ) async {
+      await _open(tester, size: _mobile, dirty: true);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
+      expect(find.byType(BottomSheet), findsOneWidget);
+    });
+
+    testWidgets('cancel on a clean sheet closes it', (tester) async {
+      await _open(tester, size: _mobile);
+
+      await tester.tap(_button(CommonKeys.cancel));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(_result, isFalse);
+    });
+  });
 }

@@ -12,6 +12,7 @@ class PagedListState<T, Q extends PagedQuery<Q>> extends Equatable {
     this.result,
     this.failure,
     this.selectionMode = false,
+    this.busyIds = const {},
   });
 
   final PagedListStatus status;
@@ -19,6 +20,9 @@ class PagedListState<T, Q extends PagedQuery<Q>> extends Equatable {
   final PagedResult<T>? result;
   final Failure? failure;
   final bool selectionMode;
+
+  /// Ids of rows with a mutation in flight (for example a status switch).
+  final Set<Object> busyIds;
 
   bool get hasData => result != null;
   bool get isInitialLoading => status == PagedListStatus.loading && !hasData;
@@ -32,14 +36,23 @@ class PagedListState<T, Q extends PagedQuery<Q>> extends Equatable {
     bool clearResult = false,
     bool clearFailure = false,
     bool? selectionMode,
+    Set<Object>? busyIds,
   }) => PagedListState<T, Q>(
     status: status ?? this.status,
     query: query ?? this.query,
     result: clearResult ? null : result ?? this.result,
     failure: clearFailure ? null : failure ?? this.failure,
     selectionMode: selectionMode ?? this.selectionMode,
+    busyIds: busyIds ?? this.busyIds,
   );
 
   @override
-  List<Object?> get props => [status, query, result, failure, selectionMode];
+  List<Object?> get props => [
+    status,
+    query,
+    result,
+    failure,
+    selectionMode,
+    busyIds,
+  ];
 }

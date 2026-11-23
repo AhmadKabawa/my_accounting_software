@@ -10,7 +10,6 @@ import 'package:accounting_software/app/core/presentation/state_management/paged
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_bulk_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_selection_scope.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
@@ -23,11 +22,11 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/cub
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_stats/color_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_effect.dart';
-import 'package:accounting_software/app/features/catalog/colors/presentation/dialogs/color_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/sections/color_stats_section.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/sections/colors_table_section.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/colors_filter_bar.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/colors_list_actions.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 class ColorsScreen extends StatelessWidget {
@@ -82,7 +81,7 @@ class ColorsScreen extends StatelessWidget {
                       final addAction = ListAddAction(
                         labelKey: ColorsKeys.add,
                         permission: Permissions.masterData.manage,
-                        onPressed: () => _edit(context),
+                        onPressed: () => ColorsListActions.edit(context),
                       );
                       return ListPageTemplate(
                         titleKey: ColorsKeys.title,
@@ -163,7 +162,8 @@ class ColorsScreen extends StatelessWidget {
                           selection: cubit.selection,
                           permission: Permissions.masterData.manage,
                           selectionModeActive: state.selectionMode,
-                          onSelectionModeExit: () => cubit.setSelectionMode(false),
+                          onSelectionModeExit: () =>
+                              cubit.setSelectionMode(false),
                           actionsBuilder: (selected) =>
                               CrudBulkActions.statusAndDelete<CatalogColor>(
                                 context: context,
@@ -205,12 +205,18 @@ class ColorsScreen extends StatelessWidget {
                                 failure: failure,
                                 onRetry: cubit.refresh,
                                 addAction: addAction,
-                                onEdit: (color) => _edit(context, color),
+                                onEdit: (color) =>
+                                    ColorsListActions.edit(context, color),
                                 onDuplicate: (color) =>
-                                    _duplicate(context, color),
+                                    ColorsListActions.duplicate(context, color),
                                 onToggleStatus: (color) =>
-                                    _status(context, color),
-                                onDelete: (color) => _delete(context, color),
+                                    ColorsListActions.toggleStatus(
+                                      context,
+                                      color,
+                                    ),
+                                onDelete: (color) =>
+                                    ColorsListActions.delete(context, color),
+                                busyIds: state.busyIds,
                                 selectedIds: selectedIds,
                                 onSelectionChanged: onSelectionChanged,
                               ),
@@ -222,43 +228,4 @@ class ColorsScreen extends StatelessWidget {
       ),
     ),
   );
-
-  Future<void> _edit(BuildContext context, [CatalogColor? color]) async {
-    final saved = await showColorEditor(context, color: color);
-    if (saved == true && context.mounted) {
-      await context.read<ColorsListCubit>().onColorSaved(isNew: color == null);
-    }
-  }
-
-  Future<void> _duplicate(BuildContext context, CatalogColor color) async {
-    final saved = await showColorEditor(context, color: color, duplicate: true);
-    if (saved == true && context.mounted) {
-      await context.read<ColorsListCubit>().onColorSaved(isNew: true);
-    }
-  }
-
-  Future<void> _delete(BuildContext context, CatalogColor color) async {
-    final cubit = context.read<ColorsListCubit>();
-    await CrudConfirmations.delete(
-      context,
-      titleKey: ColorsKeys.deleteTitle,
-      messageKey: ColorsKeys.deleteMessage,
-      messageArgs: {'name': color.name},
-      targetName: color.name,
-      onDelete: () => cubit.delete(color),
-    );
-  }
-
-  Future<void> _status(BuildContext context, CatalogColor color) async {
-    final cubit = context.read<ColorsListCubit>();
-    await CrudConfirmations.status(
-      context,
-      isActive: color.isActive,
-      targetName: color.name,
-      titleKey: ColorsKeys.deactivateTitle,
-      messageKey: ColorsKeys.deactivateMessage,
-      onActivate: () => cubit.activate(color.id),
-      onDeactivate: () => cubit.deactivate(color.id),
-    );
-  }
 }

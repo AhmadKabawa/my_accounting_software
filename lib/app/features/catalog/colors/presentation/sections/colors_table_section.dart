@@ -39,6 +39,7 @@ class ColorsTableSection extends StatelessWidget {
     required this.onDelete,
     required this.selectedIds,
     required this.onSelectionChanged,
+    this.busyIds = const {},
   });
 
   final AppViewMode? mode;
@@ -58,6 +59,9 @@ class ColorsTableSection extends StatelessWidget {
   final ValueChanged<CatalogColor> onDelete;
   final Set<Object> selectedIds;
   final ValueChanged<Set<Object>>? onSelectionChanged;
+
+  /// Colors whose status change is running (the switch shows a spinner).
+  final Set<Object> busyIds;
 
   Widget _card(BuildContext context, CatalogColor color, AppIconSize size) =>
       Column(
@@ -159,6 +163,7 @@ class ColorsTableSection extends StatelessWidget {
         onToggleStatus: onToggleStatus,
         activateLabelKey: ColorsKeys.activate,
         deactivateLabelKey: ColorsKeys.deactivate,
+        isBusy: (color) => busyIds.contains(color.id),
         badgeBuilder: (_, color) => ColorStatusBadge(color),
       ),
     ],
@@ -193,6 +198,7 @@ class ColorsTableSection extends StatelessWidget {
       onToggleStatus: () => onToggleStatus(color),
       activateLabelKey: ColorsKeys.activate,
       deactivateLabelKey: ColorsKeys.deactivate,
+      statusBusy: busyIds.contains(color.id),
     ),
     sortKey: query.sortField.name,
     sortAscending: query.sortAscending,

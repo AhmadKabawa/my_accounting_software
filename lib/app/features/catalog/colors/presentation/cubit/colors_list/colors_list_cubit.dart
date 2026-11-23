@@ -71,6 +71,7 @@ class ColorsListCubit
     kind: PagedMutationKind.statusChanged,
     successMessage: ColorsKeys.statusUpdated,
     flashFailure: true,
+    rowId: id,
   );
 
   Future<Either<Failure, Unit>> deactivate(int id) => runMutation(
@@ -78,6 +79,7 @@ class ColorsListCubit
     kind: PagedMutationKind.statusChanged,
     successMessage: ColorsKeys.statusUpdated,
     flashFailure: true,
+    rowId: id,
   );
 
   Future<BulkResult<CatalogColor>> bulkActivate(

@@ -121,6 +121,10 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     final response = await deleteItem(item);
     if (isClosed || response.isLeft()) return response;
 
+    // The delete has succeeded at the server; report that immediately so a
+    // later refresh failure cannot make the mutation look like a failure.
+    _flashMessages.post(deletedMessageKey, MessageType.success);
+
     final wasLastRowOnLaterPage =
         (state.result?.items.length ?? 0) <= 1 && state.query.page > 1;
     if (wasLastRowOnLaterPage) {
@@ -138,7 +142,6 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     }
     if (isClosed) return response;
 
-    _flashMessages.post(deletedMessageKey, MessageType.success);
     emitEffect(buildMutationEffect(PagedMutationKind.deleted));
     return response;
   }
@@ -168,26 +171,51 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     await load();
   }
 
+  /// Whether a mutation for the row with [id] is still running.
+  bool isBusy(Object id) => state.busyIds.contains(id);
+
+  void _setBusy(Object id, {required bool busy}) {
+    if (isClosed) return;
+    final next = Set<Object>.of(state.busyIds);
+    busy ? next.add(id) : next.remove(id);
+    emit(state.copyWith(busyIds: next));
+  }
+
+  /// Runs a single-row mutation. When [rowId] is given the row is marked busy
+  /// until the list has refreshed, and a repeated request for the same row
+  /// while it is busy is ignored, so a fast double tap cannot run it twice.
   @protected
   Future<Either<Failure, Unit>> runMutation(
     Future<Either<Failure, Unit>> Function() action, {
     required PagedMutationKind kind,
     required AppKey successMessage,
     bool flashFailure = false,
+    Object? rowId,
   }) async {
-    final response = await action();
-    if (isClosed) return response;
-    if (response.isRight()) {
-      publishMutation(kind);
-      await load();
-      if (!isClosed) _flashMessages.post(successMessage, MessageType.success);
-    } else if (flashFailure) {
-      response.fold(
-        (failure) => _flashMessages.post(failure.messageKey, MessageType.error),
-        (_) {},
-      );
+    if (rowId != null) {
+      if (isBusy(rowId)) return const Right(unit);
+      _setBusy(rowId, busy: true);
     }
-    return response;
+    try {
+      final response = await action();
+      if (isClosed) return response;
+      if (response.isRight()) {
+        // Report success at once; a failed refresh is a separate problem and
+        // must not make the mutation look like a failure.
+        _flashMessages.post(successMessage, MessageType.success);
+        publishMutation(kind);
+        await load();
+      } else if (flashFailure) {
+        response.fold(
+          (failure) =>
+              _flashMessages.post(failure.messageKey, MessageType.error),
+          (_) {},
+        );
+      }
+      return response;
+    } finally {
+      if (rowId != null) _setBusy(rowId, busy: false);
+    }
   }
 
   @protected
@@ -203,15 +231,13 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
       shouldStop: () => isClosed,
     );
     if (!isClosed && result.totalCount > 0) {
-      // Finish refreshing before showing success, so the user does not see
-      // a completed message while the list is still displaying its loader.
-      await load();
-      if (!isClosed) {
-        publishMutation(kind);
-        if (result.failureCount == 0) {
-          _flashMessages.post(successMessage, MessageType.success);
-        }
+      // Report a fully successful mutation before the list refresh; a refresh
+      // failure is a separate problem and must not hide the mutation result.
+      if (result.failureCount == 0) {
+        _flashMessages.post(successMessage, MessageType.success);
       }
+      await load();
+      if (!isClosed) publishMutation(kind);
     }
     return result;
   }

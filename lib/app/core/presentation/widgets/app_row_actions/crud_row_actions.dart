@@ -23,6 +23,7 @@ class CrudRowActions extends StatelessWidget {
     this.activateLabelKey,
     this.deactivateLabelKey,
     this.extraOverflow = const [],
+    this.statusBusy = false,
   });
 
   final Permission permission;
@@ -39,6 +40,9 @@ class CrudRowActions extends StatelessWidget {
   final AppKey? activateLabelKey;
   final AppKey? deactivateLabelKey;
   final List<AppRowAction> extraOverflow;
+
+  /// A status change for this row is running: its menu action is disabled.
+  final bool statusBusy;
 
   @override
   Widget build(BuildContext context) => PermissionGate(
@@ -59,7 +63,7 @@ class CrudRowActions extends StatelessWidget {
           AppRowAction(
             icon: isActive! ? AppIcons.block : AppIcons.restore,
             labelKey: isActive! ? deactivateLabelKey! : activateLabelKey!,
-            onPressed: onToggleStatus,
+            onPressed: statusBusy ? null : onToggleStatus,
           ),
         if (onDuplicate != null && duplicateLabelKey != null)
           AppRowAction(
@@ -88,6 +92,7 @@ DataTableColumn<T> crudStatusColumn<T>({
   required Widget Function(BuildContext context, T row) badgeBuilder,
   required AppKey activateLabelKey,
   required AppKey deactivateLabelKey,
+  bool Function(T row)? isBusy,
   String? sortKey,
   DataTableColumnPriority priority = DataTableColumnPriority.secondary,
 }) => DataTableColumn<T>(
@@ -100,6 +105,7 @@ DataTableColumn<T> crudStatusColumn<T>({
     child: AppSwitch(
       value: isActive(row),
       semanticsKey: isActive(row) ? deactivateLabelKey : activateLabelKey,
+      loading: isBusy?.call(row) ?? false,
       onChanged: (_) => onToggleStatus(row),
     ),
   ),

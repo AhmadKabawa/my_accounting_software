@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 
-/// Records as tiles in a responsive grid. Each tile sizes to its own content;
-/// selection and row actions are overlaid so they do not change the content's
-/// available height when selection mode is toggled.
+/// Records as tiles in a responsive grid. Tiles in one grid row share the
+/// height of the tallest one. Selection and row actions sit in a header row
+/// inside the card (never over the content), so they cannot overlap each other
+/// and toggling selection mode does not change a tile's height.
 class AppDataGrid<T> extends StatelessWidget {
   const AppDataGrid({
     super.key,
@@ -52,9 +53,12 @@ class AppDataGrid<T> extends StatelessWidget {
           itemBuilder: (context, rowIndex) {
             final start = rowIndex * columns;
             final end = math.min(start + columns, rows.length).toInt();
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            // A row holds only a few tiles, so measuring its intrinsic height
+            // is cheap; it lets every tile stretch to the tallest one.
+            return IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
                   for (var index = start; index < end; index++) ...[
                     if (index > start) SizedBox(width: gap),
                     Expanded(child: _tile(context, rows[index])),
@@ -63,7 +67,8 @@ class AppDataGrid<T> extends StatelessWidget {
                     if (empty > start) SizedBox(width: gap),
                     const Expanded(child: SizedBox.shrink()),
                   ],
-              ],
+                ],
+              ),
             );
           },
         );
@@ -75,6 +80,7 @@ class AppDataGrid<T> extends StatelessWidget {
     final id = rowId(row);
     final selected = selectedIds.contains(id);
     final hitArea = context.ui.size.height(AppComponentSize.hitArea);
+    final hasHeader = onSelectionChanged != null || rowActionsBuilder != null;
     return AppCard(
       padding: AppSpacing.sm,
       selected: selected,
@@ -87,31 +93,42 @@ class AppDataGrid<T> extends StatelessWidget {
           : onRowActivated == null
           ? null
           : () => onRowActivated!(row),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: hitArea),
-            child: gridItemBuilder(context, row),
-          ),
-          if (onSelectionChanged != null)
-            PositionedDirectional(
-              top: 0,
-              start: 0,
-              child: Checkbox(
-                value: selected,
-                onChanged: (checked) {
-                  final next = Set<Object>.from(selectedIds);
-                  (checked ?? false) ? next.add(id) : next.remove(id);
-                  onSelectionChanged!(next);
-                },
+          if (hasHeader)
+            ConstrainedBox(
+              constraints: BoxConstraints(minHeight: hitArea),
+              child: Row(
+                children: [
+                  if (onSelectionChanged != null)
+                    Checkbox(
+                      value: selected,
+                      onChanged: (checked) {
+                        final next = Set<Object>.from(selectedIds);
+                        (checked ?? false) ? next.add(id) : next.remove(id);
+                        onSelectionChanged!(next);
+                      },
+                    ),
+                  if (rowActionsBuilder != null)
+                    Expanded(
+                      child: Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        // Scales down instead of overlapping the checkbox
+                        // when many actions meet a narrow tile.
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: rowActionsBuilder!(context, row),
+                        ),
+                      ),
+                    )
+                  else
+                    const Spacer(),
+                ],
               ),
             ),
-          if (rowActionsBuilder != null)
-            PositionedDirectional(
-              top: 0,
-              end: 0,
-              child: rowActionsBuilder!(context, row),
-            ),
+          gridItemBuilder(context, row),
         ],
       ),
     );

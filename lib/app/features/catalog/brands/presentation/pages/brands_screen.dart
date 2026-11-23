@@ -9,7 +9,6 @@ import 'package:accounting_software/app/core/presentation/state_management/bloc_
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_bulk_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_selection_scope.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
@@ -25,8 +24,8 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/cub
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brands_table_section.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_stats_bar.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_list_actions.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
@@ -83,7 +82,7 @@ class BrandsScreen extends StatelessWidget {
                       final addAction = ListAddAction(
                         labelKey: BrandsKeys.add,
                         permission: Permissions.masterData.manage,
-                        onPressed: () => _edit(context),
+                        onPressed: () => BrandsListActions.edit(context),
                       );
 
                       return ListPageTemplate(
@@ -200,13 +199,19 @@ class BrandsScreen extends StatelessWidget {
                                 failure: failure,
                                 addAction: addAction,
                                 onDuplicate: (brand) =>
-                                    _duplicate(context, brand),
+                                    BrandsListActions.duplicate(context, brand),
                                 selectedIds: selectedIds,
                                 onSelectionChanged: onSelectionChanged,
-                                onEdit: (brand) => _edit(context, brand),
-                                onDelete: (brand) => _delete(context, brand),
+                                onEdit: (brand) =>
+                                    BrandsListActions.edit(context, brand),
+                                onDelete: (brand) =>
+                                    BrandsListActions.delete(context, brand),
                                 onToggleStatus: (brand) =>
-                                    _status(context, brand),
+                                    BrandsListActions.toggleStatus(
+                                      context,
+                                      brand,
+                                    ),
+                                busyIds: state.busyIds,
                               ),
                         ),
                       );
@@ -216,42 +221,4 @@ class BrandsScreen extends StatelessWidget {
       ),
     ),
   );
-
-  Future<void> _edit(BuildContext context, [Brand? brand]) async {
-    final saved = await showBrandEditor(context, brand: brand);
-    if (saved == true && context.mounted) {
-      await context.read<BrandsListCubit>().onBrandSaved(isNew: brand == null);
-    }
-  }
-
-  Future<void> _duplicate(BuildContext context, Brand brand) async {
-    final saved = await showBrandEditor(context, brand: brand, duplicate: true);
-    if (saved == true && context.mounted) {
-      await context.read<BrandsListCubit>().onBrandSaved(isNew: true);
-    }
-  }
-
-  Future<void> _delete(BuildContext context, Brand brand) async {
-    final cubit = context.read<BrandsListCubit>();
-    await CrudConfirmations.delete(
-      context,
-      titleKey: BrandsKeys.delete,
-      messageKey: BrandsKeys.confirmDelete,
-      targetName: brand.name,
-      onDelete: () => cubit.delete(brand),
-    );
-  }
-
-  Future<void> _status(BuildContext context, Brand brand) async {
-    final cubit = context.read<BrandsListCubit>();
-    await CrudConfirmations.status(
-      context,
-      isActive: brand.isActive,
-      targetName: brand.name,
-      titleKey: BrandsKeys.deactivateTitle,
-      messageKey: BrandsKeys.deactivateMessage,
-      onActivate: () => cubit.activate(brand.id),
-      onDeactivate: () => cubit.deactivate(brand.id),
-    );
-  }
 }

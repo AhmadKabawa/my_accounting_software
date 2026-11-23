@@ -19,6 +19,7 @@ class SortPanel extends StatelessWidget {
     required this.sorts,
     required this.onChanged,
     this.maxSorts = 0,
+    this.width,
   });
 
   final List<FilterBarSortOption> options;
@@ -26,6 +27,10 @@ class SortPanel extends StatelessWidget {
   final ValueChanged<List<FilterBarSort>> onChanged;
 
   final int maxSorts;
+
+  /// A fixed width for a menu (which has no bounded width of its own).
+  /// Null fills the parent, as in a bottom sheet.
+  final double? width;
 
   int get _limit =>
       maxSorts > 0 && maxSorts < options.length ? maxSorts : options.length;
@@ -80,7 +85,7 @@ class SortPanel extends StatelessWidget {
     final limitExceeded = sorts.length > _limit;
     final rowCount = math.max(1, math.min(sorts.length, _limit));
     return SizedBox(
-      width: context.ui.size.width(AppComponentSize.filterControlWidth),
+      width: width,
       child: Padding(
         padding: context.ui.padding.all(AppSpacing.sm),
         child: Column(

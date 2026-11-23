@@ -139,7 +139,12 @@ class _FilterBarState extends State<FilterBar> {
   void didUpdateWidget(covariant FilterBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!listEquals(oldWidget.sorts, widget.sorts)) {
-      _sortsNotifier.value = [...widget.sorts];
+      // An open sheet listens to this notifier; notifying during the build
+      // phase would mark it dirty mid-build, so publish after the frame.
+      final next = [...widget.sorts];
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _sortsNotifier.value = next;
+      });
     }
   }
 
@@ -155,15 +160,17 @@ class _FilterBarState extends State<FilterBar> {
     widget.onSortsChanged?.call(sorts);
   }
 
-  Widget _multiSortPanel() => ValueListenableBuilder<List<FilterBarSort>>(
-    valueListenable: _sortsNotifier,
-    builder: (context, sorts, _) => SortPanel(
-      options: widget.sortOptions,
-      sorts: sorts,
-      maxSorts: widget.maxSorts,
-      onChanged: _onSortsChanged,
-    ),
-  );
+  Widget _multiSortPanel({double? width}) =>
+      ValueListenableBuilder<List<FilterBarSort>>(
+        valueListenable: _sortsNotifier,
+        builder: (context, sorts, _) => SortPanel(
+          options: widget.sortOptions,
+          sorts: sorts,
+          maxSorts: widget.maxSorts,
+          width: width,
+          onChanged: _onSortsChanged,
+        ),
+      );
 
   void _submitSearch() => widget.onSearchChanged(_controller.text);
 
@@ -297,7 +304,11 @@ class _FilterBarState extends State<FilterBar> {
           variant: AppButtonVariant.outlined,
           onPressed: toggle,
         ),
-        children: [_multiSortPanel()],
+        children: [
+          _multiSortPanel(
+            width: context.ui.size.width(AppComponentSize.filterControlWidth),
+          ),
+        ],
       );
     }
     final button = AppButton(

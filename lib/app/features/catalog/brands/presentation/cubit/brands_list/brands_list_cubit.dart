@@ -80,6 +80,7 @@ class BrandsListCubit
       kind: PagedMutationKind.statusChanged,
       successMessage: BrandsKeys.statusUpdated,
       flashFailure: true,
+      rowId: id,
     );
   }
 

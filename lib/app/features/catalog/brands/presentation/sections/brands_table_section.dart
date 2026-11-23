@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
@@ -40,6 +41,7 @@ class BrandsTableSection extends StatelessWidget {
     this.onDuplicate,
     this.selectedIds = const {},
     this.onSelectionChanged,
+    this.busyIds = const {},
   });
 
   final VoidCallback onRetry;
@@ -61,6 +63,9 @@ class BrandsTableSection extends StatelessWidget {
   final ValueChanged<Brand>? onDuplicate;
   final Set<Object> selectedIds;
   final ValueChanged<Set<Object>>? onSelectionChanged;
+
+  /// Brands whose status change is running (the switch shows a spinner).
+  final Set<Object> busyIds;
 
   @override
   Widget build(BuildContext context) {
@@ -91,21 +96,23 @@ class BrandsTableSection extends StatelessWidget {
           priority: DataTableColumnPriority.secondary,
           numeric: true,
           // The header already says "Products": the cell is just the number.
-          cellBuilder: (c, b) => AppText.raw(
-            b.productCount?.toString() ?? '—',
-            color: c.ui.theme.colors.onSurface,
-          ),
+          cellBuilder: (c, b) => b.productCount == null
+              ? const AppText(CommonKeys.noValue)
+              : AppText.raw(
+                  b.productCount.toString(),
+                  color: c.ui.theme.colors.onSurface,
+                ),
         ),
         DataTableColumn(
           labelKey: BrandsKeys.updatedAt,
           sortKey: 'updated',
           priority: DataTableColumnPriority.secondary,
-          cellBuilder: (c, b) => AppText.raw(
-            b.updatedAt == null
-                ? '—'
-                : MaterialLocalizations.of(c).formatShortDate(b.updatedAt!),
-            color: c.ui.theme.colors.onSurfaceVariant,
-          ),
+          cellBuilder: (c, b) => b.updatedAt == null
+              ? const AppText(CommonKeys.noValue)
+              : AppText.raw(
+                  MaterialLocalizations.of(c).formatShortDate(b.updatedAt!),
+                  color: c.ui.theme.colors.onSurfaceVariant,
+                ),
         ),
         crudStatusColumn<Brand>(
           labelKey: BrandsKeys.status,
@@ -115,6 +122,7 @@ class BrandsTableSection extends StatelessWidget {
           onToggleStatus: onToggleStatus,
           activateLabelKey: BrandsKeys.activate,
           deactivateLabelKey: BrandsKeys.deactivate,
+          isBusy: (brand) => busyIds.contains(brand.id),
           badgeBuilder: (_, brand) => BrandStatusBadge(brand),
         ),
       ],
@@ -150,6 +158,7 @@ class BrandsTableSection extends StatelessWidget {
         onToggleStatus: () => onToggleStatus(b),
         activateLabelKey: BrandsKeys.activate,
         deactivateLabelKey: BrandsKeys.deactivate,
+        statusBusy: busyIds.contains(b.id),
       ),
       sortKey: query.sortField.name,
       sortAscending: query.sortAscending,

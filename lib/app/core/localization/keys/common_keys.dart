@@ -17,7 +17,8 @@ enum CommonKeys implements AppKey {
   appName(ar: 'البرنامج المحاسبي', en: 'Accounting Software'),
   comingSoon(ar: 'قريباً', en: 'Coming soon'),
   pageNotFound(ar: 'الصفحة غير موجودة', en: 'Page not found'),
-  goHome(ar: 'العودة للرئيسية', en: 'Go home');
+  goHome(ar: 'العودة للرئيسية', en: 'Go home'),
+  noValue(ar: '—', en: '—');
 
   const CommonKeys({required this.ar, required this.en});
 
