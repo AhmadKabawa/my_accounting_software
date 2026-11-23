@@ -60,7 +60,7 @@ class SortFieldButton extends StatelessWidget {
               ),
               child: Padding(
                 padding: context.ui.padding.symmetric(
-                  horizontal: AppSpacing.sm,
+                  horizontal: AppSpacing.xs,
                 ),
                 child: AppText(
                   selectedLabel,

@@ -298,6 +298,7 @@ class _FilterBarState extends State<FilterBar> {
         );
       }
       return AppDropdownMenu(
+        minWidth: AppComponentSize.none,
         anchorBuilder: (context, toggle, open) => AppButton(
           CatalogUiKeys.sortBy,
           icon: AppIcons.sort,
