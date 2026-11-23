@@ -97,5 +97,6 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
     'code': draft.code.trim(),
     'hex_code': HexColor.normalize(draft.hexCode),
     'sort_order': draft.sortOrder,
+    'is_active': draft.isActive,
   };
 }

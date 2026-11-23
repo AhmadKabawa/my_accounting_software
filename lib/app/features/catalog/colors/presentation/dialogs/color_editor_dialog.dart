@@ -43,6 +43,7 @@ CatalogColorDraft colorDuplicateSeed(BuildContext context, CatalogColor source) 
       code: '${source.code}${ColorsKeys.duplicateCodeSuffix.tr(context: context)}',
       hexCode: source.hexCode,
       sortOrder: source.sortOrder,
+      isActive: source.isActive,
     );
 
 /// Add/edit dialog for one color.
@@ -181,6 +182,7 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
         code: _code.text.trim(),
         hexCode: HexColor.normalize(ColorFieldValidators.withHash(_hex.text)),
         sortOrder: int.tryParse(_sortOrder.text.trim()) ?? 0,
+        isActive: widget.seed?.isActive ?? widget.color?.isActive ?? true,
       ),
     );
   }
