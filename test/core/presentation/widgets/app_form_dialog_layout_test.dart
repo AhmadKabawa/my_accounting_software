@@ -21,9 +21,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('desktop dialog scrolls long form content without overflow', (
-    tester,
-  ) async {
+  testWidgets(
+    'desktop dialog scrolls long form content without overflow',
+    (tester) async {
     setScreenSize(tester, const Size(1440, 900));
     await tester.pumpWidget(
       _appWithDialogContent(const SizedBox(height: 1400)),

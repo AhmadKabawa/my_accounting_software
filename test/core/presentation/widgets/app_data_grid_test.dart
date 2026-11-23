@@ -114,6 +114,32 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+
+  testWidgets('does not reserve a header without selection or actions', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(280, 800));
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 280,
+            child: AppDataGrid<String>(
+              rows: const ['Alpha'],
+              rowId: (row) => row,
+              gridItemBuilder: (_, row) => Text(row),
+              selectedIds: const {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(Checkbox), findsNothing);
+    expect(find.byType(AppRowActions), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('EqualHeightRow lays out equal cells in mirrored RTL order', (
     tester,
   ) async {
