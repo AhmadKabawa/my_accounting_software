@@ -111,9 +111,8 @@ class _AppSidebarState extends State<AppSidebar> {
       final hasActiveChild = item.children.any(
         (c) => AppSidebar.isChildActive(c, widget.activePath),
       );
-      if (i == widget.activeIndex || hasActiveChild) {
+      if (i == widget.activeIndex || hasActiveChild)
         id = AppSidebar.sectionId(item);
-      }
     }
     _setOpen(id, notify: notify);
   }

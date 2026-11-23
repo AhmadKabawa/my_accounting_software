@@ -228,7 +228,15 @@ class AppDataView<T> extends StatelessWidget {
                   checked ? next.add(id) : next.remove(id);
                   onSelectionChanged!(next);
                 },
-          onTap: onRowActivated == null ? null : () => onRowActivated!(row),
+          onTap: onSelectionChanged != null
+              ? () {
+                  final next = Set<Object>.from(selectedIds);
+                  selected ? next.remove(id) : next.add(id);
+                  onSelectionChanged!(next);
+                }
+              : onRowActivated == null
+              ? null
+              : () => onRowActivated!(row),
           actions: rowActionsBuilder?.call(context, row),
         );
       },

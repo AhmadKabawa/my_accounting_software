@@ -443,12 +443,33 @@ class ListPageTemplate extends StatelessWidget {
                   onChanged: config.onViewModeChanged!,
                 )
               : null,
-          searchSuffix: config.onRefresh == null
+          searchSuffix: config.onRefresh == null &&
+                  config.onSelectionModeToggle == null
               ? null
-              : AppIconButton(
-                  AppIcons.refresh,
-                  tooltipKey: CatalogUiKeys.refresh,
-                  onPressed: config.refreshing ? null : config.onRefresh,
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (config.onRefresh != null)
+                      AppIconButton(
+                        AppIcons.refresh,
+                        tooltipKey: CatalogUiKeys.refresh,
+                        onPressed: config.refreshing ? null : config.onRefresh,
+                      ),
+                    if (config.onSelectionModeToggle != null)
+                      Semantics(
+                        selected: config.selectionModeActive,
+                        child: AppIconButton(
+                          AppIcons.checklist,
+                          tooltipKey: config.selectionModeActive
+                              ? CatalogUiKeys.finishSelection
+                              : CatalogUiKeys.select,
+                          variant: config.selectionModeActive
+                              ? AppButtonVariant.primary
+                              : AppButtonVariant.outlined,
+                          onPressed: config.onSelectionModeToggle,
+                        ),
+                      ),
+                  ],
                 ),
         );
       },

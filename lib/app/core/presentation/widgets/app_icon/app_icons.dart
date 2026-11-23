@@ -66,6 +66,7 @@ abstract final class AppIcons {
   static const moveSortUp = AppIconData.material(Icons.keyboard_arrow_up);
   static const moveSortDown = AppIconData.material(Icons.keyboard_arrow_down);
   static const check = AppIconData.material(Icons.check);
+  static const checklist = AppIconData.material(Icons.checklist);
 
   // Row / record actions.
   static const edit = AppIconData.material(Icons.edit_outlined);

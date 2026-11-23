@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
@@ -66,6 +67,9 @@ class BrandsScreen extends StatelessWidget {
                   BlocBuilder<BrandsListCubit, BrandsListState>(
                     builder: (context, state) {
                       final cubit = context.read<BrandsListCubit>();
+                      final canBulk = context.watch<AccessCubit>().can(
+                        Permissions.masterData.manage,
+                      );
                       final page = state.result;
                       final query = state.query;
                       final rows = page?.items ?? const <Brand>[];
@@ -137,6 +141,10 @@ class BrandsScreen extends StatelessWidget {
                               .select,
                           onRefresh: cubit.refresh,
                           refreshing: state.isRefreshing,
+                          selectionModeActive: state.selectionMode,
+                          onSelectionModeToggle: canBulk
+                              ? cubit.toggleSelectionMode
+                              : null,
                         ),
                         addAction: addAction,
                         loadingViewMode: mode,
@@ -153,6 +161,8 @@ class BrandsScreen extends StatelessWidget {
                           rowId: (brand) => brand.id,
                           selection: cubit.selection,
                           permission: Permissions.masterData.manage,
+                          selectionModeActive: state.selectionMode,
+                          onSelectionModeExit: () => cubit.setSelectionMode(false),
                           actionsBuilder: (selected) =>
                               CrudBulkActions.statusAndDelete<Brand>(
                                 context: context,

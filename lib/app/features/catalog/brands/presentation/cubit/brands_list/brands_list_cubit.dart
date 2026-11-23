@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
@@ -20,7 +21,7 @@ class BrandsListCubit
     required GetBrandsUseCase getBrands,
     required SetBrandActiveUseCase setBrandActive,
     required DeleteBrandUseCase deleteBrand,
-    required super.flashMessages,
+    required FlashMessages flashMessages,
   }) : _getBrands = getBrands,
        _setBrandActive = setBrandActive,
        _deleteBrand = deleteBrand,
@@ -29,6 +30,7 @@ class BrandsListCubit
            page: AppConfig.defaultPage,
            pageSize: AppConfig.defaultPageSize,
          ),
+         flashMessages: flashMessages,
        );
 
   final GetBrandsUseCase _getBrands;
@@ -40,13 +42,13 @@ class BrandsListCubit
       _getBrands(query);
 
   @override
-  Future<Either<Failure, Unit>> deleteItem(Brand item) =>
-      _deleteBrand(item.id);
+  Future<Either<Failure, Unit>> deleteItem(Brand brand) =>
+      _deleteBrand(brand.id);
 
   @override
-  Failure? beforeDelete(Brand item) => item.productCount == null
+  Failure? beforeDelete(Brand brand) => brand.productCount == null
       ? const BrandUsageUnknownFailure()
-      : item.hasProducts
+      : brand.hasProducts
       ? const BrandInUseFailure()
       : null;
 

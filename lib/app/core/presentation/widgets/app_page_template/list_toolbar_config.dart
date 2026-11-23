@@ -30,6 +30,8 @@ class ListToolbarConfig {
     this.onViewModeChanged,
     this.onRefresh,
     this.refreshing = false,
+    this.selectionModeActive = false,
+    this.onSelectionModeToggle,
   });
 
   final ValueChanged<String> onSearchChanged;
@@ -60,4 +62,8 @@ class ListToolbarConfig {
   /// Not null = a refresh button right after the search field.
   final VoidCallback? onRefresh;
   final bool refreshing;
+
+  /// Null hides the selection-mode control (the feature has no bulk access).
+  final bool selectionModeActive;
+  final VoidCallback? onSelectionModeToggle;
 }

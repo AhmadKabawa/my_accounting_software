@@ -70,12 +70,15 @@ class TestPagedQuery implements PagedQuery<TestPagedQuery> {
       TestPagedQuery(page: 1, pageSize: pageSize, sort: sort);
 }
 
-PagedResult<int> testPagedPage(List<int> items) => PaginatedResult<int>(
-  items: items,
-  totalCount: items.length,
-  currentPage: 1,
-  totalPages: 1,
-);
+class TestPagedPage extends PaginatedResult<int> {
+  TestPagedPage(List<int> items)
+    : super(
+        items: items,
+        totalCount: items.length,
+        currentPage: 1,
+        totalPages: 1,
+      );
+}
 
 class TestPagedCubit
     extends PagedListCubit<int, TestPagedQuery, PagedMutationKind> {

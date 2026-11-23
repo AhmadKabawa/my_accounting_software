@@ -56,7 +56,15 @@ class AppDataGrid<T> extends StatelessWidget {
     return AppCard(
       padding: AppSpacing.sm,
       selected: selected,
-      onTap: onRowActivated == null ? null : () => onRowActivated!(row),
+      onTap: onSelectionChanged != null
+          ? () {
+              final next = Set<Object>.from(selectedIds);
+              selected ? next.remove(id) : next.add(id);
+              onSelectionChanged!(next);
+            }
+          : onRowActivated == null
+          ? null
+          : () => onRowActivated!(row),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
