@@ -143,3 +143,8 @@
 - These tests and dart format/flutter analyze/flutter test have not been run in this environment (Flutter/Dart SDK unavailable). Runtime status: NOT_VERIFIED.
 
 - test/core/presentation/state_management/paged_list/paged_list_cubit_test.dart additionally verifies that the delete-success flash is emitted immediately after the successful mutation response, before the subsequent list refresh completes. This distinguishes a successful delete from a later refresh failure.
+
+## Platform capabilities
+
+- `test/core/platform/platform_capabilities_test.dart` verifies the native/VM send-timeout capability and the layout-only collapsible-sidebar capability. The browser adapter's `false` send-timeout value is selected by conditional import; it still requires the web CI build for runtime verification.
+- These tests were added in the current change and have not been executed yet. Runtime status: NOT_VERIFIED.
