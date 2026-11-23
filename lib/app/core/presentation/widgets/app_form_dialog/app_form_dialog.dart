@@ -131,26 +131,22 @@ class _AppFormDialogState extends State<AppFormDialog> {
     );
 
     if (isDialog) {
-      // A shrink-wrapped scrollable gives short forms their natural height;
-      // long forms remain bounded by the Dialog's maxHeight and can scroll.
-      return Align(
-        alignment: Alignment.topCenter,
-        heightFactor: 1,
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          children: [
-            header,
-            Padding(
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          header,
+          Flexible(
+            child: SingleChildScrollView(
               padding: ui.padding.symmetric(horizontal: AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: content,
               ),
             ),
-            footer,
-          ],
-        ),
+          ),
+          footer,
+        ],
       );
     }
 
