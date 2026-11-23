@@ -11,6 +11,10 @@
 
 All slots remain available for compatibility. New list screens must use only the preferred slots.
 
+## Statistics card behavior
+
+A statistics card with a filter applies that filter to the list when selected. A card without a filter is informational only: it has no tap behavior, selected state, hover/ripple affordance, or button semantics. For example, a card showing the total inventory value is informational unless a corresponding list filter exists.
+
 ## Existing screens using legacy slots
 
 | Screen | Legacy slots |

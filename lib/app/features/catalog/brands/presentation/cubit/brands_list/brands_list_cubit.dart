@@ -1,4 +1,8 @@
+import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -33,20 +37,22 @@ class BrandsListCubit
   final DeleteBrandUseCase _deleteBrand;
 
   @override
-  fetch(BrandListQuery query) => _getBrands(query);
+  Future<Either<Failure, PagedResult<Brand>>> fetch(BrandListQuery query) =>
+      _getBrands(query);
 
   @override
-  deleteItem(Brand brand) => _deleteBrand(brand.id);
+  Future<Either<Failure, Unit>> deleteItem(Brand brand) =>
+      _deleteBrand(brand.id);
 
   @override
-  beforeDelete(Brand brand) => brand.productCount == null
+  Failure? beforeDelete(Brand brand) => brand.productCount == null
       ? const BrandUsageUnknownFailure()
       : brand.hasProducts
       ? const BrandInUseFailure()
       : null;
 
   @override
-  get deletedMessageKey => BrandsKeys.deleted;
+  AppKey get deletedMessageKey => BrandsKeys.deleted;
 
   @override
   BrandsListEffect buildMutationEffect(PagedMutationKind kind) =>
@@ -59,10 +65,12 @@ class BrandsListCubit
       _loadIfChanged(state.query.withStatus(status));
 
   Future<void> setSort({BrandSortField? field, required bool ascending}) =>
-      _loadIfChanged(state.query.withSort(
-        field: field ?? state.query.sortField,
-        ascending: ascending,
-      ));
+      _loadIfChanged(
+        state.query.withSort(
+          field: field ?? state.query.sortField,
+          ascending: ascending,
+        ),
+      );
 
   Future<void> setSorts(List<BrandSort> sorts) =>
       _loadIfChanged(state.query.withSorts(sorts));
@@ -76,7 +84,7 @@ class BrandsListCubit
     );
   }
 
-  deactivate(int id) => runMutation(
+  Future<Either<Failure, Unit>> deactivate(int id) => runMutation(
     () => _setBrandActive(SetBrandActiveParams(id: id, isActive: false)),
     kind: PagedMutationKind.statusChanged,
     successMessage: BrandsKeys.statusUpdated,

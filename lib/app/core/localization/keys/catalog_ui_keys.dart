@@ -19,6 +19,9 @@ enum CatalogUiKeys implements AppKey {
   loadMore(ar: 'تحميل المزيد', en: 'Load more'),
   rowsPerPage(ar: 'عدد الصفوف', en: 'Rows per page'),
   sortBy(ar: 'ترتيب حسب', en: 'Sort by'),
+  thenBy(ar: 'ثم حسب', en: 'Then by'),
+  none(ar: 'بلا', en: 'None'),
+  sortFieldAlreadySelected(ar: 'لا يمكن اختيار الحقل نفسه في معياري الفرز.', en: 'The same field cannot be selected for both sort criteria.'),
   sortDirection(ar: 'الاتجاه', en: 'Direction'),
   done(ar: 'تم', en: 'Done'),
   paginationLabel(

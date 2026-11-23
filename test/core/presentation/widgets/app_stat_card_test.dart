@@ -111,6 +111,28 @@ void main() {
     expect(taps, 1);
   });
 
+  testWidgets('a card without a filter is informational, not a button', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      const AppStatCard(
+        titleKey: CatalogUiKeys.filters,
+        value: '42',
+        selected: true,
+      ),
+    );
+    expect(tester.widget<AppCard>(find.byType(AppCard)).selected, isFalse);
+    expect(find.byType(InkWell), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.button == true,
+      ),
+      findsNothing,
+    );
+  });
+
+
   testWidgets('renders in every tone, theme and direction without errors', (
     tester,
   ) async {

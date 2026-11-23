@@ -57,10 +57,9 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   bool _settingSlug = false;
 
   bool get _dirty =>
-      _name.text != _initialName ||
-      _slug.text != _initialSlug ||
-      _logo.text != _initialLogo ||
-      _description.text != _initialDescription;
+      _name.text != _initialName || _slug.text != _initialSlug ||
+      _logo.text != _initialLogo || _description.text != _initialDescription ||
+      _active != (widget.brand?.isActive ?? true);
 
   @override
   void initState() {
@@ -70,6 +69,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
     _initialSlug = brand?.slug ?? '';
     _initialLogo = brand?.logo ?? '';
     _initialDescription = brand?.description ?? '';
+    _active = brand?.isActive ?? true;
     _slugTouched = brand != null;
     _name = TextEditingController(text: _initialName);
     _slug = TextEditingController(text: _initialSlug);
@@ -133,8 +133,8 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
         description: _description.text.trim().isEmpty
             ? null
             : _description.text.trim(),
-        // Only a new brand chooses its status here; edits use the list switch.
-        isActive: widget.brand == null ? _active : null,
+        // PATCH sends status only when it changed in the editor.
+        isActive: widget.brand == null || _active != widget.brand!.isActive ? _active : null,
       ),
     );
   }
@@ -190,16 +190,12 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
                           ),
                           BrandLogoSection(logo: _logo, brandName: _name),
                           BrandDetailsSection(description: _description),
-                          if (widget.brand == null) ...[
-                            context.ui.spacing.gap(AppSpacing.md),
-                            AppSwitch(
-                              value: _active,
-                              labelKey: BrandsKeys.activeOnCreate,
-                              onChanged: busy
-                                  ? null
-                                  : (value) => setState(() => _active = value),
-                            ),
-                          ],
+                          context.ui.spacing.gap(AppSpacing.md),
+                          AppSwitch(
+                            value: _active,
+                            labelKey: widget.brand == null ? BrandsKeys.activeOnCreate : BrandsKeys.active,
+                            onChanged: busy ? null : (value) => setState(() => _active = value),
+                          ),
                         ],
                       ),
                     ),

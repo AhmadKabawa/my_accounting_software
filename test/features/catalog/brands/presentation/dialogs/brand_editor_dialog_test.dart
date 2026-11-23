@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/localization/keys/template_keys.dar
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
@@ -345,6 +346,50 @@ void main() {
 
     expect(savedDraft?.logo, isNull);
   });
+
+  testWidgets('editing exposes status and changing it makes the form dirty', (
+    tester,
+  ) async {
+    const brand = Brand(
+      id: 7,
+      name: 'Original',
+      slug: 'stable-slug',
+      isActive: true,
+      productCount: 0,
+    );
+    await _pumpEditor(tester, FakeBrandsRepository(), brand: brand);
+    expect(find.byType(AppSwitch), findsOneWidget);
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    await tester.tap(find.text(BrandsKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
+  });
+
+  testWidgets('editing saves a changed status through the brand PATCH', (
+    tester,
+  ) async {
+    const brand = Brand(
+      id: 7,
+      name: 'Original',
+      slug: 'stable-slug',
+      isActive: true,
+      productCount: 0,
+    );
+    BrandDraft? savedDraft;
+    final repository = FakeBrandsRepository()
+      ..onUpdateBrand = (id, draft) async {
+        savedDraft = draft;
+        return Right(brand);
+      };
+    await _pumpEditor(tester, repository, brand: brand);
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    await tester.tap(find.text(BrandsKeys.save.en));
+    await tester.pumpAndSettle();
+    expect(savedDraft?.isActive, isFalse);
+  });
+
 
   testWidgets('editor renders without overflow at phone, tablet and desktop', (
     tester,

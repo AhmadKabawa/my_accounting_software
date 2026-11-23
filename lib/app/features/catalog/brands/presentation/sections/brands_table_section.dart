@@ -60,14 +60,11 @@ class BrandsTableSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasActiveFilters =
-        query.search.isNotEmpty || query.status != BrandStatusFilter.all;
-
     return AppDataView<Brand>(
       columns: [
         DataTableColumn(
           labelKey: BrandsKeys.brandName,
-          sortKey: query.sortField.name,
+          sortKey: 'name',
           priority: DataTableColumnPriority.primary,
           flex: 3,
           cellBuilder: (_, b) => BrandIdentity(b),
@@ -137,7 +134,7 @@ class BrandsTableSection extends StatelessWidget {
         emptyDescriptionKey: BrandsKeys.emptyDescription,
         noResultsTitleKey: BrandsKeys.noResults,
         noResultsDescriptionKey: BrandsKeys.noResultsDescription,
-        hasActiveFilters: hasActiveFilters,
+        hasActiveFilters: query.hasActiveFilters,
         addAction: addAction,
       ),
       cardBuilder: (_, b) => BrandCard(b),
@@ -164,7 +161,7 @@ class BrandsTableSection extends StatelessWidget {
           ],
         ),
       ),
-      sortKey: 'name',
+      sortKey: query.sortField.name,
       sortAscending: query.sortAscending,
       onSort: onSort,
       page: query.page,
