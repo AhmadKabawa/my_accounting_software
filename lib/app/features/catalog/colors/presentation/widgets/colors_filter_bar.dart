@@ -12,14 +12,14 @@ class ColorsFilterBar extends StatelessWidget {
     required this.onSearchChanged,
     required this.onStatusChanged,
     required this.onClearAll,
-    required this.onSort,
+    this.onSort,
   });
 
   final ColorListQuery query;
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<ColorStatusFilter> onStatusChanged;
   final VoidCallback onClearAll;
-  final void Function(ColorSortField field, bool ascending) onSort;
+  final void Function(ColorSortField field, bool ascending)? onSort;
 
   static AppKey statusLabel(ColorStatusFilter value) => switch (value) {
     ColorStatusFilter.all => ColorsKeys.allStatuses,
@@ -83,7 +83,7 @@ class ColorsFilterBar extends StatelessWidget {
     sortAscending: query.sortAscending,
     onSort: (key, ascending) {
       final field = ColorSortField.tryParse(key);
-      if (field != null) onSort(field, ascending);
+      if (field != null) onSort?.call(field, ascending);
     },
     activeFilters: activeFilters(
       context,
