@@ -43,10 +43,47 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
-  testWidgets('short desktop viewport keeps actions fixed while content scrolls', (
+  testWidgets('800x400 landscape keeps sheet actions fixed while content scrolls', (
     tester,
   ) async {
     setScreenSize(tester, const Size(800, 400));
+    await tester.pumpWidget(
+      _appWithDialogContent(
+        Column(
+          children: [
+            const SizedBox(height: 1200),
+            const Text('End of long form'),
+          ],
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open dialog'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BottomSheet), findsOneWidget);
+    expect(find.byType(SingleChildScrollView), findsOneWidget);
+    final cancel = tester.getRect(find.text('Cancel'));
+    final save = tester.getRect(find.text('Save').last);
+    final endOfForm = find.text('End of long form');
+    expect(cancel.top, greaterThanOrEqualTo(0));
+    expect(save.bottom, lessThanOrEqualTo(400));
+    expect(tester.getRect(endOfForm).top, greaterThan(400));
+
+    await tester.drag(
+      find.byType(SingleChildScrollView),
+      const Offset(0, -1000),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.getRect(endOfForm).bottom, lessThanOrEqualTo(400));
+    expect(tester.getRect(find.text('Save').last), save);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('short desktop dialog keeps actions fixed while content scrolls', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(1200, 400));
     await tester.pumpWidget(
       _appWithDialogContent(
         Column(
@@ -80,6 +117,7 @@ void main() {
     expect(tester.getRect(find.text('Save').last), save);
     expect(tester.takeException(), isNull);
   });
+
 }
 
 Widget _appWithDialogContent(Widget content) => buildTestApp(

@@ -721,7 +721,9 @@ void main() {
     (tester) async {
       tester.view.physicalSize = const Size(280, 800);
       tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.5;
       addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       const initial = [
         FilterBarSort('name', true),
         FilterBarSort('status', false),
@@ -758,11 +760,11 @@ void main() {
         find.text(CatalogUiKeys.sortFieldAlreadySelected.en),
         findsNothing,
       );
-      final disabled = find.ancestor(
-        of: find.text('Filters').last,
-        matching: find.byType(MenuItemButton),
+      final menuItems = tester.widgetList<MenuItemButton>(
+        find.byType(MenuItemButton),
       );
-      expect(tester.widget<MenuItemButton>(disabled).onPressed, isNull);
+      expect(menuItems, hasLength(3));
+      expect(menuItems.elementAt(1).onPressed, isNull);
       expect(changed, initial);
       expect(tester.takeException(), isNull);
     },
@@ -963,7 +965,8 @@ void main() {
       );
       await tester.tap(find.text('Sort by'));
       await tester.pumpAndSettle();
-      expect(find.byType(SortPanel), findsOneWidget);
+      expect(find.byTooltip('Ascending'), findsOneWidget);
+      expect(find.byTooltip('Then by'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.tap(find.byTooltip('Then by'));
       await tester.pumpAndSettle();
@@ -973,7 +976,9 @@ void main() {
         const FilterBarSort('name', true),
         const FilterBarSort('status', true),
       ]);
-      expect(find.byType(SortPanel), findsOneWidget);
+      expect(find.byTooltip('Ascending'), findsNWidgets(2));
+      expect(find.byTooltip('Move sort up'), findsOneWidget);
+      expect(find.byTooltip('Then by'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

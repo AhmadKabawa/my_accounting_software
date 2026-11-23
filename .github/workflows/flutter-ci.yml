@@ -53,5 +53,11 @@ jobs:
           flutter test
           test/core/presentation/widgets/app_searchable_dropdown_test.dart
           test/core/presentation/widgets/app_filter_bar_test.dart
-          test/core/presentation/widgets/app_data_table_test.dart
+          test/core/presentation/widgets/app_data_view_test.dart
+          test/core/presentation/widgets/app_data_view_responsive_test.dart
+          test/core/presentation/widgets/app_data_grid_test.dart
           test/core/presentation/widgets/list_page_template_test.dart
+          test/core/presentation/widgets/app_form_dialog_layout_test.dart
+          test/features/catalog/brands/presentation/widgets/brand_grid_tile_test.dart
+          test/features/catalog/colors/presentation/pages/colors_screen_test.dart
+          test/features/catalog/brands/presentation/pages/brands_screen_actions_test.dart
