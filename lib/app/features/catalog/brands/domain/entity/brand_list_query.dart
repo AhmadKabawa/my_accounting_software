@@ -44,6 +44,7 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
     this.pageSize = 25,
   });
 
+  @override
   final String search;
   final BrandStatusFilter status;
   final BrandSortField sortField;
@@ -57,7 +58,9 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
     BrandSort(sortField, sortAscending),
     ...thenSorts,
   ];
+  @override
   final int page;
+  @override
   final int pageSize;
 
   @override
@@ -77,6 +80,37 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
     status: BrandStatusFilter.all,
     page: 1,
   );
+
+  BrandListQuery withSort({
+    required BrandSortField field,
+    required bool ascending,
+  }) => copyWith(
+    sortField: field,
+    sortAscending: ascending,
+    thenSorts: const [],
+    page: 1,
+  );
+
+  BrandListQuery withSorts(List<BrandSort> values) {
+    if (values.isEmpty) return this;
+    final primary = values.first;
+    return copyWith(
+      sortField: primary.field,
+      sortAscending: primary.ascending,
+      thenSorts: values.skip(1).take(1).toList(),
+      page: 1,
+    );
+  }
+
+  bool hasSameSorts(List<BrandSort> values) {
+    if (values.isEmpty) return false;
+    final primary = values.first;
+    final secondary = values.skip(1).take(1).toList();
+    return sortField == primary.field &&
+        sortAscending == primary.ascending &&
+        thenSorts.length == secondary.length &&
+        (secondary.isEmpty || thenSorts.single == secondary.single);
+  }
 
   BrandListQuery copyWith({
     String? search,
