@@ -82,20 +82,24 @@ class BrandListQuery extends Equatable implements PagedQuery<BrandListQuery> {
   );
 
   BrandListQuery withStatus(BrandStatusFilter value) =>
-      copyWith(status: value, page: 1);
+      status == value ? this : copyWith(status: value, page: 1);
 
   BrandListQuery withSort({
     required BrandSortField field,
     required bool ascending,
-  }) => copyWith(
-    sortField: field,
-    sortAscending: ascending,
-    thenSorts: const [],
-    page: 1,
-  );
+  }) => sortField == field &&
+          sortAscending == ascending &&
+          thenSorts.isEmpty
+      ? this
+      : copyWith(
+          sortField: field,
+          sortAscending: ascending,
+          thenSorts: const [],
+          page: 1,
+        );
 
   BrandListQuery withSorts(List<BrandSort> values) {
-    if (values.isEmpty) return this;
+    if (values.isEmpty || hasSameSorts(values)) return this;
     final primary = values.first;
     return copyWith(
       sortField: primary.field,
