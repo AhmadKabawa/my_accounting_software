@@ -4,7 +4,6 @@ import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.d
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_panel.dart';
 import '../../../helpers/localized_app.dart';
 
 void main() {

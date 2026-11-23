@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_form_dialo
 import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color_draft.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failures.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/create_color_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/update_color_use_case.dart';
