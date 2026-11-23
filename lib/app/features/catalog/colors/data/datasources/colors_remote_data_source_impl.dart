@@ -78,15 +78,15 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
     fromJson: (_) => unit,
   );
 
-  /// The manual order is `sort_order` then name; a header sort orders by that
-  /// one column (name as the tie-breaker keeps pages stable).
+  /// All criteria are applied by PostgREST in priority order. An ID tie-breaker
+  /// keeps page boundaries stable when values are equal.
   String _order(ColorListQuery query) {
-    final direction = query.sortAscending ? 'asc' : 'desc';
-    return switch (query.sortField) {
-      ColorSortField.order => 'sort_order.$direction,name.asc',
-      ColorSortField.name => 'name.$direction',
-      ColorSortField.code => 'code.$direction,name.asc',
-    };
+    final terms = [
+      for (final sort in query.sorts)
+        '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
+    ];
+    final hasName = query.sorts.any((sort) => sort.field == ColorSortField.name);
+    return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
   }
 
   ColorModel _single(List<dynamic> rows) =>
@@ -97,5 +97,6 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
     'code': draft.code.trim(),
     'hex_code': HexColor.normalize(draft.hexCode),
     'sort_order': draft.sortOrder,
+    'is_active': draft.isActive,
   };
 }

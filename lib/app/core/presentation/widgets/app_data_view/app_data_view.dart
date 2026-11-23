@@ -31,10 +31,9 @@ export 'view_mode_switcher.dart';
 /// [gridItemBuilder] (optional; the grid mode exists only when given).
 ///
 /// [mode] is the user's choice (`null` = none yet). With no choice the device
-/// default applies: cards on a phone, table elsewhere. A table that cannot
-/// show two columns in the available width falls back to cards, unless the
-/// user chose the table. The device is read from `ScreenEngine`, the single
-/// source of the screen type.
+/// default follows the available content width when supplied by the page:
+/// cards below [compactContentBreakpoint], table otherwise. Without a local
+/// width, the device default from `ScreenEngine` is used.
 ///
 /// Sorting and paging are server-driven callbacks; nothing is sorted or sliced
 /// locally.
@@ -111,8 +110,19 @@ class AppDataView<T> extends StatelessWidget {
 
   /// The mode actually shown for [context] and the current width.
   /// Public so the owner can mark the matching switcher button.
-  static AppViewMode defaultModeFor(BuildContext context) =>
-      ScreenEngine.isMobile(context) ? AppViewMode.cards : AppViewMode.table;
+  static const double compactContentBreakpoint = 720;
+
+  static AppViewMode defaultModeFor(
+    BuildContext context, {
+    double? availableWidth,
+  }) {
+    if (availableWidth != null) {
+      return availableWidth < compactContentBreakpoint
+          ? AppViewMode.cards
+          : AppViewMode.table;
+    }
+    return ScreenEngine.isMobile(context) ? AppViewMode.cards : AppViewMode.table;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +168,10 @@ class AppDataView<T> extends StatelessWidget {
             if (bounded) Expanded(child: content) else content,
             ?summaryBuilder,
             context.ui.spacing.gap(AppSpacing.sm),
-            _pagination(context),
+            _pagination(
+              context,
+              constraints.hasBoundedWidth ? constraints.maxWidth : null,
+            ),
           ],
         );
       },
@@ -169,7 +182,7 @@ class AppDataView<T> extends StatelessWidget {
     final supported = supportedModes;
     final chosen = mode;
     if (chosen != null && supported.contains(chosen)) return chosen;
-    final fallback = defaultModeFor(context);
+    final fallback = defaultModeFor(context, availableWidth: width);
     if (fallback == AppViewMode.table && columns.length > 1) {
       final fit = AppDataTable.visibleFor<T>(
         context,
@@ -212,7 +225,7 @@ class AppDataView<T> extends StatelessWidget {
     );
   }
 
-  Widget _pagination(BuildContext context) {
+  Widget _pagination(BuildContext context, double? availableWidth) {
     final hasPaging =
         onPageChanged != null ||
         onPageSizeChanged != null ||
@@ -229,7 +242,10 @@ class AppDataView<T> extends StatelessWidget {
       onLoadMore: onLoadMore,
       // Phones page by "load more" only when the owner supports it; otherwise
       // they keep the numbered pages rather than lose paging.
-      mobile: ScreenEngine.isMobile(context) && onLoadMore != null,
+      mobile: onLoadMore != null &&
+          (availableWidth != null
+              ? availableWidth < compactContentBreakpoint
+              : ScreenEngine.isMobile(context)),
     );
   }
 

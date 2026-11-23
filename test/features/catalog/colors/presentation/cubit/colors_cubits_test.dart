@@ -19,7 +19,7 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/cub
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_form/color_form_effect.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_effect.dart';
-import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_state.dart';
+import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 
 import '../../support/fake_colors_repository.dart';
@@ -46,7 +46,7 @@ void main() {
     test('load reaches ready with rows', () async {
       final cubit = _list(FakeColorsRepository());
       await cubit.load();
-      expect(cubit.state.status, ColorsListStatus.ready);
+      expect(cubit.state.status, PagedListStatus.ready);
       expect(cubit.state.result?.items, [sampleColor]);
       await cubit.close();
     });
@@ -56,7 +56,7 @@ void main() {
         ..onGetColors = (_) async => const Left(_Failure());
       final cubit = _list(repository);
       await cubit.load();
-      expect(cubit.state.status, ColorsListStatus.failed);
+      expect(cubit.state.status, PagedListStatus.failed);
       expect(cubit.state.hasData, isFalse);
       expect(cubit.state.failure, isA<_Failure>());
       await cubit.close();
@@ -68,7 +68,7 @@ void main() {
       await cubit.load();
       repository.onGetColors = (_) async => const Left(_Failure());
       await cubit.refresh();
-      expect(cubit.state.status, ColorsListStatus.failed);
+      expect(cubit.state.status, PagedListStatus.failed);
       expect(cubit.state.result?.items, [sampleColor]);
       await cubit.close();
     });
@@ -82,9 +82,15 @@ void main() {
       expect(repository.queries.last.page, 1);
       expect(repository.queries.last.status, ColorStatusFilter.active);
 
-      await cubit.setSort(ColorSortField.code, ascending: false);
+      await cubit.setSorts([
+        const ColorSort(ColorSortField.code, false),
+        const ColorSort(ColorSortField.name, true),
+      ]);
       expect(repository.queries.last.sortField, ColorSortField.code);
       expect(repository.queries.last.sortAscending, isFalse);
+      expect(repository.queries.last.thenSorts, [
+        const ColorSort(ColorSortField.name, true),
+      ]);
       await cubit.close();
     });
 
@@ -94,7 +100,7 @@ void main() {
       await cubit.load();
       final before = repository.queries.length;
       await cubit.setStatus(ColorStatusFilter.all);
-      await cubit.setSort(ColorSortField.order, ascending: true);
+      await cubit.setSorts([const ColorSort(ColorSortField.order, true)]);
       expect(repository.queries.length, before);
       await cubit.close();
     });
@@ -148,7 +154,7 @@ void main() {
       final sub = cubit.effectStream.listen(effects.add);
       await cubit.setPage(2);
 
-      final result = await cubit.delete(7);
+      final result = await cubit.delete(sampleColor);
       await Future<void>.delayed(Duration.zero);
 
       expect(result.isRight(), isTrue);
@@ -160,16 +166,6 @@ void main() {
         ColorsMutationKind.deleted,
       );
       await sub.cancel();
-      await cubit.close();
-    });
-
-    test('view toggle changes only presentation state', () async {
-      final cubit = _list(FakeColorsRepository());
-      expect(cubit.state.isGridView, isFalse);
-      cubit.toggleView();
-      expect(cubit.state.isGridView, isTrue);
-      cubit.toggleView();
-      expect(cubit.state.isGridView, isFalse);
       await cubit.close();
     });
 

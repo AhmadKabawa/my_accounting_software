@@ -10,6 +10,7 @@ import 'package:accounting_software/app/core/localization/keys/template_keys.dar
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
@@ -40,6 +41,8 @@ Future<void> _pumpEditor(
   WidgetTester tester,
   FakeBrandsRepository repository, {
   Brand? brand,
+  BrandDraft? seed,
+  bool duplicate = false,
   ImagePickerPort? picker,
   ValueChanged<bool?>? onResult,
   Size size = const Size(1280, 900),
@@ -71,7 +74,11 @@ Future<void> _pumpEditor(
                       ),
                     ),
                   ],
-                  child: BrandEditorDialog(brand: brand),
+                  child: BrandEditorDialog(
+                    brand: brand,
+                    seed: seed,
+                    duplicate: duplicate,
+                  ),
                 ),
               );
               onResult?.call(result);
@@ -346,6 +353,50 @@ void main() {
     expect(savedDraft?.logo, isNull);
   });
 
+  testWidgets('editing exposes status and changing it makes the form dirty', (
+    tester,
+  ) async {
+    const brand = Brand(
+      id: 7,
+      name: 'Original',
+      slug: 'stable-slug',
+      isActive: true,
+      productCount: 0,
+    );
+    await _pumpEditor(tester, FakeBrandsRepository(), brand: brand);
+    expect(find.byType(AppSwitch), findsOneWidget);
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    await tester.tap(find.text(BrandsKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
+  });
+
+  testWidgets('editing saves a changed status through the brand PATCH', (
+    tester,
+  ) async {
+    const brand = Brand(
+      id: 7,
+      name: 'Original',
+      slug: 'stable-slug',
+      isActive: true,
+      productCount: 0,
+    );
+    BrandDraft? savedDraft;
+    final repository = FakeBrandsRepository()
+      ..onUpdateBrand = (id, draft) async {
+        savedDraft = draft;
+        return Right(brand);
+      };
+    await _pumpEditor(tester, repository, brand: brand);
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    await tester.tap(find.text(BrandsKeys.save.en));
+    await tester.pumpAndSettle();
+    expect(savedDraft?.isActive, isFalse);
+  });
+
+
   testWidgets('editor renders without overflow at phone, tablet and desktop', (
     tester,
   ) async {
@@ -361,4 +412,105 @@ void main() {
       await tester.pumpAndSettle();
     }
   });
+  testWidgets('duplicate seed copies editable fields and builds a new slug', (tester) async {
+    const source = Brand(
+      id: 9,
+      name: 'Original',
+      slug: 'original',
+      logo: 'https://cdn.test/shared.png',
+      description: 'Source description',
+      isActive: false,
+      productCount: 3,
+    );
+    await _pumpEditor(tester, FakeBrandsRepository());
+    final seed = brandDuplicateSeed(tester.element(find.byType(Scaffold).first), source);
+    expect(seed.name, 'Original (Copy)');
+    expect(seed.slug, 'original-copy');
+    expect(seed.description, 'Source description');
+    expect(seed.logo, source.logo);
+    expect(seed.isActive, isFalse);
+  });
+
+  testWidgets('duplicate editor starts clean with name selected and auto-generates slug', (tester) async {
+    const seed = BrandDraft(
+      name: 'Original (Copy)',
+      slug: 'original-copy',
+      logo: 'https://cdn.test/shared.png',
+      description: 'Source description',
+      isActive: false,
+    );
+    await _pumpEditor(tester, FakeBrandsRepository(), seed: seed, duplicate: true);
+    final nameField = tester.widget<TextFormField>(find.byType(TextFormField).at(0));
+    expect(nameField.controller!.selection.baseOffset, 0);
+    expect(nameField.controller!.selection.extentOffset, 'Original (Copy)'.length);
+    expect(tester.widget<EditableText>(find.byType(EditableText).first).autofocus, isTrue);
+    expect(nameField.controller!.text, 'Original (Copy)');
+    expect(tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text, 'original-copy');
+    await tester.enterText(find.byType(TextFormField).at(0), 'New brand');
+    await tester.pump();
+    expect(tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text, 'new-brand');
+  });
+
+  testWidgets('closing an untouched duplicate does not ask for unsaved confirmation', (tester) async {
+    const seed = BrandDraft(
+      name: 'Original (Copy)',
+      slug: 'original-copy',
+      description: 'Source description',
+      isActive: false,
+    );
+    await _pumpEditor(tester, FakeBrandsRepository(), seed: seed, duplicate: true);
+    await tester.tap(find.text(BrandsKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
+    expect(find.byType(AppFormDialog), findsNothing);
+  });
+
+  testWidgets('duplicate saves through create and copies non-unique values', (tester) async {
+    const seed = BrandDraft(
+      name: 'Original (Copy)',
+      slug: 'original-copy',
+      logo: 'https://cdn.test/shared.png',
+      description: 'Source description',
+      isActive: false,
+    );
+    BrandDraft? created;
+    final repository = FakeBrandsRepository()
+      ..onCreateBrand = (draft) async {
+        created = draft;
+        return Right(FakeBrandsRepository.brand);
+      };
+    await _pumpEditor(tester, repository, seed: seed, duplicate: true);
+    await tester.enterText(find.byType(TextFormField).at(0), 'Final copy');
+    await tester.tap(find.text(BrandsKeys.save.en));
+    await tester.pumpAndSettle();
+    expect(created?.name, 'Final copy');
+    expect(created?.slug, 'final-copy');
+    expect(created?.description, 'Source description');
+    expect(created?.logo, 'https://cdn.test/shared.png');
+    expect(created?.isActive, isFalse);
+  });
+
+
+  testWidgets('edit mode shows status switch and saves the changed status in the draft', (tester) async {
+    BrandDraft? updated;
+    final repository = FakeBrandsRepository()
+      ..onUpdateBrand = (id, draft) async {
+        updated = draft;
+        return Right(FakeBrandsRepository.brand);
+      };
+    await _pumpEditor(
+      tester,
+      repository,
+      brand: FakeBrandsRepository.brand,
+    );
+    expect(find.byType(AppSwitch), findsOneWidget);
+    expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isTrue);
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isFalse);
+    await tester.tap(find.text(BrandsKeys.save.en));
+    await tester.pumpAndSettle();
+    expect(updated?.isActive, isFalse);
+  });
+
 }

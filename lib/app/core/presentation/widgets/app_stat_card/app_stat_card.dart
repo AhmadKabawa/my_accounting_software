@@ -55,12 +55,14 @@ class AppStatCard extends StatelessWidget {
     final colors = context.ui.theme.colors;
     final (foreground, background) = AppBadgeStyle.toneColors(context, tone);
     final shown = value ?? _emptyValue;
+    final tappable = !loading && onTap != null;
+    final effectiveSelected = tappable && selected;
     // One merged node: "title value description", tappable when [onTap].
     return MergeSemantics(
       child: AppCard(
         padding: compact ? AppSpacing.sm : AppSpacing.md,
-        selected: selected,
-        onTap: loading ? null : onTap,
+        selected: effectiveSelected,
+        onTap: tappable ? onTap : null,
         child: loading
             ? _loading(context)
             : Row(

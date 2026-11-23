@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
-import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
@@ -8,8 +7,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_view/
 import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/crud_empty_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/crud_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
@@ -39,6 +37,9 @@ class BrandsTableSection extends StatelessWidget {
     required this.onDelete,
     required this.onToggleStatus,
     this.mode,
+    this.onDuplicate,
+    this.selectedIds = const {},
+    this.onSelectionChanged,
   });
 
   final VoidCallback onRetry;
@@ -57,17 +58,17 @@ class BrandsTableSection extends StatelessWidget {
 
   /// The user's chosen view; null = the screen's responsive default.
   final AppViewMode? mode;
+  final ValueChanged<Brand>? onDuplicate;
+  final Set<Object> selectedIds;
+  final ValueChanged<Set<Object>>? onSelectionChanged;
 
   @override
   Widget build(BuildContext context) {
-    final hasActiveFilters =
-        query.search.isNotEmpty || query.status != BrandStatusFilter.all;
-
     return AppDataView<Brand>(
       columns: [
         DataTableColumn(
           labelKey: BrandsKeys.brandName,
-          sortKey: query.sortField.name,
+          sortKey: 'name',
           priority: DataTableColumnPriority.primary,
           flex: 3,
           cellBuilder: (_, b) => BrandIdentity(b),
@@ -106,27 +107,22 @@ class BrandsTableSection extends StatelessWidget {
             color: c.ui.theme.colors.onSurfaceVariant,
           ),
         ),
-        DataTableColumn(
+        crudStatusColumn<Brand>(
           labelKey: BrandsKeys.status,
           sortKey: 'status',
-          priority: DataTableColumnPriority.secondary,
-          // A switch for who may manage brands; a plain badge for everyone else.
-          cellBuilder: (_, b) => PermissionGate(
-            permission: Permissions.masterData.manage,
-            fallback: BrandStatusBadge(b),
-            child: AppSwitch(
-              value: b.isActive,
-              semanticsKey: b.isActive
-                  ? BrandsKeys.deactivate
-                  : BrandsKeys.activate,
-              onChanged: (_) => onToggleStatus(b),
-            ),
-          ),
+          permission: Permissions.masterData.manage,
+          isActive: (brand) => brand.isActive,
+          onToggleStatus: onToggleStatus,
+          activateLabelKey: BrandsKeys.activate,
+          deactivateLabelKey: BrandsKeys.deactivate,
+          badgeBuilder: (_, brand) => BrandStatusBadge(brand),
         ),
       ],
       mode: mode,
       rows: rows,
       rowId: (b) => b.id,
+      selectedIds: selectedIds,
+      onSelectionChanged: onSelectionChanged,
       loading: loading,
       refreshing: refreshing,
       errorKey: failure?.messageKey,
@@ -137,34 +133,25 @@ class BrandsTableSection extends StatelessWidget {
         emptyDescriptionKey: BrandsKeys.emptyDescription,
         noResultsTitleKey: BrandsKeys.noResults,
         noResultsDescriptionKey: BrandsKeys.noResultsDescription,
-        hasActiveFilters: hasActiveFilters,
+        hasActiveFilters: query.hasActiveFilters,
         addAction: addAction,
       ),
       cardBuilder: (_, b) => BrandCard(b),
       gridItemBuilder: (_, b) => BrandGridTile(b),
-      rowActionsBuilder: (c, b) => PermissionGate(
+      rowActionsBuilder: (_, b) => CrudRowActions(
         permission: Permissions.masterData.manage,
-        child: AppRowActions(
-          primary: [
-            AppRowAction(
-              icon: AppIcons.edit,
-              labelKey: BrandsKeys.edit,
-              onPressed: () => onEdit(b),
-            ),
-          ],
-          // Status is the switch in its column; delete lives in the menu and is
-          // disabled (not hidden) while the brand still has products.
-          overflow: [
-            AppRowAction(
-              icon: AppIcons.delete,
-              labelKey: BrandsKeys.delete,
-              destructive: true,
-              onPressed: b.canDelete ? () => onDelete(b) : null,
-            ),
-          ],
-        ),
+        editLabelKey: BrandsKeys.edit,
+        onEdit: () => onEdit(b),
+        deleteLabelKey: BrandsKeys.delete,
+        onDelete: b.canDelete ? () => onDelete(b) : null,
+        duplicateLabelKey: onDuplicate == null ? null : BrandsKeys.duplicate,
+        onDuplicate: onDuplicate == null ? null : () => onDuplicate!(b),
+        isActive: b.isActive,
+        onToggleStatus: () => onToggleStatus(b),
+        activateLabelKey: BrandsKeys.activate,
+        deactivateLabelKey: BrandsKeys.deactivate,
       ),
-      sortKey: 'name',
+      sortKey: query.sortField.name,
       sortAscending: query.sortAscending,
       onSort: onSort,
       page: query.page,

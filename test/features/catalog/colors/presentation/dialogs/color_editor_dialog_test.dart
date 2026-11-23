@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_swatch/app_color_swatch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
+import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
+import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color_draft.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failures.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/create_color_use_case.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/usecase/update_color_use_case.dart';
@@ -19,6 +21,8 @@ Future<void> _pumpEditor(
   WidgetTester tester,
   FakeColorsRepository repository, {
   CatalogColor? color,
+  CatalogColorDraft? seed,
+  bool duplicate = false,
   ValueChanged<bool?>? onResult,
 }) async {
   setScreenSize(tester, const Size(1280, 900));
@@ -36,7 +40,11 @@ Future<void> _pumpEditor(
                     updateColor: UpdateColorUseCase(repository),
                     flashMessages: FlashMessages(),
                   ),
-                  child: ColorEditorDialog(color: color),
+                  child: ColorEditorDialog(
+                    color: duplicate ? null : color,
+                    seed: seed,
+                    duplicate: duplicate,
+                  ),
                 ),
               );
               onResult?.call(result);
@@ -190,4 +198,53 @@ void main() {
     expect(repository.updated.single.$1, 7);
     expect(repository.updated.single.$2.name, 'Dark navy');
   });
+  testWidgets('duplicate seed creates unique name and code and preserves appearance', (tester) async {
+    await _pumpEditor(tester, FakeColorsRepository());
+    final seed = colorDuplicateSeed(tester.element(find.byType(Scaffold).first), sampleColor);
+    expect(seed.name, 'Navy (Copy)');
+    expect(seed.code, 'NAVY-COPY');
+    expect(seed.hexCode, sampleColor.hexCode);
+    expect(seed.sortOrder, sampleColor.sortOrder);
+  });
+
+  testWidgets('duplicate editor starts clean, selects the unique fields and saves via create', (tester) async {
+    const seed = CatalogColorDraft(
+      name: 'Navy (Copy)',
+      code: 'NAVY-COPY',
+      hexCode: '#1E3A8A',
+      sortOrder: 2,
+    );
+    final repository = FakeColorsRepository();
+    await _pumpEditor(tester, repository, seed: seed, duplicate: true);
+    expect(_controller(tester, 0).selection.baseOffset, 0);
+    expect(_controller(tester, 0).selection.extentOffset, 'Navy (Copy)'.length);
+    expect(_controller(tester, 1).selection.baseOffset, 0);
+    expect(_controller(tester, 1).text, 'NAVY-COPY');
+    await tester.tap(find.text(ColorsKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(find.text(ColorsKeys.editorSubtitle.en), findsNothing);
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
+    expect(repository.created, isEmpty);
+  });
+
+  testWidgets('saving a duplicate creates a new color with copied values', (tester) async {
+    const seed = CatalogColorDraft(
+      name: 'Navy (Copy)',
+      code: 'NAVY-COPY',
+      hexCode: '#1E3A8A',
+      sortOrder: 2,
+      isActive: false,
+    );
+    final repository = FakeColorsRepository();
+    await _pumpEditor(tester, repository, seed: seed, duplicate: true);
+    await tester.enterText(find.byType(TextFormField).at(0), 'New navy');
+    await _tapSave(tester);
+    expect(repository.created.single.name, 'New navy');
+    expect(repository.created.single.code, 'NAVY-COPY');
+    expect(repository.created.single.hexCode, '#1E3A8A');
+    expect(repository.created.single.isActive, isFalse);
+    expect(repository.updated, isEmpty);
+  });
+
+
 }

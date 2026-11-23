@@ -15,6 +15,7 @@ class BrandIdentitySection extends StatelessWidget {
     required this.onNameChanged,
     required this.onSlugChanged,
     required this.showSlugHint,
+    this.nameAutofocus = false,
     this.onRegenerateSlug,
   });
 
@@ -23,6 +24,7 @@ class BrandIdentitySection extends StatelessWidget {
   final ValueChanged<String> onNameChanged;
   final ValueChanged<String> onSlugChanged;
   final bool showSlugHint;
+  final bool nameAutofocus;
   final VoidCallback? onRegenerateSlug;
 
   @override
@@ -34,6 +36,7 @@ class BrandIdentitySection extends StatelessWidget {
       AppTextField(
         controller: name,
         labelKey: BrandsKeys.brandName,
+        autofocus: nameAutofocus,
         validator: (v) => BrandFieldValidators.name(v),
         onChanged: onNameChanged,
       ),

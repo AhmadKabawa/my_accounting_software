@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_dropdown_menu/app_dropdown_menu.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_panel.dart';
@@ -5,7 +8,6 @@ export 'package:accounting_software/app/core/presentation/widgets/app_filter_bar
     show FilterBarSortOption, FilterBarSort, toggleSort;
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
@@ -117,7 +119,10 @@ class FilterBar extends StatefulWidget {
 }
 
 class _FilterBarState extends State<FilterBar> {
+  static const double _compactBreakpoint = 720;
+  static const double _minimumSearchWidth = 180;
   late final TextEditingController _ownedController;
+  late final ValueNotifier<List<FilterBarSort>> _sortsNotifier;
   bool _showEditor = false;
 
   TextEditingController get _controller =>
@@ -127,13 +132,38 @@ class _FilterBarState extends State<FilterBar> {
   void initState() {
     super.initState();
     _ownedController = TextEditingController();
+    _sortsNotifier = ValueNotifier([...widget.sorts]);
+  }
+
+  @override
+  void didUpdateWidget(covariant FilterBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!listEquals(oldWidget.sorts, widget.sorts)) {
+      _sortsNotifier.value = [...widget.sorts];
+    }
   }
 
   @override
   void dispose() {
+    _sortsNotifier.dispose();
     _ownedController.dispose();
     super.dispose();
   }
+
+  void _onSortsChanged(List<FilterBarSort> sorts) {
+    _sortsNotifier.value = [...sorts];
+    widget.onSortsChanged?.call(sorts);
+  }
+
+  Widget _multiSortPanel() => ValueListenableBuilder<List<FilterBarSort>>(
+    valueListenable: _sortsNotifier,
+    builder: (context, sorts, _) => SortPanel(
+      options: widget.sortOptions,
+      sorts: sorts,
+      maxSorts: widget.maxSorts,
+      onChanged: _onSortsChanged,
+    ),
+  );
 
   void _submitSearch() => widget.onSearchChanged(_controller.text);
 
@@ -161,9 +191,9 @@ class _FilterBarState extends State<FilterBar> {
 
   void _apply() => widget.onApply?.call();
 
-  Future<void> _openFilters() async {
+  Future<void> _openFilters({required bool compact}) async {
     if (!_hasFilterEditor) return;
-    if (!ScreenEngine.isMobile(context)) {
+    if (!compact) {
       setState(() => _showEditor = !_showEditor);
       return;
     }
@@ -243,17 +273,9 @@ class _FilterBarState extends State<FilterBar> {
     ),
   );
 
-  Widget _sortButton() {
-    final mobile = ScreenEngine.isMobile(context);
+  Widget _sortButton({required bool compact}) {
     if (_multiSort) {
-      final panel = SortPanel(
-        options: widget.sortOptions,
-        sorts: widget.sorts,
-        maxSorts: widget.maxSorts,
-        onChanged: widget.onSortsChanged!,
-      );
-      // A phone keeps the bottom sheet; wider screens get the dropdown.
-      if (mobile) {
+      if (compact) {
         return AppButton(
           CatalogUiKeys.sortBy,
           icon: AppIcons.sort,
@@ -263,7 +285,7 @@ class _FilterBarState extends State<FilterBar> {
             useSafeArea: true,
             builder: (_) => Padding(
               padding: context.ui.padding.all(AppSpacing.md),
-              child: panel,
+              child: _multiSortPanel(),
             ),
           ),
         );
@@ -275,17 +297,17 @@ class _FilterBarState extends State<FilterBar> {
           variant: AppButtonVariant.outlined,
           onPressed: toggle,
         ),
-        children: [panel],
+        children: [_multiSortPanel()],
       );
     }
     final button = AppButton(
       CatalogUiKeys.sortBy,
       icon: AppIcons.sort,
       variant: AppButtonVariant.outlined,
-      onPressed: mobile ? _openSort : () {},
+      onPressed: compact ? _openSort : () {},
     );
     // A phone keeps the bottom sheet; wider screens get a small menu.
-    if (mobile) return button;
+    if (compact) return button;
     return AppDropdownMenu(
       anchorBuilder: (context, toggle, open) => AppButton(
         CatalogUiKeys.sortBy,
@@ -320,41 +342,49 @@ class _FilterBarState extends State<FilterBar> {
     );
   }
 
-  Widget _filtersButton() => AppButton(
+  Widget _filtersButton({required bool compact}) => AppButton(
     CatalogUiKeys.filters,
     icon: AppIcons.filter,
     variant: AppButtonVariant.outlined,
-    onPressed: _openFilters,
+    onPressed: () => _openFilters(compact: compact),
   );
 
   @override
-  Widget build(BuildContext context) {
-    final style = FilterBarStyle(context);
-    final mobile = ScreenEngine.isMobile(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (mobile) _mobileToolbar(context) else _wideToolbar(context, style),
-        if (!mobile && _showEditor && _hasFilterEditor) ...[
-          context.ui.spacing.gap(AppSpacing.sm),
-          if (widget.filterPanelBuilder != null)
-            widget.filterPanelBuilder!(context, () {
-              _apply();
-              setState(() => _showEditor = false);
-            })
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final style = FilterBarStyle(context);
+      final width = constraints.hasBoundedWidth
+          ? constraints.maxWidth
+          : MediaQuery.sizeOf(context).width;
+      final compact = width < _compactBreakpoint;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (compact)
+            _mobileToolbar(context, compact: true)
           else
-            _controlsRow(context, style),
+            _wideToolbar(context, style, width),
+          if (!compact && _showEditor && _hasFilterEditor) ...[
+            context.ui.spacing.gap(AppSpacing.sm),
+            if (widget.filterPanelBuilder != null)
+              widget.filterPanelBuilder!(context, () {
+                _apply();
+                setState(() => _showEditor = false);
+              })
+            else
+              _controlsRow(context, style),
+          ],
+          if (widget.activeFilters.isNotEmpty) ...[
+            context.ui.spacing.gap(AppSpacing.sm),
+            _activeFilters(context, style),
+          ],
         ],
-        if (widget.activeFilters.isNotEmpty) ...[
-          context.ui.spacing.gap(AppSpacing.sm),
-          _activeFilters(context, style),
-        ],
-      ],
-    );
-  }
+      );
+    },
+  );
 
   /// Phone: search; then view switcher, sort and filters; then the action.
-  Widget _mobileToolbar(BuildContext context) => Column(
+  Widget _mobileToolbar(BuildContext context, {required bool compact}) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Row(
@@ -377,8 +407,8 @@ class _FilterBarState extends State<FilterBar> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             ?widget.leading,
-            if (_hasSort) _sortButton(),
-            if (_hasFilterEditor) _filtersButton(),
+            if (_hasSort) _sortButton(compact: compact),
+            if (_hasFilterEditor) _filtersButton(compact: compact),
             ?widget.trailing,
           ],
         ),
@@ -388,10 +418,14 @@ class _FilterBarState extends State<FilterBar> {
 
   /// One wrapping row, in this order: view switcher, search pill, sort,
   /// filters, result count, primary action (at the end).
-  Widget _wideToolbar(BuildContext context, FilterBarStyle style) {
-    final searchWidth = context.ui.size.width(
-      AppComponentSize.searchFieldWidth,
-    );
+  Widget _wideToolbar(BuildContext context, FilterBarStyle style, double availableWidth) {
+    final searchWidth = context.ui.size.width(AppComponentSize.searchFieldWidth);
+    final suffixWidth = widget.searchSuffix == null ? 0.0 :
+        context.ui.size.width(AppComponentSize.hitArea) + style.gap;
+    final searchGroupWidth = math.min(
+      searchWidth,
+      math.max(_minimumSearchWidth, availableWidth - suffixWidth),
+    ).toDouble();
     final count = widget.resultCount;
     return Wrap(
       spacing: style.gap,
@@ -399,21 +433,20 @@ class _FilterBarState extends State<FilterBar> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         ?widget.leading,
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: searchWidth),
-              child: _searchField(),
-            ),
-            if (widget.searchSuffix != null) ...[
-              context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
-              widget.searchSuffix!,
+        SizedBox(
+          width: searchGroupWidth,
+          child: Row(
+            children: [
+              Expanded(child: _searchField()),
+              if (widget.searchSuffix != null) ...[
+                context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
+                widget.searchSuffix!,
+              ],
             ],
-          ],
+          ),
         ),
-        if (_hasSort) _sortButton(),
-        if (_hasFilterEditor) _filtersButton(),
+        if (_hasSort) _sortButton(compact: false),
+        if (_hasFilterEditor) _filtersButton(compact: false),
         if (count != null)
           AppText.raw(
             CatalogUiKeys.resultsCount.tr(

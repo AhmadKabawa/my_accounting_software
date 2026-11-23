@@ -5,8 +5,12 @@ import 'package:flutter/foundation.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
+import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
+import 'package:accounting_software/app/core/foundation/base/bulk_mutation_use_case.dart';
+import 'package:accounting_software/app/core/presentation/state_management/list_selection_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
@@ -24,6 +28,7 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
        super(PagedListState<T, Q>(query: initialQuery));
 
   final FlashMessages _flashMessages;
+  final ListSelectionCubit<Object> selection = ListSelectionCubit<Object>();
   Timer? _searchTimer;
   int _requestVersion = 0;
 
@@ -36,6 +41,7 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
   Failure? beforeDelete(T item) => null;
 
   Future<void> load() async {
+    selection.clear();
     _searchTimer?.cancel();
     _searchTimer = null;
     final version = ++_requestVersion;
@@ -72,6 +78,7 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
   }
 
   void searchChanged(String value) {
+    selection.clear();
     _requestVersion++;
     _searchTimer?.cancel();
     emit(
@@ -130,6 +137,7 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
   /// Updates the query and clears any previously displayed failure.
   @protected
   void applyQuery(Q query) {
+    selection.clear();
     emit(state.copyWith(query: query, clearFailure: true));
   }
 
@@ -173,11 +181,42 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
     return response;
   }
 
+  @protected
+  Future<BulkResult<T>> runBulk({
+    required Iterable<T> items,
+    required Future<Either<Failure, Unit>> Function(T item) action,
+    required PagedMutationKind kind,
+    required AppKey successMessage,
+  }) async {
+    final result = await BulkMutationUseCase<T>().execute(
+      items,
+      action,
+      shouldStop: () => isClosed,
+    );
+    if (!isClosed && result.totalCount > 0) {
+      await load();
+      if (!isClosed) {
+        publishMutation(kind);
+        final message = result.failureCount == 0
+            ? successMessage
+            : result.isFailure
+                ? CatalogUiKeys.bulkFailed
+                : CatalogUiKeys.bulkPartiallyFailed;
+        _flashMessages.post(
+          message,
+          result.failureCount == 0 ? MessageType.success : MessageType.error,
+        );
+      }
+    }
+    return result;
+  }
+
   @override
-  Future<void> close() {
+  Future<void> close() async {
     _searchTimer?.cancel();
     _searchTimer = null;
     _requestVersion++;
-    return super.close();
+    await selection.close();
+    await super.close();
   }
 }

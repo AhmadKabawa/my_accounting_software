@@ -146,10 +146,9 @@ class AppDataTable<T> extends StatelessWidget {
             width: hit,
             child: header
                 ? Checkbox(
-                    value:
-                        rows.isNotEmpty &&
-                        rows.every((r) => selectedIds.contains(rowId(r))),
-                    onChanged: (value) => _toggleAll(value ?? false),
+                    tristate: true,
+                    value: _pageSelectionValue,
+                    onChanged: (_) => _toggleAll(_pageSelectionValue != true),
                   )
                 : Checkbox(
                     value: selectedIds.contains(rowId(row as T)),
@@ -303,6 +302,14 @@ class AppDataTable<T> extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool? get _pageSelectionValue {
+    if (rows.isEmpty) return false;
+    final selectedCount = rows.where((row) => selectedIds.contains(rowId(row))).length;
+    if (selectedCount == 0) return false;
+    if (selectedCount == rows.length) return true;
+    return null;
   }
 
   void _toggle(T row, bool selected) {

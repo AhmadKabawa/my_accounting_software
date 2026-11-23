@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/access/permission.dart';
+import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
+import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+
+class BulkAction {
+  const BulkAction({
+    required this.labelKey,
+    required this.icon,
+    required this.permission,
+    required this.onRun,
+    this.destructive = false,
+    this.confirm,
+  });
+
+  final AppKey labelKey;
+  final AppIconData icon;
+  final Permission permission;
+  final bool destructive;
+  final Future<void> Function() onRun;
+  final Future<bool> Function(BuildContext context, int selectedCount)? confirm;
+}
+
+/// Actions for the selected records. The caller supplies only actions available
+/// to the current feature; each action is additionally permission-gated here.
+class BulkActionBar extends StatefulWidget {
+  const BulkActionBar({
+    super.key,
+    required this.selectedCount,
+    required this.actions,
+    required this.onClear,
+  });
+
+  final int selectedCount;
+  final List<BulkAction> actions;
+  final VoidCallback onClear;
+
+  @override
+  State<BulkActionBar> createState() => _BulkActionBarState();
+}
+
+class _BulkActionBarState extends State<BulkActionBar> {
+  bool _running = false;
+
+  Future<void> _run(BulkAction action) async {
+    if (_running) return;
+    setState(() => _running = true);
+    try {
+      final confirm = action.confirm;
+      if (confirm != null &&
+          !await confirm(context, widget.selectedCount)) {
+        return;
+      }
+      await action.onRun();
+    } finally {
+      if (mounted) setState(() => _running = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.selectedCount == 0) return const SizedBox.shrink();
+    return Container(
+      padding: context.ui.padding.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: context.ui.theme.colors.surfaceContainerHighest,
+        borderRadius: AppSurfaceShape.control.circular(context),
+      ),
+      child: Wrap(
+        spacing: context.ui.spacing.sm,
+        runSpacing: context.ui.spacing.sm,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          AppText.raw(
+            CatalogUiKeys.selectedCount.tr(
+              context: context,
+              namedArgs: {'count': widget.selectedCount.toString()},
+            ),
+            type: AppTextType.labelMedium,
+          ),
+          for (final action in widget.actions)
+            PermissionGate(
+              permission: action.permission,
+              child: AppButton(
+                action.labelKey,
+                icon: action.icon,
+                size: AppButtonSize.medium,
+                variant: action.destructive
+                    ? AppButtonVariant.danger
+                    : AppButtonVariant.outlined,
+                onPressed: _running ? null : () => _run(action),
+              ),
+            ),
+          AppButton(
+            CatalogUiKeys.clearSelection,
+            size: AppButtonSize.small,
+            variant: AppButtonVariant.text,
+            onPressed: _running ? null : widget.onClear,
+          ),
+        ],
+      ),
+    );
+  }
+}
