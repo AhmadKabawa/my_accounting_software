@@ -20,6 +20,7 @@
 | `foundation/` | أنواع ونتائج مشتركة، إعدادات، Logger، UseCases، التحقق، ثوابت الصور | `foundation/types/api_result.dart` |
 | `localization/` | اللغة الحالية، مفاتيح الترجمة، تحميل الترجمات واتجاه النص | `localization/cubit/locale_cubit.dart` |
 | `network/` | Dio وواجهته، Interceptors، الاتصال، الإلغاء، عقد Realtime | `network/api_client_interface.dart` |
+| `platform/` | قدرات المنصة وتنفيذاتها المعزولة بالاستيراد الشرطي | `platform/platform_capabilities.dart` |
 | `presentation/design_system/responsive/` | القياس والـ Tokens وواجهات Responsive | `presentation/design_system/responsive/extension/ui_extension.dart` |
 | `presentation/design_system/theme/` | Light/Dark Theme والألوان والطباعة وThemeCubit | `presentation/design_system/theme/app_theme.dart` |
 | `presentation/state_management/` | BaseCubit وEffects وBlocObserver | `presentation/state_management/base_cubit.dart` |
@@ -37,6 +38,10 @@
 - `KnownPermissionCodes` يسجل الأكواد المعروفة للتطبيق؛ أي كود غير معروف يُهمل وفق العقد. لا توجد أدوار افتراضية أو `SystemRoles`.
 - `PermissionGate` و`AccessContextX` يعتمدان اللقطة الناجحة فقط. `AccessStatusGate` يحجب Shell أثناء التحميل والفشل ويعرض إعادة المحاولة. هذا فحص UX وليس حماية؛ التفويض الحقيقي يفرضه الخادم وRLS.
 - سياسة الذاكرة وإعادة التحميل والمسح موثقة في [ADR-0006](ADR/0006-access-snapshot-lifecycle.md). DI للصلاحيات في `access/di/access_di.dart`، ويُستدعى من Composition Root بعد تسجيل الشبكة.
+
+### Platform capabilities
+- `PlatformCapabilities` (`platform/platform_capabilities.dart`) exposes platform-independent capabilities selected through conditional imports. Browser builds report that Dio request send timeouts are unsupported; `dart:io` builds report support. Network services consume the capability rather than checking `kIsWeb` directly.
+- `test/core/platform/platform_capabilities_test.dart` covers the VM/native capability selection. Browser-specific behavior is supplied by the conditional stub and must be verified by the web build in CI.
 
 ### Dependency Injection
 - `sl` هو `GetIt.instance` (`di/service_locator.dart`).
