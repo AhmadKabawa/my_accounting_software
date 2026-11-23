@@ -18,7 +18,6 @@ class AppDropdownMenu extends StatelessWidget {
     required this.children,
     this.minWidth,
     this.alignment = AlignmentDirectional.bottomStart,
-    this.consumeOutsideTap = false,
   });
 
   /// Builds the anchor; call [toggle] to open or close the menu.
@@ -27,7 +26,6 @@ class AppDropdownMenu extends StatelessWidget {
   final List<Widget> children;
   final AppComponentSize? minWidth;
   final AlignmentGeometry alignment;
-  final bool consumeOutsideTap;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,6 @@ class AppDropdownMenu extends StatelessWidget {
       minWidth ?? AppComponentSize.filterControlWidth,
     );
     return MenuAnchor(
-      consumeOutsideTap: consumeOutsideTap,
       alignmentOffset: Offset(0, context.ui.spacing.xs),
       style: MenuStyle(
         backgroundColor: WidgetStatePropertyAll(colors.surface),
@@ -77,6 +74,7 @@ class AppDropdownItem extends StatelessWidget {
     this.icon,
     this.selected = false,
     this.trailing,
+    this.closeOnActivate = true,
   });
 
   final AppKey label;
@@ -84,6 +82,7 @@ class AppDropdownItem extends StatelessWidget {
   final AppIconData? icon;
   final bool selected;
   final Widget? trailing;
+  final bool closeOnActivate;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +90,15 @@ class AppDropdownItem extends StatelessWidget {
     final colors = context.ui.theme.colors;
     final foreground = selected ? saas.onSelected : colors.onSurface;
     return MenuItemButton(
-      onPressed: onPressed,
+      closeOnActivate: closeOnActivate,
+      onPressed: onPressed == null
+          ? null
+          : () {
+              if (!closeOnActivate) {
+                MenuController.maybeOf(context)?.close();
+              }
+              onPressed!();
+            },
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(
           selected ? saas.selected : Colors.transparent,
