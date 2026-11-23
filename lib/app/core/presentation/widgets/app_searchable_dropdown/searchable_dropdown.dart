@@ -430,8 +430,8 @@ class _SearchableDropdownState<T extends Object>
     if (!context.mounted) return;
     if (selection != null) widget.onChanged(selection.value);
     _resetQuery();
+    if (!mounted || !context.mounted) return;
     final displayLabel = _panelDisplayLabel(context);
-    if (!mounted) return;
     _setText(displayLabel);
     setState(() {});
   }
