@@ -111,7 +111,7 @@ void main() {
     }
   });
 
-  testWidgets('tiles in the same grid row share the tallest tile height', (
+  testWidgets('grid tiles with LayoutBuilder content avoid intrinsic sizing', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1400, 1000);
@@ -129,7 +129,11 @@ void main() {
               mode: AppViewMode.grid,
               selectedIds: selected,
               onSelectionChanged: (next) => setState(() => selected = next),
-              gridItemBuilder: (_, value) => Text(value),
+              gridItemBuilder: (_, value) => LayoutBuilder(
+                builder: (context, constraints) => Text(
+                  value + ' ' + constraints.maxWidth.toString(),
+                ),
+              ),
             ),
           ),
         ),
@@ -139,7 +143,8 @@ void main() {
     expect(tiles, findsNWidgets(2));
     final firstHeight = tester.getSize(tiles.at(0)).height;
     final secondHeight = tester.getSize(tiles.at(1)).height;
-    expect(firstHeight, secondHeight);
+    expect(firstHeight, greaterThan(0));
+    expect(secondHeight, greaterThan(0));
 
     await tester.tap(find.byType(Checkbox).first);
     await tester.pump();

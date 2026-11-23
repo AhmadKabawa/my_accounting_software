@@ -52,9 +52,8 @@ class AppDataGrid<T> extends StatelessWidget {
           itemBuilder: (context, rowIndex) {
             final start = rowIndex * columns;
             final end = math.min(start + columns, rows.length).toInt();
-            return IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   for (var index = start; index < end; index++) ...[
                     if (index > start) SizedBox(width: gap),
@@ -65,8 +64,7 @@ class AppDataGrid<T> extends StatelessWidget {
                     const Expanded(child: SizedBox.shrink()),
                   ],
                 ],
-              ),
-            );
+              );
           },
         );
       },

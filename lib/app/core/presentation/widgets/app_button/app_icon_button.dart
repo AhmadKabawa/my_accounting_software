@@ -60,39 +60,42 @@ class _AppIconButtonState extends State<AppIconButton> {
     final borderColor = visual.borderColor;
     final label = widget.tooltipKey.tr(context: context);
 
-    return Tooltip(
-      message: label,
-      child: Semantics(
-        button: true,
-        enabled: widget.onPressed != null,
-        label: label,
-        excludeSemantics: true,
-        child: SizedBox.square(
-          dimension: styles.touchTarget,
-          child: Material(
-            color: visual.background,
-            shape: RoundedRectangleBorder(
-              borderRadius: visual.radius,
-              side: borderColor == null
-                  ? BorderSide.none
-                  : BorderSide(color: borderColor, width: visual.borderWidth),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: widget.onPressed,
-              onHighlightChanged: (isPressed) =>
-                  setState(() => _pressed = isPressed),
-              child: Center(
-                child: AppIcon.fixed(
-                  widget.icon,
-                  pixelSize: visual.iconSize,
-                  color: widget.color ?? visual.foreground,
-                ),
+    final button = Semantics(
+      button: true,
+      enabled: widget.onPressed != null,
+      label: label,
+      excludeSemantics: true,
+      child: SizedBox.square(
+        dimension: styles.touchTarget,
+        child: Material(
+          color: visual.background,
+          shape: RoundedRectangleBorder(
+            borderRadius: visual.radius,
+            side: borderColor == null
+                ? BorderSide.none
+                : BorderSide(color: borderColor, width: visual.borderWidth),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: widget.onPressed,
+            onHighlightChanged: (isPressed) =>
+                setState(() => _pressed = isPressed),
+            child: Center(
+              child: AppIcon.fixed(
+                widget.icon,
+                pixelSize: visual.iconSize,
+                color: widget.color ?? visual.foreground,
               ),
             ),
           ),
         ),
       ),
     );
+
+    // Tooltip needs an Overlay to display its route. Keep the semantic label
+    // when a surface intentionally has no Navigator/Overlay ancestor.
+    return Overlay.maybeOf(context) == null
+        ? button
+        : Tooltip(message: label, child: button);
   }
 }
