@@ -18,20 +18,45 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/sec
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_field_validators.dart';
 
 /// Opens the color editor and owns the form Cubit lifetime.
-Future<bool?> showColorEditor(BuildContext context, {CatalogColor? color}) =>
-    showAppFormDialog<bool>(
-      context,
-      (_) => BlocProvider(
-        create: (_) => sl<ColorFormCubit>(),
-        child: ColorEditorDialog(color: color),
+Future<bool?> showColorEditor(
+  BuildContext context, {
+  CatalogColor? color,
+  bool duplicate = false,
+}) {
+  final seed = duplicate && color != null ? colorDuplicateSeed(context, color) : null;
+  return showAppFormDialog<bool>(
+    context,
+    (_) => BlocProvider(
+      create: (_) => sl<ColorFormCubit>(),
+      child: ColorEditorDialog(
+        color: duplicate ? null : color,
+        seed: seed,
+        duplicate: duplicate,
       ),
+    ),
+  );
+}
+
+CatalogColorDraft colorDuplicateSeed(BuildContext context, CatalogColor source) =>
+    CatalogColorDraft(
+      name: '${source.name} ${ColorsKeys.duplicateSuffix.tr(context: context)}',
+      code: '${source.code}${ColorsKeys.duplicateCodeSuffix.tr(context: context)}',
+      hexCode: source.hexCode,
+      sortOrder: source.sortOrder,
     );
 
 /// Add/edit dialog for one color.
 class ColorEditorDialog extends StatefulWidget {
-  const ColorEditorDialog({super.key, this.color});
+  const ColorEditorDialog({
+    super.key,
+    this.color,
+    this.seed,
+    this.duplicate = false,
+  }) : assert(!duplicate || (color == null && seed != null));
 
   final CatalogColor? color;
+  final CatalogColorDraft? seed;
+  final bool duplicate;
 
   @override
   State<ColorEditorDialog> createState() => _ColorEditorDialogState();
@@ -69,13 +94,18 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
   void initState() {
     super.initState();
     final color = widget.color;
+    final seed = widget.seed;
     _initial = [
-      color?.name ?? '',
-      color?.code ?? '',
-      color?.hexCode ?? '',
-      color == null ? '0' : '${color.sortOrder}',
+      seed?.name ?? color?.name ?? '',
+      seed?.code ?? color?.code ?? '',
+      seed?.hexCode ?? color?.hexCode ?? '',
+      seed != null ? '${seed.sortOrder}' : color == null ? '0' : '${color.sortOrder}',
     ];
     _name = TextEditingController(text: _initial[0]);
+    if (widget.duplicate) {
+      _name.selection = TextSelection(baseOffset: 0, extentOffset: _name.text.length);
+      _code.selection = TextSelection(baseOffset: 0, extentOffset: _code.text.length);
+    }
     _code = TextEditingController(text: _initial[1]);
     _hex = TextEditingController(text: _initial[2]);
     _sortOrder = TextEditingController(text: _initial[3]);
@@ -170,7 +200,11 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
               }
             },
             child: AppFormDialog(
-              titleKey: widget.color == null ? ColorsKeys.add : ColorsKeys.edit,
+              titleKey: widget.duplicate
+                  ? ColorsKeys.duplicateTitle
+                  : widget.color == null
+                      ? ColorsKeys.add
+                      : ColorsKeys.edit,
               subtitleKey: ColorsKeys.editorSubtitle,
               saveLabelKey: ColorsKeys.save,
               cancelLabelKey: ColorsKeys.cancel,

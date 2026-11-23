@@ -5,7 +5,22 @@ import 'package:accounting_software/app/core/presentation/widgets/app_searchable
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 
-abstract final class ColorsFilterBar {
+class ColorsFilterBar extends StatelessWidget {
+  const ColorsFilterBar({
+    super.key,
+    required this.query,
+    required this.onSearchChanged,
+    required this.onStatusChanged,
+    required this.onClearAll,
+    required this.onSort,
+  });
+
+  final ColorListQuery query;
+  final ValueChanged<String> onSearchChanged;
+  final ValueChanged<ColorStatusFilter> onStatusChanged;
+  final VoidCallback onClearAll;
+  final void Function(ColorSortField field, bool ascending) onSort;
+
   static AppKey statusLabel(ColorStatusFilter value) => switch (value) {
     ColorStatusFilter.all => ColorsKeys.allStatuses,
     ColorStatusFilter.active => ColorsKeys.active,
@@ -56,4 +71,26 @@ abstract final class ColorsFilterBar {
       onChanged: (value) => onStatusChanged(value ?? ColorStatusFilter.all),
     ),
   ];
+
+  @override
+  Widget build(BuildContext context) => FilterBar(
+    searchHintKey: ColorsKeys.searchHint,
+    debounce: Duration.zero,
+    onSearchChanged: onSearchChanged,
+    onClearAll: onClearAll,
+    sortOptions: sortOptions,
+    sortKey: query.sortField.name,
+    sortAscending: query.sortAscending,
+    onSort: (key, ascending) {
+      final field = ColorSortField.tryParse(key);
+      if (field != null) onSort(field, ascending);
+    },
+    activeFilters: activeFilters(
+      context,
+      query,
+      onSearchChanged: onSearchChanged,
+      onStatusChanged: onStatusChanged,
+    ),
+    filterControls: controls(context, query, onStatusChanged: onStatusChanged),
+  );
 }

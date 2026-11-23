@@ -313,7 +313,7 @@ class ColorsScreen extends StatelessWidget {
   Future<void> _status(BuildContext context, CatalogColor color) async {
     final cubit = context.read<ColorsListCubit>();
     if (!color.isActive) {
-      final result = await cubit.activate(color.id);
+      await cubit.activate(color.id);
       return;
     }
     await showConfirmDialog(
