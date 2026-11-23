@@ -24,15 +24,15 @@ class DioService {
     required NetworkInfo networkInfoImpl,
     required LanguageProvider languageProvider,
     required AppEndpoint refreshEndpoint,
+    required RequestSendTimeoutCapability requestSendTimeoutCapability,
   }) {
     _dio = Dio(
       BaseOptions(
         baseUrl: AppConfig.baseUrl,
         connectTimeout: const Duration(milliseconds: AppConfig.connectTimeout),
         receiveTimeout: const Duration(milliseconds: AppConfig.receiveTimeout),
-        // Browser adapters do not support sendTimeout. The capability is
-        // selected through a conditional import in core/platform.
-        sendTimeout: PlatformCapabilities.supportsRequestSendTimeout
+        // The composition root injects the platform adapter capability.
+        sendTimeout: requestSendTimeoutCapability.isSupported
             ? const Duration(milliseconds: AppConfig.sendTimeout)
             : null,
         headers: {

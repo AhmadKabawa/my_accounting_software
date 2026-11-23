@@ -15,6 +15,7 @@ import 'package:accounting_software/app/core/network/dio/dio_service.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
 import 'package:accounting_software/app/core/network/network_info/network_info.dart';
 import 'package:accounting_software/app/core/network/network_info/network_info_impl.dart';
+import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
 import 'package:accounting_software/app/core/storage/secure/secure_storage_service.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/cubit/theme_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
@@ -44,12 +45,16 @@ Future<void> initCoreDI({required AppEndpoint refreshEndpoint}) async {
   sl.registerLazySingleton<CacheManager>(
     () => CacheManager(stringCache: sl<HiveStorageService>()),
   );
+  sl.registerLazySingleton<RequestSendTimeoutCapability>(
+    () => const PlatformRequestSendTimeoutCapability(),
+  );
   sl.registerLazySingleton<DioService>(
     () => DioService(
       tokenManager: sl(),
       networkInfoImpl: sl(),
       languageProvider: sl(),
       refreshEndpoint: refreshEndpoint,
+      requestSendTimeoutCapability: sl(),
     ),
   );
   sl.registerLazySingleton<IApiClient>(() => ApiClient(dioService: sl()));
