@@ -368,6 +368,13 @@ void main() {
     expect(clearedQuery.sorts, cubit.state.query.sorts);
     expect(clearedQuery.page, 1);
 
+    final effects = <BrandsListEffect>[];
+    final subscription = cubit.effectStream.listen(effects.add);
+    await cubit.onBrandSaved(isNew: true);
+    await Future<void>.delayed(Duration.zero);
+    expect((effects.single as BrandsMutatedEffect).kind, BrandsMutationKind.created);
+    await subscription.cancel();
+
     const unknown = Brand(
       id: 90,
       name: 'Unknown',
