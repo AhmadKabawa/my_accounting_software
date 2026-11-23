@@ -150,6 +150,7 @@ class SortPanel extends StatelessWidget {
         for (final option in available)
           AppDropdownItem(
             label: option.label,
+            closeOnActivate: false,
             onPressed: () => _addField(option.key),
           ),
       ],
