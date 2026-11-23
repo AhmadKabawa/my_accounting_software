@@ -50,7 +50,7 @@ class SortPanel extends StatelessWidget {
   FilterBarSort? get _second => maxSorts < 2 || sorts.length < 2 ? null : sorts[1];
 
   void _changeFirst(String? key) {
-    if (key == null || key.isEmpty || _first?.key == key) return;
+    if (key == null || key.isEmpty || _first?.key == key || _second?.key == key) return;
     final second = _second;
     onChanged([FilterBarSort(key, true), if (second != null && second.key != key) second]);
   }
@@ -87,7 +87,8 @@ class SortPanel extends StatelessWidget {
         children: [
           _row(context, label: CatalogUiKeys.sortBy, selected: first?.key,
             ascending: first?.ascending ?? true, onField: _changeFirst,
-            onDirection: first == null ? null : () => _toggle(0), allowNone: false),
+            onDirection: first == null ? null : () => _toggle(0), allowNone: false,
+            secondaryKey: second?.key),
           if (maxSorts > 1) ...[
             context.ui.spacing.gap(AppSpacing.sm),
             _row(context, label: CatalogUiKeys.thenBy,
@@ -109,11 +110,12 @@ class SortPanel extends StatelessWidget {
 
   Widget _row(BuildContext context, {required AppKey label, required String? selected,
     required bool ascending, required ValueChanged<String?> onField,
-    required VoidCallback? onDirection, required bool allowNone, String? primaryKey}) {
+    required VoidCallback? onDirection, required bool allowNone,
+    String? primaryKey, String? secondaryKey}) {
     final items = <DropdownMenuItem<String>>[
       if (allowNone) DropdownMenuItem(value: _none, child: AppText(CatalogUiKeys.none)),
       for (final option in options)
-        DropdownMenuItem(value: option.key, enabled: option.key != primaryKey,
+        DropdownMenuItem(value: option.key, enabled: option.key != primaryKey && option.key != secondaryKey,
           child: AppText(option.label)),
     ];
     final value = selected != null && items.any((item) => item.value == selected)
