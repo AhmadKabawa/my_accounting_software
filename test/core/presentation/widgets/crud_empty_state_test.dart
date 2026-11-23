@@ -13,8 +13,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_page_templ
 import '../../../helpers/localized_app.dart';
 import '../../../helpers/test_key.dart';
 
-class _MockAccessCubit extends MockCubit<AccessState>
-    implements AccessCubit {}
+class _MockAccessCubit extends MockCubit<AccessState> implements AccessCubit {}
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));

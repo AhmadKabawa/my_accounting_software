@@ -314,6 +314,7 @@ class ListPageTemplate extends StatelessWidget {
 
   final AppKey titleKey;
   final Widget? breadcrumb;
+
   /// Legacy: use [toolbar] to let the template build the filter toolbar.
   final Widget? filterBar;
 
@@ -323,6 +324,7 @@ class ListPageTemplate extends StatelessWidget {
 
   /// `error` renders [dataTable] unless [errorKey] is given.
   final AppPageState state;
+
   /// Optional record count displayed beside the page title.
   final int? count;
 
@@ -333,6 +335,7 @@ class ListPageTemplate extends StatelessWidget {
   /// Legacy: use [stats] for summary cards.
   final Widget? actions;
   final Widget? stats;
+
   /// Legacy: configure active filters through [toolbar].
   final Widget? activeFilters;
 

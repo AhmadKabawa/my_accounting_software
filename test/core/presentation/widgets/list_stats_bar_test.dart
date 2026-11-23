@@ -84,9 +84,11 @@ void main() {
 
     expect(find.byType(AppStatCard), findsNWidgets(4));
     expect(
-      tester.widgetList<AppStatCard>(find.byType(AppStatCard)).every(
-        (card) => card.loading && card.value == null && !card.selected,
-      ),
+      tester
+          .widgetList<AppStatCard>(find.byType(AppStatCard))
+          .every(
+            (card) => card.loading && card.value == null && !card.selected,
+          ),
       isTrue,
     );
   });

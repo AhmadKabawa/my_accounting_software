@@ -35,8 +35,7 @@ class ListStatsBar<F> extends StatelessWidget {
         final gap = _cardGap.of(context);
         final fit = ((availableWidth + gap) / (_minCardWidth + gap)).floor();
         final columns = math.max(2, math.min(items.length, fit)).toInt();
-        final cardWidth =
-            (availableWidth - gap * (columns - 1)) / columns;
+        final cardWidth = (availableWidth - gap * (columns - 1)) / columns;
 
         return Wrap(
           spacing: gap,
@@ -53,7 +52,10 @@ class ListStatsBar<F> extends StatelessWidget {
                   icon: item.icon,
                   tone: item.tone,
                   loading: loading,
-                  selected: !loading && item.filter != null && item.filter == selected,
+                  selected:
+                      !loading &&
+                      item.filter != null &&
+                      item.filter == selected,
                   onTap: !loading && item.filter != null && onSelected != null
                       ? () => onSelected!(item.filter as F)
                       : null,
