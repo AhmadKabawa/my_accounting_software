@@ -275,7 +275,11 @@ class AppDataTable<T> extends StatelessWidget {
           return KeyEventResult.handled;
         }
         if (event.logicalKey == LogicalKeyboardKey.enter) {
-          onRowActivated?.call(row);
+          if (onSelectionChanged != null) {
+            _toggle(row, !selected);
+          } else {
+            onRowActivated?.call(row);
+          }
           return KeyEventResult.handled;
         }
         if (event.logicalKey == LogicalKeyboardKey.space) {
@@ -293,7 +297,11 @@ class AppDataTable<T> extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             hoverColor: style.rowHover,
-            onTap: onRowActivated == null ? null : () => onRowActivated!(row),
+            onTap: onSelectionChanged != null
+                ? () => _toggle(row, !selected)
+                : onRowActivated == null
+                ? null
+                : () => onRowActivated!(row),
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: style.rowHeight),
               child: cells(row, header: false),

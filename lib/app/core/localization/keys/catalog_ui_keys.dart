@@ -7,6 +7,9 @@ enum CatalogUiKeys implements AppKey {
   chooseOption(ar: 'اختر قيمة', en: 'Choose an option'),
   allOptions(ar: 'الكل', en: 'All'),
   clearSelection(ar: 'مسح الاختيار', en: 'Clear selection'),
+  select(ar: 'تحديد', en: 'Select'),
+  finishSelection(ar: 'إنهاء التحديد', en: 'Finish selection'),
+  selectPage(ar: 'تحديد الكل في الصفحة', en: 'Select all on this page'),
   selectedCount(ar: 'تم تحديد {count} سجل', en: '{count} selected'),
   bulkFailed(
     ar: 'فشلت العملية الجماعية لكل السجلات المحددة.',

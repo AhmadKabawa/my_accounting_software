@@ -11,12 +11,14 @@ class PagedListState<T, Q extends PagedQuery<Q>> extends Equatable {
     this.status = PagedListStatus.initial,
     this.result,
     this.failure,
+    this.selectionMode = false,
   });
 
   final PagedListStatus status;
   final Q query;
   final PagedResult<T>? result;
   final Failure? failure;
+  final bool selectionMode;
 
   bool get hasData => result != null;
   bool get isInitialLoading => status == PagedListStatus.loading && !hasData;
@@ -29,13 +31,15 @@ class PagedListState<T, Q extends PagedQuery<Q>> extends Equatable {
     Failure? failure,
     bool clearResult = false,
     bool clearFailure = false,
+    bool? selectionMode,
   }) => PagedListState<T, Q>(
     status: status ?? this.status,
     query: query ?? this.query,
     result: clearResult ? null : result ?? this.result,
     failure: clearFailure ? null : failure ?? this.failure,
+    selectionMode: selectionMode ?? this.selectionMode,
   );
 
   @override
-  List<Object?> get props => [status, query, result, failure];
+  List<Object?> get props => [status, query, result, failure, selectionMode];
 }

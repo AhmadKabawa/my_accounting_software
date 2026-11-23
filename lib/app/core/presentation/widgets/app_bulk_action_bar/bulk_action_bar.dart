@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
+import 'package:accounting_software/app/core/presentation/state_management/list_selection_cubit.dart';
 import 'package:accounting_software/app/core/access/permission_gate/permission_gate.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/compact_content_breakpoint.dart';
@@ -36,11 +37,15 @@ class BulkActionBar extends StatefulWidget {
     required this.selectedCount,
     required this.actions,
     required this.onClear,
+    this.pageSelectionState = PageSelectionState.none,
+    this.onSelectPage,
   });
 
   final int selectedCount;
   final List<BulkAction> actions;
   final VoidCallback onClear;
+  final PageSelectionState pageSelectionState;
+  final ValueChanged<bool>? onSelectPage;
 
   @override
   State<BulkActionBar> createState() => _BulkActionBarState();
@@ -65,7 +70,6 @@ class _BulkActionBarState extends State<BulkActionBar> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.selectedCount == 0) return const SizedBox.shrink();
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.hasBoundedWidth
@@ -83,6 +87,22 @@ class _BulkActionBarState extends State<BulkActionBar> {
             runSpacing: context.ui.spacing.sm,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
+              if (widget.onSelectPage != null) ...[
+                Semantics(
+                  label: CatalogUiKeys.selectPage.tr(context: context),
+                  child: Checkbox(
+                    tristate: true,
+                    value: switch (widget.pageSelectionState) {
+                      PageSelectionState.none => false,
+                      PageSelectionState.partial => null,
+                      PageSelectionState.all => true,
+                    },
+                    onChanged: _running
+                        ? null
+                        : (value) => widget.onSelectPage!(value ?? true),
+                  ),
+                ),
+              ],
               AppText.raw(
                 CatalogUiKeys.selectedCount.tr(
                   context: context,
@@ -101,7 +121,7 @@ class _BulkActionBarState extends State<BulkActionBar> {
                           variant: action.destructive
                               ? AppButtonVariant.danger
                               : AppButtonVariant.outlined,
-                          onPressed: _running ? null : () => _run(action),
+                          onPressed: _running || widget.selectedCount == 0 ? null : () => _run(action),
                         )
                       : AppButton(
                           action.labelKey,
@@ -110,19 +130,19 @@ class _BulkActionBarState extends State<BulkActionBar> {
                           variant: action.destructive
                               ? AppButtonVariant.danger
                               : AppButtonVariant.outlined,
-                          onPressed: _running ? null : () => _run(action),
+                          onPressed: _running || widget.selectedCount == 0 ? null : () => _run(action),
                         ),
                 ),
               if (compact)
                 AppIconButton(
                   AppIcons.close,
-                  tooltipKey: CatalogUiKeys.clearSelection,
+                  tooltipKey: CatalogUiKeys.finishSelection,
                   size: AppButtonSize.small,
                   onPressed: _running ? null : widget.onClear,
                 )
               else
                 AppButton(
-                  CatalogUiKeys.clearSelection,
+                  CatalogUiKeys.finishSelection,
                   size: AppButtonSize.small,
                   variant: AppButtonVariant.text,
                   onPressed: _running ? null : widget.onClear,

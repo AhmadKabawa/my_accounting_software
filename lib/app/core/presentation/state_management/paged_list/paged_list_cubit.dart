@@ -28,6 +28,16 @@ abstract class PagedListCubit<T, Q extends PagedQuery<Q>, E>
 
   final FlashMessages _flashMessages;
   final ListSelectionCubit<Object> selection = ListSelectionCubit<Object>();
+
+  bool get selectionMode => state.selectionMode;
+
+  void toggleSelectionMode() => setSelectionMode(!state.selectionMode);
+
+  void setSelectionMode(bool enabled) {
+    if (state.selectionMode == enabled) return;
+    if (!enabled) selection.clear();
+    emit(state.copyWith(selectionMode: enabled));
+  }
   Timer? _searchTimer;
   int _requestVersion = 0;
 
