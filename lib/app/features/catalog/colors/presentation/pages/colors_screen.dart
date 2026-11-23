@@ -15,7 +15,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_bulk_actio
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_result_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';

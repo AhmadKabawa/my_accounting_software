@@ -13,11 +13,11 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text/app_t
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
-import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_card.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_identity.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_status_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 
 class ColorsTableSection extends StatelessWidget {
   const ColorsTableSection({
@@ -58,6 +58,24 @@ class ColorsTableSection extends StatelessWidget {
   final ValueChanged<CatalogColor> onDelete;
   final Set<Object> selectedIds;
   final ValueChanged<Set<Object>>? onSelectionChanged;
+
+  Widget _card(BuildContext context, CatalogColor color, AppIconSize size) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      ColorIdentity(color, size: size),
+      context.ui.spacing.gap(AppSpacing.xs),
+      AppText.raw(color.code, type: AppTextType.bodySmall),
+      if (color.hexCode != null) ...[
+        context.ui.spacing.gap(AppSpacing.xs),
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: AppText.raw(color.hexCode!, type: AppTextType.bodySmall),
+        ),
+      ],
+      context.ui.spacing.gap(AppSpacing.sm),
+      ColorStatusBadge(color),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) => AppDataView<CatalogColor>(
@@ -129,8 +147,8 @@ class ColorsTableSection extends StatelessWidget {
       hasActiveFilters: query.hasActiveFilters,
       addAction: addAction,
     ),
-    cardBuilder: (_, color) => ColorCard(color),
-    gridItemBuilder: (_, color) => ColorCard(color, swatchSize: AppIconSize.xl),
+    cardBuilder: (context, color) => _card(context, color, AppIconSize.lg),
+    gridItemBuilder: (context, color) => _card(context, color, AppIconSize.xl),
     selectedIds: selectedIds,
     onSelectionChanged: onSelectionChanged,
     rowActionsBuilder: (_, color) => CrudRowActions(
