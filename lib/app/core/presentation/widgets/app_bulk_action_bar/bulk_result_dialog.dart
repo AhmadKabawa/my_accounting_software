@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/bulk_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -31,7 +32,7 @@ abstract final class BulkResultDialog {
               )),
               for (final failure in result.failures)
                 Padding(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: EdgeInsets.only(top: dialogContext.ui.spacing.xs),
                   child: AppText.raw(CatalogUiKeys.bulkFailureLine.tr(
                     context: dialogContext,
                     namedArgs: {
