@@ -36,40 +36,42 @@ class SortFieldButton extends StatelessWidget {
     final ascending = current?.ascending ?? true;
     final colors = context.ui.theme.colors;
 
-    final fieldMenu = AppDropdownMenu(
+    return AppDropdownMenu(
       minWidth: AppComponentSize.none,
-      anchorBuilder: (context, toggle, open) => Semantics(
-        button: true,
-        label: CatalogUiKeys.sortChooseField.tr(context: context),
-        excludeSemantics: true,
-        child: Material(
-          color: colors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: AppSurfaceShape.control.circular(context),
-            side: BorderSide(
-              color: colors.outlineVariant,
-              width: AppBorderWidth.thin.of(context),
-            ),
+      anchorBuilder: (context, toggle, open) => Material(
+        color: colors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppSurfaceShape.control.circular(context),
+          side: BorderSide(
+            color: colors.outlineVariant,
+            width: AppBorderWidth.thin.of(context),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: toggle,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: context.ui.size.height(AppComponentSize.hitArea),
-              ),
-              child: Padding(
-                padding: context.ui.padding.symmetric(
-                  horizontal: AppSpacing.xs,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: context.ui.size.height(AppComponentSize.hitArea),
+          ),
+          child: Row(
+            mainAxisSize: expandField ? MainAxisSize.max : MainAxisSize.min,
+            children: [
+              if (expandField)
+                Expanded(child: _fieldTarget(context, selectedLabel, toggle))
+              else
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: _fieldTarget(context, selectedLabel, toggle),
                 ),
-                child: AppText(
-                  selectedLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  useEllipsis: true,
+              if (current != null)
+                AppIconButton(
+                  ascending ? AppIcons.sortAscending : AppIcons.sortDescending,
+                  tooltipKey: ascending
+                      ? CatalogUiKeys.sortAscendingLabel
+                      : CatalogUiKeys.sortDescendingLabel,
+                  size: AppButtonSize.small,
+                  onPressed: onDirection,
                 ),
-              ),
-            ),
+            ],
           ),
         ),
       ),
@@ -85,24 +87,27 @@ class SortFieldButton extends StatelessWidget {
           ),
       ],
     );
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (expandField)
-          Expanded(child: fieldMenu)
-        else
-          Flexible(fit: FlexFit.loose, child: fieldMenu),
-        if (current != null)
-          AppIconButton(
-            ascending ? AppIcons.sortAscending : AppIcons.sortDescending,
-            tooltipKey: ascending
-                ? CatalogUiKeys.sortAscendingLabel
-                : CatalogUiKeys.sortDescendingLabel,
-            size: AppButtonSize.small,
-            onPressed: onDirection,
-          ),
-      ],
-    );
   }
+
+  Widget _fieldTarget(
+    BuildContext context,
+    AppKey selectedLabel,
+    VoidCallback toggle,
+  ) => Semantics(
+    button: true,
+    label: CatalogUiKeys.sortChooseField.tr(context: context),
+    excludeSemantics: true,
+    child: InkWell(
+      onTap: toggle,
+      child: Padding(
+        padding: context.ui.padding.symmetric(horizontal: AppSpacing.xs),
+        child: AppText(
+          selectedLabel,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          useEllipsis: true,
+        ),
+      ),
+    ),
+  );
 }
