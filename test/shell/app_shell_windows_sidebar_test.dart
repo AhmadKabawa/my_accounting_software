@@ -73,6 +73,7 @@ Future<void> _pump(
   WidgetTester tester,
   AppSettingsManager settings, {
   Size size = const Size(1400, 900),
+  String initialLocation = '/first',
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -93,7 +94,7 @@ Future<void> _pump(
     ),
   ];
   final router = GoRouter(
-    initialLocation: '/first',
+    initialLocation: initialLocation,
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(
@@ -105,7 +106,16 @@ Future<void> _pump(
         branches: [
           StatefulShellBranch(
             routes: [
-              GoRoute(path: '/first', builder: (_, _) => const Text('First')),
+              GoRoute(
+                path: '/first',
+                builder: (_, _) => const Text('First'),
+                routes: [
+                  GoRoute(
+                    path: 'detail',
+                    builder: (_, _) => const Text('Detail'),
+                  ),
+                ],
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -181,32 +191,105 @@ void main() {
     );
   });
 
-  testWidgets(
-    'opened from icons: stays open on another page, folds on the same',
-    (tester) async {
+  group('tapping the page already shown', () {
+    bool collapsed(WidgetTester tester) =>
+        tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed;
+
+    Finder expandedItem(int index) => find
+        .descendant(
+          of: find.byType(AppSidebar),
+          matching: find.text('home'),
+        )
+        .at(index);
+
+    Finder iconItem(int index) => find.byTooltip('home').at(index);
+
+    testWidgets('folds an open sidebar and opens it again from the icon', (
+      tester,
+    ) async {
       final settings = AppSettingsManager(storage: _MemoryStorage());
-      await _pump(tester, settings, size: const Size(800, 900));
-      bool collapsed() =>
-          tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed;
-      expect(collapsed(), isTrue);
+      await _pump(tester, settings);
+      expect(collapsed(tester), isFalse);
+
+      await tester.tap(expandedItem(0));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isTrue);
+      expect(find.text('First'), findsOneWidget);
+
+      await tester.tap(iconItem(0));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isFalse);
+      expect(find.text('First'), findsOneWidget);
+      expect(find.text('Second'), findsNothing);
+    });
+
+    testWidgets('the choice is saved like the toggle button', (tester) async {
+      final settings = AppSettingsManager(storage: _MemoryStorage());
+      await _pump(tester, settings);
+      await tester.tap(expandedItem(0));
+      await tester.pumpAndSettle();
+      expect(await settings.getSidebarCollapsedOrNull(), isTrue);
+    });
+
+    testWidgets('another page navigates and keeps the sidebar as it is', (
+      tester,
+    ) async {
+      final settings = AppSettingsManager(storage: _MemoryStorage());
+      await _pump(tester, settings);
+      await tester.tap(expandedItem(0));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isTrue);
+
+      await tester.tap(iconItem(1));
+      await tester.pumpAndSettle();
+      expect(find.text('Second'), findsOneWidget);
+      expect(collapsed(tester), isTrue);
+
       await tester.tap(find.byTooltip(ShellKeys.expandSidebar.en));
       await tester.pumpAndSettle();
-      expect(collapsed(), isFalse);
-
-      Finder sidebarHome() => find.descendant(
-        of: find.byType(AppSidebar),
-        matching: find.text('home'),
-      );
-
-      // Another page: the sidebar stays open.
-      await tester.tap(sidebarHome().last);
+      await tester.tap(expandedItem(0));
       await tester.pumpAndSettle();
-      expect(collapsed(), isFalse);
+      expect(find.text('First'), findsOneWidget);
+      expect(collapsed(tester), isFalse);
+    });
 
-      // The page already shown, again: back to icons.
-      await tester.tap(sidebarHome().last);
+    testWidgets('on a detail page it returns to the root instead', (
+      tester,
+    ) async {
+      final settings = AppSettingsManager(storage: _MemoryStorage());
+      await _pump(tester, settings, initialLocation: '/first/detail');
+      expect(find.text('Detail'), findsOneWidget);
+
+      await tester.tap(expandedItem(0));
       await tester.pumpAndSettle();
-      expect(collapsed(), isTrue);
-    },
-  );
+      expect(find.text('First'), findsOneWidget);
+      expect(collapsed(tester), isFalse);
+
+      // Now at the root: the same tap folds it.
+      await tester.tap(expandedItem(0));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isTrue);
+    });
+
+    testWidgets('the tablet rail opens from the icon of the current page', (
+      tester,
+    ) async {
+      final settings = AppSettingsManager(storage: _MemoryStorage());
+      await _pump(tester, settings, size: const Size(800, 900));
+      expect(collapsed(tester), isTrue);
+
+      await tester.tap(iconItem(0));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isFalse);
+
+      await tester.tap(expandedItem(1));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isFalse);
+      expect(find.text('Second'), findsOneWidget);
+
+      await tester.tap(expandedItem(1));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isTrue);
+    });
+  });
 }

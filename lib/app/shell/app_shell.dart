@@ -152,6 +152,24 @@ class AppShell extends StatelessWidget {
   String? _activePath(BuildContext context) =>
       GoRouter.maybeOf(context)?.routeInformationProvider.value.uri.path;
 
+  /// True when the shown page is the root of the active branch (the place a
+  /// reselect would go back to). Deeper pages, such as a detail, are not.
+  bool _isAtBranchRoot(BuildContext context) {
+    final path = _activePath(context);
+    final branches = navigationShell.route.branches;
+    final index = navigationShell.currentIndex;
+    if (path == null || index < 0 || index >= branches.length) return false;
+    final branch = branches[index];
+    final root =
+        branch.initialLocation ??
+        branch.routes.whereType<GoRoute>().firstOrNull?.path;
+    if (root == null) return false;
+    String trim(String value) => value.length > 1 && value.endsWith('/')
+        ? value.substring(0, value.length - 1)
+        : value;
+    return trim(path) == trim(root);
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(
@@ -262,6 +280,7 @@ class AppShell extends StatelessWidget {
             collapsible: startCollapsed || supportsCollapsibleSidebar,
             startCollapsed: startCollapsed,
             activePath: _activePath(context),
+            activeIsBranchRoot: _isAtBranchRoot(context),
             onChildSelected: (path) => context.go(path),
           )
         : AppSidebar(
@@ -360,6 +379,11 @@ class AppShell extends StatelessWidget {
 
 /// The desktop sidebar with its preferences: the open sections are always
 /// restored and saved; collapsing is offered only where [collapsible].
+///
+/// Where it collapses, a tap on the page already shown (a page without
+/// sub-items, at the root of its branch) folds the sidebar to icons, and the
+/// same tap on its icon opens it again, without navigating. On a deeper page
+/// (a detail) the tap still goes back to the page's root.
 class _PersistedSidebar extends StatefulWidget {
   const _PersistedSidebar({
     required this.items,
@@ -369,10 +393,14 @@ class _PersistedSidebar extends StatefulWidget {
     required this.collapsible,
     this.startCollapsed = false,
     this.activePath,
+    this.activeIsBranchRoot = false,
     this.onChildSelected,
   });
 
   final String? activePath;
+
+  /// The shown page is the root of its branch (see AppShell).
+  final bool activeIsBranchRoot;
   final ValueChanged<String>? onChildSelected;
   final List<NavBarItem> items;
   final int activeIndex;
@@ -412,54 +440,38 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
     });
   }
 
-  /// True while the sidebar was opened from icon-only mode. It stays open
-  /// while the user picks different pages, and folds back to icons when the
-  /// page already shown is chosen again (a sidebar that started open stays
-  /// open).
-  bool _openedFromIcons = false;
-
   Future<void> _toggle() async {
     final collapsed = !_collapsed;
-    _openedFromIcons = !collapsed;
     setState(() => _collapsed = collapsed);
     await widget.settingsManager.setSidebarCollapsed(collapsed);
   }
 
-  /// After a page was chosen: [same] = it is the page already shown.
-  void _afterNavigate({required bool same}) {
-    if (same && _openedFromIcons && !_collapsed && widget.collapsible) {
-      _toggle();
+  /// The page already shown, reached from a leaf item: tapping it toggles the
+  /// sidebar instead of navigating.
+  bool _togglesInsteadOfNavigating(int index) {
+    if (!_restored || !widget.collapsible || !widget.activeIsBranchRoot) {
+      return false;
     }
-  }
-
-  bool _isCurrentIndex(int index) {
     if (index != widget.activeIndex) return false;
-    // The parent's own page is a different page from its active child.
     final children = widget.items[index].children;
-    return !children.any((c) => AppSidebar.isChildActive(c, widget.activePath));
+    return children.isEmpty;
   }
-
-  bool _isCurrentPath(String path) =>
-      widget.activePath == path ||
-      (widget.activePath?.startsWith('$path/') ?? false);
 
   @override
   Widget build(BuildContext context) => AppSidebar(
     items: widget.items,
     activeIndex: widget.activeIndex,
     onIndexChanged: (index) {
-      final same = _isCurrentIndex(index);
+      if (_togglesInsteadOfNavigating(index)) {
+        _toggle();
+        return;
+      }
       widget.onIndexChanged(index);
-      _afterNavigate(same: same);
     },
     collapsed: _collapsed,
     onToggle: _restored && widget.collapsible ? _toggle : null,
     activePath: widget.activePath,
-    onChildSelected: (path) {
-      final same = _isCurrentPath(path);
-      widget.onChildSelected?.call(path);
-      _afterNavigate(same: same);
-    },
+    onChildSelected: widget.onChildSelected,
     initialOpenSections: _openSections,
     onOpenSectionsChanged: (open) {
       _openSections = open;
