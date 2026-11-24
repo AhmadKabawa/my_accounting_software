@@ -6,8 +6,8 @@ import 'package:accounting_software/app/core/presentation/state_management/base_
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor.dart';
-import '../../../helpers/localized_app.dart';
-import '../../../helpers/test_key.dart';
+import '../../../../helpers/localized_app.dart';
+import '../../../../helpers/test_key.dart';
 
 const _add = TestKey('test.crudEditor.add');
 const _edit = TestKey('test.crudEditor.edit');
