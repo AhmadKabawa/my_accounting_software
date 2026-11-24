@@ -18,9 +18,18 @@ const _cancel = TestKey('test.crudEditor.cancel');
 const _failure = TestKey('test.crudEditor.failure');
 
 enum _Status { idle, saving }
-sealed class _Effect { const _Effect(); }
-final class _Saved extends _Effect { const _Saved(); }
-final class _Failed extends _Effect { const _Failed(); }
+
+sealed class _Effect {
+  const _Effect();
+}
+
+final class _Saved extends _Effect {
+  const _Saved();
+}
+
+final class _Failed extends _Effect {
+  const _Failed();
+}
 
 class _EditorCubit extends BaseCubit<_Status, _Effect> {
   _EditorCubit() : super(_Status.idle);
@@ -46,40 +55,49 @@ Future<void> _open(
   bool extraDirty = false,
   ValueChanged<bool?>? onResult,
 }) async {
-  await tester.pumpWidget(buildTestApp(
-    home: Scaffold(
-      body: Builder(builder: (context) => TextButton(
-        onPressed: () async {
-          final result = await showAppFormDialog<bool>(context, (_) =>
-            CrudEditorDialog<_EditorCubit, _Status, _Effect>(
-              cubit: cubit,
-              fields: fields,
-              mode: CrudEditorMode.add,
-              labels: _labels,
-              isSaving: (state) => state == _Status.saving,
-              outcome: (effect) => switch (effect) {
-                _Saved() => const CrudEditorSuccess(),
-                _Failed() => const CrudEditorFailure(_failure),
-              },
-              onSave: () async => cubit.succeed(),
-              extraBusy: extraBusy,
-              extraDirty: extraDirty,
-              builder: (context, scope) => Column(children: [
-                TextFormField(
-                  controller: scope.fields['name'],
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty ? 'Required' : null,
+  await tester.pumpWidget(
+    buildTestApp(
+      home: Scaffold(
+        body: Builder(
+          builder: (context) => TextButton(
+            onPressed: () async {
+              final result = await showAppFormDialog<bool>(
+                context,
+                (_) => CrudEditorDialog<_EditorCubit, _Status, _Effect>(
+                  cubit: cubit,
+                  fields: fields,
+                  mode: CrudEditorMode.add,
+                  labels: _labels,
+                  isSaving: (state) => state == _Status.saving,
+                  outcome: (effect) => switch (effect) {
+                    _Saved() => const CrudEditorSuccess(),
+                    _Failed() => const CrudEditorFailure(_failure),
+                  },
+                  onSave: () async => cubit.succeed(),
+                  extraBusy: extraBusy,
+                  extraDirty: extraDirty,
+                  builder: (context, scope) => Column(
+                    children: [
+                      TextFormField(
+                        controller: scope.fields['name'],
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty
+                            ? 'Required'
+                            : null,
+                      ),
+                      TextFormField(controller: scope.fields['description']),
+                    ],
+                  ),
                 ),
-                TextFormField(controller: scope.fields['description']),
-              ]),
-            ),
-          );
-          onResult?.call(result);
-        },
-        child: const Text('Open editor'),
-      )),
+              );
+              onResult?.call(result);
+            },
+            child: const Text('Open editor'),
+          ),
+        ),
+      ),
     ),
-  ));
+  );
   await tester.tap(find.text('Open editor'));
   await tester.pumpAndSettle();
 }
@@ -88,9 +106,8 @@ Finder _action(AppKey key) => find.byWidgetPredicate(
   (widget) => widget is AppButton && widget.labelKey == key,
 );
 
-CrudEditorFields _fields() => CrudEditorFields(
-  initialValues: {'name': 'Alpha', 'description': ''},
-);
+CrudEditorFields _fields() =>
+    CrudEditorFields(initialValues: {'name': 'Alpha', 'description': ''});
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
@@ -99,8 +116,12 @@ void main() {
     final cubit = _EditorCubit();
     final fields = _fields();
     bool? result;
-    await _open(tester, cubit: cubit, fields: fields,
-      onResult: (value) => result = value);
+    await _open(
+      tester,
+      cubit: cubit,
+      fields: fields,
+      onResult: (value) => result = value,
+    );
     await tester.enterText(find.byType(TextFormField).first, 'Beta');
     await tester.tap(_action(_save));
     await tester.pumpAndSettle();
@@ -143,8 +164,12 @@ void main() {
     final cubit = _EditorCubit();
     final fields = _fields();
     bool? result;
-    await _open(tester, cubit: cubit, fields: fields,
-      onResult: (value) => result = value);
+    await _open(
+      tester,
+      cubit: cubit,
+      fields: fields,
+      onResult: (value) => result = value,
+    );
     await tester.enterText(find.byType(TextFormField).first, ' Alpha ');
     await tester.tap(_action(_cancel));
     await tester.pumpAndSettle();
@@ -166,8 +191,12 @@ void main() {
 
     final secondCubit = _EditorCubit();
     final secondFields = _fields();
-    await _open(tester, cubit: secondCubit, fields: secondFields,
-      extraBusy: true);
+    await _open(
+      tester,
+      cubit: secondCubit,
+      fields: secondFields,
+      extraBusy: true,
+    );
     expect(tester.widget<AppButton>(_action(_save)).onPressed, isNull);
     secondFields.dispose();
     await secondCubit.close();
@@ -190,29 +219,33 @@ void main() {
     setScreenSize(tester, const Size(280, 720));
     final cubit = _EditorCubit();
     final fields = _fields();
-    await tester.pumpWidget(buildTestApp(
-      direction: TextDirection.rtl,
-      textScale: 1.5,
-      home: Scaffold(
-        body: Builder(builder: (context) => TextButton(
-          onPressed: () => showAppFormDialog<void>(context, (_) =>
-            CrudEditorDialog<_EditorCubit, _Status, _Effect>(
-              cubit: cubit,
-              fields: fields,
-              mode: CrudEditorMode.duplicate,
-              labels: _labels,
-              isSaving: (state) => state == _Status.saving,
-              outcome: (_) => const CrudEditorSuccess(),
-              onSave: () async {},
-              builder: (context, scope) => TextFormField(
-                controller: scope.fields['name'],
+    await tester.pumpWidget(
+      buildTestApp(
+        direction: TextDirection.rtl,
+        textScale: 1.5,
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showAppFormDialog<void>(
+                context,
+                (_) => CrudEditorDialog<_EditorCubit, _Status, _Effect>(
+                  cubit: cubit,
+                  fields: fields,
+                  mode: CrudEditorMode.duplicate,
+                  labels: _labels,
+                  isSaving: (state) => state == _Status.saving,
+                  outcome: (_) => const CrudEditorSuccess(),
+                  onSave: () async {},
+                  builder: (context, scope) =>
+                      TextFormField(controller: scope.fields['name']),
+                ),
               ),
+              child: const Text('Open editor'),
             ),
           ),
-          child: const Text('Open editor'),
-        )),
+        ),
       ),
-    ));
+    );
     await tester.tap(find.text('Open editor'));
     await tester.pumpAndSettle();
     expect(find.byType(BottomSheet), findsOneWidget);

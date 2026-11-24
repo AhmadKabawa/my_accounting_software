@@ -65,8 +65,7 @@ class CrudEditorScope {
 /// Shared lifecycle and form shell for feature-specific CRUD editor fields.
 ///
 /// The caller owns [fields] and must dispose it with its editor state.
-class CrudEditorDialog<C extends BaseCubit<S, E>, S, E>
-    extends StatefulWidget {
+class CrudEditorDialog<C extends BaseCubit<S, E>, S, E> extends StatefulWidget {
   const CrudEditorDialog({
     super.key,
     required this.cubit,
@@ -138,44 +137,40 @@ class _CrudEditorDialogState<C extends BaseCubit<S, E>, S, E>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<C, S>(
-        bloc: widget.cubit,
-        builder: (context, state) {
-          final busy = widget.isSaving(state) || widget.extraBusy;
-          final scope = CrudEditorScope(
-            formKey: _formKey,
-            fields: widget.fields,
-            busy: busy,
-            clearFailure: _clearFailure,
-            changed: _onFieldsChanged,
-          );
-          return BlocEffectListener<E, C>(
-            cubit: widget.cubit,
-            onEffect: (context, effect) {
-              switch (widget.outcome(effect)) {
-                case CrudEditorSuccess():
-                  Navigator.of(context).pop(true);
-                case CrudEditorFailure(:final messageKey):
-                  if (mounted) setState(() => _failure = messageKey);
-              }
-            },
-            child: AppFormDialog(
-              titleKey: widget.labels.titleFor(widget.mode),
-              subtitleKey: widget.labels.subtitle,
-              saveLabelKey: widget.labels.save,
-              cancelLabelKey: widget.labels.cancel,
-              busy: busy,
-              saveEnabled: !busy,
-              dirty: widget.fields.dirty || widget.extraDirty,
-              errorKey: _failure,
-              onSave: _save,
-              child: Form(
-                key: _formKey,
-                child: widget.builder(context, scope),
-              ),
-            ),
-          );
-        },
+  Widget build(BuildContext context) => BlocBuilder<C, S>(
+    bloc: widget.cubit,
+    builder: (context, state) {
+      final busy = widget.isSaving(state) || widget.extraBusy;
+      final scope = CrudEditorScope(
+        formKey: _formKey,
+        fields: widget.fields,
+        busy: busy,
+        clearFailure: _clearFailure,
+        changed: _onFieldsChanged,
       );
+      return BlocEffectListener<E, C>(
+        cubit: widget.cubit,
+        onEffect: (context, effect) {
+          switch (widget.outcome(effect)) {
+            case CrudEditorSuccess():
+              Navigator.of(context).pop(true);
+            case CrudEditorFailure(:final messageKey):
+              if (mounted) setState(() => _failure = messageKey);
+          }
+        },
+        child: AppFormDialog(
+          titleKey: widget.labels.titleFor(widget.mode),
+          subtitleKey: widget.labels.subtitle,
+          saveLabelKey: widget.labels.save,
+          cancelLabelKey: widget.labels.cancel,
+          busy: busy,
+          saveEnabled: !busy,
+          dirty: widget.fields.dirty || widget.extraDirty,
+          errorKey: _failure,
+          onSave: _save,
+          child: Form(key: _formKey, child: widget.builder(context, scope)),
+        ),
+      );
+    },
+  );
 }
