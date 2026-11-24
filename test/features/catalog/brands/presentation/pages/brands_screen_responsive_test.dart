@@ -47,58 +47,57 @@ void main() {
     for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
       for (final dark in [false, true]) {
         for (final textScale in [1.0, 1.5]) {
-        testWidgets(
-          'brands page renders at $width, $direction, dark=$dark, scale=$textScale',
-          tester,
-        ) async {
-          final repository = FakeBrandsRepository();
-          sl.registerFactory<FlashMessages>(FlashMessages.new);
-          sl.registerSingleton<AppSettingsManager>(
-            AppSettingsManager(storage: MemoryStorage()),
-          );
-          sl.registerFactory<BrandStatsCubit>(
-            () => BrandStatsCubit(
-              getBrandStats: GetBrandStatsUseCase(repository),
-            ),
-          );
-          sl.registerFactory<BrandsListCubit>(
-            () => BrandsListCubit(
-              getBrands: GetBrandsUseCase(repository),
-              setBrandActive: SetBrandActiveUseCase(repository),
-              deleteBrand: DeleteBrandUseCase(repository),
-              flashMessages: sl(),
-            ),
-          );
-          addTearDown(() async => sl.reset());
+          testWidgets(
+            'brands page renders at $width, $direction, dark=$dark, scale=$textScale',
+            (tester) async {
+              final repository = FakeBrandsRepository();
+              sl.registerFactory<FlashMessages>(FlashMessages.new);
+              sl.registerSingleton<AppSettingsManager>(
+                AppSettingsManager(storage: MemoryStorage()),
+              );
+              sl.registerFactory<BrandStatsCubit>(
+                () => BrandStatsCubit(
+                  getBrandStats: GetBrandStatsUseCase(repository),
+                ),
+              );
+              sl.registerFactory<BrandsListCubit>(
+                () => BrandsListCubit(
+                  getBrands: GetBrandsUseCase(repository),
+                  setBrandActive: SetBrandActiveUseCase(repository),
+                  deleteBrand: DeleteBrandUseCase(repository),
+                  flashMessages: sl(),
+                ),
+              );
+              addTearDown(() async => sl.reset());
 
-          await pumpScreenMatrix(
-            tester,
-            width: width,
-            direction: direction,
-            dark: dark,
-            textScale: textScale,
-            home: BlocProvider<AccessCubit>(
-              create: (_) => AccessCubit(
-                getMyAccess: GetMyAccessUseCase(_NoopAccessRepository()),
-              )..load(),
-              child: const Scaffold(body: BrandsScreen()),
-            ),
-          );
+              await pumpScreenMatrix(
+                tester,
+                width: width,
+                direction: direction,
+                dark: dark,
+                textScale: textScale,
+                home: BlocProvider<AccessCubit>(
+                  create: (_) => AccessCubit(
+                    getMyAccess: GetMyAccessUseCase(_NoopAccessRepository()),
+                  )..load(),
+                  child: const Scaffold(body: BrandsScreen()),
+                ),
+              );
 
-          expect(find.byType(BrandsScreen), findsOneWidget);
-          // Breadcrumb + page title both show "Brands".
-          expect(find.text('Brands'), findsWidgets);
-          expect(find.textContaining('Total brands'), findsOneWidget);
-          expect(find.textContaining('Active brands'), findsOneWidget);
-          expect(find.textContaining('Inactive brands'), findsOneWidget);
-          // No unresolved placeholders anywhere on the page.
-          expect(find.textContaining('{'), findsNothing);
-          expect(find.textContaining('@'), findsNothing);
-          // Record actions are icons (AppRowActions), never text buttons.
-          expect(find.text('Edit brand'), findsNothing);
-          expect(find.text('Brand deleted'), findsNothing);
-        );
-      }
+              expect(find.byType(BrandsScreen), findsOneWidget);
+              // Breadcrumb + page title both show "Brands".
+              expect(find.text('Brands'), findsWidgets);
+              expect(find.textContaining('Total brands'), findsOneWidget);
+              expect(find.textContaining('Active brands'), findsOneWidget);
+              expect(find.textContaining('Inactive brands'), findsOneWidget);
+              // No unresolved placeholders anywhere on the page.
+              expect(find.textContaining('{'), findsNothing);
+              expect(find.textContaining('@'), findsNothing);
+              // Record actions are icons (AppRowActions), never text buttons.
+              expect(find.text('Edit brand'), findsNothing);
+              expect(find.text('Brand deleted'), findsNothing);
+            },
+          );
         }
       }
     }
