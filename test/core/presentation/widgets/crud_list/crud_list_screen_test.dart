@@ -11,7 +11,6 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
-import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
