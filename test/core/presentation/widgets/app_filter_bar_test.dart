@@ -1120,6 +1120,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+
   testWidgets(
     'two sort criteria keep the field readable on a 280px RTL phone at 1.5x text',
     (tester) async {
