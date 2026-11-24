@@ -44,11 +44,16 @@ void main() {
       final config = brandsListConfig;
 
       expect(config.flows, isNotNull);
+      expect(config.flows!.showEditor, isNotNull);
+      expect(config.flows!.onSaved, isNotNull);
+      expect(config.flows!.delete, isNotNull);
+      expect(config.flows!.activate, isNotNull);
+      expect(config.flows!.deactivate, isNotNull);
+      expect(config.flows!.canDelete, isNotNull);
       expect(config.bulk, isNotNull);
-      expect(config.actions.onEdit, isNotNull);
-      expect(config.actions.onDuplicate, isNotNull);
-      expect(config.actions.onDelete, isNotNull);
-      expect(config.actions.onToggleStatus, isNotNull);
+      expect(config.bulk!.activate, isNotNull);
+      expect(config.bulk!.deactivate, isNotNull);
+      expect(config.bulk!.delete, isNotNull);
       expect(config.bulk!.activateLabelKey, BrandsKeys.bulkActivate);
       expect(config.bulk!.deactivateLabelKey, BrandsKeys.bulkDeactivate);
       expect(config.bulk!.deleteLabelKey, BrandsKeys.bulkDelete);
