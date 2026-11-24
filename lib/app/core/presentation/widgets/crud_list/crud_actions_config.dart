@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_row_action
 ///
 /// The callbacks retain each feature's existing editor, confirmation,
 /// permission and mutation behavior; Core only dispatches the selected action.
+@Deprecated('Use CrudFlowsConfig; retained only for legacy unit tests.')
 class CrudActionsConfig<T> {
   const CrudActionsConfig({
     this.onEdit,
@@ -30,6 +31,7 @@ class CrudActionsConfig<T> {
 }
 
 /// Typed dispatch helpers shared by feature-owned row presentations.
+@Deprecated('Use CrudFlowsConfig methods directly.')
 abstract final class CrudListActions {
   static void edit<T>(
     BuildContext context,

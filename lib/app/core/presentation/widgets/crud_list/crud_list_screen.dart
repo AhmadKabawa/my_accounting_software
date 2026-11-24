@@ -181,10 +181,8 @@ class _CrudListBody<
                     cubit: cubit,
                     rowId: config.rowId,
                     itemLabel: config.itemLabel,
-                    actions: config.capabilities.duplicate
-                        ? (config.flows?.buildActions() ?? config.actions)
-                        : (config.flows?.buildActions() ?? config.actions)
-                              .withoutDuplicate(),
+                    flows: config.flows,
+                    canDuplicate: config.capabilities.duplicate,
                   ),
                 ),
           ),
@@ -197,8 +195,6 @@ class _CrudListBody<
     CrudSlotContext<T, Q, C> slot,
     List<T> selected,
   ) {
-    final custom = config.bulkActions;
-    if (custom != null) return custom(slot, selected);
     final bulk = config.bulk;
     if (bulk == null) return const [];
     return CrudBulkActions.statusAndDelete<T>(

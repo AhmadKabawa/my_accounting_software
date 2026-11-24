@@ -10,7 +10,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 
@@ -102,7 +101,8 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
     required this.cubit,
     required this.rowId,
     required this.itemLabel,
-    this.actions = const CrudActionsConfig(),
+    this.flows,
+    this.canDuplicate = true,
   });
 
   final AppViewMode? mode;
@@ -125,9 +125,13 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
   final C cubit;
   final Object Function(T row) rowId;
   final String Function(T row) itemLabel;
-  final CrudActionsConfig<T> actions;
+  final CrudFlowsConfig<T, C>? flows;
+  final bool canDuplicate;
 }
 
+/// Shared CRUD adapter: identity, sorting, filtering and data projection are
+/// required; flows handle row operations, bulk handles standard mutations,
+/// and extra* slots are reserved for feature-specific additions.
 /// Complete feature configuration for the reusable CRUD list frame.
 class CrudListConfig<
   T,
@@ -165,9 +169,7 @@ class CrudListConfig<
     this.extraFilterControls,
     this.extraBulkActions,
     this.emptyStateBuilder,
-    this.actions = const CrudActionsConfig(),
     this.flows,
-    this.bulkActions,
     this.bulk,
   });
 
@@ -206,12 +208,6 @@ class CrudListConfig<
   )?
   extraBulkActions;
   final Widget Function(BuildContext context)? emptyStateBuilder;
-  final CrudActionsConfig<T> actions;
   final CrudFlowsConfig<T, C>? flows;
-  final List<BulkAction> Function(
-    CrudSlotContext<T, Q, C> slot,
-    List<T> selected,
-  )?
-  bulkActions;
   final CrudBulkConfig<T, C>? bulk;
 }

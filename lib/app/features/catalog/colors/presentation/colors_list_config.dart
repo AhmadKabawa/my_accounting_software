@@ -13,11 +13,10 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_table
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/color_list_query.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_stats/color_stats_cubit.dart';
@@ -41,7 +40,6 @@ get colorsListConfig => CrudListConfig(
   manageAccess: Permissions.masterData.manage,
   searchHintKey: ColorsKeys.searchHint,
   addLabelKey: ColorsKeys.add,
-  onAdd: (context) => ColorsListActions.edit(context),
   createCubit: () => sl<ColorsListCubit>(),
   rowId: (color) => color.id,
   itemLabel: (color) => color.name,
@@ -111,13 +109,25 @@ get colorsListConfig => CrudListConfig(
       onRetry: context.read<ColorStatsCubit>().refresh,
     ),
   ),
-  actions: CrudActionsConfig<CatalogColor>(
-    onEdit: (context, color) => ColorsListActions.edit(context, color),
-    onDuplicate: (context, color) =>
-        ColorsListActions.duplicate(context, color),
-    onDelete: (context, color) => ColorsListActions.delete(context, color),
-    onToggleStatus: (context, color) =>
-        ColorsListActions.toggleStatus(context, color),
+  flows: CrudFlowsConfig<CatalogColor, ColorsListCubit>(
+    showEditor: (context, {item, duplicate = false}) =>
+        showColorEditor(context, color: item, duplicate: duplicate),
+    onSaved: (cubit, {required isNew}) => cubit.onColorSaved(isNew: isNew),
+    itemLabel: (color) => color.name,
+    delete: (cubit, color) => cubit.delete(color),
+    activate: (cubit, color) => cubit.activate(color.id),
+    deactivate: (cubit, color) => cubit.deactivate(color.id),
+    deleteTitleKey: ColorsKeys.deleteTitle,
+    deleteMessageKey: ColorsKeys.deleteMessage,
+    messageArgs: (color) => {'name': color.name},
+    deactivateTitleKey: ColorsKeys.deactivateTitle,
+    deactivateMessageKey: ColorsKeys.deactivateMessage,
+    editLabelKey: ColorsKeys.edit,
+    deleteLabelKey: ColorsKeys.delete,
+    duplicateLabelKey: ColorsKeys.duplicate,
+    activateLabelKey: ColorsKeys.activate,
+    deactivateLabelKey: ColorsKeys.deactivate,
+    isActive: (color) => color.isActive,
   ),
   bulk: CrudBulkConfig<CatalogColor, ColorsListCubit>(
     activateLabelKey: ColorsKeys.bulkActivate,
@@ -244,46 +254,3 @@ get colorsListConfig => CrudListConfig(
       ),
 );
 
-abstract final class ColorsListActions {
-  static Future<void> edit(BuildContext context, [CatalogColor? color]) async {
-    final saved = await showColorEditor(context, color: color);
-    if (saved == true && context.mounted) {
-      await context.read<ColorsListCubit>().onColorSaved(isNew: color == null);
-    }
-  }
-
-  static Future<void> duplicate(
-    BuildContext context,
-    CatalogColor color,
-  ) async {
-    final saved = await showColorEditor(context, color: color, duplicate: true);
-    if (saved == true && context.mounted) {
-      await context.read<ColorsListCubit>().onColorSaved(isNew: true);
-    }
-  }
-
-  static Future<void> delete(BuildContext context, CatalogColor color) {
-    final cubit = context.read<ColorsListCubit>();
-    return CrudConfirmations.delete(
-      context,
-      titleKey: ColorsKeys.deleteTitle,
-      messageKey: ColorsKeys.deleteMessage,
-      messageArgs: {'name': color.name},
-      targetName: color.name,
-      onDelete: () => cubit.delete(color),
-    );
-  }
-
-  static Future<void> toggleStatus(BuildContext context, CatalogColor color) {
-    final cubit = context.read<ColorsListCubit>();
-    return CrudConfirmations.status(
-      context,
-      isActive: color.isActive,
-      targetName: color.name,
-      titleKey: ColorsKeys.deactivateTitle,
-      messageKey: ColorsKeys.deactivateMessage,
-      onActivate: () => cubit.activate(color.id),
-      onDeactivate: () => cubit.deactivate(color.id),
-    );
-  }
-}

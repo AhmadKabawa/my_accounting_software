@@ -7,7 +7,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_empty_stat
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/crud_row_actions.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 
 /// Feature-owned status-column policy used by [CrudDataSection].
@@ -76,8 +75,9 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
         sortKey: statusColumn.sortKey,
         permission: data.permission,
         isActive: statusColumn.isActive,
-        onToggleStatus: (row) =>
-            CrudListActions.toggleStatus(context, data.actions, row),
+        onToggleStatus: data.flows == null
+            ? null
+            : (row) => data.flows!.toggleStatus(context, row),
         badgeBuilder: statusColumn.badgeBuilder,
         activateLabelKey: statusColumn.activateLabelKey,
         deactivateLabelKey: statusColumn.deactivateLabelKey,
@@ -110,26 +110,28 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
     rowActionsBuilder: (context, row) => CrudRowActions(
       permission: data.permission,
       editLabelKey: editLabelKey,
-      onEdit: () => CrudListActions.edit(context, data.actions, row),
+      onEdit: data.flows == null
+          ? null
+          : () => data.flows!.edit(context, item: row),
       deleteLabelKey: deleteLabelKey,
-      onDelete: (canDelete?.call(row) ?? true)
-          ? () => CrudListActions.delete(context, data.actions, row)
+      onDelete: (canDelete?.call(row) ?? true) && data.flows != null
+          ? () => data.flows!.deleteItem(context, row)
           : null,
-      duplicateLabelKey: data.actions.onDuplicate == null
-          ? null
-          : duplicateLabelKey,
-      onDuplicate: data.actions.onDuplicate == null
-          ? null
-          : () => CrudListActions.duplicate(context, data.actions, row),
+      duplicateLabelKey: data.canDuplicate && data.flows != null
+          ? duplicateLabelKey
+          : null,
+      onDuplicate: data.canDuplicate && data.flows != null
+          ? () => data.flows!.edit(context, item: row, duplicate: true)
+          : null,
       isActive: statusColumn.isActive(row),
-      onToggleStatus: () =>
-          CrudListActions.toggleStatus(context, data.actions, row),
+      onToggleStatus: data.flows == null
+          ? null
+          : () => data.flows!.toggleStatus(context, row),
       activateLabelKey: statusColumn.activateLabelKey,
       deactivateLabelKey: statusColumn.deactivateLabelKey,
       statusBusy: data.busyIds.contains(data.rowId(row)),
       extraOverflow:
           extraRowActions?.call(context, row) ??
-          data.actions.extraRowActions?.call(context, row) ??
           const [],
     ),
     page: data.query.page,

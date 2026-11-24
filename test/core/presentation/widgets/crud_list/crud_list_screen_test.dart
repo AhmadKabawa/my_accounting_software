@@ -24,7 +24,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_view/
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
@@ -508,7 +507,7 @@ void main() {
         onData: (value) => data = value,
       ),
     );
-    expect(data.actions.onDuplicate, isNull);
+    expect(data.canDuplicate, isFalse);
     expect(
       tester.widget<ListPageTemplate>(find.byType(ListPageTemplate)).count,
       2,
