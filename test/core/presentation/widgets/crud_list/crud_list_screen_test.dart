@@ -17,8 +17,6 @@ import 'package:accounting_software/app/core/presentation/state_management/paged
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_data_view/view_mode_switcher.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
@@ -165,7 +163,7 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
   dataSection: (data) {
     onData?.call(data);
     return AppDataView<String>(
-      columns: const [
+      columns: [
         DataTableColumn<String>(
           labelKey: _title,
           cellBuilder: (_, row) => Text(row),
