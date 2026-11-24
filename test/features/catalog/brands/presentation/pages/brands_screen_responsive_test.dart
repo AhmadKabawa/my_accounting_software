@@ -43,10 +43,12 @@ class _NoopAccessRepository implements AccessRepository {
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  for (final width in [360.0, 800.0, 1280.0]) {
+  for (final width in [280.0, 360.0, 800.0, 1280.0]) {
     for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
       for (final dark in [false, true]) {
-        testWidgets('brands page renders at $width, $direction, dark=$dark', (
+        for (final textScale in [1.0, 1.5]) {
+        testWidgets(
+          'brands page renders at $width, $direction, dark=$dark, scale=$textScale',
           tester,
         ) async {
           final repository = FakeBrandsRepository();
@@ -74,6 +76,7 @@ void main() {
             width: width,
             direction: direction,
             dark: dark,
+            textScale: textScale,
             home: BlocProvider<AccessCubit>(
               create: (_) => AccessCubit(
                 getMyAccess: GetMyAccessUseCase(_NoopAccessRepository()),
@@ -94,7 +97,9 @@ void main() {
           // Record actions are icons (AppRowActions), never text buttons.
           expect(find.text('Edit brand'), findsNothing);
           expect(find.text('Brand deleted'), findsNothing);
-        });
+        );
+      }
+        }
       }
     }
   }
