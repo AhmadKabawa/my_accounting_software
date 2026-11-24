@@ -1001,7 +1001,7 @@ void main() {
         const FilterBarSort('name', true),
         const FilterBarSort('updated', true),
       ]);
-      expect(find.byTooltip('Then by'), findsOneWidget);
+      expect(find.byTooltip('Ascending'), findsNWidgets(2));
       expect(tester.takeException(), isNull);
     },
   );
