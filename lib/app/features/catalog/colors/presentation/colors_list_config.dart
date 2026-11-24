@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
@@ -7,8 +6,6 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -26,6 +23,9 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/cub
 import 'package:accounting_software/app/features/catalog/colors/presentation/dialogs/color_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/sections/color_stats_section.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_card.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_grid_tile.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_hex_cell.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_identity.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_status_badge.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/colors_filter_bar.dart';
@@ -166,27 +166,7 @@ get colorsListConfig => CrudListConfig(
             labelKey: ColorsKeys.hexCode,
             priority: DataTableColumnPriority.secondary,
             flex: 2,
-            cellBuilder: (_, color) => color.hexCode == null
-                ? AppText(ColorsKeys.noSampleLabel, type: AppTextType.bodySmall)
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: AppText.raw(color.hexCode ?? ''),
-                        ),
-                      ),
-                      AppIconButton(
-                        AppIcons.copy,
-                        tooltipKey: ColorsKeys.copyHex,
-                        size: AppButtonSize.small,
-                        onPressed: () => Clipboard.setData(
-                          ClipboardData(text: color.hexCode ?? ''),
-                        ),
-                      ),
-                    ],
-                  ),
+            cellBuilder: (_, color) => ColorHexCell(color),
           ),
         ],
         statusColumn: CrudStatusColumnConfig<CatalogColor>(
@@ -196,53 +176,8 @@ get colorsListConfig => CrudListConfig(
           activateLabelKey: ColorsKeys.activate,
           deactivateLabelKey: ColorsKeys.deactivate,
         ),
-        cardBuilder: (context, color) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ColorIdentity(color, size: AppIconSize.lg),
-            context.ui.spacing.gap(AppSpacing.xs),
-            AppText.raw(color.code, type: AppTextType.bodySmall),
-            if (color.hexCode != null) ...[
-              context.ui.spacing.gap(AppSpacing.xs),
-              Directionality(
-                textDirection: TextDirection.ltr,
-                child: AppText.raw(
-                  color.hexCode ?? '',
-                  type: AppTextType.bodySmall,
-                ),
-              ),
-            ],
-            context.ui.spacing.gap(AppSpacing.sm),
-            ColorStatusBadge(color),
-          ],
-        ),
-        gridBuilder: (context, color) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ColorIdentity(color, size: AppIconSize.xl, maxNameLines: 2),
-            context.ui.spacing.gap(AppSpacing.xs),
-            AppText.raw(
-              color.code,
-              type: AppTextType.bodySmall,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (color.hexCode != null) ...[
-              context.ui.spacing.gap(AppSpacing.xs),
-              Directionality(
-                textDirection: TextDirection.ltr,
-                child: AppText.raw(
-                  color.hexCode ?? '',
-                  type: AppTextType.bodySmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-            context.ui.spacing.gap(AppSpacing.sm),
-            ColorStatusBadge(color),
-          ],
-        ),
+        cardBuilder: (_, color) => ColorCard(color),
+        gridBuilder: (_, color) => ColorGridTile(color),
         icon: AppIcons.colors,
         emptyTitleKey: ColorsKeys.empty,
         emptyDescriptionKey: ColorsKeys.emptyDescription,
