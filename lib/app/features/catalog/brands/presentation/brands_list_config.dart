@@ -29,7 +29,7 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/wid
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_status_badge.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_stats_bar.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_filter_bar.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_dialog.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 
