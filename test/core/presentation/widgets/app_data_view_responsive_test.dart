@@ -81,30 +81,37 @@ void main() {
     final longName = List.filled(12, 'BrandWithoutSpaces').join();
     for (final width in [280.0, 360.0, 700.0, 1400.0]) {
       for (final scale in [1.0, 1.5]) {
-        tester.view.physicalSize = Size(width, 1000);
-        tester.view.devicePixelRatio = 1;
-        tester.platformDispatcher.textScaleFactorTestValue = scale;
-        await tester.pumpWidget(
-          buildTestApp(
-            home: Scaffold(
-              body: AppDataView<String>(
-                columns: const [],
-                rows: [
-                  for (var i = 0; i < 6; i++) i.isEven ? 'Short' : longName,
-                ],
-                rowId: (value) => value,
-                mode: AppViewMode.grid,
-                gridItemBuilder: (_, value) =>
-                    Text(value, maxLines: 2, overflow: TextOverflow.ellipsis),
+        for (final direction in TextDirection.values) {
+          tester.view.physicalSize = Size(width, 1000);
+          tester.view.devicePixelRatio = 1;
+          tester.platformDispatcher.textScaleFactorTestValue = scale;
+          await tester.pumpWidget(
+            buildTestApp(
+              direction: direction,
+              home: Scaffold(
+                body: AppDataView<String>(
+                  columns: const [],
+                  rows: [
+                    for (var i = 0; i < 6; i++) i.isEven ? 'Short' : longName,
+                  ],
+                  rowId: (value) => value,
+                  mode: AppViewMode.grid,
+                  gridItemBuilder: (_, value) => Text(
+                    value,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
             ),
-          ),
-        );
-        expect(
-          tester.takeException(),
-          isNull,
-          reason: 'Grid overflow at width $width and text scale $scale',
-        );
+          );
+          expect(
+            tester.takeException(),
+            isNull,
+            reason:
+                'Grid overflow at width $width, text scale $scale, direction $direction',
+          );
+        }
       }
     }
   });
