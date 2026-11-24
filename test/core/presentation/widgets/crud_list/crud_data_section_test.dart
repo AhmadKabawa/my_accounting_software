@@ -112,7 +112,7 @@ CrudDataSection<_Row, _Query, Object> _section({
     duplicateLabelKey: _label,
     extraRowActions: extraRowActions == null
         ? null
-        : (_, row) => extraRowActions(_, row),
+        : (context, row) => extraRowActions(context, row),
   );
 }
 

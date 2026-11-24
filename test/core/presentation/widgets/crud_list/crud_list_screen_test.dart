@@ -300,7 +300,6 @@ void main() {
 
   testWidgets('shows loading until the first page is received', (tester) async {
     final page = Completer<Either<Failure, PagedResult<String>>>();
-    late _TestCubit cubit;
     setScreenSize(tester, const Size(900, 760));
     sl.registerSingleton<AppSettingsManager>(
       AppSettingsManager(storage: MemoryStorage()),
@@ -313,8 +312,7 @@ void main() {
                 ..load(),
           child: CrudListScreen<String, _Query, _TestCubit, _Effect>(
             config: _config(
-              createCubit: () =>
-                  cubit = _TestCubit()..pendingFetch = page.future,
+              createCubit: () => _TestCubit()..pendingFetch = page.future,
             ),
           ),
         ),
