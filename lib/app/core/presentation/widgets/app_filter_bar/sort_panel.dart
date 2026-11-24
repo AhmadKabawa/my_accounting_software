@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/compact_content_breakpoint.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
@@ -79,9 +80,11 @@ class SortPanel extends StatelessWidget {
     final rowCount = sorts.isEmpty ? 1 : sorts.length;
     final maxWidth = context.ui.size.width(AppComponentSize.filterControlWidth);
 
-    final fillWidth = width == double.infinity;
+    final fillWidth =
+        width == double.infinity ||
+        MediaQuery.sizeOf(context).width < compactContentBreakpoint;
     return SizedBox(
-      width: width,
+      width: fillWidth ? double.infinity : (width ?? maxWidth),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: fillWidth ? double.infinity : maxWidth,
@@ -90,9 +93,7 @@ class SortPanel extends StatelessWidget {
           padding: context.ui.padding.all(AppSpacing.xs),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: fillWidth
-                ? CrossAxisAlignment.stretch
-                : CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               for (var index = 0; index < rowCount; index++) ...[
                 if (index > 0) context.ui.spacing.gap(AppSpacing.sm),
@@ -104,8 +105,9 @@ class SortPanel extends StatelessWidget {
                   onDirection: index < sorts.length
                       ? () => _toggleDirection(index)
                       : null,
-                  expandField: fillWidth,
+                  expandField: true,
                   onMoveUp: index > 0 ? () => _moveFieldUp(index) : null,
+                  reserveRemoveSlot: sorts.length > 1 && index == 0,
                   onRemove: index > 0 ? () => _removeField(index) : null,
                 ),
               ],

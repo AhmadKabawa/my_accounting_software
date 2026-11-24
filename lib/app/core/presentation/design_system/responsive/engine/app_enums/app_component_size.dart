@@ -65,9 +65,9 @@ class AppComponentSize extends ResponsiveToken {
   /// Mobile: 320px | Tablet: 360px | Desktop: 420px
   static const searchFieldWidth = AppComponentSize(320, 360, 420);
 
-  /// Filter control (dropdown) width in list toolbars.
-  /// Mobile: 200px | Tablet: 200px | Desktop: 220px
-  static const filterControlWidth = AppComponentSize(200, 200, 220);
+  /// Filter control and desktop sort panel width in list toolbars.
+  /// Mobile: 200px | Tablet: 240px | Desktop: 240px
+  static const filterControlWidth = AppComponentSize(200, 240, 240);
 
   /// Avatar — standard profile picture size
   /// Mobile: 40px | Tablet: 48px | Desktop: 56px

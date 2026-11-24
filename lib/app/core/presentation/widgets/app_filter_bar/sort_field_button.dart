@@ -17,6 +17,7 @@ class SortFieldButton extends StatelessWidget {
     required this.isUsedElsewhere,
     required this.onSelect,
     required this.onDirection,
+    required this.onMoveUp,
     required this.expandField,
   });
 
@@ -25,6 +26,7 @@ class SortFieldButton extends StatelessWidget {
   final bool Function(String key) isUsedElsewhere;
   final ValueChanged<String> onSelect;
   final VoidCallback? onDirection;
+  final VoidCallback? onMoveUp;
   final bool expandField;
 
   @override
@@ -85,6 +87,19 @@ class SortFieldButton extends StatelessWidget {
                 ? null
                 : () => onSelect(option.key),
           ),
+        if (onMoveUp != null) ...[
+          Divider(
+            color: colors.outlineVariant,
+            height: context.ui.size.height(AppSpacing.sm),
+            thickness: AppBorderWidth.thin.of(context),
+          ),
+          AppDropdownItem(
+            label: CatalogUiKeys.moveSortUp,
+            icon: AppIcons.moveSortUp,
+            closeOnActivate: false,
+            onPressed: onMoveUp,
+          ),
+        ],
       ],
     );
   }
@@ -99,13 +114,17 @@ class SortFieldButton extends StatelessWidget {
     excludeSemantics: true,
     child: InkWell(
       onTap: toggle,
-      child: Padding(
-        padding: context.ui.padding.symmetric(horizontal: AppSpacing.xs),
-        child: AppText(
-          selectedLabel,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          useEllipsis: true,
+      child: Tooltip(
+        message: selectedLabel.tr(context: context),
+        child: Padding(
+          padding: context.ui.padding.symmetric(horizontal: AppSpacing.xs),
+          child: AppText(
+            selectedLabel,
+            type: AppTextType.bodyMedium,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            useEllipsis: true,
+          ),
         ),
       ),
     ),
