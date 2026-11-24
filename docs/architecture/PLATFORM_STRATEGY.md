@@ -7,7 +7,7 @@
 | البند | الحالة |
 |---|---|
 | مجلدات المنصات `web` و`android` و`ios` و`windows` و`macos` و`linux` | موجودة في المستودع |
-| `dart:io` و`dart:html` و`package:web` في `lib/` | **لا يوجد** استيراد منها |
+| `dart:io` داخل `lib/` | محصور في `core/platform/`؛ لا استيراد لـ `dart:html` أو `package:web` |
 | `kIsWeb` | في `core/foundation/config/env_config.dart` فقط (فحص بناء لـ Google على الويب) |
 | الشبكة والتخزين | خلف واجهات: `NetworkInfo` و`StorageService` (آمن، وHive، وSharedPreferences) |
 | البيانات | الميزات مقسمة إلى مصدر بعيد `remote_data_source` ومحلي `local_data_source` خلف Repository |
@@ -25,8 +25,8 @@
 
 | الحاجة | الواجهة (تُنشأ عند الحاجة) | v1 (ويب) | موبايل (v2) | Windows (v2) |
 |---|---|---|---|---|
-| رفع صورة | `FilePickerService` يعيد `PickedFile{name, mime, bytes}` | منتقي المتصفح | معرض/كاميرا | حوار ملفات |
-| تنزيل أو مشاركة ملف | `FileSaver` | تنزيل المتصفح | ورقة المشاركة | حوار حفظ |
+| اختيار صورة | `ImagePickerPort` يعيد `PickedImage{name, mime, bytes}` | منتقي الصور | معرض الصور عند بناء الموبايل | حوار الملفات |
+| إفلات صورة | `FileDropTarget` داخل `core/platform/file_drop/` | مدعوم على Web | معطّل على الهاتف | مدعوم على Windows/macOS |\n| تنزيل أو مشاركة ملف | `FileSaver` | تنزيل المتصفح | ورقة المشاركة | حوار حفظ |
 | طباعة | `PrintService` | حوار المتصفح وPDF | مشاركة وPDF | طابعة النظام والحرارية |
 | مسح باركود | `ScanService` | حقل نصي (ماسح USB يحاكي لوحة المفاتيح) | كاميرا | حقل نصي |
 | الاتصال بالشبكة | `NetworkInfo` (موجود) | موجود | موجود | موجود |

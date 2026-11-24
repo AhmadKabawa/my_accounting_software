@@ -22,9 +22,12 @@ final _imports = RegExp(
 final _checks = RegExp(
   r'(?<![\w.])(kIsWeb|defaultTargetPlatform)\b|Platform\.is\w+',
 );
+final _restrictedPackageImports = RegExp(
+  r'''^\s*(import|export)\s+['"]package:(file_picker|desktop_drop)/''',
+);
 
 void main() {
-  test('platform APIs appear only in the platform layer', () {
+  test('platform APIs and file picker packages appear only in platform layer', () {
     final violations = <String>[];
 
     for (final file
@@ -39,7 +42,9 @@ void main() {
       for (var i = 0; i < lines.length; i++) {
         final line = lines[i];
         if (line.trimLeft().startsWith('//')) continue;
-        if (_imports.hasMatch(line) || _checks.hasMatch(line)) {
+        if (_imports.hasMatch(line) ||
+            _checks.hasMatch(line) ||
+            _restrictedPackageImports.hasMatch(line)) {
           violations.add('$path:${i + 1}: ${line.trim()}');
         }
       }
@@ -49,8 +54,9 @@ void main() {
       violations,
       isEmpty,
       reason:
-          'Move platform-bound code behind an interface in '
-          '$_platformLayer (docs/architecture/PLATFORM_STRATEGY.md):\n'
+          'Move platform-bound code and file_picker/desktop_drop imports behind '
+          'an interface in $_platformLayer '
+          '(docs/architecture/PLATFORM_STRATEGY.md):\n'
           '${violations.join('\n')}',
     );
   });
