@@ -9,7 +9,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
@@ -29,8 +28,8 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/wid
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_logo.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_status_badge.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_stats_bar.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_list_actions.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_filter_bar.dart';
+import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 CrudListConfig<Brand, BrandListQuery, BrandsListCubit, BrandsListEffect>
@@ -104,14 +103,8 @@ get brandsListConfig => CrudListConfig(
     ),
   ),
   flows: CrudFlowsConfig<Brand, BrandsListCubit>(
-    showEditor: (context, {item, duplicate = false}) async {
-      if (duplicate) {
-        await BrandsListActions.duplicate(context, item!);
-      } else {
-        await BrandsListActions.edit(context, item);
-      }
-      return false;
-    },
+    showEditor: (context, {item, duplicate = false}) =>
+        showBrandEditor(context, brand: item, duplicate: duplicate),
     onSaved: (cubit, {required isNew}) => cubit.onBrandSaved(isNew: isNew),
     itemLabel: (brand) => brand.name,
     delete: (cubit, brand) => cubit.delete(brand),
@@ -140,14 +133,6 @@ get brandsListConfig => CrudListConfig(
     activate: (cubit, items) => cubit.bulkActivate(items),
     deactivate: (cubit, items) => cubit.bulkDeactivate(items),
     delete: (cubit, items) => cubit.bulkDelete(items),
-  ),
-  actions: CrudActionsConfig<Brand>(
-    onEdit: (context, brand) => BrandsListActions.edit(context, brand),
-    onDuplicate: (context, brand) =>
-        BrandsListActions.duplicate(context, brand),
-    onDelete: (context, brand) => BrandsListActions.delete(context, brand),
-    onToggleStatus: (context, brand) =>
-        BrandsListActions.toggleStatus(context, brand),
   ),
   dataSection: (data) =>
       CrudDataSection<Brand, BrandListQuery, BrandsListCubit>(
