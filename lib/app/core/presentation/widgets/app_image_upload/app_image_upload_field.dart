@@ -189,7 +189,10 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AppText(widget.labels.sectionTitle, type: AppTextType.titleSmall),
+                AppText(
+                  widget.labels.sectionTitle,
+                  type: AppTextType.titleSmall,
+                ),
                 context.ui.spacing.gap(AppSpacing.md),
                 previewAndActions,
                 if (supportsDrop) ...[
@@ -216,7 +219,8 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
         if (supportsDrop) {
           content = FileDropTarget(
             child: content,
-            adapter: widget.dropTargetAdapter ??
+            adapter:
+                widget.dropTargetAdapter ??
                 const DesktopFileDropTargetAdapter(),
             onFilesDropped: _onDropped,
             onHover: (hovering) {

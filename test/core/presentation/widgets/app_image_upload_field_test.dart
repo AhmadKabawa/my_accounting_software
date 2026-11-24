@@ -17,10 +17,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_logo_thumb
 import '../../../helpers/localized_app.dart';
 import '../../../helpers/test_key.dart';
 
-const _policy = ImagePolicy(
-  maxBytes: 32,
-  allowedMimeTypes: {'image/png'},
-);
+const _policy = ImagePolicy(maxBytes: 32, allowedMimeTypes: {'image/png'});
 const _labels = AppImageUploadFieldLabels(
   sectionTitle: TestKey('test.image.section'),
   upload: TestKey('test.image.upload'),
@@ -41,9 +38,7 @@ class _Failure extends Failure {
 }
 
 PickedImage _png() => PickedImage(
-  bytes: Uint8List.fromList([
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
-  ]),
+  bytes: Uint8List.fromList([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
   fileName: 'logo.png',
   mimeType: 'image/png',
 );
@@ -124,27 +119,32 @@ Future<void> _pump(
   );
 }
 
-Finder _button(WidgetTester tester, String label) =>
-    find.byWidgetPredicate(
-      (widget) => widget is AppButton && widget.labelKey?.key == label,
-    );
+Finder _button(WidgetTester tester, String label) => find.byWidgetPredicate(
+  (widget) => widget is AppButton && widget.labelKey?.key == label,
+);
 
 void main() {
-  testWidgets('empty field shows preview fallback and upload action', (tester) async {
+  testWidgets('empty field shows preview fallback and upload action', (
+    tester,
+  ) async {
     await _pump(tester, _field());
     expect(find.byType(AppLogoThumb), findsOneWidget);
     expect(_button(tester, 'test.image.upload'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('existing image shows replace and remove actions', (tester) async {
+  testWidgets('existing image shows replace and remove actions', (
+    tester,
+  ) async {
     await _pump(tester, _field(value: 'https://cdn.test/logo.png'));
     expect(_button(tester, 'test.image.replace'), findsOneWidget);
     expect(_button(tester, 'test.image.remove'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('uploading disables controls and reports busy changes', (tester) async {
+  testWidgets('uploading disables controls and reports busy changes', (
+    tester,
+  ) async {
     final result = Completer<Either<Failure, String>>();
     final busy = <bool>[];
     String? changed;
@@ -160,7 +160,10 @@ void main() {
     await tester.tap(_button(tester, 'test.image.upload'));
     await tester.pump();
     expect(busy, [true]);
-    expect(tester.widget<AppButton>(_button(tester, 'test.image.upload')).isLoading, isTrue);
+    expect(
+      tester.widget<AppButton>(_button(tester, 'test.image.upload')).isLoading,
+      isTrue,
+    );
 
     result.complete(const Right('https://cdn.test/new.png'));
     await tester.pump();
@@ -170,10 +173,7 @@ void main() {
   });
 
   testWidgets('upload failure is shown in the inline banner', (tester) async {
-    await _pump(
-      tester,
-      _field(uploader: (_) async => const Left(_Failure())),
-    );
+    await _pump(tester, _field(uploader: (_) async => const Left(_Failure())));
     await tester.tap(_button(tester, 'test.image.upload'));
     await tester.pumpAndSettle();
     expect(find.text(ErrorKeys.conflict.en), findsOneWidget);
@@ -183,10 +183,7 @@ void main() {
     String? changed = 'https://cdn.test/logo.png';
     await _pump(
       tester,
-      _field(
-        value: changed,
-        onChanged: (value) => changed = value,
-      ),
+      _field(value: changed, onChanged: (value) => changed = value),
     );
     await tester.tap(_button(tester, 'test.image.remove'));
     await tester.pump();
