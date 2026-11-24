@@ -989,7 +989,8 @@ void main() {
       ]);
       expect(find.byTooltip('Then by'), findsOneWidget);
       expect(tester.takeException(), isNull);
-  });
+    },
+  );;
 
   testWidgets(
     'wide multi-sort menu remains open and lays out without exceptions',
@@ -1180,7 +1181,8 @@ void main() {
 
       expect(find.byType(SortCriterionRow), findsNWidgets(3));
       expect(tester.takeException(), isNull);
-  });
+    },
+  );;
 
   testWidgets(
     'sort arrow toggles without opening the field menu and field selection preserves direction',
