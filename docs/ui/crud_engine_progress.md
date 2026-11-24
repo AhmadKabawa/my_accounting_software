@@ -207,3 +207,18 @@ Intermediate failed/cancelled runs are retained in GitHub Actions history; no fa
 - RTL visual alignment and color hex LTR direction/copy action.
 - Phone widths 280–360px and desktop widths; verify no overflow or clipped menus.
 - The CI matrix covers 280px, RTL and text scale 1.5 for all three modes on both screens, but it does not replace visual QA.
+
+## Task 6 (3/3) — continuation (D0–E) and sidebar
+
+| Step | Commit | Result |
+|---|---|---|
+| D0 unify on flows | before `cbe8f49`..`b4d7064` | Colors on `CrudFlowsConfig`; `ColorsListActions` removed; `CrudListConfig` field guide added |
+| D0b widgets out of the config | same range | Brands config 200 lines, Colors config 190 (was 290); every widgets file ≤ 67 lines |
+| D0c `CrudLabels` | `b4d7064` | One label object per feature, used by flows, `CrudDataSection` and the status column |
+| D0d optional `statusColumn` | `8b82983` | CI green (`45335315771`). Status, delete and duplicate are optional; tests: `crud_data_section_test` (entity without status, edit-only), `crud_list_screen_test` (delete-only bulk, flows without delete/status) |
+| D0e dead code | `83e1de6` | CI green (`45402775205`). Removed `BrandsTableSection`, `ColorsTableSection`, `BrandsListActions`, `ColorsListActions`, `CrudActionsConfig`, `buildActions`; `screenId` only in the list configs; 250-line gate added to `crud_screens_use_engine_test`; recipe updated |
+| Sidebar | `622bc72` | CI green (`45462689584`). See `docs/ui/sidebar_behavior.md` |
+
+D1 (status flows signature) and D3 (`showCount` defaults to true, documented as the single exception in the recipe) were already in place. D4: `applyTable` is kept. `withSort` and `withSorts([x])` are equivalent for a valid key, but for an unknown or null key Brands keeps the current field and still flips the direction, while Colors ignores the tap. Aligning them is a behavior change left to a decision.
+
+Tests changed: `brands_table_section_test` (coverage moved to `brands_data_section_test`), `crud_actions_config_test` (removed with its subject), `crud_list_screen_test`, `crud_data_section_test`, `brands_list_config_test` (no `BrandsScreen.screenId`), `app_shell_windows_sidebar_test` (old one-way rule replaced).
