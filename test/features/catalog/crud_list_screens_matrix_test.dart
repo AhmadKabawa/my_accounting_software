@@ -59,7 +59,7 @@ Future<void> _chooseMode(WidgetTester tester, AppViewMode mode) async {
     AppViewMode.cards => CatalogUiKeys.viewCards,
     AppViewMode.grid => CatalogUiKeys.viewGrid,
   };
-  await tester.tap(find.text(key.en).last);
+  await tester.tap(find.text(key.en));
   await tester.pumpAndSettle();
 }
 
