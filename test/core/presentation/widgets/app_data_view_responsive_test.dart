@@ -96,11 +96,8 @@ void main() {
                   ],
                   rowId: (value) => value,
                   mode: AppViewMode.grid,
-                  gridItemBuilder: (_, value) => Text(
-                    value,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  gridItemBuilder: (_, value) =>
+                      Text(value, maxLines: 2, overflow: TextOverflow.ellipsis),
                 ),
               ),
             ),
