@@ -392,15 +392,49 @@ void main() {
       expect(find.text('ADD'), findsOneWidget);
     });
 
-    testWidgets('no refresh button and no view menu without config', (
+    testWidgets('default extra actions do not add a search suffix', (
+      tester,
+    ) async {
+      final config = ListToolbarConfig(
+        onSearchChanged: (_) {},
+        onClearAll: () {},
+      );
+      expect(config.extraActions, isEmpty);
+
+      await pump(tester, config);
+
+      expect(tester.widget<FilterBar>(find.byType(FilterBar)).searchSuffix, isNull);
+      expect(find.byTooltip('Refresh data'), findsNothing);
+      expect(find.byType(ViewModeSwitcher), findsNothing);
+    });
+
+    testWidgets('extra toolbar actions follow the selection control', (
       tester,
     ) async {
       await pump(
         tester,
-        ListToolbarConfig(onSearchChanged: (_) {}, onClearAll: () {}),
+        ListToolbarConfig(
+          onSearchChanged: (_) {},
+          onClearAll: () {},
+          selectionModeActive: true,
+          onSelectionModeToggle: () {},
+          extraActions: [
+            TextButton(
+              onPressed: () {},
+              child: const Text('EXTRA TOOLBAR ACTION'),
+            ),
+          ],
+        ),
       );
-      expect(find.byTooltip('Refresh data'), findsNothing);
-      expect(find.byType(ViewModeSwitcher), findsNothing);
+
+      expect(find.text('EXTRA TOOLBAR ACTION'), findsOneWidget);
+      final suffix = tester.widget<FilterBar>(find.byType(FilterBar)).searchSuffix;
+      expect(suffix, isA<Row>());
+      final children = (suffix! as Row).children;
+      expect(children, hasLength(2));
+      expect(children.first, isA<Semantics>());
+      expect(children.last, isA<TextButton>());
+      expect(tester.takeException(), isNull);
     });
   });
 }

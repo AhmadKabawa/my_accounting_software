@@ -32,6 +32,7 @@ class ListToolbarConfig {
     this.refreshing = false,
     this.selectionModeActive = false,
     this.onSelectionModeToggle,
+    this.extraActions = const [],
   });
 
   final ValueChanged<String> onSearchChanged;
@@ -66,4 +67,7 @@ class ListToolbarConfig {
   /// Null hides the selection-mode control (the feature has no bulk access).
   final bool selectionModeActive;
   final VoidCallback? onSelectionModeToggle;
+
+  /// Additional actions shown after the selection control in the search suffix.
+  final List<Widget> extraActions;
 }

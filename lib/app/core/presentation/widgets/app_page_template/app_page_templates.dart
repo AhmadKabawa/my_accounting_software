@@ -441,7 +441,9 @@ class ListPageTemplate extends StatelessWidget {
                 )
               : null,
           searchSuffix:
-              config.onRefresh == null && config.onSelectionModeToggle == null
+              config.onRefresh == null &&
+                  config.onSelectionModeToggle == null &&
+                  config.extraActions.isEmpty
               ? null
               : Row(
                   mainAxisSize: MainAxisSize.min,
@@ -466,6 +468,7 @@ class ListPageTemplate extends StatelessWidget {
                           onPressed: config.onSelectionModeToggle,
                         ),
                       ),
+                    ...config.extraActions,
                   ],
                 ),
         );

@@ -5,7 +5,7 @@ This file is the hand-off record for task 6 (parts 1–3). Update it after each 
 | Step | Scope | Status | Commit / CI |
 |---|---|---|---|
 | 0 | Read repository instructions and required source/tests/CI; record analysis | **Documentation committed; review findings recorded** | First docs-only commit; CI pending |
-| 1 | Add default-empty `ListToolbarConfig.extraActions`; verify existing `CrudRowActions.extraOverflow`; add focused tests | Not started | — |
+| 1 | Add default-empty `ListToolbarConfig.extraActions`; verify existing `CrudRowActions.extraOverflow`; add focused tests | **Committed; CI pending** | Step 1 commit; Analyze and Test pending |
 | 2 | Add `CrudListConfig`, `CrudListScreen`, data context and core engine tests | Not started | — |
 | 3 | Add `CrudActionsConfig` and `CrudListActions`; preserve action flow | Not started | — |
 | 4 | Complete engine tests: load/error/content/refresh failure, selection/view mode, effects, slots, actions | Not started | — |
@@ -23,6 +23,13 @@ This file is the hand-off record for task 6 (parts 1–3). Update it after each 
 - Confirmed effect-listener generic order is `BlocEffectListener<Effects, CubitB>`.
 - Brands and Colors have meaningful differences in stats/count, table sort, deletion policy, delete message arguments and row mutation behavior. Preserve them via config.
 - No production files or existing tests were modified in step 0.
+
+## Step 1 implementation notes
+
+- Added `ListToolbarConfig.extraActions` as a default-empty `List<Widget>`.
+- Appended toolbar actions after the existing selection control in the existing search-suffix row; the suffix remains absent when refresh, selection and extra actions are all absent.
+- Added focused template tests for the empty default and ordering/visibility of an extra action.
+- Confirmed `CrudRowActions.extraOverflow` already exists and did not modify it.
 
 ## Verification discipline
 
