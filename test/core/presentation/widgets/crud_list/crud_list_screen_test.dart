@@ -236,7 +236,6 @@ Future<_TestCubit> _pump(
   );
 }
 
-
 Future<_TestCubit> _pumpFlowHost(
   WidgetTester tester,
   Widget Function(BuildContext context) child,
@@ -263,16 +262,10 @@ CrudFlowsConfig<String, _TestCubit> _flows({
   showEditor,
   required Future<void> Function(_TestCubit cubit, {required bool isNew})
   onSaved,
-  required Future<Either<Failure, Unit>> Function(
-    _TestCubit cubit,
-    String item,
-  )
+  required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item)
   delete,
   required Future<void> Function(_TestCubit cubit, String item) activate,
-  required Future<Either<Failure, Unit>> Function(
-    _TestCubit cubit,
-    String item,
-  )
+  required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item)
   deactivate,
   bool Function(String item)? isActive,
 }) => CrudFlowsConfig<String, _TestCubit>(
@@ -440,7 +433,6 @@ void main() {
     );
   });
 
-
   testWidgets('edit and duplicate call onSaved only after a saved editor', (
     tester,
   ) async {
@@ -455,36 +447,26 @@ void main() {
       activate: (_, _) async {},
       deactivate: (_, _) async => const Right(unit),
     );
-    await _pumpFlowHost(
-      tester,
-      (context) {
-        final actions = flows.buildActions();
-        return Scaffold(
-          body: Column(
-            children: [
-              TextButton(
-                key: const ValueKey('edit'),
-                onPressed: () => CrudListActions.edit(
-                  context,
-                  actions,
-                  'alpha',
-                ),
-                child: const Text('edit'),
-              ),
-              TextButton(
-                key: const ValueKey('duplicate'),
-                onPressed: () => CrudListActions.duplicate(
-                  context,
-                  actions,
-                  'alpha',
-                ),
-                child: const Text('duplicate'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    await _pumpFlowHost(tester, (context) {
+      final actions = flows.buildActions();
+      return Scaffold(
+        body: Column(
+          children: [
+            TextButton(
+              key: const ValueKey('edit'),
+              onPressed: () => CrudListActions.edit(context, actions, 'alpha'),
+              child: const Text('edit'),
+            ),
+            TextButton(
+              key: const ValueKey('duplicate'),
+              onPressed: () =>
+                  CrudListActions.duplicate(context, actions, 'alpha'),
+              child: const Text('duplicate'),
+            ),
+          ],
+        ),
+      );
+    });
     await tester.tap(find.byKey(const ValueKey('edit')));
     await tester.pumpAndSettle();
     expect(savedCount, 1);
@@ -513,36 +495,33 @@ void main() {
       isActive: (item) => item == 'active',
     );
     late _TestCubit cubit;
-    cubit = await _pumpFlowHost(
-      tester,
-      (context) {
-        final actions = flows.buildActions();
-        return Scaffold(
-          body: Column(
-            children: [
-              TextButton(
-                key: const ValueKey('delete'),
-                onPressed: () =>
-                    CrudListActions.delete(context, actions, 'alpha'),
-                child: const Text('delete'),
-              ),
-              TextButton(
-                key: const ValueKey('inactive'),
-                onPressed: () =>
-                    CrudListActions.toggleStatus(context, actions, 'inactive'),
-                child: const Text('inactive'),
-              ),
-              TextButton(
-                key: const ValueKey('active'),
-                onPressed: () =>
-                    CrudListActions.toggleStatus(context, actions, 'active'),
-                child: const Text('active'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    cubit = await _pumpFlowHost(tester, (context) {
+      final actions = flows.buildActions();
+      return Scaffold(
+        body: Column(
+          children: [
+            TextButton(
+              key: const ValueKey('delete'),
+              onPressed: () =>
+                  CrudListActions.delete(context, actions, 'alpha'),
+              child: const Text('delete'),
+            ),
+            TextButton(
+              key: const ValueKey('inactive'),
+              onPressed: () =>
+                  CrudListActions.toggleStatus(context, actions, 'inactive'),
+              child: const Text('inactive'),
+            ),
+            TextButton(
+              key: const ValueKey('active'),
+              onPressed: () =>
+                  CrudListActions.toggleStatus(context, actions, 'active'),
+              child: const Text('active'),
+            ),
+          ],
+        ),
+      );
+    });
     await tester.tap(find.byKey(const ValueKey('delete')));
     await tester.pumpAndSettle();
     await tester.tap(find.text(CommonKeys.cancel.en));
@@ -589,8 +568,7 @@ void main() {
       tester,
       (context) => Scaffold(
         body: TextButton(
-          onPressed: () =>
-              editFuture = flows.edit(context, item: 'alpha'),
+          onPressed: () => editFuture = flows.edit(context, item: 'alpha'),
           child: const Text('begin edit'),
         ),
       ),
