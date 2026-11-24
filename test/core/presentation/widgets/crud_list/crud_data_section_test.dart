@@ -108,12 +108,16 @@ void main() {
   testWidgets('renders table, cards and grid modes', (tester) async {
     for (final mode in AppViewMode.values) {
       await tester.pumpWidget(
-        buildTestApp(home: Scaffold(body: _section(mode: mode))),
+        buildTestApp(
+          home: Scaffold(body: _section(mode: mode)),
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.text('one'), findsWidgets);
-      if (mode == AppViewMode.cards) expect(find.text('card one'), findsOneWidget);
-      if (mode == AppViewMode.grid) expect(find.text('grid one'), findsOneWidget);
+      if (mode == AppViewMode.cards)
+        expect(find.text('card one'), findsOneWidget);
+      if (mode == AppViewMode.grid)
+        expect(find.text('grid one'), findsOneWidget);
       expect(tester.takeException(), isNull);
     }
   });
@@ -122,14 +126,19 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      buildTestApp(home: Scaffold(body: _section(rows: const []))),
+      buildTestApp(
+        home: Scaffold(body: _section(rows: const [])),
+      ),
     );
     await tester.pumpAndSettle();
     expect(find.text(_empty.en), findsOneWidget);
     await tester.pumpWidget(
       buildTestApp(
         home: Scaffold(
-          body: _section(rows: const [], query: const _Query(search: 'x')),
+          body: _section(
+            rows: const [],
+            query: const _Query(search: 'x'),
+          ),
         ),
       ),
     );

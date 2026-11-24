@@ -127,7 +127,8 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
       activateLabelKey: statusColumn.activateLabelKey,
       deactivateLabelKey: statusColumn.deactivateLabelKey,
       statusBusy: data.busyIds.contains(data.rowId(row)),
-      extraOverflow: extraRowActions?.call(context, row) ??
+      extraOverflow:
+          extraRowActions?.call(context, row) ??
           data.actions.extraRowActions?.call(context, row) ??
           const [],
     ),
