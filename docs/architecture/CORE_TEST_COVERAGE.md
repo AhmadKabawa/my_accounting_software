@@ -173,4 +173,4 @@
 - test/core/presentation/widgets/app_color_picker_test.dart: HEX/RGB/RGBA and alpha preservation, external value synchronization, preset selection, mobile collapsed/expanded behavior, custom-value auto-expansion, SV/Hue drag isolation from parent scrolling, token-sized preset hit targets, semantics increment/decrement, and narrow RTL/large-text layout.
 - test/features/catalog/colors/presentation/widgets/color_presets_test.dart: 24 palette entries and HexColor.isValid validation for every entry.
 - test/architecture/ui_quality_gate_test.dart: presentation-file classifier self-checks and the 250-line gate now include dialogs/ in addition to pages/widgets/sections.
-- These tests are included in the current implementation batch. Their runtime status remains NOT_VERIFIED until the corresponding GitHub Actions run completes successfully.
+- Verification: GitHub Actions run 45505581060 passed Auto-format Dart, Analyze, the full suite (1,187 tests), and Catalog UI widget tests (172 tests). This verifies the tests listed above on the branch revision tested by that run.
