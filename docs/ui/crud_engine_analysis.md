@@ -33,13 +33,13 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 ## Core API observations and decisions
 
 1. `PagedListState<T,Q>` already contains query, result, status, failure, selection mode and busy IDs. `PagedListCubit<T,Q,E>` already owns loading, refresh, selection, row/bulk mutations and typed effects.
-2. `BlocEffectListener<Effects,CubitB>` is declared with effects first and `CubitB extends HasEffects<Effects>`. The requested `BlocEffectListener<Object?, C>` is valid only when `C` is constrained to `PagedListCubit<T,Q,Object?>`; retain the concrete Cubit type for provider lookup. No fourth generic is indicated by the inspected signatures.
+2. `BlocEffectListener<Effects,CubitB>` is declared with effects first and `CubitB extends HasEffects<Effects>`. The engine keeps the concrete Cubit type for provider lookup and adds an explicit fourth generic `E` to `CrudListConfig` / `CrudListScreen`, constraining `C extends PagedListCubit<T,Q,E>`. This preserves the Cubit's concrete effect type without `dynamic` or weakening the Cubit provider type.
 3. `CrudRowActions` already supports optional additional overflow actions through `extraOverflow = const []`. It does not need a new field; preserve the existing API. The shared `crudStatusColumn<T>` is declared in the same file.
 4. `CrudConfirmations.delete` accepts title/message keys, optional message args, target name and an async Either-returning delete callback. `CrudConfirmations.status` activates directly and confirms deactivation. Do not change this helper.
 5. `ListToolbarConfig` currently has no extra toolbar action list. `ListPageTemplate._toolbar` creates a search suffix only for refresh/selection controls; this is the narrow extension point for step 1.
 6. `FilterBarSortOption`, `FilterBarSort`, and `mapFilterBarSorts<F,T>` are exported from the filter-bar API. Keep feature enum parsing/building in the config adapter.
 7. `ViewModeCubit` persists a string by screen id and restores only recognized `AppViewMode` values.
-8. `CrudSelectionScope.actionsBuilder` returns `List<BulkAction>`; extra bulk actions can be appended after `CrudBulkActions.statusAndDelete` without changing the existing bar.
+8. `CrudSelectionScope.actionsBuilder` returns `List<BulkAction>`. The engine exposes a feature-owned `bulkActions` builder and appends `extraBulkActions` after it. A feature can use `CrudBulkActions.statusAndDelete` as its standard builder, but the engine does not invent localized labels or feature mutation callbacks.
 9. `ListPageTemplate` supports `count`, `stats`, `toolbar`, `addAction`, error/refresh-error states and custom empty state. The list screen engine should compose these existing slots rather than replace the template.
 
 ## Discrepancies / cautions
@@ -67,5 +67,17 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - Keep all feature-specific sorting, filter controls, stats, editor flows, permissions and row policy in configuration/feature widgets.
 - Put global capabilities in one immutable `CrudCapabilities` value with conservative defaults.
 - Treat all slots as optional and call them only when supplied.
-- Keep the engine generic over the concrete Cubit type, with effect type `Object?` only if the implementation confirms the requested broad listener constraint compiles.
+- Keep the engine generic over the concrete Cubit and its actual effect type (`C extends PagedListCubit<T,Q,E>`); pass that effect type to `BlocEffectListener<E,C>`.
 - Leave Brands and Colors screens/tests behavior unchanged during this engine work.
+
+
+## Final implementation review (step 6)
+
+- Compared recursive Git trees for the base branch `fix/ui-template-hardening` and `feat/crud-list-engine`: 8 added files, 4 modified files, and 0 removed files.
+- The changed/added paths are limited to the two CRUD engine documentation files, Core's list toolbar/template and new CRUD list widgets, plus focused Core/widget tests. No Brands or Colors source or test path appears in the diff.
+- No dependency manifest or lockfile changed; no package was added.
+- The three new Core implementation files are 204 lines (`crud_list_config.dart`), 198 lines (`crud_list_screen.dart`), and 39 lines (`crud_actions_config.dart`) after CI formatting; all remain below the 220-line target.
+- Core implementation imports only Flutter and Core. The engine retains typed Cubit/effect generics, contains no `dynamic`, and exposes optional feature-owned slots/callbacks.
+- Standard bulk actions are intentionally supplied by each feature through `bulkActions` (for example, `CrudBulkActions.statusAndDelete`); `extraBulkActions` is appended after them. This keeps feature-specific localized keys and mutation policies out of Core.
+- The review does not claim a screen migration: Brands and Colors remain unchanged, as required.
+- Step 5's 280px / 360px / 700px / 1400px matrix passed at text scales 1.0 and 1.5 in both LTR and RTL. CI run 45308555462 completed successfully, including Auto-format, Analyze, full tests, and catalog UI widget tests.

@@ -1,16 +1,16 @@
 # CRUD list engine — progress tracker
 
-This file is the hand-off record for task 6 (parts 1–3). Update it after each independently committed step. Do not begin the next step until the current step has a green Analyze and Test result on CI's formatted revision.
+This file records the CRUD list engine implementation and verification, without migrating Brands or Colors. Each implementation/review step has an independent commit; do not begin the next step until the prior step is green on CI's formatted revision.
 
 | Step | Scope | Status | Commit / CI |
 |---|---|---|---|
 | 0 | Read repository instructions and required source/tests/CI; record analysis | **Complete** | CI run 45303882331 — Auto-format, Analyze and Test, and catalog UI tests succeeded |
 | 1 | Add default-empty `ListToolbarConfig.extraActions`; verify existing `CrudRowActions.extraOverflow`; add focused tests | **Complete** | Commit fe0d0e4; formatted head bf14606; CI run 45304680471 — Auto-format and Analyze and Test succeeded |
 | 2 | Add `CrudListConfig`, `CrudListScreen`, data context and core engine tests | **Complete** | Commit c3e6c62; formatted head a8ea71a; CI run 45305814183 — Auto-format, Analyze, Run tests and catalog UI tests succeeded |
-| 3 | Add `CrudActionsConfig` and `CrudListActions`; preserve action flow | **Correction required** | Commits cc50021 / aba42fe; CI run 45306729538 failed Analyze on missing import and lint; run 45307049999 failed Analyze on one unused import |
+| 3 | Add `CrudActionsConfig` and `CrudListActions`; preserve action flow | **Complete** | Commits cc50021 / aba42fe / 95ce6f2; CI run 45307272754 green after corrections |
 | 4 | Test loading/error/content/refresh-failure state projections and action/selection contracts | **Complete** | Commit 2857ce3; CI 45308115225 — Auto-format, Analyze, Run tests and catalog UI widget tests succeeded |
-| 5 | Responsive/RTL/280px/text scale coverage and final architecture checks | **In progress** | Expanded AppDataView responsive matrix to 280px/360px/700px/1400px, scales 1.0/1.5 and LTR/RTL; CI pending |
-| 6 | Review diff, constraints, docs and CI | Not started | — |
+| 5 | Responsive/RTL/280px/text scale coverage | **Complete** | Commit be580e6; formatted head caeedbb; CI 45308555462 — Auto-format, Analyze, Run tests and catalog UI widget tests succeeded |
+| 6 | Review diff, constraints, docs and CI | **Complete** | Documentation corrected and recursive tree review recorded in this commit; CI pending |
 | 7 | Final report; stop before any screen migration | Not started | — |
 
 ## Step 0 notes
@@ -63,3 +63,14 @@ This file is the hand-off record for task 6 (parts 1–3). Update it after each 
 - After every push, wait for `Auto-format Dart`, follow any bot commit, then inspect `Analyze and Test` on the formatted revision.
 - Record exact workflow run/job names and conclusions. Do not claim local commands ran.
 - The CI bot may create a format commit even when no Dart files were changed; do not treat it as an error.
+
+
+## Step 6 — final diff and architecture review
+
+- Compared the recursive Git trees of `fix/ui-template-hardening` and `feat/crud-list-engine`: 8 added files, 4 modified files, 0 removed files.
+- Confirmed no Brands or Colors source/test files changed and no dependency manifest or lockfile changed.
+- Core CRUD implementation files are 204, 198 and 39 lines after formatting (all below 220); imports remain within Flutter/Core and the effect generic remains typed.
+- Clarified the actual fourth effect generic and the feature-supplied `bulkActions` / appended `extraBulkActions` contract in the analysis document.
+- Standard `CrudBulkActions.statusAndDelete` is available to feature configuration; Core intentionally does not supply feature-specific localized labels or mutation callbacks.
+- Step 5 CI run 45308555462 is fully green on formatted head `caeedbbb`.
+
