@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 
 /// Shared edit, duplicate, delete and status flows with feature-owned policy.
 class CrudFlowsConfig<T, C> {
@@ -52,13 +51,6 @@ class CrudFlowsConfig<T, C> {
   void add(BuildContext context) {
     edit(context);
   }
-
-  CrudActionsConfig<T> buildActions() => CrudActionsConfig<T>(
-    onEdit: (context, item) => edit(context, item: item),
-    onDuplicate: (context, item) => edit(context, item: item, duplicate: true),
-    onDelete: deleteItem,
-    onToggleStatus: toggleStatus,
-  );
 
   Future<void> edit(
     BuildContext context, {
