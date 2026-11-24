@@ -7,7 +7,6 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_swatch/app_color_swatch.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_picker/app_color_picker_keys.dart';
@@ -55,7 +54,6 @@ class _AppColorPickerState extends State<AppColorPicker> {
     _sync(widget.value);
   }
 
-  @override
   bool _isCustomValue(String? value) {
     final normalized = HexColor.normalize(value);
     if (normalized == null || !HexColor.isValid(normalized)) return false;
@@ -72,6 +70,7 @@ class _AppColorPickerState extends State<AppColorPicker> {
     _showSpectrum = !context.ui.screen.isMobile || _isCustomValue(widget.value);
   }
 
+  @override
   void didUpdateWidget(covariant AppColorPicker old) {
     super.didUpdateWidget(old);
     if (old.value != widget.value) {
@@ -367,7 +366,7 @@ class _AppColorPickerState extends State<AppColorPicker> {
 
 class _ImmediatePanGestureRecognizer extends PanGestureRecognizer {
   @override
-  void addAllowedPointer(PointerEvent event) {
+  void addAllowedPointer(PointerDownEvent event) {
     super.addAllowedPointer(event);
     resolve(GestureDisposition.accepted);
   }

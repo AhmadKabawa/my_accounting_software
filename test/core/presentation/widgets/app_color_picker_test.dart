@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_picker/app_color_picker.dart';
@@ -302,11 +303,11 @@ void main() {
       ),
     );
     final sliders = find.byWidgetPredicate(
-      (widget) => widget is Semantics && widget.properties.slider,
+      (widget) => widget is Semantics && widget.properties.slider == true,
     );
     expect(sliders, findsNWidgets(2));
     for (var index = 0; index < 2; index++) {
-      final semantics = t.getSemantics(sliders.at(index));
+      final semantics = t.getSemantics(sliders.at(index)).getSemanticsData();
       expect(semantics.hasAction(SemanticsAction.increase), isTrue);
       expect(semantics.hasAction(SemanticsAction.decrease), isTrue);
     }
