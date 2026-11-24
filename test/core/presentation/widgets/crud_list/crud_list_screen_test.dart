@@ -13,6 +13,7 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
+import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
@@ -24,6 +25,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_page_templ
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_screen.dart';
@@ -129,6 +131,7 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
   void Function(BuildContext context)? onMutated,
   bool Function(_Effect effect)? isMutationEffect,
   CrudFlowsConfig<String, _TestCubit>? flows,
+  CrudBulkConfig<String, _TestCubit>? bulk,
   CrudCapabilities capabilities = const CrudCapabilities(),
   List<Widget> Function(CrudSlotContext<String, _Query, _TestCubit> slot)?
   extraToolbarActions,
@@ -168,6 +171,7 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
   onMutated: onMutated,
   isMutationEffect: isMutationEffect,
   flows: flows,
+  bulk: bulk,
   extraToolbarActions: extraToolbarActions,
   extraFilterControls: extraFilterControls,
   headerExtras: headerExtras,
@@ -431,6 +435,60 @@ void main() {
       tester.widget<ListPageTemplate>(find.byType(ListPageTemplate)).count,
       2,
     );
+  });
+
+
+  testWidgets('bulk config builds standard actions and dispatches to Cubit', (
+    tester,
+  ) async {
+    var activated = 0;
+    var deactivated = 0;
+    var deleted = 0;
+    final bulk = CrudBulkConfig<String, _TestCubit>(
+      activateLabelKey: _add,
+      deactivateLabelKey: _title,
+      deleteLabelKey: _deletedKey,
+      deactivateTitleKey: _title,
+      deactivateMessageKey: _title,
+      deleteTitleKey: _title,
+      deleteMessageKey: _title,
+      activate: (_, selected) async {
+        activated += selected.length;
+        return BulkResult<String>(
+          successCount: selected.length,
+          failures: const [],
+        );
+      },
+      deactivate: (_, selected) async {
+        deactivated += selected.length;
+        return BulkResult<String>(
+          successCount: selected.length,
+          failures: const [],
+        );
+      },
+      delete: (_, selected) async {
+        deleted += selected.length;
+        return BulkResult<String>(
+          successCount: selected.length,
+          failures: const [],
+        );
+      },
+    );
+    final cubit = await _pump(
+      tester,
+      config: _config(createCubit: _TestCubit.new, bulk: bulk),
+    );
+    cubit.selection.replace({'alpha'});
+    cubit.setSelectionMode(true);
+    await tester.pumpAndSettle();
+    final actions = tester.widget<BulkActionBar>(
+      find.byType(BulkActionBar),
+    ).actions;
+    expect(actions, hasLength(3));
+    await actions.first.onRun();
+    expect(activated, 1);
+    expect(deactivated, 0);
+    expect(deleted, 0);
   });
 
   testWidgets('edit and duplicate call onSaved only after a saved editor', (
