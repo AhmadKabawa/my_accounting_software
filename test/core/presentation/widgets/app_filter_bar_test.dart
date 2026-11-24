@@ -1109,9 +1109,9 @@ void main() {
       expect(find.byTooltip('Ascending'), findsWidgets);
     });
 
-    testWidgets('opens on a 280px phone at 1.5x text without overflow', (
-      tester,
-    ) async {
+    testWidgets(
+      'opens on a 280px phone at 1.5x text without overflow',
+      (tester) async {
       await pumpMulti(tester, size: const Size(280, 700), textScale: 1.5);
       await tester.tap(find.text('Sort by'));
       await tester.pumpAndSettle();
