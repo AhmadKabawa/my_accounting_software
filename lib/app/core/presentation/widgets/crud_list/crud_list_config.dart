@@ -86,6 +86,10 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
     required this.rows,
     required this.total,
     required this.query,
+    required this.sortKey,
+    required this.sortAscending,
+    required this.onSort,
+    required this.permission,
     required this.loading,
     required this.refreshing,
     required this.failure,
@@ -105,6 +109,10 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
   final List<T> rows;
   final int total;
   final Q query;
+  final String? sortKey;
+  final bool sortAscending;
+  final ValueChanged<DataTableSort> onSort;
+  final Permission permission;
   final bool loading;
   final bool refreshing;
   final Failure? failure;
