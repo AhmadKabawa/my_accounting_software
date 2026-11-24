@@ -10,7 +10,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
-import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
