@@ -129,121 +129,117 @@ get colorsListConfig => CrudListConfig(
     deactivate: (cubit, items) => cubit.bulkDeactivate(items),
     delete: (cubit, items) => cubit.bulkDelete(items),
   ),
-  dataSection: (data) => CrudDataSection<
-    CatalogColor,
-    ColorListQuery,
-    ColorsListCubit
-  >(
-    data: data,
-    columns: [
-      DataTableColumn(
-        labelKey: ColorsKeys.colorName,
-        sortKey: 'name',
-        priority: DataTableColumnPriority.primary,
-        flex: 3,
-        cellBuilder: (_, color) => ColorIdentity(color),
-      ),
-      DataTableColumn(
-        labelKey: ColorsKeys.code,
-        sortKey: 'code',
-        priority: DataTableColumnPriority.secondary,
-        flex: 2,
-        cellBuilder: (_, color) => Directionality(
-          textDirection: TextDirection.ltr,
-          child: AppText.raw(color.code),
-        ),
-      ),
-      DataTableColumn(
-        labelKey: ColorsKeys.hexCode,
-        priority: DataTableColumnPriority.secondary,
-        flex: 2,
-        cellBuilder: (_, color) => color.hexCode == null
-            ? AppText(ColorsKeys.noSampleLabel, type: AppTextType.bodySmall)
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: AppText.raw(color.hexCode ?? ''),
-                    ),
+  dataSection: (data) =>
+      CrudDataSection<CatalogColor, ColorListQuery, ColorsListCubit>(
+        data: data,
+        columns: [
+          DataTableColumn(
+            labelKey: ColorsKeys.colorName,
+            sortKey: 'name',
+            priority: DataTableColumnPriority.primary,
+            flex: 3,
+            cellBuilder: (_, color) => ColorIdentity(color),
+          ),
+          DataTableColumn(
+            labelKey: ColorsKeys.code,
+            sortKey: 'code',
+            priority: DataTableColumnPriority.secondary,
+            flex: 2,
+            cellBuilder: (_, color) => Directionality(
+              textDirection: TextDirection.ltr,
+              child: AppText.raw(color.code),
+            ),
+          ),
+          DataTableColumn(
+            labelKey: ColorsKeys.hexCode,
+            priority: DataTableColumnPriority.secondary,
+            flex: 2,
+            cellBuilder: (_, color) => color.hexCode == null
+                ? AppText(ColorsKeys.noSampleLabel, type: AppTextType.bodySmall)
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: AppText.raw(color.hexCode ?? ''),
+                        ),
+                      ),
+                      AppIconButton(
+                        AppIcons.copy,
+                        tooltipKey: ColorsKeys.copyHex,
+                        size: AppButtonSize.small,
+                        onPressed: () => Clipboard.setData(
+                          ClipboardData(text: color.hexCode ?? ''),
+                        ),
+                      ),
+                    ],
                   ),
-                  AppIconButton(
-                    AppIcons.copy,
-                    tooltipKey: ColorsKeys.copyHex,
-                    size: AppButtonSize.small,
-                    onPressed: () => Clipboard.setData(
-                      ClipboardData(text: color.hexCode ?? ''),
-                    ),
-                  ),
-                ],
-              ),
-      ),
-    ],
-    statusColumn: CrudStatusColumnConfig<CatalogColor>(
-      labelKey: ColorsKeys.status,
-      isActive: (color) => color.isActive,
-      badgeBuilder: (_, color) => ColorStatusBadge(color),
-      activateLabelKey: ColorsKeys.activate,
-      deactivateLabelKey: ColorsKeys.deactivate,
-    ),
-    cardBuilder: (context, color) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ColorIdentity(color, size: AppIconSize.lg),
-        context.ui.spacing.gap(AppSpacing.xs),
-        AppText.raw(color.code, type: AppTextType.bodySmall),
-        if (color.hexCode != null) ...[
-          context.ui.spacing.gap(AppSpacing.xs),
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: AppText.raw(color.hexCode ?? '', type: AppTextType.bodySmall),
           ),
         ],
-        context.ui.spacing.gap(AppSpacing.sm),
-        ColorStatusBadge(color),
-      ],
-    ),
-    gridBuilder: (context, color) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ColorIdentity(
-          color,
-          size: AppIconSize.xl,
-          maxNameLines: 2,
+        statusColumn: CrudStatusColumnConfig<CatalogColor>(
+          labelKey: ColorsKeys.status,
+          isActive: (color) => color.isActive,
+          badgeBuilder: (_, color) => ColorStatusBadge(color),
+          activateLabelKey: ColorsKeys.activate,
+          deactivateLabelKey: ColorsKeys.deactivate,
         ),
-        context.ui.spacing.gap(AppSpacing.xs),
-        AppText.raw(
-          color.code,
-          type: AppTextType.bodySmall,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        cardBuilder: (context, color) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ColorIdentity(color, size: AppIconSize.lg),
+            context.ui.spacing.gap(AppSpacing.xs),
+            AppText.raw(color.code, type: AppTextType.bodySmall),
+            if (color.hexCode != null) ...[
+              context.ui.spacing.gap(AppSpacing.xs),
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: AppText.raw(
+                  color.hexCode ?? '',
+                  type: AppTextType.bodySmall,
+                ),
+              ),
+            ],
+            context.ui.spacing.gap(AppSpacing.sm),
+            ColorStatusBadge(color),
+          ],
         ),
-        if (color.hexCode != null) ...[
-          context.ui.spacing.gap(AppSpacing.xs),
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: AppText.raw(
-              color.hexCode ?? '',
+        gridBuilder: (context, color) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ColorIdentity(color, size: AppIconSize.xl, maxNameLines: 2),
+            context.ui.spacing.gap(AppSpacing.xs),
+            AppText.raw(
+              color.code,
               type: AppTextType.bodySmall,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ],
-        context.ui.spacing.gap(AppSpacing.sm),
-        ColorStatusBadge(color),
-      ],
-    ),
-    icon: AppIcons.colors,
-    emptyTitleKey: ColorsKeys.empty,
-    emptyDescriptionKey: ColorsKeys.emptyDescription,
-    noResultsTitleKey: ColorsKeys.noResults,
-    noResultsDescriptionKey: ColorsKeys.noResultsDescription,
-    editLabelKey: ColorsKeys.edit,
-    deleteLabelKey: ColorsKeys.delete,
-    duplicateLabelKey: ColorsKeys.duplicate,
-  ),
+            if (color.hexCode != null) ...[
+              context.ui.spacing.gap(AppSpacing.xs),
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: AppText.raw(
+                  color.hexCode ?? '',
+                  type: AppTextType.bodySmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+            context.ui.spacing.gap(AppSpacing.sm),
+            ColorStatusBadge(color),
+          ],
+        ),
+        icon: AppIcons.colors,
+        emptyTitleKey: ColorsKeys.empty,
+        emptyDescriptionKey: ColorsKeys.emptyDescription,
+        noResultsTitleKey: ColorsKeys.noResults,
+        noResultsDescriptionKey: ColorsKeys.noResultsDescription,
+        editLabelKey: ColorsKeys.edit,
+        deleteLabelKey: ColorsKeys.delete,
+        duplicateLabelKey: ColorsKeys.duplicate,
+      ),
 );
 
 abstract final class ColorsListActions {
