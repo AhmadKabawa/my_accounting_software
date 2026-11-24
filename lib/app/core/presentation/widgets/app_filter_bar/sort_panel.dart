@@ -93,7 +93,9 @@ class SortPanel extends StatelessWidget {
           padding: context.ui.padding.all(AppSpacing.xs),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: fillWidth
+                ? CrossAxisAlignment.stretch
+                : CrossAxisAlignment.start,
             children: [
               for (var index = 0; index < rowCount; index++) ...[
                 if (index > 0) context.ui.spacing.gap(AppSpacing.sm),
