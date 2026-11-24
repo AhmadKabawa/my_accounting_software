@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
 import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
