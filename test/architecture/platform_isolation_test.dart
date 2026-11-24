@@ -27,39 +27,43 @@ final _restrictedPackageImports = RegExp(
 );
 
 void main() {
-  test('platform APIs and file picker packages appear only in platform layer', () {
-    final violations = <String>[];
+  test(
+    'platform APIs and file picker packages appear only in platform layer',
+    () {
+      final violations = <String>[];
 
-    for (final file
-        in Directory('lib')
-            .listSync(recursive: true)
-            .whereType<File>()
-            .where((f) => f.path.endsWith('.dart'))) {
-      final path = file.path.replaceAll(r'\', '/');
-      if (path.startsWith(_platformLayer) || _allowed.contains(path)) continue;
+      for (final file
+          in Directory('lib')
+              .listSync(recursive: true)
+              .whereType<File>()
+              .where((f) => f.path.endsWith('.dart'))) {
+        final path = file.path.replaceAll(r'\', '/');
+        if (path.startsWith(_platformLayer) || _allowed.contains(path))
+          continue;
 
-      final lines = file.readAsLinesSync();
-      for (var i = 0; i < lines.length; i++) {
-        final line = lines[i];
-        if (line.trimLeft().startsWith('//')) continue;
-        if (_imports.hasMatch(line) ||
-            _checks.hasMatch(line) ||
-            _restrictedPackageImports.hasMatch(line)) {
-          violations.add('$path:${i + 1}: ${line.trim()}');
+        final lines = file.readAsLinesSync();
+        for (var i = 0; i < lines.length; i++) {
+          final line = lines[i];
+          if (line.trimLeft().startsWith('//')) continue;
+          if (_imports.hasMatch(line) ||
+              _checks.hasMatch(line) ||
+              _restrictedPackageImports.hasMatch(line)) {
+            violations.add('$path:${i + 1}: ${line.trim()}');
+          }
         }
       }
-    }
 
-    expect(
-      violations,
-      isEmpty,
-      reason:
-          'Move platform-bound code and file_picker/desktop_drop imports behind '
-          'an interface in $_platformLayer '
-          '(docs/architecture/PLATFORM_STRATEGY.md):\n'
-          '${violations.join('\n')}',
-    );
-  });
+      expect(
+        violations,
+        isEmpty,
+        reason:
+            'Move platform-bound code and file_picker/desktop_drop imports behind '
+            'an interface in $_platformLayer '
+            '(docs/architecture/PLATFORM_STRATEGY.md):\n'
+            '${violations.join('\n')}',
+      );
+    },
+  );
 
   test('the allow-list only names files that exist', () {
     for (final path in _allowed) {
