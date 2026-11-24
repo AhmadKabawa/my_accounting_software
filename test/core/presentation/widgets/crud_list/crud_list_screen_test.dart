@@ -197,6 +197,9 @@ Future<_TestCubit> _pump(
   double textScale = 1,
 }) async {
   setScreenSize(tester, size);
+  if (sl.isRegistered<AppSettingsManager>()) {
+    await sl.unregister<AppSettingsManager>();
+  }
   sl.registerSingleton<AppSettingsManager>(
     AppSettingsManager(storage: MemoryStorage()),
   );
@@ -386,7 +389,7 @@ void main() {
       find.descendant(of: switcher, matching: find.byType(InkWell)).first,
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text(CatalogUiKeys.viewCards.en));
+    await tester.tap(find.byType(MenuItemButton).first);
     await tester.pumpAndSettle();
     expect(cubit.selection.state, isEmpty);
     expect(tester.takeException(), isNull);
