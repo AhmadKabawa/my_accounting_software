@@ -31,6 +31,19 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/wid
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brands_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
+
+const _crudLabels = CrudLabels(
+  edit: BrandsKeys.edit,
+  delete: BrandsKeys.delete,
+  duplicate: BrandsKeys.duplicate,
+  activate: BrandsKeys.activate,
+  deactivate: BrandsKeys.deactivate,
+  deleteConfirmationTitle: BrandsKeys.delete,
+  deleteConfirmationMessage: BrandsKeys.confirmDelete,
+  deactivateConfirmationTitle: BrandsKeys.deactivateTitle,
+  deactivateConfirmationMessage: BrandsKeys.deactivateMessage,
+);
 
 CrudListConfig<Brand, BrandListQuery, BrandsListCubit, BrandsListEffect>
 get brandsListConfig => CrudListConfig(
@@ -106,15 +119,8 @@ get brandsListConfig => CrudListConfig(
     delete: (cubit, brand) => cubit.delete(brand),
     activate: (cubit, brand) => cubit.activate(brand.id),
     deactivate: (cubit, brand) => cubit.deactivate(brand.id),
-    deleteTitleKey: BrandsKeys.delete,
-    deleteMessageKey: BrandsKeys.confirmDelete,
-    deactivateTitleKey: BrandsKeys.deactivateTitle,
-    deactivateMessageKey: BrandsKeys.deactivateMessage,
-    editLabelKey: BrandsKeys.edit,
-    deleteLabelKey: BrandsKeys.delete,
-    duplicateLabelKey: BrandsKeys.duplicate,
-    activateLabelKey: BrandsKeys.activate,
-    deactivateLabelKey: BrandsKeys.deactivate,
+    labels: _crudLabels,
+
     isActive: (brand) => brand.isActive,
     canDelete: (brand) => brand.canDelete,
   ),
@@ -176,13 +182,12 @@ get brandsListConfig => CrudListConfig(
                   ),
           ),
         ],
+        labels: _crudLabels,
         statusColumn: CrudStatusColumnConfig<Brand>(
           labelKey: BrandsKeys.status,
           sortKey: 'status',
           isActive: (brand) => brand.isActive,
           badgeBuilder: (_, brand) => BrandStatusBadge(brand),
-          activateLabelKey: BrandsKeys.activate,
-          deactivateLabelKey: BrandsKeys.deactivate,
         ),
         cardBuilder: (_, brand) => BrandCard(brand),
         gridBuilder: (_, brand) => BrandGridTile(brand),
@@ -191,9 +196,6 @@ get brandsListConfig => CrudListConfig(
         emptyDescriptionKey: BrandsKeys.emptyDescription,
         noResultsTitleKey: BrandsKeys.noResults,
         noResultsDescriptionKey: BrandsKeys.noResultsDescription,
-        editLabelKey: BrandsKeys.edit,
-        deleteLabelKey: BrandsKeys.delete,
-        duplicateLabelKey: BrandsKeys.duplicate,
         canDelete: (brand) => brand.canDelete,
       ),
 );

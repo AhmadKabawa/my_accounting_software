@@ -30,6 +30,19 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/wid
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_status_badge.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/colors_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
+
+const _crudLabels = CrudLabels(
+  edit: ColorsKeys.edit,
+  delete: ColorsKeys.delete,
+  duplicate: ColorsKeys.duplicate,
+  activate: ColorsKeys.activate,
+  deactivate: ColorsKeys.deactivate,
+  deleteConfirmationTitle: ColorsKeys.deleteTitle,
+  deleteConfirmationMessage: ColorsKeys.deleteMessage,
+  deactivateConfirmationTitle: ColorsKeys.deactivateTitle,
+  deactivateConfirmationMessage: ColorsKeys.deactivateMessage,
+);
 
 const _colorsScreenId = 'catalog.colors';
 
@@ -117,16 +130,9 @@ get colorsListConfig => CrudListConfig(
     delete: (cubit, color) => cubit.delete(color),
     activate: (cubit, color) => cubit.activate(color.id),
     deactivate: (cubit, color) => cubit.deactivate(color.id),
-    deleteTitleKey: ColorsKeys.deleteTitle,
-    deleteMessageKey: ColorsKeys.deleteMessage,
+    labels: _crudLabels,
     messageArgs: (color) => {'name': color.name},
-    deactivateTitleKey: ColorsKeys.deactivateTitle,
-    deactivateMessageKey: ColorsKeys.deactivateMessage,
-    editLabelKey: ColorsKeys.edit,
-    deleteLabelKey: ColorsKeys.delete,
-    duplicateLabelKey: ColorsKeys.duplicate,
-    activateLabelKey: ColorsKeys.activate,
-    deactivateLabelKey: ColorsKeys.deactivate,
+
     isActive: (color) => color.isActive,
   ),
   bulk: CrudBulkConfig<CatalogColor, ColorsListCubit>(
@@ -169,12 +175,11 @@ get colorsListConfig => CrudListConfig(
             cellBuilder: (_, color) => ColorHexCell(color),
           ),
         ],
+        labels: _crudLabels,
         statusColumn: CrudStatusColumnConfig<CatalogColor>(
           labelKey: ColorsKeys.status,
           isActive: (color) => color.isActive,
           badgeBuilder: (_, color) => ColorStatusBadge(color),
-          activateLabelKey: ColorsKeys.activate,
-          deactivateLabelKey: ColorsKeys.deactivate,
         ),
         cardBuilder: (_, color) => ColorCard(color),
         gridBuilder: (_, color) => ColorGridTile(color),
@@ -183,8 +188,5 @@ get colorsListConfig => CrudListConfig(
         emptyDescriptionKey: ColorsKeys.emptyDescription,
         noResultsTitleKey: ColorsKeys.noResults,
         noResultsDescriptionKey: ColorsKeys.noResultsDescription,
-        editLabelKey: ColorsKeys.edit,
-        deleteLabelKey: ColorsKeys.delete,
-        duplicateLabelKey: ColorsKeys.duplicate,
       ),
 );

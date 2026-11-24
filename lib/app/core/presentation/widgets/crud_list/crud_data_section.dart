@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/crud_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 
 /// Feature-owned status-column policy used by [CrudDataSection].
 class CrudStatusColumnConfig<T> {
@@ -15,8 +16,8 @@ class CrudStatusColumnConfig<T> {
     required this.labelKey,
     required this.isActive,
     required this.badgeBuilder,
-    required this.activateLabelKey,
-    required this.deactivateLabelKey,
+    this.activateLabelKey,
+    this.deactivateLabelKey,
     this.sortKey,
   });
 
@@ -24,8 +25,8 @@ class CrudStatusColumnConfig<T> {
   final String? sortKey;
   final bool Function(T row) isActive;
   final Widget Function(BuildContext context, T row) badgeBuilder;
-  final AppKey activateLabelKey;
-  final AppKey deactivateLabelKey;
+  final AppKey? activateLabelKey;
+  final AppKey? deactivateLabelKey;
 }
 
 /// Shared table/cards/grid projection for CRUD list data.
@@ -42,12 +43,15 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
     required this.emptyDescriptionKey,
     required this.noResultsTitleKey,
     required this.noResultsDescriptionKey,
-    required this.editLabelKey,
-    required this.deleteLabelKey,
-    required this.duplicateLabelKey,
+    this.labels,
+    @Deprecated('Use labels.') AppKey? editLabelKey,
+    @Deprecated('Use labels.') AppKey? deleteLabelKey,
+    @Deprecated('Use labels.') AppKey? duplicateLabelKey,
     this.canDelete,
     this.extraRowActions,
-  });
+  }) : _editLabelKey = editLabelKey,
+       _deleteLabelKey = deleteLabelKey,
+       _duplicateLabelKey = duplicateLabelKey;
 
   final CrudDataContext<T, Q, C> data;
   final List<DataTableColumn<T>> columns;
@@ -59,9 +63,16 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
   final AppKey emptyDescriptionKey;
   final AppKey noResultsTitleKey;
   final AppKey noResultsDescriptionKey;
-  final AppKey editLabelKey;
-  final AppKey deleteLabelKey;
-  final AppKey duplicateLabelKey;
+  final CrudLabels? labels;
+  final AppKey? _editLabelKey;
+  final AppKey? _deleteLabelKey;
+  final AppKey? _duplicateLabelKey;
+
+  AppKey get editLabelKey => labels?.edit ?? _editLabelKey!;
+  AppKey get deleteLabelKey => labels?.delete ?? _deleteLabelKey!;
+  AppKey get duplicateLabelKey => labels?.duplicate ?? _duplicateLabelKey!;
+  AppKey get activateLabelKey => labels?.activate ?? statusColumn.activateLabelKey!;
+  AppKey get deactivateLabelKey => labels?.deactivate ?? statusColumn.deactivateLabelKey!;
   final bool Function(T row)? canDelete;
   final List<AppRowAction> Function(BuildContext context, T row)?
   extraRowActions;
@@ -80,8 +91,8 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
           if (flows != null) flows.toggleStatus(context, row);
         },
         badgeBuilder: statusColumn.badgeBuilder,
-        activateLabelKey: statusColumn.activateLabelKey,
-        deactivateLabelKey: statusColumn.deactivateLabelKey,
+        activateLabelKey: activateLabelKey,
+        deactivateLabelKey: deactivateLabelKey,
         isBusy: (row) => data.busyIds.contains(data.rowId(row)),
       ),
     ],
@@ -130,8 +141,8 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
         final flows = data.flows;
         if (flows != null) flows.toggleStatus(context, row);
       },
-      activateLabelKey: statusColumn.activateLabelKey,
-      deactivateLabelKey: statusColumn.deactivateLabelKey,
+      activateLabelKey: activateLabelKey,
+      deactivateLabelKey: deactivateLabelKey,
       statusBusy: data.busyIds.contains(data.rowId(row)),
       extraOverflow: extraRowActions?.call(context, row) ?? const [],
     ),

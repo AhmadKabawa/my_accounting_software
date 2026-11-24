@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 
 /// Shared edit, duplicate, delete and status flows with feature-owned policy.
 class CrudFlowsConfig<T, C> {
@@ -15,19 +16,28 @@ class CrudFlowsConfig<T, C> {
     required this.delete,
     required this.activate,
     required this.deactivate,
-    required this.deleteTitleKey,
-    required this.deleteMessageKey,
-    required this.deactivateTitleKey,
-    required this.deactivateMessageKey,
-    required this.editLabelKey,
-    required this.deleteLabelKey,
-    required this.duplicateLabelKey,
-    required this.activateLabelKey,
-    required this.deactivateLabelKey,
+    this.labels,
+    @Deprecated('Use labels.') AppKey? deleteTitleKey,
+    @Deprecated('Use labels.') AppKey? deleteMessageKey,
+    @Deprecated('Use labels.') AppKey? deactivateTitleKey,
+    @Deprecated('Use labels.') AppKey? deactivateMessageKey,
+    @Deprecated('Use labels.') AppKey? editLabelKey,
+    @Deprecated('Use labels.') AppKey? deleteLabelKey,
+    @Deprecated('Use labels.') AppKey? duplicateLabelKey,
+    @Deprecated('Use labels.') AppKey? activateLabelKey,
+    @Deprecated('Use labels.') AppKey? deactivateLabelKey,
     required this.isActive,
     this.canDelete,
     this.messageArgs,
-  });
+  }) : _deleteTitleKey = deleteTitleKey,
+       _deleteMessageKey = deleteMessageKey,
+       _deactivateTitleKey = deactivateTitleKey,
+       _deactivateMessageKey = deactivateMessageKey,
+       _editLabelKey = editLabelKey,
+       _deleteLabelKey = deleteLabelKey,
+       _duplicateLabelKey = duplicateLabelKey,
+       _activateLabelKey = activateLabelKey,
+       _deactivateLabelKey = deactivateLabelKey;
 
   final Future<bool?> Function(BuildContext context, {T? item, bool duplicate})
   showEditor;
@@ -36,15 +46,26 @@ class CrudFlowsConfig<T, C> {
   final Future<Either<Failure, Unit>> Function(C cubit, T item) delete;
   final Future<Either<Failure, Unit>> Function(C cubit, T item) activate;
   final Future<Either<Failure, Unit>> Function(C cubit, T item) deactivate;
-  final AppKey deleteTitleKey;
-  final AppKey deleteMessageKey;
-  final AppKey deactivateTitleKey;
-  final AppKey deactivateMessageKey;
-  final AppKey editLabelKey;
-  final AppKey deleteLabelKey;
-  final AppKey duplicateLabelKey;
-  final AppKey activateLabelKey;
-  final AppKey deactivateLabelKey;
+  final CrudLabels? labels;
+  final AppKey? _deleteTitleKey;
+  final AppKey? _deleteMessageKey;
+  final AppKey? _deactivateTitleKey;
+  final AppKey? _deactivateMessageKey;
+  final AppKey? _editLabelKey;
+  final AppKey? _deleteLabelKey;
+  final AppKey? _duplicateLabelKey;
+  final AppKey? _activateLabelKey;
+  final AppKey? _deactivateLabelKey;
+
+  AppKey get deleteTitleKey => labels?.deleteConfirmationTitle ?? _deleteTitleKey!;
+  AppKey get deleteMessageKey => labels?.deleteConfirmationMessage ?? _deleteMessageKey!;
+  AppKey get deactivateTitleKey => labels?.deactivateConfirmationTitle ?? _deactivateTitleKey!;
+  AppKey get deactivateMessageKey => labels?.deactivateConfirmationMessage ?? _deactivateMessageKey!;
+  AppKey get editLabelKey => labels?.edit ?? _editLabelKey!;
+  AppKey get deleteLabelKey => labels?.delete ?? _deleteLabelKey!;
+  AppKey get duplicateLabelKey => labels?.duplicate ?? _duplicateLabelKey!;
+  AppKey get activateLabelKey => labels?.activate ?? _activateLabelKey!;
+  AppKey get deactivateLabelKey => labels?.deactivate ?? _deactivateLabelKey!;
   final bool Function(T item) isActive;
   final bool Function(T item)? canDelete;
   final Map<String, String> Function(T item)? messageArgs;
