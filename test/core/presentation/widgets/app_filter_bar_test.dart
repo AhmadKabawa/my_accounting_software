@@ -220,7 +220,10 @@ void main() {
             activeFilters: const [],
             onClearAll: () {},
             filterControls: [
-              TextButton(onPressed: () {}, child: const Text('Status control')),
+              TextButton(
+                onPressed: () {},
+                child: const Text('Status control'),
+              ),
             ],
           ),
         ),
