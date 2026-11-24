@@ -172,7 +172,6 @@ void main() {
     expect(busy, [true, false]);
   });
 
-
   testWidgets('successful upload switches to replace and remove actions', (
     tester,
   ) async {
