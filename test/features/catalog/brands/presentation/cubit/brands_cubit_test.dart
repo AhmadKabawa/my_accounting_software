@@ -443,6 +443,39 @@ void main() {
     },
   );
 
+  test(
+    'bulk status operations activate and deactivate each selected brand',
+    () async {
+      final repository = FakeBrandsRepository();
+      final cubit = _listCubit(repository);
+      const inactive = Brand(
+        id: 31,
+        name: 'Inactive',
+        slug: 'inactive',
+        isActive: false,
+        productCount: 0,
+      );
+      const active = Brand(
+        id: 32,
+        name: 'Active',
+        slug: 'active',
+        isActive: true,
+        productCount: 0,
+      );
+
+      final activated = await cubit.bulkActivate([inactive]);
+      final deactivated = await cubit.bulkDeactivate([active]);
+
+      expect(activated.successCount, 1);
+      expect(activated.failureCount, 0);
+      expect(deactivated.successCount, 1);
+      expect(deactivated.failureCount, 0);
+      expect(repository.statusUpdates, contains((inactive.id, true)));
+      expect(repository.statusUpdates, contains((active.id, false)));
+      await cubit.close();
+    },
+  );
+
   test('form save emits BrandSavedEffect and returns to idle', () async {
     final repository = FakeBrandsRepository();
     final messages = FlashMessages();
