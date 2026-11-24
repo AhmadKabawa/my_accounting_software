@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/image/image_upload_cubit.dart';
+import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
 import 'package:accounting_software/app/core/localization/keys/image_keys.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_image_upload/app_image_upload_field.dart';
@@ -16,6 +17,7 @@ class BrandLogoSection extends StatelessWidget {
     required this.uploader,
     required this.onBusyChanged,
     this.picker,
+    this.dropTargetAdapter,
   });
 
   final TextEditingController logo;
@@ -23,6 +25,7 @@ class BrandLogoSection extends StatelessWidget {
   final ImageUploader uploader;
   final ValueChanged<bool> onBusyChanged;
   final ImagePickerPort? picker;
+  final FileDropTargetAdapter? dropTargetAdapter;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -42,6 +45,7 @@ class BrandLogoSection extends StatelessWidget {
       ),
       previewSize: AppLogoSize.small,
       picker: picker,
+      dropTargetAdapter: dropTargetAdapter,
       onBusyChanged: onBusyChanged,
     ),
   );

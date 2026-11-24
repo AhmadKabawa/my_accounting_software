@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor.dart';
 import 'package:accounting_software/app/core/foundation/image/image_upload_cubit.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
+import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/utility/brand_slug_from.dart';
@@ -21,6 +22,7 @@ class BrandEditorDialog extends StatefulWidget {
     this.seed,
     required this.logoUploader,
     this.logoPicker,
+    this.logoDropTargetAdapter,
     this.duplicate = false,
   }) : assert(!duplicate || (brand == null && seed != null));
 
@@ -28,6 +30,7 @@ class BrandEditorDialog extends StatefulWidget {
   final BrandDraft? seed;
   final ImageUploader logoUploader;
   final ImagePickerPort? logoPicker;
+  final FileDropTargetAdapter? logoDropTargetAdapter;
   final bool duplicate;
 
   @override
@@ -154,6 +157,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
           logo: _logo,
           logoUploader: widget.logoUploader,
           logoPicker: widget.logoPicker,
+          logoDropTargetAdapter: widget.logoDropTargetAdapter,
           onLogoBusyChanged: _onLogoBusyChanged,
           description: _description,
           onNameChanged: (value) => _onNameChanged(value, scope),

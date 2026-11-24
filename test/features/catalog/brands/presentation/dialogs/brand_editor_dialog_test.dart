@@ -9,6 +9,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
+import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
@@ -23,6 +24,17 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/dia
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import '../../../../../helpers/localized_app.dart';
 import '../../support/fake_brands_repository.dart';
+
+class _PassThroughDropAdapter implements FileDropTargetAdapter {
+  const _PassThroughDropAdapter();
+
+  @override
+  Widget build({
+    required Widget child,
+    required DroppedImagesCallback onFilesDropped,
+    required ValueChanged<bool> onHover,
+  }) => child;
+}
 
 class _Picker implements ImagePickerPort {
   _Picker(this.handler);
@@ -73,6 +85,7 @@ Future<void> _pumpEditor(
                     duplicate: duplicate,
                     logoUploader: UploadBrandLogoUseCase(repository).call,
                     logoPicker: picker ?? _Picker(() async => null),
+                    logoDropTargetAdapter: const _PassThroughDropAdapter(),
                   ),
                 ),
               );
