@@ -43,12 +43,14 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
     super.initState();
     final color = widget.color;
     final seed = widget.seed;
-    _fields = CrudEditorFields(initialValues: {
-      'name': seed?.name ?? color?.name ?? '',
-      'code': seed?.code ?? color?.code ?? '',
-      'hex': seed?.hexCode ?? color?.hexCode ?? '',
-      'sortOrder': (seed?.sortOrder ?? color?.sortOrder ?? 0).toString(),
-    });
+    _fields = CrudEditorFields(
+      initialValues: {
+        'name': seed?.name ?? color?.name ?? '',
+        'code': seed?.code ?? color?.code ?? '',
+        'hex': seed?.hexCode ?? color?.hexCode ?? '',
+        'sortOrder': (seed?.sortOrder ?? color?.sortOrder ?? 0).toString(),
+      },
+    );
     if (widget.duplicate) {
       for (final controller in [_name, _code]) {
         controller.selection = TextSelection(
@@ -100,8 +102,9 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
         isSaving: (status) => status == ColorFormStatus.saving,
         outcome: (effect) => switch (effect) {
           ColorSavedEffect() => const CrudEditorSuccess(),
-          ColorSaveFailedEffect(:final messageKey) =>
-            CrudEditorFailure(messageKey),
+          ColorSaveFailedEffect(:final messageKey) => CrudEditorFailure(
+            messageKey,
+          ),
         },
         onSave: _save,
         builder: (context, scope) => ColorEditorFieldsView(

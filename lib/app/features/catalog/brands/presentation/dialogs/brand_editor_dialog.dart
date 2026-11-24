@@ -51,12 +51,14 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
     _initialActive = seed?.isActive ?? brand?.isActive ?? true;
     _active = _initialActive;
     _slugTouched = brand != null;
-    _fields = CrudEditorFields(initialValues: {
-      'name': seed?.name ?? brand?.name ?? '',
-      'slug': seed?.slug ?? brand?.slug ?? '',
-      'logo': seed?.logo ?? brand?.logo ?? '',
-      'description': seed?.description ?? brand?.description ?? '',
-    });
+    _fields = CrudEditorFields(
+      initialValues: {
+        'name': seed?.name ?? brand?.name ?? '',
+        'slug': seed?.slug ?? brand?.slug ?? '',
+        'logo': seed?.logo ?? brand?.logo ?? '',
+        'description': seed?.description ?? brand?.description ?? '',
+      },
+    );
     if (widget.duplicate) {
       _name.selection = TextSelection(
         baseOffset: 0,
@@ -64,6 +66,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
       );
     }
   }
+
   @override
   void dispose() {
     _fields.dispose();
@@ -75,6 +78,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
     _slug.text = value;
     _settingSlug = false;
   }
+
   void _onNameChanged(String value, CrudEditorScope scope) {
     scope.clearFailure();
     if (widget.brand == null && !_slugTouched) {
@@ -87,6 +91,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
     _slugTouched = true;
     scope.changed();
   }
+
   void _regenerateSlug(CrudEditorScope scope) {
     final generated = brandSlugFrom(_name.text);
     if (generated.isEmpty) return;
@@ -96,6 +101,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
       ..clearFailure()
       ..changed();
   }
+
   Future<void> _save() => context.read<BrandFormCubit>().save(
     id: widget.brand?.id,
     draft: BrandDraft(
@@ -128,8 +134,9 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
               isSaving: (status) => status == BrandFormStatus.saving,
               outcome: (effect) => switch (effect) {
                 BrandSavedEffect() => const CrudEditorSuccess(),
-                BrandSaveFailedEffect(:final messageKey) =>
-                  CrudEditorFailure(messageKey),
+                BrandSaveFailedEffect(:final messageKey) => CrudEditorFailure(
+                  messageKey,
+                ),
               },
               onSave: _save,
               extraBusy: logoState.isBusy,
