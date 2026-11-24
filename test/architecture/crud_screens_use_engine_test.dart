@@ -28,9 +28,13 @@ Map<String, String> _readFeaturePages() => {
 
 Map<String, String> _readListConfigs() => {
   for (final file
-      in Directory('lib/app/features').listSync(recursive: true).whereType<File>().where(
-        (file) => file.path.replaceAll('\\', '/').endsWith('_list_config.dart'),
-      ))
+      in Directory('lib/app/features')
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where(
+            (file) =>
+                file.path.replaceAll('\\', '/').endsWith('_list_config.dart'),
+          ))
     file.path.replaceAll('\\', '/'): file.readAsStringSync(),
 };
 
