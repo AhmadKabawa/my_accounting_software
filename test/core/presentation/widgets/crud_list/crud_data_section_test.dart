@@ -184,7 +184,8 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    // The busy switch intentionally animates; settle would wait forever.
+    await tester.pump(const Duration(milliseconds: 100));
     expect(
       tester.widget<AppSwitch>(find.byType(AppSwitch).first).loading,
       isTrue,
