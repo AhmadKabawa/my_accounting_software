@@ -13,7 +13,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_page_templ
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 
 /// Core-owned CRUD list composition. Feature widgets remain responsible for
