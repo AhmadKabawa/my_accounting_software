@@ -18,12 +18,7 @@ void main() {
       CrudListActions.delete(config, row);
       CrudListActions.toggleStatus(config, row);
 
-      expect(calls, [
-        'edit:42',
-        'duplicate:42',
-        'delete:42',
-        'status:42',
-      ]);
+      expect(calls, ['edit:42', 'duplicate:42', 'delete:42', 'status:42']);
     });
 
     test('does nothing when an optional action is not configured', () {
