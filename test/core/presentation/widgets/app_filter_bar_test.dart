@@ -664,7 +664,10 @@ void main() {
             onClearAll: () {},
             sortOptions: const [
               FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-              FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+              FilterBarSortOption(
+                key: 'status',
+                label: CatalogUiKeys.filters,
+              ),
             ],
             sorts: current,
             onSortsChanged: (next) {
@@ -754,7 +757,10 @@ void main() {
           onClearAll: () {},
           sortOptions: const [
             FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-            FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+            FilterBarSortOption(
+              key: 'status',
+              label: CatalogUiKeys.filters,
+            ),
           ],
           sorts: sorts,
           onSortsChanged: (_) {},
@@ -965,8 +971,14 @@ void main() {
               onClearAll: () {},
               sortOptions: const [
                 FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-                FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
-                FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+                FilterBarSortOption(
+                  key: 'status',
+                  label: CatalogUiKeys.filters,
+                ),
+                FilterBarSortOption(
+                  key: 'updated',
+                  label: CatalogUiKeys.refresh,
+                ),
               ],
               sorts: initial,
               onSortsChanged: (next) => changed = next,
@@ -1172,8 +1184,14 @@ void main() {
             body: SortPanel(
               options: const [
                 FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-                FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
-                FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+                FilterBarSortOption(
+                  key: 'status',
+                  label: CatalogUiKeys.filters,
+                ),
+                FilterBarSortOption(
+                  key: 'updated',
+                  label: CatalogUiKeys.refresh,
+                ),
               ],
               sorts: const [
                 FilterBarSort('name', true),
