@@ -28,8 +28,8 @@ import 'package:accounting_software/app/features/catalog/colors/domain/usecase/s
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_stats/color_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
-import 'package:accounting_software/app/features/catalog/brands/support/fake_brands_repository.dart';
-import 'package:accounting_software/app/features/catalog/colors/support/fake_colors_repository.dart';
+import 'brands/support/fake_brands_repository.dart';
+import 'colors/support/fake_colors_repository.dart';
 import '../../helpers/localized_app.dart';
 import '../../helpers/memory_storage.dart';
 import '../../helpers/screen_matrix.dart';
@@ -70,7 +70,7 @@ void main() {
   testWidgets('Brands supports all view modes at 280px RTL and 1.5 scale', (
     tester,
   ) async {
-    late FakeBrandsRepository repository;
+    var repository = FakeBrandsRepository();
     sl.registerFactory<AppSettingsManager>(
       () => AppSettingsManager(storage: MemoryStorage()),
     );
@@ -118,7 +118,7 @@ void main() {
   testWidgets('Colors supports all view modes at 280px RTL and 1.5 scale', (
     tester,
   ) async {
-    late FakeColorsRepository repository;
+    var repository = FakeColorsRepository();
     sl.registerFactory<AppSettingsManager>(
       () => AppSettingsManager(storage: MemoryStorage()),
     );
