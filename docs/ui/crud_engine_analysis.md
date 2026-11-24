@@ -66,7 +66,7 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - Reuse the existing paged list state/cubit and feature-specific concrete Cubit providers.
 - Keep all feature-specific sorting, filter controls, stats, editor flows, permissions and row policy in configuration/feature widgets.
 - Put global capabilities in one immutable `CrudCapabilities` value with conservative defaults.
-- Treat all slots as optional and call them only when supplied.
+- Keep extension slots optional and invoke them only when configured. The base screen contract still requires its feature filter builder, active-filter projection, breadcrumb and data-section builder.
 - Keep the engine generic over the concrete Cubit and its actual effect type (`C extends PagedListCubit<T,Q,E>`); pass that effect type to `BlocEffectListener<E,C>`.
 - Leave Brands and Colors screens/tests behavior unchanged during this engine work.
 
