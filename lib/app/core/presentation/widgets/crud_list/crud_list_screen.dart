@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/presentation/state_management/bloc_
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_selection_scope.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_bulk_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
@@ -212,6 +213,32 @@ class _CrudListBody<
       onActivate: (items) => bulk.activate(slot.cubit, items),
       onDeactivate: (items) => bulk.deactivate(slot.cubit, items),
       onDelete: (items) => bulk.delete(slot.cubit, items),
+    );
+  }
+
+  List<BulkAction> _standardBulkActions(
+    BuildContext context,
+    CrudSlotContext<T, Q, C> slot,
+    List<T> selected,
+  ) {
+    final bulk = config.bulk;
+    if (bulk == null) return const [];
+    final cubit = slot.cubit;
+    return CrudBulkActions.statusAndDelete<T>(
+      context: context,
+      permission: config.manageAccess,
+      selected: selected,
+      itemLabel: config.itemLabel,
+      activateLabelKey: bulk.activateLabelKey,
+      deactivateLabelKey: bulk.deactivateLabelKey,
+      deleteLabelKey: bulk.deleteLabelKey,
+      deactivateTitleKey: bulk.deactivateTitleKey,
+      deactivateMessageKey: bulk.deactivateMessageKey,
+      deleteTitleKey: bulk.deleteTitleKey,
+      deleteMessageKey: bulk.deleteMessageKey,
+      onActivate: (items) => bulk.activate(cubit, items),
+      onDeactivate: (items) => bulk.deactivate(cubit, items),
+      onDelete: (items) => bulk.delete(cubit, items),
     );
   }
 
