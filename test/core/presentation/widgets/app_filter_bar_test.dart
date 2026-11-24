@@ -1159,10 +1159,10 @@ void main() {
       final rowWidth = tester.getSize(row).width;
       final fieldWidth = tester.getSize(field).width;
       final context = tester.element(field);
-      final labelAreaWidth =
-          fieldWidth - AppButtonStyle(context).touchTarget;
-      final availableNameWidth =
-          labelAreaWidth - 2 * AppSpacing.xs.of(context);
+      final touchTarget = AppButtonStyle(context).touchTarget;
+      final labelAreaWidth = fieldWidth - touchTarget;
+      final labelPadding = 2 * AppSpacing.xs.of(context);
+      final availableNameWidth = labelAreaWidth - labelPadding;
 
       expect(fieldWidth, greaterThanOrEqualTo(rowWidth * 0.6));
       expect(availableNameWidth, greaterThanOrEqualTo(110));
@@ -1210,10 +1210,10 @@ void main() {
       final panelContext = tester.element(panel);
       final field = find.byType(SortFieldButton).first;
       final fieldWidth = tester.getSize(field).width;
-      final labelAreaWidth =
-          fieldWidth - AppButtonStyle(panelContext).touchTarget;
-      final availableNameWidth =
-          labelAreaWidth - 2 * AppSpacing.xs.of(panelContext);
+      final touchTarget = AppButtonStyle(panelContext).touchTarget;
+      final labelAreaWidth = fieldWidth - touchTarget;
+      final labelPadding = 2 * AppSpacing.xs.of(panelContext);
+      final availableNameWidth = labelAreaWidth - labelPadding;
 
       expect(find.byType(SortCriterionRow), findsNWidgets(3));
       expect(
