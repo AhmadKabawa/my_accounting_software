@@ -9,7 +9,8 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 
-typedef ImageUploader = Future<Either<Failure, String>> Function(ImageUpload upload);
+typedef ImageUploader =
+    Future<Either<Failure, String>> Function(ImageUpload upload);
 
 sealed class ImageUploadState {
   const ImageUploadState();
@@ -73,11 +74,13 @@ class ImageUploadCubit extends BaseCubit<ImageUploadState, void> {
       return;
     }
 
-    await upload(ImageUpload(
-      bytes: picked.bytes,
-      fileName: picked.fileName,
-      mimeType: picked.mimeType,
-    ));
+    await upload(
+      ImageUpload(
+        bytes: picked.bytes,
+        fileName: picked.fileName,
+        mimeType: picked.mimeType,
+      ),
+    );
   }
 
   Future<void> upload(ImageUpload upload) async {
@@ -86,8 +89,8 @@ class ImageUploadCubit extends BaseCubit<ImageUploadState, void> {
     if (!validation.isValid) {
       final key = switch (validation.status) {
         ImageValidationStatus.tooLarge => ImageKeys.tooLarge,
-        ImageValidationStatus.emptyFile || ImageValidationStatus.wrongType =>
-          ImageKeys.unsupportedType,
+        ImageValidationStatus.emptyFile ||
+        ImageValidationStatus.wrongType => ImageKeys.unsupportedType,
         ImageValidationStatus.ok => ImageKeys.unsupportedType,
       };
       emit(ImageUploadFailed(key));

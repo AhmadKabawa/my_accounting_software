@@ -37,7 +37,10 @@ void main() {
     );
     await cubit.pickAndUpload();
     expect(cubit.state, isA<ImageUploadUploaded>());
-    expect((cubit.state as ImageUploadUploaded).url, 'https://cdn.test/image.png');
+    expect(
+      (cubit.state as ImageUploadUploaded).url,
+      'https://cdn.test/image.png',
+    );
     await cubit.close();
   });
 
@@ -46,7 +49,10 @@ void main() {
     final cubit = ImageUploadCubit(
       picker: _Picker(null),
       policy: policy,
-      uploader: (_) async { uploads++; return const Right('unused'); },
+      uploader: (_) async {
+        uploads++;
+        return const Right('unused');
+      },
     );
     await cubit.pickAndUpload();
     expect(cubit.state, isA<ImageUploadIdle>());
@@ -68,13 +74,18 @@ void main() {
   test('rejects policy failures without calling uploader', () async {
     var uploads = 0;
     final cubit = ImageUploadCubit(
-      picker: _Picker(PickedImage(
-        bytes: Uint8List.fromList([1, 2, 3]),
-        fileName: 'wrong.png',
-        mimeType: 'image/png',
-      )),
+      picker: _Picker(
+        PickedImage(
+          bytes: Uint8List.fromList([1, 2, 3]),
+          fileName: 'wrong.png',
+          mimeType: 'image/png',
+        ),
+      ),
       policy: policy,
-      uploader: (_) async { uploads++; return const Right('unused'); },
+      uploader: (_) async {
+        uploads++;
+        return const Right('unused');
+      },
     );
     await cubit.pickAndUpload();
     expect(cubit.state, const ImageUploadFailed(ImageKeys.unsupportedType));
@@ -85,12 +96,17 @@ void main() {
   test('ignores a duplicate pick while busy', () async {
     var pickCount = 0;
     var finishUpload = false;
-    final picker = _CountingPicker(() { pickCount++; return _validImage(); });
+    final picker = _CountingPicker(() {
+      pickCount++;
+      return _validImage();
+    });
     final cubit = ImageUploadCubit(
       picker: picker,
       policy: policy,
       uploader: (_) async {
-        while (!finishUpload) { await Future<void>.delayed(Duration.zero); }
+        while (!finishUpload) {
+          await Future<void>.delayed(Duration.zero);
+        }
         return const Right('https://cdn.test/image.png');
       },
     );
