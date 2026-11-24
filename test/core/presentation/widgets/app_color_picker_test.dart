@@ -243,9 +243,7 @@ void main() {
     expect(_pickerSurfaces(), findsNWidgets(2));
   });
 
-  testWidgets('SV and hue drag surfaces do not scroll their parent', (
-    t,
-  ) async {
+  testWidgets('SV and hue drag surfaces do not scroll their parent', (t) async {
     final scrollController = ScrollController();
     await t.pumpWidget(
       buildTestApp(
@@ -336,5 +334,4 @@ void main() {
     expect(t.takeException(), isNull);
     expect(find.text('Custom color'), findsOneWidget);
   });
-
 }

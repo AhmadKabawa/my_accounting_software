@@ -69,8 +69,7 @@ class _AppColorPickerState extends State<AppColorPicker> {
     super.didChangeDependencies();
     if (_responsiveStateInitialized) return;
     _responsiveStateInitialized = true;
-    _showSpectrum =
-        !context.ui.screen.isMobile || _isCustomValue(widget.value);
+    _showSpectrum = !context.ui.screen.isMobile || _isCustomValue(widget.value);
   }
 
   void didUpdateWidget(covariant AppColorPicker old) {
@@ -218,7 +217,8 @@ class _AppColorPickerState extends State<AppColorPicker> {
             height: pickerSize,
             child: Semantics(
               label: AppColorPickerKeys.sv.tr(context: context),
-              value: 'S ' +
+              value:
+                  'S ' +
                   (100 * _sat).round().toString() +
                   '%, V ' +
                   (100 * _val).round().toString() +
