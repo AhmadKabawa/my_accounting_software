@@ -535,7 +535,7 @@ void main() {
       },
     );
 
-  testWidgets('result count is optional text', (tester) async {
+    testWidgets('result count is optional text', (tester) async {
       await pumpBar(tester);
       expect(find.textContaining('results'), findsNothing);
       await pumpBar(tester, resultCount: 12);
