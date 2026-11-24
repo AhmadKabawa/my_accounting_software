@@ -480,57 +480,57 @@ void main() {
     });
 
     testWidgets(
-    'wide multi-sort separates direction and field targets and closes only the nested menu',
-    (tester) async {
-      tester.view.physicalSize = const Size(1200, 900);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      var current = const [FilterBarSort('name', true)];
-      await tester.pumpWidget(
-        buildTestApp(
-          home: Scaffold(
-            body: FilterBar(
-              onSearchChanged: (_) {},
-              activeFilters: const [],
-              onClearAll: () {},
-              sortOptions: const [
-                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-                FilterBarSortOption(
-                  key: 'status',
-                  label: CatalogUiKeys.filters,
-                ),
-              ],
-              sorts: current,
-              onSortsChanged: (next) => current = next,
+      'wide multi-sort separates direction and field targets and closes only the nested menu',
+      (tester) async {
+        tester.view.physicalSize = const Size(1200, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        var current = const [FilterBarSort('name', true)];
+        await tester.pumpWidget(
+          buildTestApp(
+            home: Scaffold(
+              body: FilterBar(
+                onSearchChanged: (_) {},
+                activeFilters: const [],
+                onClearAll: () {},
+                sortOptions: const [
+                  FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                  FilterBarSortOption(
+                    key: 'status',
+                    label: CatalogUiKeys.filters,
+                  ),
+                ],
+                sorts: current,
+                onSortsChanged: (next) => current = next,
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.tap(find.text('Sort by'));
-      await tester.pumpAndSettle();
-      expect(find.byTooltip('Then by'), findsOneWidget);
+        await tester.tap(find.text('Sort by'));
+        await tester.pumpAndSettle();
+        expect(find.byTooltip('Then by'), findsOneWidget);
 
-      // The direction target changes the value without opening the field menu.
-      await tester.tap(find.byTooltip('Ascending'));
-      await tester.pumpAndSettle();
-      expect(current, [const FilterBarSort('name', false)]);
-      expect(find.byTooltip('Then by'), findsOneWidget);
-      expect(find.byType(MenuItemButton).hitTestable(), findsNothing);
+        // The direction target changes the value without opening the field menu.
+        await tester.tap(find.byTooltip('Ascending'));
+        await tester.pumpAndSettle();
+        expect(current, [const FilterBarSort('name', false)]);
+        expect(find.byTooltip('Then by'), findsOneWidget);
+        expect(find.byType(MenuItemButton).hitTestable(), findsNothing);
 
-      // The field target opens the nested menu; selecting a field closes only it.
-      await tester.tap(find.text('Search').last);
-      await tester.pumpAndSettle();
-      expect(find.byType(MenuItemButton).hitTestable(), findsNWidgets(2));
-      await tester.tap(find.text('Filters').last);
-      await tester.pumpAndSettle();
+        // The field target opens the nested menu; selecting a field closes only it.
+        await tester.tap(find.text('Search').last);
+        await tester.pumpAndSettle();
+        expect(find.byType(MenuItemButton).hitTestable(), findsNWidgets(2));
+        await tester.tap(find.text('Filters').last);
+        await tester.pumpAndSettle();
 
-      expect(current, [const FilterBarSort('status', false)]);
-      expect(find.byTooltip('Then by'), findsOneWidget);
-      expect(find.byType(MenuItemButton).hitTestable(), findsNothing);
-      expect(tester.takeException(), isNull);
-    },
-  );
+        expect(current, [const FilterBarSort('status', false)]);
+        expect(find.byTooltip('Then by'), findsOneWidget);
+        expect(find.byType(MenuItemButton).hitTestable(), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
   testWidgets('result count is optional text', (tester) async {
       await pumpBar(tester);
