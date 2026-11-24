@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,10 +17,13 @@ import 'package:accounting_software/app/core/localization/keys/common_keys.dart'
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_screen.dart';
@@ -64,6 +69,7 @@ class _TestCubit extends PagedListCubit<String, _Query, _Effect> {
 
   bool failNextFetch = false;
   int fetchCalls = 0;
+  int deleteCalls = 0;
   List<String> rows = const ['alpha', 'beta'];
 
   @override
@@ -84,8 +90,10 @@ class _TestCubit extends PagedListCubit<String, _Query, _Effect> {
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteItem(String item) async =>
-      const Right(unit);
+  Future<Either<Failure, Unit>> deleteItem(String item) async {
+    deleteCalls++;
+    return const Right(unit);
+  }
 
   @override
   TestKey get deletedMessageKey => _deletedKey;
@@ -130,6 +138,11 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
   headerExtras,
   Widget Function(CrudSlotContext<String, _Query, _TestCubit> slot)?
   statsBuilder,
+  List<BulkAction> Function(
+    CrudSlotContext<String, _Query, _TestCubit> slot,
+    List<String> selected,
+  )?
+  extraBulkActions,
   void Function(CrudDataContext<String, _Query, _TestCubit> data)? onData,
 }) => CrudListConfig<String, _Query, _TestCubit, _Effect>(
   screenId: 'crud.screen.test',
@@ -159,6 +172,7 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
   extraFilterControls: extraFilterControls,
   headerExtras: headerExtras,
   statsBuilder: statsBuilder,
+  extraBulkActions: extraBulkActions,
   dataSection: (data) {
     onData?.call(data);
     return AppDataView<String>(
@@ -221,6 +235,64 @@ Future<_TestCubit> _pump(
     tester.element(find.byType(ListPageTemplate)),
   );
 }
+
+
+Future<_TestCubit> _pumpFlowHost(
+  WidgetTester tester,
+  Widget Function(BuildContext context) child,
+) async {
+  final cubit = _TestCubit();
+  await tester.pumpWidget(
+    buildTestApp(
+      home: BlocProvider<_TestCubit>.value(
+        value: cubit,
+        child: Builder(builder: child),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return cubit;
+}
+
+CrudFlowsConfig<String, _TestCubit> _flows({
+  required Future<bool?> Function(
+    BuildContext context, {
+    String? item,
+    bool duplicate,
+  })
+  showEditor,
+  required Future<void> Function(_TestCubit cubit, {required bool isNew})
+  onSaved,
+  required Future<Either<Failure, Unit>> Function(
+    _TestCubit cubit,
+    String item,
+  )
+  delete,
+  required Future<void> Function(_TestCubit cubit, String item) activate,
+  required Future<Either<Failure, Unit>> Function(
+    _TestCubit cubit,
+    String item,
+  )
+  deactivate,
+  bool Function(String item)? isActive,
+}) => CrudFlowsConfig<String, _TestCubit>(
+  showEditor: showEditor,
+  onSaved: onSaved,
+  itemLabel: (item) => item,
+  delete: delete,
+  activate: activate,
+  deactivate: deactivate,
+  deleteTitleKey: _title,
+  deleteMessageKey: _title,
+  deactivateTitleKey: _title,
+  deactivateMessageKey: _title,
+  editLabelKey: _title,
+  deleteLabelKey: _title,
+  duplicateLabelKey: _title,
+  activateLabelKey: _title,
+  deactivateLabelKey: _title,
+  isActive: isActive ?? (_) => false,
+);
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
@@ -368,6 +440,170 @@ void main() {
     );
   });
 
+
+  testWidgets('edit and duplicate call onSaved only after a saved editor', (
+    tester,
+  ) async {
+    var editorResult = true;
+    var savedCount = 0;
+    final flows = _flows(
+      showEditor: (_, {item, duplicate = false}) async => editorResult,
+      onSaved: (_, {required isNew}) async {
+        savedCount++;
+      },
+      delete: (cubit, item) => cubit.delete(item),
+      activate: (_, _) async {},
+      deactivate: (_, _) async => const Right(unit),
+    );
+    await _pumpFlowHost(
+      tester,
+      (context) {
+        final actions = flows.buildActions();
+        return Scaffold(
+          body: Column(
+            children: [
+              TextButton(
+                key: const ValueKey('edit'),
+                onPressed: () => CrudListActions.edit(
+                  context,
+                  actions,
+                  'alpha',
+                ),
+                child: const Text('edit'),
+              ),
+              TextButton(
+                key: const ValueKey('duplicate'),
+                onPressed: () => CrudListActions.duplicate(
+                  context,
+                  actions,
+                  'alpha',
+                ),
+                child: const Text('duplicate'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    await tester.tap(find.byKey(const ValueKey('edit')));
+    await tester.pumpAndSettle();
+    expect(savedCount, 1);
+    editorResult = false;
+    await tester.tap(find.byKey(const ValueKey('duplicate')));
+    await tester.pumpAndSettle();
+    expect(savedCount, 1);
+  });
+
+  testWidgets('delete confirmation and status activation are preserved', (
+    tester,
+  ) async {
+    var activated = 0;
+    var deactivated = 0;
+    final flows = _flows(
+      showEditor: (_, {item, duplicate = false}) async => false,
+      onSaved: (_, {required isNew}) async {},
+      delete: (cubit, item) => cubit.delete(item),
+      activate: (_, _) async {
+        activated++;
+      },
+      deactivate: (_, _) async {
+        deactivated++;
+        return const Right(unit);
+      },
+      isActive: (item) => item == 'active',
+    );
+    late _TestCubit cubit;
+    cubit = await _pumpFlowHost(
+      tester,
+      (context) {
+        final actions = flows.buildActions();
+        return Scaffold(
+          body: Column(
+            children: [
+              TextButton(
+                key: const ValueKey('delete'),
+                onPressed: () =>
+                    CrudListActions.delete(context, actions, 'alpha'),
+                child: const Text('delete'),
+              ),
+              TextButton(
+                key: const ValueKey('inactive'),
+                onPressed: () =>
+                    CrudListActions.toggleStatus(context, actions, 'inactive'),
+                child: const Text('inactive'),
+              ),
+              TextButton(
+                key: const ValueKey('active'),
+                onPressed: () =>
+                    CrudListActions.toggleStatus(context, actions, 'active'),
+                child: const Text('active'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    await tester.tap(find.byKey(const ValueKey('delete')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CommonKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(cubit.deleteCalls, 0);
+
+    await tester.tap(find.byKey(const ValueKey('delete')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CommonKeys.confirm.en));
+    await tester.pumpAndSettle();
+    expect(cubit.deleteCalls, 1);
+
+    await tester.tap(find.byKey(const ValueKey('inactive')));
+    await tester.pumpAndSettle();
+    expect(activated, 1);
+    await tester.tap(find.byKey(const ValueKey('active')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CommonKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(deactivated, 0);
+    await tester.tap(find.byKey(const ValueKey('active')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CommonKeys.confirm.en));
+    await tester.pumpAndSettle();
+    expect(deactivated, 1);
+  });
+
+  testWidgets('editor completion does not use a disposed BuildContext', (
+    tester,
+  ) async {
+    final completion = Completer<bool?>();
+    var savedCount = 0;
+    final flows = _flows(
+      showEditor: (_, {item, duplicate = false}) => completion.future,
+      onSaved: (_, {required isNew}) async {
+        savedCount++;
+      },
+      delete: (cubit, item) => cubit.delete(item),
+      activate: (_, _) async {},
+      deactivate: (_, _) async => const Right(unit),
+    );
+    late Future<void> editFuture;
+    final cubit = await _pumpFlowHost(
+      tester,
+      (context) => Scaffold(
+        body: TextButton(
+          onPressed: () =>
+              editFuture = flows.edit(context, item: 'alpha'),
+          child: const Text('begin edit'),
+        ),
+      ),
+    );
+    await tester.tap(find.text('begin edit'));
+    await tester.pump();
+    await tester.pumpWidget(const SizedBox.shrink());
+    completion.complete(true);
+    await editFuture;
+    expect(savedCount, 0);
+    await cubit.close();
+  });
+
   testWidgets('view changes clear selection in narrow RTL at larger text', (
     tester,
   ) async {
@@ -376,12 +612,27 @@ void main() {
       size: const Size(280, 760),
       direction: TextDirection.rtl,
       textScale: 1.5,
-      config: _config(createCubit: _TestCubit.new),
+      config: _config(
+        createCubit: _TestCubit.new,
+        extraBulkActions: (_, selected) => [
+          BulkAction(
+            labelKey: _title,
+            icon: AppIcons.add,
+            permission: Permissions.masterData.manage,
+            onRun: () async {},
+          ),
+        ],
+      ),
     );
     cubit.selection.replace({'alpha'});
     cubit.setSelectionMode(true);
     await tester.pumpAndSettle();
     expect(cubit.selection.state, {'alpha'});
+    expect(find.byType(BulkActionBar), findsOneWidget);
+    expect(
+      tester.widget<BulkActionBar>(find.byType(BulkActionBar)).actions,
+      hasLength(1),
+    );
     final switcher = find.byType(ViewModeSwitcher);
     expect(switcher, findsOneWidget);
     await tester.tap(
