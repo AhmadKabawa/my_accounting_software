@@ -572,10 +572,7 @@ void main() {
   ) async {
     final cubit = await _pump(
       tester,
-      config: _config(
-        createCubit: _TestCubit.new,
-        useCrudDataSection: true,
-      ),
+      config: _config(createCubit: _TestCubit.new, useCrudDataSection: true),
     );
     expect(find.text('alpha'), findsOneWidget);
     expect(find.text('beta'), findsOneWidget);
@@ -583,9 +580,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('extra bulk actions are appended and executable', (
-    tester,
-  ) async {
+  testWidgets('extra bulk actions are appended and executable', (tester) async {
     var runs = 0;
     final cubit = await _pump(
       tester,
@@ -606,9 +601,9 @@ void main() {
     cubit.selection.replace({'alpha'});
     cubit.setSelectionMode(true);
     await tester.pumpAndSettle();
-    final actions = tester.widget<BulkActionBar>(
-      find.byType(BulkActionBar),
-    ).actions;
+    final actions = tester
+        .widget<BulkActionBar>(find.byType(BulkActionBar))
+        .actions;
     expect(actions.map((action) => action.labelKey), contains(_deletedKey));
     await actions.single.onRun();
     expect(runs, 1);

@@ -96,9 +96,9 @@ void main() {
         dark: false,
         textScale: 1.5,
         home: BlocProvider<AccessCubit>(
-          create: (_) => AccessCubit(
-            getMyAccess: GetMyAccessUseCase(_AccessRepository()),
-          )..load(),
+          create: (_) =>
+              AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))
+                ..load(),
           child: const Scaffold(body: BrandsScreen()),
         ),
       );
@@ -144,9 +144,9 @@ void main() {
         dark: false,
         textScale: 1.5,
         home: BlocProvider<AccessCubit>(
-          create: (_) => AccessCubit(
-            getMyAccess: GetMyAccessUseCase(_AccessRepository()),
-          )..load(),
+          create: (_) =>
+              AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))
+                ..load(),
           child: const Scaffold(body: ColorsScreen()),
         ),
       );
