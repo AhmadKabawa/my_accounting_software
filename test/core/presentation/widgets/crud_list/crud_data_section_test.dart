@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -114,10 +113,12 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('one'), findsWidgets);
-      if (mode == AppViewMode.cards)
+      if (mode == AppViewMode.cards) {
         expect(find.text('card one'), findsOneWidget);
-      if (mode == AppViewMode.grid)
+      }
+      if (mode == AppViewMode.grid) {
         expect(find.text('grid one'), findsOneWidget);
+      }
       expect(tester.takeException(), isNull);
     }
   });

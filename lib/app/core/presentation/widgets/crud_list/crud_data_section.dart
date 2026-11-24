@@ -46,7 +46,7 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
     required this.editLabelKey,
     required this.deleteLabelKey,
     required this.duplicateLabelKey,
-    this.canDelete = _alwaysCanDelete,
+    this.canDelete,
     this.extraRowActions,
   });
 
@@ -63,7 +63,7 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
   final AppKey editLabelKey;
   final AppKey deleteLabelKey;
   final AppKey duplicateLabelKey;
-  final bool Function(T row) canDelete;
+  final bool Function(T row)? canDelete;
   final List<AppRowAction> Function(BuildContext context, T row)?
   extraRowActions;
 
@@ -112,7 +112,7 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
       editLabelKey: editLabelKey,
       onEdit: () => CrudListActions.edit(context, data.actions, row),
       deleteLabelKey: deleteLabelKey,
-      onDelete: canDelete(row)
+      onDelete: (canDelete?.call(row) ?? true)
           ? () => CrudListActions.delete(context, data.actions, row)
           : null,
       duplicateLabelKey: data.actions.onDuplicate == null
@@ -139,5 +139,3 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
     onPageChanged: data.onPageChanged,
   );
 }
-
-bool _alwaysCanDelete<T>(T _) => true;
