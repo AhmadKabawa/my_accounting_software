@@ -70,6 +70,7 @@ class _TestCubit extends PagedListCubit<String, _Query, _Effect> {
     : super(initialQuery: const _Query(), flashMessages: FlashMessages());
 
   bool failNextFetch = false;
+  Future<Either<Failure, PagedResult<String>>>? pendingFetch;
   int fetchCalls = 0;
   int deleteCalls = 0;
   List<String> rows = const ['alpha', 'beta'];
@@ -77,6 +78,8 @@ class _TestCubit extends PagedListCubit<String, _Query, _Effect> {
   @override
   Future<Either<Failure, PagedResult<String>>> fetch(_Query query) async {
     fetchCalls++;
+    final pending = pendingFetch;
+    if (pending != null) return pending;
     if (failNextFetch) {
       failNextFetch = false;
       return const Left(ServerFailure(messageKey: _failureKey));
@@ -294,6 +297,55 @@ CrudFlowsConfig<String, _TestCubit> _flows({
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
   tearDown(() async => sl.reset());
+
+
+  testWidgets('shows loading until the first page is received', (
+    tester,
+  ) async {
+    final page = Completer<Either<Failure, PagedResult<String>>>();
+    late _TestCubit cubit;
+    setScreenSize(tester, const Size(900, 760));
+    sl.registerSingleton<AppSettingsManager>(
+      AppSettingsManager(storage: MemoryStorage()),
+    );
+    await tester.pumpWidget(
+      buildTestApp(
+        home: BlocProvider<AccessCubit>(
+          create: (_) =>
+              AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))
+                ..load(),
+          child: CrudListScreen<String, _Query, _TestCubit, _Effect>(
+            config: _config(
+              createCubit: () =>
+                  cubit = _TestCubit()..pendingFetch = page.future,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(
+      tester.widget<ListPageTemplate>(find.byType(ListPageTemplate)).state,
+      AppPageState.loading,
+    );
+    page.complete(
+      Right(
+        PaginatedResult<String>(
+          items: const ['alpha', 'beta'],
+          totalCount: 2,
+          currentPage: 1,
+          totalPages: 1,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<ListPageTemplate>(find.byType(ListPageTemplate)).state,
+      AppPageState.content,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+  });
 
   testWidgets('loads content and preserves rows after a refresh failure', (
     tester,

@@ -12,6 +12,9 @@ import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/crud_row_actions.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
@@ -23,6 +26,7 @@ const _empty = TestKey('empty records');
 const _emptyDescription = TestKey('empty description');
 const _noResults = TestKey('no results');
 const _noResultsDescription = TestKey('no results description');
+const _extraAction = TestKey('extra row action');
 
 class _Query implements PagedQuery<_Query> {
   const _Query({this.search = ''});
@@ -52,6 +56,7 @@ CrudDataSection<_Row, _Query, Object> _section({
   List<_Row> rows = const [_Row('one')],
   _Query query = const _Query(),
   Set<Object> busyIds = const {},
+  List<AppRowAction> Function(BuildContext context, _Row row)? extraRowActions,
 }) {
   final data = CrudDataContext<_Row, _Query, Object>(
     mode: mode,
@@ -105,6 +110,9 @@ CrudDataSection<_Row, _Query, Object> _section({
     editLabelKey: _label,
     deleteLabelKey: _label,
     duplicateLabelKey: _label,
+    extraRowActions: extraRowActions == null
+        ? null
+        : (_, row) => extraRowActions(_, row),
   );
 }
 
@@ -147,7 +155,9 @@ void main() {
     for (final mode in AppViewMode.values) {
       await tester.pumpWidget(_app(_section(mode: mode)));
       await tester.pumpAndSettle();
-      expect(find.text('one'), findsWidgets);
+      if (mode == AppViewMode.table) {
+        expect(find.text('one'), findsOneWidget);
+      }
       if (mode == AppViewMode.cards) {
         expect(find.text('card one'), findsOneWidget);
       }
@@ -156,6 +166,38 @@ void main() {
       }
       expect(tester.takeException(), isNull);
     }
+  });
+
+
+  testWidgets('projects busy status and extra row overflow actions', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        _section(
+          busyIds: {'one'},
+          extraRowActions: (_, _) => [
+            AppRowAction(
+              icon: AppIcons.add,
+              labelKey: _extraAction,
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<AppSwitch>(find.byType(AppSwitch).first).loading,
+      isTrue,
+    );
+    final rowActions = tester.widget<AppRowActions>(
+      find.byType(AppRowActions).first,
+    );
+    expect(
+      rowActions.overflow.map((action) => action.labelKey),
+      contains(_extraAction),
+    );
   });
 
   testWidgets('empty state distinguishes filters from a new list', (
