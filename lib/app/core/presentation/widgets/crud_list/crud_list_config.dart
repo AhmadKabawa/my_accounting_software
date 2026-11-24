@@ -108,7 +108,12 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
 }
 
 /// Complete feature configuration for the reusable CRUD list frame.
-class CrudListConfig<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E>, E> {
+class CrudListConfig<
+  T,
+  Q extends PagedQuery<Q>,
+  C extends PagedListCubit<T, Q, E>,
+  E
+> {
   const CrudListConfig({
     required this.screenId,
     required this.titleKey,
@@ -124,7 +129,11 @@ class CrudListConfig<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, 
     required this.activeFilters,
     required this.breadcrumb,
     required this.dataSection,
-    this.viewModes = const [AppViewMode.table, AppViewMode.cards, AppViewMode.grid],
+    this.viewModes = const [
+      AppViewMode.table,
+      AppViewMode.cards,
+      AppViewMode.grid,
+    ],
     this.capabilities = const CrudCapabilities(),
     this.onMutated,
     this.isMutationEffect,
@@ -153,7 +162,8 @@ class CrudListConfig<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, 
   final String Function(T row) itemLabel;
   final CrudSortConfig<Q, C> sort;
   final List<Widget> Function(CrudSlotContext<T, Q, C> slot) filterControls;
-  final List<FilterBarFilter> Function(CrudSlotContext<T, Q, C> slot) activeFilters;
+  final List<FilterBarFilter> Function(CrudSlotContext<T, Q, C> slot)
+  activeFilters;
   final Widget Function(BuildContext context) breadcrumb;
   final Widget Function(CrudDataContext<T, Q, C> data) dataSection;
   final List<AppViewMode> viewModes;
@@ -163,13 +173,23 @@ class CrudListConfig<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, 
   final List<SingleChildWidget> Function()? extraProviders;
   final Widget Function(CrudSlotContext<T, Q, C> slot)? statsBuilder;
   final List<Widget> Function(CrudSlotContext<T, Q, C> slot)? headerExtras;
-  final List<Widget> Function(CrudSlotContext<T, Q, C> slot)? extraToolbarActions;
-  final List<Widget> Function(CrudSlotContext<T, Q, C> slot)? extraFilterControls;
-  final List<BulkAction> Function(CrudSlotContext<T, Q, C> slot, List<T> selected)? extraBulkActions;
+  final List<Widget> Function(CrudSlotContext<T, Q, C> slot)?
+  extraToolbarActions;
+  final List<Widget> Function(CrudSlotContext<T, Q, C> slot)?
+  extraFilterControls;
+  final List<BulkAction> Function(
+    CrudSlotContext<T, Q, C> slot,
+    List<T> selected,
+  )?
+  extraBulkActions;
   final Widget Function(BuildContext context)? emptyStateBuilder;
   final ValueChanged<T>? onEdit;
   final ValueChanged<T>? onDuplicate;
   final ValueChanged<T>? onDelete;
   final ValueChanged<T>? onToggleStatus;
-  final List<BulkAction> Function(CrudSlotContext<T, Q, C> slot, List<T> selected)? bulkActions;
+  final List<BulkAction> Function(
+    CrudSlotContext<T, Q, C> slot,
+    List<T> selected,
+  )?
+  bulkActions;
 }

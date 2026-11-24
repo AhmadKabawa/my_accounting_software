@@ -17,7 +17,13 @@ import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud
 
 /// Core-owned CRUD list composition. Feature widgets remain responsible for
 /// rendering their rows and for all feature-specific business operations.
-class CrudListScreen<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E>, E> extends StatelessWidget {
+class CrudListScreen<
+  T,
+  Q extends PagedQuery<Q>,
+  C extends PagedListCubit<T, Q, E>,
+  E
+>
+    extends StatelessWidget {
   const CrudListScreen({super.key, required this.config});
 
   final CrudListConfig<T, Q, C, E> config;
@@ -45,13 +51,21 @@ class CrudListScreen<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, 
   );
 }
 
-class _CrudListBody<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E>, E> extends StatelessWidget {
+class _CrudListBody<
+  T,
+  Q extends PagedQuery<Q>,
+  C extends PagedListCubit<T, Q, E>,
+  E
+>
+    extends StatelessWidget {
   const _CrudListBody({required this.config});
 
   final CrudListConfig<T, Q, C, E> config;
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<ViewModeCubit, AppViewMode?>(
+  Widget build(
+    BuildContext context,
+  ) => BlocBuilder<ViewModeCubit, AppViewMode?>(
     builder: (context, mode) => BlocBuilder<C, PagedListState<T, Q>>(
       builder: (context, state) {
         final cubit = context.read<C>();
@@ -80,7 +94,9 @@ class _CrudListBody<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E
           titleKey: config.titleKey,
           breadcrumb: config.breadcrumb(context),
           stats: _headerWidgets(slot),
-          count: config.capabilities.showCount ? state.result?.totalCount : null,
+          count: config.capabilities.showCount
+              ? state.result?.totalCount
+              : null,
           toolbar: ListToolbarConfig(
             searchHintKey: config.searchHintKey,
             onSearchChanged: cubit.searchChanged,
@@ -92,10 +108,8 @@ class _CrudListBody<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E
             onSortsChanged: (sorts) => config.sort.apply(cubit, sorts),
             sortKey: config.sort.tableKey(state.query),
             sortAscending: config.sort.tableAscending(state.query),
-            onSort: (key, ascending) => config.sort.applyTable(
-              cubit,
-              DataTableSort(key, ascending),
-            ),
+            onSort: (key, ascending) =>
+                config.sort.applyTable(cubit, DataTableSort(key, ascending)),
             viewModes: config.viewModes,
             viewMode: mode,
             onViewModeChanged: (next) {
@@ -105,7 +119,8 @@ class _CrudListBody<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E
             onRefresh: cubit.refresh,
             refreshing: state.isRefreshing,
             selectionModeActive: state.selectionMode,
-            onSelectionModeToggle: config.capabilities.bulkSelection && canManage
+            onSelectionModeToggle:
+                config.capabilities.bulkSelection && canManage
                 ? cubit.toggleSelectionMode
                 : null,
             extraActions: config.extraToolbarActions?.call(slot) ?? const [],
@@ -115,8 +130,8 @@ class _CrudListBody<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E
           state: loading
               ? AppPageState.loading
               : failure != null
-                  ? AppPageState.error
-                  : AppPageState.content,
+              ? AppPageState.error
+              : AppPageState.content,
           errorKey: failure?.messageKey,
           refreshErrorKey: refreshFailure?.messageKey,
           onRetry: cubit.refresh,
@@ -126,35 +141,40 @@ class _CrudListBody<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E
             rowId: config.rowId,
             selection: cubit.selection,
             permission: config.manageAccess,
-            selectionModeActive: state.selectionMode && config.capabilities.bulkSelection,
+            selectionModeActive:
+                state.selectionMode && config.capabilities.bulkSelection,
             onSelectionModeExit: () => cubit.setSelectionMode(false),
             actionsBuilder: (selected) => [
               ...?config.bulkActions?.call(slot, selected),
               ...?config.extraBulkActions?.call(slot, selected),
             ],
             builder: (context, selectedIds, onSelectionChanged) =>
-                config.dataSection(CrudDataContext<T, Q, C>(
-                  mode: mode,
-                  rows: rows,
-                  total: state.result?.totalCount ?? 0,
-                  query: state.query,
-                  loading: loading,
-                  refreshing: state.isRefreshing,
-                  failure: failure,
-                  busyIds: state.busyIds,
-                  selectedIds: selectedIds,
-                  onSelectionChanged: onSelectionChanged,
-                  onRetry: cubit.refresh,
-                  onPageChanged: cubit.setPage,
-                  addAction: addAction,
-                  cubit: cubit,
-                  rowId: config.rowId,
-                  itemLabel: config.itemLabel,
-                  onEdit: config.onEdit,
-                  onDuplicate: config.capabilities.duplicate ? config.onDuplicate : null,
-                  onDelete: config.onDelete,
-                  onToggleStatus: config.onToggleStatus,
-                )),
+                config.dataSection(
+                  CrudDataContext<T, Q, C>(
+                    mode: mode,
+                    rows: rows,
+                    total: state.result?.totalCount ?? 0,
+                    query: state.query,
+                    loading: loading,
+                    refreshing: state.isRefreshing,
+                    failure: failure,
+                    busyIds: state.busyIds,
+                    selectedIds: selectedIds,
+                    onSelectionChanged: onSelectionChanged,
+                    onRetry: cubit.refresh,
+                    onPageChanged: cubit.setPage,
+                    addAction: addAction,
+                    cubit: cubit,
+                    rowId: config.rowId,
+                    itemLabel: config.itemLabel,
+                    onEdit: config.onEdit,
+                    onDuplicate: config.capabilities.duplicate
+                        ? config.onDuplicate
+                        : null,
+                    onDelete: config.onDelete,
+                    onToggleStatus: config.onToggleStatus,
+                  ),
+                ),
           ),
         );
       },
@@ -167,10 +187,7 @@ class _CrudListBody<T, Q extends PagedQuery<Q>, C extends PagedListCubit<T, Q, E
     if (stats == null && extras.isEmpty) return null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (stats != null) stats,
-        ...extras,
-      ],
+      children: [if (stats != null) stats, ...extras],
     );
   }
 }
