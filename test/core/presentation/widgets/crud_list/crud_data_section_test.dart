@@ -194,8 +194,16 @@ void main() {
       find.byType(AppRowActions).first,
     );
     expect(
+      rowActions.primary.map((action) => action.labelKey),
+      contains(_label),
+    );
+    expect(
       rowActions.overflow.map((action) => action.labelKey),
       contains(_extraAction),
+    );
+    expect(
+      rowActions.overflow.map((action) => action.labelKey),
+      contains(_label),
     );
   });
 

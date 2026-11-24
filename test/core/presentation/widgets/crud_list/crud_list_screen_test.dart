@@ -28,6 +28,7 @@ import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_screen.dart';
 import '../../../../helpers/localized_app.dart';
 import '../../../../helpers/memory_storage.dart';
@@ -138,6 +139,7 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
   CrudCapabilities capabilities = const CrudCapabilities(),
   List<Widget> Function(CrudSlotContext<String, _Query, _TestCubit> slot)?
   extraToolbarActions,
+  bool useCrudDataSection = false,
   List<Widget> Function(CrudSlotContext<String, _Query, _TestCubit> slot)?
   extraFilterControls,
   List<Widget> Function(CrudSlotContext<String, _Query, _TestCubit> slot)?
@@ -182,6 +184,34 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
   extraBulkActions: extraBulkActions,
   dataSection: (data) {
     onData?.call(data);
+    if (useCrudDataSection) {
+      return CrudDataSection<String, _Query, _TestCubit>(
+        data: data,
+        columns: [
+          DataTableColumn<String>(
+            labelKey: _title,
+            cellBuilder: (_, row) => Text(row),
+          ),
+        ],
+        statusColumn: CrudStatusColumnConfig<String>(
+          labelKey: _title,
+          isActive: (_) => true,
+          badgeBuilder: (_, _) => const Text('active'),
+          activateLabelKey: _title,
+          deactivateLabelKey: _title,
+        ),
+        cardBuilder: (_, row) => Text('card $row'),
+        gridBuilder: (_, row) => Text('grid $row'),
+        icon: AppIcons.add,
+        emptyTitleKey: _title,
+        emptyDescriptionKey: _title,
+        noResultsTitleKey: _title,
+        noResultsDescriptionKey: _title,
+        editLabelKey: _title,
+        deleteLabelKey: _title,
+        duplicateLabelKey: _title,
+      );
+    }
     return AppDataView<String>(
       columns: [
         DataTableColumn<String>(
@@ -535,6 +565,69 @@ void main() {
     expect(activated, 1);
     expect(deactivated, 0);
     expect(deleted, 0);
+  });
+
+  testWidgets('small feature config works with CrudDataSection and engine', (
+    tester,
+  ) async {
+    final cubit = await _pump(
+      tester,
+      config: _config(
+        createCubit: _TestCubit.new,
+        useCrudDataSection: true,
+      ),
+    );
+    expect(find.text('alpha'), findsOneWidget);
+    expect(find.text('beta'), findsOneWidget);
+    expect(cubit.state.result?.items, ['alpha', 'beta']);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('extra bulk actions are appended and executable', (
+    tester,
+  ) async {
+    var runs = 0;
+    final cubit = await _pump(
+      tester,
+      config: _config(
+        createCubit: _TestCubit.new,
+        extraBulkActions: (_, selected) => [
+          BulkAction(
+            labelKey: _deletedKey,
+            icon: AppIcons.add,
+            permission: Permissions.masterData.manage,
+            onRun: () async {
+              runs += selected.length;
+            },
+          ),
+        ],
+      ),
+    );
+    cubit.selection.replace({'alpha'});
+    cubit.setSelectionMode(true);
+    await tester.pumpAndSettle();
+    final actions = tester.widget<BulkActionBar>(
+      find.byType(BulkActionBar),
+    ).actions;
+    expect(actions.map((action) => action.labelKey), contains(_deletedKey));
+    await actions.single.onRun();
+    expect(runs, 1);
+  });
+
+  testWidgets('count capability can explicitly hide the record count', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      config: _config(
+        createCubit: _TestCubit.new,
+        capabilities: const CrudCapabilities(showCount: false),
+      ),
+    );
+    expect(
+      tester.widget<ListPageTemplate>(find.byType(ListPageTemplate)).count,
+      isNull,
+    );
   });
 
   testWidgets('edit and duplicate call onSaved only after a saved editor', (
