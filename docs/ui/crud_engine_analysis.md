@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This analysis records the baseline CRUD engine design and implementation on `feat/crud-list-engine`. The later Brands adoption is documented in the task 6 section below; Colors remains unchanged. The source of truth is the code and CI configuration, not the names proposed in the task.
+This analysis records the CRUD engine design and both catalog adoptions on `feat/crud-list-engine`. Brands and Colors now use the same engine with feature-specific configuration; their deliberate behavior differences remain in their adapters and Cubits. The source of truth is the code and CI configuration, not the names proposed in the task.
 
 Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes, paged-list state/cubit/query, list template and toolbar/add-action configuration, selection and bulk actions, row actions/status column, confirmations, filter/sort mapping, view-mode cubit/settings, effect mixin/base cubit/effect listener, relevant Brands/Colors widget tests, test helpers, architecture gates, `.github/workflows/flutter-ci.yml`, and `analysis_options.yaml`.
 
@@ -17,7 +17,7 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 | Search/filter | Feature-owned query setters and filter-bar controls | Same shape, feature-owned setters | Configuration supplies controls and active filters; core does not know feature query fields |
 | Sorting | Multi-sort maps with `mapFilterBarSorts`; header uses `setSort` | Multi-sort maps similarly; header uses `setSorts` | Separate filter sort mapping and table sort callback in `CrudSortConfig` |
 | Selection | `ListSelectionCubit<Object>`, selection mode and `CrudSelectionScope` | Same | Reuse the existing selection object and standard bulk actions |
-| Stats/count | Stats widget/cubit are feature-specific; no template count passed | Stats widget/cubit are feature-specific; template count passed | Keep stats in feature slots; count controlled by `capabilities.showCount` |
+| Stats/count | `BrandStatsCubit` and `BrandStatsBar`; template count disabled | `ColorStatsCubit` and `ColorStatsSection`; template count enabled | Keep stats in feature slots; count controlled by `capabilities.showCount` |
 | Effects | Typed `BrandsListEffect`; mutation refreshes stats only for `BrandsMutatedEffect` | Typed `ColorsListEffect`; mutation refreshes stats only for `ColorsMutatedEffect` | Core can expose a broad mutation callback, but adapters must preserve any feature-specific effect filtering |
 
 ## Material differences to preserve
@@ -26,7 +26,7 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - Delete confirmation differs: Brands passes `targetName` and uses its own delete/confirm keys; Colors additionally passes `messageArgs: {'name': color.name}`.
 - Both confirm deactivation and activate directly, but their Cubit implementations differ in mutation options: Brands deactivation has feature-specific behavior (including no row id / no failure flash); Colors uses the color mutation path. Do not normalize these semantics.
 - Brands deletion has `beforeDelete`/in-use protection and its row delete action can be disabled through `canDelete`; preserve that callback as a per-row policy.
-- Table header sorting differs: Brands calls `setSort(field:, ascending:)`; Colors parses and calls `setSorts([...])`. Keep `applyTable` feature-configurable.
+- Table header sorting differs: Brands calls `setSort(field:, ascending:)`; Colors parses and calls `setSorts([...])`. Keep `applyTable` feature-configurable until the dedicated sort-equivalence check in task 6 (3/3) is completed.
 - Stats widgets, state types and refresh behavior remain feature-owned. The list engine must not import either feature.
 - Brands currently does not pass `count`; Colors does. This is an explicit capability, not an inferred universal behavior.
 
@@ -49,7 +49,7 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - The CI workflow is `.github/workflows/flutter-ci.yml`, not repository-root `flutter-ci.yml`.
 - CI's dedicated catalog widget-test command explicitly includes `list_page_template_test.dart`, `colors_screen_test.dart`, `brands_screen_actions_test.dart`, and `brand_grid_tile_test.dart`. The workflow also runs the full `flutter test` suite.
 - The actual generic contract of `BlocEffectListener` is effects-first. Keep this order in implementation.
-- The existing feature screen implementations remain unchanged in this step. This analysis records their different behavior rather than trying to unify it prematurely.
+- Both feature screens now delegate to `CrudListScreen`; feature-specific query, stats, editor, row, confirmation and mutation behavior remains in the feature-owned configs/Cubits.
 
 ## Architecture and test constraints
 
@@ -96,3 +96,14 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - Colors screen and its screen widget test have identical Git blob SHAs to baseline commit `3854e616`; no Colors migration occurred.
 - Verification: workflow run `45320366371` passed Auto-format, Analyze (`No issues found`), the full suite (1,151 tests) and catalog UI widget tests (172 tests). The run also exercised the 32-case Brands responsive matrix (280/360/800/1280 × RTL/LTR × light/dark × 1.0/1.5 text scale).
 - GitHub API only; no local Flutter/Dart commands were run. This completes task 6 (2/3) only; task 6 (3/3) was not started.
+
+
+## Task 6 (3/3) — Colors migration and verification record
+
+- `ColorsScreen` is a thin entry point to `CrudListScreen(config: colorsListConfig)`; its public identity remains `catalog.colors`.
+- `colorsListConfig` keeps `showCount: true`, the `ColorStatsCubit` provider and `ColorStatsSection` arguments (failure message key and retry), refreshing stats only for `ColorsMutatedEffect`.
+- Table sort remains feature-owned: parse the header key and call `setSorts([ColorSort(field, ascending)])` only for a recognized field. The status column has no sort key.
+- Color identity/code/hex, clipboard action, LTR hex direction, card and grid tile remain in the feature presentation. Delete message arguments retain `{'name': color.name}`; activate/deactivate retain their Color Cubit row-id/failure-flash behavior.
+- No engine special-case for Colors was added. The only shared API is the typed configuration and data-section composition.
+- The Colors migration commits were `71b8077`, `6c33767`, and `f86870c`; the final Colors correction passed CI run `45325524778` (Auto-format and Analyze and Test).
+- The follow-up integration test suite is recorded in the test coverage document; its current run must be checked before calling task 6 (3/3) fully verified.

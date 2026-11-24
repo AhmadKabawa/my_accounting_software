@@ -5,6 +5,7 @@
 | Need | Preferred slot | Legacy alternative | Runtime precedence |
 |---|---|---|---|
 | Toolbar: search, filters, sorting, view modes, refresh | `toolbar: ListToolbarConfig` | `filterBar`, `activeFilters`, `viewModeSwitcher` | `filterBar` overrides `toolbar`; do not provide both |
+| Extra toolbar actions | `ListToolbarConfig.extraActions` | Feature-specific action widgets | Appended to the standard toolbar controls; defaults to an empty list |
 | Statistics | `stats` (normally `ListStatsBar`) | `actions` | `stats` wins when both are supplied |
 | Add/create action | `addAction: ListAddAction` | `primaryAction` | Mutually exclusive; the constructor asserts if both are supplied |
 | Header item count | `count` | None | Rendered beside the page title |
@@ -125,3 +126,15 @@ When no view mode has been selected, loading placeholders follow the available c
 
 ### Widget-test state
 - Do not repeatedly `pumpWidget` the same stateful widget inside a width loop without resetting its state. Give each iteration a distinct `ValueKey(width)`, or pump an empty widget between iterations, so controllers and state are not reused accidentally.
+
+
+## CRUD list engine role
+
+`CrudListScreen<T, Q, C, E>` is the feature screen's composition root for a paged CRUD list. A feature supplies `CrudListConfig`; the engine creates the configured Cubit, restores the screen's `ViewModeCubit`, applies permission-gated add/selection behavior, connects mutation effects and stats refresh, builds the standard `ListToolbarConfig`, `ListPageTemplate` and `CrudSelectionScope`, and passes typed row/query state to the feature's data builder. Core owns the reusable mechanics; it does not own feature fields, translations, repositories, editor dialogs or business rules.
+
+- Use `CrudListScreen(config: featureListConfig)` as the screen body; keep the route screen thin.
+- Use `CrudDataSection` for the standard table/cards/grid, status column, empty/no-results state and row actions. Its feature callbacks supply columns, status policy, card/grid renderers, `canDelete` and optional row actions.
+- Use the `CrudListConfig.extraToolbarActions` builder to supply per-screen toolbar widgets. The engine forwards them to `ListToolbarConfig.extraActions`; this is a screen-level slot, not a new global toolbar behavior.
+- Use `extraBulkActions` to append feature actions after the standard bulk builder. Existing actions remain first.
+- The `count` shown by `ListPageTemplate` is controlled by `CrudCapabilities.showCount`; stats remain a separate feature-owned widget.
+- Keep the `CrudListConfig` and `CrudDataSection` contracts typed. Do not use dynamic casts, feature imports in Core, or a parallel screen/template implementation.

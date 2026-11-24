@@ -148,3 +148,14 @@
 
 - `test/core/platform/platform_capabilities_test.dart` verifies the native/VM send-timeout capability and the layout-only collapsible-sidebar capability. The browser adapter's `false` send-timeout value is selected by conditional import; it still requires the web CI build for runtime verification.
 - These tests were added in the current change and have not been executed yet. Runtime status: NOT_VERIFIED.
+
+
+## CRUD list engine and catalog adoption — 2026-11-24
+
+| المكوّن | الاختبار | التغطية المكتوبة | حالة التشغيل |
+|---|---|---|---|
+| `CrudListScreen` / `CrudListConfig` | `test/core/presentation/widgets/crud_list/crud_list_screen_test.dart` | تحميل/فشل/إعادة المحاولة، الاحتفاظ بالبيانات، effects وتحديث الإحصاءات، slots الاختيارية، `extraToolbarActions` و`extraBulkActions`، `showCount` إظهاراً وإخفاءً، تدفقات الإضافة/التعديل/الحذف والحالة، وتصفير التحديد عند تبديل العرض. يتضمن fixture صغيراً يستخدم `PagedListCubit` و`CrudDataSection`. | تُسجّل بعد اكتمال CI الخاص بالمراجعة الحالية؛ وجود الاختبار وحده لا يثبت نجاحه. |
+| `CrudDataSection` | `test/core/presentation/widgets/crud_list/crud_data_section_test.dart` | table/cards/grid، عمود الحالة وحالة الانشغال، الإجراء الإضافي في صف السجل مع بقاء edit/delete، empty/no-results، RTL بعرض 280 وTextScale 1.5. | تُسجّل بعد اكتمال CI الخاص بالمراجعة الحالية؛ وجود الاختبار وحده لا يثبت نجاحه. |
+| Brands + Colors engine integration | `test/features/catalog/crud_list_screens_matrix_test.dart` إضافة إلى اختبارات الشاشة الحالية | كل أوضاع العرض الثلاثة للشاشتين عند 280 logical px، RTL، TextScale 1.5؛ فحص استثناءات Flutter بعد كل وضع. | تُسجّل بعد اكتمال CI الخاص بالمراجعة الحالية؛ وجود الاختبار وحده لا يثبت نجاحه. |
+
+لا يشمل اختبار Widget بديلاً عن الفحص اليدوي على هاتف ومتصفح فعلي. يجب فحص التحديد الجماعي، مسح التحديد عند تغيير الوضع، تحديث الإحصاءات بعد mutations، عروض 280–360 والحاسوب، وRTL بصرياً.

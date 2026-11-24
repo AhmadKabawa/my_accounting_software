@@ -103,11 +103,11 @@ Each run passed Auto-format Dart, Analyze, full tests and catalog UI widget test
 
 ### Explicit scope boundary
 
-- Brands and Colors screens and their protected tests remain unchanged; no feature migration was performed.
+- Brands and Colors are migrated through feature-owned configs; their existing protected screen tests were retained.
 - No package was added and no dependency manifest or lockfile changed.
 - No local Flutter/Dart commands were run; validation was performed by GitHub Actions.
 - Tests exercise the state projection, configuration/sort contracts, action dispatch, existing selection/template behavior and responsive data-view layout. A dedicated end-to-end widget harness for `CrudListScreen` itself is not included in this engine-only change.
-- A future adoption task should first add that focused screen integration harness, then migrate one feature at a time while preserving its editor/confirmation/effect behavior.
+- The follow-up task 6 (3/3) adds the Colors integration matrix and verifies both screens through the shared engine.
 
 
 
@@ -148,3 +148,25 @@ Each run passed Auto-format Dart, Analyze, full tests and catalog UI widget test
 
 Task 6 (2/3) is complete. Do not start task 6 (3/3) in this branch as part of this work.
 
+
+
+## Task 6 (3/3) — Colors migration and integration verification
+
+### Colors migration (step A)
+
+- Added `lib/app/features/catalog/colors/presentation/colors_list_config.dart`; `ColorsScreen` now delegates to `CrudListScreen(config: colorsListConfig)`.
+- Preserved the color screen ID, count, stats provider/section arguments, mutation-effect filter, sort parser and `setSorts` callback, editor/save/delete/status actions, delete message args, and all three data representations.
+- Colors CI correction sequence: `71b8077` (migration), `6c33767` (imports), `f86870c` (unused imports). Final correction passed workflow run `45325524778`.
+- The existing Colors screen test was not rewritten to accommodate the engine; its imports/finders were retained.
+
+### Integration coverage (step B)
+
+- Added the engine slot/capability tests and a Brands/Colors responsive integration matrix. The first CI run `45327349589` failed at Analyze because the fake repository imports pointed at `lib/app/features` instead of the existing test-support folders.
+- Corrected both imports to relative paths under `test/features/catalog/...` in commit `5d631ed`. The corresponding CI run `45327685120` is the authoritative result for this correction; update this row with its final Analyze/Test conclusion after the run completes.
+- The matrix uses 280px, RTL and 1.5 text scale for table/cards/grid on both screens. It does not replace manual visual checks.
+
+### Documentation and remaining gates
+
+- The recipe now identifies exact domain/data/presentation/DI/routing/test files, a 20-line screen adapter example, and the decision rule for capabilities versus per-screen slots versus dedicated data sections.
+- `list_page_template.md`, `CORE_MAP.md` and `CORE_TEST_COVERAGE.md` index the CRUD engine and its `extraActions` path.
+- Task 6 (3/3) is not marked complete until CI is green and the separate intentional behavior changes (step D) and architecture gate (step E) have their own commits and CI evidence.

@@ -293,6 +293,9 @@
 - `ListStatsBar<F>` and `StatItem<F>` compose responsive, wrapping `AppStatCard` tiles.
 - `ListAddAction` / `ListAddButton` centralize the permission-gated list create action; the feature supplies the permission, label key, and callback.
 - `CrudEmptyState` composes `AppEmptyState` with the empty-vs-no-results distinction and optional create action.
+- `core/presentation/widgets/crud_list/crud_list_screen.dart`: `CrudListScreen<T,Q,C,E>` composes the list frame from a typed feature-owned `CrudListConfig`; it owns Cubit/view-mode providers, mutation-effect dispatch, permission-gated add/selection, toolbar and bulk-selection wiring.
+- `crud_list_config.dart`: `CrudListConfig`, `CrudCapabilities`, typed slot/data contexts and sort adapters. Feature-specific query fields, translations, filters and callbacks stay outside Core.
+- `crud_data_section.dart`: `CrudDataSection<T,Q,C>` maps a `CrudDataContext` into table/cards/grid, shared status column, empty/no-results state and row actions; feature supplies columns, card/grid builders, status policy and optional delete/row-action rules.
 
 
 ### Paged CRUD list state

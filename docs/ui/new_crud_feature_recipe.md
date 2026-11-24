@@ -98,3 +98,81 @@ Core must receive permissions from the feature; do not hardcode feature permissi
 - Every create/edit dialog supplies its real `dirty` state. Desktop form dialogs keep Save/Cancel fixed while the center content scrolls. The mobile sheet disables drag dismissal because it bypasses the unsaved-changes guard.
 - In width-matrix widget tests, use a distinct `ValueKey(width)` when pumping the same stateful widget repeatedly, or dispose it between iterations.
 
+
+
+## Exact files and implementation order for a new feature
+
+Create only the files the feature actually needs; this is the usual dependency order:
+
+1. **Domain entity and query**
+   - `domain/entity/<feature>.dart`, optional `<feature>_draft.dart`, and `<feature>_list_query.dart`.
+   - The query implements `PagedQuery`: search, page/pageSize, active-filter detection, clear behavior and sort criteria.
+2. **Domain repository contract and use cases**
+   - `domain/repositories/<feature>_repository.dart`.
+   - `domain/usecase/get_<feature>_use_case.dart`, plus the required create/update/delete/status/stats use cases. Keep one use case per business operation that has a real domain boundary.
+3. **Data implementation**
+   - `data/datasources/<feature>_remote_data_source.dart` and its implementation.
+   - `data/repositories/<feature>_repository_impl.dart`. Use the shared `IApiClient`; do not create a feature-local Dio client.
+4. **List Cubit**
+   - `presentation/cubit/<feature>_list/<feature>_list_cubit.dart` extends `PagedListCubit<Entity, FeatureListQuery, FeatureListEffect>`.
+   - Implement `fetch`, `deleteItem`, `deletedMessageKey`, and `buildMutationEffect`; override `beforeDelete` only when this feature has a real delete guard. Keep feature-specific filters, sort setters, row mutation policy and bulk callbacks here.
+5. **Feature presentation**
+   - `presentation/<feature>_list_config.dart`: the `CrudListConfig` adapter (the existing Brands/Colors convention).
+   - `presentation/pages/<feature>_screen.dart`: a thin `CrudListScreen(config: featureListConfig)` entry point.
+   - `presentation/widgets/<feature>_identity.dart`, `<feature>_card.dart`, `<feature>_grid_tile.dart`, `<feature>_status_badge.dart`, and `<feature>_filter_bar.dart` only when the feature needs those distinct renderers.
+   - `presentation/dialogs/<feature>_editor_dialog.dart` plus form Cubit when create/edit/duplicate needs a form.
+   - `presentation/localization/<feature>_keys.dart` for every visible label and message.
+6. **Registration and routing**
+   - Register the feature data source, repository, use cases, list/form/stats Cubits in `<feature>/di/<feature>_di.dart`.
+   - Call `init<Feature>DI()` from `features/catalog/di/catalog_di.dart` (or the owning feature composition root).
+   - Add `presentation/routing/<feature>_routes.dart`; include its route list in `lib/app/routing/route_registry.dart`, and add the matching GoRoute/screen builder in `lib/app/routing/app_go_router.dart`.
+7. **Tests**
+   - Test query/use-case/Cubit behavior, the feature config, the three data representations, permissions, row/bulk mutations, editor dirty/duplicate behavior and responsive RTL/LTR layouts.
+
+### Minimal engine adapter — 20 lines
+
+After the entity, query, Cubit, sort adapter and reusable renderers exist, the feature-facing screen configuration can stay at 20 lines:
+
+```dart
+final demoConfig = CrudListConfig<DemoItem, DemoQuery, DemoCubit, DemoEffect>(
+  screenId: 'catalog.demo',
+  titleKey: DemoKeys.title,
+  manageAccess: DemoPermissions.manage,
+  searchHintKey: DemoKeys.search,
+  addLabelKey: DemoKeys.add,
+  createCubit: () => sl<DemoCubit>(),
+  rowId: (item) => item.id,
+  itemLabel: (item) => item.name,
+  sort: demoSortConfig,
+  filterControls: (_) => const [], activeFilters: (_) => const [],
+  breadcrumb: demoBreadcrumb,
+  dataSection: (data) => CrudDataSection(
+    data: data, columns: demoColumns, statusColumn: demoStatus,
+    cardBuilder: demoCard, gridBuilder: demoGridTile, icon: AppIcons.catalog,
+    emptyTitleKey: DemoKeys.empty, emptyDescriptionKey: DemoKeys.emptyHint,
+    noResultsTitleKey: DemoKeys.noResults, noResultsDescriptionKey: DemoKeys.noResultsHint,
+    editLabelKey: DemoKeys.edit, deleteLabelKey: DemoKeys.delete,
+    duplicateLabelKey: DemoKeys.duplicate,
+  ),
+);
+```
+
+The working engine integration fixture is `test/core/presentation/widgets/crud_list/crud_list_screen_test.dart`: its simple `String` row and `_TestCubit extends PagedListCubit<String, _Query, _Effect>` are pumped through a real `CrudListScreen` and `CrudDataSection`; the test asserts the fetched rows and absence of framework exceptions. The example above is the **20-line screen adapter**, not a claim that repository/data-source/domain boilerplate is also 20 lines.
+
+## How to add a capability or extension
+
+### A. A capability shared by every CRUD screen
+
+Add a field to `CrudCapabilities` or a general engine contract only when it describes a universal CRUD behavior. Give it a conservative default (`false`, `null`, or an empty collection) so existing configurations keep their current behavior. The screen reads the capability in one place; old feature configs need no edits. Example: `showCount` controls the optional header count.
+
+### B. A one-screen extension
+
+Use an existing `CrudListConfig` slot first: `statsBuilder`, `headerExtras`, `extraToolbarActions`, `extraFilterControls`, `extraBulkActions`, `actions.extraRowActions`, `emptyStateBuilder`, or a feature-owned `dataSection`. Keep the callback and business behavior in the feature. Do not add a global capability for a single screen.
+
+### C. When to add a new CrudListConfig slot
+
+Add a new slot when at least two CRUD screens need the same *kind* of extension and the existing slots cannot express it cleanly. Keep it typed, feature-owned, and default-empty/null. Do not make Core inspect feature types or import a feature.
+
+Use a dedicated feature widget instead when the addition changes the internal structure or visual semantics of one section (for example, a unique multi-part identity card or stats layout). Pass that widget through the existing builder slot rather than teaching Core the feature's structure.
+
+Use `dataSection` instead of `CrudDataSection` only when the screen's data presentation genuinely differs from the standard table/cards/grid + status + row-actions composition. If the standard composition fits, prefer `CrudDataSection` and provide columns, status policy, card/grid renderers and optional `canDelete`/extra row actions. Do not fork the shared section just to change a cell or card's appearance.
