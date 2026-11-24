@@ -409,8 +409,14 @@ void main() {
     }
 
     const options = [
-      FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-      FilterBarSortOption(key: 'is_active', label: CatalogUiKeys.filters),
+      FilterBarSortOption(
+        key: 'name',
+        label: CatalogUiKeys.search,
+      ),
+      FilterBarSortOption(
+        key: 'is_active',
+        label: CatalogUiKeys.filters,
+      ),
     ];
 
     testWidgets('wide order: leading, search, then trailing at the end', (
@@ -669,7 +675,10 @@ void main() {
             activeFilters: const [],
             onClearAll: () {},
             sortOptions: const [
-              FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+              FilterBarSortOption(
+                key: 'name',
+                label: CatalogUiKeys.search,
+              ),
               FilterBarSortOption(
                 key: 'status',
                 label: CatalogUiKeys.filters,
@@ -716,7 +725,10 @@ void main() {
               activeFilters: const [],
               onClearAll: () {},
               sortOptions: const [
-                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                FilterBarSortOption(
+                  key: 'name',
+                  label: CatalogUiKeys.search,
+                ),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -762,7 +774,10 @@ void main() {
           activeFilters: const [],
           onClearAll: () {},
           sortOptions: const [
-            FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+            FilterBarSortOption(
+              key: 'name',
+              label: CatalogUiKeys.search,
+            ),
             FilterBarSortOption(
               key: 'status',
               label: CatalogUiKeys.filters,
@@ -856,7 +871,10 @@ void main() {
             width: 280,
             child: SortPanel(
               options: const [
-                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                FilterBarSortOption(
+                  key: 'name',
+                  label: CatalogUiKeys.search,
+                ),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -894,7 +912,10 @@ void main() {
             width: 280,
             child: SortPanel(
               options: const [
-                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                FilterBarSortOption(
+                  key: 'name',
+                  label: CatalogUiKeys.search,
+                ),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -985,7 +1006,10 @@ void main() {
               activeFilters: const [],
               onClearAll: () {},
               sortOptions: const [
-                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                FilterBarSortOption(
+                  key: 'name',
+                  label: CatalogUiKeys.search,
+                ),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -1036,7 +1060,10 @@ void main() {
               activeFilters: const [],
               onClearAll: () {},
               sortOptions: const [
-                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                FilterBarSortOption(
+                  key: 'name',
+                  label: CatalogUiKeys.search,
+                ),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
@@ -1206,7 +1233,10 @@ void main() {
           home: Scaffold(
             body: SortPanel(
               options: const [
-                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                FilterBarSortOption(
+                  key: 'name',
+                  label: CatalogUiKeys.search,
+                ),
                 FilterBarSortOption(
                   key: 'status',
                   label: CatalogUiKeys.filters,
