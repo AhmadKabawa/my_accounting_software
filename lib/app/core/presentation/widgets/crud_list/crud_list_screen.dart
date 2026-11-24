@@ -86,7 +86,14 @@ class _CrudListBody<
         final addAction = ListAddAction(
           labelKey: config.addLabelKey,
           permission: config.manageAccess,
-          onPressed: () => config.onAdd(context),
+          onPressed: () {
+            final flows = config.flows;
+            if (flows != null) {
+              flows.add(context);
+            } else {
+              config.onAdd?.call(context);
+            }
+          },
         );
         final filters = [
           ...config.filterControls(slot),
@@ -169,8 +176,9 @@ class _CrudListBody<
                     rowId: config.rowId,
                     itemLabel: config.itemLabel,
                     actions: config.capabilities.duplicate
-                        ? config.actions
-                        : config.actions.withoutDuplicate(),
+                        ? (config.flows?.buildActions() ?? config.actions)
+                        : (config.flows?.buildActions() ?? config.actions)
+                              .withoutDuplicate(),
                   ),
                 ),
           ),

@@ -11,6 +11,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_page_templ
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 
 /// Shared capabilities with conservative defaults; features opt into count.
 class CrudCapabilities {
@@ -131,7 +132,7 @@ class CrudListConfig<
     required this.manageAccess,
     required this.searchHintKey,
     required this.addLabelKey,
-    required this.onAdd,
+    this.onAdd,
     required this.createCubit,
     required this.rowId,
     required this.itemLabel,
@@ -156,6 +157,7 @@ class CrudListConfig<
     this.extraBulkActions,
     this.emptyStateBuilder,
     this.actions = const CrudActionsConfig(),
+    this.flows,
     this.bulkActions,
   });
 
@@ -164,7 +166,7 @@ class CrudListConfig<
   final Permission manageAccess;
   final AppKey searchHintKey;
   final AppKey addLabelKey;
-  final void Function(BuildContext context) onAdd;
+  final void Function(BuildContext context)? onAdd;
   final C Function() createCubit;
   final Object Function(T row) rowId;
   final String Function(T row) itemLabel;
@@ -195,6 +197,7 @@ class CrudListConfig<
   extraBulkActions;
   final Widget Function(BuildContext context)? emptyStateBuilder;
   final CrudActionsConfig<T> actions;
+  final CrudFlowsConfig<T, C>? flows;
   final List<BulkAction> Function(
     CrudSlotContext<T, Q, C> slot,
     List<T> selected,
