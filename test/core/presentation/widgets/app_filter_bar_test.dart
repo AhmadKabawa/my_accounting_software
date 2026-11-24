@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/sort_criterion_row.dart';
@@ -1111,12 +1113,11 @@ void main() {
     (tester) async {
       tester.view.physicalSize = const Size(280, 800);
       tester.view.devicePixelRatio = 1;
-      tester.platformDispatcher.textScaleFactorTestValue = 1.5;
       addTearDown(tester.view.reset);
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       await tester.pumpWidget(
         buildTestApp(
           direction: TextDirection.rtl,
+          textScale: 1.5,
           home: Scaffold(
             body: SizedBox(
               width: 280,
@@ -1144,9 +1145,16 @@ void main() {
       final field = find.byType(SortFieldButton).first;
       final rowWidth = tester.getSize(row).width;
       final fieldWidth = tester.getSize(field).width;
+      final context = tester.element(field);
+      final availableNameWidth =
+          fieldWidth -
+          AppButtonStyle(context).touchTarget -
+          2 * AppSpacing.xs.of(context);
 
       expect(fieldWidth, greaterThanOrEqualTo(rowWidth * 0.6));
+      expect(availableNameWidth, greaterThanOrEqualTo(110));
       expect(find.text('Search'), findsOneWidget);
+      expect(find.byTooltip('Search'), findsOneWidget);
       expect(tester.getSize(find.text('Search')).width, greaterThan(0));
       expect(tester.takeException(), isNull);
     },
@@ -1179,7 +1187,21 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      final panel = find.byType(SortPanel);
+      final panelContext = tester.element(panel);
+      final field = find.byType(SortFieldButton).first;
+      final fieldWidth = tester.getSize(field).width;
+      final availableNameWidth =
+          fieldWidth -
+          AppButtonStyle(panelContext).touchTarget -
+          2 * AppSpacing.xs.of(panelContext);
+
       expect(find.byType(SortCriterionRow), findsNWidgets(3));
+      expect(
+        tester.getSize(panel).width,
+        AppComponentSize.filterControlWidth.of(panelContext),
+      );
+      expect(availableNameWidth, greaterThanOrEqualTo(110));
       expect(tester.takeException(), isNull);
     },
   );
