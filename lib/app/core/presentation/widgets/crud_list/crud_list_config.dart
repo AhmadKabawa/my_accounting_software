@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
@@ -8,7 +8,6 @@ import 'package:accounting_software/app/core/presentation/state_management/paged
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar_sort.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
@@ -132,7 +131,7 @@ class CrudListConfig<
     this.capabilities = const CrudCapabilities(),
     this.onMutated,
     this.isMutationEffect,
-    this.extraProviders,
+    this.providersWrapper,
     this.statsBuilder,
     this.headerExtras,
     this.extraToolbarActions,
@@ -162,7 +161,10 @@ class CrudListConfig<
   final CrudCapabilities capabilities;
   final void Function(BuildContext context)? onMutated;
   final bool Function(E effect)? isMutationEffect;
-  final List<SingleChildWidget> Function()? extraProviders;
+
+  /// Wraps the engine with any feature-owned Bloc/Repository providers.
+  final Widget Function(Widget child)? providersWrapper;
+
   final Widget Function(CrudSlotContext<T, Q, C> slot)? statsBuilder;
   final List<Widget> Function(CrudSlotContext<T, Q, C> slot)? headerExtras;
   final List<Widget> Function(CrudSlotContext<T, Q, C> slot)?

@@ -33,7 +33,7 @@ void main() {
         current: (_) => const [],
         tableKey: (_) => null,
         tableAscending: (_) => true,
-        apply: (_, __) {},
+        apply: (_, _) {},
         applyTable: (_, sort) => applied = sort,
       );
 
@@ -48,8 +48,8 @@ void main() {
         current: (query) => [FilterBarSort('field-$query', true)],
         tableKey: (query) => 'table-$query',
         tableAscending: (_) => false,
-        apply: (_, __) {},
-        applyTable: (_, __) {},
+        apply: (_, _) {},
+        applyTable: (_, _) {},
       );
 
       expect(config.current(3).single.key, 'field-3');

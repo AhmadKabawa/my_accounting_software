@@ -13,6 +13,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_page_templ
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 
 /// Core-owned CRUD list composition. Feature widgets remain responsible for
@@ -29,26 +30,28 @@ class CrudListScreen<
   final CrudListConfig<T, Q, C, E> config;
 
   @override
-  Widget build(BuildContext context) => MultiBlocProvider(
-    providers: [
-      BlocProvider<C>(create: (_) => config.createCubit()..load()),
-      ...?config.extraProviders?.call(),
-      BlocProvider(
-        create: (_) => ViewModeCubit(
-          settings: sl<AppSettingsManager>(),
-          screenId: config.screenId,
-        )..restore(),
+  Widget build(BuildContext context) {
+    final screen = MultiBlocProvider(
+      providers: [
+        BlocProvider<C>(create: (_) => config.createCubit()..load()),
+        BlocProvider(
+          create: (_) => ViewModeCubit(
+            settings: sl<AppSettingsManager>(),
+            screenId: config.screenId,
+          )..restore(),
+        ),
+      ],
+      child: BlocEffectListener<E, C>(
+        onEffect: (context, effect) {
+          if (config.isMutationEffect?.call(effect) ?? true) {
+            config.onMutated?.call(context);
+          }
+        },
+        child: _CrudListBody<T, Q, C, E>(config: config),
       ),
-    ],
-    child: BlocEffectListener<E, C>(
-      onEffect: (context, effect) {
-        if (config.isMutationEffect?.call(effect) ?? true) {
-          config.onMutated?.call(context);
-        }
-      },
-      child: _CrudListBody<T, Q, C, E>(config: config),
-    ),
-  );
+    );
+    return config.providersWrapper?.call(screen) ?? screen;
+  }
 }
 
 class _CrudListBody<
@@ -189,7 +192,7 @@ class _CrudListBody<
     if (stats == null && extras.isEmpty) return null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [if (stats != null) stats, ...extras],
+      children: [?stats, ...extras],
     );
   }
 }
