@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 
 /// Shared capabilities with conservative defaults; features opt into count.
 class CrudCapabilities {
@@ -79,10 +80,7 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
     required this.cubit,
     required this.rowId,
     required this.itemLabel,
-    this.onEdit,
-    this.onDuplicate,
-    this.onDelete,
-    this.onToggleStatus,
+    this.actions = const CrudActionsConfig(),
   });
 
   final AppViewMode? mode;
@@ -101,10 +99,7 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
   final C cubit;
   final Object Function(T row) rowId;
   final String Function(T row) itemLabel;
-  final ValueChanged<T>? onEdit;
-  final ValueChanged<T>? onDuplicate;
-  final ValueChanged<T>? onDelete;
-  final ValueChanged<T>? onToggleStatus;
+  final CrudActionsConfig<T> actions;
 }
 
 /// Complete feature configuration for the reusable CRUD list frame.
@@ -144,10 +139,7 @@ class CrudListConfig<
     this.extraFilterControls,
     this.extraBulkActions,
     this.emptyStateBuilder,
-    this.onEdit,
-    this.onDuplicate,
-    this.onDelete,
-    this.onToggleStatus,
+    this.actions = const CrudActionsConfig(),
     this.bulkActions,
   });
 
@@ -183,10 +175,7 @@ class CrudListConfig<
   )?
   extraBulkActions;
   final Widget Function(BuildContext context)? emptyStateBuilder;
-  final ValueChanged<T>? onEdit;
-  final ValueChanged<T>? onDuplicate;
-  final ValueChanged<T>? onDelete;
-  final ValueChanged<T>? onToggleStatus;
+  final CrudActionsConfig<T> actions;
   final List<BulkAction> Function(
     CrudSlotContext<T, Q, C> slot,
     List<T> selected,

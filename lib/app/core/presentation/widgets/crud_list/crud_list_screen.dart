@@ -167,12 +167,14 @@ class _CrudListBody<
                     cubit: cubit,
                     rowId: config.rowId,
                     itemLabel: config.itemLabel,
-                    onEdit: config.onEdit,
-                    onDuplicate: config.capabilities.duplicate
-                        ? config.onDuplicate
-                        : null,
-                    onDelete: config.onDelete,
-                    onToggleStatus: config.onToggleStatus,
+                    actions: CrudActionsConfig<T>(
+                      onEdit: config.actions.onEdit,
+                      onDuplicate: config.capabilities.duplicate
+                          ? config.actions.onDuplicate
+                          : null,
+                      onDelete: config.actions.onDelete,
+                      onToggleStatus: config.actions.onToggleStatus,
+                    ),
                   ),
                 ),
           ),

@@ -6,8 +6,8 @@ This file is the hand-off record for task 6 (parts 1–3). Update it after each 
 |---|---|---|---|
 | 0 | Read repository instructions and required source/tests/CI; record analysis | **Complete** | CI run 45303882331 — Auto-format, Analyze and Test, and catalog UI tests succeeded |
 | 1 | Add default-empty `ListToolbarConfig.extraActions`; verify existing `CrudRowActions.extraOverflow`; add focused tests | **Complete** | Commit fe0d0e4; formatted head bf14606; CI run 45304680471 — Auto-format and Analyze and Test succeeded |
-| 2 | Add `CrudListConfig`, `CrudListScreen`, data context and core engine tests | **Committed; CI pending** | CRUD composition, typed slots and focused config/sort tests |
-| 3 | Add `CrudActionsConfig` and `CrudListActions`; preserve action flow | Not started | — |
+| 2 | Add `CrudListConfig`, `CrudListScreen`, data context and core engine tests | **Complete** | Commit c3e6c62; formatted head a8ea71a; CI run 45305814183 — Auto-format, Analyze, Run tests and catalog UI tests succeeded |
+| 3 | Add `CrudActionsConfig` and `CrudListActions`; preserve action flow | **Committed; CI pending** | Typed feature callbacks; existing feature-owned editor/confirmation flows remain unchanged |
 | 4 | Complete engine tests: load/error/content/refresh failure, selection/view mode, effects, slots, actions | Not started | — |
 | 5 | Responsive/RTL/280px/text scale coverage and final architecture checks | Not started | — |
 | 6 | Review diff, constraints, docs and CI | Not started | — |
@@ -39,6 +39,13 @@ This file is the hand-off record for task 6 (parts 1–3). Update it after each 
 - The effect type is an explicit fourth generic parameter so the existing typed `BlocEffectListener<Effects, CubitB>` contract is preserved without dynamic casts.
 - Added focused tests for capability defaults/overrides and sort adapter forwarding/projections.
 - No Brands or Colors files were changed; no feature screen was migrated.
+
+## Step 3 implementation notes
+
+- Added `CrudActionsConfig<T>` and typed `CrudListActions` dispatch helpers for edit, duplicate, delete and status operations.
+- Moved action callbacks into one config object exposed by `CrudDataContext`; duplicate is omitted when the feature disables that capability.
+- Kept all business behavior in feature-owned callbacks. Existing Brands/Colors editor success checks, confirmation copy/arguments, status confirmation and mutation ordering remain untouched.
+- Added focused dispatch and optional-callback tests.
 
 ## Verification discipline
 
