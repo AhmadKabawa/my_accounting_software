@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This analysis compares the accepted design with the implementation on `feat/crud-list-engine`, without migrating either catalog screen. The source of truth is the code and CI configuration, not the names proposed in the task.
+This analysis records the baseline CRUD engine design and implementation on `feat/crud-list-engine`. The later Brands adoption is documented in the task 6 section below; Colors remains unchanged. The source of truth is the code and CI configuration, not the names proposed in the task.
 
 Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes, paged-list state/cubit/query, list template and toolbar/add-action configuration, selection and bulk actions, row actions/status column, confirmations, filter/sort mapping, view-mode cubit/settings, effect mixin/base cubit/effect listener, relevant Brands/Colors widget tests, test helpers, architecture gates, `.github/workflows/flutter-ci.yml`, and `analysis_options.yaml`.
 
@@ -83,8 +83,16 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - Step 5's 280px / 360px / 700px / 1400px matrix passed at text scales 1.0 and 1.5 in both LTR and RTL. CI run 45308555462 completed successfully, including Auto-format, Analyze, full tests, and catalog UI widget tests.
 
 
-## Brands adoption — step 6 (2/3), implementation note
+## Brands adoption — task 6 (2/3), final review
 
-The Brands screen now delegates to `CrudListScreen` through a feature-owned `brandsListConfig`. The config retains the feature's status filter and server multi-sort mapping, stats refresh only for mutation effects, add/edit/duplicate/delete/status handlers, bulk operations, product-aware delete eligibility, table/card/grid renderers, and localized empty/status copy. The data section uses the shared `CrudDataSection` and `CrudStatusColumnConfig`. Brands count capability remains disabled (showCount=false), consistent with the prior screen.
-
-Colors has not been migrated or changed. Migration CI and the remaining targeted verification/test coverage are not yet confirmed; no test success is asserted here. This implementation is an interim source review, not a completion report.
+- `BrandsScreen` is a thin stateless entry point to `CrudListScreen(config: brandsListConfig)`; its public `screenId` remains `catalog.brands`. The feature-owned config is 204 lines and owns the feature's query, localization, rendering and business-policy adapters.
+- Search/status controls and active chips are reused from `BrandsFilterBar`. Multi-sort remains mapped through `mapFilterBarSorts<BrandSortField, BrandSort>`; the table header retains the feature's `setSort(field:, ascending:)` API.
+- Stats remain feature-owned: `BrandStatsCubit` is provided around the engine, and refresh occurs only for `BrandsMutatedEffect`. The config explicitly disables the template count.
+- `CrudFlowsConfig` calls `showBrandEditor(context, brand: item, duplicate: duplicate)` and returns its `bool?` result. The shared flow calls `onBrandSaved(isNew: ...)` after a successful result and a mounted-context check. This avoids the earlier adapter workaround that invoked the legacy action helper and returned false.
+- Delete and status behavior remain in `BrandsListCubit`: delete retains `beforeDelete` usage checks; activation is direct; deactivation is confirmed. The per-row `canDelete` callback and bulk-delete rejection policy are both retained.
+- Bulk callbacks are feature-owned through `CrudBulkConfig`; bulk activate/deactivate/delete use the existing Cubit methods and localized copy. No business logic moved into Core.
+- The data section uses `CrudDataSection` / `CrudStatusColumnConfig`, existing `BrandIdentity`, `BrandCard`, `BrandGridTile`, `BrandStatusBadge`, and `AppIcons.brands`.
+- The page file reduced from 226 to 15 lines; the separate config is 204 lines. Existing table/action/filter/renderer files were retained.
+- Colors screen and its screen widget test have identical Git blob SHAs to baseline commit `3854e616`; no Colors migration occurred.
+- Verification: workflow run `45320366371` passed Auto-format, Analyze (`No issues found`), the full suite (1,151 tests) and catalog UI widget tests (172 tests). The run also exercised the 32-case Brands responsive matrix (280/360/800/1280 × RTL/LTR × light/dark × 1.0/1.5 text scale).
+- GitHub API only; no local Flutter/Dart commands were run. This completes task 6 (2/3) only; task 6 (3/3) was not started.

@@ -1,6 +1,6 @@
 # CRUD list engine — progress tracker
 
-This file records the CRUD list engine implementation and verification, without migrating Brands or Colors. Each implementation/review step has an independent commit; do not begin the next step until the prior step is green on CI's formatted revision.
+This file records the CRUD list engine implementation and verification, followed by the Brands adoption in task 6 (2/3). Colors remains intentionally unchanged. Engine steps and the feature migration are tracked separately.
 
 | Step | Scope | Status | Commit / CI |
 |---|---|---|---|
@@ -11,7 +11,7 @@ This file records the CRUD list engine implementation and verification, without 
 | 4 | Test loading/error/content/refresh-failure state projections and action/selection contracts | **Complete** | Commit 2857ce3; CI 45308115225 — Auto-format, Analyze, Run tests and catalog UI widget tests succeeded |
 | 5 | Responsive/RTL/280px/text scale coverage | **Complete** | Commit be580e6; formatted head caeedbb; CI 45308555462 — Auto-format, Analyze, Run tests and catalog UI widget tests succeeded |
 | 6 | Review diff, constraints, docs and CI | **Complete** | Commit 7db4213; CI 45309077863 — Auto-format, Analyze, Run tests and catalog UI widget tests succeeded |
-| 7 | Final handoff; stop before any screen migration | **Complete** | Final handoff recorded in this commit; CI pending |
+| 7 | Engine-only final handoff; stop before screen migration | **Complete** | Commit 7db4213; CI run 45309077863 green |
 
 ## Step 0 notes
 
@@ -111,11 +111,40 @@ Each run passed Auto-format Dart, Analyze, full tests and catalog UI widget test
 
 
 
-## Task 6 (2/3) — Brand migration in progress
+## Task 6 (2/3) — Brands migration and verification
 
-- Started the feature-owned configuration at `lib/app/features/catalog/brands/presentation/brands_list_config.dart`, composing existing brand list behavior with `CrudListConfig`, `CrudDataSection`, row flows, stats, sorting, filtering, permissions, and bulk actions.
-- Replaced `BrandsScreen` with a stateless engine entry point, retaining `screenId = 'catalog.brands'`.
-- Colors screen and its tests have not been modified.
-- CI is not yet verified for the migration; run 45318558761 was queued/pending at the time of this update and its job details were not yet available. Earlier analyzer failures on the branch were corrected separately (including removal of one unused test import), but do not infer a green run from those corrections.
-- GitHub API only; no local Flutter/Dart commands were run.
+### Implementation
+
+- Added feature-owned `brandsListConfig` in `lib/app/features/catalog/brands/presentation/brands_list_config.dart` and migrated `BrandsScreen` to the shared `CrudListScreen`.
+- `BrandsScreen` is now 15 lines (226 before migration); the complete feature configuration is 204 lines. Existing `BrandsTableSection`, `BrandsListActions`, filters, cards, grid tile, stats widgets and route files were retained rather than deleted.
+- Preserved `screenId = 'catalog.brands'`, `Permissions.masterData.manage`, breadcrumb navigation, status/search filters, multi-sort and table sort adapters, feature stats and mutation-effect filtering, add/edit/duplicate/delete/status flows, bulk activate/deactivate/delete, product-aware delete eligibility, and table/cards/grid rendering.
+- The editor flow now returns the actual `showBrandEditor` result to `CrudFlowsConfig`; the shared flow invokes `onBrandSaved` exactly once after a successful save. Duplicate mode continues to use the existing duplicate seed and create path.
+- `showCount: false` remains explicit. Colors was not migrated or modified.
+
+### Coverage added or retained
+
+- Added `brands_list_config_test.dart` for screen identity, permission, view modes/capabilities, filters/sorting, stats/provider hooks, record flows, bulk callbacks and data-section wiring.
+- Added Cubit coverage for bulk activate/deactivate; existing tests cover bulk delete eligibility, status/search/sort, in-use delete protection and mutation effects.
+- Extended the Brands screen matrix to 280/360/800/1280 px × LTR/RTL × light/dark × text scale 1.0/1.5 (32 combinations).
+- Existing Brands tests continue to cover status confirmation/direct activation, delete failure, stats refresh, filters, editor save and duplicate-copy behavior.
+- Fixed the CRUD data-section test to pump one frame instead of calling `pumpAndSettle` while the busy switch animation is intentionally running.
+
+### CI evidence
+
+| Workflow run | Revision | Result |
+|---|---|---|
+| 45318626942 | Brands migration docs commit | Analyze failed on a missing `CrudActionsConfig` import; the migration was corrected and the unused action configuration was later removed in favor of the typed flow callbacks |
+| 45319162109 | 0cd18d2 | Analyze passed; tests exposed the busy-switch `pumpAndSettle` timeout, corrected in 2004ca3 |
+| 45319361952 | 108883b | Same busy-switch test timeout before the correction |
+| 45319659278 | 2004ca3 | Analyze passed; tests exposed stale assertions against unused `config.actions`; corrected to assert the configured `CrudFlowsConfig` callbacks |
+| 45320147065 | 94f4e88 | Analyze passed; all 280 px / 1.5-scale matrix cases passed; same stale config assertion failed before its correction |
+| **45320366371** | **b0a9f9d** | **Green: Auto-format, Analyze, full tests (1,151 passed), and catalog UI widget tests (172 passed)** |
+
+- The successful CI run reports `No issues found`; both CI jobs completed successfully.
+- Colors source and its protected screen test were compared against the pre-migration baseline commit `3854e616`; both blob SHAs are identical.
+- GitHub API only. No local Flutter/Dart commands were run.
+
+### Scope boundary
+
+Task 6 (2/3) is complete. Do not start task 6 (3/3) in this branch as part of this work.
 
