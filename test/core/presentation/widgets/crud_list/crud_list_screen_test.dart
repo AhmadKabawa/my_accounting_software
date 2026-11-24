@@ -51,8 +51,7 @@ class _Query implements PagedQuery<_Query> {
   bool get hasActiveFilters => search.isNotEmpty;
 
   @override
-  _Query withSearch(String value) =>
-      _Query(search: value, pageSize: pageSize);
+  _Query withSearch(String value) => _Query(search: value, pageSize: pageSize);
 
   @override
   _Query withPage(int value) =>
@@ -63,7 +62,8 @@ class _Query implements PagedQuery<_Query> {
 }
 
 class _TestCubit extends PagedListCubit<String, _Query, _Effect> {
-  _TestCubit() : super(initialQuery: const _Query(), flashMessages: FlashMessages());
+  _TestCubit()
+    : super(initialQuery: const _Query(), flashMessages: FlashMessages());
 
   bool failNextFetch = false;
   int fetchCalls = 0;
@@ -87,7 +87,8 @@ class _TestCubit extends PagedListCubit<String, _Query, _Effect> {
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteItem(String item) async => const Right(unit);
+  Future<Either<Failure, Unit>> deleteItem(String item) async =>
+      const Right(unit);
 
   @override
   TestKey get deletedMessageKey => _deletedKey;
@@ -246,9 +247,7 @@ void main() {
     late _TestCubit cubit;
     cubit = await _pump(
       tester,
-      config: _config(
-        createCubit: () => _TestCubit()..failNextFetch = true,
-      ),
+      config: _config(createCubit: () => _TestCubit()..failNextFetch = true),
     );
     expect(find.text(_failureKey.en), findsOneWidget);
     await tester.tap(find.text(CommonKeys.retry.en));
@@ -280,10 +279,7 @@ void main() {
   testWidgets('optional slots are empty by default and render independently', (
     tester,
   ) async {
-    await _pump(
-      tester,
-      config: _config(createCubit: _TestCubit.new),
-    );
+    await _pump(tester, config: _config(createCubit: _TestCubit.new));
     expect(find.byKey(const ValueKey('toolbar-extra')), findsNothing);
     expect(find.byKey(const ValueKey('header-extra')), findsNothing);
     expect(find.byKey(const ValueKey('stats-extra')), findsNothing);
@@ -304,8 +300,7 @@ void main() {
         headerExtras: (_) => [
           const Text('header', key: ValueKey('header-extra')),
         ],
-        statsBuilder: (_) =>
-            const Text('stats', key: ValueKey('stats-extra')),
+        statsBuilder: (_) => const Text('stats', key: ValueKey('stats-extra')),
       ),
     );
     expect(find.byKey(const ValueKey('toolbar-extra')), findsOneWidget);
@@ -354,16 +349,15 @@ void main() {
     expect(savedCount, 1);
   });
 
-  testWidgets('duplicate capability and count are configurable', (tester) async {
+  testWidgets('duplicate capability and count are configurable', (
+    tester,
+  ) async {
     late CrudDataContext<String, _Query, _TestCubit> data;
     await _pump(
       tester,
       config: _config(
         createCubit: _TestCubit.new,
-        capabilities: const CrudCapabilities(
-          duplicate: false,
-          showCount: true,
-        ),
+        capabilities: const CrudCapabilities(duplicate: false, showCount: true),
         onData: (value) => data = value,
       ),
     );
