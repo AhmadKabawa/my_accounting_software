@@ -79,10 +79,11 @@ class _CrudListBody<
           cubit: cubit,
           canManage: canManage,
         );
-        final rows = state.result?.items ?? <T>[];
-        final failure = state.hasData ? null : state.failure;
-        final refreshFailure = state.hasData ? state.failure : null;
-        final loading = state.isInitialLoading;
+        final view = CrudListStateView<T, Q>.from(state);
+        final rows = view.rows;
+        final failure = view.failure;
+        final refreshFailure = view.refreshFailure;
+        final loading = view.loading;
         final addAction = ListAddAction(
           labelKey: config.addLabelKey,
           permission: config.manageAccess,
@@ -97,9 +98,7 @@ class _CrudListBody<
           titleKey: config.titleKey,
           breadcrumb: config.breadcrumb(context),
           stats: _headerWidgets(slot),
-          count: config.capabilities.showCount
-              ? state.result?.totalCount
-              : null,
+          count: config.capabilities.showCount ? view.total : null,
           toolbar: ListToolbarConfig(
             searchHintKey: config.searchHintKey,
             onSearchChanged: cubit.searchChanged,
@@ -156,7 +155,7 @@ class _CrudListBody<
                   CrudDataContext<T, Q, C>(
                     mode: mode,
                     rows: rows,
-                    total: state.result?.totalCount ?? 0,
+                    total: view.total,
                     query: state.query,
                     loading: loading,
                     refreshing: state.isRefreshing,

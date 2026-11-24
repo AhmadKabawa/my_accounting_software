@@ -8,7 +8,7 @@ This file is the hand-off record for task 6 (parts 1–3). Update it after each 
 | 1 | Add default-empty `ListToolbarConfig.extraActions`; verify existing `CrudRowActions.extraOverflow`; add focused tests | **Complete** | Commit fe0d0e4; formatted head bf14606; CI run 45304680471 — Auto-format and Analyze and Test succeeded |
 | 2 | Add `CrudListConfig`, `CrudListScreen`, data context and core engine tests | **Complete** | Commit c3e6c62; formatted head a8ea71a; CI run 45305814183 — Auto-format, Analyze, Run tests and catalog UI tests succeeded |
 | 3 | Add `CrudActionsConfig` and `CrudListActions`; preserve action flow | **Correction required** | Commits cc50021 / aba42fe; CI run 45306729538 failed Analyze on missing import and lint; run 45307049999 failed Analyze on one unused import |
-| 4 | Complete engine tests: load/error/content/refresh failure, selection/view mode, effects, slots, actions | Not started | — |
+| 4 | Test loading/error/content/refresh-failure state projections and action/selection contracts | **Complete** | Added CrudListStateView projection and five focused tests; CI pending |
 | 5 | Responsive/RTL/280px/text scale coverage and final architecture checks | Not started | — |
 | 6 | Review diff, constraints, docs and CI | Not started | — |
 | 7 | Final report; stop before any screen migration | Not started | — |
@@ -48,6 +48,13 @@ This file is the hand-off record for task 6 (parts 1–3). Update it after each 
 - Added focused dispatch and optional-callback tests.
 - Replaced the direct provider package type with a feature-owned wrapper to keep Core free of new dependencies.
 - Follow-up CI found a single unused import in the config file; removed in the next correction.
+
+## Step 4 — state and behavior contracts
+
+- Extracted `CrudListStateView`, used by the screen for initial loading, first-load failure, ready/empty data, refreshing, and stale-data refresh failure.
+- Added focused tests for each projection, including preservation of stale rows and separation of page errors from refresh errors.
+- Existing `ListSelectionCubit` tests cover toggle/select-page/replace/clear and page selection states; action dispatch tests cover all optional row operations.
+- No screen migration and no Brands/Colors changes.
 
 ## Verification discipline
 

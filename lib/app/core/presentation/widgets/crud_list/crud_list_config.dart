@@ -25,6 +25,24 @@ class CrudCapabilities {
   final bool bulkSelection;
 }
 
+/// Stable presentation projection for loading, failed and stale-data states.
+class CrudListStateView<T, Q extends PagedQuery<Q>> {
+  CrudListStateView.from(PagedListState<T, Q> state)
+    : rows = state.result?.items ?? <T>[],
+      total = state.result?.totalCount ?? 0,
+      loading = state.isInitialLoading,
+      refreshing = state.isRefreshing,
+      failure = state.hasData ? null : state.failure,
+      refreshFailure = state.hasData ? state.failure : null;
+
+  final List<T> rows;
+  final int total;
+  final bool loading;
+  final bool refreshing;
+  final Failure? failure;
+  final Failure? refreshFailure;
+}
+
 /// The typed, feature-owned inputs needed to render a CRUD list.
 class CrudSlotContext<T, Q extends PagedQuery<Q>, C> {
   const CrudSlotContext({
