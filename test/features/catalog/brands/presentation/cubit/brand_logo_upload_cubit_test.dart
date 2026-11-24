@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/brand_logo_policy.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
@@ -33,8 +33,13 @@ class _TestFailure extends Failure {
   const _TestFailure() : super(messageKey: ErrorKeys.conflict);
 }
 
-PickedImage _image({String mime = 'image/png', int size = 10}) =>
-    PickedImage(bytes: Uint8List(size), fileName: 'logo.png', mimeType: mime);
+PickedImage _image({String mime = 'image/png', int size = 10}) {
+  final bytes = Uint8List(size);
+  if (bytes.length >= 8) {
+    bytes.setRange(0, 8, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  }
+  return PickedImage(bytes: bytes, fileName: 'logo.png', mimeType: mime);
+}
 
 void main() {
   late FakeBrandsRepository repository;
@@ -84,7 +89,7 @@ void main() {
   });
 
   test('rejects a file over 5 MB without uploading', () async {
-    final cubit = build(_image(size: BrandLogoUpload.maxBytes + 1));
+    final cubit = build(_image(size: brandLogoPolicy.maxBytes + 1));
     await cubit.pickAndUpload();
     expect(
       cubit.state,

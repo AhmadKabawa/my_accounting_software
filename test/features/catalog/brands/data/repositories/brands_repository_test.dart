@@ -1,14 +1,16 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
+import 'package:accounting_software/app/core/network/storage/storage_image_uploader.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brand_stats_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/repositories/brands_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,8 +22,13 @@ void main() {
 
   setUp(() {
     api = FakeBrandsApiClient();
+    final uploader = StorageImageUploader(
+      api,
+      clock: () => DateTime.utc(2026, 1, 2),
+      random: Random(7),
+    );
     repository = BrandsRepositoryImpl(
-      BrandsRemoteDataSourceImpl(api),
+      BrandsRemoteDataSourceImpl(api, uploader),
       BrandStatsRemoteDataSourceImpl(api),
     );
   });
@@ -69,7 +76,6 @@ void main() {
         sortAscending: false,
       ),
     );
-    // "Newest" sorts by id (no created_at column), so no extra id term.
     expect(api.lastQueryParameters['order'], 'id.desc');
   });
 
@@ -201,7 +207,7 @@ void main() {
     'uses the MIME type when an uploaded filename has no extension',
     () async {
       final result = await repository.uploadLogo(
-        BrandLogoUpload(
+        ImageUpload(
           bytes: Uint8List.fromList([1, 2, 3]),
           fileName: 'brand-logo',
           mimeType: 'image/png',
@@ -218,7 +224,7 @@ void main() {
     () async {
       final bytes = Uint8List.fromList([1, 2, 3]);
       final result = await repository.uploadLogo(
-        BrandLogoUpload(
+        ImageUpload(
           bytes: bytes,
           fileName: 'Logo.PNG',
           mimeType: 'image/png',

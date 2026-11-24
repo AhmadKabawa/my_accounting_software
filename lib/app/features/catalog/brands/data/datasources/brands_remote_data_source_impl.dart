@@ -1,22 +1,22 @@
-import 'dart:math';
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:accounting_software/app/core/foundation/config/app_config.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
+import 'package:accounting_software/app/core/network/storage/storage_image_uploader.dart';
+import 'package:accounting_software/app/core/network/storage/storage_target.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/brands_endpoint.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/models/brand_model.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
 
 class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
-  const BrandsRemoteDataSourceImpl(this._apiClient);
+  const BrandsRemoteDataSourceImpl(this._apiClient, this._storageImageUploader);
   final IApiClient _apiClient;
+  final StorageImageUploader _storageImageUploader;
 
   @override
   Future<ApiResult<PaginatedResult<BrandModel>>> getBrands(
@@ -81,23 +81,14 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<String>> uploadLogo(BrandLogoUpload upload) {
-    final extension = _fileExtension(upload);
-    final stamp = DateTime.now().microsecondsSinceEpoch;
-    final path =
-        '${BrandsEndpoint.logoFolder}/$stamp-${Random().nextInt(0x7fffffff)}.$extension';
-    return _apiClient.post<String>(
-      BrandsEndpoint.logoUpload(path),
-      data: upload.bytes,
-      options: Options(
-        headers: {
-          'Content-Type': upload.normalizedMimeType,
-          'x-upsert': 'false',
-        },
-      ),
-      fromJson: (_) => BrandsEndpoint.logoPublicUrl(AppConfig.baseUrl, path),
-    );
-  }
+  Future<ApiResult<String>> uploadLogo(ImageUpload upload) =>
+      _storageImageUploader.upload(
+        target: const StorageTarget(
+          bucket: BrandsEndpoint.logoBucket,
+          folder: BrandsEndpoint.logoFolder,
+        ),
+        image: upload,
+      );
 
   /// Sorting is done by the database: every criterion becomes one `order`
   /// term. `id.asc` is appended unless `id` is already sorted, so equal values
@@ -130,14 +121,6 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
     final trimmed = value?.trim() ?? '';
     return trimmed.isEmpty ? null : trimmed;
   }
-
-  String _fileExtension(BrandLogoUpload upload) =>
-      switch (upload.mimeType.toLowerCase()) {
-        'image/jpeg' => 'jpg',
-        'image/png' => 'png',
-        'image/webp' => 'webp',
-        _ => 'img',
-      };
 
   String _escapeFilterValue(String value) =>
       value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');

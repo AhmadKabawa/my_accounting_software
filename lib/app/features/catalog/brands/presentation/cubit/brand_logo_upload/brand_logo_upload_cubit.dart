@@ -1,7 +1,9 @@
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
+import 'package:accounting_software/app/core/foundation/image/image_validation.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
+import 'package:accounting_software/app/features/catalog/brands/domain/brand_logo_policy.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
@@ -37,17 +39,17 @@ class BrandLogoUploadCubit extends BaseCubit<BrandLogoUploadState, void> {
       return;
     }
 
-    final upload = BrandLogoUpload(
+    final upload = ImageUpload(
       bytes: picked.bytes,
       fileName: picked.fileName,
       mimeType: picked.mimeType,
     );
-    if (!upload.hasAllowedType || upload.isEmpty) {
-      emit(const BrandLogoUploadFailed(BrandsKeys.logoFileType));
-      return;
-    }
-    if (upload.isTooLarge) {
-      emit(const BrandLogoUploadFailed(BrandsKeys.logoFileTooLarge));
+    final validation = ImageValidation.validate(upload, brandLogoPolicy);
+    if (!validation.isValid) {
+      final key = validation.status == ImageValidationStatus.tooLarge
+          ? BrandsKeys.logoFileTooLarge
+          : BrandsKeys.logoFileType;
+      emit(BrandLogoUploadFailed(key));
       return;
     }
 

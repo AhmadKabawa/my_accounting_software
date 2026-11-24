@@ -15,6 +15,7 @@ import 'package:accounting_software/app/core/network/dio/dio_service.dart';
 import 'package:accounting_software/app/core/network/dio/interceptors/language_interceptor.dart';
 import 'package:accounting_software/app/core/network/network_info/network_info.dart';
 import 'package:accounting_software/app/core/network/network_info/network_info_impl.dart';
+import 'package:accounting_software/app/core/network/storage/storage_image_uploader.dart';
 import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
 import 'package:accounting_software/app/core/storage/secure/secure_storage_service.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/cubit/theme_cubit.dart';
@@ -58,6 +59,9 @@ Future<void> initCoreDI({required AppEndpoint refreshEndpoint}) async {
     ),
   );
   sl.registerLazySingleton<IApiClient>(() => ApiClient(dioService: sl()));
+  sl.registerLazySingleton<StorageImageUploader>(
+    () => StorageImageUploader(sl<IApiClient>()),
+  );
 
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
