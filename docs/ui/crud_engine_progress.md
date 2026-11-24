@@ -109,3 +109,13 @@ Each run passed Auto-format Dart, Analyze, full tests and catalog UI widget test
 - Tests exercise the state projection, configuration/sort contracts, action dispatch, existing selection/template behavior and responsive data-view layout. A dedicated end-to-end widget harness for `CrudListScreen` itself is not included in this engine-only change.
 - A future adoption task should first add that focused screen integration harness, then migrate one feature at a time while preserving its editor/confirmation/effect behavior.
 
+
+
+## Task 6 (2/3) — Brand migration in progress
+
+- Started the feature-owned configuration at `lib/app/features/catalog/brands/presentation/brands_list_config.dart`, composing existing brand list behavior with `CrudListConfig`, `CrudDataSection`, row flows, stats, sorting, filtering, permissions, and bulk actions.
+- Replaced `BrandsScreen` with a stateless engine entry point, retaining `screenId = 'catalog.brands'`.
+- Colors screen and its tests have not been modified.
+- CI is not yet verified for the migration; run 45318558761 was queued/pending at the time of this update and its job details were not yet available. Earlier analyzer failures on the branch were corrected separately (including removal of one unused test import), but do not infer a green run from those corrections.
+- GitHub API only; no local Flutter/Dart commands were run.
+

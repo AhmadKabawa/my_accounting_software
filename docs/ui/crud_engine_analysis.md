@@ -81,3 +81,10 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - Standard bulk actions are intentionally supplied by each feature through `bulkActions` (for example, `CrudBulkActions.statusAndDelete`); `extraBulkActions` is appended after them. This keeps feature-specific localized keys and mutation policies out of Core.
 - The review does not claim a screen migration: Brands and Colors remain unchanged, as required.
 - Step 5's 280px / 360px / 700px / 1400px matrix passed at text scales 1.0 and 1.5 in both LTR and RTL. CI run 45308555462 completed successfully, including Auto-format, Analyze, full tests, and catalog UI widget tests.
+
+
+## Brands adoption — step 6 (2/3), implementation note
+
+The Brands screen now delegates to `CrudListScreen` through a feature-owned `brandsListConfig`. The config retains the feature's status filter and server multi-sort mapping, stats refresh only for mutation effects, add/edit/duplicate/delete/status handlers, bulk operations, product-aware delete eligibility, table/card/grid renderers, and localized empty/status copy. The data section uses the shared `CrudDataSection` and `CrudStatusColumnConfig`. Brands count capability remains disabled (showCount=false), consistent with the prior screen.
+
+Colors has not been migrated or changed. Migration CI and the remaining targeted verification/test coverage are not yet confirmed; no test success is asserted here. This implementation is an interim source review, not a completion report.
