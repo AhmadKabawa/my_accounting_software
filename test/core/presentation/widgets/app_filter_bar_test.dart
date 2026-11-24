@@ -945,50 +945,50 @@ void main() {
   testWidgets(
     'move up is in the field menu and keeps the desktop sort panel open',
     (tester) async {
-    tester.view.physicalSize = const Size(1280, 900);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    const initial = [
-      FilterBarSort('name', true),
-      FilterBarSort('status', false),
-      FilterBarSort('updated', true),
-    ];
-    var changed = initial;
-    await tester.pumpWidget(
-      buildTestApp(
-        home: Scaffold(
-          body: FilterBar(
-            onSearchChanged: (_) {},
-            activeFilters: const [],
-            onClearAll: () {},
-            sortOptions: const [
-              FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-              FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
-              FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
-            ],
-            sorts: initial,
-            onSortsChanged: (next) => changed = next,
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      const initial = [
+        FilterBarSort('name', true),
+        FilterBarSort('status', false),
+        FilterBarSort('updated', true),
+      ];
+      var changed = initial;
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: FilterBar(
+              onSearchChanged: (_) {},
+              activeFilters: const [],
+              onClearAll: () {},
+              sortOptions: const [
+                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+                FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+              ],
+              sorts: initial,
+              onSortsChanged: (next) => changed = next,
+            ),
           ),
         ),
-      ),
-    );
-    await tester.tap(find.text('Sort by'));
-    await tester.pumpAndSettle();
-    expect(find.text('Move sort up'), findsNothing);
+      );
+      await tester.tap(find.text('Sort by'));
+      await tester.pumpAndSettle();
+      expect(find.text('Move sort up'), findsNothing);
 
-    await tester.tap(find.text('Filters').last);
-    await tester.pumpAndSettle();
-    expect(find.text('Move sort up'), findsOneWidget);
-    await tester.tap(find.text('Move sort up'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Filters').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Move sort up'), findsOneWidget);
+      await tester.tap(find.text('Move sort up'));
+      await tester.pumpAndSettle();
 
-    expect(changed, [
-      const FilterBarSort('status', false),
-      const FilterBarSort('name', true),
-      const FilterBarSort('updated', true),
-    ]);
-    expect(find.byTooltip('Then by'), findsOneWidget);
-    expect(tester.takeException(), isNull);
+      expect(changed, [
+        const FilterBarSort('status', false),
+        const FilterBarSort('name', true),
+        const FilterBarSort('updated', true),
+      ]);
+      expect(find.byTooltip('Then by'), findsOneWidget);
+      expect(tester.takeException(), isNull);
   });
 
   testWidgets(
@@ -1112,7 +1112,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       tester.platformDispatcher.textScaleFactorTestValue = 1.5;
       addTearDown(tester.view.reset);
-      addTearDown(tester.platformDispatcher.clearTextScaleFactor);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       await tester.pumpWidget(
         buildTestApp(
           direction: TextDirection.rtl,
@@ -1154,32 +1154,32 @@ void main() {
   testWidgets(
     'three sort criteria fit the desktop panel without exceptions',
     (tester) async {
-    tester.view.physicalSize = const Size(1280, 900);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    await tester.pumpWidget(
-      buildTestApp(
-        home: Scaffold(
-          body: SortPanel(
-            options: const [
-              FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-              FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
-              FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
-            ],
-            sorts: const [
-              FilterBarSort('name', true),
-              FilterBarSort('status', false),
-              FilterBarSort('updated', true),
-            ],
-            onChanged: (_) {},
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: SortPanel(
+              options: const [
+                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+                FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+                FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+              ],
+              sorts: const [
+                FilterBarSort('name', true),
+                FilterBarSort('status', false),
+                FilterBarSort('updated', true),
+              ],
+              onChanged: (_) {},
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.byType(SortCriterionRow), findsNWidgets(3));
-    expect(tester.takeException(), isNull);
+      expect(find.byType(SortCriterionRow), findsNWidgets(3));
+      expect(tester.takeException(), isNull);
   });
 
   testWidgets(

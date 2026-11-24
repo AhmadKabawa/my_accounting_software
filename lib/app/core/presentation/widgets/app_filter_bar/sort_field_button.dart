@@ -90,7 +90,7 @@ class SortFieldButton extends StatelessWidget {
         if (onMoveUp != null) ...[
           Divider(
             color: colors.outlineVariant,
-            height: context.ui.size.height(AppSpacing.sm),
+            height: AppSpacing.sm.of(context),
             thickness: AppBorderWidth.thin.of(context),
           ),
           AppDropdownItem(
