@@ -100,7 +100,8 @@ Future<void> _open(
     ),
   );
   await tester.tap(find.text('Open editor'));
-  await tester.pumpAndSettle();
+  await tester.pump();
+  if (!extraBusy) await tester.pumpAndSettle();
 }
 
 Finder _action(AppKey key) => find.byWidgetPredicate(
@@ -185,7 +186,7 @@ void main() {
     final fields = _fields();
     await _open(tester, cubit: cubit, fields: fields);
     cubit.setBusy();
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 100));
     final busySave = tester.widget<AppButton>(_action(_save));
     expect(busySave.isLoading, isTrue);
     expect(busySave.onPressed, isNull);
