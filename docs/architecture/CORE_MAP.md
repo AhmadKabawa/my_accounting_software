@@ -17,10 +17,10 @@
 | `access/` | الدور الحالي والصلاحيات وفحص إظهار عناصر الواجهة | `access/cubit/access_cubit.dart` |
 | `di/` | تسجيل خدمات Core في GetIt | `di/service_locator.dart` |
 | `error/` | الاستثناءات الداخلية، Failure، التحويل والترجمة | `error/mappers/exception_mapper.dart` |
-| `foundation/` | أنواع ونتائج مشتركة، إعدادات، Logger، UseCases، التحقق، ثوابت الصور | `foundation/types/api_result.dart` |
+| `foundation/` | أنواع ونتائج مشتركة، إعدادات، Logger، UseCases، التحقق، سياسة ورفع الصور | `foundation/types/api_result.dart` و`foundation/image/` |
 | `localization/` | اللغة الحالية، مفاتيح الترجمة، تحميل الترجمات واتجاه النص | `localization/cubit/locale_cubit.dart` |
-| `network/` | Dio وواجهته، Interceptors، الاتصال، الإلغاء، عقد Realtime | `network/api_client_interface.dart` |
-| `platform/` | قدرات المنصة وتنفيذاتها المعزولة بالاستيراد الشرطي | `platform/platform_capabilities.dart` |
+| `network/` | Dio وواجهته، Interceptors، الاتصال، الإلغاء، عقد Realtime ورفع Storage | `network/api_client_interface.dart` و`network/storage/storage_image_uploader.dart` |
+| `platform/` | قدرات المنصة، اختيار الصور والسحب والإفلات وتنفيذاتها المعزولة | `platform/platform_capabilities.dart` و`platform/file_drop/` |
 | `presentation/design_system/responsive/` | القياس والـ Tokens وواجهات Responsive | `presentation/design_system/responsive/extension/ui_extension.dart` |
 | `presentation/design_system/theme/` | Light/Dark Theme والألوان والطباعة وThemeCubit | `presentation/design_system/theme/app_theme.dart` |
 | `presentation/state_management/` | BaseCubit وEffects وBlocObserver | `presentation/state_management/base_cubit.dart` |
@@ -40,8 +40,9 @@
 - سياسة الذاكرة وإعادة التحميل والمسح موثقة في [ADR-0006](ADR/0006-access-snapshot-lifecycle.md). DI للصلاحيات في `access/di/access_di.dart`، ويُستدعى من Composition Root بعد تسجيل الشبكة.
 
 ### Platform capabilities
-- `PlatformCapabilities` (`platform/platform_capabilities.dart`) exposes platform-independent capabilities selected through conditional imports. Browser builds report that Dio request send timeouts are unsupported; `dart:io` builds report support. Network services consume the capability rather than checking `kIsWeb` directly.
-- `test/core/platform/platform_capabilities_test.dart` covers the VM/native capability selection. Browser-specific behavior is supplied by the conditional stub and must be verified by the web build in CI.
+- `PlatformCapabilities` (`platform/platform_capabilities.dart`) exposes platform-independent capabilities selected through conditional imports. `supportsFileDrop` is true on Web/desktop and false on Android/iOS; request send-timeout support remains false on Web and true on `dart:io` platforms.
+- `FileDropTarget` (`platform/file_drop/file_drop_target.dart`) wraps `desktop_drop`; this is the only project file allowed to import that package. Its adapter seam allows Widget tests to simulate a drop without a platform plugin.
+- `test/core/platform/platform_capabilities_test.dart` covers the VM/native capabilities; `test/core/platform/file_drop/file_drop_target_test.dart` covers the test adapter. The Web stub is selected by conditional import; device/browser behavior still needs manual verification.
 
 ### Dependency Injection
 - `sl` هو `GetIt.instance` (`di/service_locator.dart`).
@@ -65,6 +66,7 @@
 - `UseCase` و`UseCaseNoParams`: عقود Use Cases.
 - `AppValidator` و`ValidationRule` (`lib/app/core/foundation/validation/app_validator.dart`): نظام التحقق من مدخلات النماذج، ورسائله `AppKey`. التوقيع `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. نوع قيم `params` هو `dynamic`؛ و`ValidationRule.async` و`AsyncValidator` محجوزان ولا يوجد مسار async في `validate()`.
 - `AppPathImage` و`AppPathImages` (`lib/app/core/foundation/constants/image_constants.dart`): ثوابت مسارات الصور والأصول. يجمع `AppPathImage.path` مسار الأصل مع الاسم، ويحدد `isRtl` ما إذا كان الأصل مرتبطاً باتجاه النص.
+- `ImagePolicy` و`ImageUpload` و`ImageValidation` (`foundation/image/`): سياسة حد الحجم وMIME، وحمولة bytes/name/MIME، والتحقق من الفراغ والحجم والنوع وتوقيع JPEG/PNG/WebP من أول البايتات. `ImageUploadCubit` يدير اختيار/تحقق/رفع الصورة ويصدر رابطاً عاماً أو `AppKey` للفشل.
 - `Money` و`CurrencyMismatchException` (`lib/app/core/foundation/money/money.dart`): نوع المال `Money(amount, currencyId)` فوق `decimal` (قرار-70، [ADR-0005](ADR/0005-money-type-and-amount-formatter.md)). الجمع والطرح والمقارنة بعملة واحدة فقط وإلا `CurrencyMismatchException`؛ `times` و`convert` صريحان؛ ولا تقريب ضمني (`Money.rounded(MoneyRounding)`). `Money.fromRaw` يقرأ قيم PostgREST دون المرور بـ `double` حين تصل نصاً. ممنوع تسجيل قيمه في `Logger`. حالة التحقق: `NOT_RUN`.
 - `MoneyRounding` و`MoneyRoundingMethod` (`money_rounding.dart` و`money_rounding_method.dart`): إعدادات تقريب العملة من جدول `currencies` (`decimal_places` و`rounding_increment` و`rounding_method`) تُمرَّر معاملاً ولا تُثبَّت في Flutter. دلالات `rounding_increment` > 0 و`UP`/`DOWN` للسالب تحتاج مطابقة مع `erp.round_currency`. `MoneyDecimalMath` (`money_decimal_math.dart`) أدوات داخلية لا تُستعمل من الميزات.
 - `AmountFormatter` و`CurrencyDisplay` و`CurrencyLabelPlacement` (`foundation/money/amount_formatter.dart`، C13): تنسيق المبالغ بدوال خالصة: أرقام غربية، فاصل آلاف وعشري، كسور العملة لا القيمة، علامة `−`، عزل Bidi (`LRI…PDI`) حول الرقم، رمز العملة خارج العزل، بلا اختصار. التقريب في العرض لا يغيّر القيمة المحفوظة.
@@ -85,6 +87,7 @@
 - `DioService`: إنشاء Dio وإضافة Interceptors.
 - Interceptors (`network/dio/interceptors/`): Auth وConnectivity وLanguage وLogger وRefreshToken وRetry.
 - `AppEndpoint` و`encodePathSegment` (`network/api_end_points.dart`): أداتان فقط. الـ endpoints نفسها في `features/<feature>/data/<feature>_endpoints.dart` (مثل `AuthEndpoints`)؛ المقاطع الديناميكية تمر بـ `encodePathSegment` فتُرمَّز وتُرفض `.` و`..`. `DioService`/`initCoreDI` يستقبلان `refreshEndpoint` من `app_di.dart` لأن Core لا يستورد ميزة.
+- `StorageImageUploader` و`StorageTarget` (`network/storage/`): رفع صورة بايتات عبر `IApiClient` الموجود، مع مجلد وbucket يحددهما المستهلك، وإرجاع رابط Storage العام. لا ينشئ Dio جديداً.
 - `NetworkInfo` و`NetworkInfoImpl`: معرفة الاتصال. لا يثبت وحده الوصول إلى الخادم.
 - `CancellableMixin` و`CancelTokenRegistry`: إلغاء الطلبات المرتبطة بعمر Cubit/Controller.
 - لا تنشئ Dio داخل Feature ولا تكرر Interceptors.
@@ -136,6 +139,7 @@
 - `AppSkeleton` (`widgets/app_skeleton/app_skeleton.dart`, C09): هياكل تحميل responsive بأشكال `line` و`block` و`card` و`tableRow`؛ يستعمل `shimmer` الموجودة، يؤخر الظهور 200ms افتراضياً ويوقف الحركة عند تفضيل تقليلها. **قيد المراجعة** حتى استعماله في AUTH-04 وCAT-07.
 - `AppEmptyState` (`widgets/app_empty_state/app_empty_state.dart`, C08): حالة فارغة بأيقونة `AppIcon` وعنوان ووصف من `AppKey` وslot اختياري للإجراء؛ يدعم عرضاً مضغوطاً للحاويات المضمّنة. **قيد المراجعة** حتى استعماله في AUTH-04 وCAT-07.
 - `AppButton`: زر موحد، بـ `AppKey` أو `AppButton.raw`، مع variants/sizes/loading. التصميم في `AppButtonStyle`.
+- `AppImageUploadField` (`widgets/app_image_upload/app_image_upload_field.dart`): معاينة `AppLogoThumb` مع اختيار/استبدال/إزالة، `ImagePolicy` وuploader يمررهما المستهلك، ورسائل `InlineBanner`، ودعم drop اختياري، و`onBusyChanged` لربط الرفع بـ `CrudEditorDialog.extraBusy`.
 - `AppIcon` و`AppImage`: عرض الأيقونات والصور؛ اقرأ الـ API قبل إعادة التنفيذ.
 - `AppNavigationBar` و`AppNavigationRail` و`AppSidebar` وأنماطها: عناصر التنقل حسب حجم الشاشة.
 - `MessageViewWidgets` و`MessageType` (`widgets/app_message/message_view_widgets.dart`): نظام الرسائل الموحد (SnackBar/Dialog/Loading). يقبل `messageKey` (AppKey، المفضل) أو `message` (String للتوافق)، ويبني على `AppText`/`AppButton`، وألوانه من `colors.error` و`semanticColors`. أنواع الرسالة: error وsuccess وwarning وinfo وloading. لا يوجد استهلاك فعّال حالياً (شاشات auth التي ستستخدمه معلّقة). `hideMessage` يُخفي أعلى نافذة رسالة فقط (يتعرف عليها باسم المسار على الـ root navigator) ولا يغلق صفحة، ولا أثر له إن لم توجد رسالة. `failureBanner(Failure)` يبني `InlineBanner` للخطأ: عنوان «يرجى مراجعة البيانات» لـ `ValidationFailure`، و«تعذّر إكمال العملية» لأعطال الشبكة والخادم والتخزين وغير المتوقع، وبلا عنوان للجلسة والصلاحية وغير الموجود؛ والنص دائماً `failure.messageKey` المترجم (لا نص خادم). مسار `message:` النصي لا يُستعمل لنص الخادم.
@@ -189,7 +193,8 @@
 - AppShell في lib/app/shell/app_shell.dart يبقى مالك التنقل المفلتر عبر AccessCubit وAccessStatusGate. أضيفت له واجهة شريط علوي اختيارية تدعم الفرع الحالي عبر ScopeSelector، فتات الخبز، قائمة المستخدم، وشارة جلسة كاشير تُمررها الميزة المالكة.
 - AppShellTopBar في presentation/widgets/app_shell يعرض الفرع وشارة القراءة فقط عند can_operate=false، ويعرض جرس إشعارات معطلاً بلا فتح في v1.
 - `AppRowActions` / `AppRowAction` (`widgets/app_row_actions/app_row_actions.dart`): إجراءات السجل كأزرار أيقونات فقط (`primary` سطرية بحد أقصى 2، و`overflow` في قائمة «المزيد»). ممنوع أزرار نصية للتعديل/الحذف في الجداول. أيقوناتها `AppIcons.edit/delete/block/restore`.
-- `ImagePickerPort` (`core/platform/image_picker/`): اختيار صورة واحدة مستقلاً عن المنصة (`PickedImage`)؛ التنفيذ `FilePickerImagePicker` الملف الوحيد الذي يستورد `file_picker`، ومسجَّل في `app_di.dart`.
+- `ImagePickerPort` (`core/platform/image_picker/`): اختيار صورة واحدة مستقلاً عن المنصة (`PickedImage`)؛ التنفيذ `FilePickerImagePicker` الملف الوحيد الذي يستورد `file_picker`، ويستخدم `FileType.image` للمعرض/منتقي الصور.
+- `FileDropTarget` (`core/platform/file_drop/`): يمرر الملفات المسقطة كـ `PickedImage`؛ لا يُعرض على الهاتف حسب `PlatformCapabilities.supportsFileDrop`. استيراد `desktop_drop` محصور في ملف التنفيذ هذا.
 - AppMenu في presentation/widgets/app_menu قائمة عامة مبنية على AppKey، وأيقونة اختيارية وعناصر قابلة للتعطيل.
 - AppBreadcrumb وAppPageHeader مكوّنان عامان مستقلان. يقبل AppShell breadcrumbBuilder اختيارياً لتوليد المسار من GoRouterState؛ تبقى قائمة breadcrumbs الثابتة متاحة للتوافق.
 - FormPageTemplate (T3) وDashboardTemplate (T5) في presentation/widgets/app_page_template؛ القوالب لا تقرأ الصلاحيات. الاستخدام في شاشات AUTH الطيّارة لم يُدمج بعد، لذلك لا تعد القوالب منجزة وفق R12.

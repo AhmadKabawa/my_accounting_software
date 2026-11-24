@@ -26,7 +26,8 @@
 | الحاجة | الواجهة (تُنشأ عند الحاجة) | v1 (ويب) | موبايل (v2) | Windows (v2) |
 |---|---|---|---|---|
 | اختيار صورة | `ImagePickerPort` يعيد `PickedImage{name, mime, bytes}` | منتقي الصور | معرض الصور عند بناء الموبايل | حوار الملفات |
-| إفلات صورة | `FileDropTarget` داخل `core/platform/file_drop/` | مدعوم على Web | معطّل على الهاتف | مدعوم على Windows/macOS |\n| تنزيل أو مشاركة ملف | `FileSaver` | تنزيل المتصفح | ورقة المشاركة | حوار حفظ |
+| إفلات صورة | `FileDropTarget` داخل `core/platform/file_drop/` | مدعوم على Web | معطّل على الهاتف | مدعوم على Windows/macOS |
+| تنزيل أو مشاركة ملف | `FileSaver` | تنزيل المتصفح | ورقة المشاركة | حوار حفظ |
 | طباعة | `PrintService` | حوار المتصفح وPDF | مشاركة وPDF | طابعة النظام والحرارية |
 | مسح باركود | `ScanService` | حقل نصي (ماسح USB يحاكي لوحة المفاتيح) | كاميرا | حقل نصي |
 | الاتصال بالشبكة | `NetworkInfo` (موجود) | موجود | موجود | موجود |
@@ -52,7 +53,7 @@
 مسارات `go_router` بأسماء ثابتة، والحالة المهمة في المسار أو المعاملات لا في الذاكرة فقط، فيعمل: رابط مباشر على الويب، وإعادة فتح الشاشة على الموبايل، وسطح المكتب. لا تعتمد على `Navigator.pop` المباشر؛ استعمل `context.pop`/`go`.
 
 ### P7. الاعتماديات
-كل حزمة جديدة تُسجَّل **بالمنصات التي تدعمها** (R11 في خطة المكوّنات، AGENTS §2). حزمة لا تدعم الويب أو لا تدعم إحدى المنصات المستهدفة تُغلَّف بواجهة من P2 قبل استعمالها، ولا تُستورد مباشرة من ميزة. الحالية: `connectivity_plus` و`flutter_secure_storage` و`hive_flutter` و`shared_preferences` و`dio` و`go_router` و`cached_network_image` (تُراجع منصاتها عند أول بناء، فلم تُتحقق هنا)، و`google_sign_in` (معطَّل في v1، قرار-65).
+كل حزمة جديدة تُسجَّل **بالمنصات التي تدعمها** (R11 في خطة المكوّنات، AGENTS §2). حزمة لا تدعم الويب أو لا تدعم إحدى المنصات المستهدفة تُغلَّف بواجهة من P2 قبل استعمالها، ولا تُستورد مباشرة من ميزة. حزمتا `file_picker` و`desktop_drop` لا تُستوردان إلا من `core/platform/`؛ يفرض `platform_isolation_test` ذلك. يستخدم المشروع `desktop_drop: ^0.8.4` المتوافق مع Dart `^3.10.0` وإصدار Flutter في CI (`3.38.1`)؛ لا حاجة إلى إصدار 0.9.x الذي يتطلب SDK أحدث. الحالية: `connectivity_plus` و`flutter_secure_storage` و`hive_flutter` و`shared_preferences` و`dio` و`go_router` و`cached_network_image` (تُراجع منصاتها عند أول بناء، فلم تُتحقق هنا)، و`google_sign_in` (معطَّل في v1، قرار-65).
 
 ### P8. الاختبارات لا تعتمد على متصفح
 اختبارات الوحدة وWidget تعمل على VM (`flutter test`). ما يحتاج منصة يُختبر بتنفيذ وهمي للواجهة. اختبار المنصة الفعلية (متصفح، جهاز) **يوسم صراحةً بما شُغّل وما لم يُشغَّل** (ARCHITECTURE_RULES §9).
@@ -79,7 +80,7 @@
 
 ## 4. الحماية الآلية
 
-اختبار `test/architecture/platform_isolation_test.dart` يفشل إن ظهر `dart:io` أو `dart:html` أو `dart:js_interop` أو `package:web` أو `kIsWeb` أو `defaultTargetPlatform` أو `Platform.isX` خارج `lib/app/core/platform/` وقائمة استثناءات قصيرة موثقة (حالياً `env_config.dart` فقط). لم يُشغَّل في جلسة كتابته (لا Flutter SDK)؛ فحصت بحثاً نصياً أن `lib/` الحالي لا يخالفه.
+اختبار `test/architecture/platform_isolation_test.dart` يفشل إن ظهر استيراد `file_picker` أو `desktop_drop` خارج `core/platform/`، كما يفشل إن ظهر `dart:io` أو `dart:html` أو `dart:js_interop` أو `package:web` أو `kIsWeb` أو `defaultTargetPlatform` أو `Platform.isX` خارج `lib/app/core/platform/` وقائمة استثناءات قصيرة موثقة (حالياً `env_config.dart` فقط). لم يُشغَّل في جلسة كتابته (لا Flutter SDK)؛ فحصت بحثاً نصياً أن `lib/` الحالي لا يخالفه.
 
 ## 5. قائمة إضافة منصة (عند v2)
 
@@ -92,5 +93,6 @@
 
 ## 6. ما لم يُتحقق منه
 - عدم وجود اعتماد على منصة في مجلدات `android` و`ios` و`windows` نفسها (إعدادات البناء والتوقيع).
+- لم تُختبر واجهة اختيار الصور أو السحب والإفلات على جهاز فعلي. أضيف في macOS Debug/Release entitlement `com.apple.security.files.user-selected.read-only` لمنتقي الملفات؛ لم تتغير `ios/Runner/Info.plist` أو Android Manifest لأن منتقي النظام لا يحتاج صلاحية كاميرا/تخزين عامة. هذا الإعداد **لم يُختبر على جهاز macOS**.
 - دعم كل حزمة في `pubspec.yaml` للمنصات الثلاث، وسلوك `flutter_secure_storage` على الويب فعلياً.
 - أن اختبارات `test/` كلها تعمل على VM دون اعتماد على منصة.

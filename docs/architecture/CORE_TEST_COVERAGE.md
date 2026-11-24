@@ -9,17 +9,17 @@
 | المجال | الاختبارات الموجودة | ما تغطيه |
 |---|---|---|
 | Access | `access_snapshot_test` و`access_remote_data_source_test` و`access_cubit_test` و`permission_gate_test` و`permission_test` | طلب RPC المصادق عليه وتحليل عقد `get_my_access`، تجاهل الأكواد غير المعروفة، البريد null، رفض الحقول المشوهة، حالات التحميل/الفشل/النجاح، retry، clear، تبديل الفرع، حجب Shell، fail-closed و`Permission.covers` |
-| DI | `di_singletons_test` | أن `TokenManager` Singleton فقط |
+| DI | `di_singletons_test` | أن `TokenManager` Singleton، وأن `StorageImageUploader` مسجّل في Core DI |
 | Error | `failure_translator_test` | ترجمة `Failure` مرة واحدة فقط |
-| Architecture (Platform) | `platform_isolation_test` | لا `dart:io`/`dart:html`/`kIsWeb`/`Platform.isX` خارج `core/platform/` والاستثناءات الموثقة؛ لم يُشغَّل |
+| Architecture (Platform) | `platform_isolation_test` | يمنع APIs الخاصة بالمنصة خارج `core/platform/`، ويمنع استيراد `file_picker` و`desktop_drop` خارجها |
 | Error (ERP) | `erp_error_test` | الرموز الـ 29 مقابل DATA_MODEL، ومسار الاستجابة ← الاستثناء ← Failure ← النص العربي/الإنجليزي |
-| Foundation | `env_config_test` و`app_config_test` و`api_result_either_test` و`app_validator_test` | التحقق من `EnvConfig`، وتمرير `AppConfig` لقيم البيئة وخيارات حجم الصفحة، و`ApiResult.toEither/toEitherAsync`، وقواعد `AppValidator` |
-| Network | `api_client_test` و`app_endpoints_test` و`language_interceptor_test` و`logger_redaction_test` و`network_info_test` و`refresh_token_interceptor_test` و`retry_interceptor_test` | تحليل الاستجابات، ترميز المسارات، Accept-Language، إخفاء الحقول الحساسة، `NetworkInfo`، تجديد الجلسة، سلوك Retry |
+| Foundation | `env_config_test` و`app_config_test` و`api_result_either_test` و`app_validator_test` و`image_validation_test` و`image_upload_cubit_test` | إعداد البيئة والنتائج والتحقق العام، وسياسة الصور (فارغ/حجم/نوع/توقيع JPEG/PNG/WebP) وحالات Cubit والإلغاء والفشل وتجاهل الاختيار المكرر |
+| Network | `api_client_test` و`app_endpoints_test` و`language_interceptor_test` و`logger_redaction_test` و`network_info_test` و`refresh_token_interceptor_test` و`retry_interceptor_test` و`storage_image_uploader_test` | تحليل الاستجابات، ترميز المسارات، Accept-Language، إخفاء الحقول الحساسة، `NetworkInfo`، تجديد الجلسة، Retry، ومسار Storage واسم الملف والرابط العام |
 | Responsive | `adaptive_layout_test` و`rh_builder_test` و`responsive_helper_equivalence_test` و`ui_text_of_test` و`design_tokens_test` | اختيار التخطيط، `Rh.builder`، تكافؤ padding/radius، و`context.ui.text.of`، وقيم Tokens (radius/spacing/component/border) و`AppGrid` و`AppDensity` |
 | Tokens | `app_motion_test` | مدد ومنحنيات الحركة و«تقليل الحركة» و`AppLayer` |
 | Theme | `app_theme_test` و`app_semantic_colors_test` و`app_colors_test` و`app_text_styles_test` | بناء الثيم دون `BuildContext`، وربط أدوار الألوان وفحص التباين WCAG (نص 4.5، غير نص 3) للوضعين، وأحجام وأوزان أدوار الخط وأرقام tnum وصفر letterSpacing، و`AppSemanticColors` (`copyWith`/`lerp`/التسجيل/الوصول عبر `ui.theme`) و`ThemeModeExtension.nameKey` |
 | State management | `base_cubit_test` و`effect_mixin_test` | Effects والـ replay |
-| Widgets | `app_empty_state_test` (C08: AppIcon وAppKey للنصين وslot الإجراء والتخطيط المضغوط)؛ `app_skeleton_test` (C09: الأنواع الأربعة، تأخير الظهور، وتقليل الحركة)؛ `app_button_style_test` و`app_density_scope_test` و`nav_bar_item_test` و`app_navigation_bar_style_test` و`app_navigation_rail_style_test` و`app_sidebar_style_test` و`app_text_test` و`message_view_widgets_test` و`inline_banner_test` و`failure_banner_test` و`flash_messages_test` | أنماط وسلوك الأزرار والتنقل والنص، وألوان وسلوك رسائل SnackBar/Dialog/Loading، و`hideMessage` (لا يغلق الصفحة، يعمل داخل ShellRoute)، وبانر C38 (الأنواع الأربعة، Light/Dark، RTL/LTR، الإغلاق)، وفصل أخطاء التحقق عن النظام وعدم تسرب نص الخادم؛ لم تُشغَّل |
+| Widgets | `app_image_upload_field_test` (الحالات الفارغة/الصورة/الرفع/الفشل، الإزالة، busy، drop صالح ورفض ملف نصي، 280px RTL ومقياس 1.5)؛ `app_empty_state_test` (C08: AppIcon وAppKey للنصين وslot الإجراء والتخطيط المضغوط)؛ `app_skeleton_test` (C09: الأنواع الأربعة، تأخير الظهور، وتقليل الحركة)؛ `app_button_style_test` و`app_density_scope_test` و`nav_bar_item_test` و`app_navigation_bar_style_test` و`app_navigation_rail_style_test` و`app_sidebar_style_test` و`app_text_test` و`message_view_widgets_test` و`inline_banner_test` و`failure_banner_test` و`flash_messages_test` | أنماط وسلوك الأزرار والتنقل والنص، وألوان وسلوك رسائل SnackBar/Dialog/Loading، و`hideMessage` (لا يغلق الصفحة، يعمل داخل ShellRoute)، وبانر C38 (الأنواع الأربعة، Light/Dark، RTL/LTR، الإغلاق)، وفصل أخطاء التحقق عن النظام وعدم تسرب نص الخادم؛ لم تُشغَّل |
 | Storage | `token_manager_test` | `TokenManager` فقط (الكتابة، التراجع، `sessionCleared`) |
 
 - **ودجتات جديدة:** `AppCard` (`app_card_test`) و`AppIconButton` (`app_icon_button_test`، منطقة لمس >= 48) لهما اختبارات مباشرة. حارس الأرقام: `test/architecture/no_magic_numbers_test.dart`. أُزيل اختبار `home_cubit_test.dart` مع إزالة HomeCubit التجريبي؛ AUTH-04 لها اختبار شاشة مستقل أدناه.
@@ -146,8 +146,10 @@
 
 ## Platform capabilities
 
-- `test/core/platform/platform_capabilities_test.dart` verifies the native/VM send-timeout capability and the layout-only collapsible-sidebar capability. The browser adapter's `false` send-timeout value is selected by conditional import; it still requires the web CI build for runtime verification.
-- These tests were added in the current change and have not been executed yet. Runtime status: NOT_VERIFIED.
+- `test/core/platform/platform_capabilities_test.dart` covers VM send-timeout, collapsible-sidebar and file-drop capability; the Web stub reports file-drop support and no send-timeout support.
+- `test/core/platform/file_drop/file_drop_target_test.dart` exercises the injected fake drop adapter; it does not simulate an OS drag event.
+- `test/core/presentation/widgets/app_image_upload_field_test.dart` covers empty/existing/uploading/failure/removal, busy callback, valid/invalid drop, and 280px RTL at text scale 1.5.
+- Manual Web/Windows/Android/iOS interaction remains a separate verification requirement.
 
 
 ## CRUD list engine and catalog adoption — 2026-11-24
@@ -166,6 +168,14 @@
 
 **Final verification:** `45329074594` passed Auto-format, Analyze, 1,163 full-suite tests and 172 catalog UI widget tests. The documentation-only final revision `ee038c4` passed the same gates in run `45329255557`.
 
+
+## Image upload core and Brands migration — 2026-11-24
+
+- `test/core/foundation/image/image_validation_test.dart` and `image_upload_cubit_test.dart`: byte-signature validation, limits, supported types, cancel, uploader failure and duplicate picks.
+- `test/core/network/storage/storage_image_uploader_test.dart`: existing bucket/folder path format, extension, headers and public URL through the shared `IApiClient`.
+- `test/core/presentation/widgets/app_image_upload_field_test.dart`: field states, busy callback, remove, drop acceptance/rejection and narrow RTL/large text.
+- `test/core/platform/file_drop/file_drop_target_test.dart`: drop adapter test seam; `test/architecture/platform_isolation_test.dart` enforces package import boundaries.
+- Brands editor tests use a valid PNG signature after byte-level validation was centralized; the old `BrandLogoUploadCubit` tests move to the core `ImageUploadCubit` suite.
 
 ## Shared CRUD editor and color picker — 2026-11-24
 

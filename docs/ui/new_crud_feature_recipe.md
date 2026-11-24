@@ -241,3 +241,42 @@ Use CrudEditorDialog<C, S, E> for catalog create/edit/duplicate forms when the f
 - Continue opening the dialog through a feature launcher that creates the feature Cubit providers and calls showAppFormDialog; do not create feature Cubits inside Core.
 
 The current reference implementations are Brands and Colors. They share save/dirty/busy/effect handling while retaining their own slug, logo-upload, HEX-name suggestion, status and duplicate-seed behavior.
+
+
+## Adding an image to a feature
+
+Keep the image rules in the feature and the picker, validation flow, field UI and Storage transport in Core.
+
+1. Define one feature policy with the accepted MIME types and byte limit.
+2. In the feature remote data source, pass a `StorageTarget(bucket, folder)` and `ImageUpload` to the shared `StorageImageUploader`; map its `ApiResult` through the feature repository/use case.
+3. Use `AppImageUploadField` in the editor and pass the use-case function as its uploader.
+4. Feed `onBusyChanged` into `CrudEditorDialog.extraBusy` so the editor cannot close while the upload is running.
+5. Keep feature labels as feature `AppKey` values; use Core's `ImageKeys.dropHint` for the shared drop hint.
+
+Example (the policy and upload use case are feature-owned):
+
+```dart
+AppImageUploadField(
+  value: logo.text,
+  onChanged: (url) => logo.text = url ?? '',
+  label: name.text,
+  policy: featureLogoPolicy,
+  uploader: uploadLogoUseCase.call,
+  labels: const AppImageUploadFieldLabels(
+    sectionTitle: FeatureKeys.logoSection,
+    upload: FeatureKeys.uploadLogo,
+    replace: FeatureKeys.replaceLogo,
+    remove: FeatureKeys.removeLogo,
+    dropHint: ImageKeys.dropHint,
+  ),
+  previewSize: AppLogoSize.small,
+  onBusyChanged: (busy) => onExtraBusyChanged(busy),
+)
+```
+
+On Android/iOS, `FileType.image` opens the system image gallery and the drop target is hidden (`supportsFileDrop == false`). On Web and desktop, the same field also accepts the first dropped file; it still validates the actual bytes before upload.
+
+Known limitations intentionally left out:
+- No image compression: a phone photo larger than the feature's limit (Brands: 5 MB) is rejected with a clear size message.
+- No camera capture: this requires a separate `image_picker` integration and camera permission declarations.
+- No cleanup of orphaned Storage files when an image is replaced or a record is deleted.
