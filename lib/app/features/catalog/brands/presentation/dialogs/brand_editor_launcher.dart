@@ -6,7 +6,6 @@ import 'package:accounting_software/app/features/catalog/brands/domain/entity/br
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_dialog.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_duplicate_seed.dart';
 
 /// Opens the shared brand editor and owns the form/upload Cubit lifetimes.
 Future<bool?> showBrandEditor(

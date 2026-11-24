@@ -4,7 +4,6 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/entity/catalog_color.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_form/color_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/colors/presentation/dialogs/color_duplicate_seed.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/dialogs/color_editor_dialog.dart';
 
 /// Opens the color editor and owns the form Cubit lifetime.

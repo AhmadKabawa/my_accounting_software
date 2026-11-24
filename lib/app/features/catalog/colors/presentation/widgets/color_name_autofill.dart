@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/color/color_name_keys.dart';
 import 'package:accounting_software/app/core/foundation/color/color_name_resolver.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 /// Keeps HEX-based name suggestions separate from the editor's manual input.
 class ColorNameAutofill {
