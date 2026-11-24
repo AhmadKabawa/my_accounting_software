@@ -216,3 +216,12 @@ capabilities: const CrudCapabilities(duplicate: false),
 ```
 
 `statusColumn: null` removes the status column, the row activate/deactivate action and bulk activation. A missing delete label or callback removes the Delete item (a per-row `flows.canDelete` that returns false keeps it visible but disabled). `test/core/presentation/widgets/crud_list/crud_data_section_test.dart` and `crud_list_screen_test.dart` cover an entity without status and delete-only bulk.
+
+## فحص يدوي مطلوب
+
+- Brands وColors في table/cards/grid على متصفح أو جهاز حقيقي.
+- التحديد الجماعي، تحديد الصفحة، مسح التحديد، وإعادة ضبط التحديد بعد تغيير نمط العرض.
+- تحديث الإحصاءات بعد الإنشاء والتعديل والنسخ والتفعيل وإلغاء التفعيل والحذف والعمليات الجماعية.
+- المحاذاة المرئية في RTL واتجاه حقل hex في LTR وإجراء النسخ.
+- عروض الهاتف 280–360px وعروض سطح المكتب؛ تحقق من عدم وجود overflow أو قوائم مقصوصة.
+- مصفوفة CI تغطي 280px وRTL ومقياس نص 1.5 لأنماط العرض الثلاثة على الشاشتين، لكنها لا تستبدل الفحص المرئي اليدوي.
