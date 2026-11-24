@@ -44,10 +44,11 @@ class StorageImageUploader {
     );
   }
 
-  String _fileExtension(ImageUpload image) => switch (image.normalizedMimeType) {
-    'image/jpeg' => 'jpg',
-    'image/png' => 'png',
-    'image/webp' => 'webp',
-    _ => 'img',
-  };
+  String _fileExtension(ImageUpload image) =>
+      switch (image.normalizedMimeType) {
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+        _ => 'img',
+      };
 }

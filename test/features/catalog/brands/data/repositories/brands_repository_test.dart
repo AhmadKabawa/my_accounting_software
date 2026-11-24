@@ -224,11 +224,7 @@ void main() {
     () async {
       final bytes = Uint8List.fromList([1, 2, 3]);
       final result = await repository.uploadLogo(
-        ImageUpload(
-          bytes: bytes,
-          fileName: 'Logo.PNG',
-          mimeType: 'image/png',
-        ),
+        ImageUpload(bytes: bytes, fileName: 'Logo.PNG', mimeType: 'image/png'),
       );
 
       expect(
