@@ -68,10 +68,10 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - Put global capabilities in one immutable `CrudCapabilities` value with conservative defaults.
 - Keep extension slots optional and invoke them only when configured. The base screen contract still requires its feature filter builder, active-filter projection, breadcrumb and data-section builder.
 - Keep the engine generic over the concrete Cubit and its actual effect type (`C extends PagedListCubit<T,Q,E>`); pass that effect type to `BlocEffectListener<E,C>`.
-- Leave Brands and Colors screens/tests behavior unchanged during this engine work.
+- At the engine-only stage, preserve Brands and Colors screens/tests unchanged; their later migrations are documented in task 6 (2/3) and task 6 (3/3) below.
 
 
-## Final implementation review (step 6)
+## Final implementation review (step 6 — engine-only baseline before feature migrations)
 
 - Compared recursive Git trees for the base branch `fix/ui-template-hardening` and `feat/crud-list-engine`: 8 added files, 4 modified files, and 0 removed files.
 - The changed/added paths are limited to the two CRUD engine documentation files, Core's list toolbar/template and new CRUD list widgets, plus focused Core/widget tests. No Brands or Colors source or test path appears in the diff.
@@ -79,23 +79,23 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - The three new Core implementation files are 204 lines (`crud_list_config.dart`), 198 lines (`crud_list_screen.dart`), and 39 lines (`crud_actions_config.dart`) after CI formatting; all remain below the 220-line target.
 - Core implementation imports only Flutter and Core. The engine retains typed Cubit/effect generics, contains no `dynamic`, and exposes optional feature-owned slots/callbacks.
 - Standard bulk actions are intentionally supplied by each feature through `bulkActions` (for example, `CrudBulkActions.statusAndDelete`); `extraBulkActions` is appended after them. This keeps feature-specific localized keys and mutation policies out of Core.
-- The review does not claim a screen migration: Brands and Colors remain unchanged, as required.
+- This historical engine-only review did not include screen migrations; Brands/Colors migrations were performed later and are documented in the task 6 sections below.
 - Step 5's 280px / 360px / 700px / 1400px matrix passed at text scales 1.0 and 1.5 in both LTR and RTL. CI run 45308555462 completed successfully, including Auto-format, Analyze, full tests, and catalog UI widget tests.
 
 
 ## Brands adoption — task 6 (2/3), final review
 
-- `BrandsScreen` is a thin stateless entry point to `CrudListScreen(config: brandsListConfig)`; its public `screenId` remains `catalog.brands`. The feature-owned config is 204 lines and owns the feature's query, localization, rendering and business-policy adapters.
+- `BrandsScreen` is a thin stateless entry point to `CrudListScreen(config: brandsListConfig)`; its public `screenId` remains `catalog.brands`. The feature-owned config is 200 lines and owns the feature's query, localization, rendering and business-policy adapters.
 - Search/status controls and active chips are reused from `BrandsFilterBar`. Multi-sort remains mapped through `mapFilterBarSorts<BrandSortField, BrandSort>`; the table header retains the feature's `setSort(field:, ascending:)` API.
-- Stats remain feature-owned: `BrandStatsCubit` is provided around the engine, and refresh occurs only for `BrandsMutatedEffect`. The config explicitly disables the template count.
+- Stats remain feature-owned: `BrandStatsCubit` is provided around the engine, and refresh occurs only for `BrandsMutatedEffect`. At the time of the initial Brands migration the config disabled the template count; step D later changed the shared default to true and removed this override.
 - `CrudFlowsConfig` calls `showBrandEditor(context, brand: item, duplicate: duplicate)` and returns its `bool?` result. The shared flow calls `onBrandSaved(isNew: ...)` after a successful result and a mounted-context check. This avoids the earlier adapter workaround that invoked the legacy action helper and returned false.
 - Delete and status behavior remain in `BrandsListCubit`: delete retains `beforeDelete` usage checks; activation is direct; deactivation is confirmed. The per-row `canDelete` callback and bulk-delete rejection policy are both retained.
 - Bulk callbacks are feature-owned through `CrudBulkConfig`; bulk activate/deactivate/delete use the existing Cubit methods and localized copy. No business logic moved into Core.
 - The data section uses `CrudDataSection` / `CrudStatusColumnConfig`, existing `BrandIdentity`, `BrandCard`, `BrandGridTile`, `BrandStatusBadge`, and `AppIcons.brands`.
 - The page file reduced from 226 to 15 lines; the separate config is 204 lines. Existing table/action/filter/renderer files were retained.
-- Colors screen and its screen widget test have identical Git blob SHAs to baseline commit `3854e616`; no Colors migration occurred.
+- At the historical Brands-adoption revision, the Colors screen and its screen widget test had identical Git blob SHAs to baseline commit `3854e616`; the later Colors migration is recorded in task 6 (3/3) below.
 - Verification: workflow run `45320366371` passed Auto-format, Analyze (`No issues found`), the full suite (1,151 tests) and catalog UI widget tests (172 tests). The run also exercised the 32-case Brands responsive matrix (280/360/800/1280 × RTL/LTR × light/dark × 1.0/1.5 text scale).
-- GitHub API only; no local Flutter/Dart commands were run. This completes task 6 (2/3) only; task 6 (3/3) was not started.
+- GitHub API only; no local Flutter/Dart commands were run. At that revision task 6 (2/3) was complete and task 6 (3/3) had not yet started; the latter was completed in the later section below.
 
 
 ## Task 6 (3/3) — Colors migration and verification record
@@ -117,3 +117,16 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - Sort consolidation was deliberately **not** performed. `BrandListQuery.withSort(field, ascending)` is equivalent to `withSorts([BrandSort(field, ascending)])`, including reset of secondary sorts/page. However, `ColorListQuery` has no `withSort(field, ascending)` method at all; it exposes only `withSorts`. Therefore the required cross-feature equivalence is not established, and `CrudSortConfig.applyTable` remains.
 - Delete confirmation copy and `beforeDelete` policy were not unified or changed.
 - Behavior tests added/updated: `brands_cubit_test.dart` (typed results, row busy and failure flash), `colors_cubits_test.dart` (stats refresh retention/failure), `brand_list_query_test.dart` (single-sort equivalence), `brands_list_config_test.dart` and `crud_list_config_test.dart` (count default). The intentional expectation changes are named here rather than hidden.
+
+
+## Final verification — task 6 (3/3)
+
+- Brands page: 226 lines before migration → 15 lines after; its feature config is 200 lines.
+- Colors page: 232 lines before migration → 15 lines after; its feature config is 290 lines. The page is a thin `CrudListScreen(config: colorsListConfig)` wrapper.
+- Colors migration final correction passed CI run `45325524778`.
+- Full code verification, including B tests, D behavior tests and the E architecture gate, passed CI run `45329074594`: Analyze succeeded, 1,163 tests passed, and 172 catalog UI widget tests passed.
+- The final documentation revision `ee038c4` also passed Auto-format, Analyze, full tests and catalog UI widget tests in CI run `45329255557`.
+- The 20-line adapter example in `new_crud_feature_recipe.md` is exactly 20 lines. The working engine fixture uses a simple `String` row and a test Cubit extending `PagedListCubit`, and renders through `CrudDataSection`.
+- The architecture gate has an empty exception set and passed in the full suite.
+- No local Flutter/Dart commands were run. No new package or lockfile change was made.
+- Manual visual QA is still required for both screens on a real phone/browser: table/cards/grid, selection and clearing selection on view changes, stats refresh after every mutation, RTL, 280–360px phones and desktop widths.

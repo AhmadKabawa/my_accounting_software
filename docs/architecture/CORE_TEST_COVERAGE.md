@@ -154,11 +154,14 @@
 
 | المكوّن | الاختبار | التغطية المكتوبة | حالة التشغيل |
 |---|---|---|---|
-| `CrudListScreen` / `CrudListConfig` | `test/core/presentation/widgets/crud_list/crud_list_screen_test.dart` | تحميل/فشل/إعادة المحاولة، الاحتفاظ بالبيانات، effects وتحديث الإحصاءات، slots الاختيارية، `extraToolbarActions` و`extraBulkActions`، `showCount` إظهاراً وإخفاءً، تدفقات الإضافة/التعديل/الحذف والحالة، وتصفير التحديد عند تبديل العرض. يتضمن fixture صغيراً يستخدم `PagedListCubit` و`CrudDataSection`. | تُسجّل بعد اكتمال CI الخاص بالمراجعة الحالية؛ وجود الاختبار وحده لا يثبت نجاحه. |
-| `CrudDataSection` | `test/core/presentation/widgets/crud_list/crud_data_section_test.dart` | table/cards/grid، عمود الحالة وحالة الانشغال، الإجراء الإضافي في صف السجل مع بقاء edit/delete، empty/no-results، RTL بعرض 280 وTextScale 1.5. | تُسجّل بعد اكتمال CI الخاص بالمراجعة الحالية؛ وجود الاختبار وحده لا يثبت نجاحه. |
-| Brands + Colors engine integration | `test/features/catalog/crud_list_screens_matrix_test.dart` إضافة إلى اختبارات الشاشة الحالية | كل أوضاع العرض الثلاثة للشاشتين عند 280 logical px، RTL، TextScale 1.5؛ فحص استثناءات Flutter بعد كل وضع. | تُسجّل بعد اكتمال CI الخاص بالمراجعة الحالية؛ وجود الاختبار وحده لا يثبت نجاحه. |
+| `CrudListScreen` / `CrudListConfig` | `test/core/presentation/widgets/crud_list/crud_list_screen_test.dart` | تحميل/فشل/إعادة المحاولة، الاحتفاظ بالبيانات، effects وتحديث الإحصاءات، slots الاختيارية، `extraToolbarActions` و`extraBulkActions`، `showCount` إظهاراً وإخفاءً، تدفقات الإضافة/التعديل/الحذف والحالة، وتصفير التحديد عند تبديل العرض. يتضمن fixture صغيراً يستخدم `PagedListCubit` و`CrudDataSection`. | نجح في CI run `45329074594` (1,163 اختباراً كاملاً؛ Analyze ناجح). |
+| `CrudDataSection` | `test/core/presentation/widgets/crud_list/crud_data_section_test.dart` | table/cards/grid، عمود الحالة وحالة الانشغال، الإجراء الإضافي في صف السجل مع بقاء edit/delete، empty/no-results، RTL بعرض 280 وTextScale 1.5. | نجح في CI run `45329074594` (1,163 اختباراً كاملاً؛ Analyze ناجح). |
+| Brands + Colors engine integration | `test/features/catalog/crud_list_screens_matrix_test.dart` إضافة إلى اختبارات الشاشة الحالية | كل أوضاع العرض الثلاثة للشاشتين عند 280 logical px، RTL، TextScale 1.5؛ فحص استثناءات Flutter بعد كل وضع. | نجح في CI run `45329074594` (1,163 اختباراً كاملاً؛ Analyze ناجح). |
 
 لا يشمل اختبار Widget بديلاً عن الفحص اليدوي على هاتف ومتصفح فعلي. يجب فحص التحديد الجماعي، مسح التحديد عند تغيير الوضع، تحديث الإحصاءات بعد mutations، عروض 280–360 والحاسوب، وRTL بصرياً.
 
 
-| CRUD architecture gate | `test/architecture/crud_screens_use_engine_test.dart` | Scans all feature page Dart files; requires direct `ListPageTemplate(` pages to delegate through `CrudListScreen(` or use an explicit exception; empty exception set; includes direct-page and engine-page self-checks. | CI verification pending for the latest formatted head. |
+| CRUD architecture gate | `test/architecture/crud_screens_use_engine_test.dart` | Scans all feature page Dart files; requires direct `ListPageTemplate(` pages to delegate through `CrudListScreen(` or use an explicit exception; empty exception set; includes direct-page and engine-page self-checks. | Passed in CI run `45329074594`; self-checks and the empty exception set were included in the 1,163-test suite. |
+
+
+**Final verification:** `45329074594` passed Auto-format, Analyze, 1,163 full-suite tests and 172 catalog UI widget tests. The documentation-only final revision `ee038c4` passed the same gates in run `45329255557`.

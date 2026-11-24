@@ -1,6 +1,6 @@
 # CRUD list engine — progress tracker
 
-This file records the CRUD list engine implementation and verification, followed by the Brands adoption in task 6 (2/3). Colors remains intentionally unchanged. Engine steps and the feature migration are tracked separately.
+This file records the CRUD list engine implementation and verification, followed by both Brands (2/3) and Colors (3/3) adoptions. Engine steps and feature migrations are tracked separately.
 
 | Step | Scope | Status | Commit / CI |
 |---|---|---|---|
@@ -116,10 +116,10 @@ Each run passed Auto-format Dart, Analyze, full tests and catalog UI widget test
 ### Implementation
 
 - Added feature-owned `brandsListConfig` in `lib/app/features/catalog/brands/presentation/brands_list_config.dart` and migrated `BrandsScreen` to the shared `CrudListScreen`.
-- `BrandsScreen` is now 15 lines (226 before migration); the complete feature configuration is 204 lines. Existing `BrandsTableSection`, `BrandsListActions`, filters, cards, grid tile, stats widgets and route files were retained rather than deleted.
+- `BrandsScreen` is now 15 lines (226 before migration); the complete feature configuration is 200 lines. Existing `BrandsTableSection`, `BrandsListActions`, filters, cards, grid tile, stats widgets and route files were retained rather than deleted.
 - Preserved `screenId = 'catalog.brands'`, `Permissions.masterData.manage`, breadcrumb navigation, status/search filters, multi-sort and table sort adapters, feature stats and mutation-effect filtering, add/edit/duplicate/delete/status flows, bulk activate/deactivate/delete, product-aware delete eligibility, and table/cards/grid rendering.
 - The editor flow now returns the actual `showBrandEditor` result to `CrudFlowsConfig`; the shared flow invokes `onBrandSaved` exactly once after a successful save. Duplicate mode continues to use the existing duplicate seed and create path.
-- `showCount: false` remains explicit. Colors was not migrated or modified.
+- At the time of the initial Brands migration, `showCount: false` was explicit. Step D changed the shared default to true and Brands now inherits it. Colors migration is recorded in task 6 (3/3) below.
 
 ### Coverage added or retained
 
@@ -146,7 +146,7 @@ Each run passed Auto-format Dart, Analyze, full tests and catalog UI widget test
 
 ### Scope boundary
 
-Task 6 (2/3) is complete. Do not start task 6 (3/3) in this branch as part of this work.
+Task 6 (2/3) was completed first; task 6 (3/3) was subsequently completed and is recorded below.
 
 
 
@@ -162,18 +162,48 @@ Task 6 (2/3) is complete. Do not start task 6 (3/3) in this branch as part of th
 ### Integration coverage (step B)
 
 - Added the engine slot/capability tests and a Brands/Colors responsive integration matrix. The first CI run `45327349589` failed at Analyze because the fake repository imports pointed at `lib/app/features` instead of the existing test-support folders.
-- Corrected both imports to relative paths under `test/features/catalog/...` in commit `5d631ed`. The corresponding CI run `45327685120` is the authoritative result for this correction; update this row with its final Analyze/Test conclusion after the run completes.
+- Corrected both imports to relative paths under `test/features/catalog/...` in commit `5d631ed`. Subsequent test runs exposed and corrected the view-mode finder, missing initial data-view selection, and typed activation test callbacks. The final formatted code passed in CI run `45329074594`.
 - The matrix uses 280px, RTL and 1.5 text scale for table/cards/grid on both screens. It does not replace manual visual checks.
 
 ### Documentation and remaining gates
 
 - The recipe now identifies exact domain/data/presentation/DI/routing/test files, a 20-line screen adapter example, and the decision rule for capabilities versus per-screen slots versus dedicated data sections.
 - `list_page_template.md`, `CORE_MAP.md` and `CORE_TEST_COVERAGE.md` index the CRUD engine and its `extraActions` path.
-- Task 6 (3/3) is not marked complete until CI is green and the separate intentional behavior changes (step D) and architecture gate (step E) have their own commits and CI evidence.
+- Task 6 (3/3), including steps D and E, is complete: final code CI is green in run `45329074594`, and the final documentation revision is green in run `45329255557`.
 
 
 ## Task 6 (3/3) — steps D and E implementation record
 
 - Step D code commit: `51d99b1`. It aligns Brands activate/deactivate results and row-scoped failure handling, retains Color stats during refresh, and changes the shared count default to true. The sort adapter was retained because `ColorListQuery.withSort` does not exist; see `crud_engine_analysis.md`.
 - Step E architecture gate commit: `4a607ca`; it adds `test/architecture/crud_screens_use_engine_test.dart` with an empty explicit exception set and direct/engine self-checks.
-- A follow-up test fixture fix is commit `015ee08`. CI for the latest formatted head is still required before marking D/E green.
+- A follow-up test fixture fix is commit `015ee08`; the bot-formatted revision is `e4dfc45`. CI run `45329074594` passed Analyze, all 1,163 tests and 172 catalog UI widget tests, including D and E.
+
+
+### Final line counts and verification
+
+| Screen | Before | After | Feature config after |
+|---|---:|---:|---:|
+| BrandsScreen | 226 | 15 | 200 |
+| ColorsScreen | 232 | 15 | 290 |
+
+### Final CI record
+
+| Commit | Purpose | CI result |
+|---|---|---|
+| `f86870c` | Final Colors migration correction | Green — run `45325524778` |
+| `1a07926` / `5d631ed` | B tests and fake repository import correction | Initial runs failed; Analyze passed after import fix, then the matrix/fixture tests were corrected |
+| `51d99b1` | D intentional behavior changes | Initial Analyze failure was in test fixture callbacks; corrected in `015ee08` |
+| `4a607ca` | E architecture gate | Its standalone run was cancelled by a newer push; included and passed in run `45329074594` |
+| `015ee08` + formatted `e4dfc45` | Final code/test fixes | Green — run `45329074594`: 1,163 tests + 172 catalog UI tests |
+| `ee038c4` | Final docs and verification record | Green — run `45329255557` |
+
+Intermediate failed/cancelled runs are retained in GitHub Actions history; no failed run is represented as green.
+
+### Manual QA still required
+
+- Brands and Colors in table/cards/grid on a real browser/device.
+- Bulk selection, select-page, clear selection and selection reset after changing view mode.
+- Statistics refresh after create, edit, duplicate, activate, deactivate, delete and bulk mutations.
+- RTL visual alignment and color hex LTR direction/copy action.
+- Phone widths 280–360px and desktop widths; verify no overflow or clipped menus.
+- The CI matrix covers 280px, RTL and text scale 1.5 for all three modes on both screens, but it does not replace visual QA.
