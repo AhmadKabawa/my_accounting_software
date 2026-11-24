@@ -231,6 +231,7 @@ void main() {
     final repository = FakeBrandsRepository();
     final picker = _Picker(() async => null);
     await _pumpEditor(tester, repository, picker: picker);
+    await tester.ensureVisible(find.text(BrandsKeys.uploadLogo.en));
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
     expect(find.text(BrandsKeys.uploadLogo.en), findsOneWidget);
@@ -260,6 +261,7 @@ void main() {
     await _pumpEditor(tester, repository, picker: picker);
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
+    expect(repository.lastUpload, isNotNull);
     expect(find.text(BrandsKeys.replaceLogo.en), findsOneWidget);
     expect(find.byTooltip(BrandsKeys.removeLogo.en), findsOneWidget);
   });
@@ -286,6 +288,7 @@ void main() {
     await _pumpEditor(tester, repository, picker: picker);
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
+    expect(repository.lastUpload, isNotNull);
     expect(find.text(BrandsKeys.saveError.en), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -371,7 +374,8 @@ void main() {
       };
     await _pumpEditor(tester, repository, brand: brand);
 
-    await tester.tap(find.byTooltip(BrandsKeys.removeLogo.en));
+    await tester.ensureVisible(find.text(BrandsKeys.removeLogo.en));
+    await tester.tap(find.text(BrandsKeys.removeLogo.en));
     await tester.pump();
     await tester.tap(find.text(BrandsKeys.save.en));
     await tester.pumpAndSettle();
@@ -391,6 +395,7 @@ void main() {
     );
     await _pumpEditor(tester, FakeBrandsRepository(), brand: brand);
     expect(find.byType(AppSwitch), findsOneWidget);
+    await tester.ensureVisible(find.byType(Switch));
     await tester.tap(find.byType(Switch));
     await tester.pump();
     await tester.tap(find.text(BrandsKeys.cancel.en));

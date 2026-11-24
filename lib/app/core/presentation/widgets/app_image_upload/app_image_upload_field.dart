@@ -68,15 +68,23 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
   late final ImageUploadCubit _cubit;
   bool _isHovering = false;
   bool _wasBusy = false;
+  String? _displayedValue;
 
   @override
   void initState() {
     super.initState();
+    _displayedValue = widget.value;
     _cubit = ImageUploadCubit(
       picker: widget.picker ?? const FilePickerImagePicker(),
       policy: widget.policy,
       uploader: widget.uploader,
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant AppImageUploadField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) _displayedValue = widget.value;
   }
 
   @override
@@ -100,18 +108,20 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
 
   void _remove() {
     if (_cubit.state.isBusy) return;
+    setState(() => _displayedValue = null);
     widget.onChanged(null);
     _cubit.reset();
   }
 
   void _onStateChanged(BuildContext context, ImageUploadState state) {
+    if (state case ImageUploadUploaded(:final url)) {
+      if (mounted) setState(() => _displayedValue = url);
+      widget.onChanged(url);
+    }
     final busy = state.isBusy;
     if (busy != _wasBusy) {
       _wasBusy = busy;
       widget.onBusyChanged?.call(busy);
-    }
-    if (state case ImageUploadUploaded(:final url)) {
-      widget.onChanged(url);
     }
   }
 
@@ -125,13 +135,13 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
       listener: _onStateChanged,
       builder: (context, state) {
         final busy = state.isBusy;
-        final hasImage = widget.value?.trim().isNotEmpty == true;
+        final hasImage = _displayedValue?.trim().isNotEmpty == true;
         final messageKey = switch (state) {
           ImageUploadFailed(:final messageKey) => messageKey,
           _ => null,
         };
         final preview = AppLogoThumb(
-          url: widget.value,
+          url: _displayedValue,
           label: widget.label,
           size: widget.previewSize,
           fallbackIcon: AppIcons.image,
