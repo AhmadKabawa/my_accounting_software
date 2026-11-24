@@ -189,7 +189,6 @@ class _CrudListBody<
     ),
   );
 
-
   List<BulkAction> _bulkActions(
     CrudSlotContext<T, Q, C> slot,
     List<T> selected,
