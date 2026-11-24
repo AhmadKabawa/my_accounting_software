@@ -107,3 +107,13 @@ Reviewed: `AGENTS.md`, `CLAUDE.md`, both catalog list screens and action classes
 - No engine special-case for Colors was added. The only shared API is the typed configuration and data-section composition.
 - The Colors migration commits were `71b8077`, `6c33767`, and `f86870c`; the final Colors correction passed CI run `45325524778` (Auto-format and Analyze and Test).
 - The follow-up integration test suite is recorded in the test coverage document; its current run must be checked before calling task 6 (3/3) fully verified.
+
+
+## Task 6 (3/3) — intentional unification decisions (step D)
+
+- Brands single-row `activate` and `deactivate` now both return `Future<Either<Failure, Unit>>`; both pass `rowId` and `flashFailure: true` to `runMutation`. The shared `CrudFlowsConfig.activate` and `CrudConfirmations.status.onActivate` contracts were aligned to the same result type.
+- `ColorStatsCubit.load` emits the initial loading state only when no previous stats exist. Refresh with prior stats does not replace the displayed state with loading; a refresh failure retains those stats and records `failed` plus the failure for `ColorStatsSection`.
+- `CrudCapabilities.showCount` now defaults to `true`; Brands inherits that default and shows its count. A feature can still opt out with `showCount: false`.
+- Sort consolidation was deliberately **not** performed. `BrandListQuery.withSort(field, ascending)` is equivalent to `withSorts([BrandSort(field, ascending)])`, including reset of secondary sorts/page. However, `ColorListQuery` has no `withSort(field, ascending)` method at all; it exposes only `withSorts`. Therefore the required cross-feature equivalence is not established, and `CrudSortConfig.applyTable` remains.
+- Delete confirmation copy and `beforeDelete` policy were not unified or changed.
+- Behavior tests added/updated: `brands_cubit_test.dart` (typed results, row busy and failure flash), `colors_cubits_test.dart` (stats refresh retention/failure), `brand_list_query_test.dart` (single-sort equivalence), `brands_list_config_test.dart` and `crud_list_config_test.dart` (count default). The intentional expectation changes are named here rather than hidden.

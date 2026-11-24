@@ -170,3 +170,10 @@ Task 6 (2/3) is complete. Do not start task 6 (3/3) in this branch as part of th
 - The recipe now identifies exact domain/data/presentation/DI/routing/test files, a 20-line screen adapter example, and the decision rule for capabilities versus per-screen slots versus dedicated data sections.
 - `list_page_template.md`, `CORE_MAP.md` and `CORE_TEST_COVERAGE.md` index the CRUD engine and its `extraActions` path.
 - Task 6 (3/3) is not marked complete until CI is green and the separate intentional behavior changes (step D) and architecture gate (step E) have their own commits and CI evidence.
+
+
+## Task 6 (3/3) — steps D and E implementation record
+
+- Step D code commit: `51d99b1`. It aligns Brands activate/deactivate results and row-scoped failure handling, retains Color stats during refresh, and changes the shared count default to true. The sort adapter was retained because `ColorListQuery.withSort` does not exist; see `crud_engine_analysis.md`.
+- Step E architecture gate commit: `4a607ca`; it adds `test/architecture/crud_screens_use_engine_test.dart` with an empty explicit exception set and direct/engine self-checks.
+- A follow-up test fixture fix is commit `015ee08`. CI for the latest formatted head is still required before marking D/E green.

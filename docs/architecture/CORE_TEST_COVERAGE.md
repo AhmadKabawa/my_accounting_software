@@ -159,3 +159,6 @@
 | Brands + Colors engine integration | `test/features/catalog/crud_list_screens_matrix_test.dart` إضافة إلى اختبارات الشاشة الحالية | كل أوضاع العرض الثلاثة للشاشتين عند 280 logical px، RTL، TextScale 1.5؛ فحص استثناءات Flutter بعد كل وضع. | تُسجّل بعد اكتمال CI الخاص بالمراجعة الحالية؛ وجود الاختبار وحده لا يثبت نجاحه. |
 
 لا يشمل اختبار Widget بديلاً عن الفحص اليدوي على هاتف ومتصفح فعلي. يجب فحص التحديد الجماعي، مسح التحديد عند تغيير الوضع، تحديث الإحصاءات بعد mutations، عروض 280–360 والحاسوب، وRTL بصرياً.
+
+
+| CRUD architecture gate | `test/architecture/crud_screens_use_engine_test.dart` | Scans all feature page Dart files; requires direct `ListPageTemplate(` pages to delegate through `CrudListScreen(` or use an explicit exception; empty exception set; includes direct-page and engine-page self-checks. | CI verification pending for the latest formatted head. |

@@ -143,9 +143,8 @@ final demoConfig = CrudListConfig<DemoItem, DemoQuery, DemoCubit, DemoEffect>(
   createCubit: () => sl<DemoCubit>(),
   rowId: (item) => item.id,
   itemLabel: (item) => item.name,
-  sort: demoSortConfig,
+  sort: demoSortConfig, breadcrumb: demoBreadcrumb,
   filterControls: (_) => const [], activeFilters: (_) => const [],
-  breadcrumb: demoBreadcrumb,
   dataSection: (data) => CrudDataSection(
     data: data, columns: demoColumns, statusColumn: demoStatus,
     cardBuilder: demoCard, gridBuilder: demoGridTile, icon: AppIcons.catalog,
