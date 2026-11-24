@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload_cubit.dart';
+import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/utility/brand_slug_from.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_effect.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_state.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_labels.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/widgets/brand_editor_fields_view.dart';
@@ -19,11 +19,15 @@ class BrandEditorDialog extends StatefulWidget {
     super.key,
     this.brand,
     this.seed,
+    required this.logoUploader,
+    this.logoPicker,
     this.duplicate = false,
   }) : assert(!duplicate || (brand == null && seed != null));
 
   final Brand? brand;
   final BrandDraft? seed;
+  final ImageUploader logoUploader;
+  final ImagePickerPort? logoPicker;
   final bool duplicate;
 
   @override
@@ -36,6 +40,7 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   bool _active = true;
   bool _slugTouched = false;
   bool _settingSlug = false;
+  bool _logoBusy = false;
 
   TextEditingController get _name => _fields['name'];
   TextEditingController get _slug => _fields['slug'];
@@ -70,6 +75,11 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
   void dispose() {
     _fields.dispose();
     super.dispose();
+  }
+
+  void _onLogoBusyChanged(bool busy) {
+    if (!mounted || _logoBusy == busy) return;
+    setState(() => _logoBusy = busy);
   }
 
   void _setSlug(String value) {
@@ -119,55 +129,55 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<BrandLogoUploadCubit, BrandLogoUploadState>(
-        builder: (context, logoState) =>
-            CrudEditorDialog<BrandFormCubit, BrandFormStatus, BrandFormEffect>(
-              cubit: context.read<BrandFormCubit>(),
-              fields: _fields,
-              mode: widget.duplicate
-                  ? CrudEditorMode.duplicate
-                  : widget.brand == null
-                  ? CrudEditorMode.add
-                  : CrudEditorMode.edit,
-              labels: brandEditorLabels,
-              isSaving: (status) => status == BrandFormStatus.saving,
-              outcome: (effect) => switch (effect) {
-                BrandSavedEffect() => const CrudEditorSuccess(),
-                BrandSaveFailedEffect(:final messageKey) => CrudEditorFailure(
-                  messageKey,
-                ),
-              },
-              onSave: _save,
-              extraBusy: logoState.isBusy,
-              extraDirty: _active != _initialActive,
-              builder: (context, scope) => BrandEditorFieldsView(
-                name: _name,
-                slug: _slug,
-                logo: _logo,
-                description: _description,
-                onNameChanged: (value) => _onNameChanged(value, scope),
-                onSlugChanged: (_) => _onSlugChanged(scope),
-                showSlugHint:
-                    _name.text.trim().isNotEmpty &&
-                    brandSlugFrom(_name.text).isEmpty,
-                nameAutofocus: widget.duplicate,
-                onRegenerateSlug:
-                    _slugTouched && brandSlugFrom(_name.text).isNotEmpty
-                    ? () => _regenerateSlug(scope)
-                    : null,
-                active: _active,
-                activeLabelKey: widget.brand == null
-                    ? BrandsKeys.activeOnCreate
-                    : BrandsKeys.active,
-                onActiveChanged: scope.busy
-                    ? null
-                    : (value) {
-                        setState(() => _active = value);
-                        scope
-                          ..clearFailure()
-                          ..changed();
-                      },
-              ),
-            ),
+      CrudEditorDialog<BrandFormCubit, BrandFormStatus, BrandFormEffect>(
+        cubit: context.read<BrandFormCubit>(),
+        fields: _fields,
+        mode: widget.duplicate
+            ? CrudEditorMode.duplicate
+            : widget.brand == null
+            ? CrudEditorMode.add
+            : CrudEditorMode.edit,
+        labels: brandEditorLabels,
+        isSaving: (status) => status == BrandFormStatus.saving,
+        outcome: (effect) => switch (effect) {
+          BrandSavedEffect() => const CrudEditorSuccess(),
+          BrandSaveFailedEffect(:final messageKey) => CrudEditorFailure(
+            messageKey,
+          ),
+        },
+        onSave: _save,
+        extraBusy: _logoBusy,
+        extraDirty: _active != _initialActive,
+        builder: (context, scope) => BrandEditorFieldsView(
+          name: _name,
+          slug: _slug,
+          logo: _logo,
+          logoUploader: widget.logoUploader,
+          logoPicker: widget.logoPicker,
+          onLogoBusyChanged: _onLogoBusyChanged,
+          description: _description,
+          onNameChanged: (value) => _onNameChanged(value, scope),
+          onSlugChanged: (_) => _onSlugChanged(scope),
+          showSlugHint:
+              _name.text.trim().isNotEmpty &&
+              brandSlugFrom(_name.text).isEmpty,
+          nameAutofocus: widget.duplicate,
+          onRegenerateSlug:
+              _slugTouched && brandSlugFrom(_name.text).isNotEmpty
+              ? () => _regenerateSlug(scope)
+              : null,
+          active: _active,
+          activeLabelKey: widget.brand == null
+              ? BrandsKeys.activeOnCreate
+              : BrandsKeys.active,
+          onActiveChanged: scope.busy
+              ? null
+              : (value) {
+                  setState(() => _active = value);
+                  scope
+                    ..clearFailure()
+                    ..changed();
+                },
+        ),
       );
 }

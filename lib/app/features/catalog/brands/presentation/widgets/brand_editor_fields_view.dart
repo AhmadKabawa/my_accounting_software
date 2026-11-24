@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload_cubit.dart';
+import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/sections/brand_details_section.dart';
@@ -13,6 +15,9 @@ class BrandEditorFieldsView extends StatelessWidget {
     required this.name,
     required this.slug,
     required this.logo,
+    required this.logoUploader,
+    required this.onLogoBusyChanged,
+    this.logoPicker,
     required this.description,
     required this.onNameChanged,
     required this.onSlugChanged,
@@ -27,6 +32,9 @@ class BrandEditorFieldsView extends StatelessWidget {
   final TextEditingController name;
   final TextEditingController slug;
   final TextEditingController logo;
+  final ImageUploader logoUploader;
+  final ValueChanged<bool> onLogoBusyChanged;
+  final ImagePickerPort? logoPicker;
   final TextEditingController description;
   final ValueChanged<String> onNameChanged;
   final ValueChanged<String> onSlugChanged;
@@ -50,7 +58,13 @@ class BrandEditorFieldsView extends StatelessWidget {
         nameAutofocus: nameAutofocus,
         onRegenerateSlug: onRegenerateSlug,
       ),
-      BrandLogoSection(logo: logo, brandName: name),
+      BrandLogoSection(
+        logo: logo,
+        brandName: name,
+        uploader: logoUploader,
+        picker: logoPicker,
+        onBusyChanged: onLogoBusyChanged,
+      ),
       BrandDetailsSection(description: description),
       context.ui.spacing.gap(AppSpacing.md),
       AppSwitch(

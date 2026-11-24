@@ -95,15 +95,6 @@ enum BrandsKeys implements AppKey {
   uploadLogo(ar: 'رفع صورة', en: 'Upload image'),
   replaceLogo(ar: 'استبدال الصورة', en: 'Replace image'),
   removeLogo(ar: 'إزالة الشعار', en: 'Remove logo'),
-  logoUploading(ar: 'جارٍ رفع الصورة…', en: 'Uploading image…'),
-  logoFileType(
-    ar: 'نوع الملف غير مدعوم. استخدم JPEG أو PNG أو WebP.',
-    en: 'Unsupported file type. Use JPEG, PNG or WebP.',
-  ),
-  logoFileTooLarge(
-    ar: 'حجم الصورة يتجاوز 5 ميغابايت.',
-    en: 'The image is larger than 5 MB.',
-  ),
   bulkActivate(ar: 'تفعيل المحدد', en: 'Activate selected'),
   bulkDeactivate(ar: 'إيقاف المحدد', en: 'Deactivate selected'),
   bulkDelete(ar: 'حذف المحدد', en: 'Delete selected'),

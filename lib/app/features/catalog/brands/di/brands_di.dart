@@ -15,7 +15,6 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/s
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/update_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
 
@@ -52,9 +51,6 @@ void initBrandsDI() {
       deleteBrand: sl(),
       flashMessages: sl(),
     ),
-  );
-  sl.registerFactory(
-    () => BrandLogoUploadCubit(uploadLogo: sl(), picker: sl()),
   );
   sl.registerFactory(
     () => BrandFormCubit(

@@ -19,7 +19,6 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/c
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/update_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import '../../../../../helpers/localized_app.dart';
@@ -67,17 +66,13 @@ Future<void> _pumpEditor(
                         flashMessages: FlashMessages(),
                       ),
                     ),
-                    BlocProvider(
-                      create: (_) => BrandLogoUploadCubit(
-                        uploadLogo: UploadBrandLogoUseCase(repository),
-                        picker: picker ?? _Picker(() async => null),
-                      ),
-                    ),
                   ],
                   child: BrandEditorDialog(
                     brand: brand,
                     seed: seed,
                     duplicate: duplicate,
+                    logoUploader: UploadBrandLogoUseCase(repository).call,
+                    logoPicker: picker ?? _Picker(() async => null),
                   ),
                 ),
               );
@@ -235,7 +230,7 @@ void main() {
     final repository = FakeBrandsRepository();
     final picker = _Picker(
       () async => PickedImage(
-        bytes: Uint8List.fromList([1, 2, 3]),
+        bytes: Uint8List.fromList([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
         fileName: 'logo.png',
         mimeType: 'image/png',
       ),
