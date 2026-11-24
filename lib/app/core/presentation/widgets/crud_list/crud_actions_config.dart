@@ -18,7 +18,8 @@ class CrudActionsConfig<T> {
   final void Function(BuildContext context, T item)? onDuplicate;
   final void Function(BuildContext context, T item)? onDelete;
   final void Function(BuildContext context, T item)? onToggleStatus;
-  final List<AppRowAction> Function(BuildContext context, T item)? extraRowActions;
+  final List<AppRowAction> Function(BuildContext context, T item)?
+  extraRowActions;
 
   CrudActionsConfig<T> withoutDuplicate() => CrudActionsConfig<T>(
     onEdit: onEdit,
@@ -30,19 +31,35 @@ class CrudActionsConfig<T> {
 
 /// Typed dispatch helpers shared by feature-owned row presentations.
 abstract final class CrudListActions {
-  static void edit<T>(BuildContext context, CrudActionsConfig<T> config, T item) {
+  static void edit<T>(
+    BuildContext context,
+    CrudActionsConfig<T> config,
+    T item,
+  ) {
     config.onEdit?.call(context, item);
   }
 
-  static void duplicate<T>(BuildContext context, CrudActionsConfig<T> config, T item) {
+  static void duplicate<T>(
+    BuildContext context,
+    CrudActionsConfig<T> config,
+    T item,
+  ) {
     config.onDuplicate?.call(context, item);
   }
 
-  static void delete<T>(BuildContext context, CrudActionsConfig<T> config, T item) {
+  static void delete<T>(
+    BuildContext context,
+    CrudActionsConfig<T> config,
+    T item,
+  ) {
     config.onDelete?.call(context, item);
   }
 
-  static void toggleStatus<T>(BuildContext context, CrudActionsConfig<T> config, T item) {
+  static void toggleStatus<T>(
+    BuildContext context,
+    CrudActionsConfig<T> config,
+    T item,
+  ) {
     config.onToggleStatus?.call(context, item);
   }
 }
