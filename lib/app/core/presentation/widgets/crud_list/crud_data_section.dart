@@ -75,9 +75,10 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
         sortKey: statusColumn.sortKey,
         permission: data.permission,
         isActive: statusColumn.isActive,
-        onToggleStatus: data.flows == null
-            ? null
-            : (row) => data.flows!.toggleStatus(context, row),
+        onToggleStatus: (row) {
+          final flows = data.flows;
+          if (flows != null) flows.toggleStatus(context, row);
+        },
         badgeBuilder: statusColumn.badgeBuilder,
         activateLabelKey: statusColumn.activateLabelKey,
         deactivateLabelKey: statusColumn.deactivateLabelKey,
@@ -110,9 +111,10 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
     rowActionsBuilder: (context, row) => CrudRowActions(
       permission: data.permission,
       editLabelKey: editLabelKey,
-      onEdit: data.flows == null
-          ? null
-          : () => data.flows!.edit(context, item: row),
+      onEdit: () {
+        final flows = data.flows;
+        if (flows != null) flows.edit(context, item: row);
+      },
       deleteLabelKey: deleteLabelKey,
       onDelete: (canDelete?.call(row) ?? true) && data.flows != null
           ? () => data.flows!.deleteItem(context, row)
@@ -124,9 +126,10 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
           ? () => data.flows!.edit(context, item: row, duplicate: true)
           : null,
       isActive: statusColumn.isActive(row),
-      onToggleStatus: data.flows == null
-          ? null
-          : () => data.flows!.toggleStatus(context, row),
+      onToggleStatus: () {
+        final flows = data.flows;
+        if (flows != null) flows.toggleStatus(context, row);
+      },
       activateLabelKey: statusColumn.activateLabelKey,
       deactivateLabelKey: statusColumn.deactivateLabelKey,
       statusBusy: data.busyIds.contains(data.rowId(row)),
