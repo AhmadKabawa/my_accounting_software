@@ -1103,17 +1103,16 @@ void main() {
       expect(find.byTooltip('Ascending'), findsWidgets);
     });
 
-    testWidgets(
-      'opens on a 280px phone at 1.5x text without overflow',
-      (tester) async {
-        await pumpMulti(tester, size: const Size(280, 700), textScale: 1.5);
-        await tester.tap(find.text('Sort by'));
-        await tester.pumpAndSettle();
+    testWidgets('opens on a 280px phone at 1.5x text without overflow', (
+      tester,
+    ) async {
+      await pumpMulti(tester, size: const Size(280, 700), textScale: 1.5);
+      await tester.tap(find.text('Sort by'));
+      await tester.pumpAndSettle();
 
-        expect(find.byType(BottomSheet), findsOneWidget);
-        expect(tester.takeException(), isNull);
-      },
-    );
+      expect(find.byType(BottomSheet), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 
   testWidgets(
@@ -1168,57 +1167,50 @@ void main() {
     },
   );
 
-  testWidgets(
-    'three sort criteria fit the desktop panel without exceptions',
-    (tester) async {
-      tester.view.physicalSize = const Size(1280, 900);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        buildTestApp(
-          home: Scaffold(
-            body: SortPanel(
-              options: const [
-                FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-                FilterBarSortOption(
-                  key: 'status',
-                  label: CatalogUiKeys.filters,
-                ),
-                FilterBarSortOption(
-                  key: 'updated',
-                  label: CatalogUiKeys.refresh,
-                ),
-              ],
-              sorts: const [
-                FilterBarSort('name', true),
-                FilterBarSort('status', false),
-                FilterBarSort('updated', true),
-              ],
-              onChanged: (_) {},
-            ),
+  testWidgets('three sort criteria fit the desktop panel without exceptions', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: SortPanel(
+            options: const [
+              FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
+              FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+              FilterBarSortOption(key: 'updated', label: CatalogUiKeys.refresh),
+            ],
+            sorts: const [
+              FilterBarSort('name', true),
+              FilterBarSort('status', false),
+              FilterBarSort('updated', true),
+            ],
+            onChanged: (_) {},
           ),
         ),
-      );
-      await tester.pumpAndSettle();
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      final panel = find.byType(SortPanel);
-      final panelContext = tester.element(panel);
-      final field = find.byType(SortFieldButton).first;
-      final fieldWidth = tester.getSize(field).width;
-      final touchTarget = AppButtonStyle(panelContext).touchTarget;
-      final labelAreaWidth = fieldWidth - touchTarget;
-      final labelPadding = 2 * AppSpacing.xs.of(panelContext);
-      final availableNameWidth = labelAreaWidth - labelPadding;
+    final panel = find.byType(SortPanel);
+    final panelContext = tester.element(panel);
+    final field = find.byType(SortFieldButton).first;
+    final fieldWidth = tester.getSize(field).width;
+    final touchTarget = AppButtonStyle(panelContext).touchTarget;
+    final labelAreaWidth = fieldWidth - touchTarget;
+    final labelPadding = 2 * AppSpacing.xs.of(panelContext);
+    final availableNameWidth = labelAreaWidth - labelPadding;
 
-      expect(find.byType(SortCriterionRow), findsNWidgets(3));
-      expect(
-        tester.getSize(panel).width,
-        AppComponentSize.filterControlWidth.of(panelContext),
-      );
-      expect(availableNameWidth, greaterThanOrEqualTo(110));
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(find.byType(SortCriterionRow), findsNWidgets(3));
+    expect(
+      tester.getSize(panel).width,
+      AppComponentSize.filterControlWidth.of(panelContext),
+    );
+    expect(availableNameWidth, greaterThanOrEqualTo(110));
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
     'sort arrow toggles without opening the field menu and field selection preserves direction',
