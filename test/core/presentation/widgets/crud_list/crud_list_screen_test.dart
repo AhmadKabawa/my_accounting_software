@@ -27,7 +27,6 @@ import 'package:accounting_software/app/core/storage/shared_preferences/app_sett
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_screen.dart';
@@ -667,19 +666,18 @@ void main() {
       deactivate: (_, _) async => const Right(unit),
     );
     await _pumpFlowHost(tester, (context) {
-      final actions = flows.buildActions();
       return Scaffold(
         body: Column(
           children: [
             TextButton(
               key: const ValueKey('edit'),
-              onPressed: () => CrudListActions.edit(context, actions, 'alpha'),
+              onPressed: () => flows.edit(context, item: 'alpha'),
               child: const Text('edit'),
             ),
             TextButton(
               key: const ValueKey('duplicate'),
               onPressed: () =>
-                  CrudListActions.duplicate(context, actions, 'alpha'),
+                  flows.edit(context, item: 'alpha', duplicate: true),
               child: const Text('duplicate'),
             ),
           ],
@@ -716,26 +714,22 @@ void main() {
     );
     late _TestCubit cubit;
     cubit = await _pumpFlowHost(tester, (context) {
-      final actions = flows.buildActions();
       return Scaffold(
         body: Column(
           children: [
             TextButton(
               key: const ValueKey('delete'),
-              onPressed: () =>
-                  CrudListActions.delete(context, actions, 'alpha'),
+              onPressed: () => flows.deleteItem(context, 'alpha'),
               child: const Text('delete'),
             ),
             TextButton(
               key: const ValueKey('inactive'),
-              onPressed: () =>
-                  CrudListActions.toggleStatus(context, actions, 'inactive'),
+              onPressed: () => flows.toggleStatus(context, 'inactive'),
               child: const Text('inactive'),
             ),
             TextButton(
               key: const ValueKey('active'),
-              onPressed: () =>
-                  CrudListActions.toggleStatus(context, actions, 'active'),
+              onPressed: () => flows.toggleStatus(context, 'active'),
               child: const Text('active'),
             ),
           ],
@@ -767,6 +761,45 @@ void main() {
     await tester.tap(find.text(CommonKeys.confirm.en));
     await tester.pumpAndSettle();
     expect(deactivated, 1);
+  });
+
+  testWidgets('flows without delete or status ignore those operations', (
+    tester,
+  ) async {
+    final flows = CrudFlowsConfig<String, _TestCubit>(
+      showEditor: (_, {item, duplicate = false}) async => false,
+      onSaved: (_, {required isNew}) async {},
+      itemLabel: (item) => item,
+      labels: const CrudLabels(edit: _title),
+    );
+    expect(flows.hasDelete, isFalse);
+    expect(flows.hasStatus, isFalse);
+    final cubit = await _pumpFlowHost(
+      tester,
+      (context) => Scaffold(
+        body: Column(
+          children: [
+            TextButton(
+              key: const ValueKey('delete'),
+              onPressed: () => flows.deleteItem(context, 'alpha'),
+              child: const Text('delete'),
+            ),
+            TextButton(
+              key: const ValueKey('status'),
+              onPressed: () => flows.toggleStatus(context, 'alpha'),
+              child: const Text('status'),
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('delete')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('status')));
+    await tester.pumpAndSettle();
+    expect(find.text(CommonKeys.confirm.en), findsNothing);
+    expect(cubit.deleteCalls, 0);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('editor completion does not use a disposed BuildContext', (

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 
 /// Shared edit, duplicate, delete and status flows with feature-owned policy.
@@ -48,14 +47,6 @@ class CrudFlowsConfig<T, C> {
       activate != null &&
       deactivate != null &&
       labels.supportsStatus;
-
-  @Deprecated('Legacy test adapter; production lists use flows directly.')
-  CrudActionsConfig<T> buildActions() => CrudActionsConfig<T>(
-    onEdit: (context, item) => edit(context, item: item),
-    onDuplicate: (context, item) => edit(context, item: item, duplicate: true),
-    onDelete: deleteItem,
-    onToggleStatus: toggleStatus,
-  );
 
   void add(BuildContext context) {
     edit(context);

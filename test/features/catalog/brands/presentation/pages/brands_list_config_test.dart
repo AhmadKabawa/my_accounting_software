@@ -3,7 +3,6 @@ import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/brands_list_config.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
 
 void main() {
   group('brandsListConfig', () {
@@ -11,7 +10,6 @@ void main() {
       final config = brandsListConfig;
 
       expect(config.screenId, 'catalog.brands');
-      expect(BrandsScreen.screenId, config.screenId);
       expect(config.manageAccess, Permissions.masterData.manage);
       expect(config.viewModes, [
         AppViewMode.table,

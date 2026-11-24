@@ -44,11 +44,9 @@ const _crudLabels = CrudLabels(
   deactivateConfirmationMessage: ColorsKeys.deactivateMessage,
 );
 
-const _colorsScreenId = 'catalog.colors';
-
 CrudListConfig<CatalogColor, ColorListQuery, ColorsListCubit, ColorsListEffect>
 get colorsListConfig => CrudListConfig(
-  screenId: _colorsScreenId,
+  screenId: 'catalog.colors',
   titleKey: ColorsKeys.title,
   manageAccess: Permissions.masterData.manage,
   searchHintKey: ColorsKeys.searchHint,

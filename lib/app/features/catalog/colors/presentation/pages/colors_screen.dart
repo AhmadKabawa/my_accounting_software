@@ -6,8 +6,6 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/col
 class ColorsScreen extends StatelessWidget {
   const ColorsScreen({super.key});
 
-  static const screenId = 'catalog.colors';
-
   @override
   Widget build(BuildContext context) =>
       CrudListScreen(config: colorsListConfig);

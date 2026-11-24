@@ -6,8 +6,6 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/bra
 class BrandsScreen extends StatelessWidget {
   const BrandsScreen({super.key});
 
-  static const screenId = 'catalog.brands';
-
   @override
   Widget build(BuildContext context) =>
       CrudListScreen(config: brandsListConfig);

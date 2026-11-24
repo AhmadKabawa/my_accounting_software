@@ -25,13 +25,14 @@ lib/app/features/catalog/<feature>/
       <feature>_editor_dialog.dart
     localization/
       <feature>_keys.dart
+    <feature>_list_config.dart   # CrudListConfig: the only per-screen wiring
     pages/
-      <feature>_screen.dart
+      <feature>_screen.dart      # thin CrudListScreen entry point
     sections/
-      <feature>_table_section.dart
       <feature>_stats_section.dart
     widgets/
       <feature>_card.dart
+      <feature>_grid_tile.dart
       <feature>_status_badge.dart
       <feature>_filter_bar.dart
 ```
@@ -42,17 +43,17 @@ The exact folders depend on the feature. Keep feature-specific fields, labels, v
 
 | Need | Main file / component to change | Can it truly be one file? |
 |---|---|---|
-| Change the number or meaning of statistics cards | `presentation/sections/<feature>_stats_section.dart` using `ListStatsBar` and `StatItem` | Usually yes, if the stats data already exists |
-| Change add-button label, permission or destination | `presentation/pages/<feature>_screen.dart` using `ListAddAction` | The key still lives in the feature localization file |
-| Add or remove a table column | `presentation/sections/<feature>_table_section.dart` | Usually yes when the domain field already exists |
-| Change row actions | `presentation/sections/<feature>_table_section.dart` using `CrudRowActions` | Callback behavior may also require the screen or cubit |
-| Add a bulk action | `presentation/cubit/<feature>_list/` plus the screen's `BulkActionBar` configuration | No: permission, confirmation, result reporting and use case may span files |
-| Add duplicate behavior | `presentation/dialogs/<feature>_editor_dialog.dart` with a feature-specific seed function | No: the row action and localized duplicate labels also change |
-| Change sort fields | `domain/entity/<feature>_list_query.dart` and the feature toolbar configuration | No: remote query ordering must support the same fields |
+| Change the number or meaning of statistics cards | `presentation/sections/<feature>_stats_section.dart` using `ListStatsBar` and `StatItem`, wired through `statsBuilder` | Usually yes, if the stats data already exists |
+| Change add-button label, permission or destination | `<feature>_list_config.dart` (`addLabelKey`, `manageAccess`, `flows.showEditor`) | The key still lives in the feature localization file |
+| Add or remove a table column | `<feature>_list_config.dart`, the `columns` of `CrudDataSection` | Usually yes when the domain field already exists |
+| Change row actions or their labels | `<feature>_list_config.dart`: `CrudLabels` (labels and confirmation copy) and `CrudFlowsConfig` (editor, delete, status callbacks); one-off extras through `CrudDataSection.extraRowActions` | Callback behavior may also require the cubit |
+| Add a bulk action | The standard three live in `CrudBulkConfig`; an extra one goes through `extraBulkActions` plus a cubit method | No: permission, confirmation, result reporting and use case may span files |
+| Add duplicate behavior | `presentation/dialogs/<feature>_editor_dialog.dart` with a feature-specific seed function, `CrudLabels.duplicate` | No: the localized duplicate labels also change |
+| Change sort fields | `domain/entity/<feature>_list_query.dart` and the `CrudSortConfig` in the config | No: remote query ordering must support the same fields |
 | Change pagination behavior | `domain/entity/<feature>_list_query.dart` and the list cubit/data query | No: query, fetch and paging contract must agree |
-| Enable row selection | `presentation/pages/<feature>_screen.dart` and `presentation/sections/<feature>_table_section.dart` using the cubit's `selection` | No: permission gating and data-view callbacks must be connected |
-| Change status display | `presentation/sections/<feature>_table_section.dart` using `crudStatusColumn` | Usually yes if status already exists |
-| Make status available in every view | `presentation/sections/<feature>_table_section.dart` using `CrudRowActions` | Usually yes if the status use case exists |
+| Enable or disable row selection | `capabilities.bulkSelection` in the config | Yes: the engine wires permission, mode and data-view callbacks |
+| Change status display | `CrudStatusColumnConfig` (badge, sort key) in the config | Usually yes if status already exists |
+| Entity without `is_active` | Leave `statusColumn`, the status callbacks and the status label group null | Yes (see "Optional operations") |
 | Change filter controls | `presentation/widgets/<feature>_filter_bar.dart` or `ListToolbarConfig` | Query fields and localization keys may also change |
 
 **Known weakness:** CRUD changes are not universally one-file changes. A new domain field, sort key, bulk mutation or duplicate mode often crosses the query/entity, data source/use case, cubit, screen, table section and localization. The table above identifies the primary feature file, not a promise that all related code is isolated there.
@@ -67,8 +68,8 @@ The exact folders depend on the feature. Keep feature-specific fields, labels, v
 6. Implement the stats Cubit and expose the feature's statistics as `StatItem` values. A card with a filter applies it; a card without a filter is informational only.
 7. Implement the form Cubit and editor dialog. For duplicate mode, create a feature-specific seed: generate new unique values, copy safe non-unique fields, and do not save until the user confirms.
 8. Implement the feature's filter/sort configuration using `FilterBar` and `ListToolbarConfig`. Keep every user-facing label in `AppKey` translations.
-9. Implement the table/data section with `AppDataView`, `CrudEmptyState`, `crudStatusColumn` and `CrudRowActions`. Supply the same row ID for table, card and grid selection.
-10. Connect the page with `ListPageTemplate` using `toolbar`, `stats`, `addAction` and `count`. Use `ViewModeCubit` for table/cards/grid.
+9. Describe the data section inside the config with `CrudDataSection`: columns, `CrudLabels`, an optional `CrudStatusColumnConfig`, and the card/grid renderers. It builds `AppDataView`, `CrudEmptyState`, `crudStatusColumn` and `CrudRowActions` for you and uses the same row ID for table, card and grid selection.
+10. Delegate the page to `CrudListScreen(config: <feature>ListConfig)`. The engine composes `ListPageTemplate` (`toolbar`, `stats`, `addAction`, `count`) and `ViewModeCubit`; do not build `ListPageTemplate` in a page.
 11. Keep selection mode off by default. Set ListToolbarConfig.selectionModeActive from the feature's PagedListCubit and provide onSelectionModeToggle only when the feature's bulk permission is granted. Pass selectionModeActive and an exit callback to CrudSelectionScope. Selection IDs and checkboxes are passed to AppDataView only while permission and selection mode are both active. Exiting mode clears IDs; query/page/view-mode changes and bulk completion clear IDs but keep mode active. The bulk bar is visible at zero selected items and its actions remain disabled until a selection exists.
 12. Add `BulkActionBar` actions with feature permissions and count-aware confirmations. Keep the operation in the cubit/use-case layer, not in widget loops. Return a `BulkResult` with every failed row and its reason; do not report partial success as full success. When no server bulk endpoint exists, `BulkMutationUseCase` executes mutations sequentially; this is not one database transaction, so document the partial-completion behavior.
 13. For bulk delete, reject or skip rows that cannot be deleted while continuing the remaining rows.
@@ -150,8 +151,7 @@ final demoConfig = CrudListConfig<DemoItem, DemoQuery, DemoCubit, DemoEffect>(
     cardBuilder: demoCard, gridBuilder: demoGridTile, icon: AppIcons.catalog,
     emptyTitleKey: DemoKeys.empty, emptyDescriptionKey: DemoKeys.emptyHint,
     noResultsTitleKey: DemoKeys.noResults, noResultsDescriptionKey: DemoKeys.noResultsHint,
-    editLabelKey: DemoKeys.edit, deleteLabelKey: DemoKeys.delete,
-    duplicateLabelKey: DemoKeys.duplicate,
+    labels: demoLabels,
   ),
 );
 ```
@@ -162,11 +162,13 @@ The working engine integration fixture is `test/core/presentation/widgets/crud_l
 
 ### A. A capability shared by every CRUD screen
 
-Add a field to `CrudCapabilities` or a general engine contract only when it describes a universal CRUD behavior. Give it a conservative default (`false`, `null`, or an empty collection) so existing configurations keep their current behavior. The screen reads the capability in one place; old feature configs need no edits. Example: `showCount` controls the optional header count.
+Add a field to `CrudCapabilities` or a general engine contract only when it describes a universal CRUD behavior. Give it a conservative default (`false`, `null`, or an empty collection) so existing configurations keep their current behavior. The screen reads the capability in one place; old feature configs need no edits.
+
+The only exception is `showCount`, which defaults to `true`: every CRUD list shows its record count, so hiding it is the opt-out (`CrudCapabilities(showCount: false)`). It was made the default after both catalog screens needed it; the CRUD lists should look the same unless a screen asks otherwise. A new capability does not get this exception.
 
 ### B. A one-screen extension
 
-Use an existing `CrudListConfig` slot first: `statsBuilder`, `headerExtras`, `extraToolbarActions`, `extraFilterControls`, `extraBulkActions`, `actions.extraRowActions`, `emptyStateBuilder`, or a feature-owned `dataSection`. Keep the callback and business behavior in the feature. Do not add a global capability for a single screen.
+Use an existing `CrudListConfig` slot first: `statsBuilder`, `headerExtras`, `extraToolbarActions`, `extraFilterControls`, `extraBulkActions`, `CrudDataSection.extraRowActions`, `emptyStateBuilder`, or a feature-owned `dataSection`. Keep the callback and business behavior in the feature. Do not add a global capability for a single screen.
 
 ### C. When to add a new CrudListConfig slot
 
@@ -180,3 +182,37 @@ Use `dataSection` instead of `CrudDataSection` only when the screen's data prese
 ## Architecture gate for CRUD screens
 
 `test/architecture/crud_screens_use_engine_test.dart` scans every Dart file under `lib/app/features/**/pages/`. A page that directly constructs `ListPageTemplate(` must also delegate through `CrudListScreen(` or appear in the explicit legacy exception set in that test. The exception set is intentionally empty for the current migration. The test has self-checks proving that direct `ListPageTemplate` construction is rejected and a `CrudListScreen` page is accepted. The full `flutter test` CI job runs this gate; do not move, rename or delete protected tests to bypass it.
+
+Every `*_list_config.dart` under `lib/app/features` must also stay within 250 lines (same test file). When a config approaches the limit, move cell/card/tile widgets into `widgets/` (as Brands and Colors do with `brand_card.dart`, `color_grid_tile.dart`, `color_hex_cell.dart`) and shared behavior into the engine. The failure message points back to this recipe.
+
+## One mechanism per purpose
+
+Row operations go through `CrudFlowsConfig` (with `CrudLabels`) and the standard bulk operations through `CrudBulkConfig`; there is no separate "actions" configuration. Use the `extra*` slots only for additions that exist on one screen.
+
+## Optional operations
+
+Only `CrudLabels.edit` and the editor flow are mandatory. Delete, duplicate and status are optional, so an entity without `is_active` (or that cannot be deleted) reuses the same engine:
+
+```dart
+const _labels = CrudLabels(
+  edit: UnitsKeys.edit,
+  delete: UnitsKeys.delete,
+  deleteConfirmationTitle: UnitsKeys.deleteTitle,
+  deleteConfirmationMessage: UnitsKeys.deleteMessage,
+); // no duplicate, no activate/deactivate
+
+flows: CrudFlowsConfig<Unit, UnitsCubit>(
+  showEditor: ..., onSaved: ..., itemLabel: (u) => u.name,
+  labels: _labels, delete: (cubit, unit) => cubit.delete(unit), // no status callbacks
+),
+bulk: CrudBulkConfig<Unit, UnitsCubit>(
+  deleteLabelKey: ..., deleteTitleKey: ..., deleteMessageKey: ...,
+  delete: (cubit, units) => cubit.bulkDelete(units), // no bulk activate/deactivate
+),
+dataSection: (data) => CrudDataSection<Unit, UnitsQuery, UnitsCubit>(
+  data: data, labels: _labels, /* statusColumn omitted: no status column */ ...
+),
+capabilities: const CrudCapabilities(duplicate: false),
+```
+
+`statusColumn: null` removes the status column, the row activate/deactivate action and bulk activation. A missing delete label or callback removes the Delete item (a per-row `flows.canDelete` that returns false keeps it visible but disabled). `test/core/presentation/widgets/crud_list/crud_data_section_test.dart` and `crud_list_screen_test.dart` cover an entity without status and delete-only bulk.
