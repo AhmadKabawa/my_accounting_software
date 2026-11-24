@@ -196,10 +196,7 @@ void main() {
         tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed;
 
     Finder expandedItem(int index) => find
-        .descendant(
-          of: find.byType(AppSidebar),
-          matching: find.text('home'),
-        )
+        .descendant(of: find.byType(AppSidebar), matching: find.text('home'))
         .at(index);
 
     Finder iconItem(int index) => find.byTooltip('home').at(index);
