@@ -7,6 +7,7 @@ import 'package:accounting_software/app/core/localization/keys/dialog_keys.dart'
 import 'package:accounting_software/app/core/localization/keys/erp_error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/field_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/image_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/message_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/scope_keys.dart';
@@ -36,6 +37,7 @@ final List<AppKey> allKeys = <AppKey>[
   ...ShellKeys.values,
   ...TemplateKeys.values,
   ...FieldKeys.values,
+  ...ImageKeys.values,
   ...ValidationKeys.values,
   ...ErrorKeys.values,
   ...ServerErrorKeys.values,
