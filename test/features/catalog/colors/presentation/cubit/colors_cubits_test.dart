@@ -224,7 +224,9 @@ void main() {
       final refresh = cubit.refresh();
       expect(cubit.state.status, ColorStatsStatus.ready);
       expect(states, isEmpty);
-      pending.complete(const Right(ColorStats(total: 4, active: 3, inactive: 1)));
+      pending.complete(
+        const Right(ColorStats(total: 4, active: 3, inactive: 1)),
+      );
       await refresh;
 
       expect(cubit.state.stats?.total, 4);
@@ -244,7 +246,10 @@ void main() {
       await cubit.refresh();
 
       expect(cubit.state.status, ColorStatsStatus.failed);
-      expect(cubit.state.stats, const ColorStats(total: 1, active: 1, inactive: 0));
+      expect(
+        cubit.state.stats,
+        const ColorStats(total: 1, active: 1, inactive: 0),
+      );
       expect(cubit.state.failure, isA<_Failure>());
       await cubit.close();
     });

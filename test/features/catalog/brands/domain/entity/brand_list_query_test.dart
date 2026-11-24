@@ -16,7 +16,6 @@ void main() {
     }
   });
 
-
   test('withSorts retains every distinct criterion in priority order', () {
     const expected = [
       BrandSort(BrandSortField.status, false),

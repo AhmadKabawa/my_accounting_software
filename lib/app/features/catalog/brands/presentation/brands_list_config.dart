@@ -83,10 +83,7 @@ get brandsListConfig => CrudListConfig(
     ],
   ),
   viewModes: const [AppViewMode.table, AppViewMode.cards, AppViewMode.grid],
-  capabilities: const CrudCapabilities(
-    duplicate: true,
-    bulkSelection: true,
-  ),
+  capabilities: const CrudCapabilities(duplicate: true, bulkSelection: true),
   providersWrapper: (child) => BlocProvider<BrandStatsCubit>(
     create: (_) => sl<BrandStatsCubit>()..load(),
     child: child,

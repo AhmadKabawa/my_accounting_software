@@ -302,7 +302,8 @@ CrudFlowsConfig<String, _TestCubit> _flows({
   onSaved,
   required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item)
   delete,
-  required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item) activate,
+  required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item)
+  activate,
   required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item)
   deactivate,
   bool Function(String item)? isActive,
