@@ -1134,7 +1134,7 @@ void main() {
         expect(find.byType(BottomSheet), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
-    ););
+    );
   });
 
   testWidgets(
