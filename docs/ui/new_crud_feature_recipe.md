@@ -225,3 +225,19 @@ capabilities: const CrudCapabilities(duplicate: false),
 - المحاذاة المرئية في RTL واتجاه حقل hex في LTR وإجراء النسخ.
 - عروض الهاتف 280–360px وعروض سطح المكتب؛ تحقق من عدم وجود overflow أو قوائم مقصوصة.
 - مصفوفة CI تغطي 280px وRTL ومقياس نص 1.5 لأنماط العرض الثلاثة على الشاشتين، لكنها لا تستبدل الفحص المرئي اليدوي.
+
+
+## Shared CRUD editor dialog
+
+Use CrudEditorDialog<C, S, E> for catalog create/edit/duplicate forms when the feature already owns its Cubit and effects. The shared component owns the common dialog lifecycle; the feature continues to own its fields, validation rules, draft construction, and save operation.
+
+- Create named controllers with CrudEditorFields; the editor owns and disposes them.
+- Supply CrudEditorLabels with the feature's localized AppKey values for add/edit/duplicate titles, subtitle, save and cancel.
+- Map the feature's success/failure effects to CrudEditorSuccess and CrudEditorFailure; do not move feature business rules into Core.
+- isSaving maps the feature state to the common busy state. Use extraBusy for independent work such as logo upload and extraDirty for non-text values such as an active switch.
+- The builder receives CrudEditorScope: use formKey for the form, fields for the controllers, busy for disabled actions, clearFailure after edits, and changed when non-controller state changes.
+- onSave runs only after the shared form validation succeeds. Keep normalization and draft creation in the feature.
+- Keep duplicate seed generation in the feature. Reuse the shared dialog shell without sharing entity-specific duplicate rules.
+- Continue opening the dialog through a feature launcher that creates the feature Cubit providers and calls showAppFormDialog; do not create feature Cubits inside Core.
+
+The current reference implementations are Brands and Colors. They share save/dirty/busy/effect handling while retaining their own slug, logo-upload, HEX-name suggestion, status and duplicate-seed behavior.

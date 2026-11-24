@@ -165,3 +165,12 @@
 
 
 **Final verification:** `45329074594` passed Auto-format, Analyze, 1,163 full-suite tests and 172 catalog UI widget tests. The documentation-only final revision `ee038c4` passed the same gates in run `45329255557`.
+
+
+## Shared CRUD editor and color picker — 2026-11-24
+
+- test/core/presentation/widgets/crud_editor/crud_editor_dialog_test.dart: shared editor form validation, success/failure effects, busy and extraBusy save disabling, dirty/extraDirty unsaved-change guard, and controller cleanup on unmount.
+- test/core/presentation/widgets/app_color_picker_test.dart: HEX/RGB/RGBA and alpha preservation, external value synchronization, preset selection, mobile collapsed/expanded behavior, custom-value auto-expansion, SV/Hue drag isolation from parent scrolling, token-sized preset hit targets, semantics increment/decrement, and narrow RTL/large-text layout.
+- test/features/catalog/colors/presentation/widgets/color_presets_test.dart: 24 palette entries and HexColor.isValid validation for every entry.
+- test/architecture/ui_quality_gate_test.dart: presentation-file classifier self-checks and the 250-line gate now include dialogs/ in addition to pages/widgets/sections.
+- These tests are included in the current implementation batch. Their runtime status remains NOT_VERIFIED until the corresponding GitHub Actions run completes successfully.

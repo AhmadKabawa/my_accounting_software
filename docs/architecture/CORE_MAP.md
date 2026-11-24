@@ -311,3 +311,11 @@
 - presentation/design_system/responsive/compact_content_breakpoint.dart: one shared breakpoint for FilterBar, AppDataView, AppPaginationBar and BulkActionBar.
 - BulkResultDialog is a detailed bulk-failure report, not a replacement for MessageViewWidgets for transient messages.
 - presentation/widgets/app_filter_bar/filter_bar_sort.dart and sort_criterion_row.dart: shared sort-value mapping, field selection, disabled duplicate options, direction, and priority movement controls.
+
+
+## Shared CRUD editor
+
+- presentation/widgets/crud_editor/: CrudEditorDialog<C,S,E> centralizes the common form dialog lifecycle for create/edit/duplicate: BlocBuilder state, effect handling, validation-before-save, success close, localized failure, busy/dirty integration with AppFormDialog.
+- CrudEditorFields owns named TextEditingControllers and their dirty comparison/disposal. CrudEditorLabels carries feature AppKeys. CrudEditorScope exposes form/fields/busy/change/failure operations to the feature-owned field builder.
+- Feature Cubits, effects, draft construction, field validation, duplicate seeds, and extra work such as logo upload remain feature-owned. extraBusy and extraDirty extend the common guard without moving business behavior into Core.
+- AppColorPicker supports compact phone presentation, immediate pointer ownership while dragging the SV/Hue surfaces, responsive preset hit targets, and semantic increase/decrease actions. Its HEX/alpha behavior remains unchanged.

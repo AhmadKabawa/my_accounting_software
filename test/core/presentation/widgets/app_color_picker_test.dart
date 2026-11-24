@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_picker/app_color_picker.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_swatch/app_color_swatch.dart';
 import '../../../helpers/localized_app.dart';
+
+Finder _pickerSurfaces() => find.descendant(
+  of: find.byType(AppColorPicker),
+  matching: find.byType(RawGestureDetector),
+);
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
@@ -21,7 +27,7 @@ void main() {
       ),
     );
 
-    final area = find.byType(GestureDetector).first;
+    final area = _pickerSurfaces().first;
     expect(t.getSize(area).width, 220);
     expect(t.getSize(area).height, 220);
 
@@ -133,7 +139,7 @@ void main() {
         (widget) =>
             widget is AppColorSwatch &&
             widget.hex == '#AABBCC' &&
-            widget.onTap != null,
+            widget.onTap == null,
       ),
     );
     await t.pump();
@@ -195,4 +201,140 @@ void main() {
       '#123456',
     );
   });
+
+  testWidgets('mobile starts collapsed for a preset and expands on demand', (
+    t,
+  ) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(360, 800)),
+          child: Scaffold(
+            body: AppColorPicker(
+              value: '#228B22',
+              presets: const ['#228B22'],
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(_pickerSurfaces(), findsNothing);
+    await t.tap(find.text('Custom color'));
+    await t.pump();
+    expect(_pickerSurfaces(), findsNWidgets(2));
+  });
+
+  testWidgets('custom mobile value starts expanded', (t) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(360, 800)),
+          child: Scaffold(
+            body: AppColorPicker(
+              value: '#123456',
+              presets: const ['#228B22'],
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(_pickerSurfaces(), findsNWidgets(2));
+  });
+
+  testWidgets('SV and hue drag surfaces do not scroll their parent', (
+    t,
+  ) async {
+    final scrollController = ScrollController();
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            controller: scrollController,
+            child: SizedBox(
+              height: 1000,
+              child: AppColorPicker(value: '#228B22', onChanged: (_) {}),
+            ),
+          ),
+        ),
+      ),
+    );
+    await t.drag(_pickerSurfaces().first, const Offset(0, 120));
+    await t.pump();
+    expect(scrollController.offset, 0);
+    await t.drag(_pickerSurfaces().last, const Offset(0, 80));
+    await t.pump();
+    expect(scrollController.offset, 0);
+    await t.pumpWidget(const SizedBox.shrink());
+    scrollController.dispose();
+  });
+
+  testWidgets('preset touch targets use the responsive hit-area token', (
+    t,
+  ) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(360, 800)),
+          child: Scaffold(
+            body: AppColorPicker(
+              value: '#228B22',
+              presets: const ['#228B22', '#F57C21'],
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    for (final label in ['#228B22', '#F57C21']) {
+      final target = find.bySemanticsLabel(label);
+      final expected = AppComponentSize.hitArea.of(t.element(target));
+      expect(t.getSize(target).width, expected);
+      expect(t.getSize(target).height, expected);
+    }
+  });
+
+  testWidgets('SV and hue expose semantic increase and decrease', (t) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: AppColorPicker(value: '#228B22', onChanged: (_) {}),
+        ),
+      ),
+    );
+    final sliders = find.byWidgetPredicate(
+      (widget) => widget is Semantics && widget.properties.slider,
+    );
+    expect(sliders, findsNWidgets(2));
+    for (var index = 0; index < 2; index++) {
+      final semantics = t.getSemantics(sliders.at(index));
+      expect(semantics.hasAction(SemanticsAction.increase), isTrue);
+      expect(semantics.hasAction(SemanticsAction.decrease), isTrue);
+    }
+  });
+
+  testWidgets('compact picker fits narrow RTL layout with large text', (
+    t,
+  ) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: MediaQuery(
+          data: const MediaQueryData(
+            size: Size(280, 760),
+            textScaler: TextScaler.linear(1.5),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(
+              body: AppColorPicker(value: '#123456', onChanged: (_) {}),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(t.takeException(), isNull);
+    expect(find.text('Custom color'), findsOneWidget);
+  });
+
 }
