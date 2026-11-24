@@ -16,8 +16,6 @@ class CrudStatusColumnConfig<T> {
     required this.labelKey,
     required this.isActive,
     required this.badgeBuilder,
-    this.activateLabelKey,
-    this.deactivateLabelKey,
     this.sortKey,
   });
 
@@ -25,17 +23,19 @@ class CrudStatusColumnConfig<T> {
   final String? sortKey;
   final bool Function(T row) isActive;
   final Widget Function(BuildContext context, T row) badgeBuilder;
-  final AppKey? activateLabelKey;
-  final AppKey? deactivateLabelKey;
 }
 
 /// Shared table/cards/grid projection for CRUD list data.
+///
+/// [statusColumn] is optional: null means the entity has no `is_active`, so
+/// there is no status column and no activate/deactivate row action. Delete and
+/// duplicate are optional through [labels] and the flows (see [CrudLabels]).
 class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
   const CrudDataSection({
     super.key,
     required this.data,
     required this.columns,
-    required this.statusColumn,
+    required this.labels,
     required this.cardBuilder,
     required this.gridBuilder,
     required this.icon,
@@ -43,19 +43,14 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
     required this.emptyDescriptionKey,
     required this.noResultsTitleKey,
     required this.noResultsDescriptionKey,
-    this.labels,
-    @Deprecated('Use labels.') AppKey? editLabelKey,
-    @Deprecated('Use labels.') AppKey? deleteLabelKey,
-    @Deprecated('Use labels.') AppKey? duplicateLabelKey,
-    this.canDelete,
+    this.statusColumn,
     this.extraRowActions,
-  }) : _editLabelKey = editLabelKey,
-       _deleteLabelKey = deleteLabelKey,
-       _duplicateLabelKey = duplicateLabelKey;
+  });
 
   final CrudDataContext<T, Q, C> data;
   final List<DataTableColumn<T>> columns;
-  final CrudStatusColumnConfig<T> statusColumn;
+  final CrudLabels labels;
+  final CrudStatusColumnConfig<T>? statusColumn;
   final Widget Function(BuildContext context, T row) cardBuilder;
   final Widget Function(BuildContext context, T row) gridBuilder;
   final AppIconData icon;
@@ -63,95 +58,102 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
   final AppKey emptyDescriptionKey;
   final AppKey noResultsTitleKey;
   final AppKey noResultsDescriptionKey;
-  final CrudLabels? labels;
-  final AppKey? _editLabelKey;
-  final AppKey? _deleteLabelKey;
-  final AppKey? _duplicateLabelKey;
-
-  AppKey get editLabelKey => labels?.edit ?? _editLabelKey!;
-  AppKey get deleteLabelKey => labels?.delete ?? _deleteLabelKey!;
-  AppKey get duplicateLabelKey => labels?.duplicate ?? _duplicateLabelKey!;
-  AppKey get activateLabelKey =>
-      labels?.activate ?? statusColumn.activateLabelKey!;
-  AppKey get deactivateLabelKey =>
-      labels?.deactivate ?? statusColumn.deactivateLabelKey!;
-  final bool Function(T row)? canDelete;
   final List<AppRowAction> Function(BuildContext context, T row)?
   extraRowActions;
 
   @override
-  Widget build(BuildContext context) => AppDataView<T>(
-    columns: [
-      ...columns,
-      crudStatusColumn<T>(
-        labelKey: statusColumn.labelKey,
-        sortKey: statusColumn.sortKey,
-        permission: data.permission,
-        isActive: statusColumn.isActive,
-        onToggleStatus: (row) {
-          final flows = data.flows;
-          if (flows != null) flows.toggleStatus(context, row);
-        },
-        badgeBuilder: statusColumn.badgeBuilder,
-        activateLabelKey: activateLabelKey,
-        deactivateLabelKey: deactivateLabelKey,
-        isBusy: (row) => data.busyIds.contains(data.rowId(row)),
+  Widget build(BuildContext context) {
+    final status = statusColumn;
+    final activate = labels.activate;
+    final deactivate = labels.deactivate;
+    assert(
+      status == null || labels.supportsStatus,
+      'A statusColumn needs the activate/deactivate labels and deactivation '
+      'confirmation copy in CrudLabels.',
+    );
+    return AppDataView<T>(
+      columns: [
+        ...columns,
+        if (status != null && activate != null && deactivate != null)
+          crudStatusColumn<T>(
+            labelKey: status.labelKey,
+            sortKey: status.sortKey,
+            permission: data.permission,
+            isActive: status.isActive,
+            onToggleStatus: (row) {
+              final flows = data.flows;
+              if (flows != null) flows.toggleStatus(context, row);
+            },
+            badgeBuilder: status.badgeBuilder,
+            activateLabelKey: activate,
+            deactivateLabelKey: deactivate,
+            isBusy: (row) => data.busyIds.contains(data.rowId(row)),
+          ),
+      ],
+      rows: data.rows,
+      rowId: data.rowId,
+      mode: data.mode,
+      cardBuilder: cardBuilder,
+      gridItemBuilder: gridBuilder,
+      loading: data.loading,
+      refreshing: data.refreshing,
+      errorKey: data.failure?.messageKey,
+      onRetry: data.onRetry,
+      emptyState: CrudEmptyState(
+        icon: icon,
+        emptyTitleKey: emptyTitleKey,
+        emptyDescriptionKey: emptyDescriptionKey,
+        noResultsTitleKey: noResultsTitleKey,
+        noResultsDescriptionKey: noResultsDescriptionKey,
+        hasActiveFilters: data.query.hasActiveFilters,
+        addAction: data.addAction,
       ),
-    ],
-    rows: data.rows,
-    rowId: data.rowId,
-    mode: data.mode,
-    cardBuilder: cardBuilder,
-    gridItemBuilder: gridBuilder,
-    loading: data.loading,
-    refreshing: data.refreshing,
-    errorKey: data.failure?.messageKey,
-    onRetry: data.onRetry,
-    emptyState: CrudEmptyState(
-      icon: icon,
-      emptyTitleKey: emptyTitleKey,
-      emptyDescriptionKey: emptyDescriptionKey,
-      noResultsTitleKey: noResultsTitleKey,
-      noResultsDescriptionKey: noResultsDescriptionKey,
-      hasActiveFilters: data.query.hasActiveFilters,
-      addAction: data.addAction,
-    ),
-    sortKey: data.sortKey,
-    sortAscending: data.sortAscending,
-    onSort: data.onSort,
-    selectedIds: data.selectedIds,
-    onSelectionChanged: data.onSelectionChanged,
-    rowActionsBuilder: (context, row) => CrudRowActions(
+      sortKey: data.sortKey,
+      sortAscending: data.sortAscending,
+      onSort: data.onSort,
+      selectedIds: data.selectedIds,
+      onSelectionChanged: data.onSelectionChanged,
+      rowActionsBuilder: _rowActions,
+      page: data.query.page,
+      pageSize: data.query.pageSize,
+      totalCount: data.total,
+      hasMore: data.query.page * data.query.pageSize < data.total,
+      onPageChanged: data.onPageChanged,
+    );
+  }
+
+  Widget _rowActions(BuildContext context, T row) {
+    final flows = data.flows;
+    final status = statusColumn;
+    final showDelete = flows == null
+        ? labels.delete != null
+        : flows.hasDelete;
+    final duplicateKey = data.canDuplicate ? labels.duplicate : null;
+    bool? isActive;
+    VoidCallback? onToggleStatus;
+    if (status != null && flows != null && flows.hasStatus) {
+      isActive = status.isActive(row);
+      onToggleStatus = () => flows.toggleStatus(context, row);
+    }
+    return CrudRowActions(
       permission: data.permission,
-      editLabelKey: editLabelKey,
-      onEdit: () {
-        final flows = data.flows;
-        if (flows != null) flows.edit(context, item: row);
-      },
-      deleteLabelKey: deleteLabelKey,
-      onDelete: (canDelete?.call(row) ?? true) && data.flows != null
-          ? () => data.flows!.deleteItem(context, row)
+      editLabelKey: labels.edit,
+      onEdit: flows == null ? null : () => flows.edit(context, item: row),
+      deleteLabelKey: showDelete ? labels.delete : null,
+      onDelete:
+          flows != null && flows.hasDelete && (flows.canDelete?.call(row) ?? true)
+          ? () => flows.deleteItem(context, row)
           : null,
-      duplicateLabelKey: data.canDuplicate && data.flows != null
-          ? duplicateLabelKey
+      duplicateLabelKey: flows == null ? null : duplicateKey,
+      onDuplicate: flows != null && duplicateKey != null
+          ? () => flows.edit(context, item: row, duplicate: true)
           : null,
-      onDuplicate: data.canDuplicate && data.flows != null
-          ? () => data.flows!.edit(context, item: row, duplicate: true)
-          : null,
-      isActive: statusColumn.isActive(row),
-      onToggleStatus: () {
-        final flows = data.flows;
-        if (flows != null) flows.toggleStatus(context, row);
-      },
-      activateLabelKey: activateLabelKey,
-      deactivateLabelKey: deactivateLabelKey,
+      isActive: isActive,
+      onToggleStatus: onToggleStatus,
+      activateLabelKey: labels.activate,
+      deactivateLabelKey: labels.deactivate,
       statusBusy: data.busyIds.contains(data.rowId(row)),
       extraOverflow: extraRowActions?.call(context, row) ?? const [],
-    ),
-    page: data.query.page,
-    pageSize: data.query.pageSize,
-    totalCount: data.total,
-    hasMore: data.query.page * data.query.pageSize < data.total,
-    onPageChanged: data.onPageChanged,
-  );
+    );
+  }
 }

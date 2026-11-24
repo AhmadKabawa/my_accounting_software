@@ -16,6 +16,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_row_action
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_add_action.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import '../../../../helpers/localized_app.dart';
 import '../../../../helpers/test_key.dart';
@@ -26,6 +28,33 @@ const _emptyDescription = TestKey('empty description');
 const _noResults = TestKey('no results');
 const _noResultsDescription = TestKey('no results description');
 const _extraAction = TestKey('extra row action');
+const _edit = TestKey('row edit');
+const _delete = TestKey('row delete');
+const _duplicate = TestKey('row duplicate');
+const _activate = TestKey('row activate');
+const _deactivate = TestKey('row deactivate');
+const _confirmTitle = TestKey('confirm title');
+const _confirmMessage = TestKey('confirm message');
+
+const _fullLabels = CrudLabels(
+  edit: _edit,
+  delete: _delete,
+  duplicate: _duplicate,
+  activate: _activate,
+  deactivate: _deactivate,
+  deleteConfirmationTitle: _confirmTitle,
+  deleteConfirmationMessage: _confirmMessage,
+  deactivateConfirmationTitle: _confirmTitle,
+  deactivateConfirmationMessage: _confirmMessage,
+);
+const _noStatusLabels = CrudLabels(
+  edit: _edit,
+  delete: _delete,
+  duplicate: _duplicate,
+  deleteConfirmationTitle: _confirmTitle,
+  deleteConfirmationMessage: _confirmMessage,
+);
+const _editOnlyLabels = CrudLabels(edit: _edit);
 
 class _Query implements PagedQuery<_Query> {
   const _Query({this.search = ''});
@@ -50,12 +79,30 @@ class _Row {
   final String id;
 }
 
+CrudFlowsConfig<_Row, Object> _flows(
+  CrudLabels labels, {
+  bool withStatus = true,
+  bool withDelete = true,
+}) => CrudFlowsConfig<_Row, Object>(
+  showEditor: (_, {item, duplicate = false}) async => false,
+  onSaved: (_, {required isNew}) async {},
+  itemLabel: (row) => row.id,
+  labels: labels,
+  delete: withDelete ? (_, _) async => const Right(unit) : null,
+  activate: withStatus ? (_, _) async => const Right(unit) : null,
+  deactivate: withStatus ? (_, _) async => const Right(unit) : null,
+  isActive: withStatus ? (_) => true : null,
+);
+
 CrudDataSection<_Row, _Query, Object> _section({
   AppViewMode? mode = AppViewMode.table,
   List<_Row> rows = const [_Row('one')],
   _Query query = const _Query(),
   Set<Object> busyIds = const {},
   List<AppRowAction> Function(BuildContext context, _Row row)? extraRowActions,
+  CrudLabels labels = _fullLabels,
+  bool withStatus = true,
+  CrudFlowsConfig<_Row, Object>? flows,
 }) {
   final data = CrudDataContext<_Row, _Query, Object>(
     mode: mode,
@@ -82,6 +129,7 @@ CrudDataSection<_Row, _Query, Object> _section({
     cubit: Object(),
     rowId: (row) => row.id,
     itemLabel: (row) => row.id,
+    flows: flows,
   );
   return CrudDataSection<_Row, _Query, Object>(
     data: data,
@@ -91,14 +139,15 @@ CrudDataSection<_Row, _Query, Object> _section({
         cellBuilder: (_, row) => Text(row.id),
       ),
     ],
-    statusColumn: CrudStatusColumnConfig<_Row>(
-      labelKey: _label,
-      isActive: (_) => true,
-      badgeBuilder: (_, _) => const Text('active'),
-      activateLabelKey: _label,
-      deactivateLabelKey: _label,
-      sortKey: 'status',
-    ),
+    labels: labels,
+    statusColumn: withStatus
+        ? CrudStatusColumnConfig<_Row>(
+            labelKey: _label,
+            isActive: (_) => true,
+            badgeBuilder: (_, _) => const Text('active'),
+            sortKey: 'status',
+          )
+        : null,
     cardBuilder: (_, row) => Text('card ${row.id}'),
     gridBuilder: (_, row) => Text('grid ${row.id}'),
     icon: AppIcons.brands,
@@ -106,9 +155,6 @@ CrudDataSection<_Row, _Query, Object> _section({
     emptyDescriptionKey: _emptyDescription,
     noResultsTitleKey: _noResults,
     noResultsDescriptionKey: _noResultsDescription,
-    editLabelKey: _label,
-    deleteLabelKey: _label,
-    duplicateLabelKey: _label,
     extraRowActions: extraRowActions == null
         ? null
         : (context, row) => extraRowActions(context, row),
@@ -195,7 +241,7 @@ void main() {
     );
     expect(
       rowActions.primary.map((action) => action.labelKey),
-      contains(_label),
+      contains(_edit),
     );
     expect(
       rowActions.overflow.map((action) => action.labelKey),
@@ -203,8 +249,67 @@ void main() {
     );
     expect(
       rowActions.overflow.map((action) => action.labelKey),
-      contains(_label),
+      contains(_delete),
     );
+  });
+
+  testWidgets('a status entity offers activation, duplicate and delete', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(_section(flows: _flows(_fullLabels), busyIds: const {})),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.byType(AppSwitch), findsOneWidget);
+    final rowActions = tester.widget<AppRowActions>(
+      find.byType(AppRowActions).first,
+    );
+    expect(rowActions.overflow.map((action) => action.labelKey), [
+      _deactivate,
+      _duplicate,
+      _delete,
+    ]);
+  });
+
+  testWidgets('an entity without status has no status column or action', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        _section(
+          labels: _noStatusLabels,
+          withStatus: false,
+          flows: _flows(_noStatusLabels, withStatus: false),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(AppSwitch), findsNothing);
+    final rowActions = tester.widget<AppRowActions>(
+      find.byType(AppRowActions).first,
+    );
+    expect(rowActions.overflow.map((action) => action.labelKey), [
+      _duplicate,
+      _delete,
+    ]);
+  });
+
+  testWidgets('duplicate and delete are optional, edit stays', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        _section(
+          labels: _editOnlyLabels,
+          withStatus: false,
+          flows: _flows(_editOnlyLabels, withStatus: false, withDelete: false),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final rowActions = tester.widget<AppRowActions>(
+      find.byType(AppRowActions).first,
+    );
+    expect(rowActions.primary.map((action) => action.labelKey), [_edit]);
+    expect(rowActions.overflow, isEmpty);
   });
 
   testWidgets('empty state distinguishes filters from a new list', (

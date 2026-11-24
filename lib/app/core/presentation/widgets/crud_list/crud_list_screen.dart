@@ -197,6 +197,9 @@ class _CrudListBody<
   ) {
     final bulk = config.bulk;
     if (bulk == null) return const [];
+    final activate = bulk.activate;
+    final deactivate = bulk.deactivate;
+    final delete = bulk.delete;
     return CrudBulkActions.statusAndDelete<T>(
       context: slot.context,
       permission: config.manageAccess,
@@ -209,9 +212,13 @@ class _CrudListBody<
       deactivateMessageKey: bulk.deactivateMessageKey,
       deleteTitleKey: bulk.deleteTitleKey,
       deleteMessageKey: bulk.deleteMessageKey,
-      onActivate: (items) => bulk.activate(slot.cubit, items),
-      onDeactivate: (items) => bulk.deactivate(slot.cubit, items),
-      onDelete: (items) => bulk.delete(slot.cubit, items),
+      onActivate: activate == null
+          ? null
+          : (items) => activate(slot.cubit, items),
+      onDeactivate: deactivate == null
+          ? null
+          : (items) => deactivate(slot.cubit, items),
+      onDelete: delete == null ? null : (items) => delete(slot.cubit, items),
     );
   }
 

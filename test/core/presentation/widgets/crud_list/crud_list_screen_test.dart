@@ -26,6 +26,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_message/fl
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
@@ -39,6 +40,18 @@ const _search = TestKey('crud search');
 const _add = TestKey('crud add');
 const _failureKey = TestKey('crud load failure');
 const _deletedKey = TestKey('crud deleted');
+
+const _labels = CrudLabels(
+  edit: _title,
+  delete: _title,
+  duplicate: _title,
+  activate: _title,
+  deactivate: _title,
+  deleteConfirmationTitle: _title,
+  deleteConfirmationMessage: _title,
+  deactivateConfirmationTitle: _title,
+  deactivateConfirmationMessage: _title,
+);
 
 enum _Effect { changed, ignored }
 
@@ -193,12 +206,11 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
             cellBuilder: (_, row) => Text(row),
           ),
         ],
+        labels: _labels,
         statusColumn: CrudStatusColumnConfig<String>(
           labelKey: _title,
           isActive: (_) => true,
           badgeBuilder: (_, _) => const Text('active'),
-          activateLabelKey: _title,
-          deactivateLabelKey: _title,
         ),
         cardBuilder: (_, row) => Text('card $row'),
         gridBuilder: (_, row) => Text('grid $row'),
@@ -207,9 +219,6 @@ CrudListConfig<String, _Query, _TestCubit, _Effect> _config({
         emptyDescriptionKey: _title,
         noResultsTitleKey: _title,
         noResultsDescriptionKey: _title,
-        editLabelKey: _title,
-        deleteLabelKey: _title,
-        duplicateLabelKey: _title,
       );
     }
     return AppDataView<String>(
@@ -313,15 +322,7 @@ CrudFlowsConfig<String, _TestCubit> _flows({
   delete: delete,
   activate: activate,
   deactivate: deactivate,
-  deleteTitleKey: _title,
-  deleteMessageKey: _title,
-  deactivateTitleKey: _title,
-  deactivateMessageKey: _title,
-  editLabelKey: _title,
-  deleteLabelKey: _title,
-  duplicateLabelKey: _title,
-  activateLabelKey: _title,
-  deactivateLabelKey: _title,
+  labels: _labels,
   isActive: isActive ?? (_) => false,
 );
 
@@ -475,15 +476,7 @@ void main() {
       delete: (current, item) => current.delete(item),
       activate: (_, _) async => const Right(unit),
       deactivate: (_, _) async => const Right(unit),
-      deleteTitleKey: _title,
-      deleteMessageKey: _title,
-      deactivateTitleKey: _title,
-      deactivateMessageKey: _title,
-      editLabelKey: _title,
-      deleteLabelKey: _title,
-      duplicateLabelKey: _title,
-      activateLabelKey: _title,
-      deactivateLabelKey: _title,
+      labels: _labels,
       isActive: (_) => false,
     );
     cubit = await _pump(
@@ -565,6 +558,35 @@ void main() {
     await actions.first.onRun();
     expect(activated, 1);
     expect(deactivated, 0);
+    expect(deleted, 0);
+  });
+
+  testWidgets('bulk config without status offers only delete', (tester) async {
+    var deleted = 0;
+    final bulk = CrudBulkConfig<String, _TestCubit>(
+      deleteLabelKey: _deletedKey,
+      deleteTitleKey: _title,
+      deleteMessageKey: _title,
+      delete: (_, selected) async {
+        deleted += selected.length;
+        return BulkResult<String>(
+          successCount: selected.length,
+          failures: const [],
+        );
+      },
+    );
+    final cubit = await _pump(
+      tester,
+      config: _config(createCubit: _TestCubit.new, bulk: bulk),
+    );
+    cubit.selection.replace({'alpha'});
+    cubit.setSelectionMode(true);
+    await tester.pumpAndSettle();
+    final actions = tester
+        .widget<BulkActionBar>(find.byType(BulkActionBar))
+        .actions;
+    expect(actions.map((action) => action.labelKey), [_deletedKey]);
+    expect(actions.single.destructive, isTrue);
     expect(deleted, 0);
   });
 

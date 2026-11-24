@@ -28,10 +28,15 @@ class CrudRowActions extends StatelessWidget {
 
   final Permission permission;
   final AppKey editLabelKey;
-  final VoidCallback onEdit;
-  final AppKey deleteLabelKey;
 
-  /// Null disables deletion but keeps its menu item visible.
+  /// Null disables the edit button (the list has no edit flow configured).
+  final VoidCallback? onEdit;
+
+  /// Null removes the Delete menu item: the entity cannot be deleted.
+  final AppKey? deleteLabelKey;
+
+  /// Null disables deletion but keeps its menu item visible (when
+  /// [deleteLabelKey] is set).
   final VoidCallback? onDelete;
   final AppKey? duplicateLabelKey;
   final VoidCallback? onDuplicate;
@@ -72,12 +77,13 @@ class CrudRowActions extends StatelessWidget {
             onPressed: onDuplicate,
           ),
         ...extraOverflow,
-        AppRowAction(
-          icon: AppIcons.delete,
-          labelKey: deleteLabelKey,
-          destructive: true,
-          onPressed: onDelete,
-        ),
+        if (deleteLabelKey case final deleteKey?)
+          AppRowAction(
+            icon: AppIcons.delete,
+            labelKey: deleteKey,
+            destructive: true,
+            onPressed: onDelete,
+          ),
       ],
     ),
   );

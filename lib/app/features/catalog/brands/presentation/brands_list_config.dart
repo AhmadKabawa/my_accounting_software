@@ -196,6 +196,5 @@ get brandsListConfig => CrudListConfig(
         emptyDescriptionKey: BrandsKeys.emptyDescription,
         noResultsTitleKey: BrandsKeys.noResults,
         noResultsDescriptionKey: BrandsKeys.noResultsDescription,
-        canDelete: (brand) => brand.canDelete,
       ),
 );

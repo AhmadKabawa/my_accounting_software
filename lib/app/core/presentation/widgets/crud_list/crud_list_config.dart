@@ -13,7 +13,9 @@ import 'package:accounting_software/app/core/presentation/widgets/app_bulk_actio
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 
-/// Shared capabilities with conservative defaults; features opt into count.
+/// Switches shared by every CRUD list. A new capability defaults to false/null
+/// so existing screens keep their behavior; [showCount] is the one documented
+/// exception: the record count is on by default (set it false to hide it).
 class CrudCapabilities {
   const CrudCapabilities({
     this.showCount = true,
@@ -129,10 +131,22 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
   final bool canDuplicate;
 }
 
-/// Shared CRUD adapter: identity, sorting, filtering and data projection are
-/// required; flows handle row operations, bulk handles standard mutations,
-/// and extra* slots are reserved for feature-specific additions.
 /// Complete feature configuration for the reusable CRUD list frame.
+///
+/// Which field serves which purpose:
+/// * Required adapters: identity ([screenId], titles, [manageAccess]),
+///   [sort], [filterControls]/[activeFilters] and [dataSection].
+/// * [flows]: row operations (add, edit, duplicate, delete, status) and their
+///   confirmations. [bulk]: the standard bulk activate/deactivate/delete.
+///   Each operation is optional (an entity without `is_active` leaves status
+///   out of both). [onAdd] is only for a list without [flows].
+/// * [capabilities]: switches shared by every list (count, duplicate, bulk
+///   selection).
+/// * [providersWrapper], [statsBuilder], [onMutated]/[isMutationEffect]:
+///   feature-owned providers, statistics and their refresh.
+/// * [headerExtras], [extraToolbarActions], [extraFilterControls],
+///   [extraBulkActions], [emptyStateBuilder]: additions for one screen only;
+///   never use them to re-implement what [flows] or [bulk] already do.
 class CrudListConfig<
   T,
   Q extends PagedQuery<Q>,
