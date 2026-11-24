@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 
 /// Feature-owned record operations supplied to the shared CRUD list engine.
 ///
@@ -10,29 +11,38 @@ class CrudActionsConfig<T> {
     this.onDuplicate,
     this.onDelete,
     this.onToggleStatus,
+    this.extraRowActions,
   });
 
-  final ValueChanged<T>? onEdit;
-  final ValueChanged<T>? onDuplicate;
-  final ValueChanged<T>? onDelete;
-  final ValueChanged<T>? onToggleStatus;
+  final void Function(BuildContext context, T item)? onEdit;
+  final void Function(BuildContext context, T item)? onDuplicate;
+  final void Function(BuildContext context, T item)? onDelete;
+  final void Function(BuildContext context, T item)? onToggleStatus;
+  final List<AppRowAction> Function(BuildContext context, T item)? extraRowActions;
+
+  CrudActionsConfig<T> withoutDuplicate() => CrudActionsConfig<T>(
+    onEdit: onEdit,
+    onDelete: onDelete,
+    onToggleStatus: onToggleStatus,
+    extraRowActions: extraRowActions,
+  );
 }
 
 /// Typed dispatch helpers shared by feature-owned row presentations.
 abstract final class CrudListActions {
-  static void edit<T>(CrudActionsConfig<T> config, T item) {
-    config.onEdit?.call(item);
+  static void edit<T>(BuildContext context, CrudActionsConfig<T> config, T item) {
+    config.onEdit?.call(context, item);
   }
 
-  static void duplicate<T>(CrudActionsConfig<T> config, T item) {
-    config.onDuplicate?.call(item);
+  static void duplicate<T>(BuildContext context, CrudActionsConfig<T> config, T item) {
+    config.onDuplicate?.call(context, item);
   }
 
-  static void delete<T>(CrudActionsConfig<T> config, T item) {
-    config.onDelete?.call(item);
+  static void delete<T>(BuildContext context, CrudActionsConfig<T> config, T item) {
+    config.onDelete?.call(context, item);
   }
 
-  static void toggleStatus<T>(CrudActionsConfig<T> config, T item) {
-    config.onToggleStatus?.call(item);
+  static void toggleStatus<T>(BuildContext context, CrudActionsConfig<T> config, T item) {
+    config.onToggleStatus?.call(context, item);
   }
 }

@@ -164,7 +164,7 @@ class CrudListConfig<
   final Permission manageAccess;
   final AppKey searchHintKey;
   final AppKey addLabelKey;
-  final VoidCallback onAdd;
+  final void Function(BuildContext context) onAdd;
   final C Function() createCubit;
   final Object Function(T row) rowId;
   final String Function(T row) itemLabel;
