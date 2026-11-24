@@ -14,6 +14,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_page_templ
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/list_toolbar_config.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/crud_bulk_actions.dart';
 
 /// Core-owned CRUD list composition. Feature widgets remain responsible for
 /// rendering their rows and for all feature-specific business operations.
@@ -153,7 +154,7 @@ class _CrudListBody<
                 state.selectionMode && config.capabilities.bulkSelection,
             onSelectionModeExit: () => cubit.setSelectionMode(false),
             actionsBuilder: (selected) => [
-              ...?config.bulkActions?.call(slot, selected),
+              ..._bulkActions(slot, selected),
               ...?config.extraBulkActions?.call(slot, selected),
             ],
             builder: (context, selectedIds, onSelectionChanged) =>
@@ -186,6 +187,33 @@ class _CrudListBody<
       },
     ),
   );
+
+
+  List<BulkAction> _bulkActions(
+    CrudSlotContext<T, Q, C> slot,
+    List<T> selected,
+  ) {
+    final custom = config.bulkActions;
+    if (custom != null) return custom(slot, selected);
+    final bulk = config.bulk;
+    if (bulk == null) return const [];
+    return CrudBulkActions.statusAndDelete<T>(
+      context: slot.context,
+      permission: config.manageAccess,
+      selected: selected,
+      itemLabel: config.itemLabel,
+      activateLabelKey: bulk.activateLabelKey,
+      deactivateLabelKey: bulk.deactivateLabelKey,
+      deleteLabelKey: bulk.deleteLabelKey,
+      deactivateTitleKey: bulk.deactivateTitleKey,
+      deactivateMessageKey: bulk.deactivateMessageKey,
+      deleteTitleKey: bulk.deleteTitleKey,
+      deleteMessageKey: bulk.deleteMessageKey,
+      onActivate: (items) => bulk.activate(slot.cubit, items),
+      onDeactivate: (items) => bulk.deactivate(slot.cubit, items),
+      onDelete: (items) => bulk.delete(slot.cubit, items),
+    );
+  }
 
   Widget? _headerWidgets(CrudSlotContext<T, Q, C> slot) {
     final stats = config.statsBuilder?.call(slot);

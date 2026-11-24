@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_table
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_actions_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 
 /// Shared capabilities with conservative defaults; features opt into count.
 class CrudCapabilities {
@@ -159,6 +160,7 @@ class CrudListConfig<
     this.actions = const CrudActionsConfig(),
     this.flows,
     this.bulkActions,
+    this.bulk,
   });
 
   final String screenId;
@@ -203,4 +205,5 @@ class CrudListConfig<
     List<T> selected,
   )?
   bulkActions;
+  final CrudBulkConfig<T, C>? bulk;
 }
