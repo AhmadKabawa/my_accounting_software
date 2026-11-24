@@ -115,8 +115,8 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
 
   void _onStateChanged(BuildContext context, ImageUploadState state) {
     if (state case ImageUploadUploaded(:final url)) {
-      if (mounted) setState(() => _displayedValue = url);
       widget.onChanged(url);
+      if (mounted) setState(() => _displayedValue = url);
     }
     final busy = state.isBusy;
     if (busy != _wasBusy) {

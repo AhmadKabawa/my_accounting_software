@@ -172,6 +172,21 @@ void main() {
     expect(busy, [true, false]);
   });
 
+
+  testWidgets('successful upload switches to replace and remove actions', (
+    tester,
+  ) async {
+    String? changed;
+    await _pump(tester, _field(onChanged: (value) => changed = value));
+    await tester.tap(_button(tester, 'test.image.upload'));
+    await tester.pumpAndSettle();
+
+    expect(changed, 'https://cdn.test/logo.png');
+    expect(_button(tester, 'test.image.replace'), findsOneWidget);
+    expect(_button(tester, 'test.image.remove'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('upload failure is shown in the inline banner', (tester) async {
     await _pump(tester, _field(uploader: (_) async => const Left(_Failure())));
     await tester.tap(_button(tester, 'test.image.upload'));

@@ -420,8 +420,10 @@ void main() {
         return Right(brand);
       };
     await _pumpEditor(tester, repository, brand: brand);
+    await tester.ensureVisible(find.byType(Switch));
     await tester.tap(find.byType(Switch));
     await tester.pump();
+    await tester.ensureVisible(find.text(BrandsKeys.save.en));
     await tester.tap(find.text(BrandsKeys.save.en));
     await tester.pumpAndSettle();
     expect(savedDraft?.isActive, isFalse);
@@ -575,6 +577,7 @@ void main() {
       await _pumpEditor(tester, repository, brand: FakeBrandsRepository.brand);
       expect(find.byType(AppSwitch), findsOneWidget);
       expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isTrue);
+      await tester.ensureVisible(find.byType(Switch));
       await tester.tap(find.byType(Switch));
       await tester.pump();
       expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isFalse);
