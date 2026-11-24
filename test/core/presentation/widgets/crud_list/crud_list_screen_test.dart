@@ -437,7 +437,6 @@ void main() {
     );
   });
 
-
   testWidgets('bulk config builds standard actions and dispatches to Cubit', (
     tester,
   ) async {
@@ -481,9 +480,9 @@ void main() {
     cubit.selection.replace({'alpha'});
     cubit.setSelectionMode(true);
     await tester.pumpAndSettle();
-    final actions = tester.widget<BulkActionBar>(
-      find.byType(BulkActionBar),
-    ).actions;
+    final actions = tester
+        .widget<BulkActionBar>(find.byType(BulkActionBar))
+        .actions;
     expect(actions, hasLength(3));
     await actions.first.onRun();
     expect(activated, 1);
