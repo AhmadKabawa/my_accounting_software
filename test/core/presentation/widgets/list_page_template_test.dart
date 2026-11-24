@@ -403,7 +403,10 @@ void main() {
 
       await pump(tester, config);
 
-      expect(tester.widget<FilterBar>(find.byType(FilterBar)).searchSuffix, isNull);
+      expect(
+        tester.widget<FilterBar>(find.byType(FilterBar)).searchSuffix,
+        isNull,
+      );
       expect(find.byTooltip('Refresh data'), findsNothing);
       expect(find.byType(ViewModeSwitcher), findsNothing);
     });
@@ -428,7 +431,9 @@ void main() {
       );
 
       expect(find.text('EXTRA TOOLBAR ACTION'), findsOneWidget);
-      final suffix = tester.widget<FilterBar>(find.byType(FilterBar)).searchSuffix;
+      final suffix = tester
+          .widget<FilterBar>(find.byType(FilterBar))
+          .searchSuffix;
       expect(suffix, isA<Row>());
       final children = (suffix! as Row).children;
       expect(children, hasLength(2));
