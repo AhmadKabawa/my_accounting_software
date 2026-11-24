@@ -1127,13 +1127,14 @@ void main() {
     testWidgets(
       'opens on a 280px phone at 1.5x text without overflow',
       (tester) async {
-      await pumpMulti(tester, size: const Size(280, 700), textScale: 1.5);
-      await tester.tap(find.text('Sort by'));
-      await tester.pumpAndSettle();
+        await pumpMulti(tester, size: const Size(280, 700), textScale: 1.5);
+        await tester.tap(find.text('Sort by'));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(BottomSheet), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.byType(BottomSheet), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    ););
   });
 
   testWidgets(
