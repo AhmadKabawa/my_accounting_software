@@ -22,10 +22,7 @@ class ColorCard extends StatelessWidget {
         context.ui.spacing.gap(AppSpacing.xs),
         Directionality(
           textDirection: TextDirection.ltr,
-          child: AppText.raw(
-            color.hexCode ?? '',
-            type: AppTextType.bodySmall,
-          ),
+          child: AppText.raw(color.hexCode ?? '', type: AppTextType.bodySmall),
         ),
       ],
       context.ui.spacing.gap(AppSpacing.sm),

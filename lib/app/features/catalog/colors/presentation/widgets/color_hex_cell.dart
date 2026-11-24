@@ -27,9 +27,8 @@ class ColorHexCell extends StatelessWidget {
               AppIcons.copy,
               tooltipKey: ColorsKeys.copyHex,
               size: AppButtonSize.small,
-              onPressed: () => Clipboard.setData(
-                ClipboardData(text: color.hexCode ?? ''),
-              ),
+              onPressed: () =>
+                  Clipboard.setData(ClipboardData(text: color.hexCode ?? '')),
             ),
           ],
         );
