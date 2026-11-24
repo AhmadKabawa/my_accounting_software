@@ -19,9 +19,7 @@ Future<bool?> showBrandEditor(
   return showAppFormDialog<bool>(
     context,
     (_) => MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => sl<BrandFormCubit>()),
-      ],
+      providers: [BlocProvider(create: (_) => sl<BrandFormCubit>())],
       child: BrandEditorDialog(
         brand: duplicate ? null : brand,
         seed: seed,

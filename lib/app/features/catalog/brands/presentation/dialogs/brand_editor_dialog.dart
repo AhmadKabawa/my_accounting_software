@@ -159,11 +159,9 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
           onNameChanged: (value) => _onNameChanged(value, scope),
           onSlugChanged: (_) => _onSlugChanged(scope),
           showSlugHint:
-              _name.text.trim().isNotEmpty &&
-              brandSlugFrom(_name.text).isEmpty,
+              _name.text.trim().isNotEmpty && brandSlugFrom(_name.text).isEmpty,
           nameAutofocus: widget.duplicate,
-          onRegenerateSlug:
-              _slugTouched && brandSlugFrom(_name.text).isNotEmpty
+          onRegenerateSlug: _slugTouched && brandSlugFrom(_name.text).isNotEmpty
               ? () => _regenerateSlug(scope)
               : null,
           active: _active,
