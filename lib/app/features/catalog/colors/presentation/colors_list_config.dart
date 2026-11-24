@@ -253,4 +253,3 @@ get colorsListConfig => CrudListConfig(
         duplicateLabelKey: ColorsKeys.duplicate,
       ),
 );
-
