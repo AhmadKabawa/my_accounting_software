@@ -44,64 +44,174 @@ get brandsListConfig => CrudListConfig(
   itemLabel: (brand) => brand.name,
   sort: CrudSortConfig<BrandListQuery, BrandsListCubit>(
     options: BrandsFilterBar.sortOptions,
-    current: (query) => [for (final item in query.sorts) FilterBarSort(item.field.name, item.ascending)],
+    current: (query) => [
+      for (final item in query.sorts)
+        FilterBarSort(item.field.name, item.ascending),
+    ],
     tableKey: (query) => query.sortField.name,
     tableAscending: (query) => query.sortAscending,
-    apply: (cubit, sorts) => cubit.setSorts(mapFilterBarSorts<BrandSortField, BrandSort>(sorts, parse: BrandSortField.tryParse, build: (field, ascending) => BrandSort(field, ascending))),
-    applyTable: (cubit, sort) => cubit.setSort(field: BrandSortField.tryParse(sort.key), ascending: sort.ascending),
+    apply: (cubit, sorts) => cubit.setSorts(
+      mapFilterBarSorts<BrandSortField, BrandSort>(
+        sorts,
+        parse: BrandSortField.tryParse,
+        build: (field, ascending) => BrandSort(field, ascending),
+      ),
+    ),
+    applyTable: (cubit, sort) => cubit.setSort(
+      field: BrandSortField.tryParse(sort.key),
+      ascending: sort.ascending,
+    ),
   ),
-  filterControls: (slot) => BrandsFilterBar.controls(slot.context, slot.state.query, onStatusChanged: slot.cubit.setStatus),
-  activeFilters: (slot) => BrandsFilterBar.activeFilters(slot.context, slot.state.query, onSearchChanged: slot.cubit.searchChanged, onStatusChanged: slot.cubit.setStatus),
-  breadcrumb: (context) => AppBreadcrumb(items: [
-    AppBreadcrumbItem(label: NavKeys.catalog, onTap: () => context.go(CatalogRoutes.hub.path)),
-    const AppBreadcrumbItem(label: BrandsKeys.title),
-  ]),
+  filterControls: (slot) => BrandsFilterBar.controls(
+    slot.context,
+    slot.state.query,
+    onStatusChanged: slot.cubit.setStatus,
+  ),
+  activeFilters: (slot) => BrandsFilterBar.activeFilters(
+    slot.context,
+    slot.state.query,
+    onSearchChanged: slot.cubit.searchChanged,
+    onStatusChanged: slot.cubit.setStatus,
+  ),
+  breadcrumb: (context) => AppBreadcrumb(
+    items: [
+      AppBreadcrumbItem(
+        label: NavKeys.catalog,
+        onTap: () => context.go(CatalogRoutes.hub.path),
+      ),
+      const AppBreadcrumbItem(label: BrandsKeys.title),
+    ],
+  ),
   viewModes: const [AppViewMode.table, AppViewMode.cards, AppViewMode.grid],
-  capabilities: const CrudCapabilities(showCount: false, duplicate: true, bulkSelection: true),
-  providersWrapper: (child) => BlocProvider<BrandStatsCubit>(create: (_) => sl<BrandStatsCubit>()..load(), child: child),
+  capabilities: const CrudCapabilities(
+    showCount: false,
+    duplicate: true,
+    bulkSelection: true,
+  ),
+  providersWrapper: (child) => BlocProvider<BrandStatsCubit>(
+    create: (_) => sl<BrandStatsCubit>()..load(),
+    child: child,
+  ),
   isMutationEffect: (effect) => effect is BrandsMutatedEffect,
   onMutated: (context) => context.read<BrandStatsCubit>().refresh(),
   statsBuilder: (slot) => BlocBuilder<BrandStatsCubit, BrandStatsState>(
-    builder: (context, stats) => BrandStatsBar(stats.stats, selectedFilter: slot.state.query.status, loading: stats is BrandStatsLoading || stats is BrandStatsInitial, onFilterSelected: slot.cubit.setStatus),
+    builder: (context, stats) => BrandStatsBar(
+      stats.stats,
+      selectedFilter: slot.state.query.status,
+      loading: stats is BrandStatsLoading || stats is BrandStatsInitial,
+      onFilterSelected: slot.cubit.setStatus,
+    ),
   ),
   flows: CrudFlowsConfig<Brand, BrandsListCubit>(
-    showEditor: (context, {item, duplicate = false}) async { if (duplicate) { await BrandsListActions.duplicate(context, item!); } else { await BrandsListActions.edit(context, item); } return false; },
+    showEditor: (context, {item, duplicate = false}) async {
+      if (duplicate) {
+        await BrandsListActions.duplicate(context, item!);
+      } else {
+        await BrandsListActions.edit(context, item);
+      }
+      return false;
+    },
     onSaved: (cubit, {required isNew}) => cubit.onBrandSaved(isNew: isNew),
     itemLabel: (brand) => brand.name,
     delete: (cubit, brand) => cubit.delete(brand),
     activate: (cubit, brand) => cubit.activate(brand.id),
     deactivate: (cubit, brand) => cubit.deactivate(brand.id),
-    deleteTitleKey: BrandsKeys.delete, deleteMessageKey: BrandsKeys.confirmDelete,
-    deactivateTitleKey: BrandsKeys.deactivateTitle, deactivateMessageKey: BrandsKeys.deactivateMessage,
-    editLabelKey: BrandsKeys.edit, deleteLabelKey: BrandsKeys.delete, duplicateLabelKey: BrandsKeys.duplicate,
-    activateLabelKey: BrandsKeys.activate, deactivateLabelKey: BrandsKeys.deactivate,
-    isActive: (brand) => brand.isActive, canDelete: (brand) => brand.canDelete,
+    deleteTitleKey: BrandsKeys.delete,
+    deleteMessageKey: BrandsKeys.confirmDelete,
+    deactivateTitleKey: BrandsKeys.deactivateTitle,
+    deactivateMessageKey: BrandsKeys.deactivateMessage,
+    editLabelKey: BrandsKeys.edit,
+    deleteLabelKey: BrandsKeys.delete,
+    duplicateLabelKey: BrandsKeys.duplicate,
+    activateLabelKey: BrandsKeys.activate,
+    deactivateLabelKey: BrandsKeys.deactivate,
+    isActive: (brand) => brand.isActive,
+    canDelete: (brand) => brand.canDelete,
   ),
   bulk: CrudBulkConfig<Brand, BrandsListCubit>(
-    activateLabelKey: BrandsKeys.bulkActivate, deactivateLabelKey: BrandsKeys.bulkDeactivate, deleteLabelKey: BrandsKeys.bulkDelete,
-    deactivateTitleKey: BrandsKeys.bulkDeactivateTitle, deactivateMessageKey: BrandsKeys.bulkDeactivateMessage,
-    deleteTitleKey: BrandsKeys.bulkDeleteTitle, deleteMessageKey: BrandsKeys.bulkDeleteMessage,
-    activate: (cubit, items) => cubit.bulkActivate(items), deactivate: (cubit, items) => cubit.bulkDeactivate(items), delete: (cubit, items) => cubit.bulkDelete(items),
+    activateLabelKey: BrandsKeys.bulkActivate,
+    deactivateLabelKey: BrandsKeys.bulkDeactivate,
+    deleteLabelKey: BrandsKeys.bulkDelete,
+    deactivateTitleKey: BrandsKeys.bulkDeactivateTitle,
+    deactivateMessageKey: BrandsKeys.bulkDeactivateMessage,
+    deleteTitleKey: BrandsKeys.bulkDeleteTitle,
+    deleteMessageKey: BrandsKeys.bulkDeleteMessage,
+    activate: (cubit, items) => cubit.bulkActivate(items),
+    deactivate: (cubit, items) => cubit.bulkDeactivate(items),
+    delete: (cubit, items) => cubit.bulkDelete(items),
   ),
   actions: CrudActionsConfig<Brand>(
     onEdit: (context, brand) => BrandsListActions.edit(context, brand),
-    onDuplicate: (context, brand) => BrandsListActions.duplicate(context, brand),
+    onDuplicate: (context, brand) =>
+        BrandsListActions.duplicate(context, brand),
     onDelete: (context, brand) => BrandsListActions.delete(context, brand),
-    onToggleStatus: (context, brand) => BrandsListActions.toggleStatus(context, brand),
+    onToggleStatus: (context, brand) =>
+        BrandsListActions.toggleStatus(context, brand),
   ),
-  dataSection: (data) => CrudDataSection<Brand, BrandListQuery, BrandsListCubit>(
-    data: data,
-    columns: [
-      DataTableColumn(labelKey: BrandsKeys.brandName, sortKey: 'name', priority: DataTableColumnPriority.primary, flex: 3, cellBuilder: (_, brand) => BrandIdentity(brand)),
-      DataTableColumn(labelKey: BrandsKeys.description, priority: DataTableColumnPriority.secondary, flex: 2, cellBuilder: (context, brand) => AppText.raw(brand.description?.trim() ?? '', color: context.ui.theme.colors.onSurfaceVariant, maxLines: 2)),
-      DataTableColumn(labelKey: BrandsKeys.productCount, numeric: true, priority: DataTableColumnPriority.secondary, cellBuilder: (context, brand) => brand.productCount == null ? const AppText(CommonKeys.noValue) : AppText.raw(brand.productCount.toString(), color: context.ui.theme.colors.onSurface)),
-      DataTableColumn(labelKey: BrandsKeys.updatedAt, sortKey: 'updated', priority: DataTableColumnPriority.secondary, cellBuilder: (context, brand) => brand.updatedAt == null ? const AppText(CommonKeys.noValue) : AppText.raw(MaterialLocalizations.of(context).formatShortDate(brand.updatedAt!), color: context.ui.theme.colors.onSurfaceVariant)),
-    ],
-    statusColumn: CrudStatusColumnConfig<Brand>(labelKey: BrandsKeys.status, sortKey: 'status', isActive: (brand) => brand.isActive, badgeBuilder: (_, brand) => BrandStatusBadge(brand), activateLabelKey: BrandsKeys.activate, deactivateLabelKey: BrandsKeys.deactivate),
-    cardBuilder: (_, brand) => BrandCard(brand), gridBuilder: (_, brand) => BrandGridTile(brand),
-    icon: AppIcons.brands, emptyTitleKey: BrandsKeys.empty, emptyDescriptionKey: BrandsKeys.emptyDescription,
-    noResultsTitleKey: BrandsKeys.noResults, noResultsDescriptionKey: BrandsKeys.noResultsDescription,
-    editLabelKey: BrandsKeys.edit, deleteLabelKey: BrandsKeys.delete, duplicateLabelKey: BrandsKeys.duplicate,
-    canDelete: (brand) => brand.canDelete,
-  ),
+  dataSection: (data) =>
+      CrudDataSection<Brand, BrandListQuery, BrandsListCubit>(
+        data: data,
+        columns: [
+          DataTableColumn(
+            labelKey: BrandsKeys.brandName,
+            sortKey: 'name',
+            priority: DataTableColumnPriority.primary,
+            flex: 3,
+            cellBuilder: (_, brand) => BrandIdentity(brand),
+          ),
+          DataTableColumn(
+            labelKey: BrandsKeys.description,
+            priority: DataTableColumnPriority.secondary,
+            flex: 2,
+            cellBuilder: (context, brand) => AppText.raw(
+              brand.description?.trim() ?? '',
+              color: context.ui.theme.colors.onSurfaceVariant,
+              maxLines: 2,
+            ),
+          ),
+          DataTableColumn(
+            labelKey: BrandsKeys.productCount,
+            numeric: true,
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (context, brand) => brand.productCount == null
+                ? const AppText(CommonKeys.noValue)
+                : AppText.raw(
+                    brand.productCount.toString(),
+                    color: context.ui.theme.colors.onSurface,
+                  ),
+          ),
+          DataTableColumn(
+            labelKey: BrandsKeys.updatedAt,
+            sortKey: 'updated',
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (context, brand) => brand.updatedAt == null
+                ? const AppText(CommonKeys.noValue)
+                : AppText.raw(
+                    MaterialLocalizations.of(
+                      context,
+                    ).formatShortDate(brand.updatedAt!),
+                    color: context.ui.theme.colors.onSurfaceVariant,
+                  ),
+          ),
+        ],
+        statusColumn: CrudStatusColumnConfig<Brand>(
+          labelKey: BrandsKeys.status,
+          sortKey: 'status',
+          isActive: (brand) => brand.isActive,
+          badgeBuilder: (_, brand) => BrandStatusBadge(brand),
+          activateLabelKey: BrandsKeys.activate,
+          deactivateLabelKey: BrandsKeys.deactivate,
+        ),
+        cardBuilder: (_, brand) => BrandCard(brand),
+        gridBuilder: (_, brand) => BrandGridTile(brand),
+        icon: AppIcons.brands,
+        emptyTitleKey: BrandsKeys.empty,
+        emptyDescriptionKey: BrandsKeys.emptyDescription,
+        noResultsTitleKey: BrandsKeys.noResults,
+        noResultsDescriptionKey: BrandsKeys.noResultsDescription,
+        editLabelKey: BrandsKeys.edit,
+        deleteLabelKey: BrandsKeys.delete,
+        duplicateLabelKey: BrandsKeys.duplicate,
+        canDelete: (brand) => brand.canDelete,
+      ),
 );

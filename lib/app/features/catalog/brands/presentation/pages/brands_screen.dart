@@ -9,5 +9,6 @@ class BrandsScreen extends StatelessWidget {
   static const screenId = 'catalog.brands';
 
   @override
-  Widget build(BuildContext context) => CrudListScreen(config: brandsListConfig);
+  Widget build(BuildContext context) =>
+      CrudListScreen(config: brandsListConfig);
 }
