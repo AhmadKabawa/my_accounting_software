@@ -71,8 +71,10 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
   AppKey get editLabelKey => labels?.edit ?? _editLabelKey!;
   AppKey get deleteLabelKey => labels?.delete ?? _deleteLabelKey!;
   AppKey get duplicateLabelKey => labels?.duplicate ?? _duplicateLabelKey!;
-  AppKey get activateLabelKey => labels?.activate ?? statusColumn.activateLabelKey!;
-  AppKey get deactivateLabelKey => labels?.deactivate ?? statusColumn.deactivateLabelKey!;
+  AppKey get activateLabelKey =>
+      labels?.activate ?? statusColumn.activateLabelKey!;
+  AppKey get deactivateLabelKey =>
+      labels?.deactivate ?? statusColumn.deactivateLabelKey!;
   final bool Function(T row)? canDelete;
   final List<AppRowAction> Function(BuildContext context, T row)?
   extraRowActions;

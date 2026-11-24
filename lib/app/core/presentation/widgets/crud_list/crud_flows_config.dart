@@ -57,10 +57,14 @@ class CrudFlowsConfig<T, C> {
   final AppKey? _activateLabelKey;
   final AppKey? _deactivateLabelKey;
 
-  AppKey get deleteTitleKey => labels?.deleteConfirmationTitle ?? _deleteTitleKey!;
-  AppKey get deleteMessageKey => labels?.deleteConfirmationMessage ?? _deleteMessageKey!;
-  AppKey get deactivateTitleKey => labels?.deactivateConfirmationTitle ?? _deactivateTitleKey!;
-  AppKey get deactivateMessageKey => labels?.deactivateConfirmationMessage ?? _deactivateMessageKey!;
+  AppKey get deleteTitleKey =>
+      labels?.deleteConfirmationTitle ?? _deleteTitleKey!;
+  AppKey get deleteMessageKey =>
+      labels?.deleteConfirmationMessage ?? _deleteMessageKey!;
+  AppKey get deactivateTitleKey =>
+      labels?.deactivateConfirmationTitle ?? _deactivateTitleKey!;
+  AppKey get deactivateMessageKey =>
+      labels?.deactivateConfirmationMessage ?? _deactivateMessageKey!;
   AppKey get editLabelKey => labels?.edit ?? _editLabelKey!;
   AppKey get deleteLabelKey => labels?.delete ?? _deleteLabelKey!;
   AppKey get duplicateLabelKey => labels?.duplicate ?? _duplicateLabelKey!;
