@@ -28,11 +28,8 @@ class CrudFlowsConfig<T, C> {
     this.canDelete,
   });
 
-  final Future<bool?> Function(
-    BuildContext context, {
-    T? item,
-    bool duplicate,
-  }) showEditor;
+  final Future<bool?> Function(BuildContext context, {T? item, bool duplicate})
+  showEditor;
   final Future<void> Function(C cubit, {required bool isNew}) onSaved;
   final String Function(T item) itemLabel;
   final Future<Either<Failure, Unit>> Function(C cubit, T item) delete;
@@ -56,8 +53,7 @@ class CrudFlowsConfig<T, C> {
 
   CrudActionsConfig<T> buildActions() => CrudActionsConfig<T>(
     onEdit: (context, item) => edit(context, item: item),
-    onDuplicate: (context, item) =>
-        edit(context, item: item, duplicate: true),
+    onDuplicate: (context, item) => edit(context, item: item, duplicate: true),
     onDelete: deleteItem,
     onToggleStatus: toggleStatus,
   );
@@ -67,11 +63,7 @@ class CrudFlowsConfig<T, C> {
     T? item,
     bool duplicate = false,
   }) async {
-    final saved = await showEditor(
-      context,
-      item: item,
-      duplicate: duplicate,
-    );
+    final saved = await showEditor(context, item: item, duplicate: duplicate);
     if (saved != true || !context.mounted) return;
     await onSaved(context.read<C>(), isNew: item == null || duplicate);
   }
