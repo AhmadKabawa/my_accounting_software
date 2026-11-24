@@ -298,10 +298,7 @@ void main() {
   setUpAll(() => useTranslations(const Locale('en')));
   tearDown(() async => sl.reset());
 
-
-  testWidgets('shows loading until the first page is received', (
-    tester,
-  ) async {
+  testWidgets('shows loading until the first page is received', (tester) async {
     final page = Completer<Either<Failure, PagedResult<String>>>();
     late _TestCubit cubit;
     setScreenSize(tester, const Size(900, 760));

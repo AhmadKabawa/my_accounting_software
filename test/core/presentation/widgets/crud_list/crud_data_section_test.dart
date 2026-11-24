@@ -168,7 +168,6 @@ void main() {
     }
   });
 
-
   testWidgets('projects busy status and extra row overflow actions', (
     tester,
   ) async {
