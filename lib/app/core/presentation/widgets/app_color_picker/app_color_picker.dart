@@ -216,7 +216,7 @@ class _AppColorPickerState extends State<AppColorPicker> {
             height: pickerSize,
             child: Semantics(
               label: AppColorPickerKeys.sv.tr(context: context),
-              value: 'S ${ (100 * _sat).round()}%, V ${(100 * _val).round()}%',
+              value: 'S ${(100 * _sat).round()}%, V ${(100 * _val).round()}%',
               increasedValue:
                   'S ${((100 * (_sat + 0.05).clamp(0.0, 1.0)).round())}%, V ${(100 * _val).round()}%',
               decreasedValue:
