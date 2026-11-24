@@ -493,7 +493,10 @@ void main() {
               onClearAll: () {},
               sortOptions: const [
                 FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-                FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+                FilterBarSortOption(
+                  key: 'status',
+                  label: CatalogUiKeys.filters,
+                ),
               ],
               sorts: current,
               onSortsChanged: (next) => current = next,
@@ -939,9 +942,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('move up is in the field menu and keeps the desktop sort panel open', (
-    tester,
-  ) async {
+  testWidgets(
+    'move up is in the field menu and keeps the desktop sort panel open',
+    (tester) async {
     tester.view.physicalSize = const Size(1280, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -1119,7 +1122,10 @@ void main() {
               child: SortPanel(
                 options: const [
                   FilterBarSortOption(key: 'name', label: CatalogUiKeys.search),
-                  FilterBarSortOption(key: 'status', label: CatalogUiKeys.filters),
+                  FilterBarSortOption(
+                    key: 'status',
+                    label: CatalogUiKeys.filters,
+                  ),
                 ],
                 sorts: const [
                   FilterBarSort('name', true),
@@ -1145,9 +1151,9 @@ void main() {
     },
   );
 
-  testWidgets('three sort criteria fit the desktop panel without exceptions', (
-    tester,
-  ) async {
+  testWidgets(
+    'three sort criteria fit the desktop panel without exceptions',
+    (tester) async {
     tester.view.physicalSize = const Size(1280, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
