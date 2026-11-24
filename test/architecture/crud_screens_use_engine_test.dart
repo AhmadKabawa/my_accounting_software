@@ -9,16 +9,15 @@ final _crudListScreen = RegExp(r'\bCrudListScreen(?:<[^>]+>)?\s*\(');
 
 Map<String, String> _readFeaturePages() => {
   for (final file
-      in Directory('lib/app/features')
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((file) {
-            final path = file.path.replaceAll('\\', '/');
-            return path.contains('/pages/') &&
-                path.endsWith('.dart') &&
-                !path.endsWith('.freezed.dart') &&
-                !path.endsWith('.g.dart');
-          }))
+      in Directory(
+        'lib/app/features',
+      ).listSync(recursive: true).whereType<File>().where((file) {
+        final path = file.path.replaceAll('\\', '/');
+        return path.contains('/pages/') &&
+            path.endsWith('.dart') &&
+            !path.endsWith('.freezed.dart') &&
+            !path.endsWith('.g.dart');
+      }))
     file.path.replaceAll('\\', '/'): file.readAsStringSync(),
 };
 
@@ -46,20 +45,23 @@ void main() {
       isEmpty,
       reason:
           'شاشة CRUD جديدة تُبنى بـ CrudListScreen؛ انظر '
-          'docs/ui/new_crud_feature_recipe.md.\n' +
+              'docs/ui/new_crud_feature_recipe.md.\n' +
           violations.join('\n'),
     );
   });
 
-  test('the gate rejects direct ListPageTemplate construction (self-check)', () {
-    expect(
-      crudScreenEngineViolations({
-        'lib/app/features/demo/presentation/pages/demo_screen.dart':
-            'return ListPageTemplate(titleKey: DemoKeys.title);',
-      }),
-      {'lib/app/features/demo/presentation/pages/demo_screen.dart'},
-    );
-  });
+  test(
+    'the gate rejects direct ListPageTemplate construction (self-check)',
+    () {
+      expect(
+        crudScreenEngineViolations({
+          'lib/app/features/demo/presentation/pages/demo_screen.dart':
+              'return ListPageTemplate(titleKey: DemoKeys.title);',
+        }),
+        {'lib/app/features/demo/presentation/pages/demo_screen.dart'},
+      );
+    },
+  );
 
   test('the gate accepts a page delegated to CrudListScreen (self-check)', () {
     expect(
