@@ -176,3 +176,8 @@ Add a new slot when at least two CRUD screens need the same *kind* of extension 
 Use a dedicated feature widget instead when the addition changes the internal structure or visual semantics of one section (for example, a unique multi-part identity card or stats layout). Pass that widget through the existing builder slot rather than teaching Core the feature's structure.
 
 Use `dataSection` instead of `CrudDataSection` only when the screen's data presentation genuinely differs from the standard table/cards/grid + status + row-actions composition. If the standard composition fits, prefer `CrudDataSection` and provide columns, status policy, card/grid renderers and optional `canDelete`/extra row actions. Do not fork the shared section just to change a cell or card's appearance.
+
+
+## Architecture gate for CRUD screens
+
+`test/architecture/crud_screens_use_engine_test.dart` scans every Dart file under `lib/app/features/**/pages/`. A page that directly constructs `ListPageTemplate(` must also delegate through `CrudListScreen(` or appear in the explicit legacy exception set in that test. The exception set is intentionally empty for the current migration. The test has self-checks proving that direct `ListPageTemplate` construction is rejected and a `CrudListScreen` page is accepted. The full `flutter test` CI job runs this gate; do not move, rename or delete protected tests to bypass it.
