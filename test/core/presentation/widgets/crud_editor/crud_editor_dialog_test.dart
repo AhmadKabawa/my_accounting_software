@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
@@ -15,7 +16,7 @@ const _duplicate = TestKey('test.crudEditor.duplicate');
 const _subtitle = TestKey('test.crudEditor.subtitle');
 const _save = TestKey('test.crudEditor.save');
 const _cancel = TestKey('test.crudEditor.cancel');
-const _failure = TestKey('test.crudEditor.failure');
+const _failure = CommonKeys.unknownError;
 
 enum _Status { idle, saving }
 
@@ -153,7 +154,7 @@ void main() {
     final fields = _fields();
     await _open(tester, cubit: cubit, fields: fields);
     cubit.fail();
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(find.text(_failure.en), findsOneWidget);
     expect(find.byType(AppFormDialog), findsOneWidget);
     fields.dispose();
@@ -184,8 +185,10 @@ void main() {
     final fields = _fields();
     await _open(tester, cubit: cubit, fields: fields);
     cubit.setBusy();
-    await tester.pump();
-    expect(tester.widget<AppButton>(_action(_save)).onPressed, isNull);
+    await tester.pumpAndSettle();
+    final busySave = tester.widget<AppButton>(_action(_save));
+    expect(busySave.isLoading, isTrue);
+    expect(busySave.onPressed, isNull);
     fields.dispose();
     await cubit.close();
 
@@ -197,7 +200,9 @@ void main() {
       fields: secondFields,
       extraBusy: true,
     );
-    expect(tester.widget<AppButton>(_action(_save)).onPressed, isNull);
+    final extraBusySave = tester.widget<AppButton>(_action(_save));
+    expect(extraBusySave.isLoading, isTrue);
+    expect(extraBusySave.onPressed, isNull);
     secondFields.dispose();
     await secondCubit.close();
   });
