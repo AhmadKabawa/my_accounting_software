@@ -9,14 +9,85 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: flutter-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  quality:
-    name: Analyze and Test
+  format:
+    name: Auto-format Dart
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      formatted_sha: ${{ steps.result.outputs.commit_sha || steps.pull_request_result.outputs.commit_sha }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.1'
+          cache: true
+
+      - name: Auto-format and commit on push
+        id: result
+        if: ${{ github.event_name == 'push' }}
+        timeout-minutes: 10
+        run: |
+          dart format .
+
+          if git diff --quiet -- '*.dart'; then
+            echo "No Dart formatting changes."
+            echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- '*.dart'
+
+          if git diff --cached --quiet; then
+            echo "No staged Dart formatting changes."
+            echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git commit -m "[skip ci] chore: auto-format Dart sources"
+          git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Verify automatic formatting
+        if: ${{ github.event_name == 'push' }}
+        timeout-minutes: 5
+        run: dart format --set-exit-if-changed .
+
+      - name: Check formatting on pull requests
+        if: ${{ github.event_name == 'pull_request' }}
+        timeout-minutes: 5
+        run: dart format --set-exit-if-changed .
+
+      - name: Export pull request revision
+        id: pull_request_result
+        if: ${{ github.event_name == 'pull_request' }}
+        run: echo "commit_sha=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+  quality:
+    name: Analyze and Test
+    needs: format
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout formatted revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.format.outputs.formatted_sha }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -28,26 +99,18 @@ jobs:
         run: flutter --version
 
       - name: Get dependencies
-        id: dependencies
         timeout-minutes: 5
         run: flutter pub get
 
-      - name: Check formatting
-        timeout-minutes: 5
-        run: dart format --set-exit-if-changed .
-
       - name: Analyze
-        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         timeout-minutes: 10
         run: flutter analyze --no-fatal-infos
 
       - name: Run tests
-        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         timeout-minutes: 20
         run: flutter test
 
       - name: Run catalog UI widget tests
-        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         timeout-minutes: 10
         run: >-
           flutter test

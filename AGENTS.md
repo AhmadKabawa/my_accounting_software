@@ -51,7 +51,7 @@
 
 ## 7. الحالة والتنقل ودورة الحياة
 
-- التزم بـ Cubit/Bloc المعتمد، واجعل كل Cubit مسؤولاً عن نطاق محدد. Cubit افتراضي وحالاته `sealed` + `Equatable` بلا freezed؛ Bloc فقط عند الحاجة لتحكم تزامن (انظر [ADR-0002](docs/architecture/ADR/0002-state-modeling-and-bloc-vs-cubit.md) و"متى أستخدم ماذا" في [FEATURE_TEMPLATE.md](docs/architecture/FEATURE_TEMPLATE.md)).
+- التزم بـ Cubit/Bloc المعتمد، واجعل كل Cubit مسؤولاً عن نطاق محدد. Cubit افتراضي وحالاته `sealed` + `Equatable` بلا freezed؛ Bloc فقط عند الحاجة لتحكم تزامن (انظر [ADR-0002](docs/architecture/ADR/0002-state-modeling-and-bloc-vs-cubit.md) و"متى أستخدم ماذا" في `FEATURE_TEMPLATE.md`).
 - لا تنشئ نسخاً متعارضة من Cubit أو Repository عندما يجب مشاركة الحالة نفسها.
 - ضع بيانات الشاشة المستمرة في State والأفعال أحادية الاستخدام في Effects.
 - استخدم GoRouter ومسارات موحدة؛ لا تجعل Domain أو Data ينفذان التنقل.
@@ -63,7 +63,7 @@
 - أضف اختبارات لقواعد الأعمال والحسابات ومسارات الشبكة والأخطاء عند إضافة سلوك أو إصلاح عطل.
 - اختبر الحالات الطبيعية والحدية والفشل والإلغاء، لا مسار النجاح فقط.
 - اعزل الشبكة والخدمات الخارجية باستخدام mocks أو fakes في اختبارات الوحدات.
-- يُتحقق بـ CI في `flutter-ci.yml` بالأوامر: `pub get`, `dart format --set-exit-if-changed .`, `analyze --no-fatal-infos`, `test`.
+- يُنسّق CI ملفات Dart تلقائياً عند كل `push` إلى الفرع، وينشئ commit إصلاح على الفرع نفسه عند وجود تغييرات تنسيق. في `pull_request` يتحقق من التنسيق دون دفع تعديلات. بعد التنسيق، يشغّل CI `pub get` و`analyze --no-fatal-infos` و`test` والاختبارات المخصصة للـ UI.
 - اتبع [قاعدة توثيق نتائج الفحوصات في قواعد المعمارية §9](docs/architecture/ARCHITECTURE_RULES.md).
 
 ## 9. التعديل الآمن وسير العمل
@@ -81,7 +81,7 @@
 
 - [فهرس المعمارية](docs/architecture/README.md) نقطة البداية للوثائق الحالية.
 - [خريطة Core](docs/architecture/CORE_MAP.md) للاكتشاف؛ افحص المصدر قبل الاعتماد على API.
-- [تغطية اختبارات Core](docs/architecture/CORE_TEST_COVERAGE.md) لمعرفة الاختبارات والفجوات.
+- [تغطية اختبارات Core](docs/architecture/CORE_TEST_COVERAGE.md) لمعرفة الاختبارات والفجوات المعروفة.
 - [استخدام Core](docs/architecture/CORE_USAGE.md) للأمثلة.
 - [معايير التكويد](docs/architecture/CODING_STANDARDS.md) و[قائمة مراجعة الميزة](docs/architecture/FEATURE_CHECKLIST.md) للمراجعة العملية. تغطية الحقول وأثر التكامل إلزاميان وفق القسم الجديد في FEATURE_CHECKLIST.md.
 
