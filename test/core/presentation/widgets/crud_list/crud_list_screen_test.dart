@@ -21,7 +21,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_table
 import 'package:accounting_software/app/core/presentation/widgets/app_bulk_action_bar/bulk_action_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_data_view.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
@@ -642,7 +641,7 @@ void main() {
         savedCount++;
       },
       delete: (cubit, item) => cubit.delete(item),
-      activate: (_, _) async {},
+      activate: (_, _) async => const Right(unit),
       deactivate: (_, _) async => const Right(unit),
     );
     await _pumpFlowHost(tester, (context) {
@@ -759,7 +758,7 @@ void main() {
         savedCount++;
       },
       delete: (cubit, item) => cubit.delete(item),
-      activate: (_, _) async {},
+      activate: (_, _) async => const Right(unit),
       deactivate: (_, _) async => const Right(unit),
     );
     late Future<void> editFuture;
