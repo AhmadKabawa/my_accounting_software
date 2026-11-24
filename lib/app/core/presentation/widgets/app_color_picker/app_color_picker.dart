@@ -216,12 +216,11 @@ class _AppColorPickerState extends State<AppColorPicker> {
             height: pickerSize,
             child: Semantics(
               label: AppColorPickerKeys.sv.tr(context: context),
-              value:
-                  'S ' +
-                  (100 * _sat).round().toString() +
-                  '%, V ' +
-                  (100 * _val).round().toString() +
-                  '%',
+              value: 'S ${ (100 * _sat).round()}%, V ${(100 * _val).round()}%',
+              increasedValue:
+                  'S ${((100 * (_sat + 0.05).clamp(0.0, 1.0)).round())}%, V ${(100 * _val).round()}%',
+              decreasedValue:
+                  'S ${((100 * (_sat - 0.05).clamp(0.0, 1.0)).round())}%, V ${(100 * _val).round()}%',
               slider: true,
               onIncrease: () => _adjustSaturation(0.05, pickerSize),
               onDecrease: () => _adjustSaturation(-0.05, pickerSize),
@@ -244,7 +243,9 @@ class _AppColorPickerState extends State<AppColorPicker> {
             height: _hueHeight,
             child: Semantics(
               label: AppColorPickerKeys.hue.tr(context: context),
-              value: _hue.round().toString() + '°',
+              value: '${_hue.round()}°',
+              increasedValue: '${(_hue + 1).clamp(0.0, 360.0).round()}°',
+              decreasedValue: '${(_hue - 1).clamp(0.0, 360.0).round()}°',
               slider: true,
               onIncrease: () => _adjustHue(1),
               onDecrease: () => _adjustHue(-1),

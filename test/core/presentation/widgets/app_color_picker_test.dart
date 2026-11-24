@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_picker/app_color_picker.dart';
@@ -8,7 +7,9 @@ import '../../../helpers/localized_app.dart';
 
 Finder _pickerSurfaces() => find.descendant(
   of: find.byType(AppColorPicker),
-  matching: find.byType(RawGestureDetector),
+  matching: find.byWidgetPredicate(
+    (widget) => widget is RawGestureDetector && widget.child is CustomPaint,
+  ),
 );
 
 void main() {
@@ -307,9 +308,9 @@ void main() {
     );
     expect(sliders, findsNWidgets(2));
     for (var index = 0; index < 2; index++) {
-      final semantics = t.getSemantics(sliders.at(index)).getSemanticsData();
-      expect(semantics.hasAction(SemanticsAction.increase), isTrue);
-      expect(semantics.hasAction(SemanticsAction.decrease), isTrue);
+      final properties = t.widget<Semantics>(sliders.at(index)).properties;
+      expect(properties.onIncrease, isNotNull);
+      expect(properties.onDecrease, isNotNull);
     }
   });
 
