@@ -9,7 +9,6 @@ import 'package:accounting_software/app/core/access/models/access_snapshot.dart'
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_template/app_page_templates.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
@@ -52,14 +51,10 @@ class _AccessRepository implements AccessRepository {
 }
 
 Future<void> _chooseMode(WidgetTester tester, AppViewMode mode) async {
-  await tester.tap(find.byTooltip(CatalogUiKeys.viewMode.en));
-  await tester.pumpAndSettle();
-  final key = switch (mode) {
-    AppViewMode.table => CatalogUiKeys.viewTable,
-    AppViewMode.cards => CatalogUiKeys.viewCards,
-    AppViewMode.grid => CatalogUiKeys.viewGrid,
-  };
-  await tester.tap(find.text(key.en));
+  final cubit = BlocProvider.of<ViewModeCubit>(
+    tester.element(find.byType(ListPageTemplate)),
+  );
+  await cubit.select(mode);
   await tester.pumpAndSettle();
 }
 
