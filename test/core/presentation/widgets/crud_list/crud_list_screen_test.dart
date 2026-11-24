@@ -25,9 +25,9 @@ import 'package:accounting_software/app/core/storage/shared_preferences/app_sett
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_screen.dart';
-import '../../../../../helpers/localized_app.dart';
-import '../../../../../helpers/memory_storage.dart';
-import '../../../../../helpers/test_key.dart';
+import '../../../../helpers/localized_app.dart';
+import '../../../../helpers/memory_storage.dart';
+import '../../../../helpers/test_key.dart';
 
 const _title = TestKey('crud title');
 const _search = TestKey('crud search');
