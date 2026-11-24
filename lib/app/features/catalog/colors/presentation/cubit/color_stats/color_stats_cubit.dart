@@ -14,7 +14,9 @@ class ColorStatsCubit extends BaseCubit<ColorStatsState, Never> {
   Future<void> load() async {
     if (isClosed) return;
     final version = ++_requestVersion;
-    emit(state.copyWith(status: ColorStatsStatus.loading, clearFailure: true));
+    if (state.stats == null) {
+      emit(state.copyWith(status: ColorStatsStatus.loading, clearFailure: true));
+    }
     final result = await _getColorStats(NoParams());
     if (isClosed || version != _requestVersion) return;
     result.fold(

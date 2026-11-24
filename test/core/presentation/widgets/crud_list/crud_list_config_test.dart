@@ -8,19 +8,19 @@ void main() {
     test('uses safe shared defaults', () {
       const capabilities = CrudCapabilities();
 
-      expect(capabilities.showCount, isFalse);
+      expect(capabilities.showCount, isTrue);
       expect(capabilities.duplicate, isTrue);
       expect(capabilities.bulkSelection, isTrue);
     });
 
     test('allows features to opt out independently', () {
       const capabilities = CrudCapabilities(
-        showCount: true,
+        showCount: false,
         duplicate: false,
         bulkSelection: false,
       );
 
-      expect(capabilities.showCount, isTrue);
+      expect(capabilities.showCount, isFalse);
       expect(capabilities.duplicate, isFalse);
       expect(capabilities.bulkSelection, isFalse);
     });

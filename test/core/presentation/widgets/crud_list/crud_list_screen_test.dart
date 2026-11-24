@@ -302,7 +302,7 @@ CrudFlowsConfig<String, _TestCubit> _flows({
   onSaved,
   required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item)
   delete,
-  required Future<void> Function(_TestCubit cubit, String item) activate,
+  required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item) activate,
   required Future<Either<Failure, Unit>> Function(_TestCubit cubit, String item)
   deactivate,
   bool Function(String item)? isActive,
@@ -473,7 +473,7 @@ void main() {
       },
       itemLabel: (item) => item,
       delete: (current, item) => current.delete(item),
-      activate: (_, _) async {},
+      activate: (_, _) async => const Right(unit),
       deactivate: (_, _) async => const Right(unit),
       deleteTitleKey: _title,
       deleteMessageKey: _title,
@@ -684,6 +684,7 @@ void main() {
       delete: (cubit, item) => cubit.delete(item),
       activate: (_, _) async {
         activated++;
+        return const Right(unit);
       },
       deactivate: (_, _) async {
         deactivated++;

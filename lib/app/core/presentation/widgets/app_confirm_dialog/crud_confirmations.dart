@@ -32,7 +32,7 @@ abstract final class CrudConfirmations {
     required String targetName,
     required AppKey titleKey,
     required AppKey messageKey,
-    required Future<void> Function() onActivate,
+    required Future<Either<Failure, Unit>> Function() onActivate,
     required Future<Either<Failure, Unit>> Function() onDeactivate,
   }) async {
     if (!isActive) {

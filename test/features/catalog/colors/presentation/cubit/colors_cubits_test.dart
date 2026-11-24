@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -209,6 +210,45 @@ void main() {
   });
 
   group('ColorStatsCubit', () {
+    test('refresh keeps existing stats visible instead of loading', () async {
+      final repository = FakeColorsRepository();
+      final cubit = ColorStatsCubit(
+        getColorStats: GetColorStatsUseCase(repository),
+      );
+      await cubit.load();
+      final pending = Completer<Either<Failure, ColorStats>>();
+      repository.onGetColorStats = () => pending.future;
+      final states = <ColorStatsState>[];
+      final subscription = cubit.stream.listen(states.add);
+
+      final refresh = cubit.refresh();
+      expect(cubit.state.status, ColorStatsStatus.ready);
+      expect(states, isEmpty);
+      pending.complete(const Right(ColorStats(total: 4, active: 3, inactive: 1)));
+      await refresh;
+
+      expect(cubit.state.stats?.total, 4);
+      expect(cubit.state.status, ColorStatsStatus.ready);
+      await subscription.cancel();
+      await cubit.close();
+    });
+
+    test('refresh failure retains stats and exposes the failure', () async {
+      final repository = FakeColorsRepository();
+      final cubit = ColorStatsCubit(
+        getColorStats: GetColorStatsUseCase(repository),
+      );
+      await cubit.load();
+      repository.onGetColorStats = () async => const Left(_Failure());
+
+      await cubit.refresh();
+
+      expect(cubit.state.status, ColorStatsStatus.failed);
+      expect(cubit.state.stats, const ColorStats(total: 1, active: 1, inactive: 0));
+      expect(cubit.state.failure, isA<_Failure>());
+      await cubit.close();
+    });
+
     test('loads independent server statistics', () async {
       final repository = FakeColorsRepository();
       final cubit = ColorStatsCubit(

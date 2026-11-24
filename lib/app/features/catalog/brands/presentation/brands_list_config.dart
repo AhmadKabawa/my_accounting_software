@@ -84,7 +84,6 @@ get brandsListConfig => CrudListConfig(
   ),
   viewModes: const [AppViewMode.table, AppViewMode.cards, AppViewMode.grid],
   capabilities: const CrudCapabilities(
-    showCount: false,
     duplicate: true,
     bulkSelection: true,
   ),

@@ -29,6 +29,7 @@ class FakeColorsRepository implements ColorsRepository {
   Either<Failure, Unit> statusResult = const Right(unit);
   Either<Failure, Unit> deleteResult = const Right(unit);
   ColorStats stats = const ColorStats(total: 1, active: 1, inactive: 0);
+  Future<Either<Failure, ColorStats>> Function()? onGetColorStats;
   final List<int> deleted = [];
 
   @override
@@ -38,8 +39,11 @@ class FakeColorsRepository implements ColorsRepository {
   }
 
   @override
-  Future<Either<Failure, ColorStats>> getColorStats() =>
-      Future.value(Right(stats));
+  Future<Either<Failure, ColorStats>> getColorStats() {
+    final handler = onGetColorStats;
+    if (handler != null) return handler();
+    return Future.value(Right(stats));
+  }
 
   @override
   Future<Either<Failure, PaginatedResult<CatalogColor>>> getColors(

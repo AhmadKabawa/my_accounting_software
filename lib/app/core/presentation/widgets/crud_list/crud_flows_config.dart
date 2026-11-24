@@ -33,7 +33,7 @@ class CrudFlowsConfig<T, C> {
   final Future<void> Function(C cubit, {required bool isNew}) onSaved;
   final String Function(T item) itemLabel;
   final Future<Either<Failure, Unit>> Function(C cubit, T item) delete;
-  final Future<void> Function(C cubit, T item) activate;
+  final Future<Either<Failure, Unit>> Function(C cubit, T item) activate;
   final Future<Either<Failure, Unit>> Function(C cubit, T item) deactivate;
   final AppKey deleteTitleKey;
   final AppKey deleteMessageKey;

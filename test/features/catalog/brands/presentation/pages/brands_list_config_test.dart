@@ -18,7 +18,7 @@ void main() {
         AppViewMode.cards,
         AppViewMode.grid,
       ]);
-      expect(config.capabilities.showCount, isFalse);
+      expect(config.capabilities.showCount, isTrue);
       expect(config.capabilities.duplicate, isTrue);
       expect(config.capabilities.bulkSelection, isTrue);
     });

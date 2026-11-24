@@ -17,7 +17,7 @@ import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud
 /// Shared capabilities with conservative defaults; features opt into count.
 class CrudCapabilities {
   const CrudCapabilities({
-    this.showCount = false,
+    this.showCount = true,
     this.duplicate = true,
     this.bulkSelection = true,
   });

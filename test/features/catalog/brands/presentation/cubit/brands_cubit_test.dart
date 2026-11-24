@@ -215,9 +215,11 @@ void main() {
       final effects = <BrandsListEffect>[];
       final subscription = cubit.effectStream.listen(effects.add);
 
-      await cubit.activate(12);
-      await cubit.deactivate(12);
+      final activation = await cubit.activate(12);
+      final deactivation = await cubit.deactivate(12);
       await cubit.delete(FakeBrandsRepository.brand);
+      expect(activation.isRight(), isTrue);
+      expect(deactivation.isRight(), isTrue);
       await Future<void>.delayed(Duration.zero);
 
       expect(effects.map((effect) => (effect as BrandsMutatedEffect).kind), [
@@ -248,8 +250,36 @@ void main() {
       final effects = <BrandsListEffect>[];
       final subscription = cubit.effectStream.listen(effects.add);
 
-      await cubit.activate(12);
+      final result = await cubit.activate(12);
 
+      expect(result.isLeft(), isTrue);
+      expect(effects, isEmpty);
+      expect(flashes, hasLength(1));
+      expect(flashes.single.type, MessageType.error);
+      await subscription.cancel();
+      stopListening();
+      await cubit.close();
+    },
+  );
+
+  test(
+    'deactivate returns failures, marks the row busy and flashes the error',
+    () async {
+      final repository = FakeBrandsRepository()
+        ..statusMutationResult = const Left(_Failure());
+      final messages = FlashMessages();
+      final flashes = [];
+      final stopListening = messages.listen(flashes.add);
+      final cubit = _listCubit(repository, flashMessages: messages);
+      final effects = <BrandsListEffect>[];
+      final subscription = cubit.effectStream.listen(effects.add);
+
+      final mutation = cubit.deactivate(12);
+      expect(cubit.state.busyIds, {12});
+      final result = await mutation;
+
+      expect(result.isLeft(), isTrue);
+      expect(cubit.state.busyIds, isEmpty);
       expect(effects, isEmpty);
       expect(flashes, hasLength(1));
       expect(flashes.single.type, MessageType.error);

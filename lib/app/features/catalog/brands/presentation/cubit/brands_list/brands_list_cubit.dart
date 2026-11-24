@@ -73,20 +73,20 @@ class BrandsListCubit
   Future<void> setSorts(List<BrandSort> sorts) =>
       _loadIfChanged(state.query.withSorts(sorts));
 
-  Future<void> activate(int id) async {
-    await runMutation(
-      () => _setBrandActive(SetBrandActiveParams(id: id, isActive: true)),
-      kind: PagedMutationKind.statusChanged,
-      successMessage: BrandsKeys.statusUpdated,
-      flashFailure: true,
-      rowId: id,
-    );
-  }
+  Future<Either<Failure, Unit>> activate(int id) => runMutation(
+    () => _setBrandActive(SetBrandActiveParams(id: id, isActive: true)),
+    kind: PagedMutationKind.statusChanged,
+    successMessage: BrandsKeys.statusUpdated,
+    flashFailure: true,
+    rowId: id,
+  );
 
   Future<Either<Failure, Unit>> deactivate(int id) => runMutation(
     () => _setBrandActive(SetBrandActiveParams(id: id, isActive: false)),
     kind: PagedMutationKind.statusChanged,
     successMessage: BrandsKeys.statusUpdated,
+    flashFailure: true,
+    rowId: id,
   );
 
   Future<BulkResult<Brand>> bulkActivate(Iterable<Brand> brands) => runBulk(
