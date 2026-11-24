@@ -111,6 +111,16 @@ Finder _action(AppKey key) => find.byWidgetPredicate(
 CrudEditorFields _fields() =>
     CrudEditorFields(initialValues: {'name': 'Alpha', 'description': ''});
 
+Future<void> _disposeEditor(
+  WidgetTester tester,
+  CrudEditorFields fields,
+  _EditorCubit cubit,
+) async {
+  await tester.pumpWidget(const SizedBox.shrink());
+  fields.dispose();
+  await cubit.close();
+}
+
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
@@ -129,8 +139,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(result, isTrue);
     expect(find.byType(AppFormDialog), findsNothing);
-    fields.dispose();
-    await cubit.close();
+    await _disposeEditor(tester, fields, cubit);
   });
 
   testWidgets('onSave runs only after Form validation', (tester) async {
@@ -146,8 +155,7 @@ void main() {
     await tester.tap(_action(_save));
     await tester.pumpAndSettle();
     expect(find.byType(AppFormDialog), findsNothing);
-    fields.dispose();
-    await cubit.close();
+    await _disposeEditor(tester, fields, cubit);
   });
 
   testWidgets('failure displays message and remains open', (tester) async {
@@ -158,8 +166,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(_failure.en), findsOneWidget);
     expect(find.byType(AppFormDialog), findsOneWidget);
-    fields.dispose();
-    await cubit.close();
+    await _disposeEditor(tester, fields, cubit);
   });
 
   testWidgets('trimmed dirty comparison ignores whitespace', (tester) async {
@@ -177,8 +184,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
     expect(result, isFalse);
-    fields.dispose();
-    await cubit.close();
+    await _disposeEditor(tester, fields, cubit);
   });
 
   testWidgets('busy and extraBusy disable save', (tester) async {
@@ -190,8 +196,7 @@ void main() {
     final busySave = tester.widget<AppButton>(_action(_save));
     expect(busySave.isLoading, isTrue);
     expect(busySave.onPressed, isNull);
-    fields.dispose();
-    await cubit.close();
+    await _disposeEditor(tester, fields, cubit);
 
     final secondCubit = _EditorCubit();
     final secondFields = _fields();
@@ -204,8 +209,7 @@ void main() {
     final extraBusySave = tester.widget<AppButton>(_action(_save));
     expect(extraBusySave.isLoading, isTrue);
     expect(extraBusySave.onPressed, isNull);
-    secondFields.dispose();
-    await secondCubit.close();
+    await _disposeEditor(tester, secondFields, secondCubit);
   });
 
   testWidgets('extraDirty uses AppFormDialog unsaved guard', (tester) async {
@@ -215,8 +219,7 @@ void main() {
     await tester.tap(_action(_cancel));
     await tester.pumpAndSettle();
     expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
-    fields.dispose();
-    await cubit.close();
+    await _disposeEditor(tester, fields, cubit);
   });
 
   testWidgets('280px, 1.5 text scale and RTL have no layout exception', (
@@ -256,7 +259,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(BottomSheet), findsOneWidget);
     expect(tester.takeException(), isNull);
-    fields.dispose();
-    await cubit.close();
+    await _disposeEditor(tester, fields, cubit);
   });
 }
