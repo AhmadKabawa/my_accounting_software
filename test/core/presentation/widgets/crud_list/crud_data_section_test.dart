@@ -108,7 +108,6 @@ CrudDataSection<_Row, _Query, Object> _section({
   );
 }
 
-
 class _AccessRepository implements AccessRepository {
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async => Right(
@@ -146,9 +145,7 @@ void main() {
 
   testWidgets('renders table, cards and grid modes', (tester) async {
     for (final mode in AppViewMode.values) {
-      await tester.pumpWidget(
-        _app(_section(mode: mode)),
-      );
+      await tester.pumpWidget(_app(_section(mode: mode)));
       await tester.pumpAndSettle();
       expect(find.text('one'), findsWidgets);
       if (mode == AppViewMode.cards) {
@@ -164,13 +161,16 @@ void main() {
   testWidgets('empty state distinguishes filters from a new list', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      _app(_section(rows: const [])),
-    );
+    await tester.pumpWidget(_app(_section(rows: const [])));
     await tester.pumpAndSettle();
     expect(find.text(_empty.en), findsOneWidget);
     await tester.pumpWidget(
-      _app(_section(rows: const [], query: const _Query(search: 'x'))),
+      _app(
+        _section(
+          rows: const [],
+          query: const _Query(search: 'x'),
+        ),
+      ),
     );
     await tester.pumpAndSettle();
     expect(find.text(_noResults.en), findsOneWidget);
