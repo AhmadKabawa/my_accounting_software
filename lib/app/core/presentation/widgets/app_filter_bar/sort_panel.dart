@@ -72,6 +72,10 @@ class SortPanel extends StatelessWidget {
     onChanged(next);
   }
 
+  void _moveFieldUpAfterMenuCloses(int index) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _moveFieldUp(index));
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasDuplicate =
@@ -108,7 +112,9 @@ class SortPanel extends StatelessWidget {
                       ? () => _toggleDirection(index)
                       : null,
                   expandField: true,
-                  onMoveUp: index > 0 ? () => _moveFieldUp(index) : null,
+                  onMoveUp: index > 0
+                      ? () => _moveFieldUpAfterMenuCloses(index)
+                      : null,
                   reserveRemoveSlot: sorts.length > 1 && index == 0,
                   onRemove: index > 0 ? () => _removeField(index) : null,
                 ),

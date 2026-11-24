@@ -1321,10 +1321,10 @@ void main() {
       expect(find.text('Move sort up'), findsNothing);
       expect(find.byTooltip('Move sort down'), findsNothing);
       expect(find.byTooltip('Remove sort criterion'), findsNothing);
-      await tester.tap(find.text('Search'));
+      await tester.tap(find.text('Search').first);
       await tester.pumpAndSettle();
       expect(find.text('Move sort up'), findsNothing);
-      await tester.tap(find.text('Search'));
+      await tester.tap(find.text('Search').first);
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('Then by'));
       await tester.pumpAndSettle();
