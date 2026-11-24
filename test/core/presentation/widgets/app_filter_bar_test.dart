@@ -971,12 +971,12 @@ void main() {
     );
     await tester.tap(find.text('Sort by'));
     await tester.pumpAndSettle();
-    expect(find.byTooltip('Move sort up'), findsNothing);
+    expect(find.text('Move sort up'), findsNothing);
 
     await tester.tap(find.text('Filters').last);
     await tester.pumpAndSettle();
-    expect(find.byTooltip('Move sort up'), findsOneWidget);
-    await tester.tap(find.byTooltip('Move sort up'));
+    expect(find.text('Move sort up'), findsOneWidget);
+    await tester.tap(find.text('Move sort up'));
     await tester.pumpAndSettle();
 
     expect(changed, [
@@ -1033,10 +1033,10 @@ void main() {
         const FilterBarSort('status', true),
       ]);
       expect(find.byTooltip('Ascending'), findsNWidgets(2));
-      expect(find.byTooltip('Move sort up'), findsNothing);
+      expect(find.text('Move sort up'), findsNothing);
       await tester.tap(find.text('Filters').last);
       await tester.pumpAndSettle();
-      expect(find.byTooltip('Move sort up'), findsOneWidget);
+      expect(find.text('Move sort up'), findsOneWidget);
       expect(find.byTooltip('Then by'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
@@ -1270,12 +1270,12 @@ void main() {
 
       expect(find.byTooltip('Then by'), findsOneWidget);
       expect(find.text('Then by'), findsNothing);
-      expect(find.byTooltip('Move sort up'), findsNothing);
+      expect(find.text('Move sort up'), findsNothing);
       expect(find.byTooltip('Move sort down'), findsNothing);
       expect(find.byTooltip('Remove sort criterion'), findsNothing);
       await tester.tap(find.text('Search'));
       await tester.pumpAndSettle();
-      expect(find.byTooltip('Move sort up'), findsNothing);
+      expect(find.text('Move sort up'), findsNothing);
       await tester.tap(find.text('Search'));
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('Then by'));
@@ -1287,10 +1287,24 @@ void main() {
         const FilterBarSort('status', true),
       ]);
       expect(find.byTooltip('Remove sort criterion'), findsOneWidget);
-      expect(find.byTooltip('Move sort up'), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byType(SortCriterionRow).first,
+          matching: find.byTooltip('Remove sort criterion'),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(SortCriterionRow).at(1),
+          matching: find.byTooltip('Remove sort criterion'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Move sort up'), findsNothing);
       await tester.tap(find.text('Filters').last);
       await tester.pumpAndSettle();
-      expect(find.byTooltip('Move sort up'), findsOneWidget);
+      expect(find.text('Move sort up'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

@@ -88,7 +88,7 @@ Never use a screen BuildContext after await to show an operation result. Capture
 
 ## Sorting and loading
 
-Multi-sort criteria are kept in priority order and all available fields may be used once. Selecting a field already used by another criterion is disabled; changing a criterion's field preserves its direction; move-up/move-down controls change the priority order. The feature query model and remote order builder must retain the entire list, not truncate after the second criterion. A zero maxSorts means no artificial cap beyond the available fields.
+Multi-sort criteria are kept in priority order and all available fields may be used once. Selecting a field already used by another criterion is disabled; changing a criterion's field preserves its direction. For criteria after the first, the field menu contains a "Move sort up" action that moves that criterion one position earlier in the priority order. The feature query model and remote order builder must retain the entire list, not truncate after the second criterion. A zero maxSorts means no artificial cap beyond the available fields.
 
 When no view mode has been selected, loading placeholders follow the available content width: cards below the shared compact breakpoint, table otherwise. An explicit saved view mode remains authoritative.
 
@@ -105,11 +105,18 @@ When no view mode has been selected, loading placeholders follow the available c
 - Use `AppLogoSize.large` (`AppComponentSize.logoPreview`) for grid previews. The component validates HTTP(S) URLs, contains the image without cropping, and provides the shared fallback.
 
 ### Multi-sort panel
-- Each criterion occupies one row: field selector, direction toggle, then move-up and remove actions for criteria after the first.
-- The field name opens the field menu; the direction icon toggles direction without opening the menu. Selecting from a nested field/add menu closes only that menu and keeps the sort panel open.
-- The add control is icon-only. There is no move-down control; moving the next criterion up changes priority.
+- Each criterion occupies one row. The field selector fills the available row width and contains both the field name and its direction target inside one bordered control. The direction icon keeps its own touch target, tooltip, and semantics; tapping it changes direction without opening the field menu.
+- The field name uses `AppTextType.bodyMedium`, stays on one line, and ends with an ellipsis when necessary. Its tooltip exposes the full translated field name.
+- Only criteria after the first show the remove action. When there is more than one criterion, the first row reserves an empty slot with the same width as the remove button so the field controls align. With one criterion, no empty slot is reserved.
+- "Move sort up" is an item at the end of the existing field menu, after a divider, and appears only for criteria after the first. This removes a separate row-level touch target and gives the field name more room without hiding the reorder action.
+- The reorder action is placed in the existing field menu rather than another nested menu. The menu already owns field selection, so adding the action there avoids another menu layer and preserves the same close behavior: the current inner menu closes while the containing sort panel remains open.
+- The add control remains icon-only. There is no move-down action; moving a later criterion up changes priority.
 - Already-used fields are disabled in the menu. Duplicate and limit messages remain at the bottom of the panel.
-- The panel follows its content up to `AppComponentSize.filterControlWidth`; on a phone it fills the bottom sheet. Do not put `LayoutBuilder` inside the panel because `MenuAnchor` measures intrinsic dimensions.
+- Desktop width is fixed to `AppComponentSize.filterControlWidth` (260 px at tablet/desktop); the phone panel fills the bottom sheet. Do not put `LayoutBuilder` inside the panel because `MenuAnchor` measures intrinsic dimensions.
+- Width calculation uses the shared tokens and `AppIconButton` touch targets:
+  - At a 280 px phone viewport, the sheet's horizontal `AppSpacing.md` padding leaves a 248 px panel. Subtract the panel's horizontal `AppSpacing.xs` padding (8 px total), the remove target (48 px), and the direction target (48 px): 144 px remain for the field-name area. The field's own horizontal `AppSpacing.xs` padding leaves 136 px for text.
+  - On desktop, the 260 px panel minus its horizontal `AppSpacing.xs` padding (16 px total), remove target (56 px), and direction target (56 px) leaves 132 px for the field-name area. Subtracting the field target's own horizontal padding (16 px) leaves 116 px for text.
+  - Both layouts keep at least 110 px for the field name without shrinking either touch target.
 
 ### Form dialogs
 - Desktop dialogs keep the header and footer outside the scrollable body. Only the middle form content scrolls, so Save and Cancel remain visible on short screens.
