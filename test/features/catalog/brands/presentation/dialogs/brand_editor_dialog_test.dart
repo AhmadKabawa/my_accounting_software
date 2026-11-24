@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/platform/image_picker/image_picker_
 import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_image_upload/app_image_upload_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
@@ -262,6 +263,10 @@ void main() {
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
     expect(repository.lastUpload, isNotNull);
+    expect(
+      tester.widget<AppImageUploadField>(find.byType(AppImageUploadField)).value,
+      'https://cdn.test/logo.png',
+    );
     expect(find.text(BrandsKeys.replaceLogo.en), findsOneWidget);
     expect(find.byTooltip(BrandsKeys.removeLogo.en), findsOneWidget);
   });
