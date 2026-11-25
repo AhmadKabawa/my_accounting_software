@@ -38,8 +38,8 @@ CategoryFormCubit _cubit(
 );
 
 void main() {
-  setUpAll(() {
-    Localization.load(
+  setUpAll(() async {
+    await Localization.load(
       const Locale('en'),
       translations: Translations({
         'categories.required': 'Required',
