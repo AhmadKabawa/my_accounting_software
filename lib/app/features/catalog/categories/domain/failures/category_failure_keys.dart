@@ -1,0 +1,30 @@
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+
+enum CategoryFailureKeys implements AppKey {
+  inUse(
+    ar: 'التصنيف مستخدم في منتجات أو له تصنيفات فرعية، أوقفه بدل حذفه',
+    en: 'This category has products or subcategories. Deactivate it instead.',
+  ),
+  slugTaken(
+    ar: 'الرابط المختصر (slug) مستخدم مسبقاً',
+    en: 'This slug is already used',
+  ),
+  invalidParent(
+    ar: 'لا يمكن جعل التصنيف تحت نفسه أو تحت أحد فروعه',
+    en: 'A category cannot sit under itself or one of its own branches',
+  ),
+  tooLarge(
+    ar: 'عدد التصنيفات أكبر من حدّ العرض الحالي',
+    en: 'There are more categories than the current view supports',
+  );
+
+  const CategoryFailureKeys({required this.ar, required this.en});
+
+  @override
+  final String ar;
+  @override
+  final String en;
+
+  @override
+  String get key => 'categories.failure.$name';
+}
