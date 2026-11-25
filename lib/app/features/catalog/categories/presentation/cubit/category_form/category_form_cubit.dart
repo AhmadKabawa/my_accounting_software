@@ -68,7 +68,11 @@ class CategoryFormCubit
 
   /// Available parent rows with full paths; the edited category and its
   /// descendants are excluded to prevent a local cycle.
-  List<CategoryNode> get parentOptions {
+  late final List<CategoryNode> _parentOptions = _buildParentOptions();
+
+  List<CategoryNode> get parentOptions => _parentOptions;
+
+  List<CategoryNode> _buildParentOptions() {
     final tree = _tree;
     if (tree == null) return const [];
     final excluded = _category == null

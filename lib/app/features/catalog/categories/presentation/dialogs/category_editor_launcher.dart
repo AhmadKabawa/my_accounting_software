@@ -26,63 +26,89 @@ Future<bool?> showCategoryEditor(
   Category? category,
   CategoryTree? tree,
   int? initialParentId,
-}) async {
-  final fields = CrudEditorFields(
-    initialValues: {
-      'name': category?.name ?? '',
-      'slug': category?.slug ?? '',
-      'description': category?.description ?? '',
-      'image': category?.image ?? '',
-      'sortOrder': '${category?.sortOrder ?? 0}',
-    },
-  );
-  final cubit = sl<CategoryFormCubit>(
-    param1: CategoryFormArgs(
-      category: category,
-      tree: tree,
-      initialParentId: initialParentId,
+}) => showAppFormDialog<bool>(
+  context,
+  (_) => BlocProvider(
+    create: (_) => sl<CategoryFormCubit>(
+      param1: CategoryFormArgs(
+        category: category,
+        tree: tree,
+        initialParentId: initialParentId,
+      ),
     ),
-  );
+    child: CategoryEditorDialog(category: category),
+  ),
+);
 
-  try {
-    return await showAppFormDialog<bool>(
-      context,
-      (_) => BlocProvider.value(
-        value: cubit,
-        child:
-            CrudEditorDialog<
-              CategoryFormCubit,
-              CategoryFormState,
-              CategoryFormEffect
-            >(
-              cubit: cubit,
-              fields: fields,
-              mode: category == null ? CrudEditorMode.add : CrudEditorMode.edit,
-              labels: const CrudEditorLabels(
-                addTitle: CategoriesKeys.add,
-                editTitle: CategoriesKeys.edit,
-                duplicateTitle: CategoriesKeys.add,
-                subtitle: CategoriesKeys.editorSubtitle,
-                save: CategoriesKeys.save,
-                cancel: CategoriesKeys.cancel,
-              ),
-              isSaving: (state) => state.saving,
-              outcome: (effect) => switch (effect) {
-                CategorySavedEffect() => const CrudEditorSuccess(),
-                CategorySaveFailedEffect(:final messageKey) =>
-                  CrudEditorFailure(messageKey),
-              },
-              onSave: cubit.save,
-              extraDirty: cubit.parentChanged,
-              onReset: cubit.reset,
-              builder: (dialogContext, scope) =>
-                  _CategoryEditorFields(cubit: cubit, scope: scope),
-            ),
+class CategoryEditorDialog extends StatefulWidget {
+  const CategoryEditorDialog({super.key, this.category});
+
+  final Category? category;
+
+  @override
+  State<CategoryEditorDialog> createState() => _CategoryEditorDialogState();
+}
+
+class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
+  late final CrudEditorFields _fields;
+
+  @override
+  void initState() {
+    super.initState();
+    final category = widget.category;
+    _fields = CrudEditorFields(
+      initialValues: {
+        'name': category?.name ?? '',
+        'slug': category?.slug ?? '',
+        'description': category?.description ?? '',
+        'image': category?.image ?? '',
+        'sortOrder': '${category?.sortOrder ?? 0}',
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _fields.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<CategoryFormCubit>();
+    return BlocBuilder<CategoryFormCubit, CategoryFormState>(
+      bloc: cubit,
+      builder: (context, state) => CrudEditorDialog<
+        CategoryFormCubit,
+        CategoryFormState,
+        CategoryFormEffect
+      >(
+        cubit: cubit,
+        fields: _fields,
+        mode: widget.category == null
+            ? CrudEditorMode.add
+            : CrudEditorMode.edit,
+        labels: const CrudEditorLabels(
+          addTitle: CategoriesKeys.add,
+          editTitle: CategoriesKeys.edit,
+          duplicateTitle: CategoriesKeys.add,
+          subtitle: CategoriesKeys.editorSubtitle,
+          save: CategoriesKeys.save,
+          cancel: CategoriesKeys.cancel,
+        ),
+        isSaving: (value) => value.saving,
+        outcome: (effect) => switch (effect) {
+          CategorySavedEffect() => const CrudEditorSuccess(),
+          CategorySaveFailedEffect(:final messageKey) =>
+            CrudEditorFailure(messageKey),
+        },
+        onSave: cubit.save,
+        extraDirty: cubit.parentChanged,
+        onReset: cubit.reset,
+        builder: (dialogContext, scope) =>
+            _CategoryEditorFields(cubit: cubit, scope: scope),
       ),
     );
-  } finally {
-    fields.dispose();
-    await cubit.close();
   }
 }
 
