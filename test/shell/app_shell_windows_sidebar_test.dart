@@ -359,6 +359,9 @@ void main() {
       expect(collapsed(tester), isTrue);
 
       await tester.tap(find.byTooltip('home').at(1));
+      // A parent also listens for a double tap, so the single tap is
+      // delivered after the double-tap window.
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.pumpAndSettle();
       expect(collapsed(tester), isFalse);
       expect(find.text('Second'), findsOneWidget);
