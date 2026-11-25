@@ -54,6 +54,7 @@ Future<void> _open(
   required CrudEditorFields fields,
   bool extraBusy = false,
   bool extraDirty = false,
+  CrudEditorMode mode = CrudEditorMode.add,
   ValueChanged<bool?>? onResult,
 }) async {
   await tester.pumpWidget(
@@ -67,7 +68,7 @@ Future<void> _open(
                 (_) => CrudEditorDialog<_EditorCubit, _Status, _Effect>(
                   cubit: cubit,
                   fields: fields,
-                  mode: CrudEditorMode.add,
+                  mode: mode,
                   labels: _labels,
                   isSaving: (state) => state == _Status.saving,
                   outcome: (effect) => switch (effect) {
@@ -220,6 +221,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
     await _disposeEditor(tester, fields, cubit);
+  });
+
+  test('reset restores every field to the original values', () {
+    final fields = _fields();
+    fields['name'].text = 'Beta';
+    fields['description'].text = 'Details';
+
+    expect(fields.dirty, isTrue);
+    fields.reset();
+    expect(fields['name'].text, 'Alpha');
+    expect(fields['description'].text, isEmpty);
+    expect(fields.dirty, isFalse);
+    fields.dispose();
   });
 
   testWidgets('280px, 1.5 text scale and RTL have no layout exception', (

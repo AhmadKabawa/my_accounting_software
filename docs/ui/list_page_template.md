@@ -83,7 +83,15 @@ AppDataGrid uses the available content width and the shared minimum tile-width t
 
 ## Form dialog dismissal
 
-Every AppFormDialog caller must pass a truthful dirty value comparing the current editable values with the initial create defaults, edit record, or duplicate seed. Compare normalized values consistently with save (the catalog editors trim surrounding whitespace); changing a field and restoring its original value is clean. A clean form may dismiss through the barrier, Escape, back, or sheet drag and returns false/null. A dirty form must route dismissal through the existing unsaved-changes confirmation; a busy form cannot dismiss. Never reload the list or show a success message unless the dialog result is true.
+Every AppFormDialog caller must pass a truthful dirty value comparing the current editable values with the initial create defaults, edit record, or duplicate seed. Compare normalized values consistently with save (the catalog editors trim surrounding whitespace); changing a field and restoring its original value is clean. A clean form may dismiss through the barrier, Escape, or back and returns false/null. A dirty form must route dismissal through the existing unsaved-changes confirmation with an explicit "Leave without saving" action; a busy form cannot dismiss. Never reload the list or show a success message unless the dialog result is true.
+
+`CrudEditorDialog` provides the shared reset action through `AppFormDialog`:
+- Create mode exposes **Clear content** and restores the initial create defaults without writing to the database.
+- Edit mode exposes **Reset** and restores the original record values captured when the editor opened; it never submits a PATCH.
+- Duplicate mode exposes **Reset** and restores the duplicate seed values.
+- Reset appears only while the form is dirty and requires confirmation. Cancelling confirmation preserves every edit.
+- `CrudEditorFields.reset()` restores text controllers. Feature-owned non-text values (such as a status switch) are restored by the optional editor `onReset` callback and must be represented in `extraDirty`.
+- Reset also clears stale validation errors. No autosave, draft persistence, or Cubit lifecycle change is introduced.
 
 Never use a screen BuildContext after await to show an operation result. Capture the root Navigator before awaiting and use its mounted state/context afterward.
 

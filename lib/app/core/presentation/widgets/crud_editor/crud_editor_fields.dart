@@ -18,6 +18,7 @@ class CrudEditorFields extends ChangeNotifier {
 
   final Map<String, String> _initialValues;
   final Map<String, TextEditingController> _controllers;
+  bool _resetting = false;
 
   TextEditingController operator [](String name) {
     final controller = _controllers[name];
@@ -39,7 +40,31 @@ class CrudEditorFields extends ChangeNotifier {
     return false;
   }
 
-  void _onFieldChanged() => notifyListeners();
+  /// Restores every field to the values captured when this editor opened.
+  ///
+  /// Create forms return to their initial defaults; edit forms return to the
+  /// original record values; duplicate forms return to their seed values.
+  void reset() {
+    if (!dirty) return;
+    _resetting = true;
+    try {
+      for (final entry in _controllers.entries) {
+        final initial = _initialValues[entry.key]!;
+        if (entry.value.text == initial) continue;
+        entry.value.value = TextEditingValue(
+          text: initial,
+          selection: TextSelection.collapsed(offset: initial.length),
+        );
+      }
+    } finally {
+      _resetting = false;
+    }
+    notifyListeners();
+  }
+
+  void _onFieldChanged() {
+    if (!_resetting) notifyListeners();
+  }
 
   @override
   void dispose() {

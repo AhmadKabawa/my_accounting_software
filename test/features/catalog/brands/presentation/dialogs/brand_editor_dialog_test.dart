@@ -410,6 +410,44 @@ void main() {
     expect(find.text(TemplateKeys.unsavedChanges.en), findsOneWidget);
   });
 
+  testWidgets('edit reset restores original text and non-text values', (
+    tester,
+  ) async {
+    const brand = Brand(
+      id: 7,
+      name: 'Original',
+      slug: 'stable-slug',
+      isActive: true,
+      productCount: 0,
+    );
+    await _pumpEditor(tester, FakeBrandsRepository(), brand: brand);
+
+    await tester.enterText(find.byType(TextFormField).first, 'Changed');
+    await tester.ensureVisible(find.byType(Switch));
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+
+    await tester.ensureVisible(find.text(TemplateKeys.reset.en).first);
+    await tester.tap(find.text(TemplateKeys.reset.en).first);
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.resetFormConfirmation.en), findsOneWidget);
+
+    await tester.tap(find.text(TemplateKeys.reset.en).last);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).first)
+          .controller!
+          .text,
+      'Original',
+    );
+    expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isTrue);
+    await tester.tap(find.text(BrandsKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
+  });
+
   testWidgets('editing saves a changed status through the brand PATCH', (
     tester,
   ) async {

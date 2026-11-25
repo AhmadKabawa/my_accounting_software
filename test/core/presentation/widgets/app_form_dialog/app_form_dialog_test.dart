@@ -90,7 +90,8 @@ void main() {
     await tester.tap(
       find.byWidgetPredicate(
         (widget) =>
-            widget is AppButton && widget.labelKey == CommonKeys.confirm,
+            widget is AppButton &&
+            widget.labelKey == TemplateKeys.leaveWithoutSaving,
       ),
     );
     await tester.pumpAndSettle();

@@ -259,6 +259,59 @@ void main() {
     },
   );
 
+  testWidgets('clear content restores the initial create values', (
+    tester,
+  ) async {
+    await _pumpEditor(tester, FakeColorsRepository());
+
+    final preset = find.bySemanticsLabel('#DC2626');
+    await tester.ensureVisible(preset);
+    await tester.pumpAndSettle();
+    await tester.tap(preset);
+    await tester.pump();
+
+    await tester.ensureVisible(find.text(TemplateKeys.clearContent.en).first);
+    await tester.tap(find.text(TemplateKeys.clearContent.en).first);
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.clearFormConfirmation.en), findsOneWidget);
+
+    await tester.tap(find.text(TemplateKeys.clearContent.en).last);
+    await tester.pumpAndSettle();
+
+    expect(_controller(tester, 0).text, isEmpty);
+    expect(_controller(tester, 1).text, isEmpty);
+    expect(_controller(tester, 2).text, '0');
+    expect(_controller(tester, 3).text, isEmpty);
+    expect(find.text(ColorsKeys.suggestedName.en), findsNothing);
+  });
+
+  testWidgets('edit reset restores original values after HEX changes', (
+    tester,
+  ) async {
+    await _pumpEditor(tester, FakeColorsRepository(), color: sampleColor);
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'Changed');
+    await tester.enterText(find.byType(TextFormField).at(3), '#FFFFFF');
+    await tester.pump();
+    expect(_controller(tester, 0).text, 'White');
+
+    await tester.ensureVisible(find.text(TemplateKeys.reset.en).first);
+    await tester.tap(find.text(TemplateKeys.reset.en).first);
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.resetFormConfirmation.en), findsOneWidget);
+
+    await tester.tap(find.text(TemplateKeys.reset.en).last);
+    await tester.pumpAndSettle();
+
+    expect(_controller(tester, 0).text, 'Navy');
+    expect(_controller(tester, 1).text, 'NAVY');
+    expect(_controller(tester, 2).text, '2');
+    expect(_controller(tester, 3).text, '#1E3A8A');
+    await tester.tap(find.text(ColorsKeys.cancel.en));
+    await tester.pumpAndSettle();
+    expect(find.text(TemplateKeys.unsavedChanges.en), findsNothing);
+  });
+
   testWidgets('saving a duplicate creates a new color with copied values', (
     tester,
   ) async {

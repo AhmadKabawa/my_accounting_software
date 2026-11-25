@@ -108,6 +108,10 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
           ),
         },
         onSave: _save,
+        onReset: () => _nameAutofill.reset(
+          context,
+          hex: widget.color?.hexCode ?? widget.seed?.hexCode,
+        ),
         builder: (context, scope) => ColorEditorFieldsView(
           name: _name,
           code: _code,

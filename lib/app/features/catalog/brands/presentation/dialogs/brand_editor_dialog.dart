@@ -151,6 +151,12 @@ class _BrandEditorDialogState extends State<BrandEditorDialog> {
         onSave: _save,
         extraBusy: _logoBusy,
         extraDirty: _active != _initialActive,
+        onReset: () {
+          _slugTouched = widget.brand != null;
+          if (_active != _initialActive) {
+            setState(() => _active = _initialActive);
+          }
+        },
         builder: (context, scope) => BrandEditorFieldsView(
           name: _name,
           slug: _slug,

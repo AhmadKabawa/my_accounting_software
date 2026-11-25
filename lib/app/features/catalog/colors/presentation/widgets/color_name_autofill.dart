@@ -32,6 +32,11 @@ class ColorNameAutofill {
     }
   }
 
+  /// Recomputes the suggestion after the shared editor restores its fields.
+  void reset(BuildContext context, {required String? hex}) {
+    _lastAutoName = _suggestion(context, ColorNameResolver.resolve(hex));
+  }
+
   void onHexChanged(
     BuildContext context, {
     required TextEditingController name,

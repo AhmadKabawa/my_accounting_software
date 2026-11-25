@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/bloc_effect_listener.dart';
@@ -78,6 +79,7 @@ class CrudEditorDialog<C extends BaseCubit<S, E>, S, E> extends StatefulWidget {
     required this.builder,
     this.extraBusy = false,
     this.extraDirty = false,
+    this.onReset,
   });
 
   final C cubit;
@@ -91,6 +93,9 @@ class CrudEditorDialog<C extends BaseCubit<S, E>, S, E> extends StatefulWidget {
   final bool extraBusy;
   final bool extraDirty;
 
+  /// Restores feature-owned values that are not held by [CrudEditorFields].
+  final VoidCallback? onReset;
+
   @override
   State<CrudEditorDialog<C, S, E>> createState() =>
       _CrudEditorDialogState<C, S, E>();
@@ -98,7 +103,7 @@ class CrudEditorDialog<C extends BaseCubit<S, E>, S, E> extends StatefulWidget {
 
 class _CrudEditorDialogState<C extends BaseCubit<S, E>, S, E>
     extends State<CrudEditorDialog<C, S, E>> {
-  final _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AppKey? _failure;
 
   @override
@@ -128,6 +133,18 @@ class _CrudEditorDialogState<C extends BaseCubit<S, E>, S, E>
   Future<void> _save() async {
     if (_formKey.currentState?.validate() != true) return;
     await widget.onSave();
+  }
+
+  void _reset() {
+    widget.fields.reset();
+    widget.onReset?.call();
+    if (!mounted) return;
+    setState(() {
+      _failure = null;
+      // Recreate FormFieldState to clear validation messages without
+      // overwriting externally owned controllers with empty initial values.
+      _formKey = GlobalKey<FormState>();
+    });
   }
 
   @override
@@ -163,6 +180,13 @@ class _CrudEditorDialogState<C extends BaseCubit<S, E>, S, E>
           subtitleKey: widget.labels.subtitle,
           saveLabelKey: widget.labels.save,
           cancelLabelKey: widget.labels.cancel,
+          resetLabelKey: widget.mode == CrudEditorMode.add
+              ? TemplateKeys.clearContent
+              : TemplateKeys.reset,
+          resetMessageKey: widget.mode == CrudEditorMode.add
+              ? TemplateKeys.clearFormConfirmation
+              : TemplateKeys.resetFormConfirmation,
+          onReset: _reset,
           busy: busy,
           saveEnabled: !busy,
           dirty: widget.fields.dirty || widget.extraDirty,

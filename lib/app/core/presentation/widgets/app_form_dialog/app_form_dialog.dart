@@ -11,6 +11,9 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text/app_t
 
 /// Shared responsive shell for create/edit forms.
 ///
+/// Dirty forms can be reset to their initial values through a confirmed,
+/// mode-specific action supplied by the shared CRUD editor.
+///
 /// A successful save is closed explicitly by the caller with
 /// `Navigator.pop(context, true)`; that programmatic close intentionally
 /// bypasses this widget's dirty-form guard.
@@ -23,6 +26,9 @@ class AppFormDialog extends StatefulWidget {
     this.subtitleKey,
     this.saveLabelKey,
     this.cancelLabelKey,
+    this.resetLabelKey,
+    this.resetMessageKey,
+    this.onReset,
     this.saveEnabled = true,
     this.busy = false,
     this.dirty = false,
@@ -34,6 +40,9 @@ class AppFormDialog extends StatefulWidget {
   final Widget child;
   final AppKey? saveLabelKey;
   final AppKey? cancelLabelKey;
+  final AppKey? resetLabelKey;
+  final AppKey? resetMessageKey;
+  final VoidCallback? onReset;
   final Future<void> Function() onSave;
   final bool saveEnabled;
   final bool busy;
@@ -57,9 +66,36 @@ class _AppFormDialogState extends State<AppFormDialog> {
       titleKey: widget.titleKey,
       messageKey: TemplateKeys.unsavedChanges,
       severity: ConfirmDialogSeverity.warning,
+      confirmLabelKey: TemplateKeys.leaveWithoutSaving,
+      cancelLabelKey: CommonKeys.cancel,
     );
     if (confirmed && mounted && !widget.busy) {
       Navigator.of(context).pop(false);
+    }
+  }
+
+  Future<void> _requestReset() async {
+    final reset = widget.onReset;
+    final message = widget.resetMessageKey;
+    final label = widget.resetLabelKey;
+    if (widget.busy ||
+        !widget.dirty ||
+        reset == null ||
+        message == null ||
+        label == null) {
+      return;
+    }
+
+    final confirmed = await showConfirmDialog(
+      context,
+      titleKey: widget.titleKey,
+      messageKey: message,
+      severity: ConfirmDialogSeverity.warning,
+      confirmLabelKey: label,
+      cancelLabelKey: CommonKeys.cancel,
+    );
+    if (confirmed && mounted && !widget.busy && widget.dirty) {
+      reset();
     }
   }
 
@@ -121,6 +157,16 @@ class _AppFormDialogState extends State<AppFormDialog> {
             variant: AppButtonVariant.text,
             onPressed: widget.busy ? null : _requestClose,
           ),
+          if (widget.dirty &&
+              !widget.busy &&
+              widget.onReset != null &&
+              widget.resetLabelKey != null &&
+              widget.resetMessageKey != null)
+            AppButton(
+              widget.resetLabelKey!,
+              variant: AppButtonVariant.outlined,
+              onPressed: _requestReset,
+            ),
           AppButton(
             widget.saveLabelKey ?? CommonKeys.save,
             isLoading: widget.busy,
