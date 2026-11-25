@@ -26,9 +26,9 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
-import '../../../../../helpers/localized_app.dart';
-import '../../../../../helpers/memory_storage.dart';
-import '../../support/fake_categories_repository.dart';
+import '../../../../helpers/localized_app.dart';
+import '../../../../helpers/memory_storage.dart';
+import '../support/fake_categories_repository.dart';
 
 class _AccessRepository implements AccessRepository {
   @override
@@ -193,7 +193,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     final cubit = _listCubit(tester);
-    cubit.selection.selectPage(cubit.state.result!.items);
+    cubit.selection.selectPage(cubit.state.result!.items.map((row) => row.id));
     expect(cubit.selection.state, isNotEmpty);
 
     await cubit.setStatus(CategoryStatusFilter.inactive);
