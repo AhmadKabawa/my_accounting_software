@@ -12,7 +12,7 @@ import 'package:accounting_software/app/features/catalog/categories/data/models/
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_draft.dart';
 
 class CategoriesRemoteDataSourceImpl implements CategoriesRemoteDataSource {
-  const CategoriesRemoteDataSourceImpl(this._apiClient);
+  CategoriesRemoteDataSourceImpl(this._apiClient);
 
   final IApiClient _apiClient;
 
