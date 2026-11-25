@@ -205,9 +205,7 @@ void main() {
   ) async {
     _register(FakeCategoriesRepository(categories: _sampleCategories()));
     await tester.pumpWidget(
-      MaterialApp(
-        home: Directionality(textDirection: TextDirection.ltr, child: _home()),
-      ),
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
     );
     await tester.pumpAndSettle();
     final cubit = _listCubit(tester);
@@ -250,9 +248,7 @@ void main() {
     );
     _register(repository);
     await tester.pumpWidget(
-      MaterialApp(
-        home: Directionality(textDirection: TextDirection.ltr, child: _home()),
-      ),
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
     );
     await tester.pumpAndSettle();
     _listCubit(tester).collapseAll();
@@ -278,6 +274,7 @@ void main() {
     );
     expect(_listCubit(tester).tree!.byId(3)?.name, 'New child');
     expect(tester.takeException(), isNull);
+    expect(repository.getAllCalls, 2);
   });
 
   testWidgets('adding a subcategory to a leaf uses the same editor flow', (
