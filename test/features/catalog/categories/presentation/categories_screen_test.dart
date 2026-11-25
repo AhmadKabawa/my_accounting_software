@@ -45,9 +45,6 @@ class _AccessRepository implements AccessRepository {
       posTerminals: const [],
     ),
   );
-
-
-
 }
 
 Category _category(int id, {int? parentId, String? name, bool active = true}) =>
