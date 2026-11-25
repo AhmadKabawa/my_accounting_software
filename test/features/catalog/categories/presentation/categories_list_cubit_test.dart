@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_list_query.dart';
-import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_node.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/failures/category_failures.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/delete_category_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/get_categories_use_case.dart';

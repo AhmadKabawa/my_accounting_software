@@ -5,8 +5,7 @@ import 'package:accounting_software/app/features/catalog/categories/domain/entit
 import 'package:accounting_software/app/features/catalog/categories/domain/repositories/categories_repository.dart';
 
 class FakeCategoriesRepository implements CategoriesRepository {
-  FakeCategoriesRepository({List<Category> categories = const []})
-    : categories = categories;
+  FakeCategoriesRepository({this.categories = const []});
 
   List<Category> categories;
   int getAllCalls = 0;
