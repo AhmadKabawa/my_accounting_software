@@ -20,13 +20,22 @@ panel).
 * Tap another page: navigate; the sidebar stays as it is (open or folded).
 * The choice is saved exactly like the chevron button.
 
+Pages with sub-items (the catalog):
+
+* Open sidebar, tap the **active sub-item** (for example Brands while on
+  Brands): it folds. On the folded rail, tapping that sub-item's icon opens it.
+* Folded rail, tap the icon of a **parent page that is shown** (the hub): it
+  opens the sidebar.
+* Open sidebar, tap a parent: it opens/closes its list (accordion); a double tap
+  opens its page. The parent row cannot fold the sidebar, since it already has
+  this job; use the sub-item, a leaf page, or the chevron button.
+
 Guards, so the shortcut never costs the user something:
 
-* Only for pages without sub-items. A parent with sub-items keeps its own
-  rule: one tap opens/closes its list, a double tap opens its page.
-* Only when the shown page is the root of its branch. On a deeper page (a
-  detail) the same tap goes back to the root, as before; a second tap then
-  folds the sidebar.
+* A leaf page toggles only at the root of its branch. On a deeper page (a
+  detail) the same tap goes back to the root; a second tap then folds it.
+* A sub-item toggles only when its own page is shown exactly (not a page
+  beneath it).
 * Only after the saved preference was restored, and only where collapsing is
   supported (`supportsCollapsibleSidebar`, or a tablet).
 * The chevron button stays as the visible, discoverable control.

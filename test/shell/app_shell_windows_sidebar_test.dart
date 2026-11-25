@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/shell_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon_data.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
@@ -74,6 +75,7 @@ Future<void> _pump(
   AppSettingsManager settings, {
   Size size = const Size(1400, 900),
   String initialLocation = '/first',
+  bool secondHasChild = false,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -89,7 +91,19 @@ Future<void> _pump(
       branchIndex: 0,
     ),
     AppDestination(
-      item: NavBarItem(icon: Icons.looks_two_outlined, label: NavKeys.home),
+      item: NavBarItem(
+        icon: Icons.looks_two_outlined,
+        label: NavKeys.home,
+        children: secondHasChild
+            ? [
+                NavBarChild(
+                  label: ShellKeys.more,
+                  icon: MaterialIconData(Icons.circle_outlined),
+                  path: '/second/child',
+                ),
+              ]
+            : const [],
+      ),
       branchIndex: 1,
     ),
   ];
@@ -120,7 +134,16 @@ Future<void> _pump(
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(path: '/second', builder: (_, _) => const Text('Second')),
+              GoRoute(
+                path: '/second',
+                builder: (_, _) => const Text('Second'),
+                routes: [
+                  GoRoute(
+                    path: 'child',
+                    builder: (_, _) => const Text('Child'),
+                  ),
+                ],
+              ),
             ],
           ),
         ],
@@ -287,6 +310,58 @@ void main() {
       await tester.tap(expandedItem(1));
       await tester.pumpAndSettle();
       expect(collapsed(tester), isTrue);
+    });
+  });
+
+  group('a section with sub-items', () {
+    bool collapsed(WidgetTester tester) =>
+        tester.widget<AppSidebar>(find.byType(AppSidebar)).collapsed;
+
+    testWidgets('tapping the active sub-item folds and reopens the sidebar', (
+      tester,
+    ) async {
+      final settings = AppSettingsManager(storage: _MemoryStorage());
+      await _pump(
+        tester,
+        settings,
+        initialLocation: '/second/child',
+        secondHasChild: true,
+      );
+      expect(collapsed(tester), isFalse);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AppSidebar),
+          matching: find.text(ShellKeys.more.en),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isTrue);
+      expect(find.text('Child'), findsOneWidget);
+
+      await tester.tap(find.byTooltip(ShellKeys.more.en));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isFalse);
+      expect(find.text('Child'), findsOneWidget);
+    });
+
+    testWidgets('the folded rail opens from the parent page icon', (
+      tester,
+    ) async {
+      final settings = AppSettingsManager(storage: _MemoryStorage());
+      await _pump(
+        tester,
+        settings,
+        size: const Size(800, 900),
+        initialLocation: '/second',
+        secondHasChild: true,
+      );
+      expect(collapsed(tester), isTrue);
+
+      await tester.tap(find.byTooltip('home').at(1));
+      await tester.pumpAndSettle();
+      expect(collapsed(tester), isFalse);
+      expect(find.text('Second'), findsOneWidget);
     });
   });
 }

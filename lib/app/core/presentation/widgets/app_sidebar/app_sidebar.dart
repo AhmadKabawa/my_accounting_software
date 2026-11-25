@@ -210,6 +210,10 @@ class _AppSidebarState extends State<AppSidebar> {
         if (children.isEmpty) {
           _closeAll();
           widget.onIndexChanged(index);
+        } else if (widget.collapsed && selected && widget.onToggle != null) {
+          // The icon of the parent page already shown, on the folded rail:
+          // it opens the sidebar (its list stays as it is).
+          widget.onToggle!();
         } else {
           _toggle(item);
         }

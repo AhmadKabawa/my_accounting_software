@@ -457,6 +457,16 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
     return children.isEmpty;
   }
 
+  /// A sub-item whose page is the one shown (not a page beneath it): tapping
+  /// it toggles the sidebar like the page-level tap does.
+  bool _togglesForChild(String path) {
+    if (!_restored || !widget.collapsible) return false;
+    String trim(String v) =>
+        v.length > 1 && v.endsWith('/') ? v.substring(0, v.length - 1) : v;
+    final active = widget.activePath;
+    return active != null && trim(active) == trim(path);
+  }
+
   @override
   Widget build(BuildContext context) => AppSidebar(
     items: widget.items,
@@ -471,7 +481,13 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
     collapsed: _collapsed,
     onToggle: _restored && widget.collapsible ? _toggle : null,
     activePath: widget.activePath,
-    onChildSelected: widget.onChildSelected,
+    onChildSelected: (path) {
+      if (_togglesForChild(path)) {
+        _toggle();
+        return;
+      }
+      widget.onChildSelected?.call(path);
+    },
     initialOpenSections: _openSections,
     onOpenSectionsChanged: (open) {
       _openSections = open;
