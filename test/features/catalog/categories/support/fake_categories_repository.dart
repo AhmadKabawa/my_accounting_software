@@ -9,9 +9,13 @@ class FakeCategoriesRepository implements CategoriesRepository {
 
   List<Category> categories;
   int getAllCalls = 0;
+  int createCalls = 0;
+  int updateCalls = 0;
   final List<int> deletedIds = [];
   final List<(int, bool)> statusUpdates = [];
   Either<Failure, Unit> mutationResult = const Right(unit);
+  Either<Failure, Category>? createResult;
+  Either<Failure, Category>? updateResult;
 
   @override
   Future<Either<Failure, List<Category>>> getAll() async {
@@ -20,14 +24,19 @@ class FakeCategoriesRepository implements CategoriesRepository {
   }
 
   @override
-  Future<Either<Failure, Category>> create(CategoryDraft draft) async =>
-      Right(categories.first);
+  Future<Either<Failure, Category>> create(CategoryDraft draft) async {
+    createCalls++;
+    return createResult ?? Right(categories.first);
+  }
 
   @override
   Future<Either<Failure, Category>> update({
     required int id,
     required CategoryDraft draft,
-  }) async => Right(categories.firstWhere((item) => item.id == id));
+  }) async {
+    updateCalls++;
+    return updateResult ?? Right(categories.firstWhere((item) => item.id == id));
+  }
 
   @override
   Future<Either<Failure, Unit>> delete(int id) async {
