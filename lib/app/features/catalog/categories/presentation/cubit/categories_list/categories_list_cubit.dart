@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
+import 'package:accounting_software/app/core/foundation/types/bulk_result.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
@@ -145,6 +146,18 @@ class CategoriesListCubit
     _reproject(state.query.withPage(page));
   }
 
+  @override
+  void searchChanged(String value) {
+    if (state.query.search == value) return;
+    _reproject(state.query.withSearch(value));
+  }
+
+  @override
+  Future<void> clearFilters() async {
+    if (!state.query.hasActiveFilters) return;
+    _reproject(state.query.cleared());
+  }
+
   Future<void> setStatus(CategoryStatusFilter status) async {
     if (state.query.status == status) return;
     _reproject(state.query.withStatus(status));
@@ -170,6 +183,73 @@ class CategoriesListCubit
   Future<Either<Failure, Unit>> activate(int id) => _setActive(id, true);
 
   Future<Either<Failure, Unit>> deactivate(int id) => _setActive(id, false);
+
+  Future<BulkResult<CategoryNode>> bulkActivate(
+    Iterable<CategoryNode> items,
+  ) => _bulkSetActive(items, true);
+
+  Future<BulkResult<CategoryNode>> bulkDeactivate(
+    Iterable<CategoryNode> items,
+  ) => _bulkSetActive(items, false);
+
+  Future<BulkResult<CategoryNode>> _bulkSetActive(
+    Iterable<CategoryNode> items,
+    bool isActive,
+  ) => runBulk(
+    items: items,
+    kind: PagedMutationKind.statusChanged,
+    successMessage: CategoriesKeys.statusUpdated,
+    action: (item) => _invalidating(
+      () => _setCategoryActive(
+        SetCategoryActiveParams(id: item.id, isActive: isActive),
+      ),
+    ),
+  );
+
+  /// Deletes selected leaves before their ancestors. A parent is eligible
+  /// only after every original child was successfully deleted in this batch.
+  Future<BulkResult<CategoryNode>> bulkDelete(
+    Iterable<CategoryNode> items,
+  ) {
+    final originalTree = _tree;
+    final deletedIds = <int>{};
+    final ordered = items.toList()
+      ..sort((a, b) {
+        final byDepth = b.depth.compareTo(a.depth);
+        return byDepth != 0 ? byDepth : a.id.compareTo(b.id);
+      });
+
+    return runBulk(
+      items: ordered,
+      kind: PagedMutationKind.deleted,
+      successMessage: CategoriesKeys.deleted,
+      action: (item) async {
+        final productCount = item.category.productCount;
+        if (productCount == null) {
+          return const Left(CategoryUsageUnknownFailure());
+        }
+        if (productCount > 0) {
+          return const Left(CategoryInUseFailure());
+        }
+
+        final originalChildren = originalTree?.childrenOf(item.id) ?? const [];
+        if (originalChildren.any((child) => !deletedIds.contains(child.id)) ||
+            (originalTree == null && item.childCount > 0)) {
+          return const Left(CategoryInUseFailure());
+        }
+
+        final result = await _deleteCategory(item.category.id);
+        result.fold(
+          (_) {},
+          (_) {
+            deletedIds.add(item.id);
+            _tree = null;
+          },
+        );
+        return result;
+      },
+    );
+  }
 
   Future<Either<Failure, Unit>> _setActive(int id, bool isActive) =>
       runMutation(

@@ -165,4 +165,78 @@ void main() {
       await cubit.close();
     },
   );
+  test('search and clear filters are local cached projections', () async {
+    final repository = FakeCategoriesRepository(
+      categories: [_category(1), _category(2)],
+    );
+    final cubit = _cubit(repository);
+    await cubit.load();
+
+    cubit.searchChanged('Category 2');
+
+    expect(cubit.state.result!.items.map((row) => row.id), [2]);
+    expect(cubit.state.result!.items.single.flat, isTrue);
+    await cubit.clearFilters();
+
+    expect(cubit.state.query.hasActiveFilters, isFalse);
+    expect(cubit.state.result!.items.map((row) => row.id), [1, 2]);
+    expect(repository.getAllCalls, 1);
+    await cubit.close();
+  });
+
+  test('bulk delete orders selected leaves before their ancestors', () async {
+    final repository = FakeCategoriesRepository(
+      categories: [
+        _category(1),
+        _category(2, parentId: 1),
+        _category(3, parentId: 2),
+        _category(4),
+      ],
+    );
+    final cubit = _cubit(repository);
+    await cubit.load();
+    final tree = cubit.tree!;
+
+    final result = await cubit.bulkDelete(
+      tree.visible(expandedIds: tree.parentIds),
+    );
+
+    expect(result.successCount, 4);
+    expect(result.failureCount, 0);
+    expect(repository.deletedIds, [3, 2, 1, 4]);
+    await cubit.close();
+  });
+
+  test('bulk delete rejects a parent when its child is not selected', () async {
+    final repository = FakeCategoriesRepository(
+      categories: [_category(1), _category(2, parentId: 1)],
+    );
+    final cubit = _cubit(repository);
+    await cubit.load();
+    final parent = cubit.tree!.visible().first;
+
+    final result = await cubit.bulkDelete([parent]);
+
+    expect(result.successCount, 0);
+    expect(result.failureCount, 1);
+    expect(repository.deletedIds, isEmpty);
+    await cubit.close();
+  });
+
+  test('bulk delete keeps a parent blocked when a selected child fails', () async {
+    final repository = FakeCategoriesRepository(
+      categories: [_category(1), _category(2, parentId: 1)],
+    )..mutationResult = const Left(CategoryInUseFailure());
+    final cubit = _cubit(repository);
+    await cubit.load();
+    final rows = cubit.tree!.visible(expandedIds: cubit.tree!.parentIds);
+
+    final result = await cubit.bulkDelete(rows);
+
+    expect(result.successCount, 0);
+    expect(result.failureCount, 2);
+    expect(repository.deletedIds, [2]);
+    await cubit.close();
+  });
+
 }
