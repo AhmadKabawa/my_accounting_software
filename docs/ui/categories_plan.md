@@ -115,8 +115,9 @@
 - لا توجد بيئة Flutter/Dart محلية؛ لم يُشغَّل محلياً `flutter analyze` أو `flutter test` أو `flutter build`.
 - المرحلة 4: CI run `45709545289` نجح (Auto-format وAnalyze وTests وCatalog UI Widget Tests).
 - المرحلة 5: run `45711643225` اجتاز Analyze، ثم فشل اختبار واحد من أصل 1260: اختبار sidebar لم يتوقع عنصر Categories. أُصلح الاختبار في commit `f9aeb6e`.
-- run `45712204962` على إصلاح الاختبار: Auto-format وAnalyze ناجحان؛ Tests كانت قيد التنفيذ عند كتابة هذا التحديث.
-- run `45712411332` على توثيق المرحلة 6: قيد الانتظار عند كتابة هذا التحديث.
+- run `45712204962` على إصلاح الاختبار `f9aeb6e` نجح بالكامل: Auto-format وAnalyze وTests وCatalog UI Widget Tests.
+- run `45712411332` على commit التوثيق الأول `4e33438` أُلغي بعد دفع commit التوثيق المصحح `bd5901e`؛ لا يُحسب نجاحاً أو فشلاً.
+- run `45712830231` على `bd5901e` نجح بالكامل: Auto-format وAnalyze وTests وCatalog UI Widget Tests.
 - لم يُختبر REST على Supabase حي، ولم تُجر تجربة manage/read-only، ولا فحص Chrome يدوي.
 
 ### 7.4 طلب REST يدوي للتحقق من count
