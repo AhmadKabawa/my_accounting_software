@@ -18,6 +18,8 @@ class AppColorPicker extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.onInputChanged,
+    this.collapsedPresetCount,
+    this.startWithMapClosed = false,
     this.presets = const [
       '#000000',
       '#FFFFFF',
@@ -35,6 +37,13 @@ class AppColorPicker extends StatefulWidget {
   /// Reports raw HEX edits, including incomplete or invalid input.
   final ValueChanged<String>? onInputChanged;
   final List<String> presets;
+
+  /// When set, only this many presets show until the user taps "More".
+  final int? collapsedPresetCount;
+
+  /// Keeps the color map closed until the user asks for it (default: open on
+  /// desktop and for a custom value, as before).
+  final bool startWithMapClosed;
   @override
   State<AppColorPicker> createState() => _AppColorPickerState();
 }
@@ -47,6 +56,7 @@ class _AppColorPickerState extends State<AppColorPicker> {
   String? _alpha;
   bool _responsiveStateInitialized = false;
   bool _showSpectrum = true;
+  bool _allPresets = false;
   Color get _color => HSVColor.fromAHSV(1, _hue, _sat, _val).toColor();
   @override
   void initState() {
@@ -67,7 +77,9 @@ class _AppColorPickerState extends State<AppColorPicker> {
     super.didChangeDependencies();
     if (_responsiveStateInitialized) return;
     _responsiveStateInitialized = true;
-    _showSpectrum = !context.ui.screen.isMobile || _isCustomValue(widget.value);
+    _showSpectrum =
+        !widget.startWithMapClosed &&
+        (!context.ui.screen.isMobile || _isCustomValue(widget.value));
   }
 
   @override
@@ -189,7 +201,9 @@ class _AppColorPickerState extends State<AppColorPicker> {
     required Widget child,
     required ValueChanged<DragDownDetails> onDown,
     required ValueChanged<DragUpdateDetails> onUpdate,
-  }) => RawGestureDetector(
+  }) => ClipRRect(
+    borderRadius: AppRadius.md.circular(context),
+    child: RawGestureDetector(
     behavior: HitTestBehavior.opaque,
     gestures: {
       _ImmediatePanGestureRecognizer:
@@ -203,6 +217,7 @@ class _AppColorPickerState extends State<AppColorPicker> {
           ),
     },
     child: child,
+    ),
   );
 
   Widget _buildSpectrum(BuildContext context, double pickerSize) {
@@ -268,8 +283,13 @@ class _AppColorPickerState extends State<AppColorPicker> {
 
   Widget _buildPresets(BuildContext context) {
     final ui = context.ui;
-    final validPresets = widget.presets.where(HexColor.isValid);
-    if (validPresets.isEmpty) return const SizedBox.shrink();
+    final allPresets = widget.presets.where(HexColor.isValid).toList();
+    if (allPresets.isEmpty) return const SizedBox.shrink();
+    final limit = widget.collapsedPresetCount;
+    final canCollapse = limit != null && allPresets.length > limit;
+    final validPresets = canCollapse && !_allPresets
+        ? allPresets.take(limit).toList()
+        : allPresets;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -302,6 +322,16 @@ class _AppColorPickerState extends State<AppColorPicker> {
                     ),
                   ),
                 ),
+              ),
+            if (canCollapse)
+              AppButton(
+                _allPresets
+                    ? AppColorPickerKeys.fewerPresets
+                    : AppColorPickerKeys.morePresets,
+                onPressed: () => setState(() => _allPresets = !_allPresets),
+                variant: AppButtonVariant.text,
+                size: AppButtonSize.small,
+                icon: _allPresets ? AppIcons.collapse : AppIcons.expand,
               ),
           ],
         ),
@@ -346,8 +376,9 @@ class _AppColorPickerState extends State<AppColorPicker> {
         AppButton(
           AppColorPickerKeys.customColor,
           onPressed: () => setState(() => _showSpectrum = !_showSpectrum),
-          variant: AppButtonVariant.text,
+          variant: AppButtonVariant.outlined,
           size: AppButtonSize.small,
+          icon: AppIcons.colors,
         ),
         if (_showSpectrum) ...[
           ui.spacing.gap(AppSpacing.sm),
@@ -397,13 +428,10 @@ class _SvPainter extends CustomPainter {
           colors: [Color(0x00000000), black],
         ).createShader(r),
     );
-    c.drawCircle(
+    _thumb(
+      c,
       Offset(s * z.width, (1 - v) * z.height),
-      8,
-      Paint()
-        ..color = white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
+      HSVColor.fromAHSV(1, h, s, v).toColor(),
     );
   }
 
@@ -430,16 +458,35 @@ class _HuePainter extends CustomPainter {
       r,
       Paint()..shader = const LinearGradient(colors: colors).createShader(r),
     );
-    c.drawCircle(
+    _thumb(
+      c,
       Offset(h / 360 * z.width, z.height / 2),
-      8,
-      Paint()
-        ..color = const Color(0xFFFFFFFF)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
+      HSVColor.fromAHSV(1, h, 1, 1).toColor(),
     );
   }
 
   @override
   bool shouldRepaint(_HuePainter o) => h != o.h;
+}
+
+/// The round handle: filled with the picked color, white ring, soft outline.
+void _thumb(Canvas canvas, Offset center, Color fill) {
+  canvas
+    ..drawCircle(
+      center,
+      11,
+      Paint()
+        ..color = const Color(0x40000000)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1,
+    )
+    ..drawCircle(center, 9, Paint()..color = fill)
+    ..drawCircle(
+      center,
+      9,
+      Paint()
+        ..color = const Color(0xFFFFFFFF)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
 }

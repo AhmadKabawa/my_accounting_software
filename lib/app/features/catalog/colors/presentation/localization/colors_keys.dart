@@ -10,10 +10,10 @@ enum ColorsKeys implements AppKey {
   codeHint(ar: 'مثال: BLK أو NAVY-01', en: 'Example: BLK or NAVY-01'),
   hexCode(ar: 'قيمة اللون (HEX)', en: 'Color value (HEX)'),
   hexHint(ar: 'اختياري، مثل #1A2B3C', en: 'Optional, for example #1A2B3C'),
-  sortOrder(ar: 'ترتيب العرض', en: 'Display order'),
+  sortOrder(ar: 'ترتيب الظهور (اختياري)', en: 'Display order (optional)'),
   sortOrderHint(
-    ar: 'الأرقام الأصغر تظهر أولاً.',
-    en: 'Lower numbers appear first.',
+    ar: 'يحدد مكان اللون في القوائم: الأصغر أولاً. اتركه 0 إن لم تحتج ترتيبًا خاصًا.',
+    en: 'Sets where the color sits in lists: lower first. Leave 0 if you do not need a custom order.',
   ),
   presets(ar: 'ألوان جاهزة', en: 'Preset colors'),
   presetPick(ar: 'اختر {name}', en: 'Pick {name}'),

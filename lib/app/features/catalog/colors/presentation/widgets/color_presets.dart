@@ -1,6 +1,9 @@
 /// A starter palette offered in the editor (a shortcut, not a limit:
 /// any HEX value can still be typed).
 abstract final class ColorPresets {
+  /// How many show before the user taps "More".
+  static const visibleCount = 8;
+
   static const List<String> hexes = [
     '#000000',
     '#FFFFFF',

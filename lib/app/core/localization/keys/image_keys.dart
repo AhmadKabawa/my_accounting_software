@@ -13,7 +13,10 @@ enum ImageKeys implements AppKey {
     ar: 'تعذّرت قراءة الصورة. حاول اختيارها مرة أخرى.',
     en: 'The image could not be read. Please choose it again.',
   ),
-  dropHint(ar: 'اسحب الصورة وأفلتها هنا', en: 'Drag and drop an image here');
+  dropHint(
+    ar: 'يمكنك سحب الصورة وإفلاتها هنا، أو اضغط «رفع» لاختيارها',
+    en: 'You can drag and drop an image here, or press Upload to choose one',
+  );
 
   const ImageKeys({required this.ar, required this.en});
   @override

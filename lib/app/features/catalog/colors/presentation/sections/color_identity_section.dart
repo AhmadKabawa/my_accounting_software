@@ -14,6 +14,7 @@ class ColorIdentitySection extends StatelessWidget {
     required this.sortOrder,
     required this.onChanged,
     required this.onNameChanged,
+    required this.onCodeChanged,
     this.suggestedName,
   });
 
@@ -22,6 +23,7 @@ class ColorIdentitySection extends StatelessWidget {
   final TextEditingController sortOrder;
   final VoidCallback onChanged;
   final VoidCallback onNameChanged;
+  final VoidCallback onCodeChanged;
   final String? suggestedName;
 
   @override
@@ -56,7 +58,10 @@ class ColorIdentitySection extends StatelessWidget {
         hintKey: ColorsKeys.codeHint,
         textDirection: TextDirection.ltr,
         validator: ColorFieldValidators.code,
-        onChanged: (_) => onChanged(),
+        onChanged: (_) {
+          onCodeChanged();
+          onChanged();
+        },
       ),
       context.ui.spacing.gap(AppSpacing.smMd),
       AppTextField(

@@ -336,4 +336,51 @@ void main() {
     expect(t.takeException(), isNull);
     expect(find.text('Custom color'), findsOneWidget);
   });
+
+  testWidgets('quick colors collapse to a count and expand with More', (
+    t,
+  ) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: AppColorPicker(
+              value: null,
+              presets: const ['#111111', '#222222', '#333333', '#444444'],
+              collapsedPresetCount: 2,
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.bySemanticsLabel('#222222'), findsOneWidget);
+    expect(find.bySemanticsLabel('#333333'), findsNothing);
+    await t.tap(find.text('More'));
+    await t.pump();
+    expect(find.bySemanticsLabel('#444444'), findsOneWidget);
+    await t.tap(find.text('Less'));
+    await t.pump();
+    expect(find.bySemanticsLabel('#444444'), findsNothing);
+  });
+
+  testWidgets('the color map can start closed and opens on demand', (t) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: AppColorPicker(
+              value: '#123456',
+              startWithMapClosed: true,
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(_pickerSurfaces(), findsNothing);
+    await t.tap(find.text('Custom color'));
+    await t.pump();
+    expect(_pickerSurfaces(), findsNWidgets(2));
+  });
 }

@@ -149,6 +149,23 @@ void main() {
     expect(result, isNull);
   });
 
+  testWidgets('HEX fills the code until the user types a code', (tester) async {
+    await _pumpEditor(tester, FakeColorsRepository());
+
+    await tester.enterText(find.byType(TextFormField).at(3), '#f57c21');
+    await tester.pump();
+    expect(_controller(tester, 1).text, 'F57C21');
+
+    await tester.enterText(find.byType(TextFormField).at(3), '#000000');
+    await tester.pump();
+    expect(_controller(tester, 1).text, '000000');
+
+    await tester.enterText(find.byType(TextFormField).at(1), 'BLK');
+    await tester.enterText(find.byType(TextFormField).at(3), '#FFFFFF');
+    await tester.pump();
+    expect(_controller(tester, 1).text, 'BLK');
+  });
+
   testWidgets('HEX suggests a name until the user edits the name', (
     tester,
   ) async {

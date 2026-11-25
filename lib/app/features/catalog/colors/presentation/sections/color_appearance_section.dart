@@ -66,6 +66,8 @@ class _ColorAppearanceSectionState extends State<ColorAppearanceSection> {
             AppColorPicker(
               value: _pickerValue,
               presets: ColorPresets.hexes,
+              collapsedPresetCount: ColorPresets.visibleCount,
+              startWithMapClosed: true,
               onInputChanged: (raw) {
                 _setText(raw);
                 field.didChange(raw);

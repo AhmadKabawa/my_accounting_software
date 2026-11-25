@@ -14,6 +14,7 @@ class ColorEditorFieldsView extends StatelessWidget {
     required this.suggestedName,
     required this.onNameChanged,
     required this.onChanged,
+    required this.onCodeChanged,
     required this.onHexChanged,
   });
 
@@ -24,6 +25,7 @@ class ColorEditorFieldsView extends StatelessWidget {
   final String? suggestedName;
   final VoidCallback onNameChanged;
   final VoidCallback onChanged;
+  final VoidCallback onCodeChanged;
   final VoidCallback onHexChanged;
 
   @override
@@ -37,6 +39,7 @@ class ColorEditorFieldsView extends StatelessWidget {
         suggestedName: suggestedName,
         onNameChanged: onNameChanged,
         onChanged: onChanged,
+        onCodeChanged: onCodeChanged,
       ),
       context.ui.spacing.gap(AppSpacing.md),
       ColorAppearanceSection(hex: hex, onChanged: onHexChanged),
