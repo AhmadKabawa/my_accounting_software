@@ -52,30 +52,36 @@ class _ApiClient extends Fake implements IApiClient {
 }
 
 void main() {
-  test('falls back to the base projection when embedded count is rejected', () async {
-    final api = _ApiClient()..firstFailure = ApiException.badRequest();
-    final source = CategoriesRemoteDataSourceImpl(api);
+  test(
+    'falls back to the base projection when embedded count is rejected',
+    () async {
+      final api = _ApiClient()..firstFailure = ApiException.badRequest();
+      final source = CategoriesRemoteDataSourceImpl(api);
 
-    final result = await source.getPage(page: 1, limit: 1000);
+      final result = await source.getPage(page: 1, limit: 1000);
 
-    expect(result, isA<ApiSuccess<PaginatedResult<CategoryModel>>>());
-    expect(api.calls, 2);
-    expect(api.queries.first['select'], CategoriesEndpoint.select);
-    expect(
-      api.queries.last['select'],
-      CategoriesEndpoint.selectWithoutProductCount,
-    );
-    final page = (result as ApiSuccess<PaginatedResult<CategoryModel>>).data;
-    expect(page.items.single.productCount, isNull);
-  });
+      expect(result, isA<ApiSuccess<PaginatedResult<CategoryModel>>>());
+      expect(api.calls, 2);
+      expect(api.queries.first['select'], CategoriesEndpoint.select);
+      expect(
+        api.queries.last['select'],
+        CategoriesEndpoint.selectWithoutProductCount,
+      );
+      final page = (result as ApiSuccess<PaginatedResult<CategoryModel>>).data;
+      expect(page.items.single.productCount, isNull);
+    },
+  );
 
-  test('does not retry permission or connectivity failures without the embed', () async {
-    final api = _ApiClient()..firstFailure = ApiException.forbidden();
-    final source = CategoriesRemoteDataSourceImpl(api);
+  test(
+    'does not retry permission or connectivity failures without the embed',
+    () async {
+      final api = _ApiClient()..firstFailure = ApiException.forbidden();
+      final source = CategoriesRemoteDataSourceImpl(api);
 
-    final result = await source.getPage(page: 1, limit: 1000);
+      final result = await source.getPage(page: 1, limit: 1000);
 
-    expect(result, isA<ApiFailure<PaginatedResult<CategoryModel>>>());
-    expect(api.calls, 1);
-  });
+      expect(result, isA<ApiFailure<PaginatedResult<CategoryModel>>>());
+      expect(api.calls, 1);
+    },
+  );
 }

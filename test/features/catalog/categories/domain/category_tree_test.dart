@@ -21,19 +21,22 @@ Category _category(
 );
 
 void main() {
-  test('builds a tree from flat rows and orders siblings deterministically', () {
-    final tree = CategoryTree([
-      _category(3, parentId: 1, sortOrder: 2),
-      _category(2, parentId: 1, sortOrder: 1),
-      _category(1),
-      _category(4),
-    ]);
+  test(
+    'builds a tree from flat rows and orders siblings deterministically',
+    () {
+      final tree = CategoryTree([
+        _category(3, parentId: 1, sortOrder: 2),
+        _category(2, parentId: 1, sortOrder: 1),
+        _category(1),
+        _category(4),
+      ]);
 
-    expect(tree.length, 4);
-    expect(tree.childrenOf(null).map((item) => item.id), [1, 4]);
-    expect(tree.childrenOf(1).map((item) => item.id), [2, 3]);
-    expect(tree.depthOf(3), 1);
-  });
+      expect(tree.length, 4);
+      expect(tree.childrenOf(null).map((item) => item.id), [1, 4]);
+      expect(tree.childrenOf(1).map((item) => item.id), [2, 3]);
+      expect(tree.depthOf(3), 1);
+    },
+  );
 
   test('derives depth, ancestor path, descendants and direct child counts', () {
     final tree = CategoryTree([
@@ -73,10 +76,7 @@ void main() {
       _category(3, parentId: 2),
     ]);
 
-    expect(
-      tree.visible(expandedIds: {1, 2}).map((row) => row.id),
-      [1, 2, 3],
-    );
+    expect(tree.visible(expandedIds: {1, 2}).map((row) => row.id), [1, 2, 3]);
     expect(tree.visible(expandedIds: {}).map((row) => row.id), [1]);
   });
 

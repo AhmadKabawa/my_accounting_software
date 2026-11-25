@@ -2,7 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/models/category_model.dart';
 
 Map<String, dynamic> _json({
-  dynamic productCategories = const [{'count': 4}],
+  dynamic productCategories = const [
+    {'count': 4},
+  ],
 }) => {
   'id': 12,
   'parent_id': 3,
@@ -48,7 +50,11 @@ void main() {
 
   test('malformed embedded count remains unknown', () {
     final model = CategoryModel.fromJson(
-      _json(productCategories: const [{'unexpected': 5}]),
+      _json(
+        productCategories: const [
+          {'unexpected': 5},
+        ],
+      ),
     );
 
     expect(model.productCount, isNull);

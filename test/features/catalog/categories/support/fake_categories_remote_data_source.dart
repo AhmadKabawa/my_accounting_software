@@ -49,8 +49,9 @@ class FakeCategoriesRemoteDataSource implements CategoriesRemoteDataSource {
   }) async => ApiSuccess(model);
 
   @override
-  Future<ApiResult<Unit>> delete(int id) async =>
-      deleteFailure == null ? const ApiSuccess(unit) : ApiFailure(deleteFailure!);
+  Future<ApiResult<Unit>> delete(int id) async => deleteFailure == null
+      ? const ApiSuccess(unit)
+      : ApiFailure(deleteFailure!);
 
   @override
   Future<ApiResult<Unit>> setActive({

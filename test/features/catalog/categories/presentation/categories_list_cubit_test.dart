@@ -36,32 +36,35 @@ CategoriesListCubit _cubit(FakeCategoriesRepository repository) =>
     );
 
 void main() {
-  test('tree expand and collapse are local projections without network calls', () async {
-    final repository = FakeCategoriesRepository(
-      categories: [
-        _category(1),
-        _category(2, parentId: 1),
-        _category(3, parentId: 2),
-      ],
-    );
-    final cubit = _cubit(repository);
-    await cubit.load();
-    expect(repository.getAllCalls, 1);
-    expect(cubit.state.query.pageSize, CategoryListQuery.treePageSize);
-    expect(cubit.state.result!.totalCount, 2);
-    expect(cubit.state.result!.items.map((row) => row.id), [1, 2]);
+  test(
+    'tree expand and collapse are local projections without network calls',
+    () async {
+      final repository = FakeCategoriesRepository(
+        categories: [
+          _category(1),
+          _category(2, parentId: 1),
+          _category(3, parentId: 2),
+        ],
+      );
+      final cubit = _cubit(repository);
+      await cubit.load();
+      expect(repository.getAllCalls, 1);
+      expect(cubit.state.query.pageSize, CategoryListQuery.treePageSize);
+      expect(cubit.state.result!.totalCount, 2);
+      expect(cubit.state.result!.items.map((row) => row.id), [1, 2]);
 
-    cubit.selection.selectPage([1]);
-    cubit.toggleExpanded(2);
-    expect(cubit.state.result!.items.map((row) => row.id), [1, 2, 3]);
-    cubit.collapseAll();
-    expect(cubit.state.result!.items.map((row) => row.id), [1]);
-    expect(cubit.selection.state, isEmpty);
-    cubit.expandAll();
-    expect(cubit.state.result!.items.map((row) => row.id), [1, 2, 3]);
-    expect(repository.getAllCalls, 1);
-    await cubit.close();
-  });
+      cubit.selection.selectPage([1]);
+      cubit.toggleExpanded(2);
+      expect(cubit.state.result!.items.map((row) => row.id), [1, 2, 3]);
+      cubit.collapseAll();
+      expect(cubit.state.result!.items.map((row) => row.id), [1]);
+      expect(cubit.selection.state, isEmpty);
+      cubit.expandAll();
+      expect(cubit.state.result!.items.map((row) => row.id), [1, 2, 3]);
+      expect(repository.getAllCalls, 1);
+      await cubit.close();
+    },
+  );
 
   test('status filtering and page changes are local and flat', () async {
     final repository = FakeCategoriesRepository(
@@ -82,45 +85,57 @@ void main() {
     await cubit.close();
   });
 
-  test('delete guard rejects parents, used leaves and unknown product counts', () async {
-    final repository = FakeCategoriesRepository(
-      categories: [
-        _category(1),
-        _category(2, parentId: 1),
-        _category(3, products: 2),
-        _category(4, products: null),
-        _category(5, products: 0),
-      ],
-    );
-    final cubit = _cubit(repository);
-    await cubit.load();
+  test(
+    'delete guard rejects parents, used leaves and unknown product counts',
+    () async {
+      final repository = FakeCategoriesRepository(
+        categories: [
+          _category(1),
+          _category(2, parentId: 1),
+          _category(3, products: 2),
+          _category(4, products: null),
+          _category(5, products: 0),
+        ],
+      );
+      final cubit = _cubit(repository);
+      await cubit.load();
 
-    final rows = cubit.state.result!.items;
-    expect(cubit.beforeDelete(rows.firstWhere((row) => row.id == 1)),
-        isA<CategoryInUseFailure>());
-    expect(cubit.beforeDelete(rows.firstWhere((row) => row.id == 3)),
-        isA<CategoryInUseFailure>());
-    expect(cubit.beforeDelete(rows.firstWhere((row) => row.id == 4)),
-        isA<CategoryUsageUnknownFailure>());
-    expect(cubit.beforeDelete(rows.firstWhere((row) => row.id == 5)), isNull);
-    expect(repository.deletedIds, isEmpty);
-    await cubit.close();
-  });
+      final rows = cubit.state.result!.items;
+      expect(
+        cubit.beforeDelete(rows.firstWhere((row) => row.id == 1)),
+        isA<CategoryInUseFailure>(),
+      );
+      expect(
+        cubit.beforeDelete(rows.firstWhere((row) => row.id == 3)),
+        isA<CategoryInUseFailure>(),
+      );
+      expect(
+        cubit.beforeDelete(rows.firstWhere((row) => row.id == 4)),
+        isA<CategoryUsageUnknownFailure>(),
+      );
+      expect(cubit.beforeDelete(rows.firstWhere((row) => row.id == 5)), isNull);
+      expect(repository.deletedIds, isEmpty);
+      await cubit.close();
+    },
+  );
 
-  test('successful status mutation invalidates and reloads cached tree', () async {
-    final repository = FakeCategoriesRepository(categories: [_category(1)]);
-    final cubit = _cubit(repository);
-    await cubit.load();
-    expect(cubit.tree, isNotNull);
+  test(
+    'successful status mutation invalidates and reloads cached tree',
+    () async {
+      final repository = FakeCategoriesRepository(categories: [_category(1)]);
+      final cubit = _cubit(repository);
+      await cubit.load();
+      expect(cubit.tree, isNotNull);
 
-    final result = await cubit.deactivate(1);
+      final result = await cubit.deactivate(1);
 
-    expect(result, const Right(unit));
-    expect(repository.statusUpdates, [(1, false)]);
-    expect(repository.getAllCalls, 2);
-    expect(cubit.tree, isNotNull);
-    await cubit.close();
-  });
+      expect(result, const Right(unit));
+      expect(repository.statusUpdates, [(1, false)]);
+      expect(repository.getAllCalls, 2);
+      expect(cubit.tree, isNotNull);
+      await cubit.close();
+    },
+  );
 
   test('saving a category invalidates the cached tree before reload', () async {
     final repository = FakeCategoriesRepository(categories: [_category(1)]);
@@ -134,18 +149,21 @@ void main() {
     await cubit.close();
   });
 
-  test('failed status mutation preserves cached tree and does not reload', () async {
-    final repository = FakeCategoriesRepository(categories: [_category(1)])
-      ..mutationResult = const Left(CategoryInUseFailure());
-    final cubit = _cubit(repository);
-    await cubit.load();
-    final cached = cubit.tree;
+  test(
+    'failed status mutation preserves cached tree and does not reload',
+    () async {
+      final repository = FakeCategoriesRepository(categories: [_category(1)])
+        ..mutationResult = const Left(CategoryInUseFailure());
+      final cubit = _cubit(repository);
+      await cubit.load();
+      final cached = cubit.tree;
 
-    final result = await cubit.deactivate(1);
+      final result = await cubit.deactivate(1);
 
-    expect(result.isLeft(), isTrue);
-    expect(cubit.tree, same(cached));
-    expect(repository.getAllCalls, 1);
-    await cubit.close();
-  });
+      expect(result.isLeft(), isTrue);
+      expect(cubit.tree, same(cached));
+      expect(repository.getAllCalls, 1);
+      await cubit.close();
+    },
+  );
 }
