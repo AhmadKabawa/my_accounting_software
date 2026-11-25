@@ -107,7 +107,6 @@ CategoriesListCubit _listCubit(WidgetTester tester) =>
       tester.element(find.byType(ListPageTemplate)),
     );
 
-
 Finder _categoryNameInput() => find.descendant(
   of: find.byWidgetPredicate(
     (widget) =>

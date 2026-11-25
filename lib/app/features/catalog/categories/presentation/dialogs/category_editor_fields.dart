@@ -13,7 +13,11 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 
 class CategoryEditorFields extends StatelessWidget {
-  const CategoryEditorFields({super.key, required this.cubit, required this.scope});
+  const CategoryEditorFields({
+    super.key,
+    required this.cubit,
+    required this.scope,
+  });
 
   final CategoryFormCubit cubit;
   final CrudEditorScope scope;
