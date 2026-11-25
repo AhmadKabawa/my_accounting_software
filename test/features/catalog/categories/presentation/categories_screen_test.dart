@@ -298,18 +298,24 @@ void main() {
       buildTestApp(home: _home(), direction: TextDirection.ltr),
     );
     await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'initial page');
     _listCubit(tester).expandAll();
     await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'after expanding the tree');
 
     await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).at(2));
     await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'after opening row actions');
     await tester.tap(find.text(CategoriesKeys.addChild.en));
     await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'after opening editor');
 
     await tester.enterText(_categoryNameInput(), 'Leaf child');
     await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'after entering the name');
     await tester.tap(find.text(CategoriesKeys.save.en));
     await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'after saving the child');
 
     expect(repository.createCalls, 1);
     expect(
