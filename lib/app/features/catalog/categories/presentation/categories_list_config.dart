@@ -7,9 +7,7 @@ import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
@@ -38,7 +36,7 @@ const _crudLabels = CrudLabels(
   activate: CategoriesKeys.activate,
   deactivate: CategoriesKeys.deactivate,
   deleteConfirmationTitle: CategoriesKeys.delete,
-  deleteConfirmationMessage: CategoriesKeys.confirmDelete,
+  deleteConfirmationMessage: CategoriesKeys.deleteMessage,
   deactivateConfirmationTitle: CategoriesKeys.deactivateTitle,
   deactivateConfirmationMessage: CategoriesKeys.deactivateMessage,
 );
@@ -126,7 +124,7 @@ get categoriesListConfig => CrudListConfig(
     deactivateMessage: (node) => node.activeChildCount == 0
         ? null
         : (
-            key: CategoriesKeys.deactivateParentWithActiveChildren,
+            key: CategoriesKeys.deactivateWithChildrenMessage,
             args: {'count': node.activeChildCount.toString()},
           ),
     labels: _crudLabels,

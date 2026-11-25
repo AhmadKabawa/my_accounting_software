@@ -217,13 +217,12 @@ class _CategoryEditorFields extends StatelessWidget {
           clearable: true,
           mode: SearchableDropdownMode.panel,
           allOptionLabel: CategoriesKeys.noParent,
-          onChanged: scope.busy
-              ? null
-              : (node) {
-                  cubit.setParent(node?.id);
-                  scope.clearFailure();
-                  scope.changed();
-                },
+          onChanged: (node) {
+            if (scope.busy) return;
+            cubit.setParent(node?.id);
+            scope.clearFailure();
+            scope.changed();
+          },
         ),
         context.ui.spacing.gap(AppSpacing.xs),
         AppText(
