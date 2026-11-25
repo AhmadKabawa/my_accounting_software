@@ -49,34 +49,35 @@ Future<bool?> showCategoryEditor(
       context,
       (_) => BlocProvider.value(
         value: cubit,
-        child: CrudEditorDialog<
-          CategoryFormCubit,
-          CategoryFormState,
-          CategoryFormEffect
-        >(
-          cubit: cubit,
-          fields: fields,
-          mode: category == null ? CrudEditorMode.add : CrudEditorMode.edit,
-          labels: const CrudEditorLabels(
-            addTitle: CategoriesKeys.add,
-            editTitle: CategoriesKeys.edit,
-            duplicateTitle: CategoriesKeys.add,
-            subtitle: CategoriesKeys.editorSubtitle,
-            save: CategoriesKeys.save,
-            cancel: CategoriesKeys.cancel,
-          ),
-          isSaving: (state) => state.saving,
-          outcome: (effect) => switch (effect) {
-            CategorySavedEffect() => const CrudEditorSuccess(),
-            CategorySaveFailedEffect(:final messageKey) =>
-              CrudEditorFailure(messageKey),
-          },
-          onSave: cubit.save,
-          extraDirty: cubit.parentChanged,
-          onReset: cubit.reset,
-          builder: (dialogContext, scope) =>
-              _CategoryEditorFields(cubit: cubit, scope: scope),
-        ),
+        child:
+            CrudEditorDialog<
+              CategoryFormCubit,
+              CategoryFormState,
+              CategoryFormEffect
+            >(
+              cubit: cubit,
+              fields: fields,
+              mode: category == null ? CrudEditorMode.add : CrudEditorMode.edit,
+              labels: const CrudEditorLabels(
+                addTitle: CategoriesKeys.add,
+                editTitle: CategoriesKeys.edit,
+                duplicateTitle: CategoriesKeys.add,
+                subtitle: CategoriesKeys.editorSubtitle,
+                save: CategoriesKeys.save,
+                cancel: CategoriesKeys.cancel,
+              ),
+              isSaving: (state) => state.saving,
+              outcome: (effect) => switch (effect) {
+                CategorySavedEffect() => const CrudEditorSuccess(),
+                CategorySaveFailedEffect(:final messageKey) =>
+                  CrudEditorFailure(messageKey),
+              },
+              onSave: cubit.save,
+              extraDirty: cubit.parentChanged,
+              onReset: cubit.reset,
+              builder: (dialogContext, scope) =>
+                  _CategoryEditorFields(cubit: cubit, scope: scope),
+            ),
       ),
     );
   } finally {
@@ -86,10 +87,7 @@ Future<bool?> showCategoryEditor(
 }
 
 class _CategoryEditorFields extends StatelessWidget {
-  const _CategoryEditorFields({
-    required this.cubit,
-    required this.scope,
-  });
+  const _CategoryEditorFields({required this.cubit, required this.scope});
 
   final CategoryFormCubit cubit;
   final CrudEditorScope scope;

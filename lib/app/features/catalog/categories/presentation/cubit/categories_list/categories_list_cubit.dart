@@ -184,9 +184,8 @@ class CategoriesListCubit
 
   Future<Either<Failure, Unit>> deactivate(int id) => _setActive(id, false);
 
-  Future<BulkResult<CategoryNode>> bulkActivate(
-    Iterable<CategoryNode> items,
-  ) => _bulkSetActive(items, true);
+  Future<BulkResult<CategoryNode>> bulkActivate(Iterable<CategoryNode> items) =>
+      _bulkSetActive(items, true);
 
   Future<BulkResult<CategoryNode>> bulkDeactivate(
     Iterable<CategoryNode> items,
@@ -208,9 +207,7 @@ class CategoriesListCubit
 
   /// Deletes selected leaves before their ancestors. A parent is eligible
   /// only after every original child was successfully deleted in this batch.
-  Future<BulkResult<CategoryNode>> bulkDelete(
-    Iterable<CategoryNode> items,
-  ) {
+  Future<BulkResult<CategoryNode>> bulkDelete(Iterable<CategoryNode> items) {
     final originalTree = _tree;
     final deletedIds = <int>{};
     final ordered = items.toList()
@@ -239,13 +236,10 @@ class CategoriesListCubit
         }
 
         final result = await _deleteCategory(item.category.id);
-        result.fold(
-          (_) {},
-          (_) {
-            deletedIds.add(item.id);
-            _tree = null;
-          },
-        );
+        result.fold((_) {}, (_) {
+          deletedIds.add(item.id);
+          _tree = null;
+        });
         return result;
       },
     );

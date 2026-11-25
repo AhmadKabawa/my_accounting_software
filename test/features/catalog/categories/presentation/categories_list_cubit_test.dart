@@ -223,20 +223,22 @@ void main() {
     await cubit.close();
   });
 
-  test('bulk delete keeps a parent blocked when a selected child fails', () async {
-    final repository = FakeCategoriesRepository(
-      categories: [_category(1), _category(2, parentId: 1)],
-    )..mutationResult = const Left(CategoryInUseFailure());
-    final cubit = _cubit(repository);
-    await cubit.load();
-    final rows = cubit.tree!.visible(expandedIds: cubit.tree!.parentIds);
+  test(
+    'bulk delete keeps a parent blocked when a selected child fails',
+    () async {
+      final repository = FakeCategoriesRepository(
+        categories: [_category(1), _category(2, parentId: 1)],
+      )..mutationResult = const Left(CategoryInUseFailure());
+      final cubit = _cubit(repository);
+      await cubit.load();
+      final rows = cubit.tree!.visible(expandedIds: cubit.tree!.parentIds);
 
-    final result = await cubit.bulkDelete(rows);
+      final result = await cubit.bulkDelete(rows);
 
-    expect(result.successCount, 0);
-    expect(result.failureCount, 2);
-    expect(repository.deletedIds, [2]);
-    await cubit.close();
-  });
-
+      expect(result.successCount, 0);
+      expect(result.failureCount, 2);
+      expect(repository.deletedIds, [2]);
+      await cubit.close();
+    },
+  );
 }

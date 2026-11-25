@@ -97,10 +97,7 @@ get categoriesListConfig => CrudListConfig(
     ],
   ),
   viewModes: const [AppViewMode.table, AppViewMode.cards],
-  capabilities: const CrudCapabilities(
-    duplicate: false,
-    bulkSelection: true,
-  ),
+  capabilities: const CrudCapabilities(duplicate: false, bulkSelection: true),
   extraToolbarActions: (slot) {
     if (slot.state.query.hasActiveFilters || slot.cubit.tree == null) {
       return const [];
@@ -119,8 +116,7 @@ get categoriesListConfig => CrudListConfig(
       category: item?.category,
       tree: context.read<CategoriesListCubit>().tree,
     ),
-    onSaved: (cubit, {required isNew}) =>
-        cubit.onCategorySaved(isNew: isNew),
+    onSaved: (cubit, {required isNew}) => cubit.onCategorySaved(isNew: isNew),
     itemLabel: (node) => node.category.name,
     delete: (cubit, node) => cubit.delete(node),
     activate: (cubit, node) => cubit.activate(node.id),
@@ -148,77 +144,78 @@ get categoriesListConfig => CrudListConfig(
     delete: (cubit, items) => cubit.bulkDelete(items),
   ),
   dataSection: (data) {
-    final section = CrudDataSection<CategoryNode, CategoryListQuery, CategoriesListCubit>(
-      data: data,
-      columns: [
-        DataTableColumn<CategoryNode>(
-          labelKey: CategoriesKeys.categoryName,
-          priority: DataTableColumnPriority.primary,
-          flex: 3,
-          cellBuilder: (_, node) => CategoryIdentity(
+    final section =
+        CrudDataSection<CategoryNode, CategoryListQuery, CategoriesListCubit>(
+          data: data,
+          columns: [
+            DataTableColumn<CategoryNode>(
+              labelKey: CategoriesKeys.categoryName,
+              priority: DataTableColumnPriority.primary,
+              flex: 3,
+              cellBuilder: (_, node) => CategoryIdentity(
+                node: node,
+                onToggle: node.hasChildren
+                    ? () => data.cubit.toggleExpanded(node.id)
+                    : null,
+              ),
+            ),
+            DataTableColumn<CategoryNode>(
+              labelKey: CategoriesKeys.description,
+              priority: DataTableColumnPriority.secondary,
+              flex: 2,
+              cellBuilder: (context, node) => AppText.raw(
+                node.category.description?.trim() ?? '',
+                color: context.ui.theme.colors.onSurfaceVariant,
+                maxLines: 2,
+              ),
+            ),
+          ],
+          labels: _crudLabels,
+          statusColumn: CrudStatusColumnConfig<CategoryNode>(
+            labelKey: CategoriesKeys.status,
+            isActive: (node) => node.category.isActive,
+            badgeBuilder: (_, node) => CategoryStatusBadge(node.category),
+          ),
+          cardBuilder: (_, node) => CategoryCard(
             node: node,
             onToggle: node.hasChildren
                 ? () => data.cubit.toggleExpanded(node.id)
                 : null,
           ),
-        ),
-        DataTableColumn<CategoryNode>(
-          labelKey: CategoriesKeys.description,
-          priority: DataTableColumnPriority.secondary,
-          flex: 2,
-          cellBuilder: (context, node) => AppText.raw(
-            node.category.description?.trim() ?? '',
-            color: context.ui.theme.colors.onSurfaceVariant,
-            maxLines: 2,
-          ),
-        ),
-      ],
-      labels: _crudLabels,
-      statusColumn: CrudStatusColumnConfig<CategoryNode>(
-        labelKey: CategoriesKeys.status,
-        isActive: (node) => node.category.isActive,
-        badgeBuilder: (_, node) => CategoryStatusBadge(node.category),
-      ),
-      cardBuilder: (_, node) => CategoryCard(
-        node: node,
-        onToggle: node.hasChildren
-            ? () => data.cubit.toggleExpanded(node.id)
-            : null,
-      ),
-      gridBuilder: (_, node) => CategoryCard(node: node),
-      icon: AppIcons.catalog,
-      emptyTitleKey: CategoriesKeys.empty,
-      emptyDescriptionKey: CategoriesKeys.emptyDescription,
-      noResultsTitleKey: CategoriesKeys.noResults,
-      noResultsDescriptionKey: CategoriesKeys.noResultsDescription,
-      extraRowActions: (context, node) {
-        final flows = data.flows;
-        if (flows == null) return const [];
-        return [
-          AppRowAction(
-            icon: AppIcons.add,
-            labelKey: CategoriesKeys.addChild,
-            onPressed: () async {
-              final saved = await showCategoryEditor(
-                context,
-                tree: data.cubit.tree,
-                initialParentId: node.id,
-              );
-              if (saved == true && context.mounted) {
-                await flows.onSaved(data.cubit, isNew: true);
-              }
-            },
-          ),
-          if (node.canDelete)
-            AppRowAction(
-              icon: AppIcons.delete,
-              labelKey: CategoriesKeys.delete,
-              destructive: true,
-              onPressed: () => flows.deleteItem(context, node),
-            ),
-        ];
-      },
-    );
+          gridBuilder: (_, node) => CategoryCard(node: node),
+          icon: AppIcons.catalog,
+          emptyTitleKey: CategoriesKeys.empty,
+          emptyDescriptionKey: CategoriesKeys.emptyDescription,
+          noResultsTitleKey: CategoriesKeys.noResults,
+          noResultsDescriptionKey: CategoriesKeys.noResultsDescription,
+          extraRowActions: (context, node) {
+            final flows = data.flows;
+            if (flows == null) return const [];
+            return [
+              AppRowAction(
+                icon: AppIcons.add,
+                labelKey: CategoriesKeys.addChild,
+                onPressed: () async {
+                  final saved = await showCategoryEditor(
+                    context,
+                    tree: data.cubit.tree,
+                    initialParentId: node.id,
+                  );
+                  if (saved == true && context.mounted) {
+                    await flows.onSaved(data.cubit, isNew: true);
+                  }
+                },
+              ),
+              if (node.canDelete)
+                AppRowAction(
+                  icon: AppIcons.delete,
+                  labelKey: CategoriesKeys.delete,
+                  destructive: true,
+                  onPressed: () => flows.deleteItem(context, node),
+                ),
+            ];
+          },
+        );
 
     if (!data.query.hasActiveFilters) return section;
     return Column(
