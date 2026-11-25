@@ -380,10 +380,9 @@ class AppShell extends StatelessWidget {
 /// The desktop sidebar with its preferences: the open sections are always
 /// restored and saved; collapsing is offered only where [collapsible].
 ///
-/// Where it collapses, a tap on the page already shown (a page without
-/// sub-items, at the root of its branch) folds the sidebar to icons, and the
-/// same tap on its icon opens it again, without navigating. On a deeper page
-/// (a detail) the tap still goes back to the page's root.
+/// Where it collapses: a tap on the page already shown folds the sidebar when
+/// open and opens it when folded; on the folded rail any other icon navigates
+/// and opens it, and a parent opens it with its list unfolded.
 class _PersistedSidebar extends StatefulWidget {
   const _PersistedSidebar({
     required this.items,
@@ -446,48 +445,55 @@ class _PersistedSidebarState extends State<_PersistedSidebar> {
     await widget.settingsManager.setSidebarCollapsed(collapsed);
   }
 
+  /// The folded rail: any tap opens the sidebar (see [_onItem], [_onChild]).
+  bool get _foldedAndReady => _restored && widget.collapsible && _collapsed;
+
   /// The page already shown, reached from a leaf item: tapping it toggles the
   /// sidebar instead of navigating.
-  bool _togglesInsteadOfNavigating(int index) {
-    if (!_restored || !widget.collapsible || !widget.activeIsBranchRoot) {
-      return false;
-    }
-    if (index != widget.activeIndex) return false;
-    final children = widget.items[index].children;
-    return children.isEmpty;
+  bool _isCurrentLeafAtRoot(int index) {
+    if (!widget.activeIsBranchRoot || index != widget.activeIndex) return false;
+    return widget.items[index].children.isEmpty;
   }
 
-  /// A sub-item whose page is the one shown (not a page beneath it): tapping
-  /// it toggles the sidebar like the page-level tap does.
-  bool _togglesForChild(String path) {
-    if (!_restored || !widget.collapsible) return false;
+  void _onItem(int index) {
+    if (!_restored || !widget.collapsible) {
+      widget.onIndexChanged(index);
+      return;
+    }
+    if (_isCurrentLeafAtRoot(index)) {
+      _toggle(); // opens when folded, folds when open
+      return;
+    }
+    if (_foldedAndReady) _toggle(); // another page from the rail: open it
+    widget.onIndexChanged(index);
+  }
+
+  bool _isActivePath(String path) {
     String trim(String v) =>
         v.length > 1 && v.endsWith('/') ? v.substring(0, v.length - 1) : v;
     final active = widget.activePath;
     return active != null && trim(active) == trim(path);
   }
 
+  void _onChild(String path) {
+    if (!_restored || !widget.collapsible) {
+      widget.onChildSelected?.call(path);
+      return;
+    }
+    final wasFolded = _collapsed;
+    if (wasFolded || _isActivePath(path)) _toggle();
+    if (!_isActivePath(path)) widget.onChildSelected?.call(path);
+  }
+
   @override
   Widget build(BuildContext context) => AppSidebar(
     items: widget.items,
     activeIndex: widget.activeIndex,
-    onIndexChanged: (index) {
-      if (_togglesInsteadOfNavigating(index)) {
-        _toggle();
-        return;
-      }
-      widget.onIndexChanged(index);
-    },
+    onIndexChanged: _onItem,
     collapsed: _collapsed,
     onToggle: _restored && widget.collapsible ? _toggle : null,
     activePath: widget.activePath,
-    onChildSelected: (path) {
-      if (_togglesForChild(path)) {
-        _toggle();
-        return;
-      }
-      widget.onChildSelected?.call(path);
-    },
+    onChildSelected: _onChild,
     initialOpenSections: _openSections,
     onOpenSectionsChanged: (open) {
       _openSections = open;

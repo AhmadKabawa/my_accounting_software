@@ -251,7 +251,7 @@ void main() {
       expect(await settings.getSidebarCollapsedOrNull(), isTrue);
     });
 
-    testWidgets('another page navigates and keeps the sidebar as it is', (
+    testWidgets('another page from the folded rail navigates and opens', (
       tester,
     ) async {
       final settings = AppSettingsManager(storage: _MemoryStorage());
@@ -263,10 +263,9 @@ void main() {
       await tester.tap(iconItem(1));
       await tester.pumpAndSettle();
       expect(find.text('Second'), findsOneWidget);
-      expect(collapsed(tester), isTrue);
+      expect(collapsed(tester), isFalse);
 
-      await tester.tap(find.byTooltip(ShellKeys.expandSidebar.en));
-      await tester.pumpAndSettle();
+      // Open: another page navigates and keeps it open.
       await tester.tap(expandedItem(0));
       await tester.pumpAndSettle();
       expect(find.text('First'), findsOneWidget);
