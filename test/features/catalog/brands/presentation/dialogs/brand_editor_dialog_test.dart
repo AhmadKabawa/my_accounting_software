@@ -270,10 +270,7 @@ void main() {
       'https://cdn.test/logo.png',
     );
     expect(find.text(BrandsKeys.replaceLogo.en), findsOneWidget);
-    expect(
-      find.bySemanticsLabel(BrandsKeys.removeLogo.en),
-      findsOneWidget,
-    );
+    expect(find.bySemanticsLabel(BrandsKeys.removeLogo.en), findsOneWidget);
   });
 
   testWidgets('upload failure shows an inline banner', (tester) async {
