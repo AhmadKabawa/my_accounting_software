@@ -5,11 +5,7 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_status_badge.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard({
-    super.key,
-    required this.node,
-    this.onToggle,
-  });
+  const CategoryCard({super.key, required this.node, this.onToggle});
 
   final CategoryNode node;
   final VoidCallback? onToggle;
@@ -18,11 +14,7 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      CategoryIdentity(
-        node: node,
-        onToggle: onToggle,
-        showPathForDeep: true,
-      ),
+      CategoryIdentity(node: node, onToggle: onToggle, showPathForDeep: true),
       context.ui.spacing.gap(AppSpacing.sm),
       Align(
         alignment: AlignmentDirectional.centerStart,
