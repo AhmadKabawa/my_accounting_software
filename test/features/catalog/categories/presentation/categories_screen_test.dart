@@ -47,20 +47,16 @@ class _AccessRepository implements AccessRepository {
   );
 }
 
-Category _category(
-  int id, {
-  int? parentId,
-  String? name,
-  bool active = true,
-}) => Category(
-  id: id,
-  parentId: parentId,
-  name: name ?? 'Category $id',
-  slug: 'category-$id',
-  sortOrder: id,
-  isActive: active,
-  productCount: 0,
-);
+Category _category(int id, {int? parentId, String? name, bool active = true}) =>
+    Category(
+      id: id,
+      parentId: parentId,
+      name: name ?? 'Category $id',
+      slug: 'category-$id',
+      sortOrder: id,
+      isActive: active,
+      productCount: 0,
+    );
 
 List<Category> _sampleCategories() => [
   _category(1, name: 'Root'),
@@ -68,7 +64,11 @@ List<Category> _sampleCategories() => [
   _category(3, parentId: 2, name: 'Grandchild'),
   _category(4, name: 'Inactive root', active: false),
   for (var id = 5; id <= 14; id++)
-    _category(id, parentId: id == 5 ? 1 : id - 1, name: id == 14 ? 'Deep leaf' : 'Level $id'),
+    _category(
+      id,
+      parentId: id == 5 ? 1 : id - 1,
+      name: id == 14 ? 'Deep leaf' : 'Level $id',
+    ),
 ];
 
 void _register(FakeCategoriesRepository repository) {
@@ -97,8 +97,8 @@ void _register(FakeCategoriesRepository repository) {
 }
 
 Widget _home() => BlocProvider<AccessCubit>(
-  create: (_) => AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))
-    ..load(),
+  create: (_) =>
+      AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))..load(),
   child: const Scaffold(body: CategoriesListPage()),
 );
 
@@ -114,7 +114,9 @@ void main() {
   testWidgets('status filters and search stay safe in the full list page', (
     tester,
   ) async {
-    final repository = FakeCategoriesRepository(categories: _sampleCategories());
+    final repository = FakeCategoriesRepository(
+      categories: _sampleCategories(),
+    );
     _register(repository);
     await tester.view.setPhysicalSize(const Size(360, 800));
     await tester.view.setDevicePixelRatio(1);
@@ -129,11 +131,17 @@ void main() {
     final cubit = _listCubit(tester);
     await cubit.setStatus(CategoryStatusFilter.active);
     await tester.pumpAndSettle();
-    expect(cubit.state.result!.items.every((row) => row.category.isActive), isTrue);
+    expect(
+      cubit.state.result!.items.every((row) => row.category.isActive),
+      isTrue,
+    );
 
     await cubit.setStatus(CategoryStatusFilter.inactive);
     await tester.pumpAndSettle();
-    expect(cubit.state.result!.items.every((row) => !row.category.isActive), isTrue);
+    expect(
+      cubit.state.result!.items.every((row) => !row.category.isActive),
+      isTrue,
+    );
 
     await cubit.setStatus(CategoryStatusFilter.all);
     cubit.searchChanged('Child');
@@ -152,7 +160,9 @@ void main() {
     await tester.view.setPhysicalSize(const Size(360, 800));
     await tester.view.setDevicePixelRatio(1);
     await tester.pumpWidget(
-      MaterialApp(home: Directionality(textDirection: TextDirection.ltr, child: _home())),
+      MaterialApp(
+        home: Directionality(textDirection: TextDirection.ltr, child: _home()),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -168,7 +178,9 @@ void main() {
   ) async {
     _register(FakeCategoriesRepository(categories: _sampleCategories()));
     await tester.pumpWidget(
-      MaterialApp(home: Directionality(textDirection: TextDirection.ltr, child: _home())),
+      MaterialApp(
+        home: Directionality(textDirection: TextDirection.ltr, child: _home()),
+      ),
     );
     await tester.pumpAndSettle();
     final cubit = _listCubit(tester);
@@ -189,7 +201,9 @@ void main() {
   ) async {
     _register(FakeCategoriesRepository(categories: _sampleCategories()));
     await tester.pumpWidget(
-      MaterialApp(home: Directionality(textDirection: TextDirection.ltr, child: _home())),
+      MaterialApp(
+        home: Directionality(textDirection: TextDirection.ltr, child: _home()),
+      ),
     );
     await tester.pumpAndSettle();
     final cubit = _listCubit(tester);
@@ -208,7 +222,9 @@ void main() {
       await tester.view.setPhysicalSize(const Size(360, 800));
       await tester.view.setDevicePixelRatio(1);
       await tester.pumpWidget(
-        MaterialApp(home: Directionality(textDirection: direction, child: _home())),
+        MaterialApp(
+          home: Directionality(textDirection: direction, child: _home()),
+        ),
       );
       await tester.pumpAndSettle();
       _listCubit(tester).searchChanged('Deep leaf');
@@ -227,10 +243,14 @@ void main() {
   testWidgets('adding a subcategory saves once and reloads the tree', (
     tester,
   ) async {
-    final repository = FakeCategoriesRepository(categories: [_category(1, name: 'Root')]);
+    final repository = FakeCategoriesRepository(
+      categories: [_category(1, name: 'Root')],
+    );
     _register(repository);
     await tester.pumpWidget(
-      MaterialApp(home: Directionality(textDirection: TextDirection.ltr, child: _home())),
+      MaterialApp(
+        home: Directionality(textDirection: TextDirection.ltr, child: _home()),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -246,7 +266,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.createCalls, 1);
-    expect(repository.categories.any((item) => item.name == 'New child' && item.parentId == 1), isTrue);
+    expect(
+      repository.categories.any(
+        (item) => item.name == 'New child' && item.parentId == 1,
+      ),
+      isTrue,
+    );
     expect(_listCubit(tester).tree!.byId(2)?.name, 'New child');
     expect(tester.takeException(), isNull);
   });
