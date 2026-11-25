@@ -78,7 +78,7 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
     final cubit = context.read<CategoryFormCubit>();
     return BlocBuilder<CategoryFormCubit, CategoryFormState>(
       bloc: cubit,
-      builder: (context, state) =>
+      builder: (context, _) =>
           CrudEditorDialog<
             CategoryFormCubit,
             CategoryFormState,

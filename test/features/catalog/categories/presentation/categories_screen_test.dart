@@ -143,7 +143,7 @@ void main() {
     );
 
     await cubit.setStatus(CategoryStatusFilter.all);
-    cubit.searchChanged('Child');
+    await tester.enterText(find.byType(TextField).first, 'Child');
     await tester.pumpAndSettle();
     expect(cubit.state.result!.items.every((row) => row.flat), isTrue);
     expect(find.textContaining('Root › Child'), findsOneWidget);
@@ -319,4 +319,34 @@ void main() {
     expect(_listCubit(tester).tree!.byId(4)?.name, 'Leaf child');
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('adding a root category saves once and reloads the tree', (
+    tester,
+  ) async {
+    final repository = FakeCategoriesRepository(categories: [_category(1)]);
+    _register(repository);
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(CategoriesKeys.add.en).first);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).at(1), 'New root');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.createCalls, 1);
+    expect(repository.getAllCalls, 2);
+    expect(
+      repository.categories.any(
+        (item) => item.name == 'New root' && item.parentId == null,
+      ),
+      isTrue,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+
 }

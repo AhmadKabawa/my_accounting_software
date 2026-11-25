@@ -27,7 +27,7 @@ class CategoryIdentity extends StatelessWidget {
     final showPath = node.flat || (showPathForDeep && node.depth > 4);
     final indent = showPath
         ? 0.0
-        : context.ui.spacing.lg * node.depth.clamp(0, 4);
+        : context.ui.spacing.lg * node.depth.clamp(0, 4).toDouble();
     final path = [...node.ancestors, category.name].join(' › ');
 
     return Padding(
