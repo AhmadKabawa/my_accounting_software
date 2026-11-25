@@ -184,9 +184,7 @@ void main() {
   ) async {
     _register(FakeCategoriesRepository(categories: _sampleCategories()));
     await tester.pumpWidget(
-      MaterialApp(
-        home: Directionality(textDirection: TextDirection.ltr, child: _home()),
-      ),
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
     );
     await tester.pumpAndSettle();
     final cubit = _listCubit(tester);
@@ -227,9 +225,7 @@ void main() {
     for (final direction in [TextDirection.rtl, TextDirection.ltr]) {
       setScreenSize(tester, const Size(360, 800));
       await tester.pumpWidget(
-        MaterialApp(
-          home: Directionality(textDirection: direction, child: _home()),
-        ),
+        buildTestApp(home: _home(), direction: direction),
       );
       await tester.pumpAndSettle();
       _listCubit(tester).searchChanged('Deep leaf');
