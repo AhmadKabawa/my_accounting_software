@@ -369,7 +369,9 @@ void main() {
     expect(find.bySemanticsLabel('#444444'), findsNothing);
   });
 
-  testWidgets('preset expansion control stays in the preset header row', (t) async {
+  testWidgets('preset expansion control stays in the preset header row', (
+    t,
+  ) async {
     await t.pumpWidget(
       buildTestApp(
         home: Scaffold(
@@ -383,22 +385,31 @@ void main() {
       ),
     );
 
-    final header = find.ancestor(
-      of: find.text(AppColorPickerKeys.presets.en),
-      matching: find.byType(Row),
-    ).first;
+    final header = find
+        .ancestor(
+          of: find.text(AppColorPickerKeys.presets.en),
+          matching: find.byType(Row),
+        )
+        .first;
     expect(
-      find.descendant(of: header, matching: find.text(AppColorPickerKeys.morePresets.en)),
+      find.descendant(
+        of: header,
+        matching: find.text(AppColorPickerKeys.morePresets.en),
+      ),
       findsOneWidget,
     );
     final moreTop = t.getTopLeft(find.text(AppColorPickerKeys.morePresets.en));
     await t.tap(find.text(AppColorPickerKeys.morePresets.en));
     await t.pump();
-    final fewerTop = t.getTopLeft(find.text(AppColorPickerKeys.fewerPresets.en));
+    final fewerTop = t.getTopLeft(
+      find.text(AppColorPickerKeys.fewerPresets.en),
+    );
     expect((moreTop.dy - fewerTop.dy).abs(), lessThan(1));
   });
 
-  testWidgets('preset expansion control is omitted without a collapse limit', (t) async {
+  testWidgets('preset expansion control is omitted without a collapse limit', (
+    t,
+  ) async {
     await t.pumpWidget(
       buildTestApp(
         home: Scaffold(

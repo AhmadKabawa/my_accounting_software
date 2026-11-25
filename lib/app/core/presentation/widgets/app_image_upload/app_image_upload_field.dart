@@ -138,7 +138,9 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
       builder: (context, state) {
         final busy = state.isBusy;
         final hasImage = _displayedValue?.trim().isNotEmpty == true;
-        final actionKey = hasImage ? widget.labels.replace : widget.labels.upload;
+        final actionKey = hasImage
+            ? widget.labels.replace
+            : widget.labels.upload;
         final errorKey = switch (state) {
           ImageUploadFailed(:final messageKey) => messageKey,
           _ => null,
@@ -165,7 +167,9 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
                     borderRadius: radius,
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight: AppComponentSize.imageDropZoneMinHeight.of(context),
+                        minHeight: AppComponentSize.imageDropZoneMinHeight.of(
+                          context,
+                        ),
                       ),
                       child: SizedBox(
                         width: double.infinity,

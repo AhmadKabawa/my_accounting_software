@@ -124,7 +124,8 @@ Future<void> _pump(
 }
 
 Finder _action(String label) => find.byWidgetPredicate(
-  (widget) => widget is Semantics &&
+  (widget) =>
+      widget is Semantics &&
       widget.properties.button == true &&
       widget.properties.label == label,
 );
@@ -133,7 +134,7 @@ void main() {
   testWidgets('empty field shows the clickable upload zone', (tester) async {
     await _pump(tester, _field());
     expect(find.byType(AppLogoThumb), findsNothing);
-    expect(_action( 'test.image.upload'), findsOneWidget);
+    expect(_action('test.image.upload'), findsOneWidget);
     if (PlatformCapabilities.supportsFileDrop) {
       expect(find.text(ImageKeys.dropHint.en), findsOneWidget);
     }
@@ -231,12 +232,18 @@ void main() {
     expect(find.text(ErrorKeys.conflict.en), findsOneWidget);
   });
 
-  testWidgets('delete is separate from picker and clears the image', (tester) async {
+  testWidgets('delete is separate from picker and clears the image', (
+    tester,
+  ) async {
     String? changed = 'https://cdn.test/logo.png';
     final picker = _Picker(_png());
     await _pump(
       tester,
-      _field(value: changed, picker: picker, onChanged: (value) => changed = value),
+      _field(
+        value: changed,
+        picker: picker,
+        onChanged: (value) => changed = value,
+      ),
     );
     await tester.tap(_button(tester, 'test.image.remove'));
     await tester.pump();

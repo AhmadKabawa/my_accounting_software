@@ -155,10 +155,7 @@ void main() {
     await _pumpEditor(tester, FakeColorsRepository());
 
     final generated = _controller(tester, 1).text;
-    expect(
-      RegExp(r'^CLR-\d{8}-\d{6}-\d{6}$').hasMatch(generated),
-      isTrue,
-    );
+    expect(RegExp(r'^CLR-\d{8}-\d{6}-\d{6}$').hasMatch(generated), isTrue);
 
     await tester.enterText(find.byType(TextFormField).at(1), 'red');
     await tester.pump();
