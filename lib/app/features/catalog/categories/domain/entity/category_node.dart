@@ -15,25 +15,17 @@ class CategoryNode extends Equatable {
   });
 
   final Category category;
-
-  /// 0 for roots, and for every row of a flat (search/filter) result.
   final int depth;
-
-  /// Names from the root down to the parent; empty for a root.
   final List<String> ancestors;
-
-  /// Direct children, active or not.
   final int childCount;
   final int activeChildCount;
   final bool expanded;
-
-  /// True when the row is part of a flat result, so its context is [ancestors].
   final bool flat;
 
   int get id => category.id;
   bool get hasChildren => childCount > 0;
 
-  /// Only a leaf with no products may be deleted; anything else is deactivated.
+  /// Unknown embedded counts are conservative: only a known zero is deletable.
   bool get canDelete => childCount == 0 && category.productCount == 0;
 
   @override

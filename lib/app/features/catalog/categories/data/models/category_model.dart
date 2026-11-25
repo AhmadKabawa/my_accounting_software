@@ -10,7 +10,7 @@ class CategoryModel {
     this.image,
     required this.sortOrder,
     required this.isActive,
-    this.productCount = 0,
+    this.productCount,
   });
 
   final int id;
@@ -21,7 +21,9 @@ class CategoryModel {
   final String? image;
   final int sortOrder;
   final bool isActive;
-  final int productCount;
+
+  /// Null when the embedded PostgREST relation count was not returned.
+  final int? productCount;
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     final id = _readInt(json['id']);
@@ -42,22 +44,22 @@ class CategoryModel {
   static int? _readInt(dynamic value) =>
       value is int ? value : int.tryParse('$value');
 
-  /// PostgREST returns the embedded count as `[{count: n}]`; a write response
-  /// has no embed, so a missing value means 0 (a new category has no products).
-  static int _readCount(dynamic value) {
+  /// PostgREST returns the embedded count as [{count: n}]. Missing or malformed
+  /// relation data is unknown, not zero: the UI must not enable deletion.
+  static int? _readCount(dynamic value) {
     if (value is num) return value.toInt();
     if (value is Map<String, dynamic>) {
       final count = value['count'];
-      return count is num ? count.toInt() : 0;
+      return count is num ? count.toInt() : null;
     }
     if (value is List && value.isNotEmpty) {
       final first = value.first;
       if (first is Map<String, dynamic>) {
         final count = first['count'];
-        return count is num ? count.toInt() : 0;
+        return count is num ? count.toInt() : null;
       }
     }
-    return 0;
+    return null;
   }
 
   Category toEntity() => Category(

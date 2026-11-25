@@ -11,12 +11,10 @@ class Category extends Equatable {
     this.image,
     required this.sortOrder,
     required this.isActive,
-    this.productCount = 0,
+    this.productCount,
   });
 
   final int id;
-
-  /// Null for a root category.
   final int? parentId;
   final String name;
   final String slug;
@@ -25,8 +23,9 @@ class Category extends Equatable {
   final int sortOrder;
   final bool isActive;
 
-  /// Products linked through `product_categories`.
-  final int productCount;
+  /// Null means the PostgREST embedded usage count was unavailable.
+  /// Unknown usage must never be interpreted as zero for delete eligibility.
+  final int? productCount;
 
   @override
   List<Object?> get props => [

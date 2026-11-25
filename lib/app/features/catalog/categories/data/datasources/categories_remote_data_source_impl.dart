@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
@@ -15,10 +16,45 @@ class CategoriesRemoteDataSourceImpl implements CategoriesRemoteDataSource {
 
   final IApiClient _apiClient;
 
+  // Once the relationship projection is rejected, keep subsequent pages on
+  // the safe projection for this data-source lifetime.
+  bool _includeProductCount = true;
+
   @override
   Future<ApiResult<PaginatedResult<CategoryModel>>> getPage({
     required int page,
     required int limit,
+  }) async {
+    final preferred = await _getPage(
+      page: page,
+      limit: limit,
+      select: _includeProductCount
+          ? CategoriesEndpoint.select
+          : CategoriesEndpoint.selectWithoutProductCount,
+    );
+    if (preferred case ApiFailure<PaginatedResult<CategoryModel>>(
+      exception: final exception,
+    )) {
+      // Only retry a client-side query/projection rejection. Permission,
+      // connectivity and server failures must remain visible to the caller.
+      if (_includeProductCount &&
+          exception is ApiException &&
+          exception.statusCode == 400) {
+        _includeProductCount = false;
+        return _getPage(
+          page: page,
+          limit: limit,
+          select: CategoriesEndpoint.selectWithoutProductCount,
+        );
+      }
+    }
+    return preferred;
+  }
+
+  Future<ApiResult<PaginatedResult<CategoryModel>>> _getPage({
+    required int page,
+    required int limit,
+    required String select,
   }) => _apiClient.getPaginated<CategoryModel>(
     CategoriesEndpoint.collection,
     fromJson: CategoryModel.fromJson,
@@ -26,7 +62,7 @@ class CategoriesRemoteDataSourceImpl implements CategoriesRemoteDataSource {
     limit: limit,
     parser: PaginatedParserPresets.supabase,
     queryParameters: {
-      'select': CategoriesEndpoint.select,
+      'select': select,
       'order': CategoriesEndpoint.order,
     },
   );
@@ -73,8 +109,6 @@ class CategoriesRemoteDataSourceImpl implements CategoriesRemoteDataSource {
   CategoryModel _single(List<dynamic> rows) =>
       PostgrestValue.single(rows, CategoryModel.fromJson, what: 'category');
 
-  /// Spec §19: data fields only; `is_active` has its own request. `parent_id`
-  /// is always sent, so a null moves the category to the root.
   Map<String, dynamic> _draftJson(CategoryDraft draft) => {
     'parent_id': draft.parentId,
     'name': draft.name.trim(),
