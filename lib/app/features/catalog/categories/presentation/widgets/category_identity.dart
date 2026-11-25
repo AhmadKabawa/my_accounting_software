@@ -24,7 +24,7 @@ class CategoryIdentity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final category = node.category;
-    final showPath = node.flat || (showPathForDeep && node.depth > 2);
+    final showPath = node.flat || (showPathForDeep && node.depth > 4);
     final indent = showPath
         ? 0.0
         : context.ui.spacing.lg * node.depth.clamp(0, 4);
