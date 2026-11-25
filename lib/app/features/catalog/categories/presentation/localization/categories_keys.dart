@@ -112,10 +112,22 @@ enum CategoriesKeys implements AppKey {
   bulkActivate(ar: 'تفعيل المحدد', en: 'Activate selected'),
   bulkDeactivate(ar: 'إيقاف المحدد', en: 'Deactivate selected'),
   bulkDelete(ar: 'حذف المحدد', en: 'Delete selected'),
-  bulkDeactivateTitle(ar: 'إيقاف التصنيفات المحددة', en: 'Deactivate selected categories'),
-  bulkDeactivateMessage(ar: 'سيتم إيقاف التصنيفات المحددة مع إبقاء التصنيفات الفرعية فعّالة.', en: 'Selected categories will be deactivated; their subcategories remain active.'),
-  bulkDeleteTitle(ar: 'حذف التصنيفات المحددة', en: 'Delete selected categories'),
-  bulkDeleteMessage(ar: 'سيتم حذف الفروع قبل الآباء. العناصر التي لا يمكن حذفها ستظهر ضمن نتائج العملية.', en: 'Children are deleted before parents. Categories that cannot be deleted will be listed in the operation results.'),
+  bulkDeactivateTitle(
+    ar: 'إيقاف التصنيفات المحددة',
+    en: 'Deactivate selected categories',
+  ),
+  bulkDeactivateMessage(
+    ar: 'سيتم إيقاف التصنيفات المحددة مع إبقاء التصنيفات الفرعية فعّالة.',
+    en: 'Selected categories will be deactivated; their subcategories remain active.',
+  ),
+  bulkDeleteTitle(
+    ar: 'حذف التصنيفات المحددة',
+    en: 'Delete selected categories',
+  ),
+  bulkDeleteMessage(
+    ar: 'سيتم حذف الفروع قبل الآباء. العناصر التي لا يمكن حذفها ستظهر ضمن نتائج العملية.',
+    en: 'Children are deleted before parents. Categories that cannot be deleted will be listed in the operation results.',
+  ),
   tableView(ar: 'عرض الجدول', en: 'Table view'),
   deleted(ar: 'تم حذف التصنيف.', en: 'Category deleted.'),
   deleteTitle(ar: 'حذف التصنيف', en: 'Delete category'),
