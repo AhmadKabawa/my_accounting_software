@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/crud_confirmations.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 
@@ -22,6 +23,7 @@ class CrudFlowsConfig<T, C> {
     this.isActive,
     this.canDelete,
     this.messageArgs,
+    this.deactivateMessage,
   });
 
   final Future<bool?> Function(BuildContext context, {T? item, bool duplicate})
@@ -37,6 +39,12 @@ class CrudFlowsConfig<T, C> {
   /// Per-row policy: false keeps the Delete menu item visible but disabled.
   final bool Function(T item)? canDelete;
   final Map<String, String> Function(T item)? messageArgs;
+
+  /// A deactivation message specific to [item] (key and arguments), for records
+  /// whose deactivation affects other records (a parent with active children).
+  /// Null, or a null result, keeps the generic [CrudLabels] message.
+  final ({AppKey key, Map<String, String> args})? Function(T item)?
+  deactivateMessage;
 
   /// Rows can be deleted: the callback and the label group are both present.
   bool get hasDelete => delete != null && labels.supportsDelete;
@@ -94,12 +102,14 @@ class CrudFlowsConfig<T, C> {
       return Future<void>.value();
     }
     final cubit = context.read<C>();
+    final specific = deactivateMessage?.call(item);
     return CrudConfirmations.status(
       context,
       isActive: active(item),
       targetName: itemLabel(item),
       titleKey: title,
-      messageKey: message,
+      messageKey: specific?.key ?? message,
+      messageArgs: specific?.args,
       onActivate: () => enable(cubit, item),
       onDeactivate: () => disable(cubit, item),
     );

@@ -23,6 +23,8 @@ import 'package:accounting_software/app/features/on_boarding/presentation/locali
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/failures/category_failure_keys.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failure_keys.dart';
 import 'package:accounting_software/app/core/foundation/color/color_name_keys.dart';
@@ -49,6 +51,8 @@ final List<AppKey> allKeys = <AppKey>[
   ...AuthKeys.values,
   ...ProfileKeys.values,
   ...BrandsKeys.values,
+  ...CategoriesKeys.values,
+  ...CategoryFailureKeys.values,
   ...ColorsKeys.values,
   ...ColorFailureKeys.values,
   ...ColorNameKeys.values,

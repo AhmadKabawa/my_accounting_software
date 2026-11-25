@@ -14,9 +14,9 @@ enum CategoryStatusFilter {
   };
 }
 
-/// The category list is a tree loaded once and shaped locally, so this query
-/// has no sort and no real paging: [pageSize] only has to exceed the largest
-/// tree the loader accepts.
+/// The category list is a tree loaded once and shaped locally, so there is no
+/// sort. The tree itself is not paged; a search or status filter turns it into
+/// a flat result list, and only that list is paged (spec §10).
 class CategoryListQuery extends Equatable
     implements PagedQuery<CategoryListQuery> {
   const CategoryListQuery({
@@ -24,10 +24,8 @@ class CategoryListQuery extends Equatable
     this.status = CategoryStatusFilter.all,
     this.expandedIds,
     this.page = 1,
-    this.pageSize = treePageSize,
+    this.pageSize = 25,
   });
-
-  static const treePageSize = 10000;
 
   @override
   final String search;
@@ -48,9 +46,16 @@ class CategoryListQuery extends Equatable
   @override
   CategoryListQuery withSearch(String value) => _copy(search: value);
 
-  /// There is one page only.
   @override
-  CategoryListQuery withPage(int value) => this;
+  CategoryListQuery withPage(int value) => value == page
+      ? this
+      : CategoryListQuery(
+          search: search,
+          status: status,
+          expandedIds: expandedIds,
+          page: value,
+          pageSize: pageSize,
+        );
 
   @override
   CategoryListQuery cleared() =>

@@ -32,6 +32,7 @@ abstract final class CrudConfirmations {
     required String targetName,
     required AppKey titleKey,
     required AppKey messageKey,
+    Map<String, String>? messageArgs,
     required Future<Either<Failure, Unit>> Function() onActivate,
     required Future<Either<Failure, Unit>> Function() onDeactivate,
   }) async {
@@ -43,6 +44,7 @@ abstract final class CrudConfirmations {
       context,
       titleKey: titleKey,
       messageKey: messageKey,
+      messageArgs: messageArgs,
       targetName: targetName,
       severity: ConfirmDialogSeverity.warning,
       onConfirm: () async => (await onDeactivate()).fold(
