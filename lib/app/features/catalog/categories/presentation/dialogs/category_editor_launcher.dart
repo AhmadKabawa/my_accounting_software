@@ -9,6 +9,7 @@ import 'package:accounting_software/app/features/catalog/categories/domain/entit
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_tree.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_effect.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_state.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/dialogs/category_editor_fields.dart';
 

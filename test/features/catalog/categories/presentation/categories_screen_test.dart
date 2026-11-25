@@ -107,6 +107,16 @@ CategoriesListCubit _listCubit(WidgetTester tester) =>
       tester.element(find.byType(ListPageTemplate)),
     );
 
+
+Finder _categoryNameInput() => find.descendant(
+  of: find.byWidgetPredicate(
+    (widget) =>
+        widget is AppTextField &&
+        widget.labelKey == CategoriesKeys.categoryName,
+  ),
+  matching: find.byType(TextField),
+);
+
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
   tearDown(() async => sl.reset());
@@ -297,7 +307,7 @@ void main() {
     await tester.tap(find.text(CategoriesKeys.addChild.en));
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextField).at(1), 'Leaf child');
+    await tester.enterText(_categoryNameInput(), 'Leaf child');
     await tester.pumpAndSettle();
     await tester.tap(find.text(CategoriesKeys.save.en));
     await tester.pumpAndSettle();
@@ -327,7 +337,7 @@ void main() {
 
     await tester.tap(find.text(CategoriesKeys.add.en).first);
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).at(1), 'New root');
+    await tester.enterText(_categoryNameInput(), 'New root');
     await tester.pumpAndSettle();
     await tester.tap(find.text(CategoriesKeys.save.en));
     await tester.pumpAndSettle();
