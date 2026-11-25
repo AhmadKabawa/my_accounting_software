@@ -118,8 +118,7 @@ void main() {
       categories: _sampleCategories(),
     );
     _register(repository);
-    await tester.view.setPhysicalSize(const Size(360, 800));
-    await tester.view.setDevicePixelRatio(1);
+    setScreenSize(tester, const Size(360, 800));
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.rtl,
@@ -149,16 +148,13 @@ void main() {
     expect(cubit.state.result!.items.every((row) => row.flat), isTrue);
     expect(find.textContaining('Root › Child'), findsOneWidget);
     expect(tester.takeException(), isNull);
-    tester.view.resetPhysicalSize();
-    tester.view.resetDevicePixelRatio();
   });
 
   testWidgets('search field retains readable width at 360 without overflow', (
     tester,
   ) async {
     _register(FakeCategoriesRepository(categories: _sampleCategories()));
-    await tester.view.setPhysicalSize(const Size(360, 800));
-    await tester.view.setDevicePixelRatio(1);
+    setScreenSize(tester, const Size(360, 800));
     await tester.pumpWidget(
       MaterialApp(
         home: Directionality(textDirection: TextDirection.ltr, child: _home()),
@@ -169,8 +165,6 @@ void main() {
     final search = find.byType(AppTextField).first;
     expect(tester.getSize(search).width, greaterThanOrEqualTo(180));
     expect(tester.takeException(), isNull);
-    tester.view.resetPhysicalSize();
-    tester.view.resetDevicePixelRatio();
   });
 
   testWidgets('tree toolbar toggles expansion without clearing search', (
@@ -219,8 +213,7 @@ void main() {
   testWidgets('deep search path renders at 360 in RTL and LTR', (tester) async {
     _register(FakeCategoriesRepository(categories: _sampleCategories()));
     for (final direction in [TextDirection.rtl, TextDirection.ltr]) {
-      await tester.view.setPhysicalSize(const Size(360, 800));
-      await tester.view.setDevicePixelRatio(1);
+      setScreenSize(tester, const Size(360, 800));
       await tester.pumpWidget(
         MaterialApp(
           home: Directionality(textDirection: direction, child: _home()),
@@ -236,8 +229,6 @@ void main() {
       await sl.reset();
       _register(FakeCategoriesRepository(categories: _sampleCategories()));
     }
-    tester.view.resetPhysicalSize();
-    tester.view.resetDevicePixelRatio();
   });
 
   testWidgets('adding a subcategory saves once and reloads the tree', (
