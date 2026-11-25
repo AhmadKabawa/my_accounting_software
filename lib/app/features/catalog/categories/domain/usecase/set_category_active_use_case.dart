@@ -14,8 +14,7 @@ class SetCategoryActiveParams extends Equatable {
   List<Object?> get props => [id, isActive];
 }
 
-class SetCategoryActiveUseCase
-    extends UseCase<Unit, SetCategoryActiveParams> {
+class SetCategoryActiveUseCase extends UseCase<Unit, SetCategoryActiveParams> {
   SetCategoryActiveUseCase(this._repository);
 
   final CategoriesRepository _repository;

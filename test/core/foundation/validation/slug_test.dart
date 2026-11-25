@@ -26,7 +26,14 @@ void main() {
     });
 
     test('rejects uppercase, spaces, edge or double hyphens and null', () {
-      for (final bad in ['Men', 'men shoes', '-men', 'men-', 'men--shoes', '']) {
+      for (final bad in [
+        'Men',
+        'men shoes',
+        '-men',
+        'men-',
+        'men--shoes',
+        '',
+      ]) {
         expect(Slug.isValid(bad), isFalse, reason: bad);
       }
       expect(Slug.isValid(null), isFalse);
