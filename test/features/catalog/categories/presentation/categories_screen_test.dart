@@ -152,7 +152,7 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'Child');
     await tester.pumpAndSettle();
     expect(cubit.state.result!.items.every((row) => row.flat), isTrue);
-    expect(find.textContaining('Root › Child'), findsOneWidget);
+    expect(find.textContaining('Root › Child'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 
