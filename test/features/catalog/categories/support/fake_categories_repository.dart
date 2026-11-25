@@ -26,7 +26,22 @@ class FakeCategoriesRepository implements CategoriesRepository {
   @override
   Future<Either<Failure, Category>> create(CategoryDraft draft) async {
     createCalls++;
-    return createResult ?? Right(categories.first);
+    if (createResult != null) return createResult!;
+    final nextId = categories.fold<int>(0, (maxId, item) =>
+        item.id > maxId ? item.id : maxId) + 1;
+    final created = Category(
+      id: nextId,
+      parentId: draft.parentId,
+      name: draft.name,
+      slug: draft.slug,
+      description: draft.description,
+      image: draft.image,
+      sortOrder: draft.sortOrder,
+      isActive: true,
+      productCount: 0,
+    );
+    categories = [...categories, created];
+    return Right(created);
   }
 
   @override
