@@ -67,22 +67,25 @@ void main() {
     await cubit.close();
   });
 
-  test('Arabic names require a manually entered slug and keep it on rename', () async {
-    final repository = FakeCategoriesRepository(categories: [_category(1)]);
-    final cubit = _cubit(repository);
+  test(
+    'Arabic names require a manually entered slug and keep it on rename',
+    () async {
+      final repository = FakeCategoriesRepository(categories: [_category(1)]);
+      final cubit = _cubit(repository);
 
-    cubit.nameChanged('أحذية رجالية');
-    expect(cubit.state.slug, isEmpty);
-    expect(cubit.state.errorFor('slug'), isNotNull);
+      cubit.nameChanged('أحذية رجالية');
+      expect(cubit.state.slug, isEmpty);
+      expect(cubit.state.errorFor('slug'), isNotNull);
 
-    cubit.slugChanged('mens-shoes');
-    cubit.nameChanged('أحذية رياضية رجالية');
+      cubit.slugChanged('mens-shoes');
+      cubit.nameChanged('أحذية رياضية رجالية');
 
-    expect(cubit.state.slug, 'mens-shoes');
-    expect(cubit.state.slugManuallyEdited, isTrue);
-    expect(cubit.state.isValid, isTrue);
-    await cubit.close();
-  });
+      expect(cubit.state.slug, 'mens-shoes');
+      expect(cubit.state.slugManuallyEdited, isTrue);
+      expect(cubit.state.isValid, isTrue);
+      await cubit.close();
+    },
+  );
 
   test('image accepts HTTP and HTTPS only', () async {
     final repository = FakeCategoriesRepository(categories: [_category(1)]);
@@ -96,32 +99,35 @@ void main() {
     await cubit.close();
   });
 
-  test('parent options include paths and exclude the edited category descendants', () async {
-    final categories = [
-      _category(1),
-      _category(2, parentId: 1),
-      _category(3, parentId: 2),
-      _category(4),
-    ];
-    final tree = CategoryTree(categories);
-    final repository = FakeCategoriesRepository(categories: categories);
-    final cubit = _cubit(repository, category: categories[1], tree: tree);
+  test(
+    'parent options include paths and exclude the edited category descendants',
+    () async {
+      final categories = [
+        _category(1),
+        _category(2, parentId: 1),
+        _category(3, parentId: 2),
+        _category(4),
+      ];
+      final tree = CategoryTree(categories);
+      final repository = FakeCategoriesRepository(categories: categories);
+      final cubit = _cubit(repository, category: categories[1], tree: tree);
 
-    expect(cubit.parentOptions.map((node) => node.id), [1, 4]);
-    expect(cubit.parentOptionLabel(cubit.parentOptions.first), 'Category 1');
-    expect(cubit.parentChanged, isFalse);
+      expect(cubit.parentOptions.map((node) => node.id), [1, 4]);
+      expect(cubit.parentOptionLabel(cubit.parentOptions.first), 'Category 1');
+      expect(cubit.parentChanged, isFalse);
 
-    cubit.setParent(3);
-    expect(cubit.state.parentId, 1);
-    cubit.setParent(4);
-    expect(cubit.state.parentId, 4);
-    expect(cubit.parentChanged, isTrue);
-    cubit.reset();
-    expect(cubit.state.parentId, 1);
-    expect(cubit.parentChanged, isFalse);
-    expect(cubit.state.name, 'Category 2');
-    await cubit.close();
-  });
+      cubit.setParent(3);
+      expect(cubit.state.parentId, 1);
+      cubit.setParent(4);
+      expect(cubit.state.parentId, 4);
+      expect(cubit.parentChanged, isTrue);
+      cubit.reset();
+      expect(cubit.state.parentId, 1);
+      expect(cubit.parentChanged, isFalse);
+      expect(cubit.state.name, 'Category 2');
+      await cubit.close();
+    },
+  );
 
   test('save emits success and returns to idle', () async {
     final repository = FakeCategoriesRepository(categories: [_category(1)]);
@@ -140,27 +146,30 @@ void main() {
     await cubit.close();
   });
 
-  test('duplicate slug is attached to the slug field as a save failure', () async {
-    final repository = FakeCategoriesRepository(categories: [_category(1)])
-      ..createResult = const Left(CategorySlugTakenFailure());
-    final cubit = _cubit(repository);
-    final effects = <CategoryFormEffect>[];
-    final subscription = cubit.effectStream.listen(effects.add);
+  test(
+    'duplicate slug is attached to the slug field as a save failure',
+    () async {
+      final repository = FakeCategoriesRepository(categories: [_category(1)])
+        ..createResult = const Left(CategorySlugTakenFailure());
+      final cubit = _cubit(repository);
+      final effects = <CategoryFormEffect>[];
+      final subscription = cubit.effectStream.listen(effects.add);
 
-    cubit.nameChanged('Men Shoes');
-    await cubit.save();
-    await Future<void>.delayed(Duration.zero);
+      cubit.nameChanged('Men Shoes');
+      await cubit.save();
+      await Future<void>.delayed(Duration.zero);
 
-    expect(effects.single, isA<CategorySaveFailedEffect>());
-    expect(
-      (effects.single as CategorySaveFailedEffect).messageKey,
-      CategoryFailureKeys.slugTaken,
-    );
-    expect(cubit.state.errorFor('slug'), isNotNull);
-    expect(cubit.state.saving, isFalse);
-    await subscription.cancel();
-    await cubit.close();
-  });
+      expect(effects.single, isA<CategorySaveFailedEffect>());
+      expect(
+        (effects.single as CategorySaveFailedEffect).messageKey,
+        CategoryFailureKeys.slugTaken,
+      );
+      expect(cubit.state.errorFor('slug'), isNotNull);
+      expect(cubit.state.saving, isFalse);
+      await subscription.cancel();
+      await cubit.close();
+    },
+  );
 
   test('invalid form does not call the repository', () async {
     final repository = FakeCategoriesRepository(categories: [_category(1)]);

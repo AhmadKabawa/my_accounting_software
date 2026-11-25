@@ -102,10 +102,7 @@ class CategoryFormCubit
       _emit(state.copyWith(slug: value, slugManuallyEdited: true));
 
   void regenerateSlug() => _emit(
-    state.copyWith(
-      slug: Slug.from(state.name),
-      slugManuallyEdited: false,
-    ),
+    state.copyWith(slug: Slug.from(state.name), slugManuallyEdited: false),
   );
 
   void descriptionChanged(String value) =>

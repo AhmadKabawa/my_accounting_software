@@ -35,7 +35,8 @@ class FakeCategoriesRepository implements CategoriesRepository {
     required CategoryDraft draft,
   }) async {
     updateCalls++;
-    return updateResult ?? Right(categories.firstWhere((item) => item.id == id));
+    return updateResult ??
+        Right(categories.firstWhere((item) => item.id == id));
   }
 
   @override
