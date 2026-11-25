@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:accounting_software/app/core/foundation/formatters/uppercase_code_formatter.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
@@ -14,7 +14,6 @@ class ColorIdentitySection extends StatelessWidget {
     required this.code,
     required this.sortOrder,
     required this.onChanged,
-    required this.onNameChanged,
     this.suggestedName,
   });
 
@@ -22,7 +21,6 @@ class ColorIdentitySection extends StatelessWidget {
   final TextEditingController code;
   final TextEditingController sortOrder;
   final VoidCallback onChanged;
-  final VoidCallback onNameChanged;
   final String? suggestedName;
 
   @override
@@ -37,7 +35,6 @@ class ColorIdentitySection extends StatelessWidget {
         autofocus: true,
         validator: ColorFieldValidators.name,
         onChanged: (_) {
-          onNameChanged();
           onChanged();
         },
       ),
@@ -58,7 +55,7 @@ class ColorIdentitySection extends StatelessWidget {
         textDirection: TextDirection.ltr,
         validator: ColorFieldValidators.code,
         textCapitalization: TextCapitalization.characters,
-        inputFormatters: const [_UppercaseCodeFormatter()],
+        inputFormatters: const [UppercaseCodeFormatter()],
         onChanged: (_) => onChanged(),
       ),
       context.ui.spacing.gap(AppSpacing.smMd),
@@ -79,27 +76,4 @@ class ColorIdentitySection extends StatelessWidget {
       ),
     ],
   );
-}
-
-class _UppercaseCodeFormatter extends TextInputFormatter {
-  const _UppercaseCodeFormatter();
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final text = newValue.text
-        .replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '')
-        .toUpperCase();
-    final base = newValue.selection.baseOffset.clamp(0, text.length).toInt();
-    final extent = newValue.selection.extentOffset
-        .clamp(0, text.length)
-        .toInt();
-    return newValue.copyWith(
-      text: text,
-      selection: TextSelection(baseOffset: base, extentOffset: extent),
-      composing: TextRange.empty,
-    );
-  }
 }

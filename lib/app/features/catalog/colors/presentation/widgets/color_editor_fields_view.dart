@@ -12,7 +12,6 @@ class ColorEditorFieldsView extends StatelessWidget {
     required this.hex,
     required this.sortOrder,
     required this.suggestedName,
-    required this.onNameChanged,
     required this.onChanged,
     required this.onHexChanged,
   });
@@ -22,7 +21,6 @@ class ColorEditorFieldsView extends StatelessWidget {
   final TextEditingController hex;
   final TextEditingController sortOrder;
   final String? suggestedName;
-  final VoidCallback onNameChanged;
   final VoidCallback onChanged;
   final VoidCallback onHexChanged;
 
@@ -35,7 +33,6 @@ class ColorEditorFieldsView extends StatelessWidget {
         code: code,
         sortOrder: sortOrder,
         suggestedName: suggestedName,
-        onNameChanged: onNameChanged,
         onChanged: onChanged,
       ),
       context.ui.spacing.gap(AppSpacing.md),
