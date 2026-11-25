@@ -361,4 +361,27 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('desktop row action menu stays within its popup width', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(
+      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+    _listCubit(tester).expandAll();
+    await tester.pumpAndSettle();
+
+    final leafActions = find.byTooltip(CatalogUiKeys.moreActions.en).at(2);
+    await tester.tap(leafActions);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+  });
+
+
 }

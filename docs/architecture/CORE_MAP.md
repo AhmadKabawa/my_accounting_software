@@ -199,7 +199,7 @@
 - `AppRowActions` / `AppRowAction` (`widgets/app_row_actions/app_row_actions.dart`): إجراءات السجل كأزرار أيقونات فقط (`primary` سطرية بحد أقصى 2، و`overflow` في قائمة «المزيد»). ممنوع أزرار نصية للتعديل/الحذف في الجداول. أيقوناتها `AppIcons.edit/delete/block/restore`.
 - `ImagePickerPort` (`core/platform/image_picker/`): اختيار صورة واحدة مستقلاً عن المنصة (`PickedImage`)؛ التنفيذ `FilePickerImagePicker` الملف الوحيد الذي يستورد `file_picker`، ويستخدم `FileType.image` للمعرض/منتقي الصور.
 - `FileDropTarget` (`core/platform/file_drop/`): يمرر الملفات المسقطة كـ `PickedImage`؛ لا يُعرض على الهاتف حسب `PlatformCapabilities.supportsFileDrop`. استيراد `desktop_drop` محصور في ملف التنفيذ هذا.
-- AppMenu في presentation/widgets/app_menu قائمة عامة مبنية على AppKey، وأيقونة اختيارية وعناصر قابلة للتعطيل.
+- AppMenu في presentation/widgets/app_menu قائمة عامة مبنية على AppKey، وأيقونة اختيارية وعناصر قابلة للتعطيل. نصوص عناصر PopupMenu مرنة بسطر واحد وellipsis عند ضيق عرض القائمة حتى لا تتجاوز حدودها.
 - AppBreadcrumb وAppPageHeader مكوّنان عامان مستقلان. يقبل AppShell breadcrumbBuilder اختيارياً لتوليد المسار من GoRouterState؛ تبقى قائمة breadcrumbs الثابتة متاحة للتوافق.
 - FormPageTemplate (T3) وDashboardTemplate (T5) في presentation/widgets/app_page_template؛ القوالب لا تقرأ الصلاحيات. الاستخدام في شاشات AUTH الطيّارة لم يُدمج بعد، لذلك لا تعد القوالب منجزة وفق R12.
 - شارة جلسة الكاشير حالياً slot من AppKey وليست اتصالاً بمصدر جلسة POS. لا توجد في AccessSnapshot حالة جلسة مفتوحة؛ مصدرها يجب أن يأتي من ميزة POS عند بنائها.

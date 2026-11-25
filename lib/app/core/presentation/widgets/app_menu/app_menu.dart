@@ -70,7 +70,14 @@ class AppMenu extends StatelessWidget {
                   AppIcon(entries[i].icon!, size: AppIconSize.md),
                   context.ui.spacing.gap(AppSpacing.sm, axis: Axis.horizontal),
                 ],
-                AppText(entries[i].label, type: AppTextType.bodyMedium),
+                Flexible(
+                  child: AppText(
+                    entries[i].label,
+                    type: AppTextType.bodyMedium,
+                    maxLines: 1,
+                    useEllipsis: true,
+                  ),
+                ),
               ],
             ),
           ),
