@@ -303,7 +303,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull, reason: 'after expanding the tree');
 
-    await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).at(2));
+    final leafActions = find.byTooltip(CatalogUiKeys.moreActions.en).at(2);
+    await tester.ensureVisible(leafActions);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'after scrolling to leaf');
+    await tester.tap(leafActions);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull, reason: 'after opening row actions');
     await tester.tap(find.text(CategoriesKeys.addChild.en));
