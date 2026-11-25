@@ -204,19 +204,18 @@ class _AppColorPickerState extends State<AppColorPicker> {
   }) => ClipRRect(
     borderRadius: AppRadius.md.circular(context),
     child: RawGestureDetector(
-    behavior: HitTestBehavior.opaque,
-    gestures: {
-      _ImmediatePanGestureRecognizer:
-          GestureRecognizerFactoryWithHandlers<_ImmediatePanGestureRecognizer>(
-            _ImmediatePanGestureRecognizer.new,
-            (recognizer) {
+      behavior: HitTestBehavior.opaque,
+      gestures: {
+        _ImmediatePanGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<
+              _ImmediatePanGestureRecognizer
+            >(_ImmediatePanGestureRecognizer.new, (recognizer) {
               recognizer
                 ..onDown = onDown
                 ..onUpdate = onUpdate;
-            },
-          ),
-    },
-    child: child,
+            }),
+      },
+      child: child,
     ),
   );
 

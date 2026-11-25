@@ -302,9 +302,7 @@ class _DashedPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rrect = borderRadius
-        .toRRect(Offset.zero & size)
-        .deflate(_stroke / 2);
+    final rrect = borderRadius.toRRect(Offset.zero & size).deflate(_stroke / 2);
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
