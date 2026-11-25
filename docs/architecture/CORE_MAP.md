@@ -65,6 +65,7 @@
 - `Logger`: سجل موحد؛ لا تسجل Tokens أو كلمات مرور أو بيانات مالية حساسة.
 - `UseCase` و`UseCaseNoParams`: عقود Use Cases.
 - `AppValidator` و`ValidationRule` (`lib/app/core/foundation/validation/app_validator.dart`): نظام التحقق من مدخلات النماذج، ورسائله `AppKey`. التوقيع `AppValidator.validate(value, rules, {params, customKeys})` يعيد نصاً مترجماً أو `null`. نوع قيم `params` هو `dynamic`؛ و`ValidationRule.async` و`AsyncValidator` محجوزان ولا يوجد مسار async في `validate()`.
+- `Slug` (`foundation/validation/slug.dart`): أداة Dart خالصة مشتركة لتوليد والتحقق من slug. `Slug.from(value)` يحوّل النص إلى مجموعات ASCII صغيرة وأرقام مفصولة بشرطة؛ لا يجري transliteration، لذلك الاسم العربي يحتاج slug يدوياً. `Slug.pattern` هو النمط المرجعي المستخدم في الماركات والتصنيفات. لا يعني ذلك وجود CHECK مماثل في قاعدة البيانات.
 - `AppPathImage` و`AppPathImages` (`lib/app/core/foundation/constants/image_constants.dart`): ثوابت مسارات الصور والأصول. يجمع `AppPathImage.path` مسار الأصل مع الاسم، ويحدد `isRtl` ما إذا كان الأصل مرتبطاً باتجاه النص.
 - `ImagePolicy` و`ImageUpload` و`ImageValidation` (`foundation/image/`): سياسة حد الحجم وMIME، وحمولة bytes/name/MIME، والتحقق من الفراغ والحجم والنوع وتوقيع JPEG/PNG/WebP من أول البايتات. `ImageUploadCubit` يدير اختيار/تحقق/رفع الصورة ويصدر رابطاً عاماً أو `AppKey` للفشل.
 - `Money` و`CurrencyMismatchException` (`lib/app/core/foundation/money/money.dart`): نوع المال `Money(amount, currencyId)` فوق `decimal` (قرار-70، [ADR-0005](ADR/0005-money-type-and-amount-formatter.md)). الجمع والطرح والمقارنة بعملة واحدة فقط وإلا `CurrencyMismatchException`؛ `times` و`convert` صريحان؛ ولا تقريب ضمني (`Money.rounded(MoneyRounding)`). `Money.fromRaw` يقرأ قيم PostgREST دون المرور بـ `double` حين تصل نصاً. ممنوع تسجيل قيمه في `Logger`. حالة التحقق: `NOT_RUN`.
@@ -100,6 +101,9 @@
 - `RealtimeClient` (`lib/app/core/network/realtime/realtime_client.dart`) **عقد مجرد فقط** (`connect/disconnect/on/off/emit/statusStream/onTableChange/offTable` وenum `RealtimeStatus`)؛ ليس خدمة جاهزة.
 - لا يوجد تنفيذ Supabase Realtime فعّال موصول أو مستخدم: لا implementation ملموس للعقد، ولا تسجيل في DI، ولا مستهلك في `lib` أو `test`.
 - عند الحاجة إلى Realtime يلزم تنفيذ جديد وتسجيله في DI وإضافة اختباراته؛ لا تفترض أنه متوفر.
+
+### CRUD list and editor
+- `CrudFlowsConfig.deactivateMessage` (في `presentation/widgets/crud_list/crud_flows_config.dart`) إضافة اختيارية تعيد رسالة التأكيد الخاصة بكل عنصر على هيئة `{key, args}`. تُستخدم عندما يحتاج إيقاف سجل أبوي إلى ذكر عدد أبنائه النشطين؛ إذا أعادت `null` يبقى نص التأكيد الافتراضي. الإضافة لا تغيّر السلوك الافتراضي للمستهلكين الحاليين.
 
 ### Responsive وDesign System
 - `ScreenEngine`: مصدر واحد لتحديد نوع الشاشة والأبعاد وحدود الشاشات (Breakpoints). افتحه لمعرفة القيم الحالية ولا تنسخها.
