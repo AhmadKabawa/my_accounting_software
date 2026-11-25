@@ -133,6 +133,7 @@ enum CategoriesKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key =>
-      this == CategoriesKeys.categoryName ? 'categories.name' : 'categories.$name';
+  String get key => this == CategoriesKeys.categoryName
+      ? 'categories.name'
+      : 'categories.$name';
 }
