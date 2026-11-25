@@ -19,4 +19,7 @@ class PlatformRequestSendTimeoutCapability
 abstract final class PlatformCapabilities {
   static bool get supportsCollapsibleSidebar =>
       platform.supportsCollapsibleSidebar;
+
+  /// Drag-and-drop is enabled on web and desktop, not on touch-only phones.
+  static bool get supportsFileDrop => platform.supportsFileDrop;
 }

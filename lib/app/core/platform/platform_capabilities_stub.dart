@@ -5,3 +5,6 @@ bool get supportsCollapsibleSidebar => true;
 
 /// Browser HTTP adapters do not support Dio's request-body send timeout.
 bool get supportsRequestSendTimeout => false;
+
+/// The browser supports file drag-and-drop.
+bool get supportsFileDrop => true;

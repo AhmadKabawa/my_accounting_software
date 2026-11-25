@@ -9,8 +9,10 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/template_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
+import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_image_upload/app_image_upload_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
@@ -19,11 +21,21 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/c
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/update_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/dialogs/brand_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import '../../../../../helpers/localized_app.dart';
 import '../../support/fake_brands_repository.dart';
+
+class _PassThroughDropAdapter implements FileDropTargetAdapter {
+  const _PassThroughDropAdapter();
+
+  @override
+  Widget build({
+    required Widget child,
+    required DroppedImagesCallback onFilesDropped,
+    required ValueChanged<bool> onHover,
+  }) => child;
+}
 
 class _Picker implements ImagePickerPort {
   _Picker(this.handler);
@@ -67,17 +79,14 @@ Future<void> _pumpEditor(
                         flashMessages: FlashMessages(),
                       ),
                     ),
-                    BlocProvider(
-                      create: (_) => BrandLogoUploadCubit(
-                        uploadLogo: UploadBrandLogoUseCase(repository),
-                        picker: picker ?? _Picker(() async => null),
-                      ),
-                    ),
                   ],
                   child: BrandEditorDialog(
                     brand: brand,
                     seed: seed,
                     duplicate: duplicate,
+                    logoUploader: UploadBrandLogoUseCase(repository).call,
+                    logoPicker: picker ?? _Picker(() async => null),
+                    logoDropTargetAdapter: const _PassThroughDropAdapter(),
                   ),
                 ),
               );
@@ -223,6 +232,7 @@ void main() {
     final repository = FakeBrandsRepository();
     final picker = _Picker(() async => null);
     await _pumpEditor(tester, repository, picker: picker);
+    await tester.ensureVisible(find.text(BrandsKeys.uploadLogo.en));
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
     expect(find.text(BrandsKeys.uploadLogo.en), findsOneWidget);
@@ -235,7 +245,16 @@ void main() {
     final repository = FakeBrandsRepository();
     final picker = _Picker(
       () async => PickedImage(
-        bytes: Uint8List.fromList([1, 2, 3]),
+        bytes: Uint8List.fromList([
+          0x89,
+          0x50,
+          0x4e,
+          0x47,
+          0x0d,
+          0x0a,
+          0x1a,
+          0x0a,
+        ]),
         fileName: 'logo.png',
         mimeType: 'image/png',
       ),
@@ -243,8 +262,18 @@ void main() {
     await _pumpEditor(tester, repository, picker: picker);
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
+    expect(repository.lastUpload, isNotNull);
+    expect(
+      tester
+          .widget<AppImageUploadField>(find.byType(AppImageUploadField))
+          .value,
+      'https://cdn.test/logo.png',
+    );
     expect(find.text(BrandsKeys.replaceLogo.en), findsOneWidget);
-    expect(find.byTooltip(BrandsKeys.removeLogo.en), findsOneWidget);
+    expect(
+      find.widgetWithText(AppButton, BrandsKeys.removeLogo.en),
+      findsOneWidget,
+    );
   });
 
   testWidgets('upload failure shows an inline banner', (tester) async {
@@ -252,7 +281,16 @@ void main() {
       ..uploadResult = const Left(_Failure());
     final picker = _Picker(
       () async => PickedImage(
-        bytes: Uint8List.fromList([1, 2, 3]),
+        bytes: Uint8List.fromList([
+          0x89,
+          0x50,
+          0x4e,
+          0x47,
+          0x0d,
+          0x0a,
+          0x1a,
+          0x0a,
+        ]),
         fileName: 'logo.png',
         mimeType: 'image/png',
       ),
@@ -260,6 +298,7 @@ void main() {
     await _pumpEditor(tester, repository, picker: picker);
     await tester.tap(find.text(BrandsKeys.uploadLogo.en));
     await tester.pumpAndSettle();
+    expect(repository.lastUpload, isNotNull);
     expect(find.text(BrandsKeys.saveError.en), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -345,7 +384,8 @@ void main() {
       };
     await _pumpEditor(tester, repository, brand: brand);
 
-    await tester.tap(find.byTooltip(BrandsKeys.removeLogo.en));
+    await tester.ensureVisible(find.text(BrandsKeys.removeLogo.en));
+    await tester.tap(find.text(BrandsKeys.removeLogo.en));
     await tester.pump();
     await tester.tap(find.text(BrandsKeys.save.en));
     await tester.pumpAndSettle();
@@ -365,6 +405,7 @@ void main() {
     );
     await _pumpEditor(tester, FakeBrandsRepository(), brand: brand);
     expect(find.byType(AppSwitch), findsOneWidget);
+    await tester.ensureVisible(find.byType(Switch));
     await tester.tap(find.byType(Switch));
     await tester.pump();
     await tester.tap(find.text(BrandsKeys.cancel.en));
@@ -389,8 +430,10 @@ void main() {
         return Right(brand);
       };
     await _pumpEditor(tester, repository, brand: brand);
+    await tester.ensureVisible(find.byType(Switch));
     await tester.tap(find.byType(Switch));
     await tester.pump();
+    await tester.ensureVisible(find.text(BrandsKeys.save.en));
     await tester.tap(find.text(BrandsKeys.save.en));
     await tester.pumpAndSettle();
     expect(savedDraft?.isActive, isFalse);
@@ -544,6 +587,7 @@ void main() {
       await _pumpEditor(tester, repository, brand: FakeBrandsRepository.brand);
       expect(find.byType(AppSwitch), findsOneWidget);
       expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isTrue);
+      await tester.ensureVisible(find.byType(Switch));
       await tester.tap(find.byType(Switch));
       await tester.pump();
       expect(tester.widget<AppSwitch>(find.byType(AppSwitch)).value, isFalse);

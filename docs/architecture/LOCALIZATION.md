@@ -28,7 +28,7 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 
 | القسم | المكان |
 |---|---|
-| `CommonKeys` `FieldKeys` `ValidationKeys` `ErrorKeys` `ServerErrorKeys` `ErpErrorKeys` `ThemeKeys` `NavKeys` `MessageKeys` `BadgeKeys` | `core/localization/keys/` |
+| `CommonKeys` `FieldKeys` `ValidationKeys` `ErrorKeys` `ServerErrorKeys` `ErpErrorKeys` `ThemeKeys` `NavKeys` `MessageKeys` `BadgeKeys` `ImageKeys` | `core/localization/keys/` |
 | `AuthKeys` (بما فيها رسائل نجاح الدخول والتسجيل والخروج والاسترجاع) | `features/auth/presentation/localization/` |
 | `ProfileKeys` | `features/profile/presentation/localization/` |
 | `OnboardingKeys` | `features/on_boarding/presentation/localization/` |
@@ -120,3 +120,8 @@ const AppText(AuthKeys.signIn)   // const يعمل، ويُترجم عند تغ�
 أضيف CatalogUiKeys.removeSort لوصف إزالة معيار فرز مستقل عن إزالة شارة الفلتر. بقي تسجيل CatalogUiKeys.values عبر key_registry.dart.
 
 أضيف CatalogUiKeys.moveSortUp وCatalogUiKeys.moveSortDown لتوضيح تغيير أولوية معيار الفرز في أدوات إعادة الترتيب.
+
+
+## مفاتيح الصور — 2026-11-24
+
+أضيف `ImageKeys` في `core/localization/keys/image_keys.dart` وسُجّل ضمن `allKeys` في `lib/app/localization/key_registry.dart`. يحتوي `unsupportedType` و`tooLarge` و`readFailed` و`dropHint` بالعربية والإنجليزية؛ تستخدمها أدوات Core المشتركة بدلاً من رسائل ثابتة أو مفاتيح خاصة بميزة واحدة.

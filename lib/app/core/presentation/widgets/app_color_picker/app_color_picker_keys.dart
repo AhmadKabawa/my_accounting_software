@@ -5,6 +5,7 @@ enum AppColorPickerKeys implements AppKey {
   noColor(ar: 'بلا لون', en: 'No color'),
   copy(ar: 'نسخ اللون', en: 'Copy color'),
   presets(ar: 'ألوان جاهزة', en: 'Presets'),
+  customColor(ar: 'لون مخصص', en: 'Custom color'),
   hue(ar: 'درجة اللون', en: 'Hue'),
   sv(ar: 'التشبع والسطوع', en: 'Saturation and value');
 

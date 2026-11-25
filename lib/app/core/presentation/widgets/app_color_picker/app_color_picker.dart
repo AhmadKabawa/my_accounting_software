@@ -1,11 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/foundation/validation/hex_color.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_swatch/app_color_swatch.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_color_picker/app_color_picker_keys.dart';
@@ -44,11 +45,29 @@ class _AppColorPickerState extends State<AppColorPicker> {
   final _controller = TextEditingController();
   double _hue = 0, _sat = 1, _val = 1;
   String? _alpha;
+  bool _responsiveStateInitialized = false;
+  bool _showSpectrum = true;
   Color get _color => HSVColor.fromAHSV(1, _hue, _sat, _val).toColor();
   @override
   void initState() {
     super.initState();
     _sync(widget.value);
+  }
+
+  bool _isCustomValue(String? value) {
+    final normalized = HexColor.normalize(value);
+    if (normalized == null || !HexColor.isValid(normalized)) return false;
+    return !widget.presets.any(
+      (preset) => HexColor.normalize(preset) == normalized,
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_responsiveStateInitialized) return;
+    _responsiveStateInitialized = true;
+    _showSpectrum = !context.ui.screen.isMobile || _isCustomValue(widget.value);
   }
 
   @override
@@ -156,66 +175,148 @@ class _AppColorPickerState extends State<AppColorPicker> {
     widget.onChanged(_output());
   }
 
+  void _adjustHue(double delta) {
+    setState(() => _hue = (_hue + delta).clamp(0.0, 360.0));
+    _emit();
+  }
+
+  void _adjustSaturation(double delta, double size) {
+    final next = (_sat + delta).clamp(0.0, 1.0);
+    _sv(Offset(next * size, (1 - _val) * size), size);
+  }
+
+  Widget _dragSurface({
+    required Widget child,
+    required ValueChanged<DragDownDetails> onDown,
+    required ValueChanged<DragUpdateDetails> onUpdate,
+  }) => RawGestureDetector(
+    behavior: HitTestBehavior.opaque,
+    gestures: {
+      _ImmediatePanGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<_ImmediatePanGestureRecognizer>(
+            _ImmediatePanGestureRecognizer.new,
+            (recognizer) {
+              recognizer
+                ..onDown = onDown
+                ..onUpdate = onUpdate;
+            },
+          ),
+    },
+    child: child,
+  );
+
+  Widget _buildSpectrum(BuildContext context, double pickerSize) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: SizedBox(
+            width: pickerSize,
+            height: pickerSize,
+            child: Semantics(
+              label: AppColorPickerKeys.sv.tr(context: context),
+              value: 'S ${(100 * _sat).round()}%, V ${(100 * _val).round()}%',
+              increasedValue:
+                  'S ${((100 * (_sat + 0.05).clamp(0.0, 1.0)).round())}%, V ${(100 * _val).round()}%',
+              decreasedValue:
+                  'S ${((100 * (_sat - 0.05).clamp(0.0, 1.0)).round())}%, V ${(100 * _val).round()}%',
+              slider: true,
+              onIncrease: () => _adjustSaturation(0.05, pickerSize),
+              onDecrease: () => _adjustSaturation(-0.05, pickerSize),
+              child: _dragSurface(
+                onDown: (details) => _sv(details.localPosition, pickerSize),
+                onUpdate: (details) => _sv(details.localPosition, pickerSize),
+                child: CustomPaint(
+                  painter: _SvPainter(_hue, _sat, _val),
+                  child: const SizedBox.expand(),
+                ),
+              ),
+            ),
+          ),
+        ),
+        context.ui.spacing.gap(AppSpacing.md),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: SizedBox(
+            width: pickerSize,
+            height: _hueHeight,
+            child: Semantics(
+              label: AppColorPickerKeys.hue.tr(context: context),
+              value: '${_hue.round()}°',
+              increasedValue: '${(_hue + 1).clamp(0.0, 360.0).round()}°',
+              decreasedValue: '${(_hue - 1).clamp(0.0, 360.0).round()}°',
+              slider: true,
+              onIncrease: () => _adjustHue(1),
+              onDecrease: () => _adjustHue(-1),
+              child: _dragSurface(
+                onDown: (details) =>
+                    _setHue(details.localPosition.dx, pickerSize),
+                onUpdate: (details) =>
+                    _setHue(details.localPosition.dx, pickerSize),
+                child: CustomPaint(
+                  painter: _HuePainter(_hue),
+                  child: const SizedBox.expand(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPresets(BuildContext context) {
+    final ui = context.ui;
+    final validPresets = widget.presets.where(HexColor.isValid);
+    if (validPresets.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppText(AppColorPickerKeys.presets),
+        ui.spacing.gap(AppSpacing.xs),
+        Wrap(
+          spacing: ui.spacing.value(AppSpacing.sm),
+          runSpacing: ui.spacing.value(AppSpacing.sm),
+          children: [
+            for (final preset in validPresets)
+              Semantics(
+                button: true,
+                selected:
+                    HexColor.normalize(widget.value) ==
+                    HexColor.normalize(preset),
+                label: preset,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => _preset(preset),
+                  child: SizedBox.square(
+                    dimension: AppComponentSize.hitArea.of(context),
+                    child: Center(
+                      child: AppColorSwatch(
+                        hex: preset,
+                        semanticLabel: preset,
+                        selected:
+                            HexColor.normalize(widget.value) ==
+                            HexColor.normalize(preset),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ui = context.ui;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final pickerSize = constraints.maxWidth.isFinite
-                ? constraints.maxWidth.clamp(0.0, _size).toDouble()
-                : _size;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: SizedBox(
-                    width: pickerSize,
-                    height: pickerSize,
-                    child: Semantics(
-                      label: AppColorPickerKeys.sv.tr(context: context),
-                      slider: true,
-                      child: GestureDetector(
-                        onPanDown: (e) => _sv(e.localPosition, pickerSize),
-                        onPanUpdate: (e) => _sv(e.localPosition, pickerSize),
-                        child: CustomPaint(
-                          painter: _SvPainter(_hue, _sat, _val),
-                          child: const SizedBox.expand(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                ui.spacing.gap(AppSpacing.md),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: SizedBox(
-                    width: pickerSize,
-                    height: _hueHeight,
-                    child: Semantics(
-                      label: AppColorPickerKeys.hue.tr(context: context),
-                      slider: true,
-                      child: GestureDetector(
-                        onPanDown: (e) =>
-                            _setHue(e.localPosition.dx, pickerSize),
-                        onPanUpdate: (e) =>
-                            _setHue(e.localPosition.dx, pickerSize),
-                        child: CustomPaint(
-                          painter: _HuePainter(_hue),
-                          child: const SizedBox.expand(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-        ui.spacing.gap(AppSpacing.md),
+        _buildPresets(context),
+        if (widget.presets.isNotEmpty) ui.spacing.gap(AppSpacing.md),
         Row(
           children: [
             Expanded(
@@ -241,26 +342,34 @@ class _AppColorPickerState extends State<AppColorPicker> {
           ],
         ),
         if (widget.value == null) AppText(AppColorPickerKeys.noColor),
-        if (widget.presets.isNotEmpty) ...[
-          ui.spacing.gap(AppSpacing.md),
-          AppText(AppColorPickerKeys.presets),
-          Wrap(
-            spacing: ui.spacing.value(AppSpacing.sm),
-            runSpacing: ui.spacing.value(AppSpacing.sm),
-            children: [
-              for (final p in widget.presets.where(HexColor.isValid))
-                AppColorSwatch(
-                  hex: p,
-                  onTap: () => _preset(p),
-                  semanticLabel: p,
-                  selected:
-                      HexColor.normalize(widget.value) == HexColor.normalize(p),
-                ),
-            ],
+        ui.spacing.gap(AppSpacing.sm),
+        AppButton(
+          AppColorPickerKeys.customColor,
+          onPressed: () => setState(() => _showSpectrum = !_showSpectrum),
+          variant: AppButtonVariant.text,
+          size: AppButtonSize.small,
+        ),
+        if (_showSpectrum) ...[
+          ui.spacing.gap(AppSpacing.sm),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final pickerSize = constraints.maxWidth.isFinite
+                  ? constraints.maxWidth.clamp(0.0, _size).toDouble()
+                  : _size;
+              return _buildSpectrum(context, pickerSize);
+            },
           ),
         ],
       ],
     );
+  }
+}
+
+class _ImmediatePanGestureRecognizer extends PanGestureRecognizer {
+  @override
+  void addAllowedPointer(PointerDownEvent event) {
+    super.addAllowedPointer(event);
+    resolve(GestureDisposition.accepted);
   }
 }
 

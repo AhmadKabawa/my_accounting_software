@@ -11,5 +11,10 @@ void main() {
     test('collapsible sidebar is a layout capability', () {
       expect(PlatformCapabilities.supportsCollapsibleSidebar, isTrue);
     });
+
+    test('desktop VM supports file drop', () {
+      // flutter test runs on the Dart VM; phone adapters explicitly disable it.
+      expect(PlatformCapabilities.supportsFileDrop, isTrue);
+    });
   });
 }

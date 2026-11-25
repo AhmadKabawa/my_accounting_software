@@ -16,13 +16,15 @@ class FilePickerImagePicker implements ImagePickerPort {
   @override
   Future<PickedImage?> pickImage() async {
     final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: _mimeByExtension.keys.toList(),
+      type: FileType.image,
       withData: true,
     );
     final file = result?.files.single;
-    final bytes = file?.bytes;
-    if (file == null || bytes == null) return null;
+    if (file == null) return null;
+    final bytes = file.bytes;
+    if (bytes == null) {
+      throw StateError('The selected image could not be read.');
+    }
     final extension = file.name.split('.').last.toLowerCase();
     return PickedImage(
       bytes: bytes,

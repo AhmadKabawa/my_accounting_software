@@ -1,5 +1,6 @@
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
+import 'package:accounting_software/app/core/network/storage/storage_image_uploader.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brand_stats_remote_data_source.dart';
@@ -14,13 +15,15 @@ import 'package:accounting_software/app/features/catalog/brands/domain/usecase/s
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/update_brand_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/usecase/upload_brand_logo_use_case.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_form/brand_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_logo_upload/brand_logo_upload_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brands_list/brands_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/cubit/brand_stats/brand_stats_cubit.dart';
 
 void initBrandsDI() {
   sl.registerLazySingleton<BrandsRemoteDataSource>(
-    () => BrandsRemoteDataSourceImpl(sl<IApiClient>()),
+    () => BrandsRemoteDataSourceImpl(
+      sl<IApiClient>(),
+      sl<StorageImageUploader>(),
+    ),
   );
   sl.registerLazySingleton<BrandStatsRemoteDataSource>(
     () => BrandStatsRemoteDataSourceImpl(sl<IApiClient>()),
@@ -48,9 +51,6 @@ void initBrandsDI() {
       deleteBrand: sl(),
       flashMessages: sl(),
     ),
-  );
-  sl.registerFactory(
-    () => BrandLogoUploadCubit(uploadLogo: sl(), picker: sl()),
   );
   sl.registerFactory(
     () => BrandFormCubit(

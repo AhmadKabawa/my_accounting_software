@@ -20,7 +20,7 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/cub
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_stats/color_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/colors_list/colors_list_effect.dart';
-import 'package:accounting_software/app/features/catalog/colors/presentation/dialogs/color_editor_dialog.dart';
+import 'package:accounting_software/app/features/catalog/colors/presentation/dialogs/color_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/sections/color_stats_section.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_card.dart';

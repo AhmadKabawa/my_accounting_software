@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/repositories/brands_repository.dart';
 
@@ -71,13 +71,13 @@ class FakeBrandsRepository implements BrandsRepository {
     return Future.value(deleteResult);
   }
 
-  BrandLogoUpload? lastUpload;
+  ImageUpload? lastUpload;
   Either<Failure, String> uploadResult = const Right(
     'https://cdn.test/logo.png',
   );
 
   @override
-  Future<Either<Failure, String>> uploadLogo(BrandLogoUpload upload) {
+  Future<Either<Failure, String>> uploadLogo(ImageUpload upload) {
     lastUpload = upload;
     return Future.value(uploadResult);
   }

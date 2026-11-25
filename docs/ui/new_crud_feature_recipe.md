@@ -216,3 +216,67 @@ capabilities: const CrudCapabilities(duplicate: false),
 ```
 
 `statusColumn: null` removes the status column, the row activate/deactivate action and bulk activation. A missing delete label or callback removes the Delete item (a per-row `flows.canDelete` that returns false keeps it visible but disabled). `test/core/presentation/widgets/crud_list/crud_data_section_test.dart` and `crud_list_screen_test.dart` cover an entity without status and delete-only bulk.
+
+## فحص يدوي مطلوب
+
+- Brands وColors في table/cards/grid على متصفح أو جهاز حقيقي.
+- التحديد الجماعي، تحديد الصفحة، مسح التحديد، وإعادة ضبط التحديد بعد تغيير نمط العرض.
+- تحديث الإحصاءات بعد الإنشاء والتعديل والنسخ والتفعيل وإلغاء التفعيل والحذف والعمليات الجماعية.
+- المحاذاة المرئية في RTL واتجاه حقل hex في LTR وإجراء النسخ.
+- عروض الهاتف 280–360px وعروض سطح المكتب؛ تحقق من عدم وجود overflow أو قوائم مقصوصة.
+- مصفوفة CI تغطي 280px وRTL ومقياس نص 1.5 لأنماط العرض الثلاثة على الشاشتين، لكنها لا تستبدل الفحص المرئي اليدوي.
+
+
+## Shared CRUD editor dialog
+
+Use CrudEditorDialog<C, S, E> for catalog create/edit/duplicate forms when the feature already owns its Cubit and effects. The shared component owns the common dialog lifecycle; the feature continues to own its fields, validation rules, draft construction, and save operation.
+
+- Create named controllers with CrudEditorFields; the editor owns and disposes them.
+- Supply CrudEditorLabels with the feature's localized AppKey values for add/edit/duplicate titles, subtitle, save and cancel.
+- Map the feature's success/failure effects to CrudEditorSuccess and CrudEditorFailure; do not move feature business rules into Core.
+- isSaving maps the feature state to the common busy state. Use extraBusy for independent work such as logo upload and extraDirty for non-text values such as an active switch.
+- The builder receives CrudEditorScope: use formKey for the form, fields for the controllers, busy for disabled actions, clearFailure after edits, and changed when non-controller state changes.
+- onSave runs only after the shared form validation succeeds. Keep normalization and draft creation in the feature.
+- Keep duplicate seed generation in the feature. Reuse the shared dialog shell without sharing entity-specific duplicate rules.
+- Continue opening the dialog through a feature launcher that creates the feature Cubit providers and calls showAppFormDialog; do not create feature Cubits inside Core.
+
+The current reference implementations are Brands and Colors. They share save/dirty/busy/effect handling while retaining their own slug, logo-upload, HEX-name suggestion, status and duplicate-seed behavior.
+
+
+## Adding an image to a feature
+
+Keep the image rules in the feature and the picker, validation flow, field UI and Storage transport in Core.
+
+1. Define one feature policy with the accepted MIME types and byte limit.
+2. In the feature remote data source, pass a `StorageTarget(bucket, folder)` and `ImageUpload` to the shared `StorageImageUploader`; map its `ApiResult` through the feature repository/use case.
+3. Use `AppImageUploadField` in the editor and pass the use-case function as its uploader.
+4. Feed `onBusyChanged` into `CrudEditorDialog.extraBusy` so the editor cannot close while the upload is running.
+5. Keep feature labels as feature `AppKey` values; use Core's `ImageKeys.dropHint` for the shared drop hint.
+
+Example (the policy and upload use case are feature-owned):
+
+```dart
+AppImageUploadField(
+  value: logo.text,
+  onChanged: (url) => logo.text = url ?? '',
+  label: name.text,
+  policy: featureLogoPolicy,
+  uploader: uploadLogoUseCase.call,
+  labels: const AppImageUploadFieldLabels(
+    sectionTitle: FeatureKeys.logoSection,
+    upload: FeatureKeys.uploadLogo,
+    replace: FeatureKeys.replaceLogo,
+    remove: FeatureKeys.removeLogo,
+    dropHint: ImageKeys.dropHint,
+  ),
+  previewSize: AppLogoSize.small,
+  onBusyChanged: (busy) => onExtraBusyChanged(busy),
+)
+```
+
+On Android/iOS, `FileType.image` opens the system image gallery and the drop target is hidden (`supportsFileDrop == false`). On Web and desktop, the same field also accepts the first dropped file; it still validates the actual bytes before upload.
+
+Known limitations intentionally left out:
+- No image compression: a phone photo larger than the feature's limit (Brands: 5 MB) is rejected with a clear size message.
+- No camera capture: this requires a separate `image_picker` integration and camera permission declarations.
+- No cleanup of orphaned Storage files when an image is replaced or a record is deleted.

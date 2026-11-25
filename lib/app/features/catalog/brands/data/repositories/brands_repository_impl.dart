@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/error/exceptions/app_exception.dart
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
 import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/brands/data/datasources/brands_remote_data_source.dart';
@@ -12,7 +13,6 @@ import 'package:accounting_software/app/features/catalog/brands/data/models/bran
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_draft.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_list_query.dart';
-import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_logo_upload.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/entity/brand_stats.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failures.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/repositories/brands_repository.dart';
@@ -104,7 +104,7 @@ class BrandsRepositoryImpl with RepositoryExecutor implements BrandsRepository {
   });
 
   @override
-  Future<Either<Failure, String>> uploadLogo(BrandLogoUpload upload) =>
+  Future<Either<Failure, String>> uploadLogo(ImageUpload upload) =>
       execute(() async {
         final result = await _remote.uploadLogo(upload);
         return switch (result) {

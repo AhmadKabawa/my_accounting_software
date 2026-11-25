@@ -122,9 +122,7 @@ void main() {
   testWidgets('tapping a preset fills the HEX field', (tester) async {
     await _pumpEditor(tester, FakeColorsRepository());
 
-    final preset = find.byWidgetPredicate(
-      (w) => w is AppColorSwatch && w.hex == '#DC2626' && w.onTap != null,
-    );
+    final preset = find.bySemanticsLabel('#DC2626');
     await tester.ensureVisible(preset);
     await tester.pumpAndSettle();
     await tester.tap(preset);

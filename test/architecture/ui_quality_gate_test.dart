@@ -14,6 +14,14 @@ const _legacy = {'on_boarding'};
 /// Split by responsibility into `widgets/` or `sections/` before exceeding it.
 const _maxPresentationLines = 250;
 
+bool _isPresentationFile(String path) {
+  final normalized = path.replaceAll('\\', '/');
+  return normalized.contains('/pages/') ||
+      normalized.contains('/widgets/') ||
+      normalized.contains('/sections/') ||
+      normalized.contains('/dialogs/');
+}
+
 Iterable<File> _featureFiles({String pathContains = ''}) sync* {
   final features = Directory(
     'lib/app/features',
@@ -45,15 +53,26 @@ List<String> _scan(Iterable<File> files, RegExp pattern, String message) {
 }
 
 void main() {
+  test('presentation classifier includes dialogs and excludes domain', () {
+    expect(
+      _isPresentationFile(
+        'lib/app/features/catalog/brands/presentation/dialogs/editor.dart',
+      ),
+      isTrue,
+    );
+    expect(
+      _isPresentationFile(
+        'lib/app/features/catalog/brands/domain/entity/brand.dart',
+      ),
+      isFalse,
+    );
+  });
+
   test('P-06: presentation files stay under the line limit', () {
     final tooLong = <String>[];
     for (final file in _featureFiles(pathContains: '/presentation/')) {
       final path = file.path.replaceAll('\\', '/');
-      final isUi =
-          path.contains('/pages/') ||
-          path.contains('/widgets/') ||
-          path.contains('/sections/');
-      if (!isUi) continue;
+      if (!_isPresentationFile(path)) continue;
       final lines = file.readAsLinesSync().length;
       if (lines > _maxPresentationLines) tooLong.add('$path ($lines lines)');
     }
