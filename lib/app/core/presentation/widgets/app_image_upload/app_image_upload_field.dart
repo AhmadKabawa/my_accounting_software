@@ -14,7 +14,6 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_dashed_border/app_dashed_border.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_image_upload/app_image_upload_zone_content.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_logo_thumb/app_logo_thumb.dart';
@@ -227,7 +226,6 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
         );
         if (supportsDrop) {
           content = FileDropTarget(
-            child: content,
             adapter:
                 widget.dropTargetAdapter ??
                 const DesktopFileDropTargetAdapter(),
@@ -237,6 +235,7 @@ class _AppImageUploadFieldState extends State<AppImageUploadField> {
                 setState(() => _isHovering = hovering);
               }
             },
+            child: content,
           );
         }
         return content;

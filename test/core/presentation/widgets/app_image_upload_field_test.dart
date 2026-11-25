@@ -147,8 +147,8 @@ void main() {
   ) async {
     await _pump(tester, _field(value: 'https://cdn.test/logo.png'));
     expect(find.byType(AppLogoThumb), findsOneWidget);
-    expect(_button(tester, 'test.image.replace'), findsOneWidget);
-    expect(_button(tester, 'test.image.remove'), findsOneWidget);
+    expect(_action('test.image.replace'), findsOneWidget);
+    expect(_action('test.image.remove'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -169,12 +169,12 @@ void main() {
       ),
     );
 
-    await tester.tap(_button(tester, 'test.image.upload'));
+    await tester.tap(_action('test.image.upload'));
     await tester.pump();
     expect(busy, [true]);
     expect(picker.calls, 1);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    await tester.tap(_button(tester, 'test.image.upload'), warnIfMissed: false);
+    await tester.tap(_action('test.image.upload'), warnIfMissed: false);
     await tester.pump();
     expect(picker.calls, 1);
 
@@ -190,12 +190,12 @@ void main() {
   ) async {
     String? changed;
     await _pump(tester, _field(onChanged: (value) => changed = value));
-    await tester.tap(_button(tester, 'test.image.upload'));
+    await tester.tap(_action('test.image.upload'));
     await tester.pumpAndSettle();
 
     expect(changed, 'https://cdn.test/logo.png');
-    expect(_button(tester, 'test.image.replace'), findsOneWidget);
-    expect(_button(tester, 'test.image.remove'), findsOneWidget);
+    expect(_action('test.image.replace'), findsOneWidget);
+    expect(_action('test.image.remove'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -215,19 +215,19 @@ void main() {
         ),
       );
 
-      await tester.tap(_button(tester, 'test.image.upload'));
+      await tester.tap(_action('test.image.upload'));
       await tester.pumpAndSettle();
 
       expect(value, 'https://cdn.test/logo.png');
       expect(busy, isFalse);
-      expect(_button(tester, 'test.image.replace'), findsOneWidget);
-      expect(_button(tester, 'test.image.remove'), findsOneWidget);
+      expect(_action('test.image.replace'), findsOneWidget);
+      expect(_action('test.image.remove'), findsOneWidget);
     },
   );
 
   testWidgets('upload failure is shown in the inline banner', (tester) async {
     await _pump(tester, _field(uploader: (_) async => const Left(_Failure())));
-    await tester.tap(_button(tester, 'test.image.upload'));
+    await tester.tap(_action('test.image.upload'));
     await tester.pumpAndSettle();
     expect(find.text(ErrorKeys.conflict.en), findsOneWidget);
   });
@@ -245,7 +245,7 @@ void main() {
         onChanged: (value) => changed = value,
       ),
     );
-    await tester.tap(_button(tester, 'test.image.remove'));
+    await tester.tap(_action('test.image.remove'));
     await tester.pump();
     expect(changed, isNull);
     expect(picker.calls, 0);
