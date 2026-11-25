@@ -68,7 +68,7 @@ class CategoriesListCubit
       final rows = tree.visible(expandedIds: query.expandedIds);
       return PagedResult(
         items: rows,
-        totalCount: tree.length,
+        totalCount: rows.length,
         currentPage: 1,
         totalPages: 1,
       );
@@ -112,8 +112,15 @@ class CategoriesListCubit
   }
 
   @override
-  Failure? beforeDelete(CategoryNode item) =>
-      item.canDelete ? null : const CategoryInUseFailure();
+  Failure? beforeDelete(CategoryNode item) {
+    if (item.childCount > 0 || (item.category.productCount ?? 0) > 0) {
+      return const CategoryInUseFailure();
+    }
+    if (item.category.productCount == null) {
+      return const CategoryUsageUnknownFailure();
+    }
+    return null;
+  }
 
   @override
   Future<Either<Failure, Unit>> deleteItem(CategoryNode item) =>

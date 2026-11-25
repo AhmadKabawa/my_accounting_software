@@ -14,9 +14,8 @@ enum CategoryStatusFilter {
   };
 }
 
-/// The category list is a tree loaded once and shaped locally, so there is no
-/// sort. The tree itself is not paged; a search or status filter turns it into
-/// a flat result list, and only that list is paged (spec §10).
+/// The category tree is loaded once and never paged. Search/status projections
+/// are flat and use 25 rows per page. The tree cap is shared with the repository.
 class CategoryListQuery extends Equatable
     implements PagedQuery<CategoryListQuery> {
   const CategoryListQuery({
@@ -24,8 +23,10 @@ class CategoryListQuery extends Equatable
     this.status = CategoryStatusFilter.all,
     this.expandedIds,
     this.page = 1,
-    this.pageSize = 25,
+    this.flatPageSize = 25,
   });
+
+  static const treePageSize = 2000;
 
   @override
   final String search;
@@ -35,8 +36,12 @@ class CategoryListQuery extends Equatable
   final Set<int>? expandedIds;
   @override
   final int page;
+
+  /// Flat search/filter result page size. The unfiltered tree uses [treePageSize].
+  final int flatPageSize;
+
   @override
-  final int pageSize;
+  int get pageSize => hasActiveFilters ? flatPageSize : treePageSize;
 
   /// A search or status filter turns the tree into a flat result list.
   @override
@@ -54,7 +59,7 @@ class CategoryListQuery extends Equatable
           status: status,
           expandedIds: expandedIds,
           page: value,
-          pageSize: pageSize,
+          flatPageSize: flatPageSize,
         );
 
   @override
@@ -69,7 +74,7 @@ class CategoryListQuery extends Equatable
     status: status,
     expandedIds: ids,
     page: page,
-    pageSize: pageSize,
+    flatPageSize: flatPageSize,
   );
 
   CategoryListQuery _copy({String? search, CategoryStatusFilter? status}) =>
@@ -78,9 +83,15 @@ class CategoryListQuery extends Equatable
         status: status ?? this.status,
         expandedIds: expandedIds,
         page: 1,
-        pageSize: pageSize,
+        flatPageSize: flatPageSize,
       );
 
   @override
-  List<Object?> get props => [search, status, expandedIds, page, pageSize];
+  List<Object?> get props => [
+    search,
+    status,
+    expandedIds,
+    page,
+    flatPageSize,
+  ];
 }

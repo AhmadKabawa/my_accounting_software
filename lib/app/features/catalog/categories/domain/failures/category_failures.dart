@@ -7,6 +7,12 @@ class CategoryInUseFailure extends Failure {
     : super(messageKey: CategoryFailureKeys.inUse, statusCode: 409);
 }
 
+/// The embedded product count was unavailable, so deletion is blocked safely.
+class CategoryUsageUnknownFailure extends Failure {
+  const CategoryUsageUnknownFailure()
+    : super(messageKey: CategoryFailureKeys.usageUnknown, statusCode: 409);
+}
+
 /// `categories.slug` is UNIQUE (SQLSTATE 23505).
 class CategorySlugTakenFailure extends Failure {
   const CategorySlugTakenFailure()

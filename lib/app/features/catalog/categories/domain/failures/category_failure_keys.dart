@@ -5,6 +5,10 @@ enum CategoryFailureKeys implements AppKey {
     ar: 'التصنيف مستخدم في منتجات أو له تصنيفات فرعية، أوقفه بدل حذفه',
     en: 'This category has products or subcategories. Deactivate it instead.',
   ),
+  usageUnknown(
+    ar: 'تعذر التحقق من ارتباط المنتجات بهذا التصنيف؛ أوقفه بدلاً من حذفه حتى يتوفر العدد.',
+    en: 'Product usage could not be verified. Deactivate this category instead of deleting it.',
+  ),
   slugTaken(
     ar: 'الرابط المختصر (slug) مستخدم مسبقاً',
     en: 'This slug is already used',
