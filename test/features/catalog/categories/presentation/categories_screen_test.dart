@@ -293,7 +293,7 @@ void main() {
       categories: _sampleCategories().take(3).toList(),
     );
     _register(repository);
-    setScreenSize(tester, const Size(1200, 900));
+    setScreenSize(tester, const Size(360, 800));
     await tester.pumpWidget(
       buildTestApp(home: _home(), direction: TextDirection.ltr),
     );
