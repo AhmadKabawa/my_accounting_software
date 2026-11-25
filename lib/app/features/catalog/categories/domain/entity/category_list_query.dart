@@ -87,11 +87,5 @@ class CategoryListQuery extends Equatable
       );
 
   @override
-  List<Object?> get props => [
-    search,
-    status,
-    expandedIds,
-    page,
-    flatPageSize,
-  ];
+  List<Object?> get props => [search, status, expandedIds, page, flatPageSize];
 }
