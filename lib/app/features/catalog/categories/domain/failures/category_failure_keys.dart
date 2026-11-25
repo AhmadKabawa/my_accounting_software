@@ -26,5 +26,5 @@ enum CategoryFailureKeys implements AppKey {
   final String en;
 
   @override
-  String get key => 'categories.failure.$name';
+  String get key => 'categoryfailures.$name';
 }
