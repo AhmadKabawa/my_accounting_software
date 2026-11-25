@@ -61,10 +61,7 @@ class CategoriesRemoteDataSourceImpl implements CategoriesRemoteDataSource {
     page: page,
     limit: limit,
     parser: PaginatedParserPresets.supabase,
-    queryParameters: {
-      'select': select,
-      'order': CategoriesEndpoint.order,
-    },
+    queryParameters: {'select': select, 'order': CategoriesEndpoint.order},
   );
 
   @override
