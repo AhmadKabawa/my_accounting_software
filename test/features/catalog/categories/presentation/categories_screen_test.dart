@@ -46,39 +46,7 @@ class _AccessRepository implements AccessRepository {
     ),
   );
 
-  testWidgets('adding a subcategory to a leaf uses the same editor flow', (
-    tester,
-  ) async {
-    final repository = FakeCategoriesRepository(
-      categories: _sampleCategories().take(3).toList(),
-    );
-    _register(repository);
-    await tester.pumpWidget(
-      buildTestApp(home: _home(), direction: TextDirection.ltr),
-    );
-    await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).at(2));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(CategoriesKeys.addChild.en));
-    await tester.pumpAndSettle();
-
-    await tester.enterText(find.byType(TextField).at(1), 'Leaf child');
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(CategoriesKeys.save.en));
-    await tester.pumpAndSettle();
-
-    expect(repository.createCalls, 1);
-    expect(
-      repository.categories.any(
-        (item) => item.name == 'Leaf child' && item.parentId == 3,
-      ),
-      isTrue,
-    );
-    expect(repository.getAllCalls, 2);
-    expect(_listCubit(tester).tree!.byId(4)?.name, 'Leaf child');
-    expect(tester.takeException(), isNull);
-  });
 
 }
 
@@ -318,6 +286,40 @@ void main() {
       isTrue,
     );
     expect(_listCubit(tester).tree!.byId(2)?.name, 'New child');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('adding a subcategory to a leaf uses the same editor flow', (
+    tester,
+  ) async {
+    final repository = FakeCategoriesRepository(
+      categories: _sampleCategories().take(3).toList(),
+    );
+    _register(repository);
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).at(2));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CategoriesKeys.addChild.en));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).at(1), 'Leaf child');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.createCalls, 1);
+    expect(
+      repository.categories.any(
+        (item) => item.name == 'Leaf child' && item.parentId == 3,
+      ),
+      isTrue,
+    );
+    expect(repository.getAllCalls, 2);
+    expect(_listCubit(tester).tree!.byId(4)?.name, 'Leaf child');
     expect(tester.takeException(), isNull);
   });
 }
