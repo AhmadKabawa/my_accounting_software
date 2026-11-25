@@ -79,6 +79,60 @@
 8. الاختبارات والتوثيق (تغطية الحقول وأثر التكامل وCORE_MAP).
 
 
+## 7. التوثيق والتحقق
+
+### 7.1 تغطية الحقول
+
+| الحقل / المعلومة | واجهة CAT-07 | قاعدة البيانات | التحقق / مصدر القيمة |
+|---|---|---|---|
+| `id` | غير قابل للتحرير؛ مفتاح الصف والإجراءات والتحديد | `categories.id` | يقرأه `CategoryModel` كعدد صحيح؛ لا يرسله النموذج |
+| `parent_id` | منتقي الأب القابل للبحث؛ المسار الكامل؛ فارغ = جذر | `categories.parent_id` → `categories.id` | يستبعد العقدة وأحفادها؛ فحص محلي لمنع الدورة |
+| `name` | هوية الصف وحقل الاسم | `categories.name` | مطلوب، ≤150؛ تحقق حي |
+| `slug` | أسفل الاسم LTR وحقل مستقل | `categories.slug` UNIQUE | `Slug.from` للاسم اللاتيني؛ العربي يحتاج إدخالاً يدوياً؛ مطلوب، ≤150، نمط ASCII lowercase/digits/hyphens؛ 23505 → خطأ slug |
+| `description` | عمود ثانوي وحقل متعدد الأسطر | `categories.description` | اختياري؛ trim وإرسال null عند الفراغ |
+| `image` | صورة مصغرة مع fallback | `categories.image` | اختياري؛ HTTP/HTTPS فقط و≤500؛ لا رفع ملفات |
+| `sort_order` | حقل ترتيب في المحرر؛ الترتيب داخل كل أب | `categories.sort_order` | عدد صحيح غير سالب؛ الافتراضي 0؛ الترتيب ثابت ثم الاسم ثم id |
+| `is_active` | شارة حالة وفلتر الكل/نشط/موقوف وإجراءات التفعيل/الإيقاف | `categories.is_active` | ليس حقلاً في المحرر؛ PATCH مستقل للحالة |
+| عدد الأبناء | شارة فرعي؛ يؤثر في منع الحذف | مشتق من صفوف `categories.parent_id` | عدد الأبناء المباشرين من `CategoryTree` |
+| عدد المنتجات | لا يعرض كعمود مستقل؛ يستخدم لحراسة الحذف | `product_categories` عبر `product_categories(count)` | nullable؛ null تعني «غير معروف» وتمنع الحذف، ولا تتحول إلى صفر |
+| مسار التصنيف | نتائج البحث/الفلتر، منتقي الأب، والبطاقة العميقة | مشتق من سلسلة `parent_id` | `CategoryTree.ancestorNames`; الأيتام والدورات القديمة تُرقّى إلى جذور حتى لا تختفي |
+
+### 7.2 معايير القبول CAT07-CATG-AC1…AC6
+
+الحالة تصف وجود التنفيذ، ولا تعني تحققاً بصرياً يدوياً. نجاح CI لا يثبت الاتصال بخدمة Supabase الحية.
+
+| المعيار | الحالة | الدليل / القيد |
+|---|---|---|
+| CAT07-CATG-AC1 — إنشاء جذر وفرعي وظهورهما في الشجرة | منفذ — اختبارات Cubit/Domain موجودة | حفظ المحرر يبطل الشجرة ويعيد تحميلها؛ لا اختبار تكامل على Supabase حي |
+| CAT07-CATG-AC2 — slug مكرر برسالة واحدة ومنع الإنشاء | منفذ — اختبار Cubit/Repository موجود | 23505 يتحول إلى خطأ slug ويظهر على الحقل؛ لا قيد DB لنمط slug نفسه |
+| CAT07-CATG-AC3 — استبعاد العقدة وأحفادها من منتقي الأب | منفذ — اختبار Cubit/Domain موجود | `descendantIds` مع استبعاد id الحالي؛ لا يمنع سباق مستخدمين متزامنين |
+| CAT07-CATG-AC4 — منع حذف المستخدم/الأب وفشل 23503 برسالة الإيقاف | منفذ — اختبارات Cubit/Repository موجودة | الحذف يظهر فقط عند childCount=0 وproductCount=0 المعروف؛ unknown يمنع الحذف؛ 23503 يعرض «أوقفه بدل حذفه» |
+| CAT07-CATG-AC5 — read-only يرى الشجرة بلا أزرار كتابة | منفذ في الإعداد — لم يُختبر باختبار Widget مخصص | `manageAccess = masterdata.manage`؛ القراءة لا تُحجب في المسار وتبقى وفق RLS؛ يلزم اختبار manage/read-only حي |
+| CAT07-CATG-AC6 — لا overflow عند 360 في RTL وLTR | منفذ في بنية الودجات — لم يُتحقق بصرياً | الإزاحة Directional والبطاقات تعرض المسار عند العمق >2؛ يلزم فحص Chrome يدوي 360/1200 وRTL/LTR |
+
+### 7.3 التحقق والـ CI
+
+- لا توجد بيئة Flutter/Dart محلية؛ لم يُشغَّل محلياً `flutter analyze` أو `flutter test` أو `flutter build`.
+- المرحلة 4: CI run `45709545289` نجح (Auto-format وAnalyze وTests وCatalog UI Widget Tests).
+- المرحلة 5: run `45711643225` اجتاز Analyze، ثم فشل اختبار واحد من أصل 1260: اختبار sidebar لم يتوقع عنصر Categories. أُصلح الاختبار في commit `f9aeb6e`.
+- run `45712204962` على إصلاح الاختبار: Auto-format وAnalyze ناجحان؛ Tests كانت قيد التنفيذ عند كتابة هذا التحديث.
+- run `45712411332` على توثيق المرحلة 6: قيد الانتظار عند كتابة هذا التحديث.
+- لم يُختبر REST على Supabase حي، ولم تُجر تجربة manage/read-only، ولا فحص Chrome يدوي.
+
+### 7.4 طلب REST يدوي للتحقق من count
+
+استبدل `<PROJECT_REF>` بعنوان مشروع Supabase و`<ANON_KEY>` بمفتاح anon و`<USER_ACCESS_TOKEN>` برمز جلسة مستخدم مصادق عليه. لا تستخدم service_role في المتصفح أو Flutter.
+
+```http
+GET https://<PROJECT_REF>.supabase.co/rest/v1/categories?select=id,parent_id,name,slug,description,image,sort_order,is_active,product_categories(count)&order=sort_order.asc,name.asc&limit=1
+apikey: <ANON_KEY>
+Authorization: Bearer <USER_ACCESS_TOKEN>
+Accept: application/json
+Prefer: count=exact
+```
+
+النتيجة المتوقعة تتضمن `"product_categories":[{"count":0}]` أو عدداً أكبر. إذا أعاد PostgREST خطأ 400/PGRST200 أو خطأ علاقة، فهذا يعني أن الإسقاط غير متاح بهذا الاسم/العلاقة في الخدمة. مصدر البيانات يعيد المحاولة مرة واحدة بإسقاط آمن بلا count ويوقف طلبات count اللاحقة طوال عمره؛ عندها يبقى العرض متاحاً لكن `productCount=null`، ويُمنع الحذف الفردي والجماعي احتياطياً. الـ fallback لا يغني عن فحص الخدمة وإصلاح العلاقة.
+
 ### 7.5 ربط المسار والصلاحيات
 
 - المسار المسجل: `/catalog/categories` عبر `CategoriesRoutes`، ويدخل في فرع الكتالوج نفسه.
