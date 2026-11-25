@@ -104,4 +104,3 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
     );
   }
 }
-
