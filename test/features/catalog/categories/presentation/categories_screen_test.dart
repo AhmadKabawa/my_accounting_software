@@ -45,6 +45,41 @@ class _AccessRepository implements AccessRepository {
       posTerminals: const [],
     ),
   );
+
+  testWidgets('adding a subcategory to a leaf uses the same editor flow', (
+    tester,
+  ) async {
+    final repository = FakeCategoriesRepository(
+      categories: _sampleCategories().take(3).toList(),
+    );
+    _register(repository);
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).at(2));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CategoriesKeys.addChild.en));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).at(1), 'Leaf child');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.createCalls, 1);
+    expect(
+      repository.categories.any(
+        (item) => item.name == 'Leaf child' && item.parentId == 3,
+      ),
+      isTrue,
+    );
+    expect(repository.getAllCalls, 2);
+    expect(_listCubit(tester).tree!.byId(4)?.name, 'Leaf child');
+    expect(tester.takeException(), isNull);
+  });
+
 }
 
 Category _category(int id, {int? parentId, String? name, bool active = true}) =>
@@ -150,6 +185,23 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('full list page renders at 1200 in RTL and LTR', (tester) async {
+    _register(FakeCategoriesRepository(categories: _sampleCategories()));
+    for (final direction in [TextDirection.rtl, TextDirection.ltr]) {
+      setScreenSize(tester, const Size(1200, 900));
+      await tester.pumpWidget(
+        buildTestApp(home: _home(), direction: direction),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(CategoriesListPage), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await sl.reset();
+      _register(FakeCategoriesRepository(categories: _sampleCategories()));
+    }
+  });
+
   testWidgets('search field retains readable width at 360 without overflow', (
     tester,
   ) async {
@@ -243,6 +295,8 @@ void main() {
         home: Directionality(textDirection: TextDirection.ltr, child: _home()),
       ),
     );
+    await tester.pumpAndSettle();
+    _listCubit(tester).collapseAll();
     await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).first);
