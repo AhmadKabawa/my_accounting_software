@@ -6,7 +6,6 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -32,7 +31,7 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 
 const _crudLabels = CrudLabels(
   edit: CategoriesKeys.edit,
-  delete: null,
+  delete: CategoriesKeys.delete,
   activate: CategoriesKeys.activate,
   deactivate: CategoriesKeys.deactivate,
   deleteConfirmationTitle: CategoriesKeys.delete,
@@ -75,16 +74,6 @@ get categoriesListConfig => CrudListConfig(
     onSearchChanged: slot.cubit.searchChanged,
     onStatusChanged: slot.cubit.setStatus,
   ),
-  extraFilterControls: (slot) => slot.state.query.hasActiveFilters
-      ? [
-          AppButton(
-            CategoriesKeys.clearFilters,
-            onPressed: slot.cubit.clearFilters,
-            variant: AppButtonVariant.outlined,
-            size: AppButtonSize.small,
-          ),
-        ]
-      : const [],
   breadcrumb: (context) => AppBreadcrumb(
     items: [
       AppBreadcrumbItem(
@@ -96,18 +85,6 @@ get categoriesListConfig => CrudListConfig(
   ),
   viewModes: const [AppViewMode.table, AppViewMode.cards],
   capabilities: const CrudCapabilities(duplicate: false, bulkSelection: true),
-  extraToolbarActions: (slot) {
-    if (slot.state.query.hasActiveFilters || slot.cubit.tree == null) {
-      return const [];
-    }
-    return [
-      CategoriesTreeToolbar(
-        enabled: true,
-        onExpandAll: slot.cubit.expandAll,
-        onCollapseAll: slot.cubit.collapseAll,
-      ),
-    ];
-  },
   flows: CrudFlowsConfig<CategoryNode, CategoriesListCubit>(
     showEditor: (context, {item, duplicate = false}) => showCategoryEditor(
       context,
@@ -155,6 +132,7 @@ get categoriesListConfig => CrudListConfig(
                 onToggle: node.hasChildren
                     ? () => data.cubit.toggleExpanded(node.id)
                     : null,
+                showPathForDeep: true,
               ),
             ),
             DataTableColumn<CategoryNode>(
@@ -215,12 +193,17 @@ get categoriesListConfig => CrudListConfig(
           },
         );
 
-    if (!data.query.hasActiveFilters) return section;
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const CategoriesFlatResultsNote(),
-        Expanded(child: section),
+        CategoriesTreeToolbar(
+          enabled: data.cubit.tree != null,
+          onExpandAll: data.cubit.expandAll,
+          onCollapseAll: data.cubit.collapseAll,
+        ),
+        if (data.query.hasActiveFilters) const CategoriesFlatResultsNote(),
+        section,
       ],
     );
   },

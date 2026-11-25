@@ -25,8 +25,10 @@ class CategoryIdentity extends StatelessWidget {
   Widget build(BuildContext context) {
     final category = node.category;
     final showPath = node.flat || (showPathForDeep && node.depth > 2);
-    final indent = showPath ? 0.0 : context.ui.spacing.lg * node.depth;
-    final ancestors = node.ancestors.join(' › ');
+    final indent = showPath
+        ? 0.0
+        : context.ui.spacing.lg * node.depth.clamp(0, 4);
+    final path = [...node.ancestors, category.name].join(' › ');
 
     return Padding(
       padding: EdgeInsetsDirectional.only(start: indent),
@@ -65,9 +67,9 @@ class CategoryIdentity extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppText.raw(category.name, type: AppTextType.titleSmall),
-                if (showPath && ancestors.isNotEmpty)
+                if (showPath && path.isNotEmpty)
                   AppText.raw(
-                    ancestors,
+                    path,
                     type: AppTextType.bodySmall,
                     color: context.ui.theme.colors.onSurfaceVariant,
                     maxLines: 1,

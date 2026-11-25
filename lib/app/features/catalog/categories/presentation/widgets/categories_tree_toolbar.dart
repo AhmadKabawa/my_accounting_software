@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 
 class CategoriesTreeToolbar extends StatelessWidget {
@@ -16,22 +17,19 @@ class CategoriesTreeToolbar extends StatelessWidget {
   final bool enabled;
 
   @override
-  Widget build(BuildContext context) => Wrap(
-    spacing: context.ui.spacing.sm,
-    runSpacing: context.ui.spacing.sm,
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
     children: [
-      AppButton(
-        CategoriesKeys.expandAll,
+      AppIconButton(
+        AppIcons.expand,
+        tooltipKey: CategoriesKeys.expandAll,
         onPressed: enabled ? onExpandAll : null,
-        icon: AppIcons.expand,
-        variant: AppButtonVariant.outlined,
         size: AppButtonSize.small,
       ),
-      AppButton(
-        CategoriesKeys.collapseAll,
+      AppIconButton(
+        AppIcons.collapse,
+        tooltipKey: CategoriesKeys.collapseAll,
         onPressed: enabled ? onCollapseAll : null,
-        icon: AppIcons.collapse,
-        variant: AppButtonVariant.outlined,
         size: AppButtonSize.small,
       ),
     ],
