@@ -51,7 +51,7 @@ class CategoriesListCubit
   ) async {
     var tree = _tree;
     if (tree == null) {
-      final response = await _getCategories(const NoParams());
+      final response = await _getCategories(NoParams());
       final failure = response.fold<Failure?>((f) => f, (_) => null);
       if (failure != null) return Left(failure);
       tree = CategoryTree(response.getOrElse(() => const []));
