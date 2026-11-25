@@ -264,7 +264,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(repository.lastUpload, isNotNull);
     expect(
-      tester.widget<AppImageUploadField>(find.byType(AppImageUploadField)).value,
+      tester
+          .widget<AppImageUploadField>(find.byType(AppImageUploadField))
+          .value,
       'https://cdn.test/logo.png',
     );
     expect(find.text(BrandsKeys.replaceLogo.en), findsOneWidget);

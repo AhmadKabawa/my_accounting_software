@@ -186,30 +186,31 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('success survives parent rebuilds from value and busy callbacks', (
-    tester,
-  ) async {
-    String? value;
-    var busy = false;
-    await _pump(
-      tester,
-      StatefulBuilder(
-        builder: (context, setState) => _field(
-          value: value,
-          onChanged: (next) => setState(() => value = next),
-          onBusyChanged: (next) => setState(() => busy = next),
+  testWidgets(
+    'success survives parent rebuilds from value and busy callbacks',
+    (tester) async {
+      String? value;
+      var busy = false;
+      await _pump(
+        tester,
+        StatefulBuilder(
+          builder: (context, setState) => _field(
+            value: value,
+            onChanged: (next) => setState(() => value = next),
+            onBusyChanged: (next) => setState(() => busy = next),
+          ),
         ),
-      ),
-    );
+      );
 
-    await tester.tap(_button(tester, 'test.image.upload'));
-    await tester.pumpAndSettle();
+      await tester.tap(_button(tester, 'test.image.upload'));
+      await tester.pumpAndSettle();
 
-    expect(value, 'https://cdn.test/logo.png');
-    expect(busy, isFalse);
-    expect(_button(tester, 'test.image.replace'), findsOneWidget);
-    expect(_button(tester, 'test.image.remove'), findsOneWidget);
-  });
+      expect(value, 'https://cdn.test/logo.png');
+      expect(busy, isFalse);
+      expect(_button(tester, 'test.image.replace'), findsOneWidget);
+      expect(_button(tester, 'test.image.remove'), findsOneWidget);
+    },
+  );
 
   testWidgets('upload failure is shown in the inline banner', (tester) async {
     await _pump(tester, _field(uploader: (_) async => const Left(_Failure())));
