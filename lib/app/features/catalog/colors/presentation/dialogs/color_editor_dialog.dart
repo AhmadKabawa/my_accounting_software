@@ -46,7 +46,7 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
     _fields = CrudEditorFields(
       initialValues: {
         'name': seed?.name ?? color?.name ?? '',
-        'code': seed?.code ?? color?.code ?? _generatedColorCode(),
+        'code': seed?.code ?? color?.code ?? '',
         'hex': seed?.hexCode ?? color?.hexCode ?? '',
         'sortOrder': (seed?.sortOrder ?? color?.sortOrder ?? 0).toString(),
       },
@@ -67,6 +67,7 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
     _nameAutofill.resolveInitial(
       context,
       name: _name,
+      code: _code,
       hex: widget.color?.hexCode ?? widget.seed?.hexCode,
     );
   }
@@ -113,27 +114,17 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
           hex: _hex,
           sortOrder: _sortOrder,
           suggestedName: _nameAutofill.suggestedName,
-          onNameChanged: () {
-            _nameAutofill.onNameChanged(_name.text);
-            scope.clearFailure();
-          },
           onChanged: scope.clearFailure,
           onHexChanged: () {
-            _nameAutofill.onHexChanged(context, name: _name, hex: _hex.text);
+            _nameAutofill.onHexChanged(
+              context,
+              name: _name,
+              code: _code,
+              hex: _hex.text,
+            );
             scope.clearFailure();
             scope.changed();
           },
         ),
       );
-}
-
-String _generatedColorCode() {
-  final now = DateTime.now();
-  final date =
-      '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
-  final time =
-      '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}';
-  final fraction =
-      '${now.millisecond.toString().padLeft(3, '0')}${now.microsecond.toString().padLeft(3, '0')}';
-  return 'CLR-$date-$time-$fraction';
 }

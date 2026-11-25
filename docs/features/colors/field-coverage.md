@@ -7,7 +7,7 @@ DATA_MODEL source/version: `docs/backend/DATA_MODEL.md`, extracted from Supabase
 |---|---|---|---|---|---|---|---|---|---|---|
 | `id` | bigint identity PK | generated | identity | no | no | no | internal identity only | no | product_color_components FK | Keep internal; never ask the user to enter it. |
 | `name` | varchar(100) | yes | none | yes | yes | yes | search; name sort | no | product color composition | Main human-readable color name. |
-| `code` | varchar(50) UNIQUE | yes | generated on create | yes | yes | yes | search; code sort | no | API/business reference | Editable `CLR-<timestamp>` abbreviation generated when the create form opens; independent of name and HEX. Database uniqueness remains authoritative. |
+| `code` | varchar(50) UNIQUE | yes | generated on create | yes | yes | yes | search; code sort | no | API/business reference | Editable three-letter English abbreviation plus a three-digit RGB-channel sum, generated when a preset or HEX value is selected. |
 | `hex_code` | varchar(9), nullable | no | null | yes | yes | swatch + HEX text/copy | search | no | AppColorSwatch / AppColorPicker | Accepts `#RRGGBB` or `#RRGGBBAA`; preserve alpha when editing an existing 8-digit value. |
 | `is_active` | boolean | no | true | default | toggle | status label | status filter | active/inactive counts | product color selection | Inactive colors remain in historical product compositions but should not be offered for new selections. |
 | `sort_order` | integer | no | 0 | yes | yes | not a primary column | default ordering, then name | no | catalog ordering | Keep editable in the form and use for default list order; avoid exposing it as a prominent column. |
@@ -19,7 +19,7 @@ DATA_MODEL source/version: `docs/backend/DATA_MODEL.md`, extracted from Supabase
 ## Coverage decisions
 
 - The editor covers the user-managed fields: name, generated-but-editable code, optional HEX, and sort order.
-- A new code uses the local form-open timestamp (`CLR-YYYYMMDD-HHMMSS-ffffff`); it is not derived from the color name or HEX and does not imply a database `created_at` value.
+- Selecting a preset or changing HEX suggests a localized color name and a code shaped as `ABC-NNN`: the first three English letters of the resolved color name plus the sum of its RGB channels (000–765). Both fields remain editable until the next color/HEX change.
 - List search is server-side across `name`, `code`, and `hex_code`; status is a server-side filter.
 - Default ordering is `sort_order` ascending with name as a stable tie-breaker. Explicit sorting is available for name and code.
 - The HEX swatch is a visual aid, not the sole representation: show the color name and HEX value, with a copy action.

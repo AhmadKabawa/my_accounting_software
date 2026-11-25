@@ -3,64 +3,73 @@ import 'package:accounting_software/app/core/foundation/color/color_name_keys.da
 import 'package:accounting_software/app/core/foundation/color/color_name_resolver.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
-/// Keeps HEX-based name suggestions separate from the editor's manual input.
+/// Generates an editable name and abbreviation whenever a color is selected.
 class ColorNameAutofill {
   String? _lastAutoName;
-  bool _manualName = false;
-  bool _updatingName = false;
   bool _resolvedInitialName = false;
 
   String? get suggestedName => _lastAutoName;
 
-  String? _suggestion(BuildContext context, String? hex) {
-    final resolved = ColorNameResolver.resolve(hex);
-    if (resolved == null) return null;
+  String? _suggestion(BuildContext context, ColorName? color) {
+    if (color == null) return null;
     return ColorNameKeys.values
-        .firstWhere((key) => key.name == resolved.name)
+        .firstWhere((key) => key.name == color.name)
         .tr(context: context);
   }
 
   void resolveInitial(
     BuildContext context, {
     required TextEditingController name,
+    required TextEditingController code,
     required String? hex,
   }) {
     if (_resolvedInitialName) return;
     _resolvedInitialName = true;
-    _lastAutoName = _suggestion(context, hex);
-    if (name.text.trim().isEmpty && _lastAutoName != null) {
-      _setAutoName(name, _lastAutoName!);
-    } else {
-      _manualName =
-          name.text.trim().isNotEmpty && name.text.trim() != _lastAutoName;
+    final color = ColorNameResolver.resolve(hex);
+    _lastAutoName = _suggestion(context, color);
+    if (name.text.trim().isEmpty && code.text.trim().isEmpty && color != null) {
+      _apply(context, name: name, code: code, color: color, hex: hex!);
     }
-  }
-
-  void onNameChanged(String value) {
-    if (_updatingName) return;
-    _manualName = value.trim().isNotEmpty && value.trim() != _lastAutoName;
   }
 
   void onHexChanged(
     BuildContext context, {
     required TextEditingController name,
+    required TextEditingController code,
     required String hex,
   }) {
-    final suggestion = _suggestion(context, hex);
-    if (!_manualName &&
-        (name.text.trim().isEmpty || name.text.trim() == _lastAutoName) &&
-        suggestion != null) {
-      _setAutoName(name, suggestion);
-    }
-    if (suggestion != null) _lastAutoName = suggestion;
+    final color = ColorNameResolver.resolve(hex);
+    if (color == null) return;
+    _apply(context, name: name, code: code, color: color, hex: hex);
   }
 
-  void _setAutoName(TextEditingController name, String value) {
-    _updatingName = true;
-    name.value = TextEditingValue(
+  void _apply(
+    BuildContext context, {
+    required TextEditingController name,
+    required TextEditingController code,
+    required ColorName color,
+    required String hex,
+  }) {
+    _lastAutoName = _suggestion(context, color);
+    if (_lastAutoName != null) _setText(name, _lastAutoName!);
+    _setText(code, _generatedCode(color, hex));
+  }
+
+  String _generatedCode(ColorName color, String hex) {
+    final digits = hex.replaceFirst('#', '').substring(0, 6);
+    final rgb = int.parse(digits, radix: 16);
+    final red = (rgb >> 16) & 0xff;
+    final green = (rgb >> 8) & 0xff;
+    final blue = rgb & 0xff;
+    final colorValue = (red + green + blue).toString().padLeft(3, '0');
+    final abbreviation = color.name.substring(0, 3).toUpperCase();
+    return '$abbreviation-$colorValue';
+  }
+
+  void _setText(TextEditingController controller, String value) {
+    controller.value = TextEditingValue(
       text: value,
       selection: TextSelection.collapsed(offset: value.length),
     );
-    _updatingName = false;
   }
 }

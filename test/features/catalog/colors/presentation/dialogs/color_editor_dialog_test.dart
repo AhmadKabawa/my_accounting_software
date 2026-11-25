@@ -150,34 +150,26 @@ void main() {
     expect(result, isNull);
   });
 
-  testWidgets('new abbreviation is generated from a timestamp and editable', (
+  testWidgets('selecting a preset generates an editable name and code', (
     tester,
   ) async {
     await _pumpEditor(tester, FakeColorsRepository());
 
-    final generated = _controller(tester, 1).text;
-    expect(RegExp(r'^CLR-\d{8}-\d{6}-\d{6}$').hasMatch(generated), isTrue);
-
-    await tester.enterText(find.byType(TextFormField).at(1), 'red');
+    final preset = find.bySemanticsLabel('#DC2626');
+    await tester.ensureVisible(preset);
+    await tester.pumpAndSettle();
+    await tester.tap(preset);
     await tester.pump();
-    expect(_controller(tester, 1).text, 'RED');
+
+    expect(_controller(tester, 0).text, 'Red');
+    expect(_controller(tester, 1).text, 'RED-296');
+    await tester.enterText(find.byType(TextFormField).at(0), 'My red');
+    await tester.enterText(find.byType(TextFormField).at(1), 'MYR');
+    expect(_controller(tester, 0).text, 'My red');
+    expect(_controller(tester, 1).text, 'MYR');
   });
 
-  testWidgets('changing HEX never changes the generated abbreviation', (
-    tester,
-  ) async {
-    await _pumpEditor(tester, FakeColorsRepository());
-
-    final generated = _controller(tester, 1).text;
-    await tester.enterText(find.byType(TextFormField).at(3), '#f57c21');
-    await tester.pump();
-    await tester.enterText(find.byType(TextFormField).at(3), '#000000');
-    await tester.pump();
-
-    expect(_controller(tester, 1).text, generated);
-  });
-
-  testWidgets('HEX suggests a name until the user edits the name', (
+  testWidgets('changing HEX regenerates name and color-derived code', (
     tester,
   ) async {
     await _pumpEditor(tester, FakeColorsRepository());
@@ -185,11 +177,15 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(3), '#000000');
     await tester.pump();
     expect(_controller(tester, 0).text, 'Black');
+    expect(_controller(tester, 1).text, 'BLA-000');
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Midnight');
+    await tester.enterText(find.byType(TextFormField).at(1), 'MID');
     await tester.enterText(find.byType(TextFormField).at(3), '#FFFFFF');
     await tester.pump();
-    expect(_controller(tester, 0).text, 'Midnight');
+
+    expect(_controller(tester, 0).text, 'White');
+    expect(_controller(tester, 1).text, 'WHI-765');
   });
 
   testWidgets('manual RGBA input is stored uppercase with alpha', (
