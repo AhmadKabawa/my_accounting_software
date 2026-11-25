@@ -10,8 +10,8 @@ import 'package:accounting_software/app/core/foundation/image/image_upload_cubit
 import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/core/localization/keys/image_keys.dart';
 import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
+import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_image_upload/app_image_upload_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_logo_thumb/app_logo_thumb.dart';
 import '../../../helpers/localized_app.dart';
@@ -29,8 +29,12 @@ const _labels = AppImageUploadFieldLabels(
 class _Picker implements ImagePickerPort {
   _Picker(this.image);
   final PickedImage? image;
+  int calls = 0;
   @override
-  Future<PickedImage?> pickImage() async => image;
+  Future<PickedImage?> pickImage() async {
+    calls++;
+    return image;
+  }
 }
 
 class _Failure extends Failure {
@@ -119,38 +123,45 @@ Future<void> _pump(
   );
 }
 
-Finder _button(WidgetTester tester, String label) => find.byWidgetPredicate(
-  (widget) => widget is AppButton && widget.labelKey?.key == label,
+Finder _action(String label) => find.byWidgetPredicate(
+  (widget) => widget is Semantics &&
+      widget.properties.button == true &&
+      widget.properties.label == label,
 );
 
 void main() {
-  testWidgets('empty field shows preview fallback and upload action', (
-    tester,
-  ) async {
+  testWidgets('empty field shows the clickable upload zone', (tester) async {
     await _pump(tester, _field());
-    expect(find.byType(AppLogoThumb), findsOneWidget);
-    expect(_button(tester, 'test.image.upload'), findsOneWidget);
+    expect(find.byType(AppLogoThumb), findsNothing);
+    expect(_action( 'test.image.upload'), findsOneWidget);
+    if (PlatformCapabilities.supportsFileDrop) {
+      expect(find.text(ImageKeys.dropHint.en), findsOneWidget);
+    }
+    expect(find.textContaining('Formats:'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('existing image shows replace and remove actions', (
+  testWidgets('existing image shows centered preview, replace and remove', (
     tester,
   ) async {
     await _pump(tester, _field(value: 'https://cdn.test/logo.png'));
+    expect(find.byType(AppLogoThumb), findsOneWidget);
     expect(_button(tester, 'test.image.replace'), findsOneWidget);
     expect(_button(tester, 'test.image.remove'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('uploading disables controls and reports busy changes', (
+  testWidgets('uploading disables the whole zone and reports busy changes', (
     tester,
   ) async {
     final result = Completer<Either<Failure, String>>();
+    final picker = _Picker(_png());
     final busy = <bool>[];
     String? changed;
     await _pump(
       tester,
       _field(
+        picker: picker,
         uploader: (_) => result.future,
         onChanged: (value) => changed = value,
         onBusyChanged: busy.add,
@@ -160,10 +171,11 @@ void main() {
     await tester.tap(_button(tester, 'test.image.upload'));
     await tester.pump();
     expect(busy, [true]);
-    expect(
-      tester.widget<AppButton>(_button(tester, 'test.image.upload')).isLoading,
-      isTrue,
-    );
+    expect(picker.calls, 1);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await tester.tap(_button(tester, 'test.image.upload'), warnIfMissed: false);
+    await tester.pump();
+    expect(picker.calls, 1);
 
     result.complete(const Right('https://cdn.test/new.png'));
     await tester.pump();
@@ -219,15 +231,17 @@ void main() {
     expect(find.text(ErrorKeys.conflict.en), findsOneWidget);
   });
 
-  testWidgets('remove action clears the image value', (tester) async {
+  testWidgets('delete is separate from picker and clears the image', (tester) async {
     String? changed = 'https://cdn.test/logo.png';
+    final picker = _Picker(_png());
     await _pump(
       tester,
-      _field(value: changed, onChanged: (value) => changed = value),
+      _field(value: changed, picker: picker, onChanged: (value) => changed = value),
     );
     await tester.tap(_button(tester, 'test.image.remove'));
     await tester.pump();
     expect(changed, isNull);
+    expect(picker.calls, 0);
   });
 
   testWidgets('drop target uploads only the first valid file', (tester) async {

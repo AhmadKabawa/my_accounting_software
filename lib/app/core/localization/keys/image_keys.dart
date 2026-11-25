@@ -16,6 +16,10 @@ enum ImageKeys implements AppKey {
   dropHint(
     ar: 'يمكنك سحب الصورة وإفلاتها هنا، أو اضغط «رفع» لاختيارها',
     en: 'You can drag and drop an image here, or press Upload to choose one',
+  ),
+  uploadPolicy(
+    ar: 'الصيغ: {formats} • الحد الأقصى: {size}',
+    en: 'Formats: {formats} • up to {size}',
   );
 
   const ImageKeys({required this.ar, required this.en});

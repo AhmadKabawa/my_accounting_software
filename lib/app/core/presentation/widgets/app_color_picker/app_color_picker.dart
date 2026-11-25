@@ -292,7 +292,22 @@ class _AppColorPickerState extends State<AppColorPicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AppText(AppColorPickerKeys.presets),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(child: AppText(AppColorPickerKeys.presets)),
+            if (canCollapse)
+              AppButton(
+                _allPresets
+                    ? AppColorPickerKeys.fewerPresets
+                    : AppColorPickerKeys.morePresets,
+                onPressed: () => setState(() => _allPresets = !_allPresets),
+                variant: AppButtonVariant.text,
+                size: AppButtonSize.small,
+                icon: _allPresets ? AppIcons.collapse : AppIcons.expand,
+              ),
+          ],
+        ),
         ui.spacing.gap(AppSpacing.xs),
         Wrap(
           spacing: ui.spacing.value(AppSpacing.sm),
@@ -321,16 +336,6 @@ class _AppColorPickerState extends State<AppColorPicker> {
                     ),
                   ),
                 ),
-              ),
-            if (canCollapse)
-              AppButton(
-                _allPresets
-                    ? AppColorPickerKeys.fewerPresets
-                    : AppColorPickerKeys.morePresets,
-                onPressed: () => setState(() => _allPresets = !_allPresets),
-                variant: AppButtonVariant.text,
-                size: AppButtonSize.small,
-                icon: _allPresets ? AppIcons.collapse : AppIcons.expand,
               ),
           ],
         ),

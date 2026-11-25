@@ -22,10 +22,14 @@ void main() {
     expect(ColorFieldValidators.name('Navy'), isNull);
   });
 
-  test('code: required and max 50', () {
+  test('code: required, max 50 and English abbreviation format', () {
     expect(ColorFieldValidators.code(''), ColorsKeys.required.en);
     expect(ColorFieldValidators.code('a' * 51), ColorsKeys.codeTooLong.en);
     expect(ColorFieldValidators.code('NAVY-01'), isNull);
+    expect(ColorFieldValidators.code('RED_COPY'), isNull);
+    expect(ColorFieldValidators.code('123'), ColorsKeys.codeFormat.en);
+    expect(ColorFieldValidators.code('RED BLUE'), ColorsKeys.codeFormat.en);
+    expect(ColorFieldValidators.code('أحمر'), ColorsKeys.codeFormat.en);
   });
 
   test('hex: optional, # optional, 6 or 8 digits', () {

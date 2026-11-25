@@ -7,7 +7,6 @@ import 'package:accounting_software/app/features/catalog/colors/domain/entity/ca
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_form/color_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/cubit/color_form/color_form_effect.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/dialogs/color_editor_labels.dart';
-import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_code_autofill.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_editor_fields_view.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_field_validators.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/widgets/color_name_autofill.dart';
@@ -33,7 +32,6 @@ class ColorEditorDialog extends StatefulWidget {
 class _ColorEditorDialogState extends State<ColorEditorDialog> {
   late final CrudEditorFields _fields;
   final _nameAutofill = ColorNameAutofill();
-  final _codeAutofill = ColorCodeAutofill();
 
   TextEditingController get _name => _fields['name'];
   TextEditingController get _code => _fields['code'];
@@ -48,14 +46,10 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
     _fields = CrudEditorFields(
       initialValues: {
         'name': seed?.name ?? color?.name ?? '',
-        'code': seed?.code ?? color?.code ?? '',
+        'code': seed?.code ?? color?.code ?? _generatedColorCode(),
         'hex': seed?.hexCode ?? color?.hexCode ?? '',
         'sortOrder': (seed?.sortOrder ?? color?.sortOrder ?? 0).toString(),
       },
-    );
-    _codeAutofill.resolveInitial(
-      code: _code,
-      hex: seed?.hexCode ?? color?.hexCode,
     );
     if (widget.duplicate) {
       for (final controller in [_name, _code]) {
@@ -123,14 +117,23 @@ class _ColorEditorDialogState extends State<ColorEditorDialog> {
             _nameAutofill.onNameChanged(_name.text);
             scope.clearFailure();
           },
-          onCodeChanged: () => _codeAutofill.onCodeChanged(_code.text),
           onChanged: scope.clearFailure,
           onHexChanged: () {
-            _codeAutofill.onHexChanged(code: _code, hex: _hex.text);
             _nameAutofill.onHexChanged(context, name: _name, hex: _hex.text);
             scope.clearFailure();
             scope.changed();
           },
         ),
       );
+}
+
+String _generatedColorCode() {
+  final now = DateTime.now();
+  final date =
+      '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+  final time =
+      '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}';
+  final fraction =
+      '${now.millisecond.toString().padLeft(3, '0')}${now.microsecond.toString().padLeft(3, '0')}';
+  return 'CLR-$date-$time-$fraction';
 }

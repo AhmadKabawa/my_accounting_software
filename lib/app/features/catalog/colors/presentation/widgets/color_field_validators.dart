@@ -9,6 +9,7 @@ abstract final class ColorFieldValidators {
   static const maxName = 100;
   static const maxCode = 50;
   static final _wholeNumber = RegExp(r'^\d{1,9}$');
+  static final _codePattern = RegExp(r'^[A-Z][A-Z0-9_-]*$');
 
   static String? name(String? value) => AppValidator.validate(
     value,
@@ -22,11 +23,15 @@ abstract final class ColorFieldValidators {
 
   static String? code(String? value) => AppValidator.validate(
     value,
-    [ValidationRule.required, ValidationRule.maxLength],
-    params: {ValidationRule.maxLength: maxCode},
+    [ValidationRule.required, ValidationRule.maxLength, ValidationRule.pattern],
+    params: {
+      ValidationRule.maxLength: maxCode,
+      ValidationRule.pattern: _codePattern,
+    },
     customKeys: {
       ValidationRule.required: ColorsKeys.required,
       ValidationRule.maxLength: ColorsKeys.codeTooLong,
+      ValidationRule.pattern: ColorsKeys.codeFormat,
     },
   );
 

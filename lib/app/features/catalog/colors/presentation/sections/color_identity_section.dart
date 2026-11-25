@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
@@ -14,7 +15,6 @@ class ColorIdentitySection extends StatelessWidget {
     required this.sortOrder,
     required this.onChanged,
     required this.onNameChanged,
-    required this.onCodeChanged,
     this.suggestedName,
   });
 
@@ -23,7 +23,6 @@ class ColorIdentitySection extends StatelessWidget {
   final TextEditingController sortOrder;
   final VoidCallback onChanged;
   final VoidCallback onNameChanged;
-  final VoidCallback onCodeChanged;
   final String? suggestedName;
 
   @override
@@ -58,10 +57,9 @@ class ColorIdentitySection extends StatelessWidget {
         hintKey: ColorsKeys.codeHint,
         textDirection: TextDirection.ltr,
         validator: ColorFieldValidators.code,
-        onChanged: (_) {
-          onCodeChanged();
-          onChanged();
-        },
+        textCapitalization: TextCapitalization.characters,
+        inputFormatters: const [_UppercaseCodeFormatter()],
+        onChanged: (_) => onChanged(),
       ),
       context.ui.spacing.gap(AppSpacing.smMd),
       AppTextField(
@@ -81,4 +79,25 @@ class ColorIdentitySection extends StatelessWidget {
       ),
     ],
   );
+}
+
+class _UppercaseCodeFormatter extends TextInputFormatter {
+  const _UppercaseCodeFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text
+        .replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '')
+        .toUpperCase();
+    final base = newValue.selection.baseOffset.clamp(0, text.length).toInt();
+    final extent = newValue.selection.extentOffset.clamp(0, text.length).toInt();
+    return newValue.copyWith(
+      text: text,
+      selection: TextSelection(baseOffset: base, extentOffset: extent),
+      composing: TextRange.empty,
+    );
+  }
 }

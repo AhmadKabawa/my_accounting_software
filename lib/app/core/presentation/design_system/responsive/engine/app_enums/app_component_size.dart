@@ -81,6 +81,10 @@ class AppComponentSize extends ResponsiveToken {
   /// Mobile: 64px | Tablet: 72px | Desktop: 80px
   static const avatarLarge = AppComponentSize(64, 72, 80);
 
+  /// Minimum height of a clickable image upload/drop zone.
+  /// Mobile: 144px | Tablet: 160px | Desktop: 176px
+  static const imageDropZoneMinHeight = AppComponentSize(144, 160, 176);
+
   /// Large logo preview for feature grid tiles.
   /// Mobile: 72px | Tablet: 80px | Desktop: 88px
   static const logoPreview = AppComponentSize(72, 80, 88);

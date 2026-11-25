@@ -327,7 +327,12 @@ void main() {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
-              body: AppColorPicker(value: '#123456', onChanged: (_) {}),
+              body: AppColorPicker(
+                value: '#123456',
+                presets: const ['#111111', '#222222', '#333333', '#444444'],
+                collapsedPresetCount: 2,
+                onChanged: (_) {},
+              ),
             ),
           ),
         ),
@@ -362,6 +367,51 @@ void main() {
     await t.tap(find.text('Less'));
     await t.pump();
     expect(find.bySemanticsLabel('#444444'), findsNothing);
+  });
+
+  testWidgets('preset expansion control stays in the preset header row', (t) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: AppColorPicker(
+            value: null,
+            presets: const ['#111111', '#222222', '#333333'],
+            collapsedPresetCount: 1,
+            onChanged: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    final header = find.ancestor(
+      of: find.text(AppColorPickerKeys.presets.en),
+      matching: find.byType(Row),
+    ).first;
+    expect(
+      find.descendant(of: header, matching: find.text(AppColorPickerKeys.morePresets.en)),
+      findsOneWidget,
+    );
+    final moreTop = t.getTopLeft(find.text(AppColorPickerKeys.morePresets.en));
+    await t.tap(find.text(AppColorPickerKeys.morePresets.en));
+    await t.pump();
+    final fewerTop = t.getTopLeft(find.text(AppColorPickerKeys.fewerPresets.en));
+    expect((moreTop.dy - fewerTop.dy).abs(), lessThan(1));
+  });
+
+  testWidgets('preset expansion control is omitted without a collapse limit', (t) async {
+    await t.pumpWidget(
+      buildTestApp(
+        home: Scaffold(
+          body: AppColorPicker(
+            value: null,
+            presets: const ['#111111', '#222222', '#333333'],
+            onChanged: (_) {},
+          ),
+        ),
+      ),
+    );
+    expect(find.text(AppColorPickerKeys.morePresets.en), findsNothing);
+    expect(find.text(AppColorPickerKeys.fewerPresets.en), findsNothing);
   });
 
   testWidgets('the color map can start closed and opens on demand', (t) async {

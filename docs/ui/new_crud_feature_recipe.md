@@ -280,3 +280,12 @@ Known limitations intentionally left out:
 - No image compression: a phone photo larger than the feature's limit (Brands: 5 MB) is rejected with a clear size message.
 - No camera capture: this requires a separate `image_picker` integration and camera permission declarations.
 - No cleanup of orphaned Storage files when an image is replaced or a record is deleted.
+
+
+## Shared image upload zone
+
+`AppImageUploadField` presents the dashed drop zone as the upload/replace action itself: tapping or keyboard activation opens the picker, while Web/desktop also accept drag-and-drop when `PlatformCapabilities.supportsFileDrop` is true. Keep the delete icon as a separate action, and keep format/size policy copy and upload errors below the preview/action content.
+
+## Generated color abbreviation
+
+The Colors editor generates a readable `CLR-YYYYMMDD-HHMMSS-ffffff` abbreviation from the local time when a new form opens. It is editable, does not change when the HEX value changes, and is not derived from the name. The database UNIQUE constraint remains the final collision guard; duplicate mode continues to append `-COPY`.
