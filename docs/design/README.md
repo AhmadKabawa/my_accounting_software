@@ -5,7 +5,17 @@
 ## الوثائق
 - [منهجية UI/UX](UI_UX_GUIDELINES.md): كيف نحلل الشاشة ونختار عناصرها وحالاتها دون افتراضات.
 - [قالب مواصفة الشاشة](SCREEN_UIUX_SPEC_TEMPLATE.md): قالب موحد يبرر القرارات قبل كتابة الكود.
-- [مواصفة CAT-07 — البيانات الأساسية](specs/CAT-07_brands.md): تطبيق المنهجية على مركز CAT-07 مع تركيز تنفيذي على الماركات.
+- [مواصفة CAT-07 — الماركات](specs/CAT-07_brands.md): المواصفة القائمة للماركات.
+- [مواصفة CAT-07 — الألوان](specs/CAT-07_colors.md): المواصفة القائمة للألوان.
+- [CAT-01 — قائمة المنتجات](specs/CAT-01_products_list.md): مواصفة قائمة المنتجات (غير منفذة).
+- [القواعد المشتركة CAT-07](specs/CAT-07_master_data_common.md): قواعد مشتركة للمواصفات المرجعية غير المنفذة.
+- [CAT-07 — التصنيفات](specs/CAT-07_categories.md).
+- [CAT-07 — أنواع المنتجات](specs/CAT-07_product_types.md).
+- [CAT-07 — أنظمة المقاسات](specs/CAT-07_size_systems.md).
+- [CAT-07 — وحدات القياس](specs/CAT-07_units.md).
+- [CAT-07 — الخصائص ومجموعات الخيارات](specs/CAT-07_attributes_options.md).
+- [CAT-07 — الجداول المرجعية الوصفية](specs/CAT-07_descriptive_tables.md).
+- [مراجعة التوافق مع vscode](specs/SPEC_FORMAT_REVIEW.md): حدود المراجعة والتعارضات.
 
 ## المراجع الملزمة
 - [نظام التصميم](../architecture/DESIGN_SYSTEM.md) و[ADR-0003](../architecture/ADR/0003-ledger-design-system.md): الهوية والتوكنز والكثافة.
