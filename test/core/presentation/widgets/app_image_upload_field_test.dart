@@ -135,8 +135,9 @@ void main() {
     await _pump(tester, _field());
     expect(find.byType(AppLogoThumb), findsNothing);
     expect(_action('test.image.upload'), findsOneWidget);
+    expect(_action('test.image.remove'), findsNothing);
     if (PlatformCapabilities.supportsFileDrop) {
-      expect(find.text(ImageKeys.dropHint.en), findsOneWidget);
+      expect(find.text('test.image.drop'), findsOneWidget);
     }
     expect(find.textContaining('Formats:'), findsOneWidget);
     expect(tester.takeException(), isNull);

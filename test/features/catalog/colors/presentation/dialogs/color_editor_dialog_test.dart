@@ -77,6 +77,7 @@ void main() {
   testWidgets('required fields block saving', (tester) async {
     final repository = FakeColorsRepository();
     await _pumpEditor(tester, repository);
+    await tester.enterText(find.byType(TextFormField).at(1), '');
 
     await _tapSave(tester);
 

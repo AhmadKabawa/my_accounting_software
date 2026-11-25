@@ -92,7 +92,7 @@ void main() {
     );
 
     expect(
-      find.text('Search by color name, code or HEX: navy'),
+      find.text('Search by color name, abbreviation or HEX: navy'),
       findsOneWidget,
     );
     expect(find.text('Status: Active'), findsOneWidget);

@@ -271,7 +271,7 @@ void main() {
     );
     expect(find.text(BrandsKeys.replaceLogo.en), findsOneWidget);
     expect(
-      find.widgetWithText(AppButton, BrandsKeys.removeLogo.en),
+      find.bySemanticsLabel(BrandsKeys.removeLogo.en),
       findsOneWidget,
     );
   });
@@ -384,8 +384,8 @@ void main() {
       };
     await _pumpEditor(tester, repository, brand: brand);
 
-    await tester.ensureVisible(find.text(BrandsKeys.removeLogo.en));
-    await tester.tap(find.text(BrandsKeys.removeLogo.en));
+    await tester.ensureVisible(find.bySemanticsLabel(BrandsKeys.removeLogo.en));
+    await tester.tap(find.bySemanticsLabel(BrandsKeys.removeLogo.en));
     await tester.pump();
     await tester.tap(find.text(BrandsKeys.save.en));
     await tester.pumpAndSettle();
