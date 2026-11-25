@@ -113,8 +113,8 @@ void main() {
     await _tapSave(tester);
 
     final draft = repository.created.single;
-    expect(draft.name, 'Navy');
-    expect(draft.code, 'NAVY');
+    expect(draft.name, 'Royal blue');
+    expect(draft.code, 'ROY-226');
     expect(draft.hexCode, '#1E3A8A');
     expect(draft.sortOrder, 5);
     expect(result, isTrue);
@@ -161,8 +161,8 @@ void main() {
     await tester.tap(preset);
     await tester.pump();
 
-    expect(_controller(tester, 0).text, 'Red');
-    expect(_controller(tester, 1).text, 'RED-296');
+    expect(_controller(tester, 0).text, 'Maroon');
+    expect(_controller(tester, 1).text, 'MAR-296');
     await tester.enterText(find.byType(TextFormField).at(0), 'My red');
     await tester.enterText(find.byType(TextFormField).at(1), 'MYR');
     expect(_controller(tester, 0).text, 'My red');

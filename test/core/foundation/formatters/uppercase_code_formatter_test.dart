@@ -12,7 +12,7 @@ void main() {
     );
 
     final formatted = formatter.formatEditUpdate(
-      const TextEditingValue.empty,
+      const TextEditingValue(),
       value,
     );
 
@@ -26,7 +26,7 @@ void main() {
     );
 
     final formatted = formatter.formatEditUpdate(
-      const TextEditingValue.empty,
+      const TextEditingValue(),
       value,
     );
 
