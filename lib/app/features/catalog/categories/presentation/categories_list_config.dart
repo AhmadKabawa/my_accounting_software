@@ -182,13 +182,6 @@ get categoriesListConfig => CrudListConfig(
                   }
                 },
               ),
-              if (node.canDelete)
-                AppRowAction(
-                  icon: AppIcons.delete,
-                  labelKey: CategoriesKeys.delete,
-                  destructive: true,
-                  onPressed: () => flows.deleteItem(context, node),
-                ),
             ];
           },
         );
