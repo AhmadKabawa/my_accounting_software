@@ -120,10 +120,7 @@ void main() {
     _register(repository);
     setScreenSize(tester, const Size(360, 800));
     await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.rtl,
-        child: MaterialApp(home: _home()),
-      ),
+      buildTestApp(home: _home(), direction: TextDirection.rtl),
     );
     await tester.pumpAndSettle();
 
@@ -173,9 +170,7 @@ void main() {
     _register(FakeCategoriesRepository(categories: _sampleCategories()));
     setScreenSize(tester, const Size(360, 800));
     await tester.pumpWidget(
-      MaterialApp(
-        home: Directionality(textDirection: TextDirection.ltr, child: _home()),
-      ),
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
     );
     await tester.pumpAndSettle();
 
@@ -252,7 +247,10 @@ void main() {
     tester,
   ) async {
     final repository = FakeCategoriesRepository(
-      categories: [_category(1, name: 'Root')],
+      categories: [
+        _category(1, name: 'Root'),
+        _category(2, parentId: 1, name: 'Existing child'),
+      ],
     );
     _register(repository);
     await tester.pumpWidget(
@@ -282,7 +280,7 @@ void main() {
       ),
       isTrue,
     );
-    expect(_listCubit(tester).tree!.byId(2)?.name, 'New child');
+    expect(_listCubit(tester).tree!.byId(3)?.name, 'New child');
     expect(tester.takeException(), isNull);
   });
 
@@ -293,9 +291,12 @@ void main() {
       categories: _sampleCategories().take(3).toList(),
     );
     _register(repository);
+    setScreenSize(tester, const Size(1200, 900));
     await tester.pumpWidget(
       buildTestApp(home: _home(), direction: TextDirection.ltr),
     );
+    await tester.pumpAndSettle();
+    _listCubit(tester).expandAll();
     await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).at(2));
@@ -323,6 +324,7 @@ void main() {
   testWidgets('adding a root category saves once and reloads the tree', (
     tester,
   ) async {
+    setScreenSize(tester, const Size(1200, 900));
     final repository = FakeCategoriesRepository(categories: [_category(1)]);
     _register(repository);
     await tester.pumpWidget(
