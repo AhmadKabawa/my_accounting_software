@@ -4,6 +4,7 @@ import 'package:accounting_software/app/features/auth/domain/entity/user/user_en
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/routing/route_registry.dart';
@@ -265,6 +266,7 @@ void main() {
       expect(CatalogRoutes.hub.path, '/catalog');
       expect(catalogMasterDataRedirect(), CatalogRoutes.hub.path);
       expect(BrandsRoutes.brands.path, '/catalog/brands');
+      expect(CategoriesRoutes.categories.path, '/catalog/categories');
     });
 
     test('alias and Brands use the same protected session guards', () {
@@ -272,6 +274,7 @@ void main() {
         CatalogRoutes.hub.path,
         CatalogRoutes.masterData.path,
         BrandsRoutes.brands.path,
+        CategoriesRoutes.categories.path,
       ]) {
         expect(protectedRoutes.contains(path), isTrue, reason: path);
         expect(publicRoutes.contains(path), isFalse, reason: path);

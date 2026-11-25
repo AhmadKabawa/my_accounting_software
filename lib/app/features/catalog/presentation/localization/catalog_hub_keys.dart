@@ -14,6 +14,10 @@ enum CatalogHubKeys implements AppKey {
     ar: 'أدر ألوان المنتجات ورموزها وقيمها المرئية.',
     en: 'Manage product colors, their codes and sample values.',
   ),
+  categoriesDescription(
+    ar: 'نظّم المنتجات ضمن تصنيفات رئيسية وفرعية واضحة.',
+    en: 'Organize products into clear parent categories and subcategories.',
+  ),
   open(ar: 'فتح', en: 'Open');
 
   const CatalogHubKeys({required this.ar, required this.en});

@@ -47,6 +47,8 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/rou
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -274,6 +276,12 @@ class AppRouter {
                 name: BrandsRoutes.brands.name,
                 pageBuilder: (context, state) =>
                     NoTransitionPage(child: const BrandsScreen()),
+              ),
+              GoRoute(
+                path: CategoriesRoutes.categories.path,
+                name: CategoriesRoutes.categories.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: CategoriesListPage()),
               ),
               GoRoute(
                 path: ColorsRoutes.colors.path,

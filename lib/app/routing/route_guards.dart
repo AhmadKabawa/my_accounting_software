@@ -12,6 +12,7 @@ import 'package:accounting_software/app/features/splash/presentation/routing/spl
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 
 Set<String> buildPublicRoutes({
   bool signupEnabled = AppConfig.signupEnabled,
@@ -37,6 +38,7 @@ final Set<String> protectedRoutes = {
   ProfileRoutes.profile.path,
   BrandsRoutes.brands.path,
   ColorsRoutes.colors.path,
+  CategoriesRoutes.categories.path,
   CatalogRoutes.hub.path,
   CatalogRoutes.masterData.path,
 };

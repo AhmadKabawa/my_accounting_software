@@ -7,6 +7,7 @@ import 'package:accounting_software/app/features/profile/presentation/routing/pr
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 
 /// Build the route catalogue for the selected feature flags. Disabled
@@ -31,6 +32,7 @@ List<RouteItem> buildRouteRegistry({
   ...CatalogRoutes.all,
   ...BrandsRoutes.all,
   ...ColorsRoutes.all,
+  ...CategoriesRoutes.all,
 ];
 
 /// Routes used by the running application.
