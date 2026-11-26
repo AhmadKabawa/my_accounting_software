@@ -188,3 +188,43 @@ Status: partial implementation; not merge-ready.
 - The new CAT-08 Cubit tests passed: UnitStats load/refresh; Option Sets list filter/sort pagination reset; deletion guard for unknown relationship counts; server stats; form create/update; and lazy options loading plus create/active mutation refresh.
 - The separate Catalog UI widget-test step did not run because the full test job ended with the unrelated Categories failures. No CAT-08 failure appeared in the completed test log.
 - Current CAT-08 presentation test coverage is Cubit-level; dedicated Option Sets widget tests and responsive dialog tests are still outstanding.
+
+
+# ملاحق توثيق التنفيذ المستخلصة من مواصفات CAT-07
+
+## 24. تفاصيل التنفيذ الفعلي (CAT-08)
+
+### تفاصيل التنفيذ كما وثّقها فرع CAT-08
+
+### Option Sets
+- **Composition:** `CrudListScreen` + `CrudListConfig`; feature-owned filters, stats, editor and `OptionSetDetailsPanel`.
+- **Statistics:** all/active/inactive are server-derived; a stats failure does not prevent list loading.
+- **Capabilities:** bulk=false and duplicate=false. The list does not embed every option row; it requests `options(count)` and loads ordered option rows only when a group is opened.
+- **Details:** desktop `AppDetailsPanel`; narrower layouts use a bottom sheet. Options are ordered by `sort_order`, then `name`, then `id`; add/edit/deactivate use compact dialogs. Individual options are never deleted.
+- **Locks/deletion:** `selection_type` is read-only when `attributes(count)` or `product_type_option_sets(count)` is positive or unknown. Group delete is hidden unless option, attribute and product-type-link counts are all known zero. FK 23503 offers deactivate instead.
+- **Editor/payload:** name/code are trimmed; create sends `is_active=true`; PATCH sends `is_active` only when changed; dirty compares normalized values. 23505/409 duplicate code and 23514/ERP28 are mapped to translated failure keys.
+
+### Attributes
+- **Composition:** `CrudListScreen` + `CrudListConfig`; no details panel; feature-owned list, filters, stats, editor and duplicate seed.
+- **Statistics:** all/active/inactive/filterable from server count queries; no page-derived counts.
+- **Capabilities:** duplicate=true; bulk=false. Duplicate copies data_type, unit_id, option_set_id and is_filterable, resets active=true, and generates a unique candidate code ending `-copy` within 80 characters.
+- **Editor/payload:** `is_required` and `is_variant_option` remain hidden and are never selected or sent. `option_set_id` is present iff data_type is option; changing data type clears incompatible IDs. `unit_id` is only sent for number. Create sends active=true; PATCH includes status only when changed. Dirty compares trimmed values.
+- **Lookups:** Attributes owns lightweight reads from units and option_sets (id/name/symbol-or-code/is_active); new assignment shows active records, while edit includes the current inactive value. No imports from sibling CAT-08 features.
+- **Locks/deletion:** data_type and option_set_id lock when product_type_attributes or product_attribute_values usage is positive or unknown. Delete is hidden while used/unknown; FK 23503 offers deactivate. Deactivation warns that ERP27 rejects new values.
+- **Localization/states:** every UI, validation and failure message is an Arabic/English feature AppKey; 23505/409, 23514, ERP27 and ERP28 are translated without showing raw server text.
+
+---
+
+## 24. تفاصيل التنفيذ الفعلي (CAT-08)
+
+### تفاصيل التنفيذ كما وثّقها فرع CAT-08
+
+- **Composition:** `CrudListScreen` + feature-owned `units_list_config.dart`; the config is capped at 250 lines and delegates filters, statistics, identity and card layout to feature widgets.
+- **Columns:** name + symbol, translated type, usage count, status, `updated_at`, actions. `updated_at` is selected and rendered using the shared date/time presentation component.
+- **Filters/sort:** status and four-value unit type are server filters; search uses name/symbol with escaped PostgREST values and 300 ms debounce; server order is name then id.
+- **Statistics:** all/active/inactive from lightweight server count queries; tapping a card applies the matching status filter; stats failure does not block the list.
+- **Capabilities:** no details panel, no bulk selection, no duplicate, no seed data.
+- **Editor/payload:** `CrudEditorDialog` in `showAppFormDialog`; name/symbol are trimmed; `is_active=true` is sent on create; PATCH includes `is_active` only if the value changed. Dirty comparison uses the same trimmed values as serialization.
+- **Deletion:** delete is offered only when both usage counts are known and sum to zero. Unknown usage blocks delete. A database 23503 response offers deactivation instead; 23505 maps to a translated duplicate-symbol failure.
+- **Localization/states:** all labels, four type values, validation and failure messages have Arabic/English `AppKey`s. Loading, empty, no-results, failed and read-only states are explicit.
+- **Decision-26 remains binding:** `base_unit_id` and `conversion_factor` are not selected for UI, displayed, or sent in POST/PATCH; existing non-default conversion rows are not edited or exposed.
