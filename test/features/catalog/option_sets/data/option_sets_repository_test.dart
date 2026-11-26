@@ -185,7 +185,7 @@ void main() {
   });
 
   test('23514 and ERP28 map to translated selection failures', () async {
-    api.nextPatchFailure = ApiException.constraint(errorCode: '23514');
+    api.nextPatchFailure = ApiException.conflict(errorCode: '23514');
     final invalid = await repository.updateOptionSet(
       id: 9,
       draft: const OptionSetDraft(
@@ -199,7 +199,7 @@ void main() {
       OptionSetFailureKeys.invalidSelectionType,
     );
 
-    api.nextPatchFailure = ApiException.erp(code: 'ERP28');
+    api.nextPatchFailure = ApiException.erp(errorCode: 'ERP28');
     final locked = await repository.updateOptionSet(
       id: 9,
       draft: const OptionSetDraft(
