@@ -12,6 +12,7 @@ import 'package:accounting_software/app/core/presentation/widgets/crud_editor/cr
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor_fields.dart';
 import 'package:accounting_software/app/features/catalog/categories/di/categories_di.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_draft.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_tree.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/upload_category_image_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
@@ -25,10 +26,11 @@ Future<bool?> showCategoryEditor(
   BuildContext context, {
   Category? category,
   CategoryTree? tree,
+  bool duplicate = false,
   int? initialParentId,
   ImagePickerPort? imagePicker,
   FileDropTargetAdapter? dropTargetAdapter,
-} ) => showAppFormDialog<bool>(
+}) => showAppFormDialog<bool>(
   context,
   (_) => BlocProvider(
     create: (_) => sl<CategoryFormCubit>(
