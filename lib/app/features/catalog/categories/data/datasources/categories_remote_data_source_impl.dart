@@ -113,5 +113,6 @@ class CategoriesRemoteDataSourceImpl implements CategoriesRemoteDataSource {
     'description': PostgrestValue.nullableTrim(draft.description),
     'image': PostgrestValue.nullableTrim(draft.image),
     'sort_order': draft.sortOrder,
+    if (draft.isActive != null) 'is_active': draft.isActive,
   };
 }
