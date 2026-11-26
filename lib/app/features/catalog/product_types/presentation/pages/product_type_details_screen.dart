@@ -162,6 +162,7 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
               },
               mode: SearchableDropdownMode.panel,
               clearable: false,
+              enabled: !widget.state.processing.contains('size-group-add'),
             ),
             context.ui.spacing.gap(AppSpacing.sm),
             if (widget.state.genderOptions.isNotEmpty)
@@ -309,6 +310,7 @@ class _AttributesSection extends StatelessWidget {
               },
               mode: SearchableDropdownMode.panel,
               clearable: false,
+              enabled: !state.processing.contains('attribute-add'),
             )
           else if (canManage)
             const AppEmptyState(
@@ -415,6 +417,7 @@ class _OptionSetsSection extends StatelessWidget {
               },
               mode: SearchableDropdownMode.panel,
               clearable: false,
+              enabled: !state.processing.contains('option-set-add'),
             )
           else if (canManage)
             const AppEmptyState(
