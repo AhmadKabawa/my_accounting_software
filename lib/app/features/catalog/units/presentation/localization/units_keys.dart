@@ -64,6 +64,7 @@ enum UnitsKeys implements AppKey {
     ar: 'الرمز يجب ألا يتجاوز 20 حرفاً',
     en: 'Symbol must be 20 characters or fewer',
   ),
+  sortByName(ar: 'الاسم', en: 'Name'),
   total(ar: 'إجمالي الوحدات', en: 'Total units'),
   activeCount(ar: 'الوحدات الفعالة', en: 'Active units'),
   inactiveCount(ar: 'الوحدات الموقوفة', en: 'Inactive units'),
