@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_attribute_link.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_link_option.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_option_set_link.dart';
@@ -34,6 +35,7 @@ final class ProductTypeDetailsFailed extends ProductTypeDetailsState {
 
 final class ProductTypeDetailsLoaded extends ProductTypeDetailsState {
   const ProductTypeDetailsLoaded({
+    required this.productType,
     required this.productTypeId,
     required this.sizeGroups,
     required this.attributes,
@@ -47,6 +49,7 @@ final class ProductTypeDetailsLoaded extends ProductTypeDetailsState {
     this.publishedProductCount,
   });
 
+  final ProductType productType;
   final int productTypeId;
   final List<ProductTypeSizeGroupLink> sizeGroups;
   final List<ProductTypeAttributeLink> attributes;
@@ -68,6 +71,7 @@ final class ProductTypeDetailsLoaded extends ProductTypeDetailsState {
     bool clearUpdateFailure = false,
     int? publishedProductCount,
   }) => ProductTypeDetailsLoaded(
+    productType: productType,
     productTypeId: productTypeId,
     sizeGroups: sizeGroups ?? this.sizeGroups,
     attributes: attributes ?? this.attributes,
@@ -85,6 +89,7 @@ final class ProductTypeDetailsLoaded extends ProductTypeDetailsState {
 
   @override
   List<Object?> get props => [
+    productType,
     productTypeId,
     sizeGroups,
     attributes,
