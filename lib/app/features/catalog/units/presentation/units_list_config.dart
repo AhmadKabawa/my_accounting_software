@@ -149,7 +149,7 @@ get unitsListConfig => CrudListConfig(
             labelKey: CommonKeys.updatedAt,
             priority: DataTableColumnPriority.secondary,
             cellBuilder: (_, unit) => AppText.raw(
-              unit.updatedAt == null ? '—' : _formatUnitUpdatedAt(unit.updatedAt!),
+              unit.updatedAt?.toLocal().toString() ?? '—',
             ),
           ),
           DataTableColumn(
