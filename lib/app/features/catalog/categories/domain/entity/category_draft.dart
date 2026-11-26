@@ -18,7 +18,8 @@ class CategoryDraft extends Equatable {
   final String? description;
   final String? image;
   final int sortOrder;
-  final bool isActive;
+  /// Null on update means leave the stored status unchanged.
+  final bool? isActive;
 
   @override
   List<Object?> get props => [
