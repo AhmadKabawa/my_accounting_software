@@ -35,20 +35,45 @@ class UnitStatsSection extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InlineBanner(messageKey: failure!, variant: InlineBannerVariant.error),
+          InlineBanner(
+            messageKey: failure!,
+            variant: InlineBannerVariant.error,
+          ),
           if (onRetry != null)
             Align(
               alignment: AlignmentDirectional.centerEnd,
-              child: AppButton(CatalogUiKeys.retry, variant: AppButtonVariant.text, onPressed: onRetry),
+              child: AppButton(
+                CatalogUiKeys.retry,
+                variant: AppButtonVariant.text,
+                onPressed: onRetry,
+              ),
             ),
         ],
       );
     }
     return ListStatsBar<UnitStatusFilter>(
       items: [
-        StatItem(labelKey: UnitsKeys.total, value: stats?.total.toString(), icon: AppIcons.catalog, tone: AppBadgeTone.info, filter: UnitStatusFilter.all),
-        StatItem(labelKey: UnitsKeys.activeCount, value: stats?.active.toString(), icon: AppIcons.success, tone: AppBadgeTone.success, filter: UnitStatusFilter.active),
-        StatItem(labelKey: UnitsKeys.inactiveCount, value: stats?.inactive.toString(), icon: AppIcons.block, tone: AppBadgeTone.neutral, filter: UnitStatusFilter.inactive),
+        StatItem(
+          labelKey: UnitsKeys.total,
+          value: stats?.total.toString(),
+          icon: AppIcons.catalog,
+          tone: AppBadgeTone.info,
+          filter: UnitStatusFilter.all,
+        ),
+        StatItem(
+          labelKey: UnitsKeys.activeCount,
+          value: stats?.active.toString(),
+          icon: AppIcons.success,
+          tone: AppBadgeTone.success,
+          filter: UnitStatusFilter.active,
+        ),
+        StatItem(
+          labelKey: UnitsKeys.inactiveCount,
+          value: stats?.inactive.toString(),
+          icon: AppIcons.block,
+          tone: AppBadgeTone.neutral,
+          filter: UnitStatusFilter.inactive,
+        ),
       ],
       selected: selectedFilter,
       onSelected: onStatusSelected,

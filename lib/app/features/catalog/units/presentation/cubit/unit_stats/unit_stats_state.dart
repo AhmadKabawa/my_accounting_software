@@ -5,7 +5,11 @@ import 'package:accounting_software/app/features/catalog/units/domain/entity/uni
 enum UnitStatsStatus { initial, loading, ready, failed }
 
 class UnitStatsState extends Equatable {
-  const UnitStatsState({this.status = UnitStatsStatus.initial, this.stats, this.failure});
+  const UnitStatsState({
+    this.status = UnitStatsStatus.initial,
+    this.stats,
+    this.failure,
+  });
   final UnitStatsStatus status;
   final UnitStats? stats;
   final Failure? failure;

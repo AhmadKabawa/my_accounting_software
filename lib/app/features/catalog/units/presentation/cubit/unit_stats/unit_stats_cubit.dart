@@ -20,8 +20,16 @@ class UnitStatsCubit extends BaseCubit<UnitStatsState, Never> {
     final result = await _getUnitStats(NoParams());
     if (isClosed || version != _requestVersion) return;
     result.fold(
-      (failure) => emit(state.copyWith(status: UnitStatsStatus.failed, failure: failure)),
-      (stats) => emit(state.copyWith(status: UnitStatsStatus.ready, stats: stats, clearFailure: true)),
+      (failure) => emit(
+        state.copyWith(status: UnitStatsStatus.failed, failure: failure),
+      ),
+      (stats) => emit(
+        state.copyWith(
+          status: UnitStatsStatus.ready,
+          stats: stats,
+          clearFailure: true,
+        ),
+      ),
     );
   }
 

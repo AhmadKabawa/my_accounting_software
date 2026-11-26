@@ -32,11 +32,26 @@ class UnitsFilterBar {
     required ValueChanged<UnitType?> onTypeChanged,
   }) => [
     if (query.search.isNotEmpty)
-      FilterBarFilter(id: FilterBar.searchFilterId, label: UnitsKeys.search, value: query.search, onRemove: () => onSearchChanged('')),
+      FilterBarFilter(
+        id: FilterBar.searchFilterId,
+        label: UnitsKeys.search,
+        value: query.search,
+        onRemove: () => onSearchChanged(''),
+      ),
     if (query.status != UnitStatusFilter.all)
-      FilterBarFilter(id: 'status', label: UnitsKeys.status, value: statusLabel(query.status).tr(context: context), onRemove: () => onStatusChanged(UnitStatusFilter.all)),
+      FilterBarFilter(
+        id: 'status',
+        label: UnitsKeys.status,
+        value: statusLabel(query.status).tr(context: context),
+        onRemove: () => onStatusChanged(UnitStatusFilter.all),
+      ),
     if (query.type != null)
-      FilterBarFilter(id: 'type', label: UnitsKeys.type, value: typeLabel(query.type!).tr(context: context), onRemove: () => onTypeChanged(null)),
+      FilterBarFilter(
+        id: 'type',
+        label: UnitsKeys.type,
+        value: typeLabel(query.type!).tr(context: context),
+        onRemove: () => onTypeChanged(null),
+      ),
   ];
 
   static List<Widget> controls(

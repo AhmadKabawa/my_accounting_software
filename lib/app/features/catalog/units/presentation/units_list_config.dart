@@ -102,7 +102,9 @@ get unitsListConfig => CrudListConfig(
       stats: statsState.stats,
       selectedFilter: slot.state.query.status,
       onStatusSelected: slot.cubit.setStatus,
-      loading: statsState.status == UnitStatsStatus.loading || statsState.status == UnitStatsStatus.initial,
+      loading:
+          statsState.status == UnitStatsStatus.loading ||
+          statsState.status == UnitStatsStatus.initial,
       failure: statsState.failure?.messageKey,
       onRetry: context.read<UnitStatsCubit>().refresh,
     ),
