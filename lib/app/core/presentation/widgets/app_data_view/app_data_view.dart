@@ -60,6 +60,7 @@ class AppDataView<T> extends StatelessWidget {
     this.onSelectionChanged,
     this.rowActionsBuilder,
     this.onRowActivated,
+    this.onRowTap,
     this.summaryBuilder,
     this.page = 1,
     this.pageSize = AppConfig.defaultPageSize,
@@ -90,6 +91,7 @@ class AppDataView<T> extends StatelessWidget {
   final ValueChanged<Set<Object>>? onSelectionChanged;
   final Widget Function(BuildContext context, T row)? rowActionsBuilder;
   final ValueChanged<T>? onRowActivated;
+  final ValueChanged<T>? onRowTap;
   final Widget? summaryBuilder;
   final int page;
   final int pageSize;
@@ -155,6 +157,7 @@ class AppDataView<T> extends StatelessWidget {
             onSelectionChanged: onSelectionChanged,
             rowActionsBuilder: rowActionsBuilder,
             onRowActivated: onRowActivated,
+            onRowTap: onRowTap,
             density: density,
             zebra: zebra,
           ),
@@ -228,7 +231,9 @@ class AppDataView<T> extends StatelessWidget {
                   checked ? next.add(id) : next.remove(id);
                   onSelectionChanged!(next);
                 },
-          onTap: onSelectionChanged != null
+          onTap: onRowTap != null
+              ? () => onRowTap!(row)
+              : onSelectionChanged != null
               ? () {
                   final next = Set<Object>.from(selectedIds);
                   selected ? next.remove(id) : next.add(id);
