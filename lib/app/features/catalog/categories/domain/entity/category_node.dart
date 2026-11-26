@@ -12,6 +12,7 @@ class CategoryNode extends Equatable {
     required this.activeChildCount,
     required this.expanded,
     this.flat = false,
+    this.underInactiveAncestor = false,
   });
 
   final Category category;
@@ -21,6 +22,7 @@ class CategoryNode extends Equatable {
   final int activeChildCount;
   final bool expanded;
   final bool flat;
+  final bool underInactiveAncestor;
 
   int get id => category.id;
   bool get hasChildren => childCount > 0;
@@ -37,5 +39,6 @@ class CategoryNode extends Equatable {
     activeChildCount,
     expanded,
     flat,
+    underInactiveAncestor,
   ];
 }
