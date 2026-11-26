@@ -50,13 +50,16 @@ class ProductTypeLinksRepositoryImpl
   @override
   Future<Either<Failure, Unit>> createSizeGroupLink(
     Map<String, dynamic> body,
-  ) => execute(() async => (await _remote.createSizeGroupLink(body)).toEither());
+  ) =>
+      execute(() async => (await _remote.createSizeGroupLink(body)).toEither());
 
   @override
   Future<Either<Failure, Unit>> patchSizeGroupLink(
     int id,
     Map<String, dynamic> body,
-  ) => execute(() async => (await _remote.patchSizeGroupLink(id, body)).toEither());
+  ) => execute(
+    () async => (await _remote.patchSizeGroupLink(id, body)).toEither(),
+  );
 
   @override
   Future<Either<Failure, Unit>> deleteSizeGroupLink(int id) =>
@@ -65,7 +68,8 @@ class ProductTypeLinksRepositoryImpl
   @override
   Future<Either<Failure, Unit>> createAttributeLink(
     Map<String, dynamic> body,
-  ) => execute(() async => (await _remote.createAttributeLink(body)).toEither());
+  ) =>
+      execute(() async => (await _remote.createAttributeLink(body)).toEither());
 
   @override
   Future<Either<Failure, Unit>> patchAttributeLink(
@@ -94,7 +98,8 @@ class ProductTypeLinksRepositoryImpl
   @override
   Future<Either<Failure, Unit>> createOptionSetLink(
     Map<String, dynamic> body,
-  ) => execute(() async => (await _remote.createOptionSetLink(body)).toEither());
+  ) =>
+      execute(() async => (await _remote.createOptionSetLink(body)).toEither());
 
   @override
   Future<Either<Failure, Unit>> patchOptionSetLink(
@@ -123,7 +128,7 @@ class ProductTypeLinksRepositoryImpl
   @override
   Future<Either<Failure, int>> getPublishedProductCount(int productTypeId) =>
       execute(
-        () async => (await _remote.getPublishedProductCount(productTypeId))
-            .toEither(),
+        () async =>
+            (await _remote.getPublishedProductCount(productTypeId)).toEither(),
       );
 }

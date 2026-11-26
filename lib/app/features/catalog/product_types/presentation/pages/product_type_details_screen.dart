@@ -69,9 +69,12 @@ class _ProductTypeDetailsBody extends StatelessWidget {
                     ),
                     AppBreadcrumbItem(
                       label: ProductTypesKeys.title,
-                      onTap: () => context.go(ProductTypesRoutes.productTypes.path),
+                      onTap: () =>
+                          context.go(ProductTypesRoutes.productTypes.path),
                     ),
-                    const AppBreadcrumbItem(label: ProductTypesKeys.detailTitle),
+                    const AppBreadcrumbItem(
+                      label: ProductTypesKeys.detailTitle,
+                    ),
                   ],
                 ),
               ),
@@ -134,7 +137,9 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final linkedIds = widget.state.sizeGroups.map((item) => item.sizeGroupId).toSet();
+    final linkedIds = widget.state.sizeGroups
+        .map((item) => item.sizeGroupId)
+        .toSet();
     final options = widget.state.sizeGroupOptions
         .where((item) => !linkedIds.contains(item.id))
         .toList(growable: false);
@@ -143,7 +148,10 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _SectionTitle(ProductTypesKeys.sizeGroups, widget.state.sizeGroups.length),
+          _SectionTitle(
+            ProductTypesKeys.sizeGroups,
+            widget.state.sizeGroups.length,
+          ),
           if (widget.canManage && options.isNotEmpty) ...[
             SearchableDropdown<ProductTypeLinkOption>(
               options: options,
@@ -170,14 +178,15 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
                 options: widget.state.genderOptions,
                 labelKey: ProductTypesKeys.gender,
                 optionLabel: (item) => item.name,
-                value: widget.state.genderOptions
-                    .where((item) => item.id == _genderId)
-                    .toList(growable: false)
-                    .isEmpty
-                ? null
-                : widget.state.genderOptions
-                    .where((item) => item.id == _genderId)
-                    .first,
+                value:
+                    widget.state.genderOptions
+                        .where((item) => item.id == _genderId)
+                        .toList(growable: false)
+                        .isEmpty
+                    ? null
+                    : widget.state.genderOptions
+                          .where((item) => item.id == _genderId)
+                          .first,
                 onChanged: (item) => setState(() => _genderId = item?.id),
                 mode: SearchableDropdownMode.panel,
               ),
@@ -214,7 +223,10 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
                       AppText.raw(item.sizeGroupName),
                       Directionality(
                         textDirection: TextDirection.ltr,
-                        child: AppText.raw(item.sizeGroupCode, type: AppTextType.labelSmall),
+                        child: AppText.raw(
+                          item.sizeGroupCode,
+                          type: AppTextType.labelSmall,
+                        ),
                       ),
                     ],
                   ),
@@ -236,15 +248,25 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
                   cellBuilder: (_, item) => AppSwitch(
                     value: item.isDefault,
                     labelKey: ProductTypesKeys.isDefault,
-                    onChanged: !widget.canManage || widget.state.processing.contains('size-group-${item.id}')
+                    onChanged:
+                        !widget.canManage ||
+                            widget.state.processing.contains(
+                              'size-group-${item.id}',
+                            )
                         ? null
-                        : (value) => cubit.updateSizeGroup(link: item, isDefault: value),
-                    loading: widget.state.processing.contains('size-group-${item.id}'),
+                        : (value) => cubit.updateSizeGroup(
+                            link: item,
+                            isDefault: value,
+                          ),
+                    loading: widget.state.processing.contains(
+                      'size-group-${item.id}',
+                    ),
                   ),
                 ),
                 DataTableColumn(
                   labelKey: ProductTypesKeys.sortOrder,
-                  cellBuilder: (_, item) => AppText.raw(item.sortOrder.toString()),
+                  cellBuilder: (_, item) =>
+                      AppText.raw(item.sortOrder.toString()),
                 ),
               ],
               rows: widget.state.sizeGroups,
@@ -253,7 +275,10 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
                   ? (context, item) => AppIconButton(
                       AppIcons.close,
                       tooltipKey: ProductTypesKeys.removeLink,
-                      onPressed: widget.state.processing.contains('size-group-${item.id}')
+                      onPressed:
+                          widget.state.processing.contains(
+                            'size-group-${item.id}',
+                          )
                           ? null
                           : () => _confirmRemoveSizeGroup(context, item, cubit),
                     )
@@ -340,7 +365,10 @@ class _AttributesSection extends StatelessWidget {
                       AppText.raw(item.name),
                       Directionality(
                         textDirection: TextDirection.ltr,
-                        child: AppText.raw(item.code, type: AppTextType.labelSmall),
+                        child: AppText.raw(
+                          item.code,
+                          type: AppTextType.labelSmall,
+                        ),
                       ),
                     ],
                   ),
@@ -354,15 +382,23 @@ class _AttributesSection extends StatelessWidget {
                   cellBuilder: (_, item) => AppSwitch(
                     value: item.isRequired,
                     labelKey: ProductTypesKeys.isRequired,
-                    onChanged: !canManage || state.processing.contains('attribute-${item.attributeId}')
+                    onChanged:
+                        !canManage ||
+                            state.processing.contains(
+                              'attribute-${item.attributeId}',
+                            )
                         ? null
-                        : (value) => cubit.updateAttribute(item, isRequired: value),
-                    loading: state.processing.contains('attribute-${item.attributeId}'),
+                        : (value) =>
+                              cubit.updateAttribute(item, isRequired: value),
+                    loading: state.processing.contains(
+                      'attribute-${item.attributeId}',
+                    ),
                   ),
                 ),
                 DataTableColumn(
                   labelKey: ProductTypesKeys.sortOrder,
-                  cellBuilder: (_, item) => AppText.raw(item.sortOrder.toString()),
+                  cellBuilder: (_, item) =>
+                      AppText.raw(item.sortOrder.toString()),
                 ),
               ],
               rows: state.attributes,
@@ -371,7 +407,10 @@ class _AttributesSection extends StatelessWidget {
                   ? (context, item) => AppIconButton(
                       AppIcons.close,
                       tooltipKey: ProductTypesKeys.removeLink,
-                      onPressed: state.processing.contains('attribute-${item.attributeId}')
+                      onPressed:
+                          state.processing.contains(
+                            'attribute-${item.attributeId}',
+                          )
                           ? null
                           : () => _confirmRemove(
                               context,
@@ -447,7 +486,10 @@ class _OptionSetsSection extends StatelessWidget {
                       AppText.raw(item.name),
                       Directionality(
                         textDirection: TextDirection.ltr,
-                        child: AppText.raw(item.code, type: AppTextType.labelSmall),
+                        child: AppText.raw(
+                          item.code,
+                          type: AppTextType.labelSmall,
+                        ),
                       ),
                     ],
                   ),
@@ -457,15 +499,23 @@ class _OptionSetsSection extends StatelessWidget {
                   cellBuilder: (_, item) => AppSwitch(
                     value: item.isRequired,
                     labelKey: ProductTypesKeys.isRequired,
-                    onChanged: !canManage || state.processing.contains('option-set-${item.optionSetId}')
+                    onChanged:
+                        !canManage ||
+                            state.processing.contains(
+                              'option-set-${item.optionSetId}',
+                            )
                         ? null
-                        : (value) => cubit.updateOptionSet(item, isRequired: value),
-                    loading: state.processing.contains('option-set-${item.optionSetId}'),
+                        : (value) =>
+                              cubit.updateOptionSet(item, isRequired: value),
+                    loading: state.processing.contains(
+                      'option-set-${item.optionSetId}',
+                    ),
                   ),
                 ),
                 DataTableColumn(
                   labelKey: ProductTypesKeys.sortOrder,
-                  cellBuilder: (_, item) => AppText.raw(item.sortOrder.toString()),
+                  cellBuilder: (_, item) =>
+                      AppText.raw(item.sortOrder.toString()),
                 ),
               ],
               rows: state.optionSets,
@@ -474,7 +524,10 @@ class _OptionSetsSection extends StatelessWidget {
                   ? (context, item) => AppIconButton(
                       AppIcons.close,
                       tooltipKey: ProductTypesKeys.removeLink,
-                      onPressed: state.processing.contains('option-set-${item.optionSetId}')
+                      onPressed:
+                          state.processing.contains(
+                            'option-set-${item.optionSetId}',
+                          )
                           ? null
                           : () => _confirmRemove(
                               context,

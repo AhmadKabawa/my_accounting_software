@@ -8,8 +8,7 @@ import 'package:accounting_software/app/features/catalog/product_types/domain/fa
 import 'package:accounting_software/app/features/catalog/product_types/domain/repositories/product_type_links_repository.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_details/product_type_details_state.dart';
 
-class ProductTypeDetailsCubit
-    extends BaseCubit<ProductTypeDetailsState, void> {
+class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
   ProductTypeDetailsCubit({required ProductTypeLinksRepository repository})
     : _repository = repository,
       super(const ProductTypeDetailsInitial());
@@ -77,9 +76,11 @@ class ProductTypeDetailsCubit
         current.sizeGroups.any(
           (item) => item.isDefault && item.genderId == genderId,
         )) {
-      emit(current.copyWith(
-        updateFailure: const ProductTypeDefaultSizeGroupConflictFailure(),
-      ));
+      emit(
+        current.copyWith(
+          updateFailure: const ProductTypeDefaultSizeGroupConflictFailure(),
+        ),
+      );
       return;
     }
     await _mutate(
@@ -108,9 +109,11 @@ class ProductTypeDetailsCubit
               item.isDefault &&
               item.genderId == link.genderId,
         )) {
-      emit(current.copyWith(
-        updateFailure: const ProductTypeDefaultSizeGroupConflictFailure(),
-      ));
+      emit(
+        current.copyWith(
+          updateFailure: const ProductTypeDefaultSizeGroupConflictFailure(),
+        ),
+      );
       return;
     }
     await _mutate(
@@ -157,14 +160,11 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'attribute-${link.attributeId}',
-      () => _repository.patchAttributeLink(
-        current.productTypeId,
-        link.attributeId,
-        {
-          if (isRequired != null) 'is_required': isRequired,
-          if (sortOrder != null) 'sort_order': sortOrder,
-        },
-      ),
+      () => _repository
+          .patchAttributeLink(current.productTypeId, link.attributeId, {
+            if (isRequired != null) 'is_required': isRequired,
+            if (sortOrder != null) 'sort_order': sortOrder,
+          }),
       checkPublishedProducts: isRequired == true,
     );
   }
@@ -174,7 +174,10 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'attribute-${link.attributeId}',
-      () => _repository.deleteAttributeLink(current.productTypeId, link.attributeId),
+      () => _repository.deleteAttributeLink(
+        current.productTypeId,
+        link.attributeId,
+      ),
     );
   }
 
@@ -206,14 +209,11 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'option-set-${link.optionSetId}',
-      () => _repository.patchOptionSetLink(
-        current.productTypeId,
-        link.optionSetId,
-        {
-          if (isRequired != null) 'is_required': isRequired,
-          if (sortOrder != null) 'sort_order': sortOrder,
-        },
-      ),
+      () => _repository
+          .patchOptionSetLink(current.productTypeId, link.optionSetId, {
+            if (isRequired != null) 'is_required': isRequired,
+            if (sortOrder != null) 'sort_order': sortOrder,
+          }),
       checkPublishedProducts: isRequired == true,
     );
   }
@@ -223,7 +223,10 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'option-set-${link.optionSetId}',
-      () => _repository.deleteOptionSetLink(current.productTypeId, link.optionSetId),
+      () => _repository.deleteOptionSetLink(
+        current.productTypeId,
+        link.optionSetId,
+      ),
     );
   }
 
@@ -238,24 +241,23 @@ class ProductTypeDetailsCubit
   }) async {
     final current = _loaded;
     if (current == null || current.processing.contains(key)) return;
-    emit(current.copyWith(
-      processing: {...current.processing, key},
-      clearUpdateFailure: true,
-    ));
+    emit(
+      current.copyWith(
+        processing: {...current.processing, key},
+        clearUpdateFailure: true,
+      ),
+    );
 
     if (checkPublishedProducts && current.publishedProductCount == null) {
       final count = await _repository.getPublishedProductCount(
         current.productTypeId,
       );
-      count.fold(
-        (_) {},
-        (value) {
-          final latest = _loaded;
-          if (latest != null) {
-            emit(latest.copyWith(publishedProductCount: value));
-          }
-        },
-      );
+      count.fold((_) {}, (value) {
+        final latest = _loaded;
+        if (latest != null) {
+          emit(latest.copyWith(publishedProductCount: value));
+        }
+      });
     }
 
     final result = await request();
@@ -265,10 +267,7 @@ class ProductTypeDetailsCubit
     if (result.isLeft()) {
       result.fold(
         (failure) => emit(
-          latest.copyWith(
-            processing: nextProcessing,
-            updateFailure: failure,
-          ),
+          latest.copyWith(processing: nextProcessing, updateFailure: failure),
         ),
         (_) {},
       );

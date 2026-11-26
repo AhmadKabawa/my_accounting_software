@@ -18,59 +18,53 @@ class ProductTypeLinksRemoteDataSourceImpl
   final IApiClient _apiClient;
 
   @override
-  Future<ApiResult<List<ProductTypeSizeGroupLink>>> getSizeGroupLinks(
-    int id,
-  ) => _apiClient.get<List<ProductTypeSizeGroupLink>>(
-    ProductTypeLinksEndpoints.sizeGroupLinks,
-    queryParameters: {
-      'select': ProductTypeLinksEndpoints.sizeGroupLinkSelect,
-      'product_type_id': 'eq.$id',
-      'order': 'sort_order.asc,id.asc',
-    },
-    fromJsonList: (rows) => rows
-        .map((row) => _sizeGroupLink(row as Map<String, dynamic>))
-        .toList(growable: false),
-  );
+  Future<ApiResult<List<ProductTypeSizeGroupLink>>> getSizeGroupLinks(int id) =>
+      _apiClient.get<List<ProductTypeSizeGroupLink>>(
+        ProductTypeLinksEndpoints.sizeGroupLinks,
+        queryParameters: {
+          'select': ProductTypeLinksEndpoints.sizeGroupLinkSelect,
+          'product_type_id': 'eq.$id',
+          'order': 'sort_order.asc,id.asc',
+        },
+        fromJsonList: (rows) => rows
+            .map((row) => _sizeGroupLink(row as Map<String, dynamic>))
+            .toList(growable: false),
+      );
 
   @override
-  Future<ApiResult<List<ProductTypeAttributeLink>>> getAttributeLinks(
-    int id,
-  ) => _apiClient.get<List<ProductTypeAttributeLink>>(
-    ProductTypeLinksEndpoints.attributeLinks,
-    queryParameters: {
-      'select': ProductTypeLinksEndpoints.attributeLinkSelect,
-      'product_type_id': 'eq.$id',
-      'order': 'sort_order.asc,attribute_id.asc',
-    },
-    fromJsonList: (rows) => rows
-        .map((row) => _attributeLink(row as Map<String, dynamic>))
-        .toList(growable: false),
-  );
+  Future<ApiResult<List<ProductTypeAttributeLink>>> getAttributeLinks(int id) =>
+      _apiClient.get<List<ProductTypeAttributeLink>>(
+        ProductTypeLinksEndpoints.attributeLinks,
+        queryParameters: {
+          'select': ProductTypeLinksEndpoints.attributeLinkSelect,
+          'product_type_id': 'eq.$id',
+          'order': 'sort_order.asc,attribute_id.asc',
+        },
+        fromJsonList: (rows) => rows
+            .map((row) => _attributeLink(row as Map<String, dynamic>))
+            .toList(growable: false),
+      );
 
   @override
-  Future<ApiResult<List<ProductTypeOptionSetLink>>> getOptionSetLinks(
-    int id,
-  ) => _apiClient.get<List<ProductTypeOptionSetLink>>(
-    ProductTypeLinksEndpoints.optionSetLinks,
-    queryParameters: {
-      'select': ProductTypeLinksEndpoints.optionSetLinkSelect,
-      'product_type_id': 'eq.$id',
-      'order': 'sort_order.asc,option_set_id.asc',
-    },
-    fromJsonList: (rows) => rows
-        .map((row) => _optionSetLink(row as Map<String, dynamic>))
-        .toList(growable: false),
-  );
+  Future<ApiResult<List<ProductTypeOptionSetLink>>> getOptionSetLinks(int id) =>
+      _apiClient.get<List<ProductTypeOptionSetLink>>(
+        ProductTypeLinksEndpoints.optionSetLinks,
+        queryParameters: {
+          'select': ProductTypeLinksEndpoints.optionSetLinkSelect,
+          'product_type_id': 'eq.$id',
+          'order': 'sort_order.asc,option_set_id.asc',
+        },
+        fromJsonList: (rows) => rows
+            .map((row) => _optionSetLink(row as Map<String, dynamic>))
+            .toList(growable: false),
+      );
 
   @override
   Future<ApiResult<List<ProductTypeLinkOption>>> getSizeGroupOptions() =>
       _getOptions(
         ProductTypeLinksEndpoints.sizeGroups,
         'id,name,code,is_active,size_systems(name)',
-        (json) => _option(
-          json,
-          detail: _embeddedName(json['size_systems']),
-        ),
+        (json) => _option(json, detail: _embeddedName(json['size_systems'])),
       );
 
   @override
@@ -217,9 +211,7 @@ class ProductTypeLinksRemoteDataSourceImpl
     Map<String, dynamic>? body,
     required _WriteMethod method,
   }) {
-    final options = Options(
-      headers: {'Prefer': 'return=minimal'},
-    );
+    final options = Options(headers: {'Prefer': 'return=minimal'});
     return switch (method) {
       _WriteMethod.post => _apiClient.post<Unit>(
         endpoint,
@@ -262,16 +254,14 @@ class ProductTypeLinksRemoteDataSourceImpl
     );
   }
 
-  ProductTypeLinkOption _option(
-    Map<String, dynamic> json, {
-    String? detail,
-  }) => ProductTypeLinkOption(
-    id: json['id'] as int,
-    name: json['name'] as String,
-    code: json['code'] as String,
-    isActive: json['is_active'] as bool? ?? true,
-    detail: detail,
-  );
+  ProductTypeLinkOption _option(Map<String, dynamic> json, {String? detail}) =>
+      ProductTypeLinkOption(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        code: json['code'] as String,
+        isActive: json['is_active'] as bool? ?? true,
+        detail: detail,
+      );
 
   ProductTypeSizeGroupLink _sizeGroupLink(Map<String, dynamic> json) {
     final group = _embedded(json['size_groups']);

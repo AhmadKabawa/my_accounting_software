@@ -23,13 +23,19 @@ abstract interface class ProductTypeLinksRemoteDataSource {
     int attributeId,
     Map<String, dynamic> body,
   );
-  Future<ApiResult<Unit>> deleteAttributeLink(int productTypeId, int attributeId);
+  Future<ApiResult<Unit>> deleteAttributeLink(
+    int productTypeId,
+    int attributeId,
+  );
   Future<ApiResult<Unit>> createOptionSetLink(Map<String, dynamic> body);
   Future<ApiResult<Unit>> patchOptionSetLink(
     int productTypeId,
     int optionSetId,
     Map<String, dynamic> body,
   );
-  Future<ApiResult<Unit>> deleteOptionSetLink(int productTypeId, int optionSetId);
+  Future<ApiResult<Unit>> deleteOptionSetLink(
+    int productTypeId,
+    int optionSetId,
+  );
   Future<ApiResult<int>> getPublishedProductCount(int productTypeId);
 }

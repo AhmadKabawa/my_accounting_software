@@ -1,9 +1,13 @@
 import 'package:accounting_software/app/core/network/api_end_points.dart';
 
 abstract final class ProductTypeLinksEndpoints {
-  static const sizeGroupLinks = AppEndpoint('/rest/v1/product_type_size_groups');
+  static const sizeGroupLinks = AppEndpoint(
+    '/rest/v1/product_type_size_groups',
+  );
   static const attributeLinks = AppEndpoint('/rest/v1/product_type_attributes');
-  static const optionSetLinks = AppEndpoint('/rest/v1/product_type_option_sets');
+  static const optionSetLinks = AppEndpoint(
+    '/rest/v1/product_type_option_sets',
+  );
   static const sizeGroups = AppEndpoint('/rest/v1/size_groups');
   static const attributes = AppEndpoint('/rest/v1/attributes');
   static const optionSets = AppEndpoint('/rest/v1/option_sets');

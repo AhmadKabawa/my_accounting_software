@@ -609,10 +609,6 @@ void main() {
       (child) => child.path == '/catalog/categories',
     );
     expect(categoriesIndex, greaterThanOrEqualTo(0));
-    expect(
-      children[categoriesIndex + 1].path,
-      '/catalog/product-types',
-    );
+    expect(children[categoriesIndex + 1].path, '/catalog/product-types');
   });
-
 }

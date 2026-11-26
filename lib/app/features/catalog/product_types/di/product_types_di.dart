@@ -22,7 +22,8 @@ void initProductTypesDI() {
     () => ProductTypeLinksRemoteDataSourceImpl(sl<IApiClient>()),
   );
   sl.registerLazySingleton<ProductTypeLinksRepository>(
-    () => ProductTypeLinksRepositoryImpl(sl<ProductTypeLinksRemoteDataSource>()),
+    () =>
+        ProductTypeLinksRepositoryImpl(sl<ProductTypeLinksRemoteDataSource>()),
   );
   sl.registerFactory(
     () => ProductTypeDetailsCubit(repository: sl<ProductTypeLinksRepository>()),
