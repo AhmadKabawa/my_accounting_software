@@ -9,6 +9,7 @@ import 'package:accounting_software/app/features/catalog/attributes/data/attribu
 import 'package:accounting_software/app/features/catalog/attributes/data/datasources/attributes_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/attributes/data/models/attribute_model.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_draft.dart';
+import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_list_query.dart';
 
 class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
@@ -133,10 +134,6 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
     'name': draft.name.trim(),
     'code': draft.code.trim(),
     'data_type': draft.dataType.name,
-    if (draft.dataType == AttributeDataType.number && draft.unitId != null)
-      'unit_id': draft.unitId,
-    if (draft.dataType == AttributeDataType.option && draft.optionSetId != null)
-      'option_set_id': draft.optionSetId,
     'unit_id': draft.dataType == AttributeDataType.number ? draft.unitId : null,
     'option_set_id': draft.dataType == AttributeDataType.option
         ? draft.optionSetId
