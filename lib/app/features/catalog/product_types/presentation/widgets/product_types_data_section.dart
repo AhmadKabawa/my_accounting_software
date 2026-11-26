@@ -78,18 +78,6 @@ class ProductTypesDataSection extends StatelessWidget {
               maxLines: 2,
             ),
           ),
-          DataTableColumn(
-            labelKey: ProductTypesKeys.updatedAt,
-            priority: DataTableColumnPriority.secondary,
-            cellBuilder: (context, item) => item.updatedAt == null
-                ? const AppText(CommonKeys.noValue)
-                : AppText.raw(
-                    MaterialLocalizations.of(
-                      context,
-                    ).formatShortDate(item.updatedAt!),
-                    color: context.ui.theme.colors.onSurfaceVariant,
-                  ),
-          ),
         ],
         labels: labels,
         statusColumn: CrudStatusColumnConfig<ProductType>(
