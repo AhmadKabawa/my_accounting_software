@@ -66,10 +66,10 @@ class UnitsListCubit
       _loadIfChanged(state.query.withSort(ascending));
 
   Future<void> setStatus(UnitStatusFilter status) =>
-      _loadIfChanged(state.query.copyWith(status: status));
+      _loadIfChanged(state.query.copyWith(status: status, page: 1));
 
   Future<void> setType(UnitType? type) =>
-      _loadIfChanged(state.query.copyWith(type: type, clearType: type == null));
+      _loadIfChanged(state.query.copyWith(type: type, clearType: type == null, page: 1));
 
   Future<void> _loadIfChanged(UnitListQuery query) async {
     if (state.query == query) return;
