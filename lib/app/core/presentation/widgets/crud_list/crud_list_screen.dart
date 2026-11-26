@@ -162,6 +162,7 @@ class _CrudListBody<
             builder: (context, selectedIds, onSelectionChanged) =>
                 config.dataSection(
                   CrudDataContext<T, Q, C>(
+                    context: context,
                     mode: mode,
                     rows: rows,
                     total: view.total,

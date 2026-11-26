@@ -19,6 +19,7 @@ import 'package:accounting_software/app/features/catalog/option_sets/domain/usec
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_sets_list/option_sets_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_stats/option_set_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_form/option_set_form_cubit.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_options/option_set_options_cubit.dart';
 
 void initOptionSetsDI() {
   sl.registerLazySingleton<OptionSetsRemoteDataSource>(

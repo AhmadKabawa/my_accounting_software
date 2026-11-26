@@ -25,6 +25,7 @@ import 'package:accounting_software/app/features/catalog/option_sets/presentatio
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_stats/option_set_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_stats/option_set_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/dialogs/option_set_editor_launcher.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/dialogs/option_set_options_launcher.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/widgets/option_sets_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/sections/option_set_stats_section.dart';
@@ -46,12 +47,7 @@ AppKey _selectionLabel(OptionSelectionType type) => switch (type) {
   OptionSelectionType.multiple => OptionSetsKeys.multiple,
 };
 
-CrudListConfig<
-  OptionSet,
-  OptionSetListQuery,
-  OptionSetsListCubit,
-  OptionSetsListEffect
->
+CrudListConfig<OptionSet, OptionSetListQuery, OptionSetsListCubit, OptionSetsListEffect>
 get optionSetsListConfig => CrudListConfig(
   screenId: 'catalog.option-sets',
   titleKey: OptionSetsKeys.title,
@@ -72,30 +68,21 @@ get optionSetsListConfig => CrudListConfig(
     applyTable: (cubit, sort) => cubit.setSort(sort.ascending),
   ),
   filterControls: (slot) => OptionSetsFilterBar.controls(
-    slot.context,
-    slot.state.query,
-    onStatusChanged: slot.cubit.setStatus,
+    slot.context, slot.state.query, onStatusChanged: slot.cubit.setStatus,
   ),
   activeFilters: (slot) => OptionSetsFilterBar.activeFilters(
-    slot.context,
-    slot.state.query,
+    slot.context, slot.state.query,
     onSearchChanged: slot.cubit.searchChanged,
     onStatusChanged: slot.cubit.setStatus,
   ),
-  breadcrumb: (context) => AppBreadcrumb(
-    items: [
-      AppBreadcrumbItem(
-        label: NavKeys.catalog,
-        onTap: () => context.go(CatalogRoutes.hub.path),
-      ),
-      const AppBreadcrumbItem(label: OptionSetsKeys.title),
-    ],
-  ),
+  breadcrumb: (context) => AppBreadcrumb(items: [
+    AppBreadcrumbItem(label: NavKeys.catalog, onTap: () => context.go(CatalogRoutes.hub.path)),
+    const AppBreadcrumbItem(label: OptionSetsKeys.title),
+  ]),
   viewModes: const [AppViewMode.table, AppViewMode.cards],
   capabilities: const CrudCapabilities(duplicate: false, bulkSelection: false),
   providersWrapper: (child) => BlocProvider<OptionSetStatsCubit>(
-    create: (_) => sl<OptionSetStatsCubit>()..load(),
-    child: child,
+    create: (_) => sl<OptionSetStatsCubit>()..load(), child: child,
   ),
   isMutationEffect: (effect) => effect is OptionSetsMutatedEffect,
   onMutated: (context) => context.read<OptionSetStatsCubit>().refresh(),
@@ -104,16 +91,13 @@ get optionSetsListConfig => CrudListConfig(
       stats: stats.stats,
       selectedFilter: slot.state.query.status,
       onStatusSelected: slot.cubit.setStatus,
-      loading:
-          stats.status == OptionSetStatsStatus.loading ||
-          stats.status == OptionSetStatsStatus.initial,
+      loading: stats.status == OptionSetStatsStatus.loading || stats.status == OptionSetStatsStatus.initial,
       failure: stats.failure?.messageKey,
       onRetry: context.read<OptionSetStatsCubit>().refresh,
     ),
   ),
   flows: CrudFlowsConfig<OptionSet, OptionSetsListCubit>(
-    showEditor: (context, {item, duplicate = false}) =>
-        showOptionSetEditor(context, optionSet: item),
+    showEditor: (context, {item, duplicate = false}) => showOptionSetEditor(context, optionSet: item),
     onSaved: (cubit, {required isNew}) => cubit.onSaved(isNew: isNew),
     itemLabel: (set) => set.name,
     delete: (cubit, set) => cubit.delete(set),
@@ -124,63 +108,38 @@ get optionSetsListConfig => CrudListConfig(
     canDelete: (set) => set.canDelete,
     hideDeleteWhenCannotDelete: true,
   ),
-  dataSection: (data) =>
-      CrudDataSection<OptionSet, OptionSetListQuery, OptionSetsListCubit>(
-        data: data,
-        columns: [
-          DataTableColumn(
-            labelKey: OptionSetsKeys.optionSetName,
-            sortKey: 'name',
-            priority: DataTableColumnPriority.primary,
-            flex: 3,
-            cellBuilder: (_, set) => AppText.raw(set.name),
-          ),
-          DataTableColumn(
-            labelKey: OptionSetsKeys.code,
-            priority: DataTableColumnPriority.primary,
-            cellBuilder: (_, set) => AppText.raw(set.code),
-          ),
-          DataTableColumn(
-            labelKey: OptionSetsKeys.selectionType,
-            priority: DataTableColumnPriority.secondary,
-            cellBuilder: (_, set) =>
-                AppText(_selectionLabel(set.selectionType)),
-          ),
-          DataTableColumn(
-            labelKey: OptionSetsKeys.option,
-            numeric: true,
-            priority: DataTableColumnPriority.secondary,
-            cellBuilder: (context, set) => AppText.raw(
-              set.optionCount?.toString() ??
-                  CommonKeys.noValue.tr(context: context),
-            ),
-          ),
-          DataTableColumn(
-            labelKey: OptionSetsKeys.used,
-            numeric: true,
-            priority: DataTableColumnPriority.secondary,
-            cellBuilder: (context, set) => AppText.raw(
-              set.usageCount?.toString() ??
-                  CommonKeys.noValue.tr(context: context),
-            ),
-          ),
-        ],
-        labels: _labels,
-        statusColumn: CrudStatusColumnConfig<OptionSet>(
-          labelKey: OptionSetsKeys.status,
-          isActive: (set) => set.isActive,
-          badgeBuilder: (_, set) => AppText(
-            set.isActive ? OptionSetsKeys.active : OptionSetsKeys.inactive,
-          ),
-        ),
-        cardBuilder: (context, set) => _OptionSetCard(set: set),
-        gridBuilder: (context, set) => _OptionSetCard(set: set),
-        icon: AppIcons.catalog,
-        emptyTitleKey: OptionSetsKeys.empty,
-        emptyDescriptionKey: OptionSetsKeys.emptyDescription,
-        noResultsTitleKey: OptionSetsKeys.noResults,
-        noResultsDescriptionKey: OptionSetsKeys.noResultsDescription,
-      ),
+  dataSection: (data) => CrudDataSection<OptionSet, OptionSetListQuery, OptionSetsListCubit>(
+    data: data,
+    columns: [
+      DataTableColumn(labelKey: OptionSetsKeys.optionSetName, sortKey: 'name',
+        priority: DataTableColumnPriority.primary, flex: 3,
+        cellBuilder: (_, set) => AppText.raw(set.name)),
+      DataTableColumn(labelKey: OptionSetsKeys.code, priority: DataTableColumnPriority.primary,
+        cellBuilder: (_, set) => AppText.raw(set.code)),
+      DataTableColumn(labelKey: OptionSetsKeys.selectionType, priority: DataTableColumnPriority.secondary,
+        cellBuilder: (_, set) => AppText(_selectionLabel(set.selectionType))),
+      DataTableColumn(labelKey: OptionSetsKeys.option, numeric: true,
+        priority: DataTableColumnPriority.secondary,
+        cellBuilder: (context, set) => AppText.raw(set.optionCount?.toString() ?? CommonKeys.noValue.tr(context: context))),
+      DataTableColumn(labelKey: OptionSetsKeys.used, numeric: true,
+        priority: DataTableColumnPriority.secondary,
+        cellBuilder: (context, set) => AppText.raw(set.usageCount?.toString() ?? CommonKeys.noValue.tr(context: context))),
+    ],
+    labels: _labels,
+    statusColumn: CrudStatusColumnConfig<OptionSet>(
+      labelKey: OptionSetsKeys.status,
+      isActive: (set) => set.isActive,
+      badgeBuilder: (_, set) => AppText(set.isActive ? OptionSetsKeys.active : OptionSetsKeys.inactive),
+    ),
+    cardBuilder: (context, set) => _OptionSetCard(set: set),
+    gridBuilder: (context, set) => _OptionSetCard(set: set),
+    icon: AppIcons.catalog,
+    emptyTitleKey: OptionSetsKeys.empty,
+    emptyDescriptionKey: OptionSetsKeys.emptyDescription,
+    noResultsTitleKey: OptionSetsKeys.noResults,
+    noResultsDescriptionKey: OptionSetsKeys.noResultsDescription,
+    onRowTap: (set) => showOptionSetOptions(data.context, set),
+  ),
 );
 
 class _OptionSetCard extends StatelessWidget {
@@ -188,17 +147,14 @@ class _OptionSetCard extends StatelessWidget {
   final OptionSet set;
   @override
   Widget build(BuildContext context) => AppCard(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppText.raw(set.name, type: AppTextType.titleMedium),
-        context.ui.spacing.gap(AppSpacing.xs),
-        AppText.raw(set.code),
-        context.ui.spacing.gap(AppSpacing.xs),
-        AppText(_selectionLabel(set.selectionType)),
-        context.ui.spacing.gap(AppSpacing.xs),
-        AppText(set.isActive ? OptionSetsKeys.active : OptionSetsKeys.inactive),
-      ],
-    ),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      AppText.raw(set.name, type: AppTextType.titleMedium),
+      context.ui.spacing.gap(AppSpacing.xs),
+      AppText.raw(set.code),
+      context.ui.spacing.gap(AppSpacing.xs),
+      AppText(_selectionLabel(set.selectionType)),
+      context.ui.spacing.gap(AppSpacing.xs),
+      AppText(set.isActive ? OptionSetsKeys.active : OptionSetsKeys.inactive),
+    ]),
   );
 }
