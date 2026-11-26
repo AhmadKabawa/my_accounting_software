@@ -104,6 +104,17 @@ class CategoryTree {
 
   int depthOf(int id) => _depthOf[id] ?? 0;
 
+  /// Parent ids from the root down to the direct parent of [id].
+  List<int> ancestorIds(int id) {
+    final ids = <int>[];
+    var parent = _parentOf[id];
+    while (parent != null) {
+      ids.add(parent);
+      parent = _parentOf[parent];
+    }
+    return ids.reversed.toList();
+  }
+
   /// Names from the root down to the parent of [id]; empty for a root.
   List<String> ancestorNames(int id) {
     final names = <String>[];
