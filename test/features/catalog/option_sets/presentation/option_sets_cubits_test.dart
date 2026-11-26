@@ -94,7 +94,10 @@ void main() {
       await cubit.load();
 
       expect(cubit.state.status, OptionSetStatsStatus.ready);
-      expect(cubit.state.stats, const OptionSetStats(total: 1, active: 1, inactive: 0));
+      expect(
+        cubit.state.stats,
+        const OptionSetStats(total: 1, active: 1, inactive: 0),
+      );
       expect(repository.getStatsCalls, 1);
     });
   });
