@@ -77,6 +77,10 @@ class CategoriesListCubit
     final rows = tree.filtered(
       search: query.search,
       isActive: query.status.isActive,
+      level: query.level,
+      usage: query.usage,
+      sortField: query.sortField,
+      sortAscending: query.sortAscending,
     );
     final pages = math.max(1, (rows.length / query.pageSize).ceil());
     final page = query.page.clamp(1, pages);
@@ -161,6 +165,21 @@ class CategoriesListCubit
   Future<void> setStatus(CategoryStatusFilter status) async {
     if (state.query.status == status) return;
     _reproject(state.query.withStatus(status));
+  }
+
+  void setLevel(CategoryLevelFilter level) {
+    if (state.query.level == level) return;
+    _reproject(state.query.withLevel(level));
+  }
+
+  void setUsage(CategoryUsageFilter usage) {
+    if (state.query.usage == usage) return;
+    _reproject(state.query.withUsage(usage));
+  }
+
+  void setSort(CategorySortField field, bool ascending) {
+    if (!state.query.hasActiveFilters) return;
+    _reproject(state.query.withSort(field: field, ascending: ascending));
   }
 
   /// Opens or closes one branch.
