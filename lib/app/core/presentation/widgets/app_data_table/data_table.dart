@@ -62,6 +62,7 @@ class AppDataTable<T> extends StatelessWidget {
     this.onSelectionChanged,
     this.rowActionsBuilder,
     this.onRowActivated,
+    this.onRowTap,
     this.density,
     this.zebra = DataTableStyle.defaultZebra,
   });
@@ -101,6 +102,10 @@ class AppDataTable<T> extends StatelessWidget {
   final ValueChanged<Set<Object>>? onSelectionChanged;
   final Widget Function(BuildContext context, T row)? rowActionsBuilder;
   final ValueChanged<T>? onRowActivated;
+
+  /// Row activation that takes precedence over selection when supplied.
+  /// Checkboxes remain the explicit selection affordance.
+  final ValueChanged<T>? onRowTap;
   final AppDensity? density;
   final bool zebra;
 
@@ -275,7 +280,9 @@ class AppDataTable<T> extends StatelessWidget {
           return KeyEventResult.handled;
         }
         if (event.logicalKey == LogicalKeyboardKey.enter) {
-          if (onSelectionChanged != null) {
+          if (onRowTap != null) {
+            onRowTap!(row);
+          } else if (onSelectionChanged != null) {
             _toggle(row, !selected);
           } else {
             onRowActivated?.call(row);
@@ -297,7 +304,9 @@ class AppDataTable<T> extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             hoverColor: style.rowHover,
-            onTap: onSelectionChanged != null
+            onTap: onRowTap != null
+                ? () => onRowTap!(row)
+                : onSelectionChanged != null
                 ? () => _toggle(row, !selected)
                 : onRowActivated == null
                 ? null
