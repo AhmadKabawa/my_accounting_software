@@ -5,9 +5,15 @@ void main() {
   test('local filters switch the list to flat results', () {
     const query = CategoryListQuery();
     expect(query.hasActiveFilters, isFalse);
-    expect(query.withStatus(CategoryStatusFilter.active).hasActiveFilters, isTrue);
+    expect(
+      query.withStatus(CategoryStatusFilter.active).hasActiveFilters,
+      isTrue,
+    );
     expect(query.withLevel(CategoryLevelFilter.roots).hasActiveFilters, isTrue);
-    expect(query.withUsage(CategoryUsageFilter.withProducts).hasActiveFilters, isTrue);
+    expect(
+      query.withUsage(CategoryUsageFilter.withProducts).hasActiveFilters,
+      isTrue,
+    );
     expect(query.withSearch('shoes').hasActiveFilters, isTrue);
   });
 

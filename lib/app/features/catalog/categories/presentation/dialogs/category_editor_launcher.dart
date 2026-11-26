@@ -34,38 +34,40 @@ Future<bool?> showCategoryEditor(
       ? categoryDuplicateSeed(context, category)
       : null;
   return showAppFormDialog<bool>(
-  context,
-  (_) => BlocProvider(
-    create: (_) => sl<CategoryFormCubit>(
-      param1: CategoryFormArgs(
+    context,
+    (_) => BlocProvider(
+      create: (_) => sl<CategoryFormCubit>(
+        param1: CategoryFormArgs(
+          category: duplicate ? null : category,
+          seed: seed,
+          tree: tree,
+          initialParentId: initialParentId,
+        ),
+      ),
+      child: CategoryEditorDialog(
         category: duplicate ? null : category,
+        duplicate: duplicate,
         seed: seed,
-        tree: tree,
-        initialParentId: initialParentId,
+        imageUploader: (upload) async {
+          final result = await sl<UploadCategoryImageUseCase>()(upload);
+          return result.leftMap(
+            (failure) => failure is PermissionFailure
+                ? PermissionFailure(
+                    messageKey: CategoriesKeys.imageUploadPermission,
+                  )
+                : failure,
+          );
+        },
+        imagePicker:
+            imagePicker ??
+            (sl.isRegistered<ImagePickerPort>() ? sl<ImagePickerPort>() : null),
+        dropTargetAdapter:
+            dropTargetAdapter ??
+            (sl.isRegistered<FileDropTargetAdapter>()
+                ? sl<FileDropTargetAdapter>()
+                : null),
       ),
     ),
-    child: CategoryEditorDialog(
-      category: duplicate ? null : category,
-      duplicate: duplicate,
-      seed: seed,
-      imageUploader: (upload) async {
-        final result = await sl<UploadCategoryImageUseCase>()(upload);
-        return result.leftMap(
-          (failure) => failure is PermissionFailure
-              ? PermissionFailure(
-                  messageKey: CategoriesKeys.imageUploadPermission,
-                )
-              : failure,
-        );
-      },
-      imagePicker: imagePicker ??
-          (sl.isRegistered<ImagePickerPort>() ? sl<ImagePickerPort>() : null),
-      dropTargetAdapter: dropTargetAdapter ??
-          (sl.isRegistered<FileDropTargetAdapter>()
-              ? sl<FileDropTargetAdapter>()
-              : null),
-    ),
-  ),
   );
 }
 

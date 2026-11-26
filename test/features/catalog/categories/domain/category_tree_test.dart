@@ -131,14 +131,23 @@ void main() {
       _category(4, name: 'Accessories', products: 0),
     ]);
 
-    expect(tree.filtered(level: CategoryLevelFilter.roots).map((n) => n.id), [1, 4]);
-    expect(tree.filtered(level: CategoryLevelFilter.leaves).map((n) => n.id), [2, 3, 4]);
+    expect(tree.filtered(level: CategoryLevelFilter.roots).map((n) => n.id), [
+      1,
+      4,
+    ]);
+    expect(tree.filtered(level: CategoryLevelFilter.leaves).map((n) => n.id), [
+      2,
+      3,
+      4,
+    ]);
     expect(
       tree.filtered(usage: CategoryUsageFilter.withProducts).map((n) => n.id),
       [1],
     );
     expect(
-      tree.filtered(usage: CategoryUsageFilter.withoutProducts).map((n) => n.id),
+      tree
+          .filtered(usage: CategoryUsageFilter.withoutProducts)
+          .map((n) => n.id),
       [2, 4],
     );
     expect(tree.withoutProductsCount, isNull);
@@ -158,35 +167,39 @@ void main() {
 
     expect(tree.withoutProductsCount, 1);
     expect(
-      tree.filtered(search: 'a', sortField: CategorySortField.name)
+      tree
+          .filtered(search: 'a', sortField: CategorySortField.name)
           .map((n) => n.id),
       [2, 3],
     );
     expect(
-      tree.filtered(sortField: CategorySortField.productCount)
-          .map((n) => n.id),
+      tree.filtered(sortField: CategorySortField.productCount).map((n) => n.id),
       [2, 1, 3],
     );
     expect(
-      tree.filtered(
-        sortField: CategorySortField.productCount,
-        sortAscending: false,
-      ).map((n) => n.id),
+      tree
+          .filtered(
+            sortField: CategorySortField.productCount,
+            sortAscending: false,
+          )
+          .map((n) => n.id),
       [1, 2, 3],
     );
   });
 
-  test('marks active descendants of inactive parents without changing status', () {
-    final tree = CategoryTree([
-      _category(1, active: false),
-      _category(2, parentId: 1, active: true),
-    ]);
+  test(
+    'marks active descendants of inactive parents without changing status',
+    () {
+      final tree = CategoryTree([
+        _category(1, active: false),
+        _category(2, parentId: 1, active: true),
+      ]);
 
-    final child = tree.visible(expandedIds: tree.parentIds).firstWhere(
-      (node) => node.id == 2,
-    );
-    expect(child.category.isActive, isTrue);
-    expect(child.underInactiveAncestor, isTrue);
-  });
-
+      final child = tree
+          .visible(expandedIds: tree.parentIds)
+          .firstWhere((node) => node.id == 2);
+      expect(child.category.isActive, isTrue);
+      expect(child.underInactiveAncestor, isTrue);
+    },
+  );
 }

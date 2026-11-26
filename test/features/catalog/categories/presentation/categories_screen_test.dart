@@ -70,16 +70,15 @@ Category _category(
   String? name,
   bool active = true,
   int? products = 0,
-}) =>
-    Category(
-      id: id,
-      parentId: parentId,
-      name: name ?? 'Category $id',
-      slug: 'category-$id',
-      sortOrder: id,
-      isActive: active,
-      productCount: products,
-    );
+}) => Category(
+  id: id,
+  parentId: parentId,
+  name: name ?? 'Category $id',
+  slug: 'category-$id',
+  sortOrder: id,
+  isActive: active,
+  productCount: products,
+);
 
 List<Category> _sampleCategories() => [
   _category(1, name: 'Root'),
@@ -131,9 +130,7 @@ void _register(
 
 Widget _home({bool canManage = true}) => BlocProvider<AccessCubit>(
   create: (_) => AccessCubit(
-    getMyAccess: GetMyAccessUseCase(
-      _AccessRepository(canManage: canManage),
-    ),
+    getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: canManage)),
   )..load(),
   child: const Scaffold(body: CategoriesListPage()),
 );
@@ -517,56 +514,65 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('statistics apply their local filters without a network request', (
-    tester,
-  ) async {
-    final repository = FakeCategoriesRepository(
-      categories: _sampleCategories(),
-    );
-    _register(repository);
-    await tester.pumpWidget(
-      buildTestApp(home: _home(), direction: TextDirection.ltr),
-    );
-    await tester.pumpAndSettle();
-    final before = repository.getAllCalls;
+  testWidgets(
+    'statistics apply their local filters without a network request',
+    (tester) async {
+      final repository = FakeCategoriesRepository(
+        categories: _sampleCategories(),
+      );
+      _register(repository);
+      await tester.pumpWidget(
+        buildTestApp(home: _home(), direction: TextDirection.ltr),
+      );
+      await tester.pumpAndSettle();
+      final before = repository.getAllCalls;
 
-    await tester.tap(find.text(CategoriesKeys.activeCategories.en));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(CategoriesKeys.activeCategories.en));
+      await tester.pumpAndSettle();
 
-    expect(_listCubit(tester).state.query.status, CategoryStatusFilter.active);
-    expect(repository.getAllCalls, before);
-    expect(tester.takeException(), isNull);
-  });
+      expect(
+        _listCubit(tester).state.query.status,
+        CategoryStatusFilter.active,
+      );
+      expect(repository.getAllCalls, before);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('desktop row opens side details panel and child navigation works', (
-    tester,
-  ) async {
-    setScreenSize(tester, const Size(1200, 900));
-    _register(
-      FakeCategoriesRepository(categories: _sampleCategories().take(4).toList()),
-    );
-    await tester.pumpWidget(
-      buildTestApp(home: _home(), direction: TextDirection.ltr),
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'desktop row opens side details panel and child navigation works',
+    (tester) async {
+      setScreenSize(tester, const Size(1200, 900));
+      _register(
+        FakeCategoriesRepository(
+          categories: _sampleCategories().take(4).toList(),
+        ),
+      );
+      await tester.pumpWidget(
+        buildTestApp(home: _home(), direction: TextDirection.ltr),
+      );
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Root').first);
-    await tester.pumpAndSettle();
-    expect(find.text(CategoriesKeys.details.en), findsOneWidget);
-    expect(find.text('Child'), findsWidgets);
+      await tester.tap(find.text('Root').first);
+      await tester.pumpAndSettle();
+      expect(find.text(CategoriesKeys.details.en), findsOneWidget);
+      expect(find.text('Child'), findsWidgets);
 
-    await tester.tap(find.text('Child').last);
-    await tester.pumpAndSettle();
-    expect(find.text('Grandchild'), findsWidgets);
-    expect(tester.takeException(), isNull);
-  });
+      await tester.tap(find.text('Child').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Grandchild'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('mobile card opens details bottom sheet without overflow', (
     tester,
   ) async {
     setScreenSize(tester, const Size(360, 800));
     _register(
-      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+      FakeCategoriesRepository(
+        categories: _sampleCategories().take(3).toList(),
+      ),
     );
     await tester.pumpWidget(
       buildTestApp(home: _home(), direction: TextDirection.rtl),
@@ -585,7 +591,9 @@ void main() {
   ) async {
     setScreenSize(tester, const Size(1200, 900));
     _register(
-      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+      FakeCategoriesRepository(
+        categories: _sampleCategories().take(3).toList(),
+      ),
     );
     await tester.pumpWidget(
       buildTestApp(home: _home(canManage: false), direction: TextDirection.ltr),
@@ -605,7 +613,9 @@ void main() {
   testWidgets('details panel closes with Escape', (tester) async {
     setScreenSize(tester, const Size(1200, 900));
     _register(
-      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+      FakeCategoriesRepository(
+        categories: _sampleCategories().take(3).toList(),
+      ),
     );
     await tester.pumpWidget(
       buildTestApp(home: _home(), direction: TextDirection.ltr),
@@ -642,11 +652,17 @@ void main() {
 
     _listCubit(tester).setLevel(CategoryLevelFilter.roots);
     await tester.pumpAndSettle();
-    expect(_listCubit(tester).state.result!.items.map((node) => node.id), [1, 3]);
+    expect(_listCubit(tester).state.result!.items.map((node) => node.id), [
+      1,
+      3,
+    ]);
 
     _listCubit(tester).setLevel(CategoryLevelFilter.leaves);
     await tester.pumpAndSettle();
-    expect(_listCubit(tester).state.result.items.map((node) => node.id), [2, 3]);
+    expect(_listCubit(tester).state.result.items.map((node) => node.id), [
+      2,
+      3,
+    ]);
 
     _listCubit(tester).setUsage(CategoryUsageFilter.withProducts);
     await tester.pumpAndSettle();
@@ -662,12 +678,7 @@ void main() {
   testWidgets('duplicate seed preserves parent and generates a fresh slug', (
     tester,
   ) async {
-    final source = _category(
-      2,
-      parentId: 1,
-      name: 'Sport',
-      active: false,
-    );
+    final source = _category(2, parentId: 1, name: 'Sport', active: false);
     CategoryDraft? seed;
     await tester.pumpWidget(
       buildTestApp(
@@ -716,7 +727,10 @@ void main() {
     expect(repository.updateCalls, 1);
     expect(repository.createCalls, 1);
     expect(repository.lastCreatedDraft?.parentId, 1);
-    expect(repository.categories.any((item) => item.name == 'Panel child'), isTrue);
+    expect(
+      repository.categories.any((item) => item.name == 'Panel child'),
+      isTrue,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -725,7 +739,9 @@ void main() {
   ) async {
     setScreenSize(tester, const Size(1200, 900));
     _register(
-      FakeCategoriesRepository(categories: _sampleCategories().take(4).toList()),
+      FakeCategoriesRepository(
+        categories: _sampleCategories().take(4).toList(),
+      ),
     );
     await tester.pumpWidget(
       buildTestApp(home: _home(), direction: TextDirection.ltr),
@@ -742,5 +758,4 @@ void main() {
     expect(_listCubit(tester).selectedId.value, isNull);
     expect(tester.takeException(), isNull);
   });
-
 }

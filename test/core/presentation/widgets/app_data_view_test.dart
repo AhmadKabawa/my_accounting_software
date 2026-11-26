@@ -515,5 +515,4 @@ void main() {
       expect(selectionChanges, 1);
     });
   });
-
 }
