@@ -59,8 +59,12 @@ Future<bool?> showCategoryEditor(
               : failure,
         );
       },
-      imagePicker: imagePicker,
-      dropTargetAdapter: dropTargetAdapter,
+      imagePicker: imagePicker ??
+          (sl.isRegistered<ImagePickerPort>() ? sl<ImagePickerPort>() : null),
+      dropTargetAdapter: dropTargetAdapter ??
+          (sl.isRegistered<FileDropTargetAdapter>()
+              ? sl<FileDropTargetAdapter>()
+              : null),
     ),
   ),
 );
