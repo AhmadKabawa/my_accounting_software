@@ -21,8 +21,14 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
   final ProductTypeLinksRepository _repository;
   final ProductTypesRepository _productTypesRepository;
   int _requestVersion = 0;
+  int? _currentProductTypeId;
+  int? _publishedProductCount;
 
   Future<void> load(int productTypeId) async {
+    if (_currentProductTypeId != productTypeId) {
+      _currentProductTypeId = productTypeId;
+      _publishedProductCount = null;
+    }
     final version = ++_requestVersion;
     emit(const ProductTypeDetailsLoading());
     final productType = await _productTypesRepository.getById(productTypeId);
@@ -66,6 +72,7 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
         attributeOptions: attributeOptions.getOrElse(() => const []),
         optionSetOptions: optionOptions.getOrElse(() => const []),
         genderOptions: genders.getOrElse(() => const []),
+        publishedProductCount: _publishedProductCount,
       ),
     );
   }
@@ -268,7 +275,8 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
       );
       count.fold((_) {}, (value) {
         final latest = _loaded;
-        if (latest != null) {
+        if (latest != null && !isClosed) {
+          _publishedProductCount = value;
           emit(latest.copyWith(publishedProductCount: value));
         }
       });
