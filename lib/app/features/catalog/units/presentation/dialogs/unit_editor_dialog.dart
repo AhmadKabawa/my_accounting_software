@@ -53,17 +53,18 @@ class _UnitEditorDialogState extends State<UnitEditorDialog> {
     super.dispose();
   }
 
-  Future<void> _save() => context.read<UnitFormCubit>().save(
-    id: widget.unit?.id,
-    draft: UnitDraft(
-      name: _name.text.trim(),
-      symbol: _symbol.text.trim(),
-      type: _type,
-      isActive: widget.unit == null || _active != widget.unit!.isActive
-          ? _active
-          : null,
-    ),
-  );
+  Future<void> _save() {
+    final unit = widget.unit;
+    return context.read<UnitFormCubit>().save(
+      id: unit?.id,
+      draft: UnitDraft(
+        name: _name.text.trim(),
+        symbol: _symbol.text.trim(),
+        type: _type,
+        isActive: unit == null || _active != unit.isActive ? _active : null,
+      ),
+    );
+  }
 
   AppKey _typeLabel(UnitType type) => switch (type) {
     UnitType.weight => UnitsKeys.weight,

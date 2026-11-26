@@ -43,6 +43,7 @@ enum UnitsKeys implements AppKey {
   inactiveCount(ar: 'الوحدات الموقوفة', en: 'Inactive units'),
   loadError(ar: 'تعذر تحميل الوحدات', en: 'Could not load units'),
   saveError(ar: 'تعذر حفظ الوحدة', en: 'Could not save unit'),
+  saved(ar: 'تم حفظ الوحدة', en: 'Unit saved'),
   deleted(ar: 'تم حذف الوحدة', en: 'Unit deleted'),
   statusUpdated(ar: 'تم تحديث حالة الوحدة', en: 'Unit status updated');
 
