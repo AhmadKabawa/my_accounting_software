@@ -7,8 +7,6 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/loc
 import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
-import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
 
 /// One place the shell can go to: what to show ([item], the model shared by
 /// the bottom bar, the rail and the sidebar), which `StatefulShellBranch` it
@@ -53,16 +51,6 @@ const appDestinations = [
           label: BrandsKeys.title,
           icon: AppIcons.brands,
           path: '/catalog/brands',
-        ),
-        NavBarChild(
-          label: UnitsKeys.title,
-          icon: AppIcons.catalog,
-          path: '/catalog/units',
-        ),
-        NavBarChild(
-          label: OptionSetsKeys.title,
-          icon: AppIcons.catalog,
-          path: '/catalog/option-sets',
         ),
         NavBarChild(
           label: ColorsKeys.title,
