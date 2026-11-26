@@ -352,9 +352,10 @@ class _AttributesSection extends StatelessWidget {
                   cellBuilder: (_, item) => AppSwitch(
                     value: item.isRequired,
                     labelKey: ProductTypesKeys.isRequired,
-                    onChanged: canManage
-                        ? (value) => cubit.updateAttribute(item, isRequired: value)
-                        : null,
+                    onChanged: !canManage || state.processing.contains('attribute-${item.attributeId}')
+                        ? null
+                        : (value) => cubit.updateAttribute(item, isRequired: value),
+                    loading: state.processing.contains('attribute-${item.attributeId}'),
                   ),
                 ),
                 DataTableColumn(
@@ -368,11 +369,13 @@ class _AttributesSection extends StatelessWidget {
                   ? (context, item) => AppIconButton(
                       AppIcons.close,
                       tooltipKey: ProductTypesKeys.removeLink,
-                      onPressed: () => _confirmRemove(
-                        context,
-                        cubit,
-                        () => cubit.removeAttribute(item),
-                      ),
+                      onPressed: state.processing.contains('attribute-${item.attributeId}')
+                          ? null
+                          : () => _confirmRemove(
+                              context,
+                              cubit,
+                              () => cubit.removeAttribute(item),
+                            ),
                     )
                   : null,
             ),
@@ -451,9 +454,10 @@ class _OptionSetsSection extends StatelessWidget {
                   cellBuilder: (_, item) => AppSwitch(
                     value: item.isRequired,
                     labelKey: ProductTypesKeys.isRequired,
-                    onChanged: canManage
-                        ? (value) => cubit.updateOptionSet(item, isRequired: value)
-                        : null,
+                    onChanged: !canManage || state.processing.contains('option-set-${item.optionSetId}')
+                        ? null
+                        : (value) => cubit.updateOptionSet(item, isRequired: value),
+                    loading: state.processing.contains('option-set-${item.optionSetId}'),
                   ),
                 ),
                 DataTableColumn(
@@ -467,11 +471,13 @@ class _OptionSetsSection extends StatelessWidget {
                   ? (context, item) => AppIconButton(
                       AppIcons.close,
                       tooltipKey: ProductTypesKeys.removeLink,
-                      onPressed: () => _confirmRemove(
-                        context,
-                        cubit,
-                        () => cubit.removeOptionSet(item),
-                      ),
+                      onPressed: state.processing.contains('option-set-${item.optionSetId}')
+                          ? null
+                          : () => _confirmRemove(
+                              context,
+                              cubit,
+                              () => cubit.removeOptionSet(item),
+                            ),
                     )
                   : null,
             ),
@@ -509,7 +515,11 @@ class _SectionTitle extends StatelessWidget {
       children: [
         Expanded(child: AppText(label, type: AppTextType.titleMedium)),
         AppBadge(
-          label: ProductTypesKeys.productsCount,
+          label: label == ProductTypesKeys.sizeGroups
+              ? ProductTypesKeys.sizeGroupsCount
+              : label == ProductTypesKeys.attributes
+              ? ProductTypesKeys.attributesCount
+              : ProductTypesKeys.optionSetsCount,
           labelArgs: {'count': count.toString()},
           size: AppBadgeSize.small,
         ),
