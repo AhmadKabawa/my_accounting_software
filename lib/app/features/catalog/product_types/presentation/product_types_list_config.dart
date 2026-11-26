@@ -89,5 +89,5 @@ CrudListConfig<ProductType, ProductTypeListQuery, ProductTypesListCubit,
     canDelete: (item) => item.canDelete,
     hideDeleteWhenCannotDelete: true,
   ),
-  dataSection: (data) => ProductTypesDataSection(data: data),
+  dataSection: (data) => ProductTypesDataSection(data: data, labels: _labels),
 );
