@@ -11,16 +11,16 @@ Future<void> showOptionSetOptions(BuildContext context, OptionSet optionSet) {
     child: OptionSetOptionsDialog(optionSet: optionSet),
   );
   if (MediaQuery.sizeOf(context).width >= 720) {
-    return showDialog<void>(
-      context: context,
-      builder: (_) => content(),
-    );
+    return showDialog<void>(context: context, builder: (_) => content());
   }
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     builder: (_) => SafeArea(
-      child: SizedBox(height: MediaQuery.sizeOf(context).height * .82, child: content()),
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * .82,
+        child: content(),
+      ),
     ),
   );
 }

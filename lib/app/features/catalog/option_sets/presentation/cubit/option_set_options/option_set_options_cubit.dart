@@ -31,40 +31,78 @@ class OptionSetOptionsCubit extends BaseCubit<OptionSetOptionsState, Never> {
     if (isClosed) return;
     _optionSetId = optionSetId;
     final version = ++_requestVersion;
-    emit(state.copyWith(status: OptionSetOptionsStatus.loading, clearFailure: true));
-    final result = await _getOptions(GetOptionsParams(optionSetId: optionSetId));
+    emit(
+      state.copyWith(
+        status: OptionSetOptionsStatus.loading,
+        clearFailure: true,
+      ),
+    );
+    final result = await _getOptions(
+      GetOptionsParams(optionSetId: optionSetId),
+    );
     if (isClosed || version != _requestVersion) return;
     result.fold(
-      (failure) => emit(state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure)),
-      (options) => emit(state.copyWith(status: OptionSetOptionsStatus.ready, options: options, clearFailure: true)),
+      (failure) => emit(
+        state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure),
+      ),
+      (options) => emit(
+        state.copyWith(
+          status: OptionSetOptionsStatus.ready,
+          options: options,
+          clearFailure: true,
+        ),
+      ),
     );
   }
 
-  Future<void> saveOption({int? optionId, required CatalogOptionDraft draft}) async {
+  Future<void> saveOption({
+    int? optionId,
+    required CatalogOptionDraft draft,
+  }) async {
     final setId = _optionSetId;
-    if (setId == null || isClosed || state.status == OptionSetOptionsStatus.saving) return;
-    emit(state.copyWith(status: OptionSetOptionsStatus.saving, clearFailure: true));
+    if (setId == null ||
+        isClosed ||
+        state.status == OptionSetOptionsStatus.saving)
+      return;
+    emit(
+      state.copyWith(status: OptionSetOptionsStatus.saving, clearFailure: true),
+    );
     final result = optionId == null
-        ? await _createOption(CreateOptionParams(optionSetId: setId, draft: draft))
-        : await _updateOption(UpdateOptionParams(optionId: optionId, draft: draft));
+        ? await _createOption(
+            CreateOptionParams(optionSetId: setId, draft: draft),
+          )
+        : await _updateOption(
+            UpdateOptionParams(optionId: optionId, draft: draft),
+          );
     if (isClosed) return;
     final failure = result.fold<Failure?>((value) => value, (_) => null);
     if (failure != null) {
-      emit(state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure));
+      emit(
+        state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure),
+      );
     } else {
       await load(setId);
     }
   }
 
-  Future<void> setActive({required int optionId, required bool isActive}) async {
+  Future<void> setActive({
+    required int optionId,
+    required bool isActive,
+  }) async {
     final setId = _optionSetId;
     if (setId == null || isClosed) return;
-    emit(state.copyWith(status: OptionSetOptionsStatus.saving, clearFailure: true));
-    final result = await _setOptionActive(SetOptionActiveParams(optionId: optionId, isActive: isActive));
+    emit(
+      state.copyWith(status: OptionSetOptionsStatus.saving, clearFailure: true),
+    );
+    final result = await _setOptionActive(
+      SetOptionActiveParams(optionId: optionId, isActive: isActive),
+    );
     if (isClosed) return;
     final failure = result.fold<Failure?>((value) => value, (_) => null);
     if (failure != null) {
-      emit(state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure));
+      emit(
+        state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure),
+      );
     } else {
       await load(setId);
     }

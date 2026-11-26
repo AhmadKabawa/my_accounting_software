@@ -30,7 +30,9 @@ class OptionSetOptionsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canManage = context.watch<AccessCubit>().can(Permissions.masterData.manage);
+    final canManage = context.watch<AccessCubit>().can(
+      Permissions.masterData.manage,
+    );
     return BlocBuilder<OptionSetOptionsCubit, OptionSetOptionsState>(
       builder: (context, state) => AlertDialog(
         title: AppText.raw(optionSet.name),
@@ -43,71 +45,100 @@ class OptionSetOptionsDialog extends StatelessWidget {
               messageKey: state.failure?.messageKey ?? OptionSetsKeys.loadError,
               variant: InlineBannerVariant.error,
             ),
-            OptionSetOptionsStatus.ready || OptionSetOptionsStatus.saving =>
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (state.failure != null)
-                    InlineBanner(messageKey: state.failure!.messageKey, variant: InlineBannerVariant.error),
-                  if (state.options.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: AppText(OptionSetsKeys.emptyOptions),
-                    )
-                  else
-                    Flexible(
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: state.options.length,
-                        separatorBuilder: (_, _) => const Divider(height: 1),
-                        itemBuilder: (context, index) {
-                          final option = state.options[index];
-                          return ListTile(
-                            title: AppText.raw(option.name),
-                            subtitle: AppText.raw(option.code),
-                            trailing: canManage
-                                ? Wrap(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        tooltip: OptionSetsKeys.editOption.tr(context: context),
-                                        onPressed: state.status == OptionSetOptionsStatus.saving
-                                            ? null
-                                            : () => _edit(context, option),
-                                        icon: const Icon(Icons.edit_outlined),
+            OptionSetOptionsStatus.ready ||
+            OptionSetOptionsStatus.saving => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (state.failure != null)
+                  InlineBanner(
+                    messageKey: state.failure!.messageKey,
+                    variant: InlineBannerVariant.error,
+                  ),
+                if (state.options.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: AppText(OptionSetsKeys.emptyOptions),
+                  )
+                else
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: state.options.length,
+                      separatorBuilder: (_, _) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final option = state.options[index];
+                        return ListTile(
+                          title: AppText.raw(option.name),
+                          subtitle: AppText.raw(option.code),
+                          trailing: canManage
+                              ? Wrap(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      tooltip: OptionSetsKeys.editOption.tr(
+                                        context: context,
                                       ),
-                                      IconButton(
-                                        tooltip: option.isActive
-                                            ? OptionSetsKeys.deactivate.tr(context: context)
-                                            : OptionSetsKeys.activate.tr(context: context),
-                                        onPressed: state.status == OptionSetOptionsStatus.saving
-                                            ? null
-                                            : () => context.read<OptionSetOptionsCubit>().setActive(
+                                      onPressed:
+                                          state.status ==
+                                              OptionSetOptionsStatus.saving
+                                          ? null
+                                          : () => _edit(context, option),
+                                      icon: const Icon(Icons.edit_outlined),
+                                    ),
+                                    IconButton(
+                                      tooltip: option.isActive
+                                          ? OptionSetsKeys.deactivate.tr(
+                                              context: context,
+                                            )
+                                          : OptionSetsKeys.activate.tr(
+                                              context: context,
+                                            ),
+                                      onPressed:
+                                          state.status ==
+                                              OptionSetOptionsStatus.saving
+                                          ? null
+                                          : () => context
+                                                .read<OptionSetOptionsCubit>()
+                                                .setActive(
                                                   optionId: option.id,
                                                   isActive: !option.isActive,
                                                 ),
-                                        icon: Icon(option.isActive ? Icons.toggle_on : Icons.toggle_off),
+                                      icon: Icon(
+                                        option.isActive
+                                            ? Icons.toggle_on
+                                            : Icons.toggle_off,
                                       ),
-                                    ],
-                                  )
-                                : AppText(option.isActive ? OptionSetsKeys.active : OptionSetsKeys.inactive),
-                          );
-                        },
-                      ),
+                                    ),
+                                  ],
+                                )
+                              : AppText(
+                                  option.isActive
+                                      ? OptionSetsKeys.active
+                                      : OptionSetsKeys.inactive,
+                                ),
+                        );
+                      },
                     ),
-                  if (state.status == OptionSetOptionsStatus.saving)
-                    const LinearProgressIndicator(),
-                ],
-              ),
+                  ),
+                if (state.status == OptionSetOptionsStatus.saving)
+                  const LinearProgressIndicator(),
+              ],
+            ),
           },
         ),
         actions: [
           if (canManage)
             AppButton(
               OptionSetsKeys.addOption,
-              onPressed: state.status == OptionSetOptionsStatus.saving ? null : () => _edit(context),
+              onPressed: state.status == OptionSetOptionsStatus.saving
+                  ? null
+                  : () => _edit(context),
             ),
-          AppButton(OptionSetsKeys.cancel, variant: AppButtonVariant.text, onPressed: () => Navigator.pop(context)),
+          AppButton(
+            OptionSetsKeys.cancel,
+            variant: AppButtonVariant.text,
+            onPressed: () => Navigator.pop(context),
+          ),
         ],
       ),
     );
@@ -133,7 +164,9 @@ class _OptionEditorDialogState extends State<_OptionEditorDialog> {
     super.initState();
     _name = TextEditingController(text: widget.option?.name ?? '');
     _code = TextEditingController(text: widget.option?.code ?? '');
-    _sortOrder = TextEditingController(text: (widget.option?.sortOrder ?? 0).toString());
+    _sortOrder = TextEditingController(
+      text: (widget.option?.sortOrder ?? 0).toString(),
+    );
   }
 
   @override
@@ -146,7 +179,11 @@ class _OptionEditorDialogState extends State<_OptionEditorDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: AppText(widget.option == null ? OptionSetsKeys.addOption : OptionSetsKeys.editOption),
+    title: AppText(
+      widget.option == null
+          ? OptionSetsKeys.addOption
+          : OptionSetsKeys.editOption,
+    ),
     content: Form(
       key: _formKey,
       child: Column(
@@ -154,24 +191,37 @@ class _OptionEditorDialogState extends State<_OptionEditorDialog> {
         children: [
           TextFormField(
             controller: _name,
-            decoration: InputDecoration(labelText: OptionSetsKeys.optionName.tr(context: context)),
-            validator: (value) => value?.trim().isEmpty ?? true ? OptionSetsKeys.required.tr(context: context) : null,
+            decoration: InputDecoration(
+              labelText: OptionSetsKeys.optionName.tr(context: context),
+            ),
+            validator: (value) => value?.trim().isEmpty ?? true
+                ? OptionSetsKeys.required.tr(context: context)
+                : null,
           ),
           TextFormField(
             controller: _code,
-            decoration: InputDecoration(labelText: OptionSetsKeys.code.tr(context: context)),
-            validator: (value) => value?.trim().isEmpty ?? true ? OptionSetsKeys.required.tr(context: context) : null,
+            decoration: InputDecoration(
+              labelText: OptionSetsKeys.code.tr(context: context),
+            ),
+            validator: (value) => value?.trim().isEmpty ?? true
+                ? OptionSetsKeys.required.tr(context: context)
+                : null,
           ),
           TextFormField(
             controller: _sortOrder,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: OptionSetsKeys.sortOrder.tr(context: context)),
+            decoration: InputDecoration(
+              labelText: OptionSetsKeys.sortOrder.tr(context: context),
+            ),
           ),
         ],
       ),
     ),
     actions: [
-      TextButton(onPressed: () => Navigator.pop(context), child: Text(OptionSetsKeys.cancel.tr(context: context))),
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(OptionSetsKeys.cancel.tr(context: context)),
+      ),
       FilledButton(
         onPressed: () {
           if (!_formKey.currentState!.validate()) return;

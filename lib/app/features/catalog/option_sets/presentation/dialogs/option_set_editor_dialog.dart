@@ -132,7 +132,8 @@ class _OptionSetEditorDialogState extends State<OptionSetEditorDialog> {
                 scope.clearFailure();
               },
             ),
-            if (widget.optionSet != null && !widget.optionSet!.canChangeSelectionType)
+            if (widget.optionSet != null &&
+                !widget.optionSet!.canChangeSelectionType)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: AppText(OptionSetsKeys.locked),
