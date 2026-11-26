@@ -44,8 +44,15 @@ void initOptionSetsDI() {
   sl.registerLazySingleton(() => UpdateOptionUseCase(sl()));
   sl.registerLazySingleton(() => SetOptionActiveUseCase(sl()));
   sl.registerFactory(() => OptionSetStatsCubit(getStats: sl()));
-  sl.registerFactory(() => OptionSetFormCubit(create: sl(), update: sl(), flashMessages: sl()));
-  sl.registerFactory(() => OptionSetsListCubit(
-    getOptionSets: sl(), setActive: sl(), deleteOptionSet: sl(), flashMessages: sl(),
-  ));
+  sl.registerFactory(
+    () => OptionSetFormCubit(create: sl(), update: sl(), flashMessages: sl()),
+  );
+  sl.registerFactory(
+    () => OptionSetsListCubit(
+      getOptionSets: sl(),
+      setActive: sl(),
+      deleteOptionSet: sl(),
+      flashMessages: sl(),
+    ),
+  );
 }

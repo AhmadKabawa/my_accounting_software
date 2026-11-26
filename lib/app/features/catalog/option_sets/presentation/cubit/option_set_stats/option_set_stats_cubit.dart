@@ -15,17 +15,26 @@ class OptionSetStatsCubit extends BaseCubit<OptionSetStatsState, Never> {
     if (isClosed) return;
     final version = ++_requestVersion;
     if (state.stats == null) {
-      emit(state.copyWith(status: OptionSetStatsStatus.loading, clearFailure: true));
+      emit(
+        state.copyWith(
+          status: OptionSetStatsStatus.loading,
+          clearFailure: true,
+        ),
+      );
     }
     final result = await _getStats(NoParams());
     if (isClosed || version != _requestVersion) return;
     result.fold(
-      (failure) => emit(state.copyWith(status: OptionSetStatsStatus.failed, failure: failure)),
-      (stats) => emit(state.copyWith(
-        status: OptionSetStatsStatus.ready,
-        stats: stats,
-        clearFailure: true,
-      )),
+      (failure) => emit(
+        state.copyWith(status: OptionSetStatsStatus.failed, failure: failure),
+      ),
+      (stats) => emit(
+        state.copyWith(
+          status: OptionSetStatsStatus.ready,
+          stats: stats,
+          clearFailure: true,
+        ),
+      ),
     );
   }
 

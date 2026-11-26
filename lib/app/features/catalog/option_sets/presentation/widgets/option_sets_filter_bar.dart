@@ -44,7 +44,10 @@ class OptionSetsFilterBar {
     required ValueChanged<OptionSetStatusFilter> onStatusChanged,
   }) => [
     SearchableDropdown<OptionSetStatusFilter>(
-      options: const [OptionSetStatusFilter.active, OptionSetStatusFilter.inactive],
+      options: const [
+        OptionSetStatusFilter.active,
+        OptionSetStatusFilter.inactive,
+      ],
       labelKey: OptionSetsKeys.status,
       optionLabel: (value) => statusLabel(value).tr(context: context),
       value: query.status == OptionSetStatusFilter.all ? null : query.status,

@@ -11,7 +11,8 @@ import 'package:accounting_software/app/features/catalog/option_sets/presentatio
 
 enum OptionSetFormStatus { idle, saving }
 
-class OptionSetFormCubit extends BaseCubit<OptionSetFormStatus, OptionSetFormEffect> {
+class OptionSetFormCubit
+    extends BaseCubit<OptionSetFormStatus, OptionSetFormEffect> {
   OptionSetFormCubit({
     required CreateOptionSetUseCase create,
     required UpdateOptionSetUseCase update,

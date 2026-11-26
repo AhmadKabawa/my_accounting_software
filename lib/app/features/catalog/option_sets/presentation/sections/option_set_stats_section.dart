@@ -35,7 +35,10 @@ class OptionSetStatsSection extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InlineBanner(messageKey: failure!, variant: InlineBannerVariant.error),
+          InlineBanner(
+            messageKey: failure!,
+            variant: InlineBannerVariant.error,
+          ),
           if (onRetry != null)
             Align(
               alignment: AlignmentDirectional.centerEnd,

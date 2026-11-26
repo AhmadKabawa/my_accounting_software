@@ -6,11 +6,13 @@ import 'package:accounting_software/app/features/catalog/option_sets/domain/enti
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_form/option_set_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/dialogs/option_set_editor_dialog.dart';
 
-Future<bool?> showOptionSetEditor(BuildContext context, {OptionSet? optionSet}) =>
-    showAppFormDialog<bool>(
-      context,
-      (_) => BlocProvider(
-        create: (_) => sl<OptionSetFormCubit>(),
-        child: OptionSetEditorDialog(optionSet: optionSet),
-      ),
-    );
+Future<bool?> showOptionSetEditor(
+  BuildContext context, {
+  OptionSet? optionSet,
+}) => showAppFormDialog<bool>(
+  context,
+  (_) => BlocProvider(
+    create: (_) => sl<OptionSetFormCubit>(),
+    child: OptionSetEditorDialog(optionSet: optionSet),
+  ),
+);

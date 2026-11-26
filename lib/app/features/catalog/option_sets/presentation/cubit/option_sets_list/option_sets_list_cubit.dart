@@ -12,7 +12,9 @@ import 'package:accounting_software/app/features/catalog/option_sets/domain/usec
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_sets_list/option_sets_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
 
-class OptionSetsListCubit extends PagedListCubit<OptionSet, OptionSetListQuery, OptionSetsListEffect> {
+class OptionSetsListCubit
+    extends
+        PagedListCubit<OptionSet, OptionSetListQuery, OptionSetsListEffect> {
   OptionSetsListCubit({
     required GetOptionSetsUseCase getOptionSets,
     required SetOptionSetActiveUseCase setActive,
@@ -21,18 +23,21 @@ class OptionSetsListCubit extends PagedListCubit<OptionSet, OptionSetListQuery, 
   }) : _getOptionSets = getOptionSets,
        _setActive = setActive,
        _deleteOptionSet = deleteOptionSet,
-       super(initialQuery: const OptionSetListQuery(
-         page: AppConfig.defaultPage,
-         pageSize: AppConfig.defaultPageSize,
-       ));
+       super(
+         initialQuery: const OptionSetListQuery(
+           page: AppConfig.defaultPage,
+           pageSize: AppConfig.defaultPageSize,
+         ),
+       );
 
   final GetOptionSetsUseCase _getOptionSets;
   final SetOptionSetActiveUseCase _setActive;
   final DeleteOptionSetUseCase _deleteOptionSet;
 
   @override
-  Future<Either<Failure, PagedResult<OptionSet>>> fetch(OptionSetListQuery query) =>
-      _getOptionSets(query);
+  Future<Either<Failure, PagedResult<OptionSet>>> fetch(
+    OptionSetListQuery query,
+  ) => _getOptionSets(query);
 
   @override
   Future<Either<Failure, Unit>> deleteItem(OptionSet item) =>

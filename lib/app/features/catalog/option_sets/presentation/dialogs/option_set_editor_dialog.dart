@@ -56,7 +56,8 @@ class _OptionSetEditorDialogState extends State<OptionSetEditorDialog> {
       name: _name.text.trim(),
       code: _code.text.trim(),
       selectionType: _selection,
-      isActive: widget.optionSet == null || _active != widget.optionSet!.isActive
+      isActive:
+          widget.optionSet == null || _active != widget.optionSet!.isActive
           ? _active
           : null,
     ),
@@ -69,18 +70,27 @@ class _OptionSetEditorDialogState extends State<OptionSetEditorDialog> {
 
   @override
   Widget build(BuildContext context) =>
-      CrudEditorDialog<OptionSetFormCubit, OptionSetFormStatus, OptionSetFormEffect>(
+      CrudEditorDialog<
+        OptionSetFormCubit,
+        OptionSetFormStatus,
+        OptionSetFormEffect
+      >(
         cubit: context.read<OptionSetFormCubit>(),
         fields: _fields,
-        mode: widget.optionSet == null ? CrudEditorMode.add : CrudEditorMode.edit,
+        mode: widget.optionSet == null
+            ? CrudEditorMode.add
+            : CrudEditorMode.edit,
         labels: optionSetEditorLabels,
         isSaving: (status) => status == OptionSetFormStatus.saving,
         outcome: (effect) => switch (effect) {
           OptionSetSavedEffect() => const CrudEditorSuccess(),
-          OptionSetSaveFailedEffect(:final messageKey) => CrudEditorFailure(messageKey),
+          OptionSetSaveFailedEffect(:final messageKey) => CrudEditorFailure(
+            messageKey,
+          ),
         },
         onSave: _save,
-        extraDirty: _selection != _initialSelection || _active != _initialActive,
+        extraDirty:
+            _selection != _initialSelection || _active != _initialActive,
         onReset: () => setState(() {
           _selection = _initialSelection;
           _active = _initialActive;
@@ -110,7 +120,8 @@ class _OptionSetEditorDialogState extends State<OptionSetEditorDialog> {
             SearchableDropdown<OptionSelectionType>(
               options: OptionSelectionType.values,
               labelKey: OptionSetsKeys.selectionType,
-              optionLabel: (value) => _selectionLabel(value).tr(context: context),
+              optionLabel: (value) =>
+                  _selectionLabel(value).tr(context: context),
               value: _selection,
               clearable: false,
               onChanged: (value) {
