@@ -142,6 +142,11 @@ void main() {
       [2, 4],
     );
     expect(tree.withoutProductsCount, isNull);
+    expect(tree.length, 4);
+    expect(tree.rootCount, 2);
+    expect(tree.leafCount, 3);
+    expect(tree.activeCount, 4);
+    expect(tree.inactiveCount, 0);
   });
 
   test('derives known no-product statistic and sorts flat results', () {
