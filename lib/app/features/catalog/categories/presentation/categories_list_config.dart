@@ -254,14 +254,14 @@ get categoriesListConfig => CrudListConfig(
       final flows = data.flows;
       final canManage = context.can(data.permission) && flows != null;
       void addChild() {
-        if (!canManage) return;
+        if (!canManage || flows == null) return;
         showCategoryEditor(
           context,
           tree: data.cubit.tree,
           initialParentId: node.id,
         ).then((saved) {
           if (saved == true && context.mounted) {
-            flows.onSaved(data.cubit, isNew: true);
+            flows?.onSaved(data.cubit, isNew: true);
           }
         });
       }
@@ -273,17 +273,17 @@ get categoriesListConfig => CrudListConfig(
         canManage: canManage,
         onClose: close,
         onSelectChild: selectChild,
-        onEdit: canManage ? () => flows.edit(context, item: node) : null,
+        onEdit: canManage ? () => flows!.edit(context, item: node) : null,
         onAddChild: canManage ? addChild : null,
         onToggleStatus: canManage
-            ? () => flows.toggleStatus(context, node)
+            ? () => flows!.toggleStatus(context, node)
             : null,
         onDuplicate: canManage
-            ? () => flows.edit(context, item: node, duplicate: true)
+            ? () => flows!.edit(context, item: node, duplicate: true)
             : null,
         onDelete: canManage && node.canDelete
             ? () {
-                flows.deleteItem(context, node).whenComplete(
+                flows!.deleteItem(context, node).whenComplete(
                   () => data.cubit.selectDetails(null),
                 );
               }
