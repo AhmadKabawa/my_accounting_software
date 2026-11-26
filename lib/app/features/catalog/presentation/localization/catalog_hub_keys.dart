@@ -14,18 +14,6 @@ enum CatalogHubKeys implements AppKey {
     ar: 'أدر ألوان المنتجات ورموزها وقيمها المرئية.',
     en: 'Manage product colors, their codes and sample values.',
   ),
-  categoriesDescription(
-    ar: 'نظّم المنتجات ضمن تصنيفات رئيسية وفرعية واضحة.',
-    en: 'Organize products into clear parent categories and subcategories.',
-  ),
-  sportsDescription(
-    ar: 'حدّد الرياضات التي تناسبها منتجاتك مثل كرة القدم والجري.',
-    en: 'Define the sports your products suit, such as football and running.',
-  ),
-  tagsDescription(
-    ar: 'أنشئ وسوماً حرة لتصنيف المنتجات والبحث عنها بسرعة.',
-    en: 'Create free-form tags to label products and find them quickly.',
-  ),
   unitsDescription(
     ar: 'إدارة وحدات القياس والرموز وأنواعها.',
     en: 'Manage measurement units, symbols and types.',
@@ -37,6 +25,18 @@ enum CatalogHubKeys implements AppKey {
   attributesDescription(
     ar: 'إدارة خصائص المنتجات وأنواع البيانات والارتباطات.',
     en: 'Manage product attributes, data types and references.',
+  ),
+  categoriesDescription(
+    ar: 'نظّم المنتجات ضمن تصنيفات رئيسية وفرعية واضحة.',
+    en: 'Organize products into clear parent categories and subcategories.',
+  ),
+  sportsDescription(
+    ar: 'حدّد الرياضات التي تناسبها منتجاتك مثل كرة القدم والجري.',
+    en: 'Define the sports your products suit, such as football and running.',
+  ),
+  tagsDescription(
+    ar: 'أنشئ وسوماً حرة لتصنيف المنتجات والبحث عنها بسرعة.',
+    en: 'Create free-form tags to label products and find them quickly.',
   ),
   open(ar: 'فتح', en: 'Open');
 
