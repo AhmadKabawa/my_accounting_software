@@ -14,9 +14,7 @@ import 'package:accounting_software/app/features/catalog/units/presentation/cubi
 void main() {
   test('UnitStatsCubit loads and refreshes server-derived counts', () async {
     final repository = _FakeUnitsRepository();
-    final cubit = UnitStatsCubit(
-      getUnitStats: GetUnitStatsUseCase(repository),
-    );
+    final cubit = UnitStatsCubit(getUnitStats: GetUnitStatsUseCase(repository));
     addTearDown(cubit.close);
 
     await cubit.load();
