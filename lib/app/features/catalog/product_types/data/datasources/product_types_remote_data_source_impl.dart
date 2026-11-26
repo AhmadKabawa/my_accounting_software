@@ -23,7 +23,7 @@ class ProductTypesRemoteDataSourceImpl implements ProductTypesRemoteDataSource {
       _apiClient.get<ProductTypeModel>(
         ProductTypeEndpoints.collection,
         queryParameters: {
-          'select': ProductTypeEndpoints.select,
+          'select': ProductTypeEndpoints.selectWithoutUsageCounts,
           'id': 'eq.$id',
         },
         fromJsonList: _single,
