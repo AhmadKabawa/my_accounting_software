@@ -641,7 +641,7 @@ void main() {
 
     _listCubit(tester).setLevel(CategoryLevelFilter.roots);
     await tester.pumpAndSettle();
-    expect(_listCubit(tester).state.result.items.map((node) => node.id), [1, 3]);
+    expect(_listCubit(tester).state.result!.items.map((node) => node.id), [1, 3]);
 
     _listCubit(tester).setLevel(CategoryLevelFilter.leaves);
     await tester.pumpAndSettle();
