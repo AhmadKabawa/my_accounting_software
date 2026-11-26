@@ -2,6 +2,17 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 
 enum UnitsKeys implements AppKey {
   title(ar: 'وحدات القياس', en: 'Units'),
+  status(ar: 'الحالة', en: 'Status'),
+  delete(ar: 'حذف الوحدة', en: 'Delete unit'),
+  confirmDelete(ar: 'هل تريد حذف الوحدة {name}؟', en: 'Delete unit {name}?'),
+  activate(ar: 'تفعيل', en: 'Activate'),
+  deactivate(ar: 'إيقاف', en: 'Deactivate'),
+  deactivateTitle(ar: 'إيقاف الوحدة', en: 'Deactivate unit'),
+  deactivateMessage(ar: 'سيؤدي إيقاف الوحدة إلى منع استخدامها في السجلات الجديدة.', en: 'Deactivating this unit prevents its use in new records.'),
+  empty(ar: 'لا توجد وحدات قياس', en: 'No units yet'),
+  emptyDescription(ar: 'أضف وحدات القياس المستخدمة في المنتجات.', en: 'Add the measurement units used by products.'),
+  noResults(ar: 'لا توجد نتائج', en: 'No results'),
+  noResultsDescription(ar: 'جرّب تغيير كلمات البحث.', en: 'Try changing your search.'),
   editorSubtitle(ar: 'بيانات وحدة القياس ورمزها ونوعها', en: 'Unit name, symbol and measurement type'),
   activeOnCreate(ar: 'تفعيل الوحدة عند الإنشاء', en: 'Activate unit on creation'),
   add(ar: 'إضافة وحدة', en: 'Add unit'),

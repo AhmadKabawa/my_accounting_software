@@ -42,6 +42,8 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 import 'package:accounting_software/app/features/auth/presentation/pages/select_branch/select_branch_screen.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/catalog_hub_screen.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
@@ -276,6 +278,12 @@ class AppRouter {
                 name: BrandsRoutes.brands.name,
                 pageBuilder: (context, state) =>
                     NoTransitionPage(child: const BrandsScreen()),
+              ),
+              GoRoute(
+                path: UnitsRoutes.units.path,
+                name: UnitsRoutes.units.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: UnitsScreen()),
               ),
               GoRoute(
                 path: CategoriesRoutes.categories.path,
