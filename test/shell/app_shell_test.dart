@@ -62,6 +62,17 @@ class _FakeAccessRepository implements AccessRepository {
 
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async => result;
+  test('catalog sidebar places product types after categories', () {
+    final children = appDestinations[1].item.children;
+    final categoriesIndex = children.indexWhere(
+      (child) => child.path == '/catalog/categories',
+    );
+    expect(categoriesIndex, greaterThanOrEqualTo(0));
+    expect(
+      children[categoriesIndex + 1].path,
+      '/catalog/product-types',
+    );
+  });
 }
 
 AppDestination _dest(IconData icon, int branch, {Permission? permission}) =>
