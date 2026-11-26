@@ -46,12 +46,20 @@ import 'package:accounting_software/app/features/catalog/presentation/pages/cata
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/pages/tags_screen.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/pages/sports_screen.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/pages/product_types_screen.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/pages/product_type_details_screen.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -281,16 +289,22 @@ class AppRouter {
                     NoTransitionPage(child: const BrandsScreen()),
               ),
               GoRoute(
+                path: UnitsRoutes.units.path,
+                name: UnitsRoutes.units.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: UnitsScreen()),
+              ),
+              GoRoute(
+                path: OptionSetsRoutes.optionSets.path,
+                name: OptionSetsRoutes.optionSets.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: OptionSetsScreen()),
+              ),
+              GoRoute(
                 path: CategoriesRoutes.categories.path,
                 name: CategoriesRoutes.categories.name,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: CategoriesListPage()),
-              ),
-              GoRoute(
-                path: ColorsRoutes.colors.path,
-                name: ColorsRoutes.colors.name,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: ColorsScreen()),
               ),
               GoRoute(
                 path: ProductTypesRoutes.productTypes.path,
@@ -309,6 +323,30 @@ class AppRouter {
                         : ProductTypeDetailsScreen(productTypeId: id),
                   );
                 },
+              ),
+            ],
+          ),
+
+          /// ───────── PROFILE ─────────
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: ColorsRoutes.colors.path,
+                name: ColorsRoutes.colors.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: ColorsScreen()),
+              ),
+              GoRoute(
+                path: TagsRoutes.tags.path,
+                name: TagsRoutes.tags.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: TagsScreen()),
+              ),
+              GoRoute(
+                path: SportsRoutes.sports.path,
+                name: SportsRoutes.sports.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: SportsScreen()),
               ),
             ],
           ),
