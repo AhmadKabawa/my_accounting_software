@@ -11,6 +11,7 @@ class CategoryModel {
     required this.sortOrder,
     required this.isActive,
     this.productCount,
+    this.updatedAt,
   });
 
   final int id;
@@ -24,6 +25,7 @@ class CategoryModel {
 
   /// Null when the embedded PostgREST relation count was not returned.
   final int? productCount;
+  final DateTime? updatedAt;
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     final id = _readInt(json['id']);
@@ -38,6 +40,7 @@ class CategoryModel {
       sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
       isActive: json['is_active'] as bool? ?? true,
       productCount: _readCount(json['product_categories']),
+      updatedAt: DateTime.tryParse('${json['updated_at'] ?? ''}'),
     );
   }
 
@@ -72,5 +75,6 @@ class CategoryModel {
     sortOrder: sortOrder,
     isActive: isActive,
     productCount: productCount,
+    updatedAt: updatedAt,
   );
 }
