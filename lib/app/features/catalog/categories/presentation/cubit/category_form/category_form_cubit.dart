@@ -65,7 +65,7 @@ class CategoryFormCubit
   /// Used by CrudEditorDialog in addition to its text-controller dirty check.
   bool get parentChanged => state.parentId != _initialParentId;
 
-  bool get activeChanged => state.isActive != (_category?.isActive ?? true);
+  bool get activeChanged => state.isActive != _initialState.isActive;
 
   /// Restores the feature-owned values when the shared editor resets.
   void reset() {
