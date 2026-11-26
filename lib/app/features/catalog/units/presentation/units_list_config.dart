@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
@@ -15,12 +16,17 @@ import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/units/domain/entity/catalog_unit.dart';
 import 'package:accounting_software/app/features/catalog/units/domain/entity/unit_list_query.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/cubit/units_list/units_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/cubit/units_list/units_list_effect.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/cubit/unit_stats/unit_stats_cubit.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/cubit/unit_stats/unit_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/dialogs/unit_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/widgets/units_filter_bar.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/sections/unit_stats_section.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 const _labels = CrudLabels(
@@ -52,14 +58,28 @@ get unitsListConfig => CrudListConfig(
   rowId: (unit) => unit.id,
   itemLabel: (unit) => unit.name,
   sort: CrudSortConfig<UnitListQuery, UnitsListCubit>(
-    current: (_) => const [],
-    tableKey: (_) => null,
-    tableAscending: (_) => true,
-    apply: (_, __) {},
-    applyTable: (_, __) {},
+    options: UnitsFilterBar.sortOptions,
+    current: (query) => [FilterBarSort('name', query.sortAscending)],
+    tableKey: (_) => 'name',
+    tableAscending: (query) => query.sortAscending,
+    apply: (cubit, sorts) {
+      if (sorts.isNotEmpty) cubit.setSort(sorts.first.ascending);
+    },
+    applyTable: (cubit, sort) => cubit.setSort(sort.ascending),
   ),
-  filterControls: (_) => const [],
-  activeFilters: (_) => const [],
+  filterControls: (slot) => UnitsFilterBar.controls(
+    slot.context,
+    slot.state.query,
+    onStatusChanged: slot.cubit.setStatus,
+    onTypeChanged: slot.cubit.setType,
+  ),
+  activeFilters: (slot) => UnitsFilterBar.activeFilters(
+    slot.context,
+    slot.state.query,
+    onSearchChanged: slot.cubit.searchChanged,
+    onStatusChanged: slot.cubit.setStatus,
+    onTypeChanged: slot.cubit.setType,
+  ),
   breadcrumb: (context) => AppBreadcrumb(
     items: [
       AppBreadcrumbItem(
@@ -71,6 +91,22 @@ get unitsListConfig => CrudListConfig(
   ),
   viewModes: const [AppViewMode.table, AppViewMode.cards],
   capabilities: const CrudCapabilities(duplicate: false, bulkSelection: false),
+  providersWrapper: (child) => BlocProvider<UnitStatsCubit>(
+    create: (_) => sl<UnitStatsCubit>()..load(),
+    child: child,
+  ),
+  isMutationEffect: (effect) => effect is UnitsMutatedEffect,
+  onMutated: (context) => context.read<UnitStatsCubit>().refresh(),
+  statsBuilder: (slot) => BlocBuilder<UnitStatsCubit, UnitStatsState>(
+    builder: (context, statsState) => UnitStatsSection(
+      stats: statsState.stats,
+      selectedFilter: slot.state.query.status,
+      onStatusSelected: slot.cubit.setStatus,
+      loading: statsState.status == UnitStatsStatus.loading || statsState.status == UnitStatsStatus.initial,
+      failure: statsState.failure?.messageKey,
+      onRetry: context.read<UnitStatsCubit>().refresh,
+    ),
+  ),
   flows: CrudFlowsConfig<CatalogUnit, UnitsListCubit>(
     showEditor: (context, {item, duplicate = false}) =>
         showUnitEditor(context, unit: item),
@@ -82,6 +118,7 @@ get unitsListConfig => CrudListConfig(
     labels: _labels,
     isActive: (unit) => unit.isActive,
     canDelete: (unit) => unit.usageCount == 0,
+    hideDeleteWhenCannotDelete: true,
   ),
   dataSection: (data) =>
       CrudDataSection<CatalogUnit, UnitListQuery, UnitsListCubit>(
@@ -89,6 +126,7 @@ get unitsListConfig => CrudListConfig(
         columns: [
           DataTableColumn(
             labelKey: UnitsKeys.unitName,
+            sortKey: 'name',
             priority: DataTableColumnPriority.primary,
             flex: 3,
             cellBuilder: (_, unit) => AppText.raw(unit.name),
