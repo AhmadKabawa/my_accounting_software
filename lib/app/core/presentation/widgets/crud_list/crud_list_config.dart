@@ -90,7 +90,7 @@ class CrudSortConfig<Q, C> {
 /// Values supplied to a feature's table/cards/grid builder.
 class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
   const CrudDataContext({
-    required this.context,
+    this.context,
     required this.mode,
     required this.rows,
     required this.total,
@@ -115,7 +115,7 @@ class CrudDataContext<T, Q extends PagedQuery<Q>, C> {
     this.canDuplicate = true,
   });
 
-  final BuildContext context;
+  final BuildContext? context;
   final AppViewMode? mode;
   final List<T> rows;
   final int total;

@@ -71,7 +71,7 @@ class OptionSetOptionsDialog extends StatelessWidget {
                           title: AppText.raw(option.name),
                           subtitle: AppText.raw(option.code),
                           trailing: canManage
-                              ? Wrap(
+                              ? Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(

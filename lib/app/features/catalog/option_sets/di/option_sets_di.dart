@@ -49,6 +49,14 @@ void initOptionSetsDI() {
     () => OptionSetFormCubit(create: sl(), update: sl(), flashMessages: sl()),
   );
   sl.registerFactory(
+    () => OptionSetOptionsCubit(
+      getOptions: sl(),
+      createOption: sl(),
+      updateOption: sl(),
+      setOptionActive: sl(),
+    ),
+  );
+  sl.registerFactory(
     () => OptionSetsListCubit(
       getOptionSets: sl(),
       setActive: sl(),

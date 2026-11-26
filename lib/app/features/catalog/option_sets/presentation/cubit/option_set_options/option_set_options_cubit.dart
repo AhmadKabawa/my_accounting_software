@@ -1,6 +1,5 @@
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_draft.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/get_options_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/create_option_use_case.dart';
