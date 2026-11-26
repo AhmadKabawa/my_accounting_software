@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set.dart';
@@ -123,6 +124,7 @@ class _OptionSetEditorDialogState extends State<OptionSetEditorDialog> {
               optionLabel: (value) =>
                   _selectionLabel(value).tr(context: context),
               value: _selection,
+              enabled: widget.optionSet?.canChangeSelectionType ?? true,
               clearable: false,
               onChanged: (value) {
                 if (value == null) return;
@@ -130,6 +132,11 @@ class _OptionSetEditorDialogState extends State<OptionSetEditorDialog> {
                 scope.clearFailure();
               },
             ),
+            if (widget.optionSet != null && !widget.optionSet!.canChangeSelectionType)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: AppText(OptionSetsKeys.locked),
+              ),
             context.ui.spacing.gap(AppSpacing.sm),
             AppSwitch(
               value: _active,

@@ -33,7 +33,7 @@ class OptionSetOptionsDialog extends StatelessWidget {
     final canManage = context.watch<AccessCubit>().can(Permissions.masterData.manage);
     return BlocBuilder<OptionSetOptionsCubit, OptionSetOptionsState>(
       builder: (context, state) => AlertDialog(
-        title: Text(optionSet.name),
+        title: AppText.raw(optionSet.name),
         content: SizedBox(
           width: 560,
           child: switch (state.status) {
@@ -63,8 +63,8 @@ class OptionSetOptionsDialog extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final option = state.options[index];
                           return ListTile(
-                            title: Text(option.name),
-                            subtitle: Text('${option.code} · ${option.sortOrder}'),
+                            title: AppText.raw(option.name),
+                            subtitle: AppText.raw(option.code),
                             trailing: canManage
                                 ? Wrap(
                                     mainAxisSize: MainAxisSize.min,
@@ -90,7 +90,7 @@ class OptionSetOptionsDialog extends StatelessWidget {
                                       ),
                                     ],
                                   )
-                                : Text(option.isActive ? OptionSetsKeys.active.tr(context: context) : OptionSetsKeys.inactive.tr(context: context)),
+                                : AppText(option.isActive ? OptionSetsKeys.active : OptionSetsKeys.inactive),
                           );
                         },
                       ),
@@ -146,7 +146,7 @@ class _OptionEditorDialogState extends State<_OptionEditorDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: Text(widget.option == null ? OptionSetsKeys.addOption.tr(context: context) : OptionSetsKeys.editOption.tr(context: context)),
+    title: AppText(widget.option == null ? OptionSetsKeys.addOption : OptionSetsKeys.editOption),
     content: Form(
       key: _formKey,
       child: Column(
