@@ -53,6 +53,10 @@ import 'package:accounting_software/app/features/catalog/sports/presentation/pag
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -280,6 +284,18 @@ class AppRouter {
                 name: BrandsRoutes.brands.name,
                 pageBuilder: (context, state) =>
                     NoTransitionPage(child: const BrandsScreen()),
+              ),
+              GoRoute(
+                path: UnitsRoutes.units.path,
+                name: UnitsRoutes.units.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: UnitsScreen()),
+              ),
+              GoRoute(
+                path: OptionSetsRoutes.optionSets.path,
+                name: OptionSetsRoutes.optionSets.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: OptionSetsScreen()),
               ),
               GoRoute(
                 path: CategoriesRoutes.categories.path,
