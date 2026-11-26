@@ -62,6 +62,9 @@ class UnitsListCubit
   UnitsListEffect buildMutationEffect(PagedMutationKind kind) =>
       UnitsMutatedEffect.fromPaged(kind);
 
+  Future<void> setSort(bool ascending) =>
+      _loadIfChanged(state.query.withSort(ascending));
+
   Future<void> setStatus(UnitStatusFilter status) =>
       _loadIfChanged(state.query.copyWith(status: status));
 
