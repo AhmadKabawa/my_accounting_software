@@ -46,5 +46,5 @@ enum OptionSetsKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'optionSets.$name';
+  String get key => 'optionsets.$name';
 }

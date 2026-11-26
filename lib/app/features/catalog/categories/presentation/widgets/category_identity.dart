@@ -99,30 +99,45 @@ class CategoryIdentity extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText.raw(category.name, type: AppTextType.titleSmall),
-                    Row(
-                      children: [
-                        Expanded(child: secondary),
-                        if (compact && node.underInactiveAncestor)
-                          AppBadge(
-                            label: CategoriesKeys.underInactiveParent,
-                            size: AppBadgeSize.small,
-                            tone: AppBadgeTone.neutral,
-                          )
-                        else if (compact && node.childCount > 0)
-                          badge,
-                        if (!compact && node.underInactiveAncestor) ...[
-                          context.ui.spacing.gap(
-                            AppSpacing.xs,
-                            axis: Axis.horizontal,
+                    if (compact)
+                      Wrap(
+                        spacing: context.ui.spacing.xs,
+                        runSpacing: context.ui.spacing.xs,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: constraints.maxWidth * 0.62,
+                            ),
+                            child: secondary,
                           ),
-                          AppBadge(
-                            label: CategoriesKeys.underInactiveParent,
-                            size: AppBadgeSize.small,
-                            tone: AppBadgeTone.neutral,
-                          ),
+                          if (node.underInactiveAncestor)
+                            AppBadge(
+                              label: CategoriesKeys.underInactiveParent,
+                              size: AppBadgeSize.small,
+                              tone: AppBadgeTone.neutral,
+                            )
+                          else if (node.childCount > 0)
+                            badge,
                         ],
-                      ],
-                    ),
+                      )
+                    else
+                      Row(
+                        children: [
+                          Expanded(child: secondary),
+                          if (node.underInactiveAncestor) ...[
+                            context.ui.spacing.gap(
+                              AppSpacing.xs,
+                              axis: Axis.horizontal,
+                            ),
+                            AppBadge(
+                              label: CategoriesKeys.underInactiveParent,
+                              size: AppBadgeSize.small,
+                              tone: AppBadgeTone.neutral,
+                            ),
+                          ],
+                        ],
+                      ),
                   ],
                 ),
               ),

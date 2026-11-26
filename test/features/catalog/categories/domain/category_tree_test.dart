@@ -15,7 +15,7 @@ Category _category(
   id: id,
   parentId: parentId,
   name: name ?? 'Category $id',
-  slug: slug ?? 'category-$id',
+  slug: slug ?? 'item-$id',
   sortOrder: sortOrder,
   isActive: active,
   productCount: products,
