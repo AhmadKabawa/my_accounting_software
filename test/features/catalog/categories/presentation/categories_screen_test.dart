@@ -9,7 +9,6 @@ import 'package:accounting_software/app/core/access/domain/access_repository.dar
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
-import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/localization/keys/image_keys.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
@@ -430,7 +429,7 @@ void main() {
 
     await tester.tap(find.text(CategoriesKeys.add.en).first);
     await tester.pumpAndSettle();
-    await tester.tap(find.bySemanticsLabel(CategoriesKeys.uploadImage.en));
+    await tester.tap(find.text(CategoriesKeys.uploadImage.en));
     await tester.pumpAndSettle();
 
     expect(repository.uploadCalls, 1);
