@@ -81,7 +81,6 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
   Failure? _failureFrom<T>(Either<Failure, T> result) =>
       result.fold((failure) => failure, (_) => null);
 
-
   Future<void> addSizeGroup({
     required int sizeGroupId,
     int? genderId,
