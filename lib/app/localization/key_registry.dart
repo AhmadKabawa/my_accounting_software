@@ -23,11 +23,6 @@ import 'package:accounting_software/app/features/on_boarding/presentation/locali
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
-import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
-import 'package:accounting_software/app/features/catalog/units/domain/failures/unit_failure_keys.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/domain/failures/option_set_failure_keys.dart';
-import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/failures/category_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
@@ -60,11 +55,6 @@ final List<AppKey> allKeys = <AppKey>[
   ...AuthKeys.values,
   ...ProfileKeys.values,
   ...BrandsKeys.values,
-  ...UnitsKeys.values,
-  ...UnitFailureKeys.values,
-  ...OptionSetsKeys.values,
-  ...OptionSetFailureKeys.values,
-  ...AttributesKeys.values,
   ...CategoriesKeys.values,
   ...CategoryFailureKeys.values,
   ...ColorsKeys.values,
