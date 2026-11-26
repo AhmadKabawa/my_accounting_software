@@ -535,7 +535,10 @@ void main() {
 
     await tester.tap(find.text(CategoriesKeys.add.en).first);
     await tester.pumpAndSettle();
-    await tester.tap(find.bySemanticsLabel(CategoriesKeys.uploadImage.en));
+    final uploadButton = find.bySemanticsLabel(CategoriesKeys.uploadImage.en);
+    await tester.ensureVisible(uploadButton);
+    await tester.pumpAndSettle();
+    await tester.tap(uploadButton);
     await tester.pumpAndSettle();
 
     expect(repository.uploadCalls, 0);
