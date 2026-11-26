@@ -41,6 +41,7 @@ class CategoryFormCubit
            image: category?.image ?? '',
            sortOrder: '${category?.sortOrder ?? 0}',
            slugManuallyEdited: category != null,
+           isActive: category?.isActive ?? true,
          ),
        ) {
     _initialState = state;
@@ -59,6 +60,8 @@ class CategoryFormCubit
 
   /// Used by CrudEditorDialog in addition to its text-controller dirty check.
   bool get parentChanged => state.parentId != _initialParentId;
+
+  bool get activeChanged => state.isActive != (_category?.isActive ?? true);
 
   /// Restores the feature-owned values when the shared editor resets.
   void reset() {
@@ -113,6 +116,8 @@ class CategoryFormCubit
       _emit(state.copyWith(description: value));
 
   void imageChanged(String value) => _emit(state.copyWith(image: value));
+
+  void activeChanged(bool value) => _emit(state.copyWith(isActive: value));
 
   void sortOrderChanged(String value) =>
       _emit(state.copyWith(sortOrder: value));
@@ -193,6 +198,9 @@ class CategoryFormCubit
           : value.description.trim(),
       image: value.image.trim().isEmpty ? null : value.image.trim(),
       sortOrder: int.tryParse(value.sortOrder.trim()) ?? 0,
+      isActive: _category == null || value.isActive != _category!.isActive
+          ? value.isActive
+          : null,
     );
     final result = _category == null
         ? await _createCategory(draft)
