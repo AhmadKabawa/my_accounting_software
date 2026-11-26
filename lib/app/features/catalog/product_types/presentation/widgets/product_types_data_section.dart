@@ -23,8 +23,12 @@ class ProductTypesDataSection extends StatelessWidget {
     required this.labels,
   });
 
-  final CrudDataContext<ProductType, ProductTypeListQuery,
-      ProductTypesListCubit> data;
+  final CrudDataContext<
+    ProductType,
+    ProductTypeListQuery,
+    ProductTypesListCubit
+  >
+  data;
   final CrudLabels labels;
 
   @override

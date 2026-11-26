@@ -23,10 +23,7 @@ class ProductTypeFormCubit
   final ProductTypesRepository _repository;
   final FlashMessages _flashMessages;
 
-  Future<void> save({
-    required ProductTypeDraft draft,
-    int? id,
-  }) async {
+  Future<void> save({required ProductTypeDraft draft, int? id}) async {
     if (state == ProductTypeFormStatus.saving || isClosed) return;
     emit(ProductTypeFormStatus.saving);
     final result = id == null
@@ -35,9 +32,8 @@ class ProductTypeFormCubit
     if (isClosed) return;
 
     result.fold(
-      (failure) => emitEffect(
-        ProductTypeSaveFailedEffect(_messageKey(failure)),
-      ),
+      (failure) =>
+          emitEffect(ProductTypeSaveFailedEffect(_messageKey(failure))),
       (productType) {
         emitEffect(ProductTypeSavedEffect(productType));
         _flashMessages.post(ProductTypesKeys.saved, MessageType.success);

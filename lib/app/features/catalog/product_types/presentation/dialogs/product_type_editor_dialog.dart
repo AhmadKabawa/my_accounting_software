@@ -62,8 +62,8 @@ class _ProductTypeEditorDialogState extends State<ProductTypeEditorDialog> {
       code: _code.text.trim(),
       description: _description.text.trim(),
       sortOrder: int.tryParse(_sortOrder.text.trim()) ?? 0,
-      isActive: widget.productType == null ||
-              _active != widget.productType!.isActive
+      isActive:
+          widget.productType == null || _active != widget.productType!.isActive
           ? _active
           : null,
     ),
@@ -71,8 +71,11 @@ class _ProductTypeEditorDialogState extends State<ProductTypeEditorDialog> {
 
   @override
   Widget build(BuildContext context) =>
-      CrudEditorDialog<ProductTypeFormCubit, ProductTypeFormStatus,
-        ProductTypeFormEffect>(
+      CrudEditorDialog<
+        ProductTypeFormCubit,
+        ProductTypeFormStatus,
+        ProductTypeFormEffect
+      >(
         cubit: context.read<ProductTypeFormCubit>(),
         fields: _fields,
         mode: widget.productType == null
@@ -82,8 +85,9 @@ class _ProductTypeEditorDialogState extends State<ProductTypeEditorDialog> {
         isSaving: (status) => status == ProductTypeFormStatus.saving,
         outcome: (effect) => switch (effect) {
           ProductTypeSavedEffect() => const CrudEditorSuccess(),
-          ProductTypeSaveFailedEffect(:final messageKey) =>
-            CrudEditorFailure(messageKey),
+          ProductTypeSaveFailedEffect(:final messageKey) => CrudEditorFailure(
+            messageKey,
+          ),
         },
         onSave: _save,
         extraDirty: _active != _initialActive,

@@ -35,8 +35,13 @@ const _labels = CrudLabels(
   deactivateConfirmationMessage: ProductTypesKeys.deactivateMessage,
 );
 
-CrudListConfig<ProductType, ProductTypeListQuery, ProductTypesListCubit,
-    ProductTypesListEffect> get productTypesListConfig => CrudListConfig(
+CrudListConfig<
+  ProductType,
+  ProductTypeListQuery,
+  ProductTypesListCubit,
+  ProductTypesListEffect
+>
+get productTypesListConfig => CrudListConfig(
   screenId: 'catalog.productTypes',
   titleKey: ProductTypesKeys.title,
   manageAccess: Permissions.masterData.manage,
@@ -74,29 +79,29 @@ CrudListConfig<ProductType, ProductTypeListQuery, ProductTypesListCubit,
     ],
   ),
   viewModes: const [AppViewMode.table, AppViewMode.cards, AppViewMode.grid],
-  capabilities: const CrudCapabilities(
-    duplicate: false,
-    bulkSelection: false,
-  ),
+  capabilities: const CrudCapabilities(duplicate: false, bulkSelection: false),
   providersWrapper: (child) => BlocProvider<ProductTypeStatsCubit>(
     create: (_) => sl<ProductTypeStatsCubit>()..load(),
     child: child,
   ),
   isMutationEffect: (effect) => effect is ProductTypesMutatedEffect,
   onMutated: (context) => context.read<ProductTypeStatsCubit>().refresh(),
-  statsBuilder: (slot) => BlocBuilder<ProductTypeStatsCubit, ProductTypeStatsState>(
-    builder: (context, stats) => ProductTypeStatsBar(
-      stats.stats,
-      selectedFilter: slot.state.query.status,
-      loading: stats is ProductTypeStatsLoading ||
-          stats is ProductTypeStatsInitial,
-      onFilterSelected: slot.cubit.setStatus,
-    ),
-  ),
+  statsBuilder: (slot) =>
+      BlocBuilder<ProductTypeStatsCubit, ProductTypeStatsState>(
+        builder: (context, stats) => ProductTypeStatsBar(
+          stats.stats,
+          selectedFilter: slot.state.query.status,
+          loading:
+              stats is ProductTypeStatsLoading ||
+              stats is ProductTypeStatsInitial,
+          onFilterSelected: slot.cubit.setStatus,
+        ),
+      ),
   flows: CrudFlowsConfig<ProductType, ProductTypesListCubit>(
     showEditor: (context, {item, duplicate = false}) =>
         showProductTypeEditor(context, productType: item),
-    onSaved: (cubit, {required isNew}) => cubit.onProductTypeSaved(isNew: isNew),
+    onSaved: (cubit, {required isNew}) =>
+        cubit.onProductTypeSaved(isNew: isNew),
     itemLabel: (item) => item.name,
     delete: (cubit, item) => cubit.delete(item),
     activate: (cubit, item) => cubit.activate(item.id),

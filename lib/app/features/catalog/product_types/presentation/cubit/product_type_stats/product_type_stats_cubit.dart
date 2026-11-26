@@ -47,7 +47,9 @@ class ProductTypeStatsCubit extends BaseCubit<ProductTypeStatsState, void> {
         );
         return;
       }
-      items.addAll(result.getOrElse(() => throw StateError('Unreachable')).items);
+      items.addAll(
+        result.getOrElse(() => throw StateError('Unreachable')).items,
+      );
     }
 
     if (isClosed || version != _requestVersion) return;
