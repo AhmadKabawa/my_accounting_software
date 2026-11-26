@@ -17,6 +17,14 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
 
 /// The Catalog tab: a hub that lists the catalog areas. Each area opens its own
 /// page inside the Catalog branch (so the bottom bar / sidebar stays on Catalog).
@@ -49,6 +57,18 @@ class CatalogHubScreen extends StatelessWidget {
             ),
             _AreaCard(
               icon: AppIcons.catalog,
+              titleKey: UnitsKeys.title,
+              descriptionKey: CatalogHubKeys.unitsDescription,
+              onOpen: () => context.go(UnitsRoutes.units.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.catalog,
+              titleKey: OptionSetsKeys.title,
+              descriptionKey: CatalogHubKeys.optionSetsDescription,
+              onOpen: () => context.go(OptionSetsRoutes.optionSets.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.catalog,
               titleKey: CategoriesKeys.title,
               descriptionKey: CatalogHubKeys.categoriesDescription,
               onOpen: () => context.go(CategoriesRoutes.categories.path),
@@ -64,6 +84,18 @@ class CatalogHubScreen extends StatelessWidget {
               titleKey: ColorsKeys.title,
               descriptionKey: CatalogHubKeys.colorsDescription,
               onOpen: () => context.go(ColorsRoutes.colors.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.tags,
+              titleKey: TagsKeys.title,
+              descriptionKey: CatalogHubKeys.tagsDescription,
+              onOpen: () => context.go(TagsRoutes.tags.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.sports,
+              titleKey: SportsKeys.title,
+              descriptionKey: CatalogHubKeys.sportsDescription,
+              onOpen: () => context.go(SportsRoutes.sports.path),
             ),
           ],
         ),
