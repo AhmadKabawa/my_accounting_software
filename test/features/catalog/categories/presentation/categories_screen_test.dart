@@ -32,6 +32,7 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/dialogs/category_duplicate_seed.dart';
 import '../../../../helpers/localized_app.dart';
 import '../../../../helpers/memory_storage.dart';
 import '../support/fake_categories_repository.dart';
@@ -656,6 +657,33 @@ void main() {
     expect(_listCubit(tester).state.result.items.map((node) => node.id), [2]);
     expect(repository.getAllCalls, before);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('duplicate seed preserves parent and generates a fresh slug', (
+    tester,
+  ) async {
+    final source = _category(
+      2,
+      parentId: 1,
+      name: 'Sport',
+      active: false,
+    );
+    CategoryDraft? seed;
+    await tester.pumpWidget(
+      buildTestApp(
+        home: Builder(
+          builder: (context) {
+            seed = categoryDuplicateSeed(context, source);
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+
+    expect(seed?.parentId, 1);
+    expect(seed?.name, 'Sport Copy');
+    expect(seed?.slug, 'sport-copy');
+    expect(seed?.isActive, isFalse);
   });
 
 }
