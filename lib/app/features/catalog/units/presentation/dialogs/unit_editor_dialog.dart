@@ -40,10 +40,7 @@ class _UnitEditorDialogState extends State<UnitEditorDialog> {
     _initialActive = unit?.isActive ?? true;
     _active = _initialActive;
     _fields = CrudEditorFields(
-      initialValues: {
-        'name': unit?.name ?? '',
-        'symbol': unit?.symbol ?? '',
-      },
+      initialValues: {'name': unit?.name ?? '', 'symbol': unit?.symbol ?? ''},
     );
   }
 
@@ -74,79 +71,79 @@ class _UnitEditorDialogState extends State<UnitEditorDialog> {
   };
 
   @override
-  Widget build(BuildContext context) =>
-      CrudEditorDialog<UnitFormCubit, UnitFormStatus, UnitFormEffect>(
-        cubit: context.read<UnitFormCubit>(),
-        fields: _fields,
-        mode: widget.unit == null ? CrudEditorMode.add : CrudEditorMode.edit,
-        labels: unitEditorLabels,
-        isSaving: (status) => status == UnitFormStatus.saving,
-        outcome: (effect) => switch (effect) {
-          UnitSavedEffect() => const CrudEditorSuccess(),
-          UnitSaveFailedEffect(:final messageKey) =>
-            CrudEditorFailure(messageKey),
-        },
-        onSave: _save,
-        extraDirty: _type != _initialType || _active != _initialActive,
-        onReset: () {
-          setState(() {
-            _type = _initialType;
-            _active = _initialActive;
-          });
-        },
-        builder: (context, scope) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AppTextField(
-              controller: _name,
-              labelKey: UnitsKeys.unitName,
-              onChanged: (_) => scope.clearFailure(),
-              validator: (value) {
-                final text = value?.trim() ?? '';
-                if (text.isEmpty) return UnitsKeys.required.tr(context: context);
-                if (text.length > 100) {
-                  return UnitsKeys.nameTooLong.tr(context: context);
-                }
-                return null;
-              },
-            ),
-            context.ui.spacing.gap(AppSpacing.sm),
-            AppTextField(
-              controller: _symbol,
-              labelKey: UnitsKeys.symbol,
-              onChanged: (_) => scope.clearFailure(),
-              validator: (value) {
-                final text = value?.trim() ?? '';
-                if (text.isEmpty) return UnitsKeys.required.tr(context: context);
-                if (text.length > 20) {
-                  return UnitsKeys.symbolTooLong.tr(context: context);
-                }
-                return null;
-              },
-              textDirection: TextDirection.ltr,
-            ),
-            context.ui.spacing.gap(AppSpacing.sm),
-            SearchableDropdown<UnitType>(
-              options: UnitType.values,
-              labelKey: UnitsKeys.type,
-              optionLabel: (type) => _typeLabel(type).tr(context: context),
-              value: _type,
-              clearable: false,
-              onChanged: (type) {
-                if (type == null) return;
-                setState(() => _type = type);
-                scope.clearFailure();
-              },
-            ),
-            context.ui.spacing.gap(AppSpacing.sm),
-            AppSwitch(
-              value: _active,
-              labelKey: widget.unit == null
-                  ? UnitsKeys.activeOnCreate
-                  : UnitsKeys.active,
-              onChanged: (value) => setState(() => _active = value),
-            ),
-          ],
+  Widget build(
+    BuildContext context,
+  ) => CrudEditorDialog<UnitFormCubit, UnitFormStatus, UnitFormEffect>(
+    cubit: context.read<UnitFormCubit>(),
+    fields: _fields,
+    mode: widget.unit == null ? CrudEditorMode.add : CrudEditorMode.edit,
+    labels: unitEditorLabels,
+    isSaving: (status) => status == UnitFormStatus.saving,
+    outcome: (effect) => switch (effect) {
+      UnitSavedEffect() => const CrudEditorSuccess(),
+      UnitSaveFailedEffect(:final messageKey) => CrudEditorFailure(messageKey),
+    },
+    onSave: _save,
+    extraDirty: _type != _initialType || _active != _initialActive,
+    onReset: () {
+      setState(() {
+        _type = _initialType;
+        _active = _initialActive;
+      });
+    },
+    builder: (context, scope) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppTextField(
+          controller: _name,
+          labelKey: UnitsKeys.unitName,
+          onChanged: (_) => scope.clearFailure(),
+          validator: (value) {
+            final text = value?.trim() ?? '';
+            if (text.isEmpty) return UnitsKeys.required.tr(context: context);
+            if (text.length > 100) {
+              return UnitsKeys.nameTooLong.tr(context: context);
+            }
+            return null;
+          },
         ),
-      );
+        context.ui.spacing.gap(AppSpacing.sm),
+        AppTextField(
+          controller: _symbol,
+          labelKey: UnitsKeys.symbol,
+          onChanged: (_) => scope.clearFailure(),
+          validator: (value) {
+            final text = value?.trim() ?? '';
+            if (text.isEmpty) return UnitsKeys.required.tr(context: context);
+            if (text.length > 20) {
+              return UnitsKeys.symbolTooLong.tr(context: context);
+            }
+            return null;
+          },
+          textDirection: TextDirection.ltr,
+        ),
+        context.ui.spacing.gap(AppSpacing.sm),
+        SearchableDropdown<UnitType>(
+          options: UnitType.values,
+          labelKey: UnitsKeys.type,
+          optionLabel: (type) => _typeLabel(type).tr(context: context),
+          value: _type,
+          clearable: false,
+          onChanged: (type) {
+            if (type == null) return;
+            setState(() => _type = type);
+            scope.clearFailure();
+          },
+        ),
+        context.ui.spacing.gap(AppSpacing.sm),
+        AppSwitch(
+          value: _active,
+          labelKey: widget.unit == null
+              ? UnitsKeys.activeOnCreate
+              : UnitsKeys.active,
+          onChanged: (value) => setState(() => _active = value),
+        ),
+      ],
+    ),
+  );
 }

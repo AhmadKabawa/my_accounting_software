@@ -65,9 +65,8 @@ class UnitsListCubit
   Future<void> setStatus(UnitStatusFilter status) =>
       _loadIfChanged(state.query.copyWith(status: status));
 
-  Future<void> setType(UnitType? type) => _loadIfChanged(
-    state.query.copyWith(type: type, clearType: type == null),
-  );
+  Future<void> setType(UnitType? type) =>
+      _loadIfChanged(state.query.copyWith(type: type, clearType: type == null));
 
   Future<void> _loadIfChanged(UnitListQuery query) async {
     if (state.query == query) return;
@@ -90,42 +89,38 @@ class UnitsListCubit
     rowId: id,
   );
 
-  Future<BulkResult<CatalogUnit>> bulkActivate(
-    Iterable<CatalogUnit> items,
-  ) => runBulk(
-    items: items,
-    action: (item) =>
-        _setUnitActive(SetUnitActiveParams(id: item.id, isActive: true)),
-    kind: PagedMutationKind.statusChanged,
-    successMessage: UnitsKeys.statusUpdated,
-  );
-
-  Future<BulkResult<CatalogUnit>> bulkDeactivate(
-    Iterable<CatalogUnit> items,
-  ) => runBulk(
-    items: items,
-    action: (item) =>
-        _setUnitActive(SetUnitActiveParams(id: item.id, isActive: false)),
-    kind: PagedMutationKind.statusChanged,
-    successMessage: UnitsKeys.statusUpdated,
-  );
-
-  Future<BulkResult<CatalogUnit>> bulkDelete(
-    Iterable<CatalogUnit> items,
-  ) => runBulk(
-    items: items,
-    action: (item) {
-      final rejection = beforeDelete(item);
-      return rejection == null
-          ? _deleteUnit(item.id)
-          : Future.value(Left<Failure, Unit>(rejection));
-    },
-    kind: PagedMutationKind.deleted,
-    successMessage: UnitsKeys.deleted,
-  );
-
-  Future<void> onUnitSaved({required bool isNew}) =>
-      reloadAfterMutation(
-        isNew ? PagedMutationKind.created : PagedMutationKind.updated,
+  Future<BulkResult<CatalogUnit>> bulkActivate(Iterable<CatalogUnit> items) =>
+      runBulk(
+        items: items,
+        action: (item) =>
+            _setUnitActive(SetUnitActiveParams(id: item.id, isActive: true)),
+        kind: PagedMutationKind.statusChanged,
+        successMessage: UnitsKeys.statusUpdated,
       );
+
+  Future<BulkResult<CatalogUnit>> bulkDeactivate(Iterable<CatalogUnit> items) =>
+      runBulk(
+        items: items,
+        action: (item) =>
+            _setUnitActive(SetUnitActiveParams(id: item.id, isActive: false)),
+        kind: PagedMutationKind.statusChanged,
+        successMessage: UnitsKeys.statusUpdated,
+      );
+
+  Future<BulkResult<CatalogUnit>> bulkDelete(Iterable<CatalogUnit> items) =>
+      runBulk(
+        items: items,
+        action: (item) {
+          final rejection = beforeDelete(item);
+          return rejection == null
+              ? _deleteUnit(item.id)
+              : Future.value(Left<Failure, Unit>(rejection));
+        },
+        kind: PagedMutationKind.deleted,
+        successMessage: UnitsKeys.deleted,
+      );
+
+  Future<void> onUnitSaved({required bool isNew}) => reloadAfterMutation(
+    isNew ? PagedMutationKind.created : PagedMutationKind.updated,
+  );
 }

@@ -6,6 +6,5 @@ class UnitsScreen extends StatelessWidget {
   const UnitsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      CrudListScreen(config: unitsListConfig);
+  Widget build(BuildContext context) => CrudListScreen(config: unitsListConfig);
 }

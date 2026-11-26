@@ -34,13 +34,12 @@ const _labels = CrudLabels(
   deactivateConfirmationMessage: UnitsKeys.deactivateMessage,
 );
 
-String _unitTypeLabel(BuildContext context, UnitType type) =>
-    switch (type) {
-      UnitType.weight => UnitsKeys.weight.tr(context: context),
-      UnitType.length => UnitsKeys.length.tr(context: context),
-      UnitType.volume => UnitsKeys.volume.tr(context: context),
-      UnitType.piece => UnitsKeys.piece.tr(context: context),
-    };
+String _unitTypeLabel(BuildContext context, UnitType type) => switch (type) {
+  UnitType.weight => UnitsKeys.weight.tr(context: context),
+  UnitType.length => UnitsKeys.length.tr(context: context),
+  UnitType.volume => UnitsKeys.volume.tr(context: context),
+  UnitType.piece => UnitsKeys.piece.tr(context: context),
+};
 
 CrudListConfig<CatalogUnit, UnitListQuery, UnitsListCubit, UnitsListEffect>
 get unitsListConfig => CrudListConfig(
@@ -84,50 +83,51 @@ get unitsListConfig => CrudListConfig(
     isActive: (unit) => unit.isActive,
     canDelete: (unit) => unit.usageCount == 0,
   ),
-  dataSection: (data) => CrudDataSection<CatalogUnit, UnitListQuery, UnitsListCubit>(
-    data: data,
-    columns: [
-      DataTableColumn(
-        labelKey: UnitsKeys.unitName,
-        priority: DataTableColumnPriority.primary,
-        flex: 3,
-        cellBuilder: (_, unit) => AppText.raw(unit.name),
-      ),
-      DataTableColumn(
-        labelKey: UnitsKeys.symbol,
-        priority: DataTableColumnPriority.primary,
-        cellBuilder: (_, unit) => AppText.raw(unit.symbol),
-      ),
-      DataTableColumn(
-        labelKey: UnitsKeys.type,
-        priority: DataTableColumnPriority.secondary,
-        cellBuilder: (context, unit) =>
-            AppText.raw(_unitTypeLabel(context, unit.type)),
-      ),
-      DataTableColumn(
-        labelKey: UnitsKeys.usage,
-        numeric: true,
-        priority: DataTableColumnPriority.secondary,
-        cellBuilder: (_, unit) => AppText.raw(
-          unit.usageCount?.toString() ?? UnitsKeys.unknownUsage.tr(),
+  dataSection: (data) =>
+      CrudDataSection<CatalogUnit, UnitListQuery, UnitsListCubit>(
+        data: data,
+        columns: [
+          DataTableColumn(
+            labelKey: UnitsKeys.unitName,
+            priority: DataTableColumnPriority.primary,
+            flex: 3,
+            cellBuilder: (_, unit) => AppText.raw(unit.name),
+          ),
+          DataTableColumn(
+            labelKey: UnitsKeys.symbol,
+            priority: DataTableColumnPriority.primary,
+            cellBuilder: (_, unit) => AppText.raw(unit.symbol),
+          ),
+          DataTableColumn(
+            labelKey: UnitsKeys.type,
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (context, unit) =>
+                AppText.raw(_unitTypeLabel(context, unit.type)),
+          ),
+          DataTableColumn(
+            labelKey: UnitsKeys.usage,
+            numeric: true,
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (_, unit) => AppText.raw(
+              unit.usageCount?.toString() ?? UnitsKeys.unknownUsage.tr(),
+            ),
+          ),
+        ],
+        labels: _labels,
+        statusColumn: CrudStatusColumnConfig<CatalogUnit>(
+          labelKey: UnitsKeys.status,
+          isActive: (unit) => unit.isActive,
+          badgeBuilder: (context, unit) =>
+              AppText(unit.isActive ? UnitsKeys.active : UnitsKeys.inactive),
         ),
+        cardBuilder: (context, unit) => _UnitCard(unit: unit),
+        gridBuilder: (context, unit) => _UnitCard(unit: unit),
+        icon: AppIcons.catalog,
+        emptyTitleKey: UnitsKeys.empty,
+        emptyDescriptionKey: UnitsKeys.emptyDescription,
+        noResultsTitleKey: UnitsKeys.noResults,
+        noResultsDescriptionKey: UnitsKeys.noResultsDescription,
       ),
-    ],
-    labels: _labels,
-    statusColumn: CrudStatusColumnConfig<CatalogUnit>(
-      labelKey: UnitsKeys.status,
-      isActive: (unit) => unit.isActive,
-      badgeBuilder: (context, unit) =>
-          AppText(unit.isActive ? UnitsKeys.active : UnitsKeys.inactive),
-    ),
-    cardBuilder: (context, unit) => _UnitCard(unit: unit),
-    gridBuilder: (context, unit) => _UnitCard(unit: unit),
-    icon: AppIcons.catalog,
-    emptyTitleKey: UnitsKeys.empty,
-    emptyDescriptionKey: UnitsKeys.emptyDescription,
-    noResultsTitleKey: UnitsKeys.noResults,
-    noResultsDescriptionKey: UnitsKeys.noResultsDescription,
-  ),
 );
 
 class _UnitCard extends StatelessWidget {

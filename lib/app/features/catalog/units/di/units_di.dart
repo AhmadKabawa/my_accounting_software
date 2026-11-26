@@ -25,11 +25,8 @@ void initUnitsDI() {
   sl.registerLazySingleton(() => SetUnitActiveUseCase(sl()));
   sl.registerLazySingleton(() => DeleteUnitUseCase(sl()));
   sl.registerFactory(
-    () => UnitFormCubit(
-      createUnit: sl(),
-      updateUnit: sl(),
-      flashMessages: sl(),
-    ),
+    () =>
+        UnitFormCubit(createUnit: sl(), updateUnit: sl(), flashMessages: sl()),
   );
   sl.registerFactory(
     () => UnitsListCubit(
