@@ -67,7 +67,7 @@ class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
   @override
   Future<ApiResult<UnitModel>> createUnit(UnitDraft draft) => _apiClient.post(
     UnitsEndpoint.collection,
-    data: _draftJson(draft),
+    data: _draftJson(draft, includeActiveDefault: true),
     options: Options(headers: {'Prefer': 'return=representation'}),
     fromJsonList: _single,
   );
@@ -106,10 +106,15 @@ class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
   UnitModel _single(List<dynamic> rows) =>
       PostgrestValue.single(rows, UnitModel.fromJson, what: 'unit');
 
-  Map<String, Object?> _draftJson(UnitDraft draft) => {
+  Map<String, Object?> _draftJson(
+    UnitDraft draft, {
+    bool includeActiveDefault = false,
+  }) => {
     'name': draft.name.trim(),
     'symbol': draft.symbol.trim(),
     'unit_type': draft.type.name,
-    if (draft.isActive != null) 'is_active': draft.isActive,
+    if (includeActiveDefault) 'is_active': draft.isActive ?? true,
+    if (!includeActiveDefault && draft.isActive != null)
+      'is_active': draft.isActive,
   };
 }

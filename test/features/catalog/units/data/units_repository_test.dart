@@ -76,7 +76,6 @@ void main() {
         name: 'Piece',
         symbol: 'pc',
         type: UnitType.piece,
-        isActive: true,
       ),
     );
 
