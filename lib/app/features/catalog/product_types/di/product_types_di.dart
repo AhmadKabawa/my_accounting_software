@@ -28,7 +28,10 @@ void initProductTypesDI() {
         ProductTypeLinksRepositoryImpl(sl<ProductTypeLinksRemoteDataSource>()),
   );
   sl.registerFactory(
-    () => ProductTypeDetailsCubit(repository: sl<ProductTypeLinksRepository>()),
+    () => ProductTypeDetailsCubit(
+      repository: sl<ProductTypeLinksRepository>(),
+      productTypesRepository: sl<ProductTypesRepository>(),
+    ),
   );
   sl.registerLazySingleton<ProductTypesRepository>(
     () => ProductTypesRepositoryImpl(sl<ProductTypesRemoteDataSource>()),
