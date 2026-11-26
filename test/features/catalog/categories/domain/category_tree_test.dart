@@ -132,13 +132,13 @@ void main() {
     ]);
 
     expect(tree.filtered(level: CategoryLevelFilter.roots).map((n) => n.id), [
-      1,
       4,
+      1,
     ]);
     expect(tree.filtered(level: CategoryLevelFilter.leaves).map((n) => n.id), [
+      4,
       2,
       3,
-      4,
     ]);
     expect(
       tree.filtered(usage: CategoryUsageFilter.withProducts).map((n) => n.id),
@@ -148,7 +148,7 @@ void main() {
       tree
           .filtered(usage: CategoryUsageFilter.withoutProducts)
           .map((n) => n.id),
-      [2, 4],
+      [4, 2],
     );
     expect(tree.withoutProductsCount, isNull);
     expect(tree.length, 4);
@@ -162,7 +162,7 @@ void main() {
     final tree = CategoryTree([
       _category(1, name: 'Zulu', sortOrder: 2, products: 4),
       _category(2, name: 'Alpha', sortOrder: 1, products: 0),
-      _category(3, name: 'Beta', sortOrder: 3, products: null),
+      _category(3, name: 'Beta', sortOrder: 3, products: 2),
     ]);
 
     expect(tree.withoutProductsCount, 1);
@@ -173,8 +173,14 @@ void main() {
       [2, 3],
     );
     expect(
+      tree
+          .filtered(search: 'a', sortField: CategorySortField.sortOrder)
+          .map((n) => n.id),
+      [2, 3],
+    );
+    expect(
       tree.filtered(sortField: CategorySortField.productCount).map((n) => n.id),
-      [2, 1, 3],
+      [2, 3, 1],
     );
     expect(
       tree
@@ -183,8 +189,17 @@ void main() {
             sortAscending: false,
           )
           .map((n) => n.id),
-      [1, 2, 3],
+      [1, 3, 2],
     );
+  });
+
+  test('unknown product counts keep the no-product statistic unknown', () {
+    final tree = CategoryTree([
+      _category(1, products: 0),
+      _category(2, products: null),
+    ]);
+
+    expect(tree.withoutProductsCount, isNull);
   });
 
   test(

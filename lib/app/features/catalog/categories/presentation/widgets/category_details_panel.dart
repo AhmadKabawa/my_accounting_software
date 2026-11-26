@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_details_panel/app_details_panel.dart';
@@ -18,7 +19,7 @@ class CategoryDetailsPanel extends StatelessWidget {
     required this.tree,
     required this.onClose,
     required this.onSelectChild,
-    this.width = 360,
+    this.width = AppComponentSize.cardWidth.desktop,
     this.canManage = false,
     this.onEdit,
     this.onAddChild,
@@ -60,8 +61,8 @@ class CategoryDetailsPanel extends StatelessWidget {
               if (category.image?.trim().isNotEmpty == true)
                 AppImage.network(
                   category.image!,
-                  width: 64,
-                  height: 64,
+                  width: AppComponentSize.avatarLarge.of(context),
+                  height: AppComponentSize.avatarLarge.of(context),
                   errorWidget: const AppIcon(AppIcons.brokenImage),
                 )
               else
@@ -99,7 +100,7 @@ class CategoryDetailsPanel extends StatelessWidget {
             CategoriesKeys.description,
             category.description?.trim().isNotEmpty == true
                 ? category.description!
-                : '—',
+                : CommonKeys.noValue.tr(context: context),
           ),
           _line(
             context,
@@ -114,7 +115,7 @@ class CategoryDetailsPanel extends StatelessWidget {
           _line(
             context,
             CategoriesKeys.products,
-            category.productCount?.toString() ?? '—',
+            category.productCount?.toString() ?? CommonKeys.noValue.tr(context: context),
           ),
           _line(
             context,
@@ -194,7 +195,7 @@ class CategoryDetailsPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 112,
+          width: AppComponentSize.tableColumnMin.of(context),
           child: AppText(
             label,
             type: AppTextType.bodySmall,

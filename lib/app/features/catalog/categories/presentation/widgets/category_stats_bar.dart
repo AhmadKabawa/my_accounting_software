@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_stats_bar/list_stats_bar.dart';
@@ -101,7 +103,7 @@ class CategoryStatsBar extends StatelessWidget {
         ),
         StatItem(
           labelKey: CategoriesKeys.noProductStats,
-          value: value?.withoutProductsCount?.toString() ?? '—',
+          value: value?.withoutProductsCount?.toString() ?? CommonKeys.noValue.tr(context: context),
           icon: AppIcons.info,
           tone: AppBadgeTone.neutral,
           filter: CategoryStatsFilter.withoutProducts,

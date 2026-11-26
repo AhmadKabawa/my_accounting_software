@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
@@ -32,7 +34,7 @@ class CategoryCard extends StatelessWidget {
             children: [
               const AppText(CategoriesKeys.products),
               context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
-              AppText.raw(node.category.productCount?.toString() ?? '—'),
+              AppText.raw(node.category.productCount?.toString() ?? CommonKeys.noValue.tr(context: context)),
             ],
           ),
           Row(

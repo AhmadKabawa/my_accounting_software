@@ -297,7 +297,10 @@ void main() {
     _listCubit(tester).collapseAll();
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).first);
+    final rootActions = find.byTooltip(CatalogUiKeys.moreActions.en).first;
+    await tester.ensureVisible(rootActions);
+    await tester.pumpAndSettle();
+    await tester.tap(rootActions);
     await tester.pumpAndSettle();
     await tester.tap(find.text(CategoriesKeys.addChild.en));
     await tester.pumpAndSettle();
@@ -459,7 +462,10 @@ void main() {
 
     await tester.tap(find.text(CategoriesKeys.add.en).first);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(CategoriesKeys.uploadImage.en));
+    final uploadButton = find.bySemanticsLabel(CategoriesKeys.uploadImage.en);
+    await tester.ensureVisible(uploadButton);
+    await tester.pumpAndSettle();
+    await tester.tap(uploadButton);
     await tester.pumpAndSettle();
 
     expect(repository.uploadCalls, 1);
@@ -497,7 +503,10 @@ void main() {
 
     await tester.tap(find.text(CategoriesKeys.add.en).first);
     await tester.pumpAndSettle();
-    await tester.tap(find.bySemanticsLabel(CategoriesKeys.uploadImage.en));
+    final uploadButton = find.bySemanticsLabel(CategoriesKeys.uploadImage.en);
+    await tester.ensureVisible(uploadButton);
+    await tester.pumpAndSettle();
+    await tester.tap(uploadButton);
     await tester.pumpAndSettle();
 
     expect(repository.uploadCalls, 1);
@@ -547,7 +556,7 @@ void main() {
       await tester.pumpAndSettle();
       final before = repository.getAllCalls;
 
-      await tester.tap(find.text(CategoriesKeys.activeCategories.en));
+      await tester.tap(find.text(CategoriesKeys.activeCategories.en).first);
       await tester.pumpAndSettle();
 
       expect(
