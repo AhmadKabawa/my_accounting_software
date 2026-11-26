@@ -19,6 +19,8 @@ class FakeCategoriesRepository implements CategoriesRepository {
   Either<Failure, Category>? updateResult;
   CategoryDraft? lastCreatedDraft;
   CategoryDraft? lastUpdatedDraft;
+  int uploadCalls = 0;
+  Either<Failure, String>? uploadImageResult;
 
   @override
   Future<Either<Failure, List<Category>>> getAll() async {
@@ -70,8 +72,11 @@ class FakeCategoriesRepository implements CategoriesRepository {
   }
 
   @override
-  Future<Either<Failure, String>> uploadImage(ImageUpload image) async =>
-      const Right('https://cdn.example.test/categories/image.webp');
+  Future<Either<Failure, String>> uploadImage(ImageUpload image) async {
+    uploadCalls++;
+    return uploadImageResult ??
+        const Right('https://cdn.example.test/categories/image.webp');
+  }
 
   @override
   Future<Either<Failure, Unit>> setActive({
