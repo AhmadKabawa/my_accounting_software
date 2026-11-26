@@ -24,5 +24,5 @@ enum ProductTypeFailureKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'catalog.productTypes.failures.$name';
+  String get key => 'producttypefailures.$name';
 }
