@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -172,6 +173,25 @@ get categoriesListConfig => CrudListConfig(
                     : null,
                 showPathForDeep: true,
               ),
+            ),
+            DataTableColumn<CategoryNode>(
+              labelKey: CategoriesKeys.products,
+              numeric: true,
+              priority: DataTableColumnPriority.secondary,
+              cellBuilder: (context, node) => node.category.productCount == null
+                  ? const AppText(CommonKeys.noValue)
+                  : AppText.raw(node.category.productCount.toString()),
+            ),
+            DataTableColumn<CategoryNode>(
+              labelKey: CategoriesKeys.updatedAt,
+              priority: DataTableColumnPriority.secondary,
+              cellBuilder: (context, node) => node.category.updatedAt == null
+                  ? const AppText(CommonKeys.noValue)
+                  : AppText.raw(
+                      MaterialLocalizations.of(context).formatShortDate(
+                        node.category.updatedAt!,
+                      ),
+                    ),
             ),
             DataTableColumn<CategoryNode>(
               labelKey: CategoriesKeys.description,
