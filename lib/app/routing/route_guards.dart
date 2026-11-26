@@ -15,9 +15,6 @@ import 'package:accounting_software/app/features/catalog/tags/presentation/routi
 import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
-import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
-import 'package:accounting_software/app/features/catalog/attributes/presentation/routing/attributes_routes.dart';
 
 Set<String> buildPublicRoutes({
   bool signupEnabled = AppConfig.signupEnabled,
@@ -44,11 +41,11 @@ final Set<String> protectedRoutes = {
   BrandsRoutes.brands.path,
   ColorsRoutes.colors.path,
   CategoriesRoutes.categories.path,
+  TagsRoutes.tags.path,
+  SportsRoutes.sports.path,
   UnitsRoutes.units.path,
   OptionSetsRoutes.optionSets.path,
   AttributesRoutes.attributes.path,
-  TagsRoutes.tags.path,
-  SportsRoutes.sports.path,
   CatalogRoutes.hub.path,
   CatalogRoutes.masterData.path,
 };
