@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
+
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/base/use_case.dart';
@@ -42,6 +44,11 @@ class CategoriesListCubit
   final DeleteCategoryUseCase _deleteCategory;
 
   CategoryTree? _tree;
+  final ValueNotifier<int?> selectedId = ValueNotifier(null);
+
+  void selectDetails(int? id) {
+    if (selectedId.value != id) selectedId.value = id;
+  }
 
   /// The loaded tree, for the editor's parent picker. Null before first load.
   CategoryTree? get tree => _tree;
@@ -58,7 +65,12 @@ class CategoriesListCubit
       tree = CategoryTree(response.getOrElse(() => const []));
       _tree = tree;
     }
-    return Right(_project(tree, query));
+    final result = _project(tree, query);
+    final selected = selectedId.value;
+    if (selected != null && !result.items.any((row) => row.id == selected)) {
+      selectedId.value = null;
+    }
+    return Right(result);
   }
 
   PagedResult<CategoryNode> _project(
@@ -98,10 +110,15 @@ class CategoriesListCubit
     final tree = _tree;
     if (tree == null) return;
     selection.clear();
+    final projected = _project(tree, query);
+    final selected = selectedId.value;
+    if (selected != null && !projected.items.any((row) => row.id == selected)) {
+      selectedId.value = null;
+    }
     emit(
       state.copyWith(
         query: query,
-        result: _project(tree, query),
+        result: projected,
         status: PagedListStatus.ready,
         clearFailure: true,
       ),
@@ -276,6 +293,12 @@ class CategoriesListCubit
         flashFailure: true,
         rowId: id,
       );
+
+  @override
+  Future<void> close() {
+    selectedId.dispose();
+    return super.close();
+  }
 
   Future<void> onCategorySaved({required bool isNew}) {
     _tree = null;
