@@ -18,6 +18,8 @@ abstract final class AppIcons {
   static const brands = AppIconData.material(Icons.sell_outlined);
   static const colors = AppIconData.material(Icons.palette_outlined);
   static const catalog = AppIconData.material(Icons.category_outlined);
+  static const sports = AppIconData.material(Icons.sports_soccer_outlined);
+  static const tags = AppIconData.material(Icons.label_outline);
   static const add = AppIconData.material(Icons.add);
 
   static const sale = AppIconData.material(Icons.receipt_long_outlined);

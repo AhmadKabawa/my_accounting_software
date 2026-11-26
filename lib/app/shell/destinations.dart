@@ -4,6 +4,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_navigation_bar/app_navigation_bar.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 
 /// One place the shell can go to: what to show ([item], the model shared by
@@ -59,6 +61,16 @@ const appDestinations = [
           label: CategoriesKeys.title,
           icon: AppIcons.catalog,
           path: '/catalog/categories',
+        ),
+        NavBarChild(
+          label: TagsKeys.title,
+          icon: AppIcons.tags,
+          path: '/catalog/tags',
+        ),
+        NavBarChild(
+          label: SportsKeys.title,
+          icon: AppIcons.sports,
+          path: '/catalog/sports',
         ),
       ],
     ),
