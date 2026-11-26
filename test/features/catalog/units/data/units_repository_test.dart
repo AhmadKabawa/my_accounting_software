@@ -72,11 +72,7 @@ void main() {
 
   test('create omits conversion fields and sends active state', () async {
     await repository.createUnit(
-      const UnitDraft(
-        name: 'Piece',
-        symbol: 'pc',
-        type: UnitType.piece,
-      ),
+      const UnitDraft(name: 'Piece', symbol: 'pc', type: UnitType.piece),
     );
 
     final request = api.lastRequest;
