@@ -37,9 +37,6 @@ List<RouteItem> buildRouteRegistry({
   ...CategoriesRoutes.all,
   ...TagsRoutes.all,
   ...SportsRoutes.all,
-  ...UnitsRoutes.all,
-  ...OptionSetsRoutes.all,
-  ...AttributesRoutes.all,
 ];
 
 /// Routes used by the running application.
