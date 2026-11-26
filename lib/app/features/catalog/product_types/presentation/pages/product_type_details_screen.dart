@@ -66,7 +66,13 @@ class _ProductTypeDetailsBody extends StatelessWidget {
                     ? Directionality(
                         textDirection: TextDirection.ltr,
                         child: AppText.raw(
-                          '${state.productType.name} · ${state.productType.code}',
+                          ProductTypesKeys.detailSubtitle.tr(
+                            context: context,
+                            namedArgs: {
+                              'name': state.productType.name,
+                              'code': state.productType.code,
+                            },
+                          ),
                         ),
                       )
                     : null,
