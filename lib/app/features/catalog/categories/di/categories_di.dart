@@ -1,5 +1,6 @@
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
+import 'package:accounting_software/app/core/network/storage/storage_image_uploader.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/datasources/categories_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/datasources/categories_remote_data_source_impl.dart';
@@ -12,6 +13,7 @@ import 'package:accounting_software/app/features/catalog/categories/domain/useca
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/get_categories_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/set_category_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/update_category_use_case.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/usecase/upload_category_image_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/categories_list/categories_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 
@@ -25,7 +27,10 @@ class CategoryFormArgs {
 
 void initCategoriesDI() {
   sl.registerLazySingleton<CategoriesRemoteDataSource>(
-    () => CategoriesRemoteDataSourceImpl(sl<IApiClient>()),
+    () => CategoriesRemoteDataSourceImpl(
+      sl<IApiClient>(),
+      sl<StorageImageUploader>(),
+    ),
   );
   sl.registerLazySingleton<CategoriesRepository>(
     () => CategoriesRepositoryImpl(sl<CategoriesRemoteDataSource>()),
@@ -36,6 +41,7 @@ void initCategoriesDI() {
   sl.registerLazySingleton(() => UpdateCategoryUseCase(sl()));
   sl.registerLazySingleton(() => SetCategoryActiveUseCase(sl()));
   sl.registerLazySingleton(() => DeleteCategoryUseCase(sl()));
+  sl.registerLazySingleton(() => UploadCategoryImageUseCase(sl()));
 
   sl.registerFactory(
     () => CategoriesListCubit(
