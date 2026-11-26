@@ -143,10 +143,7 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
       editLabelKey: labels.edit,
       onEdit: flows == null ? null : () => flows.edit(context, item: row),
       deleteLabelKey: showDelete && !hideDelete ? labels.delete : null,
-      onDelete:
-          flows != null &&
-              flows.hasDelete &&
-              canDelete
+      onDelete: flows != null && flows.hasDelete && canDelete
           ? () => flows.deleteItem(context, row)
           : null,
       duplicateLabelKey: flows == null ? null : duplicateKey,
