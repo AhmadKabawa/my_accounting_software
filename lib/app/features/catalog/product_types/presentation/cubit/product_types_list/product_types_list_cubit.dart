@@ -12,10 +12,13 @@ import 'package:accounting_software/app/features/catalog/product_types/domain/re
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_types_list/product_types_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 
-class ProductTypesListCubit extends PagedListCubit<
-    ProductType,
-    ProductTypeListQuery,
-    ProductTypesListEffect> {
+class ProductTypesListCubit
+    extends
+        PagedListCubit<
+          ProductType,
+          ProductTypeListQuery,
+          ProductTypesListEffect
+        > {
   ProductTypesListCubit({
     required ProductTypesRepository repository,
     required super.flashMessages,
@@ -78,8 +81,7 @@ class ProductTypesListCubit extends PagedListCubit<
     rowId: id,
   );
 
-  Future<void> onProductTypeSaved({required bool isNew}) =>
-      reloadAfterMutation(
-        isNew ? PagedMutationKind.created : PagedMutationKind.updated,
-      );
+  Future<void> onProductTypeSaved({required bool isNew}) => reloadAfterMutation(
+    isNew ? PagedMutationKind.created : PagedMutationKind.updated,
+  );
 }

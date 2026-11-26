@@ -12,8 +12,7 @@ import 'package:accounting_software/app/features/catalog/product_types/data/mode
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_draft.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_list_query.dart';
 
-class ProductTypesRemoteDataSourceImpl
-    implements ProductTypesRemoteDataSource {
+class ProductTypesRemoteDataSourceImpl implements ProductTypesRemoteDataSource {
   ProductTypesRemoteDataSourceImpl(this._apiClient);
 
   final IApiClient _apiClient;
@@ -63,8 +62,10 @@ class ProductTypesRemoteDataSourceImpl
       'order': ProductTypeEndpoints.order,
       if (search.isNotEmpty)
         'or': '(name.ilike."*$search*",code.ilike."*$search*")',
-      if (query.status == ProductTypeStatusFilter.active) 'is_active': 'eq.true',
-      if (query.status == ProductTypeStatusFilter.inactive) 'is_active': 'eq.false',
+      if (query.status == ProductTypeStatusFilter.active)
+        'is_active': 'eq.true',
+      if (query.status == ProductTypeStatusFilter.inactive)
+        'is_active': 'eq.false',
     },
   );
 
@@ -108,8 +109,11 @@ class ProductTypesRemoteDataSourceImpl
     options: Options(headers: {'Prefer': 'return=minimal'}),
   );
 
-  ProductTypeModel _single(List<dynamic> rows) =>
-      PostgrestValue.single(rows, ProductTypeModel.fromJson, what: 'product type');
+  ProductTypeModel _single(List<dynamic> rows) => PostgrestValue.single(
+    rows,
+    ProductTypeModel.fromJson,
+    what: 'product type',
+  );
 
   Map<String, dynamic> _draftJson(ProductTypeDraft draft) => {
     'name': draft.name.trim(),

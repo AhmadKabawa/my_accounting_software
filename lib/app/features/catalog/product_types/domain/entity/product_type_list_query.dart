@@ -32,11 +32,8 @@ class ProductTypeListQuery extends Equatable
   ProductTypeListQuery withPage(int value) => copyWith(page: value);
 
   @override
-  ProductTypeListQuery cleared() => copyWith(
-    search: '',
-    status: ProductTypeStatusFilter.all,
-    page: 1,
-  );
+  ProductTypeListQuery cleared() =>
+      copyWith(search: '', status: ProductTypeStatusFilter.all, page: 1);
 
   ProductTypeListQuery withStatus(ProductTypeStatusFilter value) =>
       status == value ? this : copyWith(status: value, page: 1);

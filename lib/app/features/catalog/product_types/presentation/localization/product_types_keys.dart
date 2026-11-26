@@ -35,10 +35,19 @@ enum ProductTypesKeys implements AppKey {
     ar: 'غيّر عبارة البحث أو فلتر الحالة ثم حاول مجدداً.',
     en: 'Change the search term or status filter and try again.',
   ),
-  loadError(ar: 'تعذر تحميل أنواع المنتجات', en: 'Could not load product types'),
+  loadError(
+    ar: 'تعذر تحميل أنواع المنتجات',
+    en: 'Could not load product types',
+  ),
   required(ar: 'هذا الحقل مطلوب', en: 'This field is required'),
-  nameTooLong(ar: 'يجب ألا يتجاوز الاسم 150 حرفاً.', en: 'Name must be 150 characters or fewer.'),
-  codeTooLong(ar: 'يجب ألا يتجاوز الرمز 50 حرفاً.', en: 'Code must be 50 characters or fewer.'),
+  nameTooLong(
+    ar: 'يجب ألا يتجاوز الاسم 150 حرفاً.',
+    en: 'Name must be 150 characters or fewer.',
+  ),
+  codeTooLong(
+    ar: 'يجب ألا يتجاوز الرمز 50 حرفاً.',
+    en: 'Code must be 50 characters or fewer.',
+  ),
   sortOrderInvalid(ar: 'أدخل عدداً صحيحاً.', en: 'Enter a whole number.'),
   codeLocked(
     ar: 'لا يمكن تغيير الرمز بعد استخدام النوع أو تعذر التحقق من ارتباطاته.',
@@ -50,7 +59,10 @@ enum ProductTypesKeys implements AppKey {
   activate(ar: 'إعادة تفعيل', en: 'Reactivate'),
   deactivate(ar: 'إيقاف', en: 'Deactivate'),
   deleteTitle(ar: 'حذف نوع المنتج', en: 'Delete product type'),
-  deleteMessage(ar: 'هل تريد حذف نوع المنتج {name}؟', en: 'Delete product type {name}?'),
+  deleteMessage(
+    ar: 'هل تريد حذف نوع المنتج {name}؟',
+    en: 'Delete product type {name}?',
+  ),
   deactivateTitle(ar: 'إيقاف نوع المنتج', en: 'Deactivate product type'),
   deactivateMessage(
     ar: 'سيبقى النوع والمنتجات الحالية مرتبطة به، ولن يظهر للاختيارات الجديدة.',
@@ -79,10 +91,19 @@ enum ProductTypesKeys implements AppKey {
   isRequired(ar: 'إلزامية', en: 'Required'),
   gender(ar: 'الجنس', en: 'Gender'),
   sortOrder(ar: 'الترتيب', en: 'Order'),
-  noSizeGroups(ar: 'لا مجموعة مقاسات لهذا النوع', en: 'No size groups for this type'),
+  noSizeGroups(
+    ar: 'لا مجموعة مقاسات لهذا النوع',
+    en: 'No size groups for this type',
+  ),
   noAttributes(ar: 'لا خصائص لهذا النوع', en: 'No attributes for this type'),
-  noOptionSets(ar: 'لا مجموعات خيارات لهذا النوع', en: 'No option sets for this type'),
-  noAvailableOptions(ar: 'لا توجد خيارات نشطة متاحة للربط', en: 'No active options are available to link'),
+  noOptionSets(
+    ar: 'لا مجموعات خيارات لهذا النوع',
+    en: 'No option sets for this type',
+  ),
+  noAvailableOptions(
+    ar: 'لا توجد خيارات نشطة متاحة للربط',
+    en: 'No active options are available to link',
+  ),
   removeLinkConfirmation(
     ar: 'سيُحذف صف الربط فقط ولن تتأثر المنتجات الموجودة. هل تريد المتابعة؟',
     en: 'Only the link row will be removed; existing products will not change. Continue?',

@@ -36,8 +36,9 @@ class ProductTypesRepositoryImpl
           isFromCache: data.isFromCache,
         ),
       ),
-      ApiFailure<PaginatedResult<ProductTypeModel>>(:final exception) =>
-        Left(ExceptionMapper.map(exception)),
+      ApiFailure<PaginatedResult<ProductTypeModel>>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
@@ -75,7 +76,9 @@ class ProductTypesRepositoryImpl
     final result = await _remote.setActive(id: id, isActive: isActive);
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<Unit>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 

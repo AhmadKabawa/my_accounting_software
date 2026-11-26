@@ -16,7 +16,8 @@ final class ProductTypesMutatedEffect extends ProductTypesListEffect {
       ProductTypesMutatedEffect(switch (kind) {
         PagedMutationKind.created => ProductTypeMutationKind.created,
         PagedMutationKind.updated => ProductTypeMutationKind.updated,
-        PagedMutationKind.statusChanged => ProductTypeMutationKind.statusChanged,
+        PagedMutationKind.statusChanged =>
+          ProductTypeMutationKind.statusChanged,
         PagedMutationKind.deleted => ProductTypeMutationKind.deleted,
       });
 

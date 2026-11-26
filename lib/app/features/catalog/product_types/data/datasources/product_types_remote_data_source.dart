@@ -17,10 +17,7 @@ abstract interface class ProductTypesRemoteDataSource {
     required ProductTypeDraft draft,
   });
 
-  Future<ApiResult<Unit>> setActive({
-    required int id,
-    required bool isActive,
-  });
+  Future<ApiResult<Unit>> setActive({required int id, required bool isActive});
 
   Future<ApiResult<Unit>> delete(int id);
 }
