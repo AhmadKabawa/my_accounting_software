@@ -96,10 +96,7 @@ class FakeCatalogApiClient extends Fake implements IApiClient {
     );
   }
 
-  Map<String, dynamic> _project(
-    Map<String, dynamic> row,
-    String select,
-  ) {
+  Map<String, dynamic> _project(Map<String, dynamic> row, String select) {
     final projected = Map<String, dynamic>.of(row);
     if (!select.contains('product_variants(count)')) {
       projected.remove('product_variants');
