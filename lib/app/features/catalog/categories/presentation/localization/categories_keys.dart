@@ -20,11 +20,15 @@ enum CategoriesKeys implements AppKey {
   ),
   regenerateSlug(ar: 'توليد من الاسم', en: 'Generate from name'),
   description(ar: 'الوصف', en: 'Description'),
-  image(ar: 'رابط الصورة', en: 'Image URL'),
-  imageHint(
-    ar: 'اختياري، رابط يبدأ بـ http أو https.',
-    en: 'Optional, a link starting with http or https.',
+  imageSection(ar: 'صورة التصنيف', en: 'Category image'),
+  uploadImage(ar: 'رفع الصورة', en: 'Upload image'),
+  replaceImage(ar: 'استبدال الصورة', en: 'Replace image'),
+  removeImage(ar: 'إزالة الصورة', en: 'Remove image'),
+  imageUploadPermission(
+    ar: 'رفضت سياسة Storage رفع الصورة. يلزم منح masterdata.manage صلاحية الكتابة على مجلد categories داخل product-images.',
+    en: 'Storage rejected this upload. The categories folder in product-images needs a write policy for masterdata.manage.',
   ),
+  duplicateSuffix(ar: 'نسخة', en: 'Copy'),
   sortOrder(ar: 'ترتيب الظهور (اختياري)', en: 'Display order (optional)'),
   sortOrderHint(
     ar: 'الأصغر أولاً بين التصنيفات التي تحت الأب نفسه.',
