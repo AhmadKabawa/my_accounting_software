@@ -599,6 +599,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.text('Root › Child'), findsOneWidget);
     await tester.tap(find.text('Root').first);
     await tester.pumpAndSettle();
 

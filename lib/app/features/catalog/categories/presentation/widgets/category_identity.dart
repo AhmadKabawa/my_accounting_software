@@ -16,16 +16,19 @@ class CategoryIdentity extends StatelessWidget {
     required this.node,
     this.onToggle,
     this.showPathForDeep = false,
+    this.showFullPath = false,
   });
 
   final CategoryNode node;
   final VoidCallback? onToggle;
   final bool showPathForDeep;
+  final bool showFullPath;
 
   @override
   Widget build(BuildContext context) {
     final category = node.category;
-    final showPath = node.flat || (showPathForDeep && node.depth > 4);
+    final showPath =
+        node.flat || showFullPath || (showPathForDeep && node.depth > 4);
     final path = [...node.ancestors, category.name].join(' › ');
     final badge = AppBadge(
       label: CategoriesKeys.childrenCount,

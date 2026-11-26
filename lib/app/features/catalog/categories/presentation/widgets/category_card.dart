@@ -16,7 +16,12 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      CategoryIdentity(node: node, onToggle: onToggle, showPathForDeep: true),
+      CategoryIdentity(
+        node: node,
+        onToggle: onToggle,
+        showPathForDeep: true,
+        showFullPath: true,
+      ),
       context.ui.spacing.gap(AppSpacing.sm),
       Wrap(
         spacing: context.ui.spacing.md,
