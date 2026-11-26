@@ -9,6 +9,7 @@ enum CategoriesKeys implements AppKey {
   add(ar: 'إضافة تصنيف', en: 'Add category'),
   addChild(ar: 'إضافة تصنيف فرعي', en: 'Add subcategory'),
   edit(ar: 'تعديل التصنيف', en: 'Edit category'),
+  duplicate(ar: 'نسخ التصنيف', en: 'Duplicate category'),
   // `name` would shadow the enum value-name lookup used by the key getter.
   categoryName(ar: 'اسم التصنيف', en: 'Category name'),
   parent(ar: 'التصنيف الأب', en: 'Parent category'),
