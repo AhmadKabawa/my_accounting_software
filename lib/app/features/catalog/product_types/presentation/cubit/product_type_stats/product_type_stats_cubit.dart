@@ -53,16 +53,12 @@ class ProductTypeStatsCubit extends BaseCubit<ProductTypeStatsState, void> {
     }
 
     if (isClosed || version != _requestVersion) return;
-    final unknownUsage = items.any((item) => item.productCount == null);
     emit(
       ProductTypeStatsLoaded(
         ProductTypeStats(
           total: page.totalCount,
           active: items.where((item) => item.isActive).length,
           inactive: items.where((item) => !item.isActive).length,
-          withoutProducts: unknownUsage
-              ? null
-              : items.where((item) => item.productCount == 0).length,
         ),
       ),
     );
