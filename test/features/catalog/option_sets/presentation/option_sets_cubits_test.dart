@@ -36,71 +36,80 @@ void main() {
 
     tearDown(() async => cubit.close());
 
-    test('status and sort changes reset pagination and reload server query', () async {
-      await cubit.load();
-      await cubit.setPage(4);
-      await cubit.setStatus(OptionSetStatusFilter.active);
+    test(
+      'status and sort changes reset pagination and reload server query',
+      () async {
+        await cubit.load();
+        await cubit.setPage(4);
+        await cubit.setStatus(OptionSetStatusFilter.active);
 
-      expect(cubit.state.query.page, 1);
-      expect(cubit.state.query.status, OptionSetStatusFilter.active);
-      expect(repository.queries.last.page, 1);
-      expect(repository.queries.last.status, OptionSetStatusFilter.active);
+        expect(cubit.state.query.page, 1);
+        expect(cubit.state.query.status, OptionSetStatusFilter.active);
+        expect(repository.queries.last.page, 1);
+        expect(repository.queries.last.status, OptionSetStatusFilter.active);
 
-      await cubit.setPage(3);
-      await cubit.setSort(false);
-      expect(cubit.state.query.page, 1);
-      expect(cubit.state.query.sortAscending, isFalse);
-    });
+        await cubit.setPage(3);
+        await cubit.setSort(false);
+        expect(cubit.state.query.page, 1);
+        expect(cubit.state.query.sortAscending, isFalse);
+      },
+    );
 
-    test('delete is rejected when either relationship count is unknown', () async {
-      final result = await cubit.delete(
-        const OptionSet(
-          id: 7,
-          name: 'Size',
-          code: 'SIZE',
-          selectionType: OptionSelectionType.single,
-          isActive: true,
-          options: [],
-          usageCount: 0,
-          optionCount: null,
-        ),
-      );
+    test(
+      'delete is rejected when either relationship count is unknown',
+      () async {
+        final result = await cubit.delete(
+          const OptionSet(
+            id: 7,
+            name: 'Size',
+            code: 'SIZE',
+            selectionType: OptionSelectionType.single,
+            isActive: true,
+            options: [],
+            usageCount: 0,
+            optionCount: null,
+          ),
+        );
 
-      expect(result.isLeft(), isTrue);
-      expect(repository.deleteCalls, 0);
-    });
+        expect(result.isLeft(), isTrue);
+        expect(repository.deleteCalls, 0);
+      },
+    );
   });
 
   group('OptionSetOptionsCubit', () {
-    test('loads lazily and refreshes after create and active mutations', () async {
-      final repository = _FakeOptionSetsRepository();
-      final cubit = OptionSetOptionsCubit(
-        getOptions: GetOptionsUseCase(repository),
-        createOption: CreateOptionUseCase(repository),
-        updateOption: UpdateOptionUseCase(repository),
-        setOptionActive: SetOptionActiveUseCase(repository),
-      );
-      addTearDown(cubit.close);
+    test(
+      'loads lazily and refreshes after create and active mutations',
+      () async {
+        final repository = _FakeOptionSetsRepository();
+        final cubit = OptionSetOptionsCubit(
+          getOptions: GetOptionsUseCase(repository),
+          createOption: CreateOptionUseCase(repository),
+          updateOption: UpdateOptionUseCase(repository),
+          setOptionActive: SetOptionActiveUseCase(repository),
+        );
+        addTearDown(cubit.close);
 
-      expect(repository.getOptionsCalls, 0);
-      await cubit.load(12);
-      expect(cubit.state.status, OptionSetOptionsStatus.ready);
-      expect(repository.getOptionsCalls, 1);
+        expect(repository.getOptionsCalls, 0);
+        await cubit.load(12);
+        expect(cubit.state.status, OptionSetOptionsStatus.ready);
+        expect(repository.getOptionsCalls, 1);
 
-      await cubit.saveOption(
-        draft: const CatalogOptionDraft(
-          name: 'Large',
-          code: 'L',
-          sortOrder: 2,
-        ),
-      );
-      expect(repository.createdOptionSetIds, [12]);
-      expect(repository.getOptionsCalls, 2);
+        await cubit.saveOption(
+          draft: const CatalogOptionDraft(
+            name: 'Large',
+            code: 'L',
+            sortOrder: 2,
+          ),
+        );
+        expect(repository.createdOptionSetIds, [12]);
+        expect(repository.getOptionsCalls, 2);
 
-      await cubit.setActive(optionId: 41, isActive: false);
-      expect(repository.optionActiveChanges, [(41, false)]);
-      expect(repository.getOptionsCalls, 3);
-    });
+        await cubit.setActive(optionId: 41, isActive: false);
+        expect(repository.optionActiveChanges, [(41, false)]);
+        expect(repository.getOptionsCalls, 3);
+      },
+    );
   });
 }
 
@@ -159,8 +168,9 @@ class _FakeOptionSetsRepository implements OptionSetsRepository {
   }
 
   @override
-  Future<Either<Failure, OptionSet>> createOptionSet(OptionSetDraft draft) async =>
-      const Right(_set);
+  Future<Either<Failure, OptionSet>> createOptionSet(
+    OptionSetDraft draft,
+  ) async => const Right(_set);
 
   @override
   Future<Either<Failure, OptionSet>> updateOptionSet({
