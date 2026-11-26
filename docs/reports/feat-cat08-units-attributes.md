@@ -172,3 +172,8 @@ Status: partial implementation; not merge-ready.
 ### Follow-up verification note
 - Run 45908472416: Auto-format succeeded, but Analyze found two implementation errors (the options dialog used an unsupported Wrap parameter and the shared CRUD data context made its new BuildContext field required for existing callers). It also reported two unused imports.
 - Corrected the dialog layout, registered the options Cubit in DI, removed unused imports, and made the CRUD data context optional for existing callers while the CRUD screen supplies it. A fresh CI run is required to verify these corrections and the Option Sets additions.
+
+
+### Option Sets UI architecture follow-up
+- Run 45909021118: Auto-format and Analyze succeeded. Tests reported 1320 passed and 14 failed: 12 existing Categories failures plus two CAT-08 architecture gates in the option editor (raw Material controls and un-tokenized dimensions).
+- Reworked the option editor to use AppTextField, AppButton, AppIconButton, AppIcons and responsive spacing/component-size tokens. The updated editor is pushed; a fresh CI run is needed to verify the architecture gates and full suite.
