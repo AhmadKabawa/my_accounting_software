@@ -16,7 +16,7 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
     required ProductTypesRepository productTypesRepository,
   }) : _repository = repository,
        _productTypesRepository = productTypesRepository,
-      super(const ProductTypeDetailsInitial());
+       super(const ProductTypeDetailsInitial());
 
   final ProductTypeLinksRepository _repository;
   final ProductTypesRepository _productTypesRepository;
@@ -63,7 +63,9 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
 
     emit(
       ProductTypeDetailsLoaded(
-        productType: productType.getOrElse(() => throw StateError('Unreachable')),
+        productType: productType.getOrElse(
+          () => throw StateError('Unreachable'),
+        ),
         productTypeId: productTypeId,
         sizeGroups: sizeGroups.getOrElse(() => const []),
         attributes: attributes.getOrElse(() => const []),

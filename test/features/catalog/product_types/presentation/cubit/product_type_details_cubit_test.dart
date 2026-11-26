@@ -48,29 +48,31 @@ void main() {
     links.sizeGroups = [_sizeGroup(id: 1, genderId: null, isDefault: true)];
     await cubit.load(9);
 
-    await cubit.addSizeGroup(
-      sizeGroupId: 22,
-      genderId: null,
-      isDefault: true,
-    );
+    await cubit.addSizeGroup(sizeGroupId: 22, genderId: null, isDefault: true);
 
     final state = cubit.state as ProductTypeDetailsLoaded;
-    expect(state.updateFailure, isA<ProductTypeDefaultSizeGroupConflictFailure>());
+    expect(
+      state.updateFailure,
+      isA<ProductTypeDefaultSizeGroupConflictFailure>(),
+    );
     expect(links.createSizeGroupCalls, 0);
   });
 
-  test('checks published products before making an attribute required', () async {
-    await cubit.load(9);
+  test(
+    'checks published products before making an attribute required',
+    () async {
+      await cubit.load(9);
 
-    await cubit.addAttribute(attributeId: 44, isRequired: true);
+      await cubit.addAttribute(attributeId: 44, isRequired: true);
 
-    final countIndex = links.calls.indexOf('published-count');
-    final createIndex = links.calls.indexOf('create-attribute');
-    expect(countIndex, greaterThanOrEqualTo(0));
-    expect(createIndex, greaterThan(countIndex));
-    final state = cubit.state as ProductTypeDetailsLoaded;
-    expect(state.publishedProductCount, 6);
-  });
+      final countIndex = links.calls.indexOf('published-count');
+      final createIndex = links.calls.indexOf('create-attribute');
+      expect(countIndex, greaterThanOrEqualTo(0));
+      expect(createIndex, greaterThan(countIndex));
+      final state = cubit.state as ProductTypeDetailsLoaded;
+      expect(state.publishedProductCount, 6);
+    },
+  );
 }
 
 ProductType _type() => const ProductType(
@@ -109,12 +111,7 @@ class _FakeTypesRepository implements ProductTypesRepository {
   Future<Either<Failure, PaginatedResult<ProductType>>> getPage(
     ProductTypeListQuery query,
   ) async => const Right(
-    PaginatedResult(
-      items: [],
-      totalCount: 0,
-      currentPage: 1,
-      totalPages: 0,
-    ),
+    PaginatedResult(items: [], totalCount: 0, currentPage: 1, totalPages: 0),
   );
 
   @override
@@ -158,23 +155,25 @@ class _FakeLinksRepository implements ProductTypeLinksRepository {
   ) async => const Right([]);
 
   @override
-  Future<Either<Failure, List<ProductTypeLinkOption>>> getSizeGroupOptions() async =>
-      const Right([]);
+  Future<Either<Failure, List<ProductTypeLinkOption>>>
+  getSizeGroupOptions() async => const Right([]);
 
   @override
-  Future<Either<Failure, List<ProductTypeLinkOption>>> getAttributeOptions() async =>
-      const Right([]);
+  Future<Either<Failure, List<ProductTypeLinkOption>>>
+  getAttributeOptions() async => const Right([]);
 
   @override
-  Future<Either<Failure, List<ProductTypeLinkOption>>> getOptionSetOptions() async =>
-      const Right([]);
+  Future<Either<Failure, List<ProductTypeLinkOption>>>
+  getOptionSetOptions() async => const Right([]);
 
   @override
-  Future<Either<Failure, List<ProductTypeLinkOption>>> getGenderOptions() async =>
-      const Right([]);
+  Future<Either<Failure, List<ProductTypeLinkOption>>>
+  getGenderOptions() async => const Right([]);
 
   @override
-  Future<Either<Failure, Unit>> createSizeGroupLink(Map<String, dynamic> body) async {
+  Future<Either<Failure, Unit>> createSizeGroupLink(
+    Map<String, dynamic> body,
+  ) async {
     createSizeGroupCalls++;
     return const Right(unit);
   }
@@ -229,7 +228,9 @@ class _FakeLinksRepository implements ProductTypeLinksRepository {
   ) async => const Right(unit);
 
   @override
-  Future<Either<Failure, int>> getPublishedProductCount(int productTypeId) async {
+  Future<Either<Failure, int>> getPublishedProductCount(
+    int productTypeId,
+  ) async {
     calls.add('published-count');
     return const Right(6);
   }

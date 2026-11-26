@@ -75,17 +75,20 @@ void main() {
     expect(cubit.state.result?.items.single.name, 'Boots');
   });
 
-  test('delete is rejected for unknown or linked usage before API call', () async {
-    final unknown = _type(1, products: null);
-    final linked = _type(2, products: 1);
+  test(
+    'delete is rejected for unknown or linked usage before API call',
+    () async {
+      final unknown = _type(1, products: null);
+      final linked = _type(2, products: 1);
 
-    final unknownResult = await cubit.delete(unknown);
-    final linkedResult = await cubit.delete(linked);
+      final unknownResult = await cubit.delete(unknown);
+      final linkedResult = await cubit.delete(linked);
 
-    expect(unknownResult.isLeft(), isTrue);
-    expect(linkedResult.isLeft(), isTrue);
-    expect(repository.deleteCalls, 0);
-  });
+      expect(unknownResult.isLeft(), isTrue);
+      expect(linkedResult.isLeft(), isTrue);
+      expect(repository.deleteCalls, 0);
+    },
+  );
 }
 
 PaginatedResult<ProductType> _page(List<ProductType> items) => PaginatedResult(
@@ -95,22 +98,19 @@ PaginatedResult<ProductType> _page(List<ProductType> items) => PaginatedResult(
   totalPages: 1,
 );
 
-ProductType _type(
-  int id, {
-  String name = 'Shoes',
-  int? products = 0,
-}) => ProductType(
-  id: id,
-  name: name,
-  code: 'TYPE$id',
-  sortOrder: 0,
-  isActive: true,
-  productCount: products,
-  sizeGroupCount: 0,
-  attributeCount: 0,
-  optionSetCount: 0,
-  careInstructionCount: 0,
-);
+ProductType _type(int id, {String name = 'Shoes', int? products = 0}) =>
+    ProductType(
+      id: id,
+      name: name,
+      code: 'TYPE$id',
+      sortOrder: 0,
+      isActive: true,
+      productCount: products,
+      sizeGroupCount: 0,
+      attributeCount: 0,
+      optionSetCount: 0,
+      careInstructionCount: 0,
+    );
 
 class _FakeProductTypesRepository implements ProductTypesRepository {
   Either<Failure, PaginatedResult<ProductType>> result = Right(_page(const []));

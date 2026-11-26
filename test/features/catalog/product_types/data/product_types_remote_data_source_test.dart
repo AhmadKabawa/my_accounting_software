@@ -22,40 +22,49 @@ void main() {
     remote = ProductTypesRemoteDataSourceImpl(api);
   });
 
-  test('list query uses server search, fixed order, status and embedded counts', () async {
-    final result = await remote.getPage(
-      const ProductTypeListQuery(
-        search: 'shoe',
-        status: ProductTypeStatusFilter.active,
-      ),
-    );
+  test(
+    'list query uses server search, fixed order, status and embedded counts',
+    () async {
+      final result = await remote.getPage(
+        const ProductTypeListQuery(
+          search: 'shoe',
+          status: ProductTypeStatusFilter.active,
+        ),
+      );
 
-    expect(result, isA<ApiSuccess<PaginatedResult>>());
-    expect(api.lastQuery?['order'], 'sort_order.asc,name.asc,id.asc');
-    expect(api.lastQuery?['is_active'], 'eq.true');
-    expect(api.lastQuery?['or'], '(name.ilike."*shoe*",code.ilike."*shoe*")');
-    expect(api.lastQuery?['select'], contains('products(count)'));
-    expect(api.lastQuery?['select'], contains('product_type_option_sets(count)'));
+      expect(result, isA<ApiSuccess<PaginatedResult>>());
+      expect(api.lastQuery?['order'], 'sort_order.asc,name.asc,id.asc');
+      expect(api.lastQuery?['is_active'], 'eq.true');
+      expect(api.lastQuery?['or'], '(name.ilike."*shoe*",code.ilike."*shoe*")');
+      expect(api.lastQuery?['select'], contains('products(count)'));
+      expect(
+        api.lastQuery?['select'],
+        contains('product_type_option_sets(count)'),
+      );
 
-    final page = (result as ApiSuccess<PaginatedResult>).data;
-    expect(page.items.single.productCount, 3);
-    expect(page.items.single.sizeGroupCount, 0);
-    expect(page.items.single.attributeCount, 2);
-    expect(page.items.single.optionSetCount, 0);
-  });
+      final page = (result as ApiSuccess<PaginatedResult>).data;
+      expect(page.items.single.productCount, 3);
+      expect(page.items.single.sizeGroupCount, 0);
+      expect(page.items.single.attributeCount, 2);
+      expect(page.items.single.optionSetCount, 0);
+    },
+  );
 
-  test('400 on embedded counts retries without counts and leaves usage unknown', () async {
-    api.failFirstListWith400 = true;
+  test(
+    '400 on embedded counts retries without counts and leaves usage unknown',
+    () async {
+      api.failFirstListWith400 = true;
 
-    final result = await remote.getPage(const ProductTypeListQuery());
+      final result = await remote.getPage(const ProductTypeListQuery());
 
-    expect(result, isA<ApiSuccess<PaginatedResult>>());
-    expect(api.listCalls, 2);
-    expect(api.lastQuery?['select'], isNot(contains('products(count)')));
-    final page = (result as ApiSuccess<PaginatedResult>).data;
-    expect(page.items.single.productCount, isNull);
-    expect(page.items.single.sizeGroupCount, isNull);
-  });
+      expect(result, isA<ApiSuccess<PaginatedResult>>());
+      expect(api.listCalls, 2);
+      expect(api.lastQuery?['select'], isNot(contains('products(count)')));
+      final page = (result as ApiSuccess<PaginatedResult>).data;
+      expect(page.items.single.productCount, isNull);
+      expect(page.items.single.sizeGroupCount, isNull);
+    },
+  );
 
   test('create trims fields and sends active status explicitly', () async {
     await remote.create(
@@ -105,13 +114,17 @@ void main() {
     final duplicate = await repository.create(
       const ProductTypeDraft(name: 'Shoes', code: 'SHOE'),
     );
-    expect(duplicate.fold((failure) => failure, (_) => null),
-        isA<ProductTypeDuplicateFailure>());
+    expect(
+      duplicate.fold((failure) => failure, (_) => null),
+      isA<ProductTypeDuplicateFailure>(),
+    );
 
     api.nextDeleteFailure = ApiException.conflict(errorCode: '23503');
     final inUse = await repository.delete(9);
-    expect(inUse.fold((failure) => failure, (_) => null),
-        isA<ProductTypeInUseFailure>());
+    expect(
+      inUse.fold((failure) => failure, (_) => null),
+      isA<ProductTypeInUseFailure>(),
+    );
   });
 }
 
@@ -133,11 +146,21 @@ class _FakeApiClient implements IApiClient {
       'sort_order': 4,
       'is_active': true,
       'updated_at': '2026-01-02T03:04:05Z',
-      'products': [{'count': 3}],
-      'product_type_size_groups': [{'count': 0}],
-      'product_type_attributes': [{'count': 2}],
-      'product_type_option_sets': [{'count': 0}],
-      'product_type_care_instructions': [{'count': 0}],
+      'products': [
+        {'count': 3},
+      ],
+      'product_type_size_groups': [
+        {'count': 0},
+      ],
+      'product_type_attributes': [
+        {'count': 2},
+      ],
+      'product_type_option_sets': [
+        {'count': 0},
+      ],
+      'product_type_care_instructions': [
+        {'count': 0},
+      ],
     },
   ];
 

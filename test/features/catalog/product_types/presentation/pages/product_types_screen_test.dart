@@ -142,9 +142,7 @@ void _register(_FakeProductTypesRepository repository) {
 
 Widget _home({required bool canManage}) => BlocProvider<AccessCubit>(
   create: (_) => AccessCubit(
-    getMyAccess: GetMyAccessUseCase(
-      _AccessRepository(canManage: canManage),
-    ),
+    getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: canManage)),
   )..load(),
   child: const Scaffold(body: ProductTypesScreen()),
 );
@@ -155,26 +153,27 @@ void main() {
   for (final width in [360.0, 600.0, 900.0, 1200.0]) {
     for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
       for (final dark in [false, true]) {
-        testWidgets('product types page renders at $width, $direction, dark=$dark', (
-          tester,
-        ) async {
-          final repository = _FakeProductTypesRepository();
-          _register(repository);
-          await pumpScreenMatrix(
-            tester,
-            width: width,
-            direction: direction,
-            dark: dark,
-            home: _home(canManage: true),
-          );
+        testWidgets(
+          'product types page renders at $width, $direction, dark=$dark',
+          (tester) async {
+            final repository = _FakeProductTypesRepository();
+            _register(repository);
+            await pumpScreenMatrix(
+              tester,
+              width: width,
+              direction: direction,
+              dark: dark,
+              home: _home(canManage: true),
+            );
 
-          expect(find.byType(ProductTypesScreen), findsOneWidget);
-          expect(find.text('Shoes'), findsWidgets);
-          expect(find.text('SHOE'), findsWidgets);
-          expect(find.textContaining('{'), findsNothing);
-          expect(find.textContaining('@'), findsNothing);
-          expect(tester.takeException(), isNull);
-        });
+            expect(find.byType(ProductTypesScreen), findsOneWidget);
+            expect(find.text('Shoes'), findsWidgets);
+            expect(find.text('SHOE'), findsWidgets);
+            expect(find.textContaining('{'), findsNothing);
+            expect(find.textContaining('@'), findsNothing);
+            expect(tester.takeException(), isNull);
+          },
+        );
       }
     }
   }

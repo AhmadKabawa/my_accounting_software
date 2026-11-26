@@ -109,24 +109,25 @@ class _FakeLinksRepository implements ProductTypeLinksRepository {
   ) async => const Right([]);
 
   @override
-  Future<Either<Failure, List<ProductTypeLinkOption>>> getSizeGroupOptions() async =>
-      const Right([]);
+  Future<Either<Failure, List<ProductTypeLinkOption>>>
+  getSizeGroupOptions() async => const Right([]);
 
   @override
-  Future<Either<Failure, List<ProductTypeLinkOption>>> getAttributeOptions() async =>
-      const Right([]);
+  Future<Either<Failure, List<ProductTypeLinkOption>>>
+  getAttributeOptions() async => const Right([]);
 
   @override
-  Future<Either<Failure, List<ProductTypeLinkOption>>> getOptionSetOptions() async =>
-      const Right([]);
+  Future<Either<Failure, List<ProductTypeLinkOption>>>
+  getOptionSetOptions() async => const Right([]);
 
   @override
-  Future<Either<Failure, List<ProductTypeLinkOption>>> getGenderOptions() async =>
-      const Right([]);
+  Future<Either<Failure, List<ProductTypeLinkOption>>>
+  getGenderOptions() async => const Right([]);
 
   @override
-  Future<Either<Failure, Unit>> createSizeGroupLink(Map<String, dynamic> body) async =>
-      const Right(unit);
+  Future<Either<Failure, Unit>> createSizeGroupLink(
+    Map<String, dynamic> body,
+  ) async => const Right(unit);
 
   @override
   Future<Either<Failure, Unit>> patchSizeGroupLink(
@@ -175,8 +176,9 @@ class _FakeLinksRepository implements ProductTypeLinksRepository {
   ) async => const Right(unit);
 
   @override
-  Future<Either<Failure, int>> getPublishedProductCount(int productTypeId) async =>
-      const Right(0);
+  Future<Either<Failure, int>> getPublishedProductCount(
+    int productTypeId,
+  ) async => const Right(0);
 }
 
 void _register() {
@@ -192,9 +194,7 @@ void _register() {
 
 Widget _home({required bool canManage}) => BlocProvider<AccessCubit>(
   create: (_) => AccessCubit(
-    getMyAccess: GetMyAccessUseCase(
-      _AccessRepository(canManage: canManage),
-    ),
+    getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: canManage)),
   )..load(),
   child: const Scaffold(body: ProductTypeDetailsScreen(productTypeId: 9)),
 );
@@ -205,24 +205,25 @@ void main() {
   for (final width in [360.0, 600.0, 900.0, 1200.0]) {
     for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
       for (final dark in [false, true]) {
-        testWidgets('product type details renders at $width, $direction, dark=$dark', (
-          tester,
-        ) async {
-          _register();
-          await pumpScreenMatrix(
-            tester,
-            width: width,
-            direction: direction,
-            dark: dark,
-            home: _home(canManage: true),
-          );
+        testWidgets(
+          'product type details renders at $width, $direction, dark=$dark',
+          (tester) async {
+            _register();
+            await pumpScreenMatrix(
+              tester,
+              width: width,
+              direction: direction,
+              dark: dark,
+              home: _home(canManage: true),
+            );
 
-          expect(find.textContaining('Shoes'), findsOneWidget);
-          expect(find.text(ProductTypesKeys.noSizeGroups.en), findsWidgets);
-          expect(find.text(ProductTypesKeys.noAttributes.en), findsWidgets);
-          expect(find.text(ProductTypesKeys.noOptionSets.en), findsWidgets);
-          expect(tester.takeException(), isNull);
-        });
+            expect(find.textContaining('Shoes'), findsOneWidget);
+            expect(find.text(ProductTypesKeys.noSizeGroups.en), findsWidgets);
+            expect(find.text(ProductTypesKeys.noAttributes.en), findsWidgets);
+            expect(find.text(ProductTypesKeys.noOptionSets.en), findsWidgets);
+            expect(tester.takeException(), isNull);
+          },
+        );
       }
     }
   }
