@@ -44,3 +44,17 @@ This is a partial foundation, not a complete CAT-08 feature delivery. The follow
 - The feature code is written against the existing REST client and shared paginated-list contracts.
 - Relationship counts are treated as unknown when the response does not contain a parseable count; deletion/structural changes are conservatively blocked by domain getters.
 - The project owner should run formatter, analyzer and the relevant test suite before considering this branch ready.
+
+## Follow-up additions
+
+After the initial report draft, the branch also gained:
+- Option Sets and Attributes repository contracts and adapters.
+- List/create/update use cases for Option Sets and Attributes.
+- Dependency registrations for Units, Option Sets and Attributes in `initCatalogDI`.
+- Arabic/English AppKey localization enums for all three features.
+- Query and usage-guard tests for Option Sets and Attributes.
+- Attribute draft serialization explicitly clears `unit_id` and `option_set_id` when the selected data type no longer supports them.
+
+## Remaining blockers to a complete feature
+
+The branch still does not contain the actual presentation implementation: no Cubits/states/effects, CRUD list configs, screens, editor dialogs, stats widgets, route registration, or Catalog hub cards. Option and Attribute mutation use cases for nested options/status/lookup choices also need to be completed and surfaced through presentation. The current localization enums are foundations and are not yet consumed by screens. Accordingly, do not treat this branch as ready to merge or as completion of CAT-08.
