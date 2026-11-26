@@ -67,6 +67,7 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
   Future<ApiResult<List<AttributeUnitChoice>>> getUnitChoices() => _apiClient.get<List<AttributeUnitChoice>>(
     AttributesEndpoint.unitsLookup,
     queryParameters: {'select': 'id,name,symbol,is_active', 'is_active': 'eq.true', 'order': 'name.asc,id.asc'},
+    requiresAuth: true,
     fromJsonList: (rows) => rows.map((row) => AttributeUnitChoice(
       id: _readId(row['id']),
       name: row['name'] as String,
@@ -101,6 +102,8 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
     'data_type': draft.dataType.name,
     if (draft.dataType == AttributeDataType.number && draft.unitId != null) 'unit_id': draft.unitId,
     if (draft.dataType == AttributeDataType.option && draft.optionSetId != null) 'option_set_id': draft.optionSetId,
+    'unit_id': draft.dataType == AttributeDataType.number ? draft.unitId : null,
+    'option_set_id': draft.dataType == AttributeDataType.option ? draft.optionSetId : null,
     'is_filterable': draft.isFilterable,
     if (draft.isActive != null) 'is_active': draft.isActive,
   };
