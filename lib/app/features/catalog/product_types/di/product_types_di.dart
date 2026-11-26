@@ -6,6 +6,7 @@ import 'package:accounting_software/app/features/catalog/product_types/data/data
 import 'package:accounting_software/app/features/catalog/product_types/data/repositories/product_types_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/repositories/product_types_repository.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_types_list/product_types_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_form/product_type_form_cubit.dart';
 
 void initProductTypesDI() {
   sl.registerLazySingleton<ProductTypesRemoteDataSource>(
@@ -13,6 +14,12 @@ void initProductTypesDI() {
   );
   sl.registerLazySingleton<ProductTypesRepository>(
     () => ProductTypesRepositoryImpl(sl<ProductTypesRemoteDataSource>()),
+  );
+  sl.registerFactory(
+    () => ProductTypeFormCubit(
+      repository: sl<ProductTypesRepository>(),
+      flashMessages: sl<FlashMessages>(),
+    ),
   );
   sl.registerFactory(
     () => ProductTypesListCubit(
