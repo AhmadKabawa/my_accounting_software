@@ -45,6 +45,7 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
     required this.noResultsDescriptionKey,
     this.statusColumn,
     this.extraRowActions,
+    this.onRowTap,
   });
 
   final CrudDataContext<T, Q, C> data;
@@ -60,6 +61,7 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
   final AppKey noResultsDescriptionKey;
   final List<AppRowAction> Function(BuildContext context, T row)?
   extraRowActions;
+  final ValueChanged<T>? onRowTap;
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +116,7 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
       selectedIds: data.selectedIds,
       onSelectionChanged: data.onSelectionChanged,
       rowActionsBuilder: _rowActions,
+      onRowTap: onRowTap,
       page: data.query.page,
       pageSize: data.query.pageSize,
       totalCount: data.total,
