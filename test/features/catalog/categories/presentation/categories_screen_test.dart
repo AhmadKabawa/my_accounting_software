@@ -63,7 +63,13 @@ class _AccessRepository implements AccessRepository {
   );
 }
 
-Category _category(int id, {int? parentId, String? name, bool active = true}) =>
+Category _category(
+  int id, {
+  int? parentId,
+  String? name,
+  bool active = true,
+  int? products = 0,
+}) =>
     Category(
       id: id,
       parentId: parentId,
@@ -71,7 +77,7 @@ Category _category(int id, {int? parentId, String? name, bool active = true}) =>
       slug: 'category-$id',
       sortOrder: id,
       isActive: active,
-      productCount: 0,
+      productCount: products,
     );
 
 List<Category> _sampleCategories() => [
@@ -612,6 +618,43 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
     expect(find.text(CategoriesKeys.details.en), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('level and usage filters are local on the full page', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(360, 800));
+    final repository = FakeCategoriesRepository(
+      categories: [
+        _category(1, name: 'Root with products', products: 2),
+        _category(2, parentId: 1, name: 'Leaf without products', products: 0),
+        _category(3, name: 'Unknown root', products: null),
+      ],
+    );
+    _register(repository);
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.rtl),
+    );
+    await tester.pumpAndSettle();
+    final before = repository.getAllCalls;
+
+    _listCubit(tester).setLevel(CategoryLevelFilter.roots);
+    await tester.pumpAndSettle();
+    expect(_listCubit(tester).state.result.items.map((node) => node.id), [1, 3]);
+
+    _listCubit(tester).setLevel(CategoryLevelFilter.leaves);
+    await tester.pumpAndSettle();
+    expect(_listCubit(tester).state.result.items.map((node) => node.id), [2, 3]);
+
+    _listCubit(tester).setUsage(CategoryUsageFilter.withProducts);
+    await tester.pumpAndSettle();
+    expect(_listCubit(tester).state.result.items.map((node) => node.id), [1]);
+
+    _listCubit(tester).setUsage(CategoryUsageFilter.withoutProducts);
+    await tester.pumpAndSettle();
+    expect(_listCubit(tester).state.result.items.map((node) => node.id), [2]);
+    expect(repository.getAllCalls, before);
     expect(tester.takeException(), isNull);
   });
 
