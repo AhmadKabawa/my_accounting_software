@@ -18,6 +18,10 @@ enum CatalogHubKeys implements AppKey {
     ar: 'نظّم المنتجات ضمن تصنيفات رئيسية وفرعية واضحة.',
     en: 'Organize products into clear parent categories and subcategories.',
   ),
+  sportsDescription(
+    ar: 'حدّد الرياضات التي تناسبها منتجاتك مثل كرة القدم والجري.',
+    en: 'Define the sports your products suit, such as football and running.',
+  ),
   open(ar: 'فتح', en: 'Open');
 
   const CatalogHubKeys({required this.ar, required this.en});
