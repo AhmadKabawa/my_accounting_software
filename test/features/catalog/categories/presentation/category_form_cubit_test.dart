@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_draft.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_tree.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/failures/category_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/failures/category_failures.dart';
@@ -182,4 +183,48 @@ void main() {
     expect(cubit.state.errorFor('slug'), isNotNull);
     await cubit.close();
   });
+  test('new and duplicate categories send their selected active state', () async {
+    final repository = FakeCategoriesRepository(categories: [_category(1)]);
+    final seed = CategoryDraft(
+      parentId: 1,
+      name: 'Sport Copy',
+      slug: 'sport-copy',
+      isActive: false,
+    );
+    final cubit = CategoryFormCubit(
+      createCategory: CreateCategoryUseCase(repository),
+      updateCategory: UpdateCategoryUseCase(repository),
+      flashMessages: FlashMessages(),
+      seed: seed,
+      tree: CategoryTree(repository.categories),
+    );
+
+    await cubit.save();
+
+    expect(repository.createCalls, 1);
+    expect(repository.updateCalls, 0);
+    expect(repository.lastCreatedDraft?.parentId, 1);
+    expect(repository.lastCreatedDraft?.isActive, isFalse);
+    await cubit.close();
+  });
+
+  test('PATCH omits unchanged status and sends it only after a change', () async {
+    final category = _category(1);
+    final repository = FakeCategoriesRepository(categories: [category]);
+    final cubit = _cubit(
+      repository,
+      category: category,
+      tree: CategoryTree([category]),
+    );
+
+    cubit.nameChanged('Updated Shoes');
+    await cubit.save();
+    expect(repository.lastUpdatedDraft?.isActive, isNull);
+
+    cubit.activeChanged(false);
+    await cubit.save();
+    expect(repository.lastUpdatedDraft?.isActive, isFalse);
+    await cubit.close();
+  });
+
 }
