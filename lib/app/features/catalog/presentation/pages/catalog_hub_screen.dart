@@ -49,15 +49,15 @@ class CatalogHubScreen extends StatelessWidget {
             ),
             _AreaCard(
               icon: AppIcons.catalog,
-              titleKey: CategoriesKeys.title,
-              descriptionKey: CatalogHubKeys.categoriesDescription,
-              onOpen: () => context.go(CategoriesRoutes.categories.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
               titleKey: UnitsKeys.title,
               descriptionKey: CatalogHubKeys.unitsDescription,
               onOpen: () => context.go(UnitsRoutes.units.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.catalog,
+              titleKey: CategoriesKeys.title,
+              descriptionKey: CatalogHubKeys.categoriesDescription,
+              onOpen: () => context.go(CategoriesRoutes.categories.path),
             ),
             _AreaCard(
               icon: AppIcons.colors,
