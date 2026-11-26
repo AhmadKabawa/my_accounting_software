@@ -97,7 +97,7 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
               ),
             },
             onSave: cubit.save,
-            extraDirty: cubit.parentChanged,
+            extraDirty: cubit.parentChanged || cubit.activeChanged,
             onReset: cubit.reset,
             builder: (dialogContext, scope) =>
                 CategoryEditorFields(cubit: cubit, scope: scope),
