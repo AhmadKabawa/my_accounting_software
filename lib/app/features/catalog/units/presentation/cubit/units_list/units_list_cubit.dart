@@ -45,10 +45,11 @@ class UnitsListCubit
 
   @override
   Failure? beforeDelete(CatalogUnit item) {
-    if (item.usageCount == null) {
+    final usageCount = item.usageCount;
+    if (usageCount == null) {
       return const ValidationFailure(messageKey: UnitsKeys.unknownUsage);
     }
-    if (item.usageCount! > 0) {
+    if (usageCount > 0) {
       return const ValidationFailure(messageKey: UnitsKeys.inUse);
     }
     return null;
