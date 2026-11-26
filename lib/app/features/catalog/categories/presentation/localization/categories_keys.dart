@@ -2,6 +2,10 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 
 enum CategoriesKeys implements AppKey {
   title(ar: 'التصنيفات', en: 'Categories'),
+  details(ar: 'تفاصيل التصنيف', en: 'Category details'),
+  closeDetails(ar: 'إغلاق التفاصيل', en: 'Close details'),
+  directChildren(ar: 'التصنيفات الفرعية المباشرة', en: 'Direct subcategories'),
+  descendantCount(ar: 'كل الأحفاد', en: 'All descendants'),
   add(ar: 'إضافة تصنيف', en: 'Add category'),
   addChild(ar: 'إضافة تصنيف فرعي', en: 'Add subcategory'),
   edit(ar: 'تعديل التصنيف', en: 'Edit category'),
