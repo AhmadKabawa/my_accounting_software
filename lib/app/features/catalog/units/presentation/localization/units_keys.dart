@@ -16,6 +16,7 @@ enum UnitsKeys implements AppKey {
   all(ar: 'الكل', en: 'All'),
   search(ar: 'ابحث بالاسم أو الرمز', en: 'Search by name or symbol'),
   usage(ar: 'مرتبطة بسجلات', en: 'Linked records'),
+  inUse(ar: 'لا يمكن حذف وحدة مستخدمة', en: 'A unit in use cannot be deleted'),
   unknownUsage(
     ar: 'تعذر التحقق من الاستخدام؛ لا يمكن الحذف',
     en: 'Usage could not be verified; deletion is blocked',
