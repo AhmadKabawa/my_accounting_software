@@ -88,7 +88,7 @@ void main() {
   });
 }
 
-PagedResult<ProductType> _page(List<ProductType> items) => PagedResult(
+PaginatedResult<ProductType> _page(List<ProductType> items) => PaginatedResult(
   items: items,
   totalCount: items.length,
   currentPage: 1,
