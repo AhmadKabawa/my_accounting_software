@@ -6,6 +6,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_parser.d
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/core/network/api_end_points.dart';
+import 'package:accounting_software/app/core/network/storage/storage_image_uploader.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/categories_endpoint.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/datasources/categories_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/models/category_model.dart';
@@ -55,7 +56,7 @@ void main() {
     'falls back to the base projection when embedded count is rejected',
     () async {
       final api = _ApiClient()..firstFailure = ApiException.badRequest();
-      final source = CategoriesRemoteDataSourceImpl(api);
+      final source = CategoriesRemoteDataSourceImpl(api, StorageImageUploader(api));
 
       final result = await source.getPage(page: 1, limit: 1000);
 
