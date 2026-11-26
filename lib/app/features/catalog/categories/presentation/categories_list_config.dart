@@ -27,6 +27,7 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/categories_flat_results_note.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/categories_tree_toolbar.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_card.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_stats_bar.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_identity.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_status_badge.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
@@ -101,7 +102,27 @@ get categoriesListConfig => CrudListConfig(
     ],
   ),
   viewModes: const [AppViewMode.table, AppViewMode.cards],
-  capabilities: const CrudCapabilities(duplicate: false, bulkSelection: true),
+  capabilities: const CrudCapabilities(duplicate: true, bulkSelection: true),
+  statsBuilder: (slot) => CategoryStatsBar(
+    tree: slot.cubit.tree,
+    query: slot.state.query,
+    onSelected: (filter) {
+      switch (filter) {
+        case CategoryStatsFilter.all:
+          slot.cubit.clearFilters();
+        case CategoryStatsFilter.active:
+          slot.cubit.setStatus(CategoryStatusFilter.active);
+        case CategoryStatsFilter.inactive:
+          slot.cubit.setStatus(CategoryStatusFilter.inactive);
+        case CategoryStatsFilter.roots:
+          slot.cubit.setLevel(CategoryLevelFilter.roots);
+        case CategoryStatsFilter.leaves:
+          slot.cubit.setLevel(CategoryLevelFilter.leaves);
+        case CategoryStatsFilter.withoutProducts:
+          slot.cubit.setUsage(CategoryUsageFilter.withoutProducts);
+      }
+    },
+  ),
   flows: CrudFlowsConfig<CategoryNode, CategoriesListCubit>(
     showEditor: (context, {item, duplicate = false}) => showCategoryEditor(
       context,
