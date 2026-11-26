@@ -181,7 +181,7 @@ get optionSetsListConfig => CrudListConfig(
         emptyDescriptionKey: OptionSetsKeys.emptyDescription,
         noResultsTitleKey: OptionSetsKeys.noResults,
         noResultsDescriptionKey: OptionSetsKeys.noResultsDescription,
-        onRowTap: (set) => showOptionSetOptions(data.context, set),
+        onRowTap: (set) => showOptionSetOptions(data.context!, set),
       ),
 );
 
