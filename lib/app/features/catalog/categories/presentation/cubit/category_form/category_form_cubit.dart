@@ -156,17 +156,7 @@ class CategoryFormCubit
         ValidationRule.pattern: CategoriesKeys.slugFormat,
       },
     ),
-    'image': value.image.trim().isEmpty
-        ? null
-        : AppValidator.validate(
-            value.image,
-            [ValidationRule.httpUrl, ValidationRule.maxLength],
-            params: {ValidationRule.maxLength: 500},
-            customKeys: {
-              ValidationRule.httpUrl: CategoriesKeys.imageFormat,
-              ValidationRule.maxLength: CategoriesKeys.imageTooLong,
-            },
-          ),
+    'image': value.image.length > 500 ? CategoriesKeys.imageTooLong.tr() : null,
     'sortOrder': value.sortOrder.trim().isEmpty
         ? null
         : AppValidator.validate(
