@@ -79,11 +79,12 @@ class FakeCatalogApiClient extends Fake implements IApiClient {
       }
     }
     final isCount = query['select'] == 'id';
+    final select = query['select']?.toString() ?? '';
     final source = isCount
         ? <Map<String, dynamic>>[
             {'id': 1},
           ]
-        : rows;
+        : rows.map((row) => _project(row, select)).toList();
     final items = source.map(fromJson).toList();
     final count = _countFor(query, isCount);
     return ApiSuccess(
