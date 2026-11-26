@@ -5,7 +5,13 @@ import 'package:accounting_software/app/features/catalog/units/domain/entity/cat
 enum UnitStatusFilter { all, active, inactive }
 
 class UnitListQuery extends Equatable implements PagedQuery<UnitListQuery> {
-  const UnitListQuery({this.search = '', this.status = UnitStatusFilter.all, this.type, this.page = 1, this.pageSize = 25});
+  const UnitListQuery({
+    this.search = '',
+    this.status = UnitStatusFilter.all,
+    this.type,
+    this.page = 1,
+    this.pageSize = 25,
+  });
   @override
   final String search;
   final UnitStatusFilter status;
@@ -15,14 +21,22 @@ class UnitListQuery extends Equatable implements PagedQuery<UnitListQuery> {
   @override
   final int pageSize;
   @override
-  bool get hasActiveFilters => search.isNotEmpty || status != UnitStatusFilter.all || type != null;
+  bool get hasActiveFilters =>
+      search.isNotEmpty || status != UnitStatusFilter.all || type != null;
   @override
   UnitListQuery withSearch(String value) => copyWith(search: value, page: 1);
   @override
   UnitListQuery withPage(int value) => copyWith(page: value);
   @override
   UnitListQuery cleared() => UnitListQuery(pageSize: pageSize);
-  UnitListQuery copyWith({String? search, UnitStatusFilter? status, UnitType? type, bool clearType = false, int? page, int? pageSize}) => UnitListQuery(
+  UnitListQuery copyWith({
+    String? search,
+    UnitStatusFilter? status,
+    UnitType? type,
+    bool clearType = false,
+    int? page,
+    int? pageSize,
+  }) => UnitListQuery(
     search: search ?? this.search,
     status: status ?? this.status,
     type: clearType ? null : type ?? this.type,

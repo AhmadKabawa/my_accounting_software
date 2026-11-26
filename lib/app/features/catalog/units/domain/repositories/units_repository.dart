@@ -6,9 +6,17 @@ import 'package:accounting_software/app/features/catalog/units/domain/entity/uni
 import 'package:accounting_software/app/features/catalog/units/domain/entity/unit_list_query.dart';
 
 abstract interface class UnitsRepository {
-  Future<Either<Failure, PaginatedResult<CatalogUnit>>> getUnits(UnitListQuery query);
+  Future<Either<Failure, PaginatedResult<CatalogUnit>>> getUnits(
+    UnitListQuery query,
+  );
   Future<Either<Failure, CatalogUnit>> createUnit(UnitDraft draft);
-  Future<Either<Failure, CatalogUnit>> updateUnit({required int id, required UnitDraft draft});
-  Future<Either<Failure, Unit>> setUnitActive({required int id, required bool isActive});
+  Future<Either<Failure, CatalogUnit>> updateUnit({
+    required int id,
+    required UnitDraft draft,
+  });
+  Future<Either<Failure, Unit>> setUnitActive({
+    required int id,
+    required bool isActive,
+  });
   Future<Either<Failure, Unit>> deleteUnit(int id);
 }

@@ -27,7 +27,8 @@ class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
       queryParameters: {
         'select': UnitsEndpoint.select,
         'order': 'name.asc,id.asc',
-        if (term.isNotEmpty) 'or': '(name.ilike."*$term*",symbol.ilike."*$term*")',
+        if (term.isNotEmpty)
+          'or': '(name.ilike."*$term*",symbol.ilike."*$term*")',
         if (query.status == UnitStatusFilter.active) 'is_active': 'eq.true',
         if (query.status == UnitStatusFilter.inactive) 'is_active': 'eq.false',
         if (query.type != null) 'unit_type': 'eq.${query.type!.name}',
@@ -44,7 +45,10 @@ class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<UnitModel>> updateUnit({required int id, required UnitDraft draft}) => _apiClient.patch(
+  Future<ApiResult<UnitModel>> updateUnit({
+    required int id,
+    required UnitDraft draft,
+  }) => _apiClient.patch(
     UnitsEndpoint.collection,
     queryParameters: {'id': 'eq.$id'},
     data: _draftJson(draft),
@@ -53,7 +57,10 @@ class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<Unit>> setUnitActive({required int id, required bool isActive}) => _apiClient.patch(
+  Future<ApiResult<Unit>> setUnitActive({
+    required int id,
+    required bool isActive,
+  }) => _apiClient.patch(
     UnitsEndpoint.collection,
     queryParameters: {'id': 'eq.$id'},
     data: {'is_active': isActive},
@@ -68,7 +75,8 @@ class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
     options: Options(headers: {'Prefer': 'return=minimal'}),
   );
 
-  UnitModel _single(List<dynamic> rows) => PostgrestValue.single(rows, UnitModel.fromJson, what: 'unit');
+  UnitModel _single(List<dynamic> rows) =>
+      PostgrestValue.single(rows, UnitModel.fromJson, what: 'unit');
 
   Map<String, Object?> _draftJson(UnitDraft draft) => {
     'name': draft.name.trim(),

@@ -16,47 +16,67 @@ class UnitsRepositoryImpl with RepositoryExecutor implements UnitsRepository {
   final UnitsRemoteDataSource _remote;
 
   @override
-  Future<Either<Failure, PaginatedResult<CatalogUnit>>> getUnits(UnitListQuery query) => execute(() async {
+  Future<Either<Failure, PaginatedResult<CatalogUnit>>> getUnits(
+    UnitListQuery query,
+  ) => execute(() async {
     final result = await _remote.getUnits(query);
     return switch (result) {
-      ApiSuccess<PaginatedResult<UnitModel>>(:final data) => Right(PaginatedResult<CatalogUnit>(
-        items: data.items.map((item) => item.toEntity()).toList(),
-        totalCount: data.totalCount,
-        currentPage: data.currentPage,
-        totalPages: data.totalPages,
-        isFromCache: data.isFromCache,
-      )),
-      ApiFailure<PaginatedResult<UnitModel>>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiSuccess<PaginatedResult<UnitModel>>(:final data) => Right(
+        PaginatedResult<CatalogUnit>(
+          items: data.items.map((item) => item.toEntity()).toList(),
+          totalCount: data.totalCount,
+          currentPage: data.currentPage,
+          totalPages: data.totalPages,
+          isFromCache: data.isFromCache,
+        ),
+      ),
+      ApiFailure<PaginatedResult<UnitModel>>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
   @override
-  Future<Either<Failure, CatalogUnit>> createUnit(UnitDraft draft) => _write(() => _remote.createUnit(draft));
+  Future<Either<Failure, CatalogUnit>> createUnit(UnitDraft draft) =>
+      _write(() => _remote.createUnit(draft));
 
   @override
-  Future<Either<Failure, CatalogUnit>> updateUnit({required int id, required UnitDraft draft}) =>
-      _write(() => _remote.updateUnit(id: id, draft: draft));
+  Future<Either<Failure, CatalogUnit>> updateUnit({
+    required int id,
+    required UnitDraft draft,
+  }) => _write(() => _remote.updateUnit(id: id, draft: draft));
 
-  Future<Either<Failure, CatalogUnit>> _write(Future<ApiResult<UnitModel>> Function() request) => execute(() async {
+  Future<Either<Failure, CatalogUnit>> _write(
+    Future<ApiResult<UnitModel>> Function() request,
+  ) => execute(() async {
     final result = await request();
     return switch (result) {
       ApiSuccess<UnitModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<UnitModel>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<UnitModel>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
   @override
-  Future<Either<Failure, Unit>> setUnitActive({required int id, required bool isActive}) =>
-      _unitResult(() => _remote.setUnitActive(id: id, isActive: isActive));
+  Future<Either<Failure, Unit>> setUnitActive({
+    required int id,
+    required bool isActive,
+  }) => _unitResult(() => _remote.setUnitActive(id: id, isActive: isActive));
 
   @override
-  Future<Either<Failure, Unit>> deleteUnit(int id) => _unitResult(() => _remote.deleteUnit(id));
+  Future<Either<Failure, Unit>> deleteUnit(int id) =>
+      _unitResult(() => _remote.deleteUnit(id));
 
-  Future<Either<Failure, Unit>> _unitResult(Future<ApiResult<Unit>> Function() request) => execute(() async {
+  Future<Either<Failure, Unit>> _unitResult(
+    Future<ApiResult<Unit>> Function() request,
+  ) => execute(() async {
     final result = await request();
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<Unit>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 }

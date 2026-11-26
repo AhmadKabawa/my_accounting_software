@@ -8,7 +8,13 @@ import 'package:accounting_software/app/features/catalog/units/domain/entity/uni
 abstract interface class UnitsRemoteDataSource {
   Future<ApiResult<PaginatedResult<UnitModel>>> getUnits(UnitListQuery query);
   Future<ApiResult<UnitModel>> createUnit(UnitDraft draft);
-  Future<ApiResult<UnitModel>> updateUnit({required int id, required UnitDraft draft});
-  Future<ApiResult<Unit>> setUnitActive({required int id, required bool isActive});
+  Future<ApiResult<UnitModel>> updateUnit({
+    required int id,
+    required UnitDraft draft,
+  });
+  Future<ApiResult<Unit>> setUnitActive({
+    required int id,
+    required bool isActive,
+  });
   Future<ApiResult<Unit>> deleteUnit(int id);
 }

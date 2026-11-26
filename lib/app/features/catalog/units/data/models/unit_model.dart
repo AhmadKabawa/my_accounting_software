@@ -1,7 +1,14 @@
 import 'package:accounting_software/app/features/catalog/units/domain/entity/catalog_unit.dart';
 
 class UnitModel {
-  const UnitModel({required this.id, required this.name, required this.symbol, required this.type, required this.isActive, required this.usageCount});
+  const UnitModel({
+    required this.id,
+    required this.name,
+    required this.symbol,
+    required this.type,
+    required this.isActive,
+    required this.usageCount,
+  });
   final int id;
   final String name;
   final String symbol;
@@ -14,7 +21,9 @@ class UnitModel {
     final id = rawId is int ? rawId : int.tryParse(rawId.toString());
     if (id == null) throw const FormatException('Invalid unit id');
     final typeName = json['unit_type']?.toString();
-    final matchingTypes = UnitType.values.where((item) => item.name == typeName);
+    final matchingTypes = UnitType.values.where(
+      (item) => item.name == typeName,
+    );
     if (matchingTypes.isEmpty) throw const FormatException('Invalid unit type');
     final products = _readCount(json['product_variants']);
     final attributes = _readCount(json['attributes']);
@@ -24,12 +33,16 @@ class UnitModel {
       symbol: json['symbol'] as String,
       type: matchingTypes.first,
       isActive: json['is_active'] as bool? ?? true,
-      usageCount: products == null || attributes == null ? null : products + attributes,
+      usageCount: products == null || attributes == null
+          ? null
+          : products + attributes,
     );
   }
 
   static int? _readCount(Object? value) {
-    if (value is List && value.isNotEmpty && value.first is Map<String, dynamic>) {
+    if (value is List &&
+        value.isNotEmpty &&
+        value.first is Map<String, dynamic>) {
       final count = (value.first as Map<String, dynamic>)['count'];
       return count is num ? count.toInt() : null;
     }
@@ -40,5 +53,12 @@ class UnitModel {
     return null;
   }
 
-  CatalogUnit toEntity() => CatalogUnit(id: id, name: name, symbol: symbol, type: type, isActive: isActive, usageCount: usageCount);
+  CatalogUnit toEntity() => CatalogUnit(
+    id: id,
+    name: name,
+    symbol: symbol,
+    type: type,
+    isActive: isActive,
+    usageCount: usageCount,
+  );
 }
