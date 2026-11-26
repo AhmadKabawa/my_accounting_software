@@ -1,3 +1,4 @@
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_draft.dart';
@@ -47,11 +48,12 @@ class OptionSetOptionsCubit extends BaseCubit<OptionSetOptionsState, Never> {
         ? await _createOption(CreateOptionParams(optionSetId: setId, draft: draft))
         : await _updateOption(UpdateOptionParams(optionId: optionId, draft: draft));
     if (isClosed) return;
-    result.fold(
-      (failure) => emit(state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure)),
-      (_) {},
-    );
-    if (result.isRight()) await load(setId);
+    final failure = result.fold<Failure?>((value) => value, (_) => null);
+    if (failure != null) {
+      emit(state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure));
+    } else {
+      await load(setId);
+    }
   }
 
   Future<void> setActive({required int optionId, required bool isActive}) async {
@@ -60,12 +62,12 @@ class OptionSetOptionsCubit extends BaseCubit<OptionSetOptionsState, Never> {
     emit(state.copyWith(status: OptionSetOptionsStatus.saving, clearFailure: true));
     final result = await _setOptionActive(SetOptionActiveParams(optionId: optionId, isActive: isActive));
     if (isClosed) return;
-    result.fold(
-      (failure) => emit(state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure)),
-      (_) {},
-    );
-    if (result.isRight()) await load(setId);
-    );
+    final failure = result.fold<Failure?>((value) => value, (_) => null);
+    if (failure != null) {
+      emit(state.copyWith(status: OptionSetOptionsStatus.failed, failure: failure));
+    } else {
+      await load(setId);
+    }
   }
 
   @override
