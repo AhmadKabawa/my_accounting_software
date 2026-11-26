@@ -113,7 +113,7 @@ class _CrudListBody<
             onClearAll: cubit.clearFilters,
             activeFilters: config.activeFilters(slot),
             filterControls: filters,
-            sortOptions: config.sort.options,
+            sortOptions: config.sort.optionsFor(state.query),
             sorts: config.sort.current(state.query),
             onSortsChanged: (sorts) => config.sort.apply(cubit, sorts),
             sortKey: config.sort.tableKey(state.query),
