@@ -126,6 +126,11 @@ class CategoryEditorFields extends StatelessWidget {
           },
           onBusyChanged: onImageBusyChanged,
         ),
+        _fieldError(
+          context,
+          state.errorFor('image'),
+          state.image.trim().isNotEmpty,
+        ),
         context.ui.spacing.gap(AppSpacing.md),
         AppTextField(
           controller: scope.fields['sortOrder'],

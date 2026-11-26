@@ -158,7 +158,7 @@ class CategoryFormCubit
         ValidationRule.pattern: CategoriesKeys.slugFormat,
       },
     ),
-    'image': value.image.length > 500 ? CategoriesKeys.imageTooLong.tr() : null,
+    'image': _validateImage(value.image),
     'sortOrder': value.sortOrder.trim().isEmpty
         ? null
         : AppValidator.validate(
@@ -170,6 +170,18 @@ class CategoryFormCubit
             },
           ),
   };
+
+  String? _validateImage(String value) {
+    if (value.isEmpty) return null;
+    if (value.length > 500) return CategoriesKeys.imageTooLong.tr();
+    final uri = Uri.tryParse(value);
+    if (uri == null ||
+        !const {'http', 'https'}.contains(uri.scheme.toLowerCase()) ||
+        uri.host.isEmpty) {
+      return CategoriesKeys.imageFormat.tr();
+    }
+    return null;
+  }
 
   Future<void> save() async {
     if (state.saving || isClosed) return;
