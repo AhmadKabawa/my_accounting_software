@@ -100,8 +100,15 @@ class CategoryIdentity extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(child: secondary),
-                        if (compact && node.childCount > 0) badge,
-                        if (node.underInactiveAncestor) ...[
+                        if (compact && node.underInactiveAncestor)
+                          AppBadge(
+                            label: CategoriesKeys.underInactiveParent,
+                            size: AppBadgeSize.small,
+                            tone: AppBadgeTone.neutral,
+                          )
+                        else if (compact && node.childCount > 0)
+                          badge,
+                        if (!compact && node.underInactiveAncestor) ...[
                           context.ui.spacing.gap(
                             AppSpacing.xs,
                             axis: Axis.horizontal,

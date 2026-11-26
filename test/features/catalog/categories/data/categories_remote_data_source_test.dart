@@ -79,7 +79,10 @@ void main() {
     'does not retry permission or connectivity failures without the embed',
     () async {
       final api = _ApiClient()..firstFailure = ApiException.forbidden();
-      final source = CategoriesRemoteDataSourceImpl(api);
+      final source = CategoriesRemoteDataSourceImpl(
+        api,
+        StorageImageUploader(api),
+      );
 
       final result = await source.getPage(page: 1, limit: 1000);
 

@@ -221,7 +221,7 @@ void main() {
     await cubit.save();
     expect(repository.lastUpdatedDraft?.isActive, isNull);
 
-    cubit.activeChanged(false);
+    cubit.setActive(false);
     await cubit.save();
     expect(repository.lastUpdatedDraft?.isActive, isFalse);
     await cubit.close();
