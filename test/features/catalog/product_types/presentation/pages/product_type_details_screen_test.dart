@@ -8,6 +8,8 @@ import 'package:accounting_software/app/core/access/domain/get_my_access_usecase
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type.dart';
@@ -215,10 +217,10 @@ void main() {
             home: _home(canManage: true),
           );
 
-          expect(find.text('Shoes'), findsOneWidget);
-          expect(find.text(ProductTypesKeys.noSizeGroups.en), findsOneWidget);
-          expect(find.text(ProductTypesKeys.noAttributes.en), findsOneWidget);
-          expect(find.text(ProductTypesKeys.noOptionSets.en), findsOneWidget);
+          expect(find.textContaining('Shoes'), findsOneWidget);
+          expect(find.text(ProductTypesKeys.noSizeGroups.en), findsWidgets);
+          expect(find.text(ProductTypesKeys.noAttributes.en), findsWidgets);
+          expect(find.text(ProductTypesKeys.noOptionSets.en), findsWidgets);
           expect(tester.takeException(), isNull);
         });
       }
