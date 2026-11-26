@@ -47,10 +47,11 @@ Widget buildCategoriesDataSection(
       required ValueChanged<int> selectChild,
     }) {
       void addChild() {
-        if (!canManage) return;
+        final tree = data.cubit.tree;
+        if (!canManage || tree == null) return;
         showCategoryEditor(
           context,
-          tree: data.cubit.tree!,
+          tree: tree,
           initialParentId: node.id,
         ).then((saved) {
           if (saved == true && context.mounted) {
@@ -76,7 +77,7 @@ Widget buildCategoriesDataSection(
             : null,
         onDelete: canManage && node.canDelete
             ? () {
-                flows!
+                flows
                     .deleteItem(context, node)
                     .whenComplete(() => data.cubit.selectDetails(null));
               }
