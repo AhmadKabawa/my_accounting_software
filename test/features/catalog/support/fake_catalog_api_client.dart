@@ -96,6 +96,28 @@ class FakeCatalogApiClient extends Fake implements IApiClient {
     );
   }
 
+  Map<String, dynamic> _project(
+    Map<String, dynamic> row,
+    String select,
+  ) {
+    final projected = Map<String, dynamic>.of(row);
+    if (!select.contains('product_variants(count)')) {
+      projected.remove('product_variants');
+    }
+    if (!select.contains('options(count)')) projected.remove('options');
+    if (!select.contains('attributes(count)')) projected.remove('attributes');
+    if (!select.contains('product_type_option_sets(count)')) {
+      projected.remove('product_type_option_sets');
+    }
+    if (!select.contains('product_type_attributes(count)')) {
+      projected.remove('product_type_attributes');
+    }
+    if (!select.contains('product_attribute_values(count)')) {
+      projected.remove('product_attribute_values');
+    }
+    return projected;
+  }
+
   int _countFor(Map<String, dynamic> query, bool isCount) {
     if (!isCount) return totalCount;
     if (query['is_active'] == 'eq.true') return activeCount;
