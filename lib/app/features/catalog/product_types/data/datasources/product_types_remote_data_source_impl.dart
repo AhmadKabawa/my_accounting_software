@@ -116,7 +116,7 @@ class ProductTypesRemoteDataSourceImpl
     'code': draft.code.trim(),
     'description': PostgrestValue.nullableTrim(draft.description),
     'sort_order': draft.sortOrder,
-    'is_active': draft.isActive,
+    if (draft.isActive != null) 'is_active': draft.isActive,
   };
 
   String _escapeFilterValue(String value) =>
