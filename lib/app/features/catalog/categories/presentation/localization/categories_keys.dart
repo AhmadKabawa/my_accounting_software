@@ -48,6 +48,10 @@ enum CategoriesKeys implements AppKey {
   cancel(ar: 'إلغاء', en: 'Cancel'),
   active(ar: 'فعّال', en: 'Active'),
   inactive(ar: 'موقوف', en: 'Inactive'),
+  underInactiveParent(
+    ar: 'تحت أب موقوف',
+    en: 'Under inactive parent',
+  ),
   status(ar: 'الحالة', en: 'Status'),
   allStatuses(ar: 'كل الحالات', en: 'All statuses'),
   level(ar: 'المستوى', en: 'Level'),
