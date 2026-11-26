@@ -61,7 +61,7 @@ Widget buildCategoriesDataSection(
 
       return CategoryDetailsPanel(
         node: node,
-        tree: data.cubit.tree!,
+        tree: data.cubit.tree,
         width: width,
         canManage: canManage,
         onClose: close,
