@@ -30,7 +30,7 @@ class CategoryStatsBar extends StatelessWidget {
   final ValueChanged<CategoryStatsFilter> onSelected;
 
   CategoryStatsFilter? get _selected {
-    if (query.search.isNotEmpty) return null;
+    if (query.search.trim().isNotEmpty) return null;
     if (query.status == CategoryStatusFilter.active &&
         query.level == CategoryLevelFilter.all &&
         query.usage == CategoryUsageFilter.all) {
@@ -101,7 +101,7 @@ class CategoryStatsBar extends StatelessWidget {
         ),
         StatItem(
           labelKey: CategoriesKeys.noProductStats,
-          value: value?.withoutProductsCount?.toString(),
+          value: value?.withoutProductsCount?.toString() ?? '—',
           icon: AppIcons.info,
           tone: AppBadgeTone.neutral,
           filter: CategoryStatsFilter.withoutProducts,
