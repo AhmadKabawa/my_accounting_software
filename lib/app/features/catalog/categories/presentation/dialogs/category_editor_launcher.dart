@@ -155,6 +155,7 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
               ),
             },
             onSave: cubit.save,
+            extraBusy: _imageBusy,
             extraDirty: cubit.parentChanged || cubit.activeChanged,
             onReset: cubit.reset,
             builder: (dialogContext, scope) => CategoryEditorFields(
