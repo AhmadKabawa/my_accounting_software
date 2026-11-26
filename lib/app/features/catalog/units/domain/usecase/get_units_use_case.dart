@@ -6,10 +6,12 @@ import 'package:accounting_software/app/features/catalog/units/domain/entity/cat
 import 'package:accounting_software/app/features/catalog/units/domain/entity/unit_list_query.dart';
 import 'package:accounting_software/app/features/catalog/units/domain/repositories/units_repository.dart';
 
-class GetUnitsUseCase extends UseCase<PaginatedResult<CatalogUnit>, UnitListQuery> {
+class GetUnitsUseCase
+    extends UseCase<PaginatedResult<CatalogUnit>, UnitListQuery> {
   GetUnitsUseCase(this._repository);
   final UnitsRepository _repository;
   @override
-  Future<Either<Failure, PaginatedResult<CatalogUnit>>> call(UnitListQuery params) =>
-      _repository.getUnits(params);
+  Future<Either<Failure, PaginatedResult<CatalogUnit>>> call(
+    UnitListQuery params,
+  ) => _repository.getUnits(params);
 }

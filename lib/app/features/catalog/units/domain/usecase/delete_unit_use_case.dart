@@ -7,5 +7,6 @@ class DeleteUnitUseCase extends UseCase<Unit, int> {
   DeleteUnitUseCase(this._repository);
   final UnitsRepository _repository;
   @override
-  Future<Either<Failure, Unit>> call(int params) => _repository.deleteUnit(params);
+  Future<Either<Failure, Unit>> call(int params) =>
+      _repository.deleteUnit(params);
 }

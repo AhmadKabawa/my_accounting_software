@@ -3,9 +3,11 @@ import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 
 enum AttributeStatusFilter { all, active, inactive }
+
 enum AttributeFilterableFilter { all, filterable, notFilterable }
 
-class AttributeListQuery extends Equatable implements PagedQuery<AttributeListQuery> {
+class AttributeListQuery extends Equatable
+    implements PagedQuery<AttributeListQuery> {
   const AttributeListQuery({
     this.search = '',
     this.status = AttributeStatusFilter.all,
@@ -24,11 +26,14 @@ class AttributeListQuery extends Equatable implements PagedQuery<AttributeListQu
   @override
   final int pageSize;
   @override
-  bool get hasActiveFilters => search.isNotEmpty ||
-      status != AttributeStatusFilter.all || dataType != null ||
+  bool get hasActiveFilters =>
+      search.isNotEmpty ||
+      status != AttributeStatusFilter.all ||
+      dataType != null ||
       filterable != AttributeFilterableFilter.all;
   @override
-  AttributeListQuery withSearch(String value) => copyWith(search: value, page: 1);
+  AttributeListQuery withSearch(String value) =>
+      copyWith(search: value, page: 1);
   @override
   AttributeListQuery withPage(int value) => copyWith(page: value);
   @override
@@ -50,5 +55,12 @@ class AttributeListQuery extends Equatable implements PagedQuery<AttributeListQu
     pageSize: pageSize ?? this.pageSize,
   );
   @override
-  List<Object?> get props => [search, status, dataType, filterable, page, pageSize];
+  List<Object?> get props => [
+    search,
+    status,
+    dataType,
+    filterable,
+    page,
+    pageSize,
+  ];
 }

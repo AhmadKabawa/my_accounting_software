@@ -19,5 +19,13 @@ class AttributeDraft extends Equatable {
   final bool isFilterable;
   final bool? isActive;
   @override
-  List<Object?> get props => [name, code, dataType, unitId, optionSetId, isFilterable, isActive];
+  List<Object?> get props => [
+    name,
+    code,
+    dataType,
+    unitId,
+    optionSetId,
+    isFilterable,
+    isActive,
+  ];
 }

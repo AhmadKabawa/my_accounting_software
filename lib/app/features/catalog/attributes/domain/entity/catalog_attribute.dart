@@ -29,18 +29,33 @@ class CatalogAttribute extends Equatable {
   final String? optionSetName;
   final bool isFilterable;
   final bool isActive;
+
   /// Null means the relationship count is unknown.
   final int? linkedProductTypesCount;
+
   /// Null means the relationship count is unknown.
   final int? valueCount;
   bool get isInUse =>
-      linkedProductTypesCount == null || valueCount == null ||
-      linkedProductTypesCount! > 0 || valueCount! > 0;
+      linkedProductTypesCount == null ||
+      valueCount == null ||
+      linkedProductTypesCount! > 0 ||
+      valueCount! > 0;
   bool get canDelete => !isInUse;
   bool get canChangeType => !isInUse;
   @override
   List<Object?> get props => [
-    id, name, code, dataType, unitId, unitName, unitSymbol, optionSetId,
-    optionSetName, isFilterable, isActive, linkedProductTypesCount, valueCount,
+    id,
+    name,
+    code,
+    dataType,
+    unitId,
+    unitName,
+    unitSymbol,
+    optionSetId,
+    optionSetName,
+    isFilterable,
+    isActive,
+    linkedProductTypesCount,
+    valueCount,
   ];
 }
