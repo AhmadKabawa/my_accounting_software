@@ -50,7 +50,7 @@ Widget buildCategoriesDataSection(
         if (!canManage) return;
         showCategoryEditor(
           context,
-          tree: data.cubit.tree,
+          tree: data.cubit.tree!,
           initialParentId: node.id,
         ).then((saved) {
           if (saved == true && context.mounted) {
@@ -66,13 +66,13 @@ Widget buildCategoriesDataSection(
         canManage: canManage,
         onClose: close,
         onSelectChild: selectChild,
-        onEdit: canManage ? () => flows!.edit(context, item: node) : null,
+        onEdit: canManage ? () => flows.edit(context, item: node) : null,
         onAddChild: canManage ? addChild : null,
         onToggleStatus: canManage
-            ? () => flows!.toggleStatus(context, node)
+            ? () => flows.toggleStatus(context, node)
             : null,
         onDuplicate: canManage
-            ? () => flows!.edit(context, item: node, duplicate: true)
+            ? () => flows.edit(context, item: node, duplicate: true)
             : null,
         onDelete: canManage && node.canDelete
             ? () {
