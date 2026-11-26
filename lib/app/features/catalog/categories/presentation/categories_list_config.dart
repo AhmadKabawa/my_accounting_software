@@ -117,18 +117,23 @@ get categoriesListConfig => CrudListConfig(
           slot.cubit.clearFilters();
           break;
         case CategoryStatsFilter.active:
+          slot.cubit.clearFilters();
           slot.cubit.setStatus(CategoryStatusFilter.active);
           break;
         case CategoryStatsFilter.inactive:
+          slot.cubit.clearFilters();
           slot.cubit.setStatus(CategoryStatusFilter.inactive);
           break;
         case CategoryStatsFilter.roots:
+          slot.cubit.clearFilters();
           slot.cubit.setLevel(CategoryLevelFilter.roots);
           break;
         case CategoryStatsFilter.leaves:
+          slot.cubit.clearFilters();
           slot.cubit.setLevel(CategoryLevelFilter.leaves);
           break;
         case CategoryStatsFilter.withoutProducts:
+          slot.cubit.clearFilters();
           slot.cubit.setUsage(CategoryUsageFilter.withoutProducts);
           break;
       }
