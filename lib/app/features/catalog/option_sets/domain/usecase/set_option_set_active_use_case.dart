@@ -8,7 +8,9 @@ class SetOptionSetActiveParams {
   final int id;
   final bool isActive;
 }
-class SetOptionSetActiveUseCase extends UseCase<Unit, SetOptionSetActiveParams> {
+
+class SetOptionSetActiveUseCase
+    extends UseCase<Unit, SetOptionSetActiveParams> {
   SetOptionSetActiveUseCase(this._repository);
   final OptionSetsRepository _repository;
   @override

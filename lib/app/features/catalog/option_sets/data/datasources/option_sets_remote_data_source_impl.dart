@@ -28,8 +28,9 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
           ? OptionSetsEndpoint.select
           : OptionSetsEndpoint.baseSelect,
     );
-    if (preferred
-        case ApiFailure<PaginatedResult<OptionSetModel>>(:final exception)) {
+    if (preferred case ApiFailure<PaginatedResult<OptionSetModel>>(
+      :final exception,
+    )) {
       if (_includeCounts &&
           exception is ApiException &&
           exception.statusCode == 400) {
@@ -79,9 +80,8 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
         if (term.isNotEmpty)
           'or': '(name.ilike."*$term*",code.ilike."*$term*")',
       },
-      fromJsonList: (rows) => rows
-          .map((row) => CatalogOptionModel.fromJson(row))
-          .toList(),
+      fromJsonList: (rows) =>
+          rows.map((row) => CatalogOptionModel.fromJson(row)).toList(),
     );
   }
 

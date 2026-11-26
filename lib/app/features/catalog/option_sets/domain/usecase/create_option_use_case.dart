@@ -9,10 +9,11 @@ class CreateOptionParams {
   final int optionSetId;
   final CatalogOptionDraft draft;
 }
+
 class CreateOptionUseCase extends UseCase<Unit, CreateOptionParams> {
   CreateOptionUseCase(this._repository);
   final OptionSetsRepository _repository;
   @override
-  Future<Either<Failure, Unit>> call(CreateOptionParams params) =>
-      _repository.createOption(optionSetId: params.optionSetId, draft: params.draft);
+  Future<Either<Failure, Unit>> call(CreateOptionParams params) => _repository
+      .createOption(optionSetId: params.optionSetId, draft: params.draft);
 }

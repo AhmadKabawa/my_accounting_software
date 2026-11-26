@@ -6,7 +6,8 @@ import 'package:accounting_software/app/features/catalog/option_sets/data/dataso
 import 'package:accounting_software/app/features/catalog/option_sets/data/option_sets_endpoint.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_stats.dart';
 
-class OptionSetStatsRemoteDataSourceImpl implements OptionSetStatsRemoteDataSource {
+class OptionSetStatsRemoteDataSourceImpl
+    implements OptionSetStatsRemoteDataSource {
   const OptionSetStatsRemoteDataSourceImpl(this._apiClient);
   final IApiClient _apiClient;
 
@@ -16,13 +17,20 @@ class OptionSetStatsRemoteDataSourceImpl implements OptionSetStatsRemoteDataSour
     if (totalResult case ApiFailure<PaginatedResult<int>>(:final exception)) {
       return ApiFailure<OptionSetStats>(exception);
     }
-    final total = (totalResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
-    final activeResult = await _count(const {'select': 'id', 'is_active': 'eq.true'});
+    final total =
+        (totalResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
+    final activeResult = await _count(const {
+      'select': 'id',
+      'is_active': 'eq.true',
+    });
     if (activeResult case ApiFailure<PaginatedResult<int>>(:final exception)) {
       return ApiFailure<OptionSetStats>(exception);
     }
-    final active = (activeResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
-    return ApiSuccess(OptionSetStats(total: total, active: active, inactive: total - active));
+    final active =
+        (activeResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
+    return ApiSuccess(
+      OptionSetStats(total: total, active: active, inactive: total - active),
+    );
   }
 
   Future<ApiResult<PaginatedResult<int>>> _count(Map<String, dynamic> query) =>

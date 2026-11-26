@@ -9,6 +9,7 @@ class UpdateOptionParams {
   final int optionId;
   final CatalogOptionDraft draft;
 }
+
 class UpdateOptionUseCase extends UseCase<Unit, UpdateOptionParams> {
   UpdateOptionUseCase(this._repository);
   final OptionSetsRepository _repository;

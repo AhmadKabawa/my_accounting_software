@@ -21,9 +21,15 @@ void main() {
     'code': 'COL',
     'selection_type': 'multiple',
     'is_active': true,
-    'options': const [{'count': 4}],
-    'attributes': const [{'count': 2}],
-    'product_type_option_sets': const [{'count': 1}],
+    'options': const [
+      {'count': 4},
+    ],
+    'attributes': const [
+      {'count': 2},
+    ],
+    'product_type_option_sets': const [
+      {'count': 1},
+    ],
   };
 
   late FakeCatalogApiClient api;
@@ -75,7 +81,10 @@ void main() {
       'selection_type': 'multiple',
       'is_active': true,
     });
-    expect(api.lastRequest.options?.headers?['Prefer'], 'return=representation');
+    expect(
+      api.lastRequest.options?.headers?['Prefer'],
+      'return=representation',
+    );
   });
 
   test('options are fetched lazily for a set in stable order', () async {
@@ -90,7 +99,10 @@ void main() {
     ];
     final result = await repository.getOptions(optionSetId: 9, search: 'bl');
     expect(result.isRight(), isTrue);
-    expect(api.lastRequest.path, OptionSetsEndpoint.optionsCollection.toStringPath());
+    expect(
+      api.lastRequest.path,
+      OptionSetsEndpoint.optionsCollection.toStringPath(),
+    );
     expect(api.lastRequest.query['option_set_id'], 'eq.9');
     expect(api.lastRequest.query['order'], 'sort_order.asc,name.asc,id.asc');
     expect(api.lastRequest.query['or'], contains('bl'));
@@ -108,7 +120,10 @@ void main() {
         isActive: true,
       ),
     );
-    expect(api.lastRequest.path, OptionSetsEndpoint.optionsCollection.toStringPath());
+    expect(
+      api.lastRequest.path,
+      OptionSetsEndpoint.optionsCollection.toStringPath(),
+    );
     expect(api.lastRequest.body, {
       'option_set_id': 9,
       'name': 'Blue',

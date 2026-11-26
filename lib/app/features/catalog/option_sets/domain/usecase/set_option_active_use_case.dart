@@ -8,10 +8,14 @@ class SetOptionActiveParams {
   final int optionId;
   final bool isActive;
 }
+
 class SetOptionActiveUseCase extends UseCase<Unit, SetOptionActiveParams> {
   SetOptionActiveUseCase(this._repository);
   final OptionSetsRepository _repository;
   @override
   Future<Either<Failure, Unit>> call(SetOptionActiveParams params) =>
-      _repository.setOptionActive(optionId: params.optionId, isActive: params.isActive);
+      _repository.setOptionActive(
+        optionId: params.optionId,
+        isActive: params.isActive,
+      );
 }

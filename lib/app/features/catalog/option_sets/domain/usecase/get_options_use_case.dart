@@ -9,10 +9,14 @@ class GetOptionsParams {
   final int optionSetId;
   final String search;
 }
+
 class GetOptionsUseCase extends UseCase<List<CatalogOption>, GetOptionsParams> {
   GetOptionsUseCase(this._repository);
   final OptionSetsRepository _repository;
   @override
   Future<Either<Failure, List<CatalogOption>>> call(GetOptionsParams params) =>
-      _repository.getOptions(optionSetId: params.optionSetId, search: params.search);
+      _repository.getOptions(
+        optionSetId: params.optionSetId,
+        search: params.search,
+      );
 }

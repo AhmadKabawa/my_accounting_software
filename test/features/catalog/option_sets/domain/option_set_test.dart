@@ -18,8 +18,14 @@ void main() {
   );
 
   test('group deletion requires no options and known zero usage', () {
-    expect(buildSet(options: const [], usage: 0, optionCount: 0).canDelete, isTrue);
-    expect(buildSet(options: const [], usage: null, optionCount: 0).canDelete, isFalse);
+    expect(
+      buildSet(options: const [], usage: 0, optionCount: 0).canDelete,
+      isTrue,
+    );
+    expect(
+      buildSet(options: const [], usage: null, optionCount: 0).canDelete,
+      isFalse,
+    );
     expect(
       buildSet(
         options: const [
@@ -47,15 +53,27 @@ void main() {
 
   test('selection type is immutable when usage is present or unknown', () {
     expect(
-      buildSet(options: const [], usage: 2, optionCount: 0).canChangeSelectionType,
+      buildSet(
+        options: const [],
+        usage: 2,
+        optionCount: 0,
+      ).canChangeSelectionType,
       isFalse,
     );
     expect(
-      buildSet(options: const [], usage: null, optionCount: 0).canChangeSelectionType,
+      buildSet(
+        options: const [],
+        usage: null,
+        optionCount: 0,
+      ).canChangeSelectionType,
       isFalse,
     );
     expect(
-      buildSet(options: const [], usage: 0, optionCount: 0).canChangeSelectionType,
+      buildSet(
+        options: const [],
+        usage: 0,
+        optionCount: 0,
+      ).canChangeSelectionType,
       isTrue,
     );
   });

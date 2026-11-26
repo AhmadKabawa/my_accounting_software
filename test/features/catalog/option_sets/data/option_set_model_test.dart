@@ -3,9 +3,15 @@ import 'package:accounting_software/app/features/catalog/option_sets/data/models
 
 void main() {
   Map<String, dynamic> json({
-    Object? options = const [{'count': 4}],
-    Object? attributes = const [{'count': 2}],
-    Object? links = const [{'count': 1}],
+    Object? options = const [
+      {'count': 4},
+    ],
+    Object? attributes = const [
+      {'count': 2},
+    ],
+    Object? links = const [
+      {'count': 1},
+    ],
   }) => {
     'id': 9,
     'name': 'Colours',
@@ -41,9 +47,15 @@ void main() {
   test('known zero counts allow deletion', () {
     final set = OptionSetModel.fromJson(
       json(
-        options: const [{'count': 0}],
-        attributes: const [{'count': 0}],
-        links: const [{'count': 0}],
+        options: const [
+          {'count': 0},
+        ],
+        attributes: const [
+          {'count': 0},
+        ],
+        links: const [
+          {'count': 0},
+        ],
       ),
     ).toEntity();
     expect(set.canDelete, isTrue);
