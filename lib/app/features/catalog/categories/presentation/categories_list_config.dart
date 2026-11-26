@@ -12,7 +12,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
@@ -183,10 +182,10 @@ get categoriesListConfig => CrudListConfig(
         required ValueChanged<int> selectChild,
       }) {
         final flows = data.flows;
-        final canManage = context.can(data.permission) && flows != null;
+        final canManage = context.can(data.permission);
 
         void addChild() {
-          if (!canManage || flows == null) return;
+          if (!canManage) return;
           showCategoryEditor(
             context,
             tree: data.cubit.tree,

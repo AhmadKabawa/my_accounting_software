@@ -190,7 +190,7 @@ class CategoryFormCubit
           : value.description.trim(),
       image: value.image.trim().isEmpty ? null : value.image.trim(),
       sortOrder: int.tryParse(value.sortOrder.trim()) ?? 0,
-      isActive: _category == null || value.isActive != _category!.isActive
+      isActive: _category == null || value.isActive != _category.isActive
           ? value.isActive
           : null,
     );

@@ -21,6 +21,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_message/fl
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/features/catalog/categories/di/categories_di.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_draft.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_list_query.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/create_category_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/delete_category_use_case.dart';
@@ -734,7 +735,7 @@ void main() {
 
     _listCubit(tester).setLevel(CategoryLevelFilter.leaves);
     await tester.pumpAndSettle();
-    expect(_listCubit(tester).state.result.items.map((node) => node.id), [
+    expect(_listCubit(tester).state.result!.items.map((node) => node.id), [
       2,
       3,
     ]);
