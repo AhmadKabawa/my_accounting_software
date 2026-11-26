@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/foundation/validator/form_validator.dart';
+import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
@@ -143,10 +143,34 @@ class _ProductTypeEditorDialogState extends State<ProductTypeEditorDialog> {
               labelKey: ProductTypesKeys.sortOrderLabel,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              validator: (value) => value == null || value.trim().isEmpty ||
-                      int.tryParse(value.trim()) == null
-                  ? ProductTypesKeys.sortOrderInvalid.tr(context: context)
-                  : null,
+              validator: (value) => AppValidator.validate(
+                value,
+                [ValidationRule.required, ValidationRule.pattern],
+                params: {ValidationRule.pattern: RegExp(r'^\\d+
+              onChanged: (_) => scope.clearFailure(),
+            ),
+            context.ui.spacing.gap(AppSpacing.md),
+            AppSwitch(
+              value: _active,
+              labelKey: widget.productType == null
+                  ? ProductTypesKeys.activeOnCreate
+                  : ProductTypesKeys.active,
+              onChanged: scope.busy
+                  ? null
+                  : (value) {
+                      setState(() => _active = value);
+                      scope.clearFailure();
+                    },
+            ),
+          ],
+        ),
+      );
+}
+)},
+                customKeys: {
+                  ValidationRule.pattern: ProductTypesKeys.sortOrderInvalid,
+                },
+              ),
               onChanged: (_) => scope.clearFailure(),
             ),
             context.ui.spacing.gap(AppSpacing.md),
