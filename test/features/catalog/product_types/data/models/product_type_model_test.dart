@@ -40,6 +40,7 @@ void main() {
       expect(model.optionSetCount, 0);
       expect(model.careInstructionCount, 0);
       expect(model.toEntity().canDelete, isFalse);
+      expect(model.toEntity().codeLocked, isTrue);
     });
 
     test('keeps absent counts unknown instead of zero', () {
@@ -57,7 +58,33 @@ void main() {
       expect(model.toEntity().codeLocked, isTrue);
     });
 
-    test('treats an empty embedded relation as zero', () {
+    test('link usage protects deletion but does not lock the code', () {
+      final model = ProductTypeModel.fromJson({
+        'id': 2,
+        'name': 'Shirt',
+        'code': 'SHIRT',
+        'products': [
+          {'count': 0},
+        ],
+        'product_type_size_groups': [
+          {'count': 1},
+        ],
+        'product_type_attributes': [
+          {'count': 0},
+        ],
+        'product_type_option_sets': [
+          {'count': 0},
+        ],
+        'product_type_care_instructions': [
+          {'count': 0},
+        ],
+      });
+
+      expect(model.toEntity().canDelete, isFalse);
+      expect(model.toEntity().codeLocked, isFalse);
+    });
+
+    test('treats empty embedded relations as zero', () {
       final model = ProductTypeModel.fromJson({
         'id': 1,
         'name': 'Shirt',
