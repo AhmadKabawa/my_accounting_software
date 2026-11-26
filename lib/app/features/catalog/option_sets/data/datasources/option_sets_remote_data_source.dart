@@ -6,28 +6,13 @@ import 'package:accounting_software/app/features/catalog/option_sets/domain/enti
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_list_query.dart';
 
 abstract interface class OptionSetsRemoteDataSource {
-  Future<ApiResult<PaginatedResult<OptionSetModel>>> getOptionSets(
-    OptionSetListQuery query,
-  );
+  Future<ApiResult<PaginatedResult<OptionSetModel>>> getOptionSets(OptionSetListQuery query);
+  Future<ApiResult<List<CatalogOptionModel>>> getOptions({required int optionSetId, String search = ''});
   Future<ApiResult<OptionSetModel>> createOptionSet(OptionSetDraft draft);
-  Future<ApiResult<OptionSetModel>> updateOptionSet({
-    required int id,
-    required OptionSetDraft draft,
-  });
-  Future<ApiResult<Unit>> setOptionSetActive({
-    required int id,
-    required bool isActive,
-  });
-  Future<ApiResult<Unit>> createOption({
-    required int optionSetId,
-    required CatalogOptionDraft draft,
-  });
-  Future<ApiResult<Unit>> updateOption({
-    required int optionId,
-    required CatalogOptionDraft draft,
-  });
-  Future<ApiResult<Unit>> setOptionActive({
-    required int optionId,
-    required bool isActive,
-  });
+  Future<ApiResult<OptionSetModel>> updateOptionSet({required int id, required OptionSetDraft draft});
+  Future<ApiResult<Unit>> deleteOptionSet(int id);
+  Future<ApiResult<Unit>> setOptionSetActive({required int id, required bool isActive});
+  Future<ApiResult<Unit>> createOption({required int optionSetId, required CatalogOptionDraft draft});
+  Future<ApiResult<Unit>> updateOption({required int optionId, required CatalogOptionDraft draft});
+  Future<ApiResult<Unit>> setOptionActive({required int optionId, required bool isActive});
 }

@@ -10,6 +10,7 @@ class OptionSetListQuery extends Equatable
     this.status = OptionSetStatusFilter.all,
     this.page = 1,
     this.pageSize = 25,
+    this.sortAscending = true,
   });
   @override
   final String search;
@@ -18,6 +19,7 @@ class OptionSetListQuery extends Equatable
   final int page;
   @override
   final int pageSize;
+  final bool sortAscending;
   @override
   bool get hasActiveFilters =>
       search.isNotEmpty || status != OptionSetStatusFilter.all;
@@ -33,12 +35,16 @@ class OptionSetListQuery extends Equatable
     OptionSetStatusFilter? status,
     int? page,
     int? pageSize,
+    bool? sortAscending,
   }) => OptionSetListQuery(
     search: search ?? this.search,
     status: status ?? this.status,
     page: page ?? this.page,
     pageSize: pageSize ?? this.pageSize,
+    sortAscending: sortAscending ?? this.sortAscending,
   );
+  OptionSetListQuery withSort(bool ascending) =>
+      copyWith(sortAscending: ascending, page: 1);
   @override
-  List<Object?> get props => [search, status, page, pageSize];
+  List<Object?> get props => [search, status, page, pageSize, sortAscending];
 }

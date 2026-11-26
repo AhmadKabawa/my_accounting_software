@@ -28,6 +28,7 @@ class OptionSet extends Equatable {
     required this.isActive,
     required this.options,
     required this.usageCount,
+    this.optionCount,
   });
   final int id;
   final String name;
@@ -38,7 +39,8 @@ class OptionSet extends Equatable {
 
   /// Null means at least one relationship count is unknown.
   final int? usageCount;
-  bool get canDelete => options.isEmpty && usageCount == 0;
+  final int? optionCount;
+  bool get canDelete => optionCount == 0 && usageCount == 0;
   bool get canChangeSelectionType => usageCount == 0;
   @override
   List<Object?> get props => [
@@ -49,5 +51,6 @@ class OptionSet extends Equatable {
     isActive,
     options,
     usageCount,
+    optionCount,
   ];
 }

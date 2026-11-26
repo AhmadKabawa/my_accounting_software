@@ -9,6 +9,7 @@ class OptionSetModel {
     required this.isActive,
     required this.options,
     required this.usageCount,
+    this.optionCount,
   });
   final int id;
   final String name;
@@ -17,6 +18,7 @@ class OptionSetModel {
   final bool isActive;
   final List<CatalogOption> options;
   final int? usageCount;
+  final int? optionCount;
 
   factory OptionSetModel.fromJson(Map<String, dynamic> json) {
     final rawId = json['id'];
@@ -26,25 +28,20 @@ class OptionSetModel {
     final types = OptionSelectionType.values.where(
       (item) => item.name == rawType,
     );
-    if (types.isEmpty)
+    if (types.isEmpty) {
       throw const FormatException('Invalid option selection type');
+    }
     final attributes = _count(json['attributes']);
     final typeLinks = _count(json['product_type_option_sets']);
-    final rawOptions = json['options'];
-    final options = rawOptions is List
-        ? rawOptions
-              .whereType<Map<String, dynamic>>()
-              .map(CatalogOptionModel.fromJson)
-              .map((item) => item.toEntity())
-              .toList()
-        : <CatalogOption>[];
+    final optionCount = _count(json['options']);
     return OptionSetModel(
       id: id,
       name: json['name'] as String,
       code: json['code'] as String,
       selectionType: types.first,
       isActive: json['is_active'] as bool? ?? true,
-      options: options,
+      options: const [],
+      optionCount: optionCount,
       usageCount: attributes == null || typeLinks == null
           ? null
           : attributes + typeLinks,
@@ -73,6 +70,7 @@ class OptionSetModel {
     isActive: isActive,
     options: options,
     usageCount: usageCount,
+    optionCount: optionCount,
   );
 }
 
