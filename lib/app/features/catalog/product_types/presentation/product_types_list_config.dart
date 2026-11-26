@@ -6,6 +6,9 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_stats/product_type_stats_cubit.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_stats/product_type_stats_state.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/widgets/product_type_stats_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
@@ -75,7 +78,21 @@ CrudListConfig<ProductType, ProductTypeListQuery, ProductTypesListCubit,
     duplicate: false,
     bulkSelection: false,
   ),
+  providersWrapper: (child) => BlocProvider<ProductTypeStatsCubit>(
+    create: (_) => sl<ProductTypeStatsCubit>()..load(),
+    child: child,
+  ),
   isMutationEffect: (effect) => effect is ProductTypesMutatedEffect,
+  onMutated: (context) => context.read<ProductTypeStatsCubit>().refresh(),
+  statsBuilder: (slot) => BlocBuilder<ProductTypeStatsCubit, ProductTypeStatsState>(
+    builder: (context, stats) => ProductTypeStatsBar(
+      stats.stats,
+      selectedFilter: slot.state.query.status,
+      loading: stats is ProductTypeStatsLoading ||
+          stats is ProductTypeStatsInitial,
+      onFilterSelected: slot.cubit.setStatus,
+    ),
+  ),
   flows: CrudFlowsConfig<ProductType, ProductTypesListCubit>(
     showEditor: (context, {item, duplicate = false}) =>
         showProductTypeEditor(context, productType: item),
