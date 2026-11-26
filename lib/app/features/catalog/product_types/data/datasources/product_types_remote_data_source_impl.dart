@@ -6,7 +6,7 @@ import 'package:accounting_software/app/core/foundation/types/paginated_parser.d
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/core/network/postgrest_helpers.dart';
-import 'package:accounting_software/app/features/catalog/product_types/data/product_type_endpoints.dart';
+import 'package:accounting_software/app/features/catalog/product_types/data/product_types_endpoints.dart';
 import 'package:accounting_software/app/features/catalog/product_types/data/datasources/product_types_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/product_types/data/models/product_type_model.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_draft.dart';
