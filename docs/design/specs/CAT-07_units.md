@@ -109,3 +109,14 @@
 - [ ] CAT07-UN-AC3: جسم الطلب لا يحوي `base_unit_id` ولا `conversion_factor` (اختبار Repository).
 - [ ] CAT07-UN-AC4: لا حقل تحويل في أي نموذج أو عمود.
 - [ ] CAT07-UN-AC5: وحدة مستخدمة لا تعرض «حذف».
+## 23. C12 implementation clarifications for CAT-08
+
+- **Composition:** `CrudListScreen` + feature-owned `units_list_config.dart`; the config is capped at 250 lines and delegates filters, statistics, identity and card layout to feature widgets.
+- **Columns:** name + symbol, translated type, usage count, status, `updated_at`, actions. `updated_at` is selected and rendered using the shared date/time presentation component.
+- **Filters/sort:** status and four-value unit type are server filters; search uses name/symbol with escaped PostgREST values and 300 ms debounce; server order is name then id.
+- **Statistics:** all/active/inactive from lightweight server count queries; tapping a card applies the matching status filter; stats failure does not block the list.
+- **Capabilities:** no details panel, no bulk selection, no duplicate, no seed data.
+- **Editor/payload:** `CrudEditorDialog` in `showAppFormDialog`; name/symbol are trimmed; `is_active=true` is sent on create; PATCH includes `is_active` only if the value changed. Dirty comparison uses the same trimmed values as serialization.
+- **Deletion:** delete is offered only when both usage counts are known and sum to zero. Unknown usage blocks delete. A database 23503 response offers deactivation instead; 23505 maps to a translated duplicate-symbol failure.
+- **Localization/states:** all labels, four type values, validation and failure messages have Arabic/English `AppKey`s. Loading, empty, no-results, failed and read-only states are explicit.
+- **Decision-26 remains binding:** `base_unit_id` and `conversion_factor` are not selected for UI, displayed, or sent in POST/PATCH; existing non-default conversion rows are not edited or exposed.

@@ -7,6 +7,7 @@
 | Field | Type / constraint | Add | Edit | List / detail | Search / filter / sort | Related feature / decision |
 |---|---|---|---|---|---|---|
 | id | integer PK | generated | immutable | internal | none | referenced by product variants and attributes |
+| updated_at | timestamptz (`+std`) | server managed | server managed | last-updated column | sort/display only | use the shared date/time renderer; never client-derived |
 | name | varchar(100), required | required | editable | primary | search; sort name | non-unique |
 | symbol | varchar(20), required, unique | required | editable | primary beside name | search | duplicate maps to 23505 |
 | unit_type | varchar(30), CHECK weight/length/volume/piece | required select | editable select | translated | filter by type | fixed four-value domain |

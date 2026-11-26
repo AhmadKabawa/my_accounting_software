@@ -1,10 +1,55 @@
 # CAT-08 Units, Option Sets and Attributes — implementation report
 
+
+## Stage 0 — architecture audit and specification correction (2026-11-26)
+
+### A. Pattern extracted from Categories and adopted for CAT-08
+
+| Concern | Pattern observed in Categories / CAT-07 | CAT-08 decision |
+|---|---|---|
+| Screen composition | Thin `CrudListScreen` + feature-owned `CrudListConfig`; feature-specific data sections/widgets stay outside the config. | All three screens use the shared CRUD engine; each config stays below 250 lines. |
+| List state | `PagedListCubit` with sealed/Equatable feature effects, query reset, 300 ms debounced search, latest-request-wins. | Server-backed paging/search/filter/sort; no client-only aggregate calculations. |
+| Data access | Feature-owned endpoint and remote data source over `IApiClient`; Supabase pagination parser; escaped PostgREST search; stable `id` tie-break. | No sibling-feature imports; Attributes owns lightweight Units/Option Sets lookup reads. |
+| Statistics | Dedicated lightweight count requests and `ListStatsBar`; stats failure must not block list loading. | Units and Option Sets: all/active/inactive. Attributes: all/active/inactive/filterable. Counts are server-derived. |
+| Details | Categories has a desktop `AppDetailsPanel` and a narrow-screen bottom sheet. | Units: no details panel. Option Sets: details panel/bottom sheet owns lazy-loaded options. Attributes: no details panel. |
+| Editor | `CrudEditorDialog` in `showAppFormDialog`; feature-owned validation through `AppValidator`; dirty guard compares normalized saved values. | Trimmed name/code/symbol values are compared exactly as submitted; create sends active=true, PATCH sends status only when changed. |
+| Permissions | `CrudListConfig.manageAccess = Permissions.masterData.manage`; read access stays open; route does not add a role guard. | Same policy for all CAT-08 screens. |
+| Usage/deletion | PostgREST relationship `count`; null means unknown, not zero; unknown blocks deletion. Database FK remains final authority. | Custom feature confirmation offers deactivate after a 23503 FK failure; duplicate 23505/409 and business codes map to translated feature failures. |
+| Localization | Feature-owned `AppKey` enums with Arabic and English; domain failures live under `domain/failures`. | UnitsKeys, OptionSetsKeys, AttributesKeys and one failure-key enum per feature; no ARB or raw server messages. |
+| Tests | Model/repository fake-client tests, Cubit race/debounce tests, widget tests through `pumpScreenMatrix`, architecture checks. | CAT-08 adds request/body/error assertions and responsive RTL/LTR light/dark coverage at 360/600/900/1200. |
+
+### B. What changed in Categories after its specification, and what the CAT-08 drafts had omitted
+
+| Categories implementation/spec evolution | Missing or under-specified in the original CAT-08 drafts | Correction made in the CAT-08-owned specs |
+|---|---|---|
+| Categories moved onto `CrudListScreen` + `CrudListConfig`, with a feature-owned data section. | The CAT-08 drafts described fields and actions but did not mandate the CRUD engine composition. | All three CAT-08 screens must use the CRUD engine; no hand-built list template. |
+| Categories gained server-backed stats, clickable stats cards and independent stats failure handling. | Stats were not explicit enough, and did not state that counts must be server-derived. | Added exact stat sets and prohibited page-derived aggregates. |
+| Categories gained a desktop details panel and mobile bottom sheet. | The drafts did not explicitly decide whether each CAT-08 screen has a details panel. | Units/Attributes: none; Option Sets: panel + bottom sheet for nested options. |
+| Categories supports duplicate and bulk flows, but these are feature decisions, not defaults. | CAT-08 had no explicit bulk/duplicate matrix. | Units: both false; Option Sets: both false; Attributes: duplicate true, bulk false. |
+| Categories explicitly sends `is_active` on create and only sends it in PATCH when changed. | CAT-08 drafts did not spell out the payload rule. | Added create/status/PATCH payload requirements to each spec. |
+| Categories protects unsaved edits with a normalized dirty guard and feature-owned validators. | CAT-08 drafts lacked a precise trim-equivalent dirty rule and did not consistently mandate `AppValidator`. | Added `trim()`-equivalent dirty comparison and AppValidator-only field validation. |
+| Categories has dedicated loading/empty/no-results/error states, translated failures, unknown-count handling and FK fallbacks. | CAT-08 drafts lacked a complete state/error contract. | Added state matrix, feature failure keys, unknown-count blocking and 23503/23505/ERP mappings. |
+
+### C. Corrected feature decisions
+
+- **Units:** server stats all/active/inactive; status and type filters; name + `id` sorting; updated-at column; no details panel, bulk or duplicate; no conversion fields in UI or payload; unknown usage blocks delete; status on create and only-if-changed PATCH.
+- **Option Sets:** server stats all/active/inactive; no bulk or duplicate; lazy-load option rows only when the set opens; sort options by `sort_order`, then `name`, then `id`; never delete individual options; lock selection type for positive or unknown usage; hide group delete for any option/reference/unknown count.
+- **Attributes:** server stats all/active/inactive/filterable; duplicate enabled with a unique `-copy` code seed; bulk and details panel disabled; option-set relation iff data_type is option; changing type clears incompatible IDs; current inactive lookup remains visible while editing; lock data_type and option_set_id for positive or unknown usage.
+- No Categories, Brands, Colors, Core, backend schema, migration, RPC, view, dependency, or BACKEND_REQUESTS file is changed by the final CAT-08 tree.
+
+### D. CI baseline and branch policy
+
+- Run `45889013226` (commit `a96f869e`): auto-format succeeded; Analyze succeeded; tests failed with 13 failures (12 pre-existing Categories widget/domain failures plus the CAT-08 OptionSets key-prefix registry failure).
+- Run `45889825902` (temporary commit `977...`): auto-format failed while an out-of-scope Categories experiment was present. That experiment was reverted; no Categories changes remain in the final tree.
+- Run `45889964780` (commit `20ba26ea`): auto-format succeeded; Analyze succeeded; tests still fail on the 12 Categories failures. The OptionSets key-prefix failure is resolved. The CAT-08 domain tests visible in this run pass.
+- No local Flutter/Dart commands were run. The GitHub Actions runner is the only Flutter verification environment available.
+- Branch updates use the latest fetched branch SHA and a non-forced compare-and-swap ref update; no other branch is merged, rebased into, or modified. No PR is opened.
+
 ## Branch and scope
 
 - Branch: `feat/cat08-units-attributes`
 - No merge, pull request, or changes to another branch were made.
-- No CI run was used as a gate, per the task instruction.
+- GitHub CI is used as the gate after each pushed phase. Local Flutter/Dart commands are not available in this workspace.
 - No local Flutter/Dart SDK or project workspace was available. Formatting, analysis and tests have not been run locally.
 
 ## Implemented in this work
