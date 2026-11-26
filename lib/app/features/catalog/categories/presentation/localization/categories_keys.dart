@@ -86,6 +86,7 @@ enum CategoriesKeys implements AppKey {
   topLevel(ar: 'رئيسي', en: 'Top level'),
   path(ar: 'المسار', en: 'Path'),
   products(ar: 'المنتجات', en: 'Products'),
+  updatedAt(ar: 'آخر تحديث', en: 'Last updated'),
   subcategories(ar: 'الفروع', en: 'Subcategories'),
   empty(ar: 'لا توجد تصنيفات بعد', en: 'No categories yet'),
   emptyDescription(
