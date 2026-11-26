@@ -148,12 +148,13 @@ get unitsListConfig => CrudListConfig(
           DataTableColumn(
             labelKey: CommonKeys.updatedAt,
             priority: DataTableColumnPriority.secondary,
-            cellBuilder: (_, unit) =>
-                AppText.raw(unit.updatedAt == null
-                ? '—'
-                : MaterialLocalizations.of(context).formatShortDate(
-                    unit.updatedAt!.toLocal(),
-                  )),
+            cellBuilder: (_, unit) => AppText.raw(
+              unit.updatedAt == null
+                  ? '—'
+                  : MaterialLocalizations.of(
+                      context,
+                    ).formatShortDate(unit.updatedAt!.toLocal()),
+            ),
           ),
           DataTableColumn(
             labelKey: UnitsKeys.usage,
