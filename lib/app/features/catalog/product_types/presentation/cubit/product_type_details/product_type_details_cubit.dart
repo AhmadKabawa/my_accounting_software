@@ -47,15 +47,14 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
     final genders = await _repository.getGenderOptions();
     if (isClosed || version != _requestVersion) return;
 
-    final failure = _firstFailure([
-      sizeGroups,
-      attributes,
-      optionSets,
-      sizeOptions,
-      attributeOptions,
-      optionOptions,
-      genders,
-    ]);
+    final failure =
+        _failureFrom(sizeGroups) ??
+        _failureFrom(attributes) ??
+        _failureFrom(optionSets) ??
+        _failureFrom(sizeOptions) ??
+        _failureFrom(attributeOptions) ??
+        _failureFrom(optionOptions) ??
+        _failureFrom(genders);
     if (failure != null) {
       emit(ProductTypeDetailsFailed(failure));
       return;
@@ -79,13 +78,9 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
     );
   }
 
-  Failure? _firstFailure(List<Either<Failure, Object?>> results) {
-    for (final result in results) {
-      final failure = result.fold((value) => value, (_) => null);
-      if (failure != null) return failure;
-    }
-    return null;
-  }
+  Failure? _failureFrom<T>(Either<Failure, T> result) =>
+      result.fold((failure) => failure, (_) => null);
+
 
   Future<void> addSizeGroup({
     required int sizeGroupId,
