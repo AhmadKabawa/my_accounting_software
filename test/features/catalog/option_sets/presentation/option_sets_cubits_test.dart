@@ -9,13 +9,19 @@ import 'package:accounting_software/app/features/catalog/option_sets/domain/enti
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_stats.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/repositories/option_sets_repository.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/create_option_use_case.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/create_option_set_use_case.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/get_option_set_stats_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/delete_option_set_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/get_option_sets_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/get_options_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/set_option_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/set_option_set_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/update_option_use_case.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/update_option_set_use_case.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_form/option_set_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_options/option_set_options_cubit.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_stats/option_set_stats_cubit.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_stats/option_set_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_options/option_set_options_state.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_sets_list/option_sets_list_cubit.dart';
 
@@ -77,6 +83,47 @@ void main() {
     );
   });
 
+  group('OptionSetStatsCubit', () {
+    test('publishes server-derived counts', () async {
+      final repository = _FakeOptionSetsRepository();
+      final cubit = OptionSetStatsCubit(
+        getStats: GetOptionSetStatsUseCase(repository),
+      );
+      addTearDown(cubit.close);
+
+      await cubit.load();
+
+      expect(cubit.state.status, OptionSetStatsStatus.ready);
+      expect(cubit.state.stats, const OptionSetStats(total: 1, active: 1, inactive: 0));
+      expect(repository.getStatsCalls, 1);
+    });
+  });
+
+  group('OptionSetFormCubit', () {
+    test('uses create for new sets and update for existing sets', () async {
+      final repository = _FakeOptionSetsRepository();
+      final cubit = OptionSetFormCubit(
+        create: CreateOptionSetUseCase(repository),
+        update: UpdateOptionSetUseCase(repository),
+        flashMessages: FlashMessages(),
+      );
+      addTearDown(cubit.close);
+      const draft = OptionSetDraft(
+        name: 'Size',
+        code: 'SIZE',
+        selectionType: OptionSelectionType.single,
+        isActive: true,
+      );
+
+      await cubit.save(draft: draft);
+      await cubit.save(id: 12, draft: draft);
+
+      expect(repository.createdGroupDrafts, [draft]);
+      expect(repository.updatedGroupIds, [12]);
+      expect(cubit.state, OptionSetFormStatus.idle);
+    });
+  });
+
   group('OptionSetOptionsCubit', () {
     test(
       'loads lazily and refreshes after create and active mutations',
@@ -119,6 +166,9 @@ class _FakeOptionSetsRepository implements OptionSetsRepository {
   final List<(int, bool)> optionActiveChanges = [];
   int deleteCalls = 0;
   int getOptionsCalls = 0;
+  int getStatsCalls = 0;
+  final List<OptionSetDraft> createdGroupDrafts = [];
+  final List<int> updatedGroupIds = [];
 
   static const _option = CatalogOption(
     id: 41,
@@ -140,8 +190,10 @@ class _FakeOptionSetsRepository implements OptionSetsRepository {
   );
 
   @override
-  Future<Either<Failure, OptionSetStats>> getOptionSetStats() async =>
-      const Right(OptionSetStats(total: 1, active: 1, inactive: 0));
+  Future<Either<Failure, OptionSetStats>> getOptionSetStats() async {
+    getStatsCalls++;
+    return const Right(OptionSetStats(total: 1, active: 1, inactive: 0));
+  }
 
   @override
   Future<Either<Failure, PaginatedResult<OptionSet>>> getOptionSets(
@@ -176,7 +228,10 @@ class _FakeOptionSetsRepository implements OptionSetsRepository {
   Future<Either<Failure, OptionSet>> updateOptionSet({
     required int id,
     required OptionSetDraft draft,
-  }) async => const Right(_set);
+  }) async {
+    updatedGroupIds.add(id);
+    return const Right(_set);
+  }
 
   @override
   Future<Either<Failure, Unit>> deleteOptionSet(int id) async {
