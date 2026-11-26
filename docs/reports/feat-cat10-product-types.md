@@ -3,8 +3,8 @@
 التاريخ: 2026-11-25  
 الفرع: `feat/cat10-product-types`  
 الأساس: `feat/cat07-categories-ui` عند `b4b9d19a4500b52fa6abc5c3d8cc2bcaebab5f5a`  
-HEAD المراجع: `86cf54514893c8bf205d6a6c3e04263fe10e3f45`  
-مقارنة الفرع: ahead 118 / behind 0.  
+HEAD المراجع: `db970a05d7206c2875b7d035615dfa6777dbd5c4`  
+مقارنة الفرع: ahead 122 / behind 0.  
 الحالة: **تنفيذ واسع لكنه غير متحقق آلياً وغير جاهز للدمج**. لا PR ولا merge.
 
 ## 1. النمط المستخرج من Categories وما التزم به
