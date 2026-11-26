@@ -19,6 +19,17 @@ class ProductTypesRemoteDataSourceImpl implements ProductTypesRemoteDataSource {
   bool _includeUsageCounts = true;
 
   @override
+  Future<ApiResult<ProductTypeModel>> getById(int id) =>
+      _apiClient.get<ProductTypeModel>(
+        ProductTypeEndpoints.collection,
+        queryParameters: {
+          'select': ProductTypeEndpoints.select,
+          'id': 'eq.$id',
+        },
+        fromJsonList: _single,
+      );
+
+  @override
   Future<ApiResult<PaginatedResult<ProductTypeModel>>> getPage(
     ProductTypeListQuery query,
   ) async {
