@@ -35,6 +35,7 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 
 const _crudLabels = CrudLabels(
   edit: CategoriesKeys.edit,
+  duplicate: CategoriesKeys.duplicate,
   delete: CategoriesKeys.delete,
   activate: CategoriesKeys.activate,
   deactivate: CategoriesKeys.deactivate,
@@ -128,6 +129,7 @@ get categoriesListConfig => CrudListConfig(
     showEditor: (context, {item, duplicate = false}) => showCategoryEditor(
       context,
       category: item?.category,
+      duplicate: duplicate,
       tree: context.read<CategoriesListCubit>().tree,
     ),
     onSaved: (cubit, {required isNew}) => cubit.onCategorySaved(isNew: isNew),
