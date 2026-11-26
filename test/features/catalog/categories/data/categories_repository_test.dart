@@ -107,5 +107,6 @@ extension on CategoryModel {
     sortOrder: sortOrder,
     isActive: isActive,
     productCount: productCount,
+    updatedAt: updatedAt,
   );
 }
