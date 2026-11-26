@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
+import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_list_query.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_node.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/categories_list/categories_list_cubit.dart';
@@ -19,6 +20,18 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_details_panel.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_identity.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_status_badge.dart';
+
+const categoriesCrudLabels = CrudLabels(
+  edit: CategoriesKeys.edit,
+  duplicate: CategoriesKeys.duplicate,
+  delete: CategoriesKeys.delete,
+  activate: CategoriesKeys.activate,
+  deactivate: CategoriesKeys.deactivate,
+  deleteConfirmationTitle: CategoriesKeys.delete,
+  deleteConfirmationMessage: CategoriesKeys.deleteMessage,
+  deactivateConfirmationTitle: CategoriesKeys.deactivateTitle,
+  deactivateConfirmationMessage: CategoriesKeys.deactivateMessage,
+);
 
 Widget buildCategoriesDataSection(
   CrudDataContext<CategoryNode, CategoryListQuery, CategoriesListCubit> data,
@@ -41,7 +54,7 @@ Widget buildCategoriesDataSection(
           initialParentId: node.id,
         ).then((saved) {
           if (saved == true && context.mounted) {
-            flows!.onSaved(data.cubit, isNew: true);
+            flows.onSaved(data.cubit, isNew: true);
           }
         });
       }

@@ -19,7 +19,7 @@ class CategoryDetailsPanel extends StatelessWidget {
     required this.tree,
     required this.onClose,
     required this.onSelectChild,
-    this.width = AppComponentSize.cardWidth.desktop,
+    required this.width,
     this.canManage = false,
     this.onEdit,
     this.onAddChild,

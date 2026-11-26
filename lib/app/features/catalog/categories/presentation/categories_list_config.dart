@@ -23,19 +23,8 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/categories_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_stats_bar.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_data_section.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/dialogs/category_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
-
-const _crudLabels = CrudLabels(
-  edit: CategoriesKeys.edit,
-  duplicate: CategoriesKeys.duplicate,
-  delete: CategoriesKeys.delete,
-  activate: CategoriesKeys.activate,
-  deactivate: CategoriesKeys.deactivate,
-  deleteConfirmationTitle: CategoriesKeys.delete,
-  deleteConfirmationMessage: CategoriesKeys.deleteMessage,
-  deactivateConfirmationTitle: CategoriesKeys.deactivateTitle,
-  deactivateConfirmationMessage: CategoriesKeys.deactivateMessage,
-);
 
 CrudListConfig<
   CategoryNode,
@@ -149,7 +138,7 @@ get categoriesListConfig => CrudListConfig(
             key: CategoriesKeys.deactivateWithChildrenMessage,
             args: {'count': node.activeChildCount.toString()},
           ),
-    labels: _crudLabels,
+    labels: categoriesCrudLabels,
   ),
   bulk: CrudBulkConfig<CategoryNode, CategoriesListCubit>(
     activateLabelKey: CategoriesKeys.bulkActivate,
