@@ -169,6 +169,8 @@ void main() {
             expect(find.byType(ProductTypesScreen), findsOneWidget);
             expect(find.text('Shoes'), findsWidgets);
             expect(find.text('SHOE'), findsWidgets);
+            expect(find.text(ProductTypesKeys.updatedAt.en), findsNothing);
+            expect(find.text(ProductTypesKeys.unusedStats.en), findsNothing);
             expect(find.textContaining('{'), findsNothing);
             expect(find.textContaining('@'), findsNothing);
             expect(tester.takeException(), isNull);
