@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -16,10 +17,15 @@ import 'package:accounting_software/app/features/catalog/product_types/presentat
 import 'package:accounting_software/app/features/catalog/product_types/presentation/widgets/product_type_status_badge.dart';
 
 class ProductTypesDataSection extends StatelessWidget {
-  const ProductTypesDataSection({super.key, required this.data});
+  const ProductTypesDataSection({
+    super.key,
+    required this.data,
+    required this.labels,
+  });
 
   final CrudDataContext<ProductType, ProductTypeListQuery,
       ProductTypesListCubit> data;
+  final CrudLabels labels;
 
   @override
   Widget build(BuildContext context) =>
@@ -49,14 +55,14 @@ class ProductTypesDataSection extends StatelessWidget {
             labelKey: ProductTypesKeys.products,
             numeric: true,
             priority: DataTableColumnPriority.secondary,
-            cellBuilder: (_, item) => AppText(
-              item.productCount == null
-                  ? CommonKeys.noValue
-                  : ProductTypesKeys.productsCount,
-              args: item.productCount == null
-                  ? null
-                  : {'count': item.productCount.toString()},
-            ),
+            cellBuilder: (context, item) => item.productCount == null
+                ? const AppText(CommonKeys.noValue)
+                : AppText.raw(
+                    ProductTypesKeys.productsCount.tr(
+                      context: context,
+                      namedArgs: {'count': item.productCount.toString()},
+                    ),
+                  ),
           ),
           DataTableColumn(
             labelKey: ProductTypesKeys.descriptionLabel,
@@ -81,12 +87,7 @@ class ProductTypesDataSection extends StatelessWidget {
                   ),
           ),
         ],
-        labels: const CrudLabels(
-          edit: ProductTypesKeys.edit,
-          delete: ProductTypesKeys.delete,
-          activate: ProductTypesKeys.activate,
-          deactivate: ProductTypesKeys.deactivate,
-        ),
+        labels: labels,
         statusColumn: CrudStatusColumnConfig<ProductType>(
           labelKey: ProductTypesKeys.status,
           isActive: (item) => item.isActive,
