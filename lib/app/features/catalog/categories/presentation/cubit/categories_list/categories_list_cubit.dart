@@ -47,6 +47,23 @@ class CategoriesListCubit
   final ValueNotifier<int?> selectedId = ValueNotifier(null);
 
   void selectDetails(int? id) {
+    if (id == null) {
+      if (selectedId.value != null) selectedId.value = null;
+      return;
+    }
+    final tree = _tree;
+    if (tree == null) return;
+    var query = state.query;
+    var result = _project(tree, query);
+    if (!result.items.any((row) => row.id == id)) {
+      query = query.cleared();
+    }
+    if (!query.hasActiveFilters) {
+      final expanded = {...(query.expandedIds ?? tree.defaultExpandedIds)}
+        ..addAll(tree.ancestorIds(id));
+      query = query.withExpanded(expanded);
+    }
+    if (query != state.query) _reproject(query);
     if (selectedId.value != id) selectedId.value = id;
   }
 
