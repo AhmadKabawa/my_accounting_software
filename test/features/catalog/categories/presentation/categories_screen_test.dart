@@ -686,4 +686,61 @@ void main() {
     expect(seed?.isActive, isFalse);
   });
 
+  testWidgets('details panel edit then add-child uses the shared editor flow', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(1200, 900));
+    final repository = FakeCategoriesRepository(
+      categories: _sampleCategories().take(3).toList(),
+    );
+    _register(repository);
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Root').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip(CategoriesKeys.edit.en));
+    await tester.pumpAndSettle();
+    await tester.enterText(_categoryNameInput(), 'Root Updated');
+    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip(CategoriesKeys.addChild.en));
+    await tester.pumpAndSettle();
+    await tester.enterText(_categoryNameInput(), 'Panel child');
+    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.updateCalls, 1);
+    expect(repository.createCalls, 1);
+    expect(repository.lastCreatedDraft?.parentId, 1);
+    expect(repository.categories.any((item) => item.name == 'Panel child'), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('changing filters clears a details selection outside results', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(
+      FakeCategoriesRepository(categories: _sampleCategories().take(4).toList()),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Root').first);
+    await tester.pumpAndSettle();
+    expect(_listCubit(tester).selectedId.value, 1);
+
+    _listCubit(tester).setStatus(CategoryStatusFilter.inactive);
+    await tester.pumpAndSettle();
+
+    expect(_listCubit(tester).selectedId.value, isNull);
+    expect(tester.takeException(), isNull);
+  });
+
 }
