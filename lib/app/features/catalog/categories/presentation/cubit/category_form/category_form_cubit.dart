@@ -60,6 +60,8 @@ class CategoryFormCubit
 
   CategoryTree? get tree => _tree;
 
+  bool get isNew => _category == null;
+
   /// Used by CrudEditorDialog in addition to its text-controller dirty check.
   bool get parentChanged => state.parentId != _initialParentId;
 

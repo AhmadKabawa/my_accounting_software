@@ -680,6 +680,7 @@ void main() {
     await tester.tap(find.text(CategoriesKeys.add.en).first);
     await tester.pumpAndSettle();
     expect(find.text(CategoriesKeys.categoryName.en), findsOneWidget);
+    expect(find.text(CategoriesKeys.activeOnCreate.en), findsOneWidget);
 
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
@@ -791,6 +792,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(CategoriesKeys.edit.en));
     await tester.pumpAndSettle();
+    expect(find.text(CategoriesKeys.active.en), findsOneWidget);
     await tester.enterText(_categoryNameInput(), 'Root Updated');
     await tester.tap(find.text(CategoriesKeys.save.en));
     await tester.pumpAndSettle();

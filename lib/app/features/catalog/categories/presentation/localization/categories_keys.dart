@@ -52,6 +52,7 @@ enum CategoriesKeys implements AppKey {
   save(ar: 'حفظ', en: 'Save'),
   cancel(ar: 'إلغاء', en: 'Cancel'),
   active(ar: 'فعّال', en: 'Active'),
+  activeOnCreate(ar: 'نشط عند الإنشاء', en: 'Active on create'),
   inactive(ar: 'موقوف', en: 'Inactive'),
   underInactiveParent(ar: 'تحت أب موقوف', en: 'Under inactive parent'),
   status(ar: 'الحالة', en: 'Status'),
