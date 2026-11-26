@@ -52,6 +52,7 @@ void main() {
     ValueChanged<Set<Object>>? onSelectionChanged,
     Set<Object> selectedIds = const {},
     ValueChanged<String>? onRowActivated,
+    ValueChanged<String>? onRowTap,
     bool hasMore = false,
     VoidCallback? onLoadMore,
     int totalCount = 75,
@@ -85,6 +86,7 @@ void main() {
                     selectedIds: selectedIds,
                     onSelectionChanged: onSelectionChanged,
                     onRowActivated: onRowActivated,
+                    onRowTap: onRowTap,
                     hasMore: hasMore,
                     onLoadMore: onLoadMore,
                     totalCount: totalCount,
@@ -470,4 +472,48 @@ void main() {
       expect(find.text('No data'), findsOneWidget);
     });
   });
+  group('row tap with bulk selection', () {
+    testWidgets('table row tap activates details without toggling selection', (
+      tester,
+    ) async {
+      final tapped = <String>[];
+      var selectionChanges = 0;
+      await pump(
+        tester,
+        mode: AppViewMode.table,
+        onSelectionChanged: (_) => selectionChanges++,
+        onRowTap: tapped.add,
+      );
+
+      await tester.tap(find.text('Alpha'));
+      await tester.pumpAndSettle();
+
+      expect(tapped, ['Alpha']);
+      expect(selectionChanges, 0);
+    });
+
+    testWidgets('card tap activates details while checkbox remains selection', (
+      tester,
+    ) async {
+      final tapped = <String>[];
+      var selectionChanges = 0;
+      await pump(
+        tester,
+        size: const Size(360, 800),
+        mode: AppViewMode.cards,
+        onSelectionChanged: (_) => selectionChanges++,
+        onRowTap: tapped.add,
+      );
+
+      await tester.tap(find.text('Alpha'));
+      await tester.pumpAndSettle();
+
+      expect(tapped, ['Alpha']);
+      expect(selectionChanges, 0);
+      await tester.tap(find.byType(Checkbox).first);
+      await tester.pumpAndSettle();
+      expect(selectionChanges, 1);
+    });
+  });
+
 }
