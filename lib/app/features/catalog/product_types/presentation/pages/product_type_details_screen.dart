@@ -61,6 +61,14 @@ class _ProductTypeDetailsBody extends StatelessWidget {
             children: [
               AppPageHeader(
                 titleKey: ProductTypesKeys.detailTitle,
+                subtitle: state is ProductTypeDetailsLoaded
+                    ? Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: AppText.raw(
+                          '${state.productType.name} · ${state.productType.code}',
+                        ),
+                      )
+                    : null,
                 breadcrumb: AppBreadcrumb(
                   items: [
                     AppBreadcrumbItem(
