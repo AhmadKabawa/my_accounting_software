@@ -19,6 +19,7 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_state.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/dialogs/category_editor_fields.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/dialogs/category_duplicate_seed.dart';
 
 Future<bool?> showCategoryEditor(
   BuildContext context, {
@@ -27,18 +28,25 @@ Future<bool?> showCategoryEditor(
   int? initialParentId,
   ImagePickerPort? imagePicker,
   FileDropTargetAdapter? dropTargetAdapter,
-}) => showAppFormDialog<bool>(
+} ) => showAppFormDialog<bool>(
   context,
   (_) => BlocProvider(
     create: (_) => sl<CategoryFormCubit>(
       param1: CategoryFormArgs(
-        category: category,
+        category: duplicate ? null : category,
+        seed: duplicate && category != null
+            ? categoryDuplicateSeed(context, category)
+            : null,
         tree: tree,
         initialParentId: initialParentId,
       ),
     ),
     child: CategoryEditorDialog(
-      category: category,
+      category: duplicate ? null : category,
+      duplicate: duplicate,
+      seed: duplicate && category != null
+          ? categoryDuplicateSeed(context, category)
+          : null,
       imageUploader: (upload) async {
         final result = await sl<UploadCategoryImageUseCase>()(upload);
         return result.leftMap((failure) => failure.statusCode == 403
@@ -55,12 +63,16 @@ class CategoryEditorDialog extends StatefulWidget {
   const CategoryEditorDialog({
     super.key,
     this.category,
+    this.seed,
+    this.duplicate = false,
     required this.imageUploader,
     this.imagePicker,
     this.dropTargetAdapter,
   });
 
   final Category? category;
+  final CategoryDraft? seed;
+  final bool duplicate;
   final ImageUploader imageUploader;
   final ImagePickerPort? imagePicker;
   final FileDropTargetAdapter? dropTargetAdapter;
@@ -79,11 +91,11 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
     final category = widget.category;
     _fields = CrudEditorFields(
       initialValues: {
-        'name': category?.name ?? '',
-        'slug': category?.slug ?? '',
-        'description': category?.description ?? '',
-        'image': category?.image ?? '',
-        'sortOrder': '${category?.sortOrder ?? 0}',
+        'name': widget.seed?.name ?? category?.name ?? '',
+        'slug': widget.seed?.slug ?? category?.slug ?? '',
+        'description': widget.seed?.description ?? category?.description ?? '',
+        'image': widget.seed?.image ?? category?.image ?? '',
+        'sortOrder': '${widget.seed?.sortOrder ?? category?.sortOrder ?? 0}',
       },
     );
   }
@@ -111,7 +123,9 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
           >(
             cubit: cubit,
             fields: _fields,
-            mode: widget.category == null
+            mode: widget.duplicate
+                ? CrudEditorMode.duplicate
+                : widget.category == null
                 ? CrudEditorMode.add
                 : CrudEditorMode.edit,
             labels: const CrudEditorLabels(
