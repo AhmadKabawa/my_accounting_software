@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,6 +9,9 @@ import 'package:accounting_software/app/core/access/domain/access_repository.dar
 import 'package:accounting_software/app/core/access/domain/get_my_access_usecase.dart';
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
+import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
+import 'package:accounting_software/app/core/localization/keys/image_keys.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
@@ -22,6 +27,7 @@ import 'package:accounting_software/app/features/catalog/categories/domain/useca
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/get_categories_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/set_category_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/update_category_use_case.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/usecase/upload_category_image_use_case.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/categories_list/categories_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
@@ -29,6 +35,14 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import '../../../../helpers/localized_app.dart';
 import '../../../../helpers/memory_storage.dart';
 import '../support/fake_categories_repository.dart';
+
+class _ImagePicker implements ImagePickerPort {
+  _ImagePicker(this.image);
+  final PickedImage image;
+
+  @override
+  Future<PickedImage?> pickImage() async => image;
+}
 
 class _AccessRepository implements AccessRepository {
   @override
@@ -71,11 +85,20 @@ List<Category> _sampleCategories() => [
     ),
 ];
 
-void _register(FakeCategoriesRepository repository) {
+void _register(
+  FakeCategoriesRepository repository, {
+  ImagePickerPort? imagePicker,
+}) {
   sl.registerFactory<AppSettingsManager>(
     () => AppSettingsManager(storage: MemoryStorage()),
   );
   sl.registerFactory<FlashMessages>(FlashMessages.new);
+  sl.registerLazySingleton<UploadCategoryImageUseCase>(
+    () => UploadCategoryImageUseCase(repository),
+  );
+  if (imagePicker != null) {
+    sl.registerSingleton<ImagePickerPort>(imagePicker);
+  }
   sl.registerFactory<CategoriesListCubit>(
     () => CategoriesListCubit(
       getCategories: GetCategoriesUseCase(repository),
@@ -90,6 +113,7 @@ void _register(FakeCategoriesRepository repository) {
       updateCategory: UpdateCategoryUseCase(repository),
       flashMessages: sl<FlashMessages>(),
       category: args.category,
+      seed: args.seed,
       tree: args.tree,
       initialParentId: args.initialParentId,
     ),
@@ -384,4 +408,101 @@ void main() {
 
     expect(tester.takeException(), isNull);
   });
+  testWidgets('category editor uploads a selected image and saves its URL', (
+    tester,
+  ) async {
+    final repository = FakeCategoriesRepository(categories: []);
+    _register(
+      repository,
+      imagePicker: _ImagePicker(
+        PickedImage(
+          bytes: Uint8List.fromList([1, 2, 3]),
+          fileName: 'category.png',
+          mimeType: 'image/png',
+        ),
+      ),
+    );
+    setScreenSize(tester, const Size(360, 800));
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.rtl),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(CategoriesKeys.add.en).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(CategoriesKeys.uploadImage.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.uploadCalls, 1);
+    await tester.enterText(_categoryNameInput(), 'Photo category');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.pumpAndSettle();
+
+    expect(
+      repository.lastCreatedDraft?.image,
+      'https://cdn.example.test/categories/image.webp',
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('category image upload shows a clear Storage permission error', (
+    tester,
+  ) async {
+    final repository = FakeCategoriesRepository()
+      ..uploadImageResult = const Left(PermissionFailure());
+    _register(
+      repository,
+      imagePicker: _ImagePicker(
+        PickedImage(
+          bytes: Uint8List.fromList([1, 2, 3]),
+          fileName: 'category.png',
+          mimeType: 'image/png',
+        ),
+      ),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(CategoriesKeys.add.en).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(CategoriesKeys.uploadImage.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.uploadCalls, 1);
+    expect(find.text(CategoriesKeys.imageUploadPermission.en), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('category image upload rejects files larger than five MB', (
+    tester,
+  ) async {
+    final repository = FakeCategoriesRepository();
+    _register(
+      repository,
+      imagePicker: _ImagePicker(
+        PickedImage(
+          bytes: Uint8List(5 * 1024 * 1024 + 1),
+          fileName: 'large.png',
+          mimeType: 'image/png',
+        ),
+      ),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(CategoriesKeys.add.en).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(CategoriesKeys.uploadImage.en));
+    await tester.pumpAndSettle();
+
+    expect(repository.uploadCalls, 0);
+    expect(find.text(ImageKeys.tooLarge.en), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
 }
