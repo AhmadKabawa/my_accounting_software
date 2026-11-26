@@ -141,6 +141,17 @@ class CategoryTree {
       if (childrenOf(root.id).isNotEmpty) root.id,
   };
 
+  bool _hasInactiveAncestor(int id) {
+    var parent = _parentOf[id];
+    while (parent != null) {
+      final ancestor = _byId[parent];
+      if (ancestor == null) break;
+      if (!ancestor.isActive) return true;
+      parent = _parentOf[parent];
+    }
+    return false;
+  }
+
   CategoryNode _node(
     Category category, {
     required bool expanded,
@@ -155,6 +166,7 @@ class CategoryTree {
       activeChildCount: kids.where((child) => child.isActive).length,
       expanded: expanded,
       flat: flat,
+      underInactiveAncestor: _hasInactiveAncestor(category.id),
     );
   }
 
