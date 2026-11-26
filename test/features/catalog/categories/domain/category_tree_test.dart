@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_tree.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_list_query.dart';
 
 Category _category(
   int id, {
@@ -122,4 +123,65 @@ void main() {
 
     expect(tree.childrenOf(1).map((item) => item.id), [2, 4, 3]);
   });
+  test('filters roots, leaves and known product usage locally', () {
+    final tree = CategoryTree([
+      _category(1, name: 'Shoes', products: 2),
+      _category(2, parentId: 1, name: 'Sport', products: 0),
+      _category(3, parentId: 1, name: 'Unknown', products: null),
+      _category(4, name: 'Accessories', products: 0),
+    ]);
+
+    expect(tree.filtered(level: CategoryLevelFilter.roots).map((n) => n.id), [1, 4]);
+    expect(tree.filtered(level: CategoryLevelFilter.leaves).map((n) => n.id), [2, 3, 4]);
+    expect(
+      tree.filtered(usage: CategoryUsageFilter.withProducts).map((n) => n.id),
+      [1],
+    );
+    expect(
+      tree.filtered(usage: CategoryUsageFilter.withoutProducts).map((n) => n.id),
+      [2, 4],
+    );
+    expect(tree.withoutProductsCount, isNull);
+  });
+
+  test('derives known no-product statistic and sorts flat results', () {
+    final tree = CategoryTree([
+      _category(1, name: 'Zulu', sortOrder: 2, products: 4),
+      _category(2, name: 'Alpha', sortOrder: 1, products: 0),
+      _category(3, name: 'Beta', sortOrder: 3, products: null),
+    ]);
+
+    expect(tree.withoutProductsCount, 1);
+    expect(
+      tree.filtered(search: 'a', sortField: CategorySortField.name)
+          .map((n) => n.id),
+      [2, 3],
+    );
+    expect(
+      tree.filtered(sortField: CategorySortField.productCount)
+          .map((n) => n.id),
+      [2, 1, 3],
+    );
+    expect(
+      tree.filtered(
+        sortField: CategorySortField.productCount,
+        sortAscending: false,
+      ).map((n) => n.id),
+      [1, 2, 3],
+    );
+  });
+
+  test('marks active descendants of inactive parents without changing status', () {
+    final tree = CategoryTree([
+      _category(1, active: false),
+      _category(2, parentId: 1, active: true),
+    ]);
+
+    final child = tree.visible(expandedIds: tree.parentIds).firstWhere(
+      (node) => node.id == 2,
+    );
+    expect(child.category.isActive, isTrue);
+    expect(child.underInactiveAncestor, isTrue);
+  });
+
 }
