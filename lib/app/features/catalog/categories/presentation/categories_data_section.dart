@@ -158,7 +158,7 @@ Widget buildCategoriesDataSection(
                     ),
             ),
           ],
-          labels: _crudLabels,
+          labels: categoriesCrudLabels,
           statusColumn: CrudStatusColumnConfig<CategoryNode>(
             labelKey: CategoriesKeys.status,
             isActive: (node) => node.category.isActive,
