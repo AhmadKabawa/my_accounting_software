@@ -44,6 +44,8 @@ class _ImagePicker implements ImagePickerPort {
 }
 
 class _AccessRepository implements AccessRepository {
+  _AccessRepository({this.canManage = true});
+  final bool canManage;
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async => Right(
     AccessSnapshot(
@@ -52,7 +54,7 @@ class _AccessRepository implements AccessRepository {
       email: null,
       isSuperAdmin: false,
       roles: const [],
-      permissions: {Permissions.masterData.manage},
+      permissions: canManage ? {Permissions.masterData.manage} : const {},
       branches: const [],
       warehouses: const [],
       posTerminals: const [],
@@ -119,9 +121,12 @@ void _register(
   );
 }
 
-Widget _home() => BlocProvider<AccessCubit>(
-  create: (_) =>
-      AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))..load(),
+Widget _home({bool canManage = true}) => BlocProvider<AccessCubit>(
+  create: (_) => AccessCubit(
+    getMyAccess: GetMyAccessUseCase(
+      _AccessRepository(canManage: canManage),
+    ),
+  )..load(),
   child: const Scaffold(body: CategoriesListPage()),
 );
 
@@ -501,6 +506,111 @@ void main() {
 
     expect(repository.uploadCalls, 0);
     expect(find.text(ImageKeys.tooLarge.en), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('statistics apply their local filters without a network request', (
+    tester,
+  ) async {
+    final repository = FakeCategoriesRepository(
+      categories: _sampleCategories(),
+    );
+    _register(repository);
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+    final before = repository.getAllCalls;
+
+    await tester.tap(find.text(CategoriesKeys.activeCategories.en));
+    await tester.pumpAndSettle();
+
+    expect(_listCubit(tester).state.query.status, CategoryStatusFilter.active);
+    expect(repository.getAllCalls, before);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('desktop row opens side details panel and child navigation works', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(
+      FakeCategoriesRepository(categories: _sampleCategories().take(4).toList()),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Root').first);
+    await tester.pumpAndSettle();
+    expect(find.text(CategoriesKeys.details.en), findsOneWidget);
+    expect(find.text('Child'), findsWidgets);
+
+    await tester.tap(find.text('Child').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Grandchild'), findsWidgets);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('mobile card opens details bottom sheet without overflow', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(360, 800));
+    _register(
+      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.rtl),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Root').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text(CategoriesKeys.details.en), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('read-only users see no write actions in rows or details', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(
+      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(canManage: false), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip(CatalogUiKeys.moreActions.en), findsNothing);
+    await tester.tap(find.text('Root').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text(CategoriesKeys.details.en), findsOneWidget);
+    expect(find.byTooltip(CategoriesKeys.edit.en), findsNothing);
+    expect(find.byTooltip(CategoriesKeys.addChild.en), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('details panel closes with Escape', (tester) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(
+      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Root').first);
+    await tester.pumpAndSettle();
+    expect(find.text(CategoriesKeys.details.en), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text(CategoriesKeys.details.en), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
