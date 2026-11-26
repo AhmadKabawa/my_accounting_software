@@ -87,6 +87,7 @@ enum ProductTypesKeys implements AppKey {
   deleted(ar: 'تم حذف نوع المنتج.', en: 'Product type deleted.'),
   statusUpdated(ar: 'تم تحديث الحالة.', en: 'Status updated.'),
   detailTitle(ar: 'تفاصيل نوع المنتج', en: 'Product type details'),
+  detailSubtitle(ar: '{name} · {code}', en: '{name} · {code}'),
   addSizeGroup(ar: 'ربط مجموعة مقاسات', en: 'Link size group'),
   addAttribute(ar: 'ربط خاصية', en: 'Link attribute'),
   addOptionSet(ar: 'ربط مجموعة خيارات', en: 'Link option set'),
