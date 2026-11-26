@@ -92,7 +92,8 @@ class CategoryTree {
   int get leafCount => _byId.keys.where((id) => childrenOf(id).isEmpty).length;
 
   /// Null means at least one row has an unknown product relation count.
-  int? get withoutProductsCount => _byId.values.any((item) => item.productCount == null)
+  int? get withoutProductsCount =>
+      _byId.values.any((item) => item.productCount == null)
       ? null
       : _byId.values.where((item) => item.productCount == 0).length;
 
@@ -236,7 +237,8 @@ class CategoryTree {
     int compare(CategoryNode a, CategoryNode b) {
       final ac = a.category.productCount;
       final bc = b.category.productCount;
-      if (sortField == CategorySortField.productCount && (ac == null) != (bc == null)) {
+      if (sortField == CategorySortField.productCount &&
+          (ac == null) != (bc == null)) {
         return ac == null ? 1 : -1;
       }
       final result = switch (sortField) {

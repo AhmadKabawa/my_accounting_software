@@ -51,9 +51,13 @@ Future<bool?> showCategoryEditor(
           : null,
       imageUploader: (upload) async {
         final result = await sl<UploadCategoryImageUseCase>()(upload);
-        return result.leftMap((failure) => failure.statusCode == 403
-            ? PermissionFailure(messageKey: CategoriesKeys.imageUploadPermission)
-            : failure);
+        return result.leftMap(
+          (failure) => failure.statusCode == 403
+              ? PermissionFailure(
+                  messageKey: CategoriesKeys.imageUploadPermission,
+                )
+              : failure,
+        );
       },
       imagePicker: imagePicker,
       dropTargetAdapter: dropTargetAdapter,

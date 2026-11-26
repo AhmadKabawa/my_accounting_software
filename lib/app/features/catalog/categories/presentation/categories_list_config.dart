@@ -65,9 +65,8 @@ get categoriesListConfig => CrudListConfig(
   itemLabel: (node) => node.category.name,
   sort: CrudSortConfig<CategoryListQuery, CategoriesListCubit>(
     maxSorts: 1,
-    optionsForQuery: (query) => query.hasActiveFilters
-        ? CategoriesFilterBar.sortOptions
-        : const [],
+    optionsForQuery: (query) =>
+        query.hasActiveFilters ? CategoriesFilterBar.sortOptions : const [],
     current: (query) => query.hasActiveFilters
         ? [FilterBarSort(query.sortField.name, query.sortAscending)]
         : const [],
@@ -170,81 +169,78 @@ get categoriesListConfig => CrudListConfig(
     delete: (cubit, items) => cubit.bulkDelete(items),
   ),
   dataSection: (data) {
-    final section = CrudDataSection<
-      CategoryNode,
-      CategoryListQuery,
-      CategoriesListCubit
-    >(
-      data: data,
-      columns: [
-        DataTableColumn<CategoryNode>(
-          labelKey: CategoriesKeys.categoryName,
-          priority: DataTableColumnPriority.primary,
-          flex: 3,
-          cellBuilder: (_, node) => CategoryIdentity(
+    final section =
+        CrudDataSection<CategoryNode, CategoryListQuery, CategoriesListCubit>(
+          data: data,
+          columns: [
+            DataTableColumn<CategoryNode>(
+              labelKey: CategoriesKeys.categoryName,
+              priority: DataTableColumnPriority.primary,
+              flex: 3,
+              cellBuilder: (_, node) => CategoryIdentity(
+                node: node,
+                onToggle: node.hasChildren
+                    ? () => data.cubit.toggleExpanded(node.id)
+                    : null,
+                showPathForDeep: true,
+              ),
+            ),
+            DataTableColumn<CategoryNode>(
+              labelKey: CategoriesKeys.description,
+              priority: DataTableColumnPriority.secondary,
+              flex: 2,
+              cellBuilder: (context, node) => AppText.raw(
+                node.category.description?.trim() ?? '',
+                color: context.ui.theme.colors.onSurfaceVariant,
+                maxLines: 2,
+              ),
+            ),
+            DataTableColumn<CategoryNode>(
+              labelKey: CategoriesKeys.products,
+              numeric: true,
+              priority: DataTableColumnPriority.secondary,
+              cellBuilder: (_, node) => node.category.productCount == null
+                  ? const AppText(CommonKeys.noValue)
+                  : AppText.raw(node.category.productCount.toString()),
+            ),
+            DataTableColumn<CategoryNode>(
+              labelKey: CategoriesKeys.updatedAt,
+              priority: DataTableColumnPriority.secondary,
+              cellBuilder: (context, node) => node.category.updatedAt == null
+                  ? const AppText(CommonKeys.noValue)
+                  : AppText.raw(
+                      MaterialLocalizations.of(
+                        context,
+                      ).formatShortDate(node.category.updatedAt!),
+                    ),
+            ),
+          ],
+          labels: _crudLabels,
+          statusColumn: CrudStatusColumnConfig<CategoryNode>(
+            labelKey: CategoriesKeys.status,
+            isActive: (node) => node.category.isActive,
+            badgeBuilder: (_, node) => CategoryStatusBadge(node.category),
+          ),
+          cardBuilder: (_, node) => CategoryCard(
             node: node,
             onToggle: node.hasChildren
                 ? () => data.cubit.toggleExpanded(node.id)
                 : null,
-            showPathForDeep: true,
           ),
-        ),
-        DataTableColumn<CategoryNode>(
-          labelKey: CategoriesKeys.description,
-          priority: DataTableColumnPriority.secondary,
-          flex: 2,
-          cellBuilder: (context, node) => AppText.raw(
-            node.category.description?.trim() ?? '',
-            color: context.ui.theme.colors.onSurfaceVariant,
-            maxLines: 2,
-          ),
-        ),
-        DataTableColumn<CategoryNode>(
-          labelKey: CategoriesKeys.products,
-          numeric: true,
-          priority: DataTableColumnPriority.secondary,
-          cellBuilder: (_, node) => node.category.productCount == null
-              ? const AppText(CommonKeys.noValue)
-              : AppText.raw(node.category.productCount.toString()),
-        ),
-        DataTableColumn<CategoryNode>(
-          labelKey: CategoriesKeys.updatedAt,
-          priority: DataTableColumnPriority.secondary,
-          cellBuilder: (context, node) => node.category.updatedAt == null
-              ? const AppText(CommonKeys.noValue)
-              : AppText.raw(
-                  MaterialLocalizations.of(context).formatShortDate(
-                    node.category.updatedAt!,
-                  ),
-                ),
-        ),
-      ],
-      labels: _crudLabels,
-      statusColumn: CrudStatusColumnConfig<CategoryNode>(
-        labelKey: CategoriesKeys.status,
-        isActive: (node) => node.category.isActive,
-        badgeBuilder: (_, node) => CategoryStatusBadge(node.category),
-      ),
-      cardBuilder: (_, node) => CategoryCard(
-        node: node,
-        onToggle: node.hasChildren
-            ? () => data.cubit.toggleExpanded(node.id)
-            : null,
-      ),
-      gridBuilder: (_, node) => CategoryCard(node: node),
-      onRowTap: (node) {
-        if (ScreenEngine.isDesktop(context)) {
-          data.cubit.selectDetails(node.id);
-        } else {
-          openMobileDetails(node);
-        }
-      },
-      icon: AppIcons.catalog,
-      emptyTitleKey: CategoriesKeys.empty,
-      emptyDescriptionKey: CategoriesKeys.emptyDescription,
-      noResultsTitleKey: CategoriesKeys.noResults,
-      noResultsDescriptionKey: CategoriesKeys.noResultsDescription,
-    );
+          gridBuilder: (_, node) => CategoryCard(node: node),
+          onRowTap: (node) {
+            if (ScreenEngine.isDesktop(context)) {
+              data.cubit.selectDetails(node.id);
+            } else {
+              openMobileDetails(node);
+            }
+          },
+          icon: AppIcons.catalog,
+          emptyTitleKey: CategoriesKeys.empty,
+          emptyDescriptionKey: CategoriesKeys.emptyDescription,
+          noResultsTitleKey: CategoriesKeys.noResults,
+          noResultsDescriptionKey: CategoriesKeys.noResultsDescription,
+        );
 
     Widget buildPanel(
       CategoryNode node, {
@@ -284,9 +280,9 @@ get categoriesListConfig => CrudListConfig(
             : null,
         onDelete: canManage && node.canDelete
             ? () {
-                flows!.deleteItem(context, node).whenComplete(
-                  () => data.cubit.selectDetails(null),
-                );
+                flows!
+                    .deleteItem(context, node)
+                    .whenComplete(() => data.cubit.selectDetails(null));
               }
             : null,
       );
@@ -308,7 +304,9 @@ get categoriesListConfig => CrudListConfig(
               width: MediaQuery.sizeOf(sheetContext).width,
               close: () => Navigator.of(sheetContext).pop(),
               selectChild: (id) {
-                final next = allNodes.firstWhere((candidate) => candidate.id == id);
+                final next = allNodes.firstWhere(
+                  (candidate) => candidate.id == id,
+                );
                 setSheetState(() => current = next);
               },
             ),
@@ -342,7 +340,9 @@ get categoriesListConfig => CrudListConfig(
             break;
           }
         }
-        if (selectedId == null || selectedNode == null || data.cubit.tree == null) {
+        if (selectedId == null ||
+            selectedNode == null ||
+            data.cubit.tree == null) {
           return content;
         }
         return Row(

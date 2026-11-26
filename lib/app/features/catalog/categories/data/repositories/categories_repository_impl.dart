@@ -99,7 +99,9 @@ class CategoriesRepositoryImpl
         final result = await _remote.uploadImage(image);
         return switch (result) {
           ApiSuccess<String>(:final data) => Right(data),
-          ApiFailure<String>(:final exception) => Left(ExceptionMapper.map(exception)),
+          ApiFailure<String>(:final exception) => Left(
+            ExceptionMapper.map(exception),
+          ),
         };
       });
 

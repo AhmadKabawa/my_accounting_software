@@ -11,7 +11,10 @@ class CategoriesFilterBar {
   static const sortOptions = [
     FilterBarSortOption(key: 'name', label: CategoriesKeys.sortByName),
     FilterBarSortOption(key: 'sortOrder', label: CategoriesKeys.sortByOrder),
-    FilterBarSortOption(key: 'productCount', label: CategoriesKeys.sortByProducts),
+    FilterBarSortOption(
+      key: 'productCount',
+      label: CategoriesKeys.sortByProducts,
+    ),
   ];
 
   static AppKey statusLabel(CategoryStatusFilter value) => switch (value) {
@@ -78,7 +81,10 @@ class CategoriesFilterBar {
     required ValueChanged<CategoryUsageFilter> onUsageChanged,
   }) => [
     SearchableDropdown<CategoryStatusFilter>(
-      options: const [CategoryStatusFilter.active, CategoryStatusFilter.inactive],
+      options: const [
+        CategoryStatusFilter.active,
+        CategoryStatusFilter.inactive,
+      ],
       labelKey: CategoriesKeys.status,
       optionLabel: (value) => statusLabel(value).tr(context: context),
       value: query.status == CategoryStatusFilter.all ? null : query.status,

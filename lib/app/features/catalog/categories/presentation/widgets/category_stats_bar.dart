@@ -7,7 +7,14 @@ import 'package:accounting_software/app/features/catalog/categories/domain/entit
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_tree.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 
-enum CategoryStatsFilter { all, active, inactive, roots, leaves, withoutProducts }
+enum CategoryStatsFilter {
+  all,
+  active,
+  inactive,
+  roots,
+  leaves,
+  withoutProducts,
+}
 
 /// Locally derived tree counters; tapping a card applies its matching filter.
 class CategoryStatsBar extends StatelessWidget {

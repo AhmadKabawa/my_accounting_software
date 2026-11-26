@@ -56,7 +56,10 @@ void main() {
     'falls back to the base projection when embedded count is rejected',
     () async {
       final api = _ApiClient()..firstFailure = ApiException.badRequest();
-      final source = CategoriesRemoteDataSourceImpl(api, StorageImageUploader(api));
+      final source = CategoriesRemoteDataSourceImpl(
+        api,
+        StorageImageUploader(api),
+      );
 
       final result = await source.getPage(page: 1, limit: 1000);
 

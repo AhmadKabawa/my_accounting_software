@@ -73,15 +73,12 @@ class CategoryListQuery extends Equatable
   CategoryListQuery withSearch(String value) => _copy(search: value);
 
   @override
-  CategoryListQuery withPage(int value) => value == page
-      ? this
-      : _copy(page: value);
+  CategoryListQuery withPage(int value) =>
+      value == page ? this : _copy(page: value);
 
   @override
-  CategoryListQuery cleared() => CategoryListQuery(
-    expandedIds: expandedIds,
-    flatPageSize: flatPageSize,
-  );
+  CategoryListQuery cleared() =>
+      CategoryListQuery(expandedIds: expandedIds, flatPageSize: flatPageSize);
 
   CategoryListQuery withStatus(CategoryStatusFilter value) =>
       status == value ? this : _copy(status: value);

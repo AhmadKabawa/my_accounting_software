@@ -18,6 +18,7 @@ class CategoryDraft extends Equatable {
   final String? description;
   final String? image;
   final int sortOrder;
+
   /// Null on update means leave the stored status unchanged.
   final bool? isActive;
 

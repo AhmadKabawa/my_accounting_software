@@ -101,7 +101,11 @@ class CategoryDetailsPanel extends StatelessWidget {
                 ? category.description!
                 : '—',
           ),
-          _line(context, CategoriesKeys.subcategories, node.childCount.toString()),
+          _line(
+            context,
+            CategoriesKeys.subcategories,
+            node.childCount.toString(),
+          ),
           _line(
             context,
             CategoriesKeys.descendantCount,
@@ -112,10 +116,17 @@ class CategoryDetailsPanel extends StatelessWidget {
             CategoriesKeys.products,
             category.productCount?.toString() ?? '—',
           ),
-          _line(context, CategoriesKeys.sortOrder, category.sortOrder.toString()),
+          _line(
+            context,
+            CategoriesKeys.sortOrder,
+            category.sortOrder.toString(),
+          ),
           if (children.isNotEmpty) ...[
             context.ui.spacing.gap(AppSpacing.md),
-            AppText(CategoriesKeys.directChildren, type: AppTextType.titleSmall),
+            AppText(
+              CategoriesKeys.directChildren,
+              type: AppTextType.titleSmall,
+            ),
             for (final child in children)
               Builder(
                 builder: (context) {

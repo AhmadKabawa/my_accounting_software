@@ -33,7 +33,8 @@ class CategoryFormCubit
        _category = category,
        _seed = seed,
        _tree = tree,
-       _initialParentId = initialParentId ?? seed?.parentId ?? category?.parentId,
+       _initialParentId =
+           initialParentId ?? seed?.parentId ?? category?.parentId,
        super(
          CategoryFormState(
            parentId: initialParentId ?? seed?.parentId ?? category?.parentId,

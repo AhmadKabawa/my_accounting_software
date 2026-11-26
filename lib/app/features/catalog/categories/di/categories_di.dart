@@ -19,7 +19,12 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 
 class CategoryFormArgs {
-  const CategoryFormArgs({this.category, this.seed, this.tree, this.initialParentId});
+  const CategoryFormArgs({
+    this.category,
+    this.seed,
+    this.tree,
+    this.initialParentId,
+  });
 
   final Category? category;
   final CategoryDraft? seed;
