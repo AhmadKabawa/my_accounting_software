@@ -2,6 +2,9 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
+import 'package:accounting_software/app/core/network/storage/storage_image_uploader.dart';
+import 'package:accounting_software/app/core/network/storage/storage_target.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
@@ -12,9 +15,10 @@ import 'package:accounting_software/app/features/catalog/categories/data/models/
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_draft.dart';
 
 class CategoriesRemoteDataSourceImpl implements CategoriesRemoteDataSource {
-  CategoriesRemoteDataSourceImpl(this._apiClient);
+  CategoriesRemoteDataSourceImpl(this._apiClient, this._storageImageUploader);
 
   final IApiClient _apiClient;
+  final StorageImageUploader _storageImageUploader;
 
   // Once the relationship projection is rejected, keep subsequent pages on
   // the safe projection for this data-source lifetime.
@@ -90,6 +94,16 @@ class CategoriesRemoteDataSourceImpl implements CategoriesRemoteDataSource {
     CategoriesEndpoint.collection,
     queryParameters: {'id': 'eq.$id'},
   );
+
+  @override
+  Future<ApiResult<String>> uploadImage(ImageUpload image) =>
+      _storageImageUploader.upload(
+        target: const StorageTarget(
+          bucket: CategoriesEndpoint.imageBucket,
+          folder: CategoriesEndpoint.imageFolder,
+        ),
+        image: image,
+      );
 
   @override
   Future<ApiResult<Unit>> setActive({
