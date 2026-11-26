@@ -84,7 +84,7 @@ class ProductTypeDetailsCubit
     }
     await _mutate(
       'size-group-add',
-      _repository.createSizeGroupLink({
+      () => _repository.createSizeGroupLink({
         'product_type_id': current.productTypeId,
         'size_group_id': sizeGroupId,
         'gender_id': genderId,
@@ -115,7 +115,7 @@ class ProductTypeDetailsCubit
     }
     await _mutate(
       'size-group-${link.id}',
-      _repository.patchSizeGroupLink(link.id, {
+      () => _repository.patchSizeGroupLink(link.id, {
         if (isDefault != null) 'is_default': isDefault,
         if (sortOrder != null) 'sort_order': sortOrder,
       }),
@@ -125,7 +125,7 @@ class ProductTypeDetailsCubit
   Future<void> removeSizeGroup(ProductTypeSizeGroupLink link) async {
     await _mutate(
       'size-group-${link.id}',
-      _repository.deleteSizeGroupLink(link.id),
+      () => _repository.deleteSizeGroupLink(link.id),
     );
   }
 
@@ -138,7 +138,7 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'attribute-add',
-      _repository.createAttributeLink({
+      () => _repository.createAttributeLink({
         'product_type_id': current.productTypeId,
         'attribute_id': attributeId,
         'is_required': isRequired,
@@ -157,7 +157,7 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'attribute-${link.attributeId}',
-      _repository.patchAttributeLink(
+      () => _repository.patchAttributeLink(
         current.productTypeId,
         link.attributeId,
         {
@@ -174,7 +174,7 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'attribute-${link.attributeId}',
-      _repository.deleteAttributeLink(current.productTypeId, link.attributeId),
+      () => _repository.deleteAttributeLink(current.productTypeId, link.attributeId),
     );
   }
 
@@ -187,7 +187,7 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'option-set-add',
-      _repository.createOptionSetLink({
+      () => _repository.createOptionSetLink({
         'product_type_id': current.productTypeId,
         'option_set_id': optionSetId,
         'is_required': isRequired,
@@ -206,7 +206,7 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'option-set-${link.optionSetId}',
-      _repository.patchOptionSetLink(
+      () => _repository.patchOptionSetLink(
         current.productTypeId,
         link.optionSetId,
         {
@@ -223,7 +223,7 @@ class ProductTypeDetailsCubit
     if (current == null) return;
     await _mutate(
       'option-set-${link.optionSetId}',
-      _repository.deleteOptionSetLink(current.productTypeId, link.optionSetId),
+      () => _repository.deleteOptionSetLink(current.productTypeId, link.optionSetId),
     );
   }
 
@@ -233,12 +233,15 @@ class ProductTypeDetailsCubit
 
   Future<void> _mutate(
     String key,
-    Future<Either<Failure, Unit>> request, {
+    Future<Either<Failure, Unit>> Function() request, {
     bool checkPublishedProducts = false,
   }) async {
     final current = _loaded;
     if (current == null || current.processing.contains(key)) return;
-    emit(current.copyWith(processing: {...current.processing, key}));
+    emit(current.copyWith(
+      processing: {...current.processing, key},
+      clearUpdateFailure: true,
+    ));
 
     if (checkPublishedProducts && current.publishedProductCount == null) {
       final count = await _repository.getPublishedProductCount(
@@ -255,7 +258,7 @@ class ProductTypeDetailsCubit
       );
     }
 
-    final result = await request;
+    final result = await request();
     final latest = _loaded;
     if (latest == null || isClosed) return;
     final nextProcessing = {...latest.processing}..remove(key);
