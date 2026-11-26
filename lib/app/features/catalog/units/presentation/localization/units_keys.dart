@@ -4,7 +4,7 @@ enum UnitsKeys implements AppKey {
   title(ar: 'وحدات القياس', en: 'Units'),
   add(ar: 'إضافة وحدة', en: 'Add unit'),
   edit(ar: 'تعديل الوحدة', en: 'Edit unit'),
-  name(ar: 'اسم الوحدة', en: 'Unit name'),
+  unitName(ar: 'اسم الوحدة', en: 'Unit name'),
   symbol(ar: 'الرمز', en: 'Symbol'),
   type(ar: 'نوع الوحدة', en: 'Unit type'),
   weight(ar: 'وزن', en: 'Weight'),
@@ -49,5 +49,5 @@ enum UnitsKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'units.${name}';
+  String get key => 'units.$name';
 }

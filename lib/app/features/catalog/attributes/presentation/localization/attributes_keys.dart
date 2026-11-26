@@ -4,7 +4,7 @@ enum AttributesKeys implements AppKey {
   title(ar: 'الخصائص', en: 'Attributes'),
   add(ar: 'إضافة خاصية', en: 'Add attribute'),
   edit(ar: 'تعديل الخاصية', en: 'Edit attribute'),
-  name(ar: 'اسم الخاصية', en: 'Attribute name'),
+  attributeName(ar: 'اسم الخاصية', en: 'Attribute name'),
   code(ar: 'الرمز', en: 'Code'),
   dataType(ar: 'نوع البيانات', en: 'Data type'),
   text(ar: 'نص', en: 'Text'),
@@ -45,5 +45,5 @@ enum AttributesKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'attributes.${name}';
+  String get key => 'attributes.$name';
 }

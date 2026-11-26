@@ -4,7 +4,7 @@ enum OptionSetsKeys implements AppKey {
   title(ar: 'مجموعات الخيارات', en: 'Option Sets'),
   add(ar: 'إضافة مجموعة', en: 'Add option set'),
   edit(ar: 'تعديل المجموعة', en: 'Edit option set'),
-  name(ar: 'اسم المجموعة', en: 'Set name'),
+  optionSetName(ar: 'اسم المجموعة', en: 'Set name'),
   code(ar: 'الرمز', en: 'Code'),
   selectionType(ar: 'طريقة الاختيار', en: 'Selection type'),
   single(ar: 'اختيار واحد', en: 'Single'),
@@ -46,5 +46,5 @@ enum OptionSetsKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'optionSets.${name}';
+  String get key => 'optionSets.$name';
 }
