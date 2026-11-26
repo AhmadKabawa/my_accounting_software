@@ -167,3 +167,8 @@ Status: partial implementation; not merge-ready.
 - Attributes presentation and its type-dependent unit/option-set selectors, usage locks and duplicate flow.
 - Move Attribute lookup choice models out of the Data layer into Domain to restore the dependency direction.
 - Full CAT-08 test matrix and a final CI run on the latest branch head.
+
+
+### Follow-up verification note
+- Run 45908472416: Auto-format succeeded, but Analyze found two implementation errors (the options dialog used an unsupported Wrap parameter and the shared CRUD data context made its new BuildContext field required for existing callers). It also reported two unused imports.
+- Corrected the dialog layout, registered the options Cubit in DI, removed unused imports, and made the CRUD data context optional for existing callers while the CRUD screen supplies it. A fresh CI run is required to verify these corrections and the Option Sets additions.
