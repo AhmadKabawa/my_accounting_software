@@ -135,3 +135,13 @@
 - الموجود حالياً: UNIQUE على `categories.slug`، ولا يوجد CHECK يفرض lowercase ASCII أو صيغة الشرطات؛ نمط `Slug.pattern` مفروض في Flutter فقط.
 - الطلب: بعد تدقيق البيانات الحالية ومعالجة أي slug مخالف، أضف CHECK يطابق النمط `^[a-z0-9]+(-[a-z0-9]+)*$` مع إبقاء UNIQUE منفصلاً. اختبر القيم الفارغة، الأحرف الكبيرة، المسافات، الشرطات المتكررة/الطرفية، والأرقام.
 - ملاحظة: لا يُفترض أن قيد الواجهة يحمي REST أو أي مستهلك آخر؛ RLS لا يفرض صيغة الحقل.
+
+
+### B-25 — صلاحية رفع صور التصنيفات (عالية — مفتوح)
+
+- **الوضع الحالي المؤكد:** bucket `product-images` عام، بحد 5 MB وأنواع JPEG/PNG/WebP. سياسة القراءة عامة؛ سياسات INSERT/UPDATE/DELETE الحالية على `product-images` تتطلب `catalog.manage` (DATA_MODEL §11/§12). كتابة سجل `categories` تتطلب `masterdata.manage`.
+- **ما يفعله Flutter:** يرفع الصورة عبر `StorageImageUploader` إلى `product-images/categories/<timestamp>-<random>.<ext>` مع `x-upsert: false`، ثم يحفظ الرابط العام في `categories.image`. لا يحتاج المسار إلى UPDATE أو DELETE في عملية الرفع الحالية.
+- **المطلوب:** أضف سياسة INSERT مستقلة ومحدودة على `storage.objects` تسمح للمستخدم authenticated بالرفع فقط عندما يكون `bucket_id = 'product-images'` والمجلد الأول `categories`، وبعد التحقق بواسطة نفس helper المعتمد في السياسات الحالية من `masterdata.manage`. أبقِ سياسات `catalog.manage` الحالية للمنتجات دون تغيير، ولا توسّع الكتابة على جذر bucket أو بقية المجلدات. تبقى القراءة العامة كما هي لأن bucket عام.
+- **بديل إذا تعذر فصل السياسة بالمجلد:** أنشئ bucket عاماً مستقلاً باسم `category-images`، بنفس حد 5 MB وJPEG/PNG/WebP، مع قراءة عامة وسياسة INSERT للمستخدم authenticated ذي `masterdata.manage` فقط؛ ثم نسّق مع Flutter لتغيير ثابت bucket بعد تأكيد backend.
+- **القبول:** اختبار رفع فعلي بحساب يملك `masterdata.manage` ولا يملك `catalog.manage`؛ ينجح الرفع إلى المسار المحدد، بينما لا يمنح ذلك الحساب حق رفع ملفات المنتجات. يجب اختبار رفض مستخدم لا يملك `masterdata.manage` أيضاً.
+- **حالة الواجهة:** عند 403 تعرض `CategoriesKeys.imageUploadPermission`؛ لا انهيار ولا تخفيف للتحقق. لا تعتبر الرفع الحي مكتملاً حتى تنفيذ السياسة واختبارها.

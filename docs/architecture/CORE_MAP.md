@@ -290,6 +290,8 @@
 ## ملحق: نظام عرض البيانات والـ SaaS UI (توحيد الواجهات)
 
 - `widgets/app_data_view/`: `AppDataView` (جدول/بطاقات/شبكة، حالات، ترقيم، تحديد)، `ViewModeSwitcher`، `ViewModeCubit`، `AppPaginationBar`، `AppRecordCard`، `AppDataGrid`. الجدول وحده في `app_data_table/`.
+- `widgets/app_details_panel/app_details_panel.dart`: `AppDetailsPanel` سطح تفاصيل عام داخل قوائم CRUD؛ يمكن وضعه كلوحة جانبية داخل `Row` أو داخل Bottom Sheet/حوار. لا يفرض ارتفاعاً مرناً رأسياً، ويغلق عبر callback مع اختصار Escape.
+- `AppDataView.onRowTap` يمرر تفعيل الصف إلى الجدول والبطاقات؛ في الجدول يدعم صف Core Focus/Tab وArrow/Enter. استخدمه لفتح التفاصيل دون خلطه بالتحديد الجماعي.
 - `widgets/app_stat_card/`: `AppStatCard`.
 - `widgets/app_filter_bar/`: `FilterBar` بخانات `leading/trailing` وفرز وفلاتر ومربع بحث حبة.
 - `widgets/app_page_template/`: `ListPageTemplate` ببطاقة واحدة وعقد أخطاء موحّد.
