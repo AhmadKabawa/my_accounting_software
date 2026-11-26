@@ -638,7 +638,9 @@ void main() {
   ) async {
     setScreenSize(tester, const Size(1200, 900));
     _register(
-      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+      FakeCategoriesRepository(
+        categories: _sampleCategories().take(3).toList(),
+      ),
     );
     await tester.pumpWidget(
       buildTestApp(home: _home(), direction: TextDirection.ltr),
@@ -649,9 +651,11 @@ void main() {
       tester.element(find.text('Root').first),
       scopeOk: false,
     );
-    for (var i = 0;
-        i < 40 && FocusManager.instance.primaryFocus != rowFocus;
-        i++) {
+    for (
+      var i = 0;
+      i < 40 && FocusManager.instance.primaryFocus != rowFocus;
+      i++
+    ) {
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pump();
     }
