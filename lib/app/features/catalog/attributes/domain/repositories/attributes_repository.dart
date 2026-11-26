@@ -7,10 +7,20 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/entit
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 
 abstract interface class AttributesRepository {
-  Future<Either<Failure, PaginatedResult<CatalogAttribute>>> getAttributes(AttributeListQuery query);
-  Future<Either<Failure, CatalogAttribute>> createAttribute(AttributeDraft draft);
-  Future<Either<Failure, CatalogAttribute>> updateAttribute({required int id, required AttributeDraft draft});
-  Future<Either<Failure, Unit>> setAttributeActive({required int id, required bool isActive});
+  Future<Either<Failure, PaginatedResult<CatalogAttribute>>> getAttributes(
+    AttributeListQuery query,
+  );
+  Future<Either<Failure, CatalogAttribute>> createAttribute(
+    AttributeDraft draft,
+  );
+  Future<Either<Failure, CatalogAttribute>> updateAttribute({
+    required int id,
+    required AttributeDraft draft,
+  });
+  Future<Either<Failure, Unit>> setAttributeActive({
+    required int id,
+    required bool isActive,
+  });
   Future<Either<Failure, List<AttributeUnitChoice>>> getUnitChoices();
   Future<Either<Failure, List<AttributeOptionSetChoice>>> getOptionSetChoices();
 }

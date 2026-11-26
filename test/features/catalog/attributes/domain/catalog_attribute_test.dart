@@ -2,7 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 
 void main() {
-  CatalogAttribute buildAttribute({required int? links, required int? values}) => CatalogAttribute(
+  CatalogAttribute buildAttribute({
+    required int? links,
+    required int? values,
+  }) => CatalogAttribute(
     id: 1,
     name: 'Material',
     code: 'MATERIAL',

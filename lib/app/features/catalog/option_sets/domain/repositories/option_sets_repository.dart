@@ -6,11 +6,28 @@ import 'package:accounting_software/app/features/catalog/option_sets/domain/enti
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_list_query.dart';
 
 abstract interface class OptionSetsRepository {
-  Future<Either<Failure, PaginatedResult<OptionSet>>> getOptionSets(OptionSetListQuery query);
+  Future<Either<Failure, PaginatedResult<OptionSet>>> getOptionSets(
+    OptionSetListQuery query,
+  );
   Future<Either<Failure, OptionSet>> createOptionSet(OptionSetDraft draft);
-  Future<Either<Failure, OptionSet>> updateOptionSet({required int id, required OptionSetDraft draft});
-  Future<Either<Failure, Unit>> setOptionSetActive({required int id, required bool isActive});
-  Future<Either<Failure, Unit>> createOption({required int optionSetId, required CatalogOptionDraft draft});
-  Future<Either<Failure, Unit>> updateOption({required int optionId, required CatalogOptionDraft draft});
-  Future<Either<Failure, Unit>> setOptionActive({required int optionId, required bool isActive});
+  Future<Either<Failure, OptionSet>> updateOptionSet({
+    required int id,
+    required OptionSetDraft draft,
+  });
+  Future<Either<Failure, Unit>> setOptionSetActive({
+    required int id,
+    required bool isActive,
+  });
+  Future<Either<Failure, Unit>> createOption({
+    required int optionSetId,
+    required CatalogOptionDraft draft,
+  });
+  Future<Either<Failure, Unit>> updateOption({
+    required int optionId,
+    required CatalogOptionDraft draft,
+  });
+  Future<Either<Failure, Unit>> setOptionActive({
+    required int optionId,
+    required bool isActive,
+  });
 }

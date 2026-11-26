@@ -16,7 +16,9 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
   final IApiClient _apiClient;
 
   @override
-  Future<ApiResult<PaginatedResult<AttributeModel>>> getAttributes(AttributeListQuery query) {
+  Future<ApiResult<PaginatedResult<AttributeModel>>> getAttributes(
+    AttributeListQuery query,
+  ) {
     final term = PostgrestValue.escapeFilter(query.search.trim());
     return _apiClient.getPaginated<AttributeModel>(
       AttributesEndpoint.collection,
@@ -27,26 +29,35 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
       queryParameters: {
         'select': AttributesEndpoint.select,
         'order': 'name.asc,id.asc',
-        if (term.isNotEmpty) 'or': '(name.ilike."*$term*",code.ilike."*$term*")',
-        if (query.status == AttributeStatusFilter.active) 'is_active': 'eq.true',
-        if (query.status == AttributeStatusFilter.inactive) 'is_active': 'eq.false',
+        if (term.isNotEmpty)
+          'or': '(name.ilike."*$term*",code.ilike."*$term*")',
+        if (query.status == AttributeStatusFilter.active)
+          'is_active': 'eq.true',
+        if (query.status == AttributeStatusFilter.inactive)
+          'is_active': 'eq.false',
         if (query.dataType != null) 'data_type': 'eq.${query.dataType!.name}',
-        if (query.filterable == AttributeFilterableFilter.filterable) 'is_filterable': 'eq.true',
-        if (query.filterable == AttributeFilterableFilter.notFilterable) 'is_filterable': 'eq.false',
+        if (query.filterable == AttributeFilterableFilter.filterable)
+          'is_filterable': 'eq.true',
+        if (query.filterable == AttributeFilterableFilter.notFilterable)
+          'is_filterable': 'eq.false',
       },
     );
   }
 
   @override
-  Future<ApiResult<AttributeModel>> createAttribute(AttributeDraft draft) => _apiClient.post(
-    AttributesEndpoint.collection,
-    data: _draftJson(draft),
-    options: Options(headers: {'Prefer': 'return=representation'}),
-    fromJsonList: _single,
-  );
+  Future<ApiResult<AttributeModel>> createAttribute(AttributeDraft draft) =>
+      _apiClient.post(
+        AttributesEndpoint.collection,
+        data: _draftJson(draft),
+        options: Options(headers: {'Prefer': 'return=representation'}),
+        fromJsonList: _single,
+      );
 
   @override
-  Future<ApiResult<AttributeModel>> updateAttribute({required int id, required AttributeDraft draft}) => _apiClient.patch(
+  Future<ApiResult<AttributeModel>> updateAttribute({
+    required int id,
+    required AttributeDraft draft,
+  }) => _apiClient.patch(
     AttributesEndpoint.collection,
     queryParameters: {'id': 'eq.$id'},
     data: _draftJson(draft),
@@ -55,7 +66,10 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<Unit>> setAttributeActive({required int id, required bool isActive}) => _apiClient.patch(
+  Future<ApiResult<Unit>> setAttributeActive({
+    required int id,
+    required bool isActive,
+  }) => _apiClient.patch(
     AttributesEndpoint.collection,
     queryParameters: {'id': 'eq.$id'},
     data: {'is_active': isActive},
@@ -64,29 +78,47 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<List<AttributeUnitChoice>>> getUnitChoices() => _apiClient.get<List<AttributeUnitChoice>>(
-    AttributesEndpoint.unitsLookup,
-    queryParameters: {'select': 'id,name,symbol,is_active', 'is_active': 'eq.true', 'order': 'name.asc,id.asc'},
-    requiresAuth: true,
-    fromJsonList: (rows) => rows.map((row) => AttributeUnitChoice(
-      id: _readId(row['id']),
-      name: row['name'] as String,
-      symbol: row['symbol'] as String,
-      isActive: row['is_active'] as bool? ?? true,
-    )).toList(),
-  );
+  Future<ApiResult<List<AttributeUnitChoice>>> getUnitChoices() =>
+      _apiClient.get<List<AttributeUnitChoice>>(
+        AttributesEndpoint.unitsLookup,
+        queryParameters: {
+          'select': 'id,name,symbol,is_active',
+          'is_active': 'eq.true',
+          'order': 'name.asc,id.asc',
+        },
+        requiresAuth: true,
+        fromJsonList: (rows) => rows
+            .map(
+              (row) => AttributeUnitChoice(
+                id: _readId(row['id']),
+                name: row['name'] as String,
+                symbol: row['symbol'] as String,
+                isActive: row['is_active'] as bool? ?? true,
+              ),
+            )
+            .toList(),
+      );
 
   @override
-  Future<ApiResult<List<AttributeOptionSetChoice>>> getOptionSetChoices() => _apiClient.get<List<AttributeOptionSetChoice>>(
-    AttributesEndpoint.optionSetsLookup,
-    queryParameters: {'select': 'id,name,code,is_active', 'is_active': 'eq.true', 'order': 'name.asc,id.asc'},
-    fromJsonList: (rows) => rows.map((row) => AttributeOptionSetChoice(
-      id: _readId(row['id']),
-      name: row['name'] as String,
-      code: row['code'] as String,
-      isActive: row['is_active'] as bool? ?? true,
-    )).toList(),
-  );
+  Future<ApiResult<List<AttributeOptionSetChoice>>> getOptionSetChoices() =>
+      _apiClient.get<List<AttributeOptionSetChoice>>(
+        AttributesEndpoint.optionSetsLookup,
+        queryParameters: {
+          'select': 'id,name,code,is_active',
+          'is_active': 'eq.true',
+          'order': 'name.asc,id.asc',
+        },
+        fromJsonList: (rows) => rows
+            .map(
+              (row) => AttributeOptionSetChoice(
+                id: _readId(row['id']),
+                name: row['name'] as String,
+                code: row['code'] as String,
+                isActive: row['is_active'] as bool? ?? true,
+              ),
+            )
+            .toList(),
+      );
 
   int _readId(Object? value) {
     final id = value is int ? value : int.tryParse(value?.toString() ?? '');
@@ -94,16 +126,21 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
     return id;
   }
 
-  AttributeModel _single(List<dynamic> rows) => PostgrestValue.single(rows, AttributeModel.fromJson, what: 'attribute');
+  AttributeModel _single(List<dynamic> rows) =>
+      PostgrestValue.single(rows, AttributeModel.fromJson, what: 'attribute');
 
   Map<String, Object?> _draftJson(AttributeDraft draft) => {
     'name': draft.name.trim(),
     'code': draft.code.trim(),
     'data_type': draft.dataType.name,
-    if (draft.dataType == AttributeDataType.number && draft.unitId != null) 'unit_id': draft.unitId,
-    if (draft.dataType == AttributeDataType.option && draft.optionSetId != null) 'option_set_id': draft.optionSetId,
+    if (draft.dataType == AttributeDataType.number && draft.unitId != null)
+      'unit_id': draft.unitId,
+    if (draft.dataType == AttributeDataType.option && draft.optionSetId != null)
+      'option_set_id': draft.optionSetId,
     'unit_id': draft.dataType == AttributeDataType.number ? draft.unitId : null,
-    'option_set_id': draft.dataType == AttributeDataType.option ? draft.optionSetId : null,
+    'option_set_id': draft.dataType == AttributeDataType.option
+        ? draft.optionSetId
+        : null,
     'is_filterable': draft.isFilterable,
     if (draft.isActive != null) 'is_active': draft.isActive,
   };

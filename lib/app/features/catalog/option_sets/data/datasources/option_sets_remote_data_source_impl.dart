@@ -16,7 +16,9 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
   final IApiClient _apiClient;
 
   @override
-  Future<ApiResult<PaginatedResult<OptionSetModel>>> getOptionSets(OptionSetListQuery query) {
+  Future<ApiResult<PaginatedResult<OptionSetModel>>> getOptionSets(
+    OptionSetListQuery query,
+  ) {
     final term = PostgrestValue.escapeFilter(query.search.trim());
     return _apiClient.getPaginated<OptionSetModel>(
       OptionSetsEndpoint.collection,
@@ -27,23 +29,30 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
       queryParameters: {
         'select': OptionSetsEndpoint.select,
         'order': 'name.asc,id.asc',
-        if (term.isNotEmpty) 'or': '(name.ilike."*$term*",code.ilike."*$term*")',
-        if (query.status == OptionSetStatusFilter.active) 'is_active': 'eq.true',
-        if (query.status == OptionSetStatusFilter.inactive) 'is_active': 'eq.false',
+        if (term.isNotEmpty)
+          'or': '(name.ilike."*$term*",code.ilike."*$term*")',
+        if (query.status == OptionSetStatusFilter.active)
+          'is_active': 'eq.true',
+        if (query.status == OptionSetStatusFilter.inactive)
+          'is_active': 'eq.false',
       },
     );
   }
 
   @override
-  Future<ApiResult<OptionSetModel>> createOptionSet(OptionSetDraft draft) => _apiClient.post(
-    OptionSetsEndpoint.collection,
-    data: _setJson(draft),
-    options: Options(headers: {'Prefer': 'return=representation'}),
-    fromJsonList: _single,
-  );
+  Future<ApiResult<OptionSetModel>> createOptionSet(OptionSetDraft draft) =>
+      _apiClient.post(
+        OptionSetsEndpoint.collection,
+        data: _setJson(draft),
+        options: Options(headers: {'Prefer': 'return=representation'}),
+        fromJsonList: _single,
+      );
 
   @override
-  Future<ApiResult<OptionSetModel>> updateOptionSet({required int id, required OptionSetDraft draft}) => _apiClient.patch(
+  Future<ApiResult<OptionSetModel>> updateOptionSet({
+    required int id,
+    required OptionSetDraft draft,
+  }) => _apiClient.patch(
     OptionSetsEndpoint.collection,
     queryParameters: {'id': 'eq.$id'},
     data: _setJson(draft),
@@ -52,7 +61,10 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<Unit>> setOptionSetActive({required int id, required bool isActive}) => _apiClient.patch(
+  Future<ApiResult<Unit>> setOptionSetActive({
+    required int id,
+    required bool isActive,
+  }) => _apiClient.patch(
     OptionSetsEndpoint.collection,
     queryParameters: {'id': 'eq.$id'},
     data: {'is_active': isActive},
@@ -61,7 +73,10 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<Unit>> createOption({required int optionSetId, required CatalogOptionDraft draft}) => _apiClient.post(
+  Future<ApiResult<Unit>> createOption({
+    required int optionSetId,
+    required CatalogOptionDraft draft,
+  }) => _apiClient.post(
     OptionSetsEndpoint.optionsCollection,
     data: _optionJson(optionSetId, draft),
     options: Options(headers: {'Prefer': 'return=minimal'}),
@@ -69,7 +84,10 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<Unit>> updateOption({required int optionId, required CatalogOptionDraft draft}) => _apiClient.patch(
+  Future<ApiResult<Unit>> updateOption({
+    required int optionId,
+    required CatalogOptionDraft draft,
+  }) => _apiClient.patch(
     OptionSetsEndpoint.optionsCollection,
     queryParameters: {'id': 'eq.$optionId'},
     data: _optionJson(null, draft),
@@ -78,7 +96,10 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<Unit>> setOptionActive({required int optionId, required bool isActive}) => _apiClient.patch(
+  Future<ApiResult<Unit>> setOptionActive({
+    required int optionId,
+    required bool isActive,
+  }) => _apiClient.patch(
     OptionSetsEndpoint.optionsCollection,
     queryParameters: {'id': 'eq.$optionId'},
     data: {'is_active': isActive},
@@ -86,7 +107,8 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
     fromJson: (_) => unit,
   );
 
-  OptionSetModel _single(List<dynamic> rows) => PostgrestValue.single(rows, OptionSetModel.fromJson, what: 'option set');
+  OptionSetModel _single(List<dynamic> rows) =>
+      PostgrestValue.single(rows, OptionSetModel.fromJson, what: 'option set');
 
   Map<String, Object?> _setJson(OptionSetDraft draft) => {
     'name': draft.name.trim(),
@@ -95,7 +117,10 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
     if (draft.isActive != null) 'is_active': draft.isActive,
   };
 
-  Map<String, Object?> _optionJson(int? optionSetId, CatalogOptionDraft draft) => {
+  Map<String, Object?> _optionJson(
+    int? optionSetId,
+    CatalogOptionDraft draft,
+  ) => {
     if (optionSetId != null) 'option_set_id': optionSetId,
     'name': draft.name.trim(),
     'code': draft.code.trim(),

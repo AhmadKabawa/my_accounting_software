@@ -11,61 +11,90 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/entit
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/repositories/attributes_repository.dart';
 
-class AttributesRepositoryImpl with RepositoryExecutor implements AttributesRepository {
+class AttributesRepositoryImpl
+    with RepositoryExecutor
+    implements AttributesRepository {
   const AttributesRepositoryImpl(this._remote);
   final AttributesRemoteDataSource _remote;
 
   @override
-  Future<Either<Failure, PaginatedResult<CatalogAttribute>>> getAttributes(AttributeListQuery query) => execute(() async {
+  Future<Either<Failure, PaginatedResult<CatalogAttribute>>> getAttributes(
+    AttributeListQuery query,
+  ) => execute(() async {
     final result = await _remote.getAttributes(query);
     return switch (result) {
-      ApiSuccess<PaginatedResult<AttributeModel>>(:final data) => Right(PaginatedResult<CatalogAttribute>(
-        items: data.items.map((item) => item.toEntity()).toList(),
-        totalCount: data.totalCount, currentPage: data.currentPage,
-        totalPages: data.totalPages, isFromCache: data.isFromCache,
-      )),
-      ApiFailure<PaginatedResult<AttributeModel>>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiSuccess<PaginatedResult<AttributeModel>>(:final data) => Right(
+        PaginatedResult<CatalogAttribute>(
+          items: data.items.map((item) => item.toEntity()).toList(),
+          totalCount: data.totalCount,
+          currentPage: data.currentPage,
+          totalPages: data.totalPages,
+          isFromCache: data.isFromCache,
+        ),
+      ),
+      ApiFailure<PaginatedResult<AttributeModel>>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
   @override
-  Future<Either<Failure, CatalogAttribute>> createAttribute(AttributeDraft draft) => _write(() => _remote.createAttribute(draft));
+  Future<Either<Failure, CatalogAttribute>> createAttribute(
+    AttributeDraft draft,
+  ) => _write(() => _remote.createAttribute(draft));
   @override
-  Future<Either<Failure, CatalogAttribute>> updateAttribute({required int id, required AttributeDraft draft}) =>
-      _write(() => _remote.updateAttribute(id: id, draft: draft));
+  Future<Either<Failure, CatalogAttribute>> updateAttribute({
+    required int id,
+    required AttributeDraft draft,
+  }) => _write(() => _remote.updateAttribute(id: id, draft: draft));
 
-  Future<Either<Failure, CatalogAttribute>> _write(Future<ApiResult<AttributeModel>> Function() request) => execute(() async {
+  Future<Either<Failure, CatalogAttribute>> _write(
+    Future<ApiResult<AttributeModel>> Function() request,
+  ) => execute(() async {
     final result = await request();
     return switch (result) {
       ApiSuccess<AttributeModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<AttributeModel>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<AttributeModel>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
   @override
-  Future<Either<Failure, Unit>> setAttributeActive({required int id, required bool isActive}) => execute(() async {
+  Future<Either<Failure, Unit>> setAttributeActive({
+    required int id,
+    required bool isActive,
+  }) => execute(() async {
     final result = await _remote.setAttributeActive(id: id, isActive: isActive);
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<Unit>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
   @override
-  Future<Either<Failure, List<AttributeUnitChoice>>> getUnitChoices() => execute(() async {
-    final result = await _remote.getUnitChoices();
-    return switch (result) {
-      ApiSuccess<List<AttributeUnitChoice>>(:final data) => Right(data),
-      ApiFailure<List<AttributeUnitChoice>>(:final exception) => Left(ExceptionMapper.map(exception)),
-    };
-  });
+  Future<Either<Failure, List<AttributeUnitChoice>>> getUnitChoices() =>
+      execute(() async {
+        final result = await _remote.getUnitChoices();
+        return switch (result) {
+          ApiSuccess<List<AttributeUnitChoice>>(:final data) => Right(data),
+          ApiFailure<List<AttributeUnitChoice>>(:final exception) => Left(
+            ExceptionMapper.map(exception),
+          ),
+        };
+      });
 
   @override
-  Future<Either<Failure, List<AttributeOptionSetChoice>>> getOptionSetChoices() => execute(() async {
+  Future<Either<Failure, List<AttributeOptionSetChoice>>>
+  getOptionSetChoices() => execute(() async {
     final result = await _remote.getOptionSetChoices();
     return switch (result) {
       ApiSuccess<List<AttributeOptionSetChoice>>(:final data) => Right(data),
-      ApiFailure<List<AttributeOptionSetChoice>>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<List<AttributeOptionSetChoice>>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 }

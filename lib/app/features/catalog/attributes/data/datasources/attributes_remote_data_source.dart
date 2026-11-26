@@ -6,7 +6,12 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/entit
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_list_query.dart';
 
 class AttributeUnitChoice {
-  const AttributeUnitChoice({required this.id, required this.name, required this.symbol, required this.isActive});
+  const AttributeUnitChoice({
+    required this.id,
+    required this.name,
+    required this.symbol,
+    required this.isActive,
+  });
   final int id;
   final String name;
   final String symbol;
@@ -14,7 +19,12 @@ class AttributeUnitChoice {
 }
 
 class AttributeOptionSetChoice {
-  const AttributeOptionSetChoice({required this.id, required this.name, required this.code, required this.isActive});
+  const AttributeOptionSetChoice({
+    required this.id,
+    required this.name,
+    required this.code,
+    required this.isActive,
+  });
   final int id;
   final String name;
   final String code;
@@ -22,10 +32,18 @@ class AttributeOptionSetChoice {
 }
 
 abstract interface class AttributesRemoteDataSource {
-  Future<ApiResult<PaginatedResult<AttributeModel>>> getAttributes(AttributeListQuery query);
+  Future<ApiResult<PaginatedResult<AttributeModel>>> getAttributes(
+    AttributeListQuery query,
+  );
   Future<ApiResult<AttributeModel>> createAttribute(AttributeDraft draft);
-  Future<ApiResult<AttributeModel>> updateAttribute({required int id, required AttributeDraft draft});
-  Future<ApiResult<Unit>> setAttributeActive({required int id, required bool isActive});
+  Future<ApiResult<AttributeModel>> updateAttribute({
+    required int id,
+    required AttributeDraft draft,
+  });
+  Future<ApiResult<Unit>> setAttributeActive({
+    required int id,
+    required bool isActive,
+  });
   Future<ApiResult<List<AttributeUnitChoice>>> getUnitChoices();
   Future<ApiResult<List<AttributeOptionSetChoice>>> getOptionSetChoices();
 }
