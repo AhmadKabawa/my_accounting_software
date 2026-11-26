@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
@@ -36,9 +36,7 @@ Future<bool?> showCategoryEditor(
     create: (_) => sl<CategoryFormCubit>(
       param1: CategoryFormArgs(
         category: duplicate ? null : category,
-        seed: duplicate && category != null
-            ? categoryDuplicateSeed(context, category)
-            : null,
+        seed: seed,
         tree: tree,
         initialParentId: initialParentId,
       ),
@@ -46,9 +44,7 @@ Future<bool?> showCategoryEditor(
     child: CategoryEditorDialog(
       category: duplicate ? null : category,
       duplicate: duplicate,
-      seed: duplicate && category != null
-          ? categoryDuplicateSeed(context, category)
-          : null,
+      seed: seed,
       imageUploader: (upload) async {
         final result = await sl<UploadCategoryImageUseCase>()(upload);
         return result.leftMap(
@@ -67,7 +63,8 @@ Future<bool?> showCategoryEditor(
               : null),
     ),
   ),
-);
+  );
+}
 
 class CategoryEditorDialog extends StatefulWidget {
   const CategoryEditorDialog({

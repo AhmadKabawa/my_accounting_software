@@ -31,7 +31,6 @@ class CategoryFormCubit
        _updateCategory = updateCategory,
        _flashMessages = flashMessages,
        _category = category,
-       _seed = seed,
        _tree = tree,
        _initialParentId =
            initialParentId ?? seed?.parentId ?? category?.parentId,
@@ -55,7 +54,6 @@ class CategoryFormCubit
   final UpdateCategoryUseCase _updateCategory;
   final FlashMessages _flashMessages;
   final Category? _category;
-  final CategoryDraft? _seed;
   final CategoryTree? _tree;
   final int? _initialParentId;
   late final CategoryFormState _initialState;
@@ -121,7 +119,7 @@ class CategoryFormCubit
 
   void imageChanged(String value) => _emit(state.copyWith(image: value));
 
-  void activeChanged(bool value) => _emit(state.copyWith(isActive: value));
+  void setActive(bool value) => _emit(state.copyWith(isActive: value));
 
   void sortOrderChanged(String value) =>
       _emit(state.copyWith(sortOrder: value));

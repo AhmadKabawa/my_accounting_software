@@ -149,14 +149,10 @@ class CategoryEditorFields extends StatelessWidget {
         AppSwitch(
           value: state.isActive,
           labelKey: CategoriesKeys.active,
-          onChanged: scope.busy ? null : cubit.activeChanged,
+          onChanged: scope.busy ? null : cubit.setActive,
         ),
         context.ui.spacing.gap(AppSpacing.md),
-        AppSwitch(
-          value: state.isActive,
-          labelKey: CategoriesKeys.active,
-          onChanged: scope.busy ? null : cubit.activeChanged,
-        ),
+
         context.ui.spacing.gap(AppSpacing.lg),
         AppText(CategoriesKeys.placementSection, type: AppTextType.titleSmall),
         context.ui.spacing.gap(AppSpacing.sm),
