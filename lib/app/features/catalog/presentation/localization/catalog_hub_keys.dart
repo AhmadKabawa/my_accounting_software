@@ -14,18 +14,6 @@ enum CatalogHubKeys implements AppKey {
     ar: 'أدر ألوان المنتجات ورموزها وقيمها المرئية.',
     en: 'Manage product colors, their codes and sample values.',
   ),
-  unitsDescription(
-    ar: 'إدارة وحدات القياس والرموز وأنواعها.',
-    en: 'Manage measurement units, symbols and types.',
-  ),
-  optionSetsDescription(
-    ar: 'إدارة مجموعات الخيارات والقيم المرتبطة بها.',
-    en: 'Manage option sets and their values.',
-  ),
-  attributesDescription(
-    ar: 'إدارة خصائص المنتجات وأنواع البيانات والارتباطات.',
-    en: 'Manage product attributes, data types and references.',
-  ),
   categoriesDescription(
     ar: 'نظّم المنتجات ضمن تصنيفات رئيسية وفرعية واضحة.',
     en: 'Organize products into clear parent categories and subcategories.',
