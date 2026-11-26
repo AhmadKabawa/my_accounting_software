@@ -1,5 +1,4 @@
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failure_keys.dart';
 
 class ProductTypeInUseFailure extends Failure {
@@ -14,7 +13,7 @@ class ProductTypeUsageUnknownFailure extends Failure {
 
 class ProductTypeDuplicateFailure extends Failure {
   const ProductTypeDuplicateFailure()
-    : super(messageKey: ErrorKeys.conflict, statusCode: 409);
+    : super(messageKey: ProductTypeFailureKeys.duplicate, statusCode: 409);
 }
 
 class ProductTypeDefaultSizeGroupConflictFailure extends Failure {
