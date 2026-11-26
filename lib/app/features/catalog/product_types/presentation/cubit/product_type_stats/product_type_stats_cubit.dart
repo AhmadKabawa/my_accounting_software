@@ -1,5 +1,3 @@
-import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
-import 'package:accounting_software/app/core/foundation/base/use_case.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_list_query.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_stats.dart';
