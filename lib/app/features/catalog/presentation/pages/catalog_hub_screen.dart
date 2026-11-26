@@ -19,6 +19,10 @@ import 'package:accounting_software/app/features/catalog/units/presentation/loca
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
 
 /// The Catalog tab: a hub that lists the catalog areas. Each area opens its own
 /// page inside the Catalog branch (so the bottom bar / sidebar stays on Catalog).
@@ -72,6 +76,18 @@ class CatalogHubScreen extends StatelessWidget {
               titleKey: ColorsKeys.title,
               descriptionKey: CatalogHubKeys.colorsDescription,
               onOpen: () => context.go(ColorsRoutes.colors.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.tags,
+              titleKey: TagsKeys.title,
+              descriptionKey: CatalogHubKeys.tagsDescription,
+              onOpen: () => context.go(TagsRoutes.tags.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.sports,
+              titleKey: SportsKeys.title,
+              descriptionKey: CatalogHubKeys.sportsDescription,
+              onOpen: () => context.go(SportsRoutes.sports.path),
             ),
           ],
         ),
