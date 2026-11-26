@@ -21,8 +21,14 @@ enum AttributesKeys implements AppKey {
   all(ar: 'الكل', en: 'All'),
   search(ar: 'ابحث بالاسم أو الرمز', en: 'Search by name or code'),
   used(ar: 'مرتبطة بمنتجات', en: 'In use'),
-  locked(ar: 'لا يمكن تغيير النوع لوجود استخدامات', en: 'Data type is locked while values or links exist'),
-  deactivateWarning(ar: 'إيقاف الخاصية يمنع إسناد قيم جديدة وفق سياسة ERP27', en: 'Deactivation blocks assigning new values under ERP27'),
+  locked(
+    ar: 'لا يمكن تغيير النوع لوجود استخدامات',
+    en: 'Data type is locked while values or links exist',
+  ),
+  deactivateWarning(
+    ar: 'إيقاف الخاصية يمنع إسناد قيم جديدة وفق سياسة ERP27',
+    en: 'Deactivation blocks assigning new values under ERP27',
+  ),
   save(ar: 'حفظ', en: 'Save'),
   cancel(ar: 'إلغاء', en: 'Cancel'),
   required(ar: 'هذا الحقل مطلوب', en: 'This field is required'),
