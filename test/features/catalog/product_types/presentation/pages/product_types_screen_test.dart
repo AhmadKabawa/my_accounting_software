@@ -189,7 +189,7 @@ void main() {
       home: _home(canManage: true),
     );
 
-    await tester.tap(find.text(ProductTypesKeys.activeStats.en));
+    await tester.tap(find.text(ProductTypesKeys.activeStats.en).first);
     await tester.pumpAndSettle();
 
     expect(repository.queries.last.status, ProductTypeStatusFilter.active);
