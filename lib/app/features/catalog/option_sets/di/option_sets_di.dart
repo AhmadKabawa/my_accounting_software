@@ -16,6 +16,9 @@ import 'package:accounting_software/app/features/catalog/option_sets/domain/usec
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/create_option_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/update_option_use_case.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/usecase/set_option_active_use_case.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_sets_list/option_sets_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_stats/option_set_stats_cubit.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_form/option_set_form_cubit.dart';
 
 void initOptionSetsDI() {
   sl.registerLazySingleton<OptionSetsRemoteDataSource>(
@@ -40,4 +43,9 @@ void initOptionSetsDI() {
   sl.registerLazySingleton(() => CreateOptionUseCase(sl()));
   sl.registerLazySingleton(() => UpdateOptionUseCase(sl()));
   sl.registerLazySingleton(() => SetOptionActiveUseCase(sl()));
+  sl.registerFactory(() => OptionSetStatsCubit(getStats: sl()));
+  sl.registerFactory(() => OptionSetFormCubit(create: sl(), update: sl(), flashMessages: sl()));
+  sl.registerFactory(() => OptionSetsListCubit(
+    getOptionSets: sl(), setActive: sl(), deleteOptionSet: sl(), flashMessages: sl(),
+  ));
 }

@@ -44,6 +44,8 @@ import 'package:accounting_software/app/features/profile/presentation/localizati
 import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/catalog_hub_screen.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
@@ -284,6 +286,12 @@ class AppRouter {
                 name: UnitsRoutes.units.name,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: UnitsScreen()),
+              ),
+              GoRoute(
+                path: OptionSetsRoutes.optionSets.path,
+                name: OptionSetsRoutes.optionSets.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: OptionSetsScreen()),
               ),
               GoRoute(
                 path: CategoriesRoutes.categories.path,
