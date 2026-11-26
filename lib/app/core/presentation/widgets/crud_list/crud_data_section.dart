@@ -130,6 +130,8 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
     final status = statusColumn;
     final showDelete = flows == null ? labels.delete != null : flows.hasDelete;
     final duplicateKey = data.canDuplicate ? labels.duplicate : null;
+    final canDelete = flows?.canDelete?.call(row) ?? true;
+    final hideDelete = flows?.hideDeleteWhenCannotDelete == true && !canDelete;
     bool? isActive;
     VoidCallback? onToggleStatus;
     if (status != null && flows != null && flows.hasStatus) {
@@ -140,11 +142,11 @@ class CrudDataSection<T, Q extends PagedQuery<Q>, C> extends StatelessWidget {
       permission: data.permission,
       editLabelKey: labels.edit,
       onEdit: flows == null ? null : () => flows.edit(context, item: row),
-      deleteLabelKey: showDelete ? labels.delete : null,
+      deleteLabelKey: showDelete && !hideDelete ? labels.delete : null,
       onDelete:
           flows != null &&
               flows.hasDelete &&
-              (flows.canDelete?.call(row) ?? true)
+              canDelete
           ? () => flows.deleteItem(context, row)
           : null,
       duplicateLabelKey: flows == null ? null : duplicateKey,

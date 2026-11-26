@@ -307,6 +307,7 @@
 - `core/presentation/widgets/crud_list/crud_list_screen.dart`: `CrudListScreen<T,Q,C,E>` composes the list frame from a typed feature-owned `CrudListConfig`; it owns Cubit/view-mode providers, mutation-effect dispatch, permission-gated add/selection, toolbar and bulk-selection wiring.
 - `crud_list_config.dart`: `CrudListConfig`, `CrudCapabilities`, typed slot/data contexts and sort adapters. Feature-specific query fields, translations, filters and callbacks stay outside Core.
 - `crud_data_section.dart`: `CrudDataSection<T,Q,C>` maps a `CrudDataContext` into table/cards/grid, shared status column, empty/no-results state and row actions; feature supplies columns, card/grid builders, status policy and optional delete/row-action rules.
+- `CrudFlowsConfig.hideDeleteWhenCannotDelete` optionally hides the standard Delete item when `canDelete` rejects a row; default false preserves existing screens.
 
 
 ### Paged CRUD list state

@@ -24,6 +24,7 @@ class CrudFlowsConfig<T, C> {
     this.canDelete,
     this.messageArgs,
     this.deactivateMessage,
+    this.hideDeleteWhenCannotDelete = false,
   });
 
   final Future<bool?> Function(BuildContext context, {T? item, bool duplicate})
@@ -45,6 +46,10 @@ class CrudFlowsConfig<T, C> {
   /// Null, or a null result, keeps the generic [CrudLabels] message.
   final ({AppKey key, Map<String, String> args})? Function(T item)?
   deactivateMessage;
+
+  /// When true, a row that fails [canDelete] has no Delete menu item.
+  /// Defaults to the legacy disabled-item behavior for existing screens.
+  final bool hideDeleteWhenCannotDelete;
 
   /// Rows can be deleted: the callback and the label group are both present.
   bool get hasDelete => delete != null && labels.supportsDelete;

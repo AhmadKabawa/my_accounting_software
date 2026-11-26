@@ -395,6 +395,25 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('parent row hides the standard delete action', (tester) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(
+      FakeCategoriesRepository(
+        categories: _sampleCategories().take(3).toList(),
+      ),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).first);
+    await tester.pumpAndSettle();
+
+    expect(find.text(CategoriesKeys.delete.en), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('desktop row action menu stays within its popup width', (
     tester,
   ) async {

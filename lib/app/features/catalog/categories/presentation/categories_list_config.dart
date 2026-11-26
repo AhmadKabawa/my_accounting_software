@@ -153,6 +153,7 @@ get categoriesListConfig => CrudListConfig(
     deactivate: (cubit, node) => cubit.deactivate(node.id),
     isActive: (node) => node.category.isActive,
     canDelete: (node) => node.canDelete,
+    hideDeleteWhenCannotDelete: true,
     deactivateMessage: (node) => node.activeChildCount == 0
         ? null
         : (
