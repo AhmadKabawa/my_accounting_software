@@ -367,5 +367,5 @@ get categoriesListConfig => CrudListConfig(
         },
       );
     },
-  ),,
+  ),
 );
