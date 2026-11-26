@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
@@ -42,11 +44,16 @@ class ProductTypeCard extends StatelessWidget {
         runSpacing: context.ui.spacing.sm,
         children: [
           ProductTypeStatusBadge(productType),
-          AppText.raw(
-            productType.productCount?.toString() ?? '—',
-            type: AppTextType.bodySmall,
+          AppBadge(
+            label: productType.productCount == null
+                ? CommonKeys.noValue
+                : ProductTypesKeys.productsCount,
+            labelArgs: productType.productCount == null
+                ? null
+                : {'count': productType.productCount.toString()},
+            tone: AppBadgeTone.neutral,
+            size: AppBadgeSize.small,
           ),
-          const AppText(ProductTypesKeys.products),
         ],
       ),
     ],
