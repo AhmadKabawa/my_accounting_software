@@ -6,7 +6,6 @@ enum CategoryStatusFilter {
   active,
   inactive;
 
-  /// The `is_active` value to match, or null for no filtering.
   bool? get isActive => switch (this) {
     CategoryStatusFilter.all => null,
     CategoryStatusFilter.active => true,
@@ -14,13 +13,33 @@ enum CategoryStatusFilter {
   };
 }
 
-/// The category tree is loaded once and never paged. Search/status projections
-/// are flat and use 25 rows per page. The tree cap is shared with the repository.
+enum CategoryLevelFilter { all, roots, leaves }
+
+enum CategoryUsageFilter { all, withProducts, withoutProducts }
+
+enum CategorySortField {
+  name,
+  sortOrder,
+  productCount;
+
+  static CategorySortField? tryParse(String value) => switch (value) {
+    'name' => CategorySortField.name,
+    'sortOrder' => CategorySortField.sortOrder,
+    'productCount' => CategorySortField.productCount,
+    _ => null,
+  };
+}
+
+/// The complete tree is cached; all filters and flat sorting are local.
 class CategoryListQuery extends Equatable
     implements PagedQuery<CategoryListQuery> {
   const CategoryListQuery({
     this.search = '',
     this.status = CategoryStatusFilter.all,
+    this.level = CategoryLevelFilter.all,
+    this.usage = CategoryUsageFilter.all,
+    this.sortField = CategorySortField.sortOrder,
+    this.sortAscending = true,
     this.expandedIds,
     this.page = 1,
     this.flatPageSize = 25,
@@ -31,22 +50,24 @@ class CategoryListQuery extends Equatable
   @override
   final String search;
   final CategoryStatusFilter status;
-
-  /// Open parents; null means the default (roots open).
+  final CategoryLevelFilter level;
+  final CategoryUsageFilter usage;
+  final CategorySortField sortField;
+  final bool sortAscending;
   final Set<int>? expandedIds;
   @override
   final int page;
-
-  /// Flat search/filter result page size. The unfiltered tree uses [treePageSize].
   final int flatPageSize;
 
   @override
   int get pageSize => hasActiveFilters ? flatPageSize : treePageSize;
 
-  /// A search or status filter turns the tree into a flat result list.
   @override
   bool get hasActiveFilters =>
-      search.trim().isNotEmpty || status != CategoryStatusFilter.all;
+      search.trim().isNotEmpty ||
+      status != CategoryStatusFilter.all ||
+      level != CategoryLevelFilter.all ||
+      usage != CategoryUsageFilter.all;
 
   @override
   CategoryListQuery withSearch(String value) => _copy(search: value);
@@ -54,38 +75,72 @@ class CategoryListQuery extends Equatable
   @override
   CategoryListQuery withPage(int value) => value == page
       ? this
-      : CategoryListQuery(
-          search: search,
-          status: status,
-          expandedIds: expandedIds,
-          page: value,
-          flatPageSize: flatPageSize,
-        );
+      : _copy(page: value);
 
   @override
-  CategoryListQuery cleared() =>
-      _copy(search: '', status: CategoryStatusFilter.all);
+  CategoryListQuery cleared() => CategoryListQuery(
+    expandedIds: expandedIds,
+    flatPageSize: flatPageSize,
+  );
 
   CategoryListQuery withStatus(CategoryStatusFilter value) =>
       status == value ? this : _copy(status: value);
 
+  CategoryListQuery withLevel(CategoryLevelFilter value) =>
+      level == value ? this : _copy(level: value);
+
+  CategoryListQuery withUsage(CategoryUsageFilter value) =>
+      usage == value ? this : _copy(usage: value);
+
+  CategoryListQuery withSort({
+    required CategorySortField field,
+    required bool ascending,
+  }) => sortField == field && sortAscending == ascending
+      ? this
+      : _copy(sortField: field, sortAscending: ascending);
+
   CategoryListQuery withExpanded(Set<int>? ids) => CategoryListQuery(
     search: search,
     status: status,
+    level: level,
+    usage: usage,
+    sortField: sortField,
+    sortAscending: sortAscending,
     expandedIds: ids,
     page: page,
     flatPageSize: flatPageSize,
   );
 
-  CategoryListQuery _copy({String? search, CategoryStatusFilter? status}) =>
-      CategoryListQuery(
-        search: search ?? this.search,
-        status: status ?? this.status,
-        expandedIds: expandedIds,
-        page: 1,
-        flatPageSize: flatPageSize,
-      );
+  CategoryListQuery _copy({
+    String? search,
+    CategoryStatusFilter? status,
+    CategoryLevelFilter? level,
+    CategoryUsageFilter? usage,
+    CategorySortField? sortField,
+    bool? sortAscending,
+    int? page,
+  }) => CategoryListQuery(
+    search: search ?? this.search,
+    status: status ?? this.status,
+    level: level ?? this.level,
+    usage: usage ?? this.usage,
+    sortField: sortField ?? this.sortField,
+    sortAscending: sortAscending ?? this.sortAscending,
+    expandedIds: expandedIds,
+    page: page ?? 1,
+    flatPageSize: flatPageSize,
+  );
 
   @override
-  List<Object?> get props => [search, status, expandedIds, page, flatPageSize];
+  List<Object?> get props => [
+    search,
+    status,
+    level,
+    usage,
+    sortField,
+    sortAscending,
+    expandedIds,
+    page,
+    flatPageSize,
+  ];
 }
