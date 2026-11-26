@@ -42,17 +42,21 @@ import 'package:accounting_software/app/features/auth/presentation/localization/
 import 'package:accounting_software/app/features/auth/presentation/pages/select_branch/select_branch_screen.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
-import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
-import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/catalog_hub_screen.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/pages/tags_screen.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/pages/sports_screen.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -304,6 +308,18 @@ class AppRouter {
                 name: ColorsRoutes.colors.name,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: ColorsScreen()),
+              ),
+              GoRoute(
+                path: TagsRoutes.tags.path,
+                name: TagsRoutes.tags.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: TagsScreen()),
+              ),
+              GoRoute(
+                path: SportsRoutes.sports.path,
+                name: SportsRoutes.sports.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: SportsScreen()),
               ),
             ],
           ),
