@@ -747,7 +747,7 @@ void main() {
 
     _listCubit(tester).setUsage(CategoryUsageFilter.withoutProducts);
     await tester.pumpAndSettle();
-    expect(_listCubit(tester).state.result.items.map((node) => node.id), [2]);
+    expect(_listCubit(tester).state.result!.items.map((node) => node.id), [2]);
     expect(repository.getAllCalls, before);
     expect(tester.takeException(), isNull);
   });
