@@ -12,6 +12,7 @@ class Category extends Equatable {
     required this.sortOrder,
     required this.isActive,
     this.productCount,
+    this.updatedAt,
   });
 
   final int id;
@@ -26,6 +27,7 @@ class Category extends Equatable {
   /// Null means the PostgREST embedded usage count was unavailable.
   /// Unknown usage must never be interpreted as zero for delete eligibility.
   final int? productCount;
+  final DateTime? updatedAt;
 
   @override
   List<Object?> get props => [
@@ -38,5 +40,6 @@ class Category extends Equatable {
     sortOrder,
     isActive,
     productCount,
+    updatedAt,
   ];
 }
