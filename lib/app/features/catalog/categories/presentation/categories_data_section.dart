@@ -46,9 +46,11 @@ Widget buildCategoriesDataSection(
       required VoidCallback close,
       required ValueChanged<int> selectChild,
     }) {
+      final tree = data.cubit.tree;
+      if (tree == null) return const SizedBox.shrink();
+
       void addChild() {
-        final tree = data.cubit.tree;
-        if (!canManage || tree == null) return;
+        if (!canManage) return;
         showCategoryEditor(context, tree: tree, initialParentId: node.id).then((
           saved,
         ) {
@@ -60,7 +62,7 @@ Widget buildCategoriesDataSection(
 
       return CategoryDetailsPanel(
         node: node,
-        tree: data.cubit.tree,
+        tree: tree,
         width: width,
         canManage: canManage,
         onClose: close,
