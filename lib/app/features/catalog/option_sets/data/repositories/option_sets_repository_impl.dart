@@ -99,7 +99,8 @@ class OptionSetsRepositoryImpl
 
   Failure _mapGroupWriteFailure(AppException exception) {
     if (exception is ApiException &&
-        (exception.errorCode == '23505' || exception.statusCode == 409)) {
+        (exception.errorCode == '23505' ||
+            (exception.errorCode == null && exception.statusCode == 409))) {
       return ValidationFailure(
         messageKey: OptionSetFailureKeys.duplicateCode,
         statusCode: exception.statusCode,
