@@ -222,7 +222,10 @@ class _FakeOptionSetsRepository implements OptionSetsRepository {
   @override
   Future<Either<Failure, OptionSet>> createOptionSet(
     OptionSetDraft draft,
-  ) async => const Right(_set);
+  ) async {
+    createdGroupDrafts.add(draft);
+    return const Right(_set);
+  }
 
   @override
   Future<Either<Failure, OptionSet>> updateOptionSet({
