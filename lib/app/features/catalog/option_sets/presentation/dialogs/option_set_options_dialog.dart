@@ -50,13 +50,15 @@ class OptionSetOptionsDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 InlineBanner(
-                  messageKey: state.failure?.messageKey ?? OptionSetsKeys.loadError,
+                  messageKey:
+                      state.failure?.messageKey ?? OptionSetsKeys.loadError,
                   variant: InlineBannerVariant.error,
                 ),
                 AppButton(
                   CatalogUiKeys.retry,
                   variant: AppButtonVariant.text,
-                  onPressed: () => context.read<OptionSetOptionsCubit>().load(optionSet.id),
+                  onPressed: () =>
+                      context.read<OptionSetOptionsCubit>().load(optionSet.id),
                 ),
               ],
             ),
@@ -94,21 +96,29 @@ class OptionSetOptionsDialog extends StatelessWidget {
                                     AppIconButton(
                                       AppIcons.edit,
                                       tooltipKey: OptionSetsKeys.editOption,
-                                      onPressed: state.status == OptionSetOptionsStatus.saving
+                                      onPressed:
+                                          state.status ==
+                                              OptionSetOptionsStatus.saving
                                           ? null
                                           : () => _edit(context, option),
                                     ),
                                     AppIconButton(
-                                      option.isActive ? AppIcons.block : AppIcons.restore,
+                                      option.isActive
+                                          ? AppIcons.block
+                                          : AppIcons.restore,
                                       tooltipKey: option.isActive
                                           ? OptionSetsKeys.deactivate
                                           : OptionSetsKeys.activate,
-                                      onPressed: state.status == OptionSetOptionsStatus.saving
+                                      onPressed:
+                                          state.status ==
+                                              OptionSetOptionsStatus.saving
                                           ? null
-                                          : () => context.read<OptionSetOptionsCubit>().setActive(
-                                                optionId: option.id,
-                                                isActive: !option.isActive,
-                                              ),
+                                          : () => context
+                                                .read<OptionSetOptionsCubit>()
+                                                .setActive(
+                                                  optionId: option.id,
+                                                  isActive: !option.isActive,
+                                                ),
                                     ),
                                   ],
                                 )
