@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_draft.dart';
 
@@ -15,6 +16,8 @@ abstract interface class CategoriesRepository {
   });
 
   Future<Either<Failure, Unit>> delete(int id);
+
+  Future<Either<Failure, String>> uploadImage(ImageUpload image);
 
   Future<Either<Failure, Unit>> setActive({
     required int id,
