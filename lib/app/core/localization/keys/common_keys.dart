@@ -18,6 +18,7 @@ enum CommonKeys implements AppKey {
   comingSoon(ar: 'قريباً', en: 'Coming soon'),
   pageNotFound(ar: 'الصفحة غير موجودة', en: 'Page not found'),
   goHome(ar: 'العودة للرئيسية', en: 'Go home'),
+  updatedAt(ar: 'آخر تحديث', en: 'Updated at'),
   noValue(ar: '—', en: '—');
 
   const CommonKeys({required this.ar, required this.en});
