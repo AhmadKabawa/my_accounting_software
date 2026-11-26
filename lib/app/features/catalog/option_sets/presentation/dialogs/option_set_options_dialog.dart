@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_draft.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_set_options/option_set_options_cubit.dart';
@@ -37,13 +41,23 @@ class OptionSetOptionsDialog extends StatelessWidget {
       builder: (context, state) => AlertDialog(
         title: AppText.raw(optionSet.name),
         content: SizedBox(
-          width: 560,
+          width: context.ui.size.width(AppComponentSize.formDialogWidth),
           child: switch (state.status) {
             OptionSetOptionsStatus.initial || OptionSetOptionsStatus.loading =>
               const Center(child: CircularProgressIndicator()),
-            OptionSetOptionsStatus.failed => InlineBanner(
-              messageKey: state.failure?.messageKey ?? OptionSetsKeys.loadError,
-              variant: InlineBannerVariant.error,
+            OptionSetOptionsStatus.failed => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InlineBanner(
+                  messageKey: state.failure?.messageKey ?? OptionSetsKeys.loadError,
+                  variant: InlineBannerVariant.error,
+                ),
+                AppButton(
+                  CatalogUiKeys.retry,
+                  variant: AppButtonVariant.text,
+                  onPressed: () => context.read<OptionSetOptionsCubit>().load(optionSet.id),
+                ),
+              ],
             ),
             OptionSetOptionsStatus.ready ||
             OptionSetOptionsStatus.saving => Column(
@@ -56,7 +70,7 @@ class OptionSetOptionsDialog extends StatelessWidget {
                   ),
                 if (state.options.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: context.ui.padding.all(AppSpacing.lg),
                     child: AppText(OptionSetsKeys.emptyOptions),
                   )
                 else
@@ -64,7 +78,9 @@ class OptionSetOptionsDialog extends StatelessWidget {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: state.options.length,
-                      separatorBuilder: (_, _) => const Divider(height: 1),
+                      separatorBuilder: (_, _) => Divider(
+                        height: context.ui.spacing.value(AppSpacing.xs),
+                      ),
                       itemBuilder: (context, index) {
                         final option = state.options[index];
                         return ListTile(
@@ -74,40 +90,24 @@ class OptionSetOptionsDialog extends StatelessWidget {
                               ? Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    IconButton(
-                                      tooltip: OptionSetsKeys.editOption.tr(
-                                        context: context,
-                                      ),
-                                      onPressed:
-                                          state.status ==
-                                              OptionSetOptionsStatus.saving
+                                    AppIconButton(
+                                      AppIcons.edit,
+                                      tooltipKey: OptionSetsKeys.editOption,
+                                      onPressed: state.status == OptionSetOptionsStatus.saving
                                           ? null
                                           : () => _edit(context, option),
-                                      icon: const Icon(Icons.edit_outlined),
                                     ),
-                                    IconButton(
-                                      tooltip: option.isActive
-                                          ? OptionSetsKeys.deactivate.tr(
-                                              context: context,
-                                            )
-                                          : OptionSetsKeys.activate.tr(
-                                              context: context,
-                                            ),
-                                      onPressed:
-                                          state.status ==
-                                              OptionSetOptionsStatus.saving
+                                    AppIconButton(
+                                      option.isActive ? AppIcons.block : AppIcons.restore,
+                                      tooltipKey: option.isActive
+                                          ? OptionSetsKeys.deactivate
+                                          : OptionSetsKeys.activate,
+                                      onPressed: state.status == OptionSetOptionsStatus.saving
                                           ? null
-                                          : () => context
-                                                .read<OptionSetOptionsCubit>()
-                                                .setActive(
-                                                  optionId: option.id,
-                                                  isActive: !option.isActive,
-                                                ),
-                                      icon: Icon(
-                                        option.isActive
-                                            ? Icons.toggle_on
-                                            : Icons.toggle_off,
-                                      ),
+                                          : () => context.read<OptionSetOptionsCubit>().setActive(
+                                                optionId: option.id,
+                                                isActive: !option.isActive,
+                                              ),
                                     ),
                                   ],
                                 )
@@ -189,40 +189,39 @@ class _OptionEditorDialogState extends State<_OptionEditorDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextFormField(
+          AppTextField(
             controller: _name,
-            decoration: InputDecoration(
-              labelText: OptionSetsKeys.optionName.tr(context: context),
-            ),
+            labelKey: OptionSetsKeys.optionName,
             validator: (value) => value?.trim().isEmpty ?? true
                 ? OptionSetsKeys.required.tr(context: context)
                 : null,
           ),
-          TextFormField(
+          context.ui.spacing.gap(AppSpacing.sm),
+          AppTextField(
             controller: _code,
-            decoration: InputDecoration(
-              labelText: OptionSetsKeys.code.tr(context: context),
-            ),
+            labelKey: OptionSetsKeys.code,
+            textDirection: TextDirection.ltr,
             validator: (value) => value?.trim().isEmpty ?? true
                 ? OptionSetsKeys.required.tr(context: context)
                 : null,
           ),
-          TextFormField(
+          context.ui.spacing.gap(AppSpacing.sm),
+          AppTextField(
             controller: _sortOrder,
+            labelKey: OptionSetsKeys.sortOrder,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: OptionSetsKeys.sortOrder.tr(context: context),
-            ),
           ),
         ],
       ),
     ),
     actions: [
-      TextButton(
+      AppButton(
+        OptionSetsKeys.cancel,
+        variant: AppButtonVariant.text,
         onPressed: () => Navigator.pop(context),
-        child: Text(OptionSetsKeys.cancel.tr(context: context)),
       ),
-      FilledButton(
+      AppButton(
+        OptionSetsKeys.save,
         onPressed: () {
           if (!_formKey.currentState!.validate()) return;
           Navigator.pop(
@@ -234,7 +233,6 @@ class _OptionEditorDialogState extends State<_OptionEditorDialog> {
             ),
           );
         },
-        child: Text(OptionSetsKeys.save.tr(context: context)),
       ),
     ],
   );
