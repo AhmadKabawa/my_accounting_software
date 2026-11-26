@@ -29,6 +29,7 @@ import 'package:accounting_software/app/features/catalog/product_types/domain/en
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_details/product_type_details_cubit.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_details/product_type_details_state.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/widgets/product_type_sort_order_field.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
