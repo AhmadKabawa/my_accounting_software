@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/foundation/image/image_upload_cubit.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
@@ -30,7 +29,11 @@ Future<bool?> showCategoryEditor(
   int? initialParentId,
   ImagePickerPort? imagePicker,
   FileDropTargetAdapter? dropTargetAdapter,
-}) => showAppFormDialog<bool>(
+}) {
+  final seed = duplicate && category != null
+      ? categoryDuplicateSeed(context, category)
+      : null;
+  return showAppFormDialog<bool>(
   context,
   (_) => BlocProvider(
     create: (_) => sl<CategoryFormCubit>(
