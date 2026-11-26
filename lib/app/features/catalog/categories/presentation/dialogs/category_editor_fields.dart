@@ -7,11 +7,13 @@ import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_i
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor_dialog.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_node.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/sections/category_image_section.dart';
 
 class CategoryEditorFields extends StatelessWidget {
   const CategoryEditorFields({
@@ -100,22 +102,19 @@ class CategoryEditorFields extends StatelessWidget {
           },
         ),
         context.ui.spacing.gap(AppSpacing.md),
-        AppTextField(
-          controller: scope.fields['image'],
-          labelKey: CategoriesKeys.image,
-          hintKey: CategoriesKeys.imageHint,
-          textDirection: TextDirection.ltr,
-          enabled: !scope.busy,
-          validator: (_) => state.errorFor('image'),
+        CategoryImageSection(
+          image: scope.fields['image'],
+          categoryName: scope.fields['name'],
+          uploader: imageUploader,
+          picker: imagePicker,
+          dropTargetAdapter: dropTargetAdapter,
           onChanged: (value) {
-            cubit.imageChanged(value);
+            cubit.imageChanged(value ?? '');
+            scope.fields['image'].text = value ?? '';
             scope.clearFailure();
+            scope.changed();
           },
-        ),
-        _fieldError(
-          context,
-          state.errorFor('image'),
-          state.image.trim().isNotEmpty,
+          onBusyChanged: onImageBusyChanged,
         ),
         context.ui.spacing.gap(AppSpacing.md),
         AppTextField(
@@ -135,6 +134,12 @@ class CategoryEditorFields extends StatelessWidget {
           context,
           state.errorFor('sortOrder'),
           state.sortOrder.trim().isNotEmpty,
+        ),
+        context.ui.spacing.gap(AppSpacing.md),
+        AppSwitch(
+          value: state.isActive,
+          labelKey: CategoriesKeys.active,
+          onChanged: scope.busy ? null : cubit.activeChanged,
         ),
         context.ui.spacing.gap(AppSpacing.md),
         AppSwitch(
