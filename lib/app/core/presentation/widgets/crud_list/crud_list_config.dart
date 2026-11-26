@@ -66,6 +66,7 @@ class CrudSortConfig<Q, C> {
   const CrudSortConfig({
     this.options = const [],
     this.optionsForQuery,
+    this.maxSorts = 0,
     required this.current,
     required this.tableKey,
     required this.tableAscending,
@@ -75,6 +76,7 @@ class CrudSortConfig<Q, C> {
 
   final List<FilterBarSortOption> options;
   final List<FilterBarSortOption> Function(Q query)? optionsForQuery;
+  final int maxSorts;
 
   List<FilterBarSortOption> optionsFor(Q query) =>
       optionsForQuery?.call(query) ?? options;
