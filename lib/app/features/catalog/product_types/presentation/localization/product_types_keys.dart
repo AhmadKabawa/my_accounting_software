@@ -126,5 +126,5 @@ enum ProductTypesKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'catalog.productTypes.$name';
+  String get key => 'producttypes.$name';
 }
