@@ -2,6 +2,8 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 
 enum UnitsKeys implements AppKey {
   title(ar: 'وحدات القياس', en: 'Units'),
+  editorSubtitle(ar: 'بيانات وحدة القياس ورمزها ونوعها', en: 'Unit name, symbol and measurement type'),
+  activeOnCreate(ar: 'تفعيل الوحدة عند الإنشاء', en: 'Activate unit on creation'),
   add(ar: 'إضافة وحدة', en: 'Add unit'),
   edit(ar: 'تعديل الوحدة', en: 'Edit unit'),
   unitName(ar: 'اسم الوحدة', en: 'Unit name'),

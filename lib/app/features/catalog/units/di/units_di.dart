@@ -10,6 +10,7 @@ import 'package:accounting_software/app/features/catalog/units/domain/usecase/ge
 import 'package:accounting_software/app/features/catalog/units/domain/usecase/set_unit_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/units/domain/usecase/update_unit_use_case.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/cubit/units_list/units_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/cubit/unit_form/unit_form_cubit.dart';
 
 void initUnitsDI() {
   sl.registerLazySingleton<UnitsRemoteDataSource>(
@@ -23,6 +24,13 @@ void initUnitsDI() {
   sl.registerLazySingleton(() => UpdateUnitUseCase(sl()));
   sl.registerLazySingleton(() => SetUnitActiveUseCase(sl()));
   sl.registerLazySingleton(() => DeleteUnitUseCase(sl()));
+  sl.registerFactory(
+    () => UnitFormCubit(
+      createUnit: sl(),
+      updateUnit: sl(),
+      flashMessages: sl(),
+    ),
+  );
   sl.registerFactory(
     () => UnitsListCubit(
       getUnits: sl(),
