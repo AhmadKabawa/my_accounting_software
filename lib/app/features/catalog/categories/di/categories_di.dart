@@ -6,6 +6,7 @@ import 'package:accounting_software/app/features/catalog/categories/data/datasou
 import 'package:accounting_software/app/features/catalog/categories/data/datasources/categories_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/repositories/categories_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_draft.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_tree.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/repositories/categories_repository.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/usecase/create_category_use_case.dart';
@@ -18,9 +19,10 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 
 class CategoryFormArgs {
-  const CategoryFormArgs({this.category, this.tree, this.initialParentId});
+  const CategoryFormArgs({this.category, this.seed, this.tree, this.initialParentId});
 
   final Category? category;
+  final CategoryDraft? seed;
   final CategoryTree? tree;
   final int? initialParentId;
 }
@@ -57,6 +59,7 @@ void initCategoriesDI() {
       updateCategory: sl(),
       flashMessages: sl<FlashMessages>(),
       category: args.category,
+      seed: args.seed,
       tree: args.tree,
       initialParentId: args.initialParentId,
     ),
