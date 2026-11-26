@@ -20,11 +20,12 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/features/auth/presentation/localization/auth_keys.dart';
 import 'package:accounting_software/app/features/home/presentation/localization/home_keys.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/localization/onboarding_keys.dart';
+import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 // [cat10:begin] Product types localization imports.
 import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 // [cat10:end]
-import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
+
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/failures/category_failure_keys.dart';
