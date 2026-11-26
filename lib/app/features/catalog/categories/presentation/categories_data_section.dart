@@ -49,11 +49,9 @@ Widget buildCategoriesDataSection(
       void addChild() {
         final tree = data.cubit.tree;
         if (!canManage || tree == null) return;
-        showCategoryEditor(
-          context,
-          tree: tree,
-          initialParentId: node.id,
-        ).then((saved) {
+        showCategoryEditor(context, tree: tree, initialParentId: node.id).then((
+          saved,
+        ) {
           if (saved == true && context.mounted) {
             flows.onSaved(data.cubit, isNew: true);
           }
