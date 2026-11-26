@@ -24,24 +24,26 @@ class CategoryFormCubit
     required UpdateCategoryUseCase updateCategory,
     required FlashMessages flashMessages,
     Category? category,
+    CategoryDraft? seed,
     CategoryTree? tree,
     int? initialParentId,
   }) : _createCategory = createCategory,
        _updateCategory = updateCategory,
        _flashMessages = flashMessages,
        _category = category,
+       _seed = seed,
        _tree = tree,
-       _initialParentId = initialParentId ?? category?.parentId,
+       _initialParentId = initialParentId ?? seed?.parentId ?? category?.parentId,
        super(
          CategoryFormState(
-           parentId: initialParentId ?? category?.parentId,
-           name: category?.name ?? '',
-           slug: category?.slug ?? '',
-           description: category?.description ?? '',
-           image: category?.image ?? '',
-           sortOrder: '${category?.sortOrder ?? 0}',
-           slugManuallyEdited: category != null,
-           isActive: category?.isActive ?? true,
+           parentId: initialParentId ?? seed?.parentId ?? category?.parentId,
+           name: seed?.name ?? category?.name ?? '',
+           slug: seed?.slug ?? category?.slug ?? '',
+           description: seed?.description ?? category?.description ?? '',
+           image: seed?.image ?? category?.image ?? '',
+           sortOrder: '${seed?.sortOrder ?? category?.sortOrder ?? 0}',
+           slugManuallyEdited: category != null || seed != null,
+           isActive: seed?.isActive ?? category?.isActive ?? true,
          ),
        ) {
     _initialState = state;
@@ -52,6 +54,7 @@ class CategoryFormCubit
   final UpdateCategoryUseCase _updateCategory;
   final FlashMessages _flashMessages;
   final Category? _category;
+  final CategoryDraft? _seed;
   final CategoryTree? _tree;
   final int? _initialParentId;
   late final CategoryFormState _initialState;
