@@ -14,10 +14,7 @@ import 'package:accounting_software/app/features/catalog/product_types/presentat
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 
 class ProductTypeEditorDialog extends StatefulWidget {
-  const ProductTypeEditorDialog({
-    super.key,
-    this.productType,
-  });
+  const ProductTypeEditorDialog({super.key, this.productType});
 
   final ProductType? productType;
 
@@ -141,32 +138,11 @@ class _ProductTypeEditorDialogState extends State<ProductTypeEditorDialog> {
             AppTextField(
               controller: _sortOrder,
               labelKey: ProductTypesKeys.sortOrderLabel,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              keyboardType: const TextInputType.numberWithOptions(signed: true),
               validator: (value) => AppValidator.validate(
                 value,
                 [ValidationRule.required, ValidationRule.pattern],
-                params: {ValidationRule.pattern: RegExp(r'^\\d+
-              onChanged: (_) => scope.clearFailure(),
-            ),
-            context.ui.spacing.gap(AppSpacing.md),
-            AppSwitch(
-              value: _active,
-              labelKey: widget.productType == null
-                  ? ProductTypesKeys.activeOnCreate
-                  : ProductTypesKeys.active,
-              onChanged: scope.busy
-                  ? null
-                  : (value) {
-                      setState(() => _active = value);
-                      scope.clearFailure();
-                    },
-            ),
-          ],
-        ),
-      );
-}
-)},
+                params: {ValidationRule.pattern: RegExp(r'^-?[0-9]+$')},
                 customKeys: {
                   ValidationRule.pattern: ProductTypesKeys.sortOrderInvalid,
                 },
