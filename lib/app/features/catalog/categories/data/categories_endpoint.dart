@@ -10,12 +10,12 @@ abstract final class CategoriesEndpoint {
 
   /// Preferred projection with the linked product usage count.
   static const select =
-      'id,parent_id,name,slug,description,image,sort_order,is_active,'
+      'id,parent_id,name,slug,description,image,sort_order,is_active,updated_at,'
       'product_categories(count)';
 
   /// Safe fallback when PostgREST cannot resolve the embedded relation.
   static const selectWithoutProductCount =
-      'id,parent_id,name,slug,description,image,sort_order,is_active';
+      'id,parent_id,name,slug,description,image,sort_order,is_active,updated_at';
 
   static const order = 'sort_order.asc,name.asc,id.asc';
 }
