@@ -1,0 +1,23 @@
+import 'package:accounting_software/app/core/di/service_locator.dart';
+import 'package:accounting_software/app/core/network/api_client_interface.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
+import 'package:accounting_software/app/features/catalog/product_types/data/datasources/product_types_remote_data_source.dart';
+import 'package:accounting_software/app/features/catalog/product_types/data/datasources/product_types_remote_data_source_impl.dart';
+import 'package:accounting_software/app/features/catalog/product_types/data/repositories/product_types_repository_impl.dart';
+import 'package:accounting_software/app/features/catalog/product_types/domain/repositories/product_types_repository.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_types_list/product_types_list_cubit.dart';
+
+void initProductTypesDI() {
+  sl.registerLazySingleton<ProductTypesRemoteDataSource>(
+    () => ProductTypesRemoteDataSourceImpl(sl<IApiClient>()),
+  );
+  sl.registerLazySingleton<ProductTypesRepository>(
+    () => ProductTypesRepositoryImpl(sl<ProductTypesRemoteDataSource>()),
+  );
+  sl.registerFactory(
+    () => ProductTypesListCubit(
+      repository: sl<ProductTypesRepository>(),
+      flashMessages: sl<FlashMessages>(),
+    ),
+  );
+}
