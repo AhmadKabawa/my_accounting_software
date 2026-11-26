@@ -15,10 +15,6 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/loc
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
-import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
-import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
@@ -52,18 +48,6 @@ class CatalogHubScreen extends StatelessWidget {
               titleKey: BrandsKeys.title,
               descriptionKey: CatalogHubKeys.brandsDescription,
               onOpen: () => context.go(BrandsRoutes.brands.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: UnitsKeys.title,
-              descriptionKey: CatalogHubKeys.unitsDescription,
-              onOpen: () => context.go(UnitsRoutes.units.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: OptionSetsKeys.title,
-              descriptionKey: CatalogHubKeys.optionSetsDescription,
-              onOpen: () => context.go(OptionSetsRoutes.optionSets.path),
             ),
             _AreaCard(
               icon: AppIcons.catalog,
