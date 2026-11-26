@@ -6,6 +6,8 @@ import 'package:accounting_software/app/features/catalog/product_types/domain/en
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_list_query.dart';
 
 abstract interface class ProductTypesRepository {
+  Future<Either<Failure, ProductType>> getById(int id);
+
   Future<Either<Failure, PaginatedResult<ProductType>>> getPage(
     ProductTypeListQuery query,
   );
