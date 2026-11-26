@@ -9,6 +9,7 @@ class CategoryFormState extends Equatable {
     this.image = '',
     this.sortOrder = '0',
     this.slugManuallyEdited = false,
+    this.isActive = true,
     this.saving = false,
     this.errors = const {},
   });
@@ -20,6 +21,7 @@ class CategoryFormState extends Equatable {
   final String image;
   final String sortOrder;
   final bool slugManuallyEdited;
+  final bool isActive;
   final bool saving;
   final Map<String, String?> errors;
 
@@ -36,6 +38,7 @@ class CategoryFormState extends Equatable {
     String? image,
     String? sortOrder,
     bool? slugManuallyEdited,
+    bool? isActive,
     bool? saving,
     Map<String, String?>? errors,
   }) => CategoryFormState(
@@ -46,6 +49,7 @@ class CategoryFormState extends Equatable {
     image: image ?? this.image,
     sortOrder: sortOrder ?? this.sortOrder,
     slugManuallyEdited: slugManuallyEdited ?? this.slugManuallyEdited,
+    isActive: isActive ?? this.isActive,
     saving: saving ?? this.saving,
     errors: errors ?? this.errors,
   );
@@ -59,6 +63,7 @@ class CategoryFormState extends Equatable {
     image,
     sortOrder,
     slugManuallyEdited,
+    isActive,
     saving,
     errors,
   ];
