@@ -77,10 +77,7 @@ enum SportsKeys implements AppKey {
   delete(ar: 'حذف', en: 'Delete'),
   deleted(ar: 'تم حذف الرياضة.', en: 'Sport deleted.'),
   deleteTitle(ar: 'حذف الرياضة', en: 'Delete sport'),
-  deleteMessage(
-    ar: 'هل تريد حذف الرياضة {name}؟',
-    en: 'Delete sport {name}?',
-  ),
+  deleteMessage(ar: 'هل تريد حذف الرياضة {name}؟', en: 'Delete sport {name}?'),
   deactivateTitle(ar: 'إيقاف الرياضة', en: 'Deactivate sport'),
   deactivateMessage(
     ar: 'سيتم إيقاف الرياضة مع الاحتفاظ بها وبسجلاتها، ولن تظهر عند اختيار رياضات جديدة.',

@@ -30,8 +30,7 @@ class SportsRemoteDataSourceImpl implements SportsRemoteDataSource {
         'select': SportsEndpoint.select,
         'order': _order(query),
         if (searchTerm.isNotEmpty)
-          'or':
-              '(name.ilike."*$searchTerm*",code.ilike."*$searchTerm*")',
+          'or': '(name.ilike."*$searchTerm*",code.ilike."*$searchTerm*")',
         if (query.status == SportStatusFilter.active) 'is_active': 'eq.true',
         if (query.status == SportStatusFilter.inactive) 'is_active': 'eq.false',
       },

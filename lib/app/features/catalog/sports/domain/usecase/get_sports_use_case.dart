@@ -6,13 +6,11 @@ import 'package:accounting_software/app/features/catalog/sports/domain/entity/sp
 import 'package:accounting_software/app/features/catalog/sports/domain/entity/sport_list_query.dart';
 import 'package:accounting_software/app/features/catalog/sports/domain/repositories/sports_repository.dart';
 
-class GetSportsUseCase
-    extends UseCase<PaginatedResult<Sport>, SportListQuery> {
+class GetSportsUseCase extends UseCase<PaginatedResult<Sport>, SportListQuery> {
   GetSportsUseCase(this._repository);
   final SportsRepository _repository;
 
   @override
-  Future<Either<Failure, PaginatedResult<Sport>>> call(
-    SportListQuery params,
-  ) => _repository.getSports(params);
+  Future<Either<Failure, PaginatedResult<Sport>>> call(SportListQuery params) =>
+      _repository.getSports(params);
 }

@@ -35,9 +35,8 @@ class SportsListCubit
   final DeleteSportUseCase _deleteSport;
 
   @override
-  Future<Either<Failure, PagedResult<Sport>>> fetch(
-    SportListQuery query,
-  ) => _getSports(query);
+  Future<Either<Failure, PagedResult<Sport>>> fetch(SportListQuery query) =>
+      _getSports(query);
 
   @override
   Future<Either<Failure, Unit>> deleteItem(Sport item) =>
@@ -82,9 +81,7 @@ class SportsListCubit
     rowId: id,
   );
 
-  Future<BulkResult<Sport>> bulkActivate(
-    Iterable<Sport> sports,
-  ) => runBulk(
+  Future<BulkResult<Sport>> bulkActivate(Iterable<Sport> sports) => runBulk(
     items: sports,
     action: (sport) =>
         _setSportActive(SetSportActiveParams(id: sport.id, isActive: true)),
@@ -92,9 +89,7 @@ class SportsListCubit
     successMessage: SportsKeys.statusUpdated,
   );
 
-  Future<BulkResult<Sport>> bulkDeactivate(
-    Iterable<Sport> sports,
-  ) => runBulk(
+  Future<BulkResult<Sport>> bulkDeactivate(Iterable<Sport> sports) => runBulk(
     items: sports,
     action: (sport) =>
         _setSportActive(SetSportActiveParams(id: sport.id, isActive: false)),
@@ -102,13 +97,12 @@ class SportsListCubit
     successMessage: SportsKeys.statusUpdated,
   );
 
-  Future<BulkResult<Sport>> bulkDelete(Iterable<Sport> sports) =>
-      runBulk(
-        items: sports,
-        action: (sport) => _deleteSport(DeleteSportParams(sport.id)),
-        kind: PagedMutationKind.deleted,
-        successMessage: SportsKeys.deleted,
-      );
+  Future<BulkResult<Sport>> bulkDelete(Iterable<Sport> sports) => runBulk(
+    items: sports,
+    action: (sport) => _deleteSport(DeleteSportParams(sport.id)),
+    kind: PagedMutationKind.deleted,
+    successMessage: SportsKeys.deleted,
+  );
 
   Future<void> onSportSaved({required bool isNew}) => reloadAfterMutation(
     isNew ? PagedMutationKind.created : PagedMutationKind.updated,

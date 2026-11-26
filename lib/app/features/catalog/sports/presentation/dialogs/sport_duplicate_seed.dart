@@ -5,11 +5,10 @@ import 'package:accounting_software/app/features/catalog/sports/domain/entity/sp
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
 
 /// Copies the sport's description and order while making its identity unique.
-SportDraft sportDuplicateSeed(BuildContext context, Sport source) =>
-    SportDraft(
-      name: '${source.name} ${SportsKeys.duplicateSuffix.tr(context: context)}',
-      code: source.code + SportsKeys.duplicateCodeSuffix.tr(context: context),
-      description: source.description,
-      sortOrder: source.sortOrder,
-      isActive: source.isActive,
-    );
+SportDraft sportDuplicateSeed(BuildContext context, Sport source) => SportDraft(
+  name: '${source.name} ${SportsKeys.duplicateSuffix.tr(context: context)}',
+  code: source.code + SportsKeys.duplicateCodeSuffix.tr(context: context),
+  description: source.description,
+  sortOrder: source.sortOrder,
+  isActive: source.isActive,
+);
