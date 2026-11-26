@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
@@ -143,6 +144,13 @@ get unitsListConfig => CrudListConfig(
             priority: DataTableColumnPriority.secondary,
             cellBuilder: (context, unit) =>
                 AppText.raw(_unitTypeLabel(context, unit.type)),
+          ),
+          DataTableColumn(
+            labelKey: CommonKeys.updatedAt,
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (_, unit) => AppText.raw(
+              unit.updatedAt == null ? '—' : _formatUnitUpdatedAt(unit.updatedAt!),
+            ),
           ),
           DataTableColumn(
             labelKey: UnitsKeys.usage,
