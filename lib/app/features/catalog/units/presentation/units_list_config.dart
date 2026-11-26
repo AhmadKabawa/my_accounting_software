@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
@@ -139,7 +139,7 @@ class _UnitCard extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(unit.name, type: AppTextType.titleMedium),
+        AppText.raw(unit.name, type: AppTextType.titleMedium),
         context.ui.spacing.gap(AppSpacing.xs),
         AppText.raw(unit.symbol),
         context.ui.spacing.gap(AppSpacing.xs),
