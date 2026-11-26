@@ -140,3 +140,30 @@ This section supersedes earlier progress statements where the branch has since g
 6. Complete the CAT-08 report sections for field coverage, acceptance criteria, integration blocks, CI runs and proposed backend requests only after the corresponding evidence exists.
 
 Status: partial implementation; not merge-ready.
+
+## Implementation progress update — 2026-11-26 (continued)
+
+### Units follow-up
+- Unit status/type filter changes now reset pagination to page 1.
+- The list table now includes the localized last-updated column.
+- Units is registered in the Catalog sidebar and appears immediately after Brands in the Catalog hub.
+- Added a sidebar destination assertion and filter-query pagination coverage.
+
+### Option Sets presentation now added
+- Added the paged list Cubit, server-stats Cubit/state, create/update form Cubit/effects, editor dialog and launcher.
+- Added status filtering, name sorting, server-derived all/active/inactive statistics, and the CRUD list screen/config.
+- Registered the Option Sets screen in the Catalog router, sidebar and hub, and added its presentation Cubits to Catalog DI.
+- Opening a set lazily fetches its options. The options dialog supports create, update and activate/deactivate; no option-delete action is exposed.
+- The selection-type field is disabled when usage is positive or unknown. Group deletion remains blocked unless both option count and usage count are known to be zero.
+
+### Latest verified CI baseline
+- Run 45908018318 (tested commit 76962d9a00fc68920d7ae0426220e04466473c45): Auto-format succeeded and Analyze succeeded. The test job reported 1322 passed and 12 failed; all 12 failures were in Categories widget tests, outside CAT-08.
+- The same run verified the Units sidebar test and passed the UI quality gate after replacing the hard-coded missing-value placeholder with the localized common key.
+- The Option Sets presentation additions pushed after that tested commit have not yet been covered by a completed CI run.
+- No local Flutter/Dart commands were run. No merge or pull request was created.
+
+### Still outstanding
+- Option Sets presentation tests, including list Cubit, editor, lazy options loading, option mutations, and responsive dialog behavior.
+- Attributes presentation and its type-dependent unit/option-set selectors, usage locks and duplicate flow.
+- Move Attribute lookup choice models out of the Data layer into Domain to restore the dependency direction.
+- Full CAT-08 test matrix and a final CI run on the latest branch head.
