@@ -49,6 +49,8 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/rou
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/pages/product_types_screen.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
