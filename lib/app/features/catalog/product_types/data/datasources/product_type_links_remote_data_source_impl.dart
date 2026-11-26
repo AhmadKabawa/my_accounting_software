@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
+import 'package:accounting_software/app/core/network/api_end_points.dart';
 import 'package:accounting_software/app/features/catalog/product_types/data/datasources/product_type_links_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/product_types/data/product_type_links_endpoints.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_attribute_link.dart';
@@ -92,7 +93,7 @@ class ProductTypeLinksRemoteDataSourceImpl
       );
 
   Future<ApiResult<List<ProductTypeLinkOption>>> _getOptions(
-    dynamic endpoint,
+    AppEndpoint endpoint,
     String select,
     ProductTypeLinkOption Function(Map<String, dynamic>) parse,
   ) => _apiClient.get<List<ProductTypeLinkOption>>(
@@ -206,7 +207,7 @@ class ProductTypeLinksRemoteDataSourceImpl
   );
 
   Future<ApiResult<Unit>> _write(
-    dynamic endpoint, {
+    AppEndpoint endpoint, {
     Map<String, dynamic>? query,
     Map<String, dynamic>? body,
     required _WriteMethod method,
