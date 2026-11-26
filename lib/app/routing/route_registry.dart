@@ -6,6 +6,8 @@ import 'package:accounting_software/app/features/on_boarding/presentation/routin
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
@@ -39,6 +41,8 @@ List<RouteItem> buildRouteRegistry({
   ...UnitsRoutes.all,
   ...OptionSetsRoutes.all,
   ...AttributesRoutes.all,
+  ...TagsRoutes.all,
+  ...SportsRoutes.all,
 ];
 
 /// Routes used by the running application.
