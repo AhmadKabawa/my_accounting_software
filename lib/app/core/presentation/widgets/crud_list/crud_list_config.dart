@@ -65,6 +65,7 @@ class CrudSlotContext<T, Q extends PagedQuery<Q>, C> {
 class CrudSortConfig<Q, C> {
   const CrudSortConfig({
     this.options = const [],
+    this.optionsForQuery,
     required this.current,
     required this.tableKey,
     required this.tableAscending,
@@ -73,6 +74,10 @@ class CrudSortConfig<Q, C> {
   });
 
   final List<FilterBarSortOption> options;
+  final List<FilterBarSortOption> Function(Q query)? optionsForQuery;
+
+  List<FilterBarSortOption> optionsFor(Q query) =>
+      optionsForQuery?.call(query) ?? options;
   final List<FilterBarSort> Function(Q query) current;
   final String? Function(Q query) tableKey;
   final bool Function(Q query) tableAscending;
