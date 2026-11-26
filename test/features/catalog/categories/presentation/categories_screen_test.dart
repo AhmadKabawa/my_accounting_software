@@ -367,7 +367,9 @@ void main() {
   ) async {
     setScreenSize(tester, const Size(1200, 900));
     _register(
-      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+      FakeCategoriesRepository(
+        categories: _sampleCategories().take(3).toList(),
+      ),
     );
     await tester.pumpWidget(
       buildTestApp(home: _home(), direction: TextDirection.ltr),
@@ -382,6 +384,4 @@ void main() {
 
     expect(tester.takeException(), isNull);
   });
-
-
 }
