@@ -13,7 +13,10 @@ class ProductTypeDraft extends Equatable {
   final String code;
   final String? description;
   final int sortOrder;
-  final bool isActive;
+
+  /// Null on update means status was unchanged and must not be sent in PATCH.
+  /// Create flows always pass the selected value (true by default).
+  final bool? isActive;
 
   @override
   List<Object?> get props => [name, code, description, sortOrder, isActive];
