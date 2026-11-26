@@ -292,6 +292,24 @@ class AppRouter {
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: ColorsScreen()),
               ),
+              GoRoute(
+                path: ProductTypesRoutes.productTypes.path,
+                name: ProductTypesRoutes.productTypes.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: ProductTypesScreen()),
+              ),
+              GoRoute(
+                path: ProductTypesRoutes.detailsPath,
+                name: 'catalog.productTypeDetails',
+                pageBuilder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  return NoTransitionPage(
+                    child: id == null
+                        ? NotFoundScreen(location: state.uri.toString())
+                        : ProductTypeDetailsScreen(productTypeId: id),
+                  );
+                },
+              ),
             ],
           ),
 
