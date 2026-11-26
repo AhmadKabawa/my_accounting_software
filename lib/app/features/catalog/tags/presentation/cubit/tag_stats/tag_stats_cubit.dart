@@ -15,16 +15,13 @@ class TagStatsCubit extends BaseCubit<TagStatsState, Never> {
     if (isClosed) return;
     final version = ++_requestVersion;
     if (state.stats == null) {
-      emit(
-        state.copyWith(status: TagStatsStatus.loading, clearFailure: true),
-      );
+      emit(state.copyWith(status: TagStatsStatus.loading, clearFailure: true));
     }
     final result = await _getTagStats(NoParams());
     if (isClosed || version != _requestVersion) return;
     result.fold(
-      (failure) => emit(
-        state.copyWith(status: TagStatsStatus.failed, failure: failure),
-      ),
+      (failure) =>
+          emit(state.copyWith(status: TagStatsStatus.failed, failure: failure)),
       (stats) =>
           emit(state.copyWith(status: TagStatsStatus.ready, stats: stats)),
     );

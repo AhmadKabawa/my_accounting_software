@@ -47,10 +47,6 @@ void initTagsDI() {
   );
   sl.registerFactory(() => TagStatsCubit(getTagStats: sl()));
   sl.registerFactory(
-    () => TagFormCubit(
-      createTag: sl(),
-      updateTag: sl(),
-      flashMessages: sl(),
-    ),
+    () => TagFormCubit(createTag: sl(), updateTag: sl(), flashMessages: sl()),
   );
 }

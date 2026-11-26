@@ -12,9 +12,7 @@ Future<bool?> showTagEditor(
   CatalogTag? tag,
   bool duplicate = false,
 }) {
-  final seed = duplicate && tag != null
-      ? tagDuplicateSeed(context, tag)
-      : null;
+  final seed = duplicate && tag != null ? tagDuplicateSeed(context, tag) : null;
   return showAppFormDialog<bool>(
     context,
     (_) => BlocProvider(

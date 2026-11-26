@@ -7,6 +7,5 @@ class TagsScreen extends StatelessWidget {
   const TagsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      CrudListScreen(config: tagsListConfig);
+  Widget build(BuildContext context) => CrudListScreen(config: tagsListConfig);
 }

@@ -16,9 +16,7 @@ class TagsRemoteDataSourceImpl implements TagsRemoteDataSource {
   final IApiClient _apiClient;
 
   @override
-  Future<ApiResult<PaginatedResult<TagModel>>> getTags(
-    TagListQuery query,
-  ) {
+  Future<ApiResult<PaginatedResult<TagModel>>> getTags(TagListQuery query) {
     final searchTerm = PostgrestValue.escapeFilter(query.search.trim());
     return _apiClient.getPaginated<TagModel>(
       TagsEndpoint.collection,
@@ -30,8 +28,7 @@ class TagsRemoteDataSourceImpl implements TagsRemoteDataSource {
         'select': TagsEndpoint.select,
         'order': _order(query),
         if (searchTerm.isNotEmpty)
-          'or':
-              '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
+          'or': '(name.ilike."*$searchTerm*",slug.ilike."*$searchTerm*")',
         if (query.status == TagStatusFilter.active) 'is_active': 'eq.true',
         if (query.status == TagStatusFilter.inactive) 'is_active': 'eq.false',
       },
@@ -84,9 +81,7 @@ class TagsRemoteDataSourceImpl implements TagsRemoteDataSource {
       for (final sort in query.sorts)
         '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
     ];
-    final hasName = query.sorts.any(
-      (sort) => sort.field == TagSortField.name,
-    );
+    final hasName = query.sorts.any((sort) => sort.field == TagSortField.name);
     return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
   }
 

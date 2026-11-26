@@ -35,9 +35,8 @@ class TagsListCubit
   final DeleteTagUseCase _deleteTag;
 
   @override
-  Future<Either<Failure, PagedResult<CatalogTag>>> fetch(
-    TagListQuery query,
-  ) => _getTags(query);
+  Future<Either<Failure, PagedResult<CatalogTag>>> fetch(TagListQuery query) =>
+      _getTags(query);
 
   @override
   Future<Either<Failure, Unit>> deleteItem(CatalogTag item) =>
@@ -82,25 +81,23 @@ class TagsListCubit
     rowId: id,
   );
 
-  Future<BulkResult<CatalogTag>> bulkActivate(
-    Iterable<CatalogTag> tags,
-  ) => runBulk(
-    items: tags,
-    action: (tag) =>
-        _setTagActive(SetTagActiveParams(id: tag.id, isActive: true)),
-    kind: PagedMutationKind.statusChanged,
-    successMessage: TagsKeys.statusUpdated,
-  );
+  Future<BulkResult<CatalogTag>> bulkActivate(Iterable<CatalogTag> tags) =>
+      runBulk(
+        items: tags,
+        action: (tag) =>
+            _setTagActive(SetTagActiveParams(id: tag.id, isActive: true)),
+        kind: PagedMutationKind.statusChanged,
+        successMessage: TagsKeys.statusUpdated,
+      );
 
-  Future<BulkResult<CatalogTag>> bulkDeactivate(
-    Iterable<CatalogTag> tags,
-  ) => runBulk(
-    items: tags,
-    action: (tag) =>
-        _setTagActive(SetTagActiveParams(id: tag.id, isActive: false)),
-    kind: PagedMutationKind.statusChanged,
-    successMessage: TagsKeys.statusUpdated,
-  );
+  Future<BulkResult<CatalogTag>> bulkDeactivate(Iterable<CatalogTag> tags) =>
+      runBulk(
+        items: tags,
+        action: (tag) =>
+            _setTagActive(SetTagActiveParams(id: tag.id, isActive: false)),
+        kind: PagedMutationKind.statusChanged,
+        successMessage: TagsKeys.statusUpdated,
+      );
 
   Future<BulkResult<CatalogTag>> bulkDelete(Iterable<CatalogTag> tags) =>
       runBulk(

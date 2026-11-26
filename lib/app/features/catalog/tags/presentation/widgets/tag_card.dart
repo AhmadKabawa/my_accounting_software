@@ -19,10 +19,7 @@ class TagCard extends StatelessWidget {
       context.ui.spacing.gap(AppSpacing.xs),
       Directionality(
         textDirection: TextDirection.ltr,
-        child: AppText.raw(
-          tag.slug,
-          type: AppTextType.bodySmall,
-        ),
+        child: AppText.raw(tag.slug, type: AppTextType.bodySmall),
       ),
       context.ui.spacing.gap(AppSpacing.sm),
       TagStatusBadge(tag),

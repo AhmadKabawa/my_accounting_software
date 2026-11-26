@@ -6,9 +6,7 @@ import 'package:accounting_software/app/features/catalog/tags/domain/entity/cata
 import 'package:accounting_software/app/features/catalog/tags/domain/entity/tag_list_query.dart';
 
 abstract interface class TagsRemoteDataSource {
-  Future<ApiResult<PaginatedResult<TagModel>>> getTags(
-    TagListQuery query,
-  );
+  Future<ApiResult<PaginatedResult<TagModel>>> getTags(TagListQuery query);
 
   Future<ApiResult<TagModel>> createTag(CatalogTagDraft draft);
 

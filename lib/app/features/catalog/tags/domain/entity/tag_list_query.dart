@@ -49,10 +49,7 @@ class TagListQuery extends Equatable implements PagedQuery<TagListQuery> {
   @override
   final int pageSize;
 
-  List<TagSort> get sorts => [
-    TagSort(sortField, sortAscending),
-    ...thenSorts,
-  ];
+  List<TagSort> get sorts => [TagSort(sortField, sortAscending), ...thenSorts];
 
   bool get isFiltered => hasActiveFilters;
   @override
