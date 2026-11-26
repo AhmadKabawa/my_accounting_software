@@ -64,6 +64,7 @@ get categoriesListConfig => CrudListConfig(
   rowId: (node) => node.id,
   itemLabel: (node) => node.category.name,
   sort: CrudSortConfig<CategoryListQuery, CategoriesListCubit>(
+    maxSorts: 1,
     optionsForQuery: (query) => query.hasActiveFilters
         ? CategoriesFilterBar.sortOptions
         : const [],
