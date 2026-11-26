@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
 import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/datasources/categories_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/models/category_model.dart';
@@ -91,6 +92,16 @@ class CategoriesRepositoryImpl
       ApiFailure<Unit>(:final exception) => Left(_mapDeleteFailure(exception)),
     };
   });
+
+  @override
+  Future<Either<Failure, String>> uploadImage(ImageUpload image) =>
+      execute(() async {
+        final result = await _remote.uploadImage(image);
+        return switch (result) {
+          ApiSuccess<String>(:final data) => Right(data),
+          ApiFailure<String>(:final exception) => Left(ExceptionMapper.map(exception)),
+        };
+      });
 
   @override
   Future<Either<Failure, Unit>> setActive({
