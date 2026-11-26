@@ -626,6 +626,58 @@ void main() {
     expect(find.text(CategoriesKeys.details.en), findsOneWidget);
     expect(find.byTooltip(CategoriesKeys.edit.en), findsNothing);
     expect(find.byTooltip(CategoriesKeys.addChild.en), findsNothing);
+    expect(find.byTooltip(CategoriesKeys.activate.en), findsNothing);
+    expect(find.byTooltip(CategoriesKeys.deactivate.en), findsNothing);
+    expect(find.byTooltip(CategoriesKeys.duplicate.en), findsNothing);
+    expect(find.byTooltip(CategoriesKeys.delete.en), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Tab reaches a category row and Enter opens its details', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(
+      FakeCategoriesRepository(categories: _sampleCategories().take(3).toList()),
+    );
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    final rowFocus = Focus.of(
+      tester.element(find.text('Root').first),
+      scopeOk: false,
+    );
+    for (var i = 0;
+        i < 40 && FocusManager.instance.primaryFocus != rowFocus;
+        i++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+    }
+    expect(FocusManager.instance.primaryFocus, same(rowFocus));
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.text(CategoriesKeys.details.en), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('editor dialog closes with Escape', (tester) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(FakeCategoriesRepository(categories: []));
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(CategoriesKeys.add.en).first);
+    await tester.pumpAndSettle();
+    expect(find.text(CategoriesKeys.categoryName.en), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text(CategoriesKeys.categoryName.en), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
