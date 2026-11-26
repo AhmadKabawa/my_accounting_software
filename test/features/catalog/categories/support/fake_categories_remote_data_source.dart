@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/datasources/categories_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/categories/data/models/category_model.dart';
@@ -52,6 +53,10 @@ class FakeCategoriesRemoteDataSource implements CategoriesRemoteDataSource {
   Future<ApiResult<Unit>> delete(int id) async => deleteFailure == null
       ? const ApiSuccess(unit)
       : ApiFailure(deleteFailure!);
+
+  @override
+  Future<ApiResult<String>> uploadImage(ImageUpload image) async =>
+      const ApiSuccess('https://cdn.example.test/categories/image.webp');
 
   @override
   Future<ApiResult<Unit>> setActive({
