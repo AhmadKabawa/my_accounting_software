@@ -116,6 +116,7 @@ class _CrudListBody<
             sortOptions: config.sort.optionsFor(state.query),
             sorts: config.sort.current(state.query),
             onSortsChanged: (sorts) => config.sort.apply(cubit, sorts),
+            maxSorts: config.sort.maxSorts,
             sortKey: config.sort.tableKey(state.query),
             sortAscending: config.sort.tableAscending(state.query),
             onSort: (key, ascending) =>
