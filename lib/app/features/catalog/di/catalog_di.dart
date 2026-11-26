@@ -14,9 +14,7 @@ void initCatalogDI() {
   initCategoriesDI();
   initTagsDI();
   initSportsDI();
-  // [cat08:begin] CAT-08 master-data registrations.
   initUnitsDI();
   initOptionSetsDI();
   initAttributesDI();
-  // [cat08:end]
 }
