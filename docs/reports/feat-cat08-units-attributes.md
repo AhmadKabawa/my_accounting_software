@@ -181,3 +181,10 @@ Status: partial implementation; not merge-ready.
 
 ### Formatting run note
 - The first auto-format attempt after the shared-widget refactor formatted the Option Sets options dialog but could not push its formatter commit because the report was updated concurrently. The formatted revision will be re-run without parallel branch updates.
+
+
+### Latest CI verification — 2026-11-26
+- Run 45911324131 tested the branch after the Units statistics test was added. Auto-format and Analyze succeeded. The full test job reported 1328 passed and 12 failed; all 12 failures remain in `Categories` tests outside CAT-08.
+- The new CAT-08 Cubit tests passed: UnitStats load/refresh; Option Sets list filter/sort pagination reset; deletion guard for unknown relationship counts; server stats; form create/update; and lazy options loading plus create/active mutation refresh.
+- The separate Catalog UI widget-test step did not run because the full test job ended with the unrelated Categories failures. No CAT-08 failure appeared in the completed test log.
+- Current CAT-08 presentation test coverage is Cubit-level; dedicated Option Sets widget tests and responsive dialog tests are still outstanding.
