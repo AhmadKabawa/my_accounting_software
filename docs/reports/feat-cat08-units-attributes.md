@@ -177,3 +177,7 @@ Status: partial implementation; not merge-ready.
 ### Option Sets UI architecture follow-up
 - Run 45909021118: Auto-format and Analyze succeeded. Tests reported 1320 passed and 14 failed: 12 existing Categories failures plus two CAT-08 architecture gates in the option editor (raw Material controls and un-tokenized dimensions).
 - Reworked the option editor to use AppTextField, AppButton, AppIconButton, AppIcons and responsive spacing/component-size tokens. The updated editor is pushed; a fresh CI run is needed to verify the architecture gates and full suite.
+
+
+### Formatting run note
+- The first auto-format attempt after the shared-widget refactor formatted the Option Sets options dialog but could not push its formatter commit because the report was updated concurrently. The formatted revision will be re-run without parallel branch updates.
