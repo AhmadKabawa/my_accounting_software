@@ -115,7 +115,8 @@ class CategoryDetailsPanel extends StatelessWidget {
           _line(
             context,
             CategoriesKeys.products,
-            category.productCount?.toString() ?? CommonKeys.noValue.tr(context: context),
+            category.productCount?.toString() ??
+                CommonKeys.noValue.tr(context: context),
           ),
           _line(
             context,

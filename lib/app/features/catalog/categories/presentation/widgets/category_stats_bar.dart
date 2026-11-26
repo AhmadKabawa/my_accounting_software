@@ -103,7 +103,9 @@ class CategoryStatsBar extends StatelessWidget {
         ),
         StatItem(
           labelKey: CategoriesKeys.noProductStats,
-          value: value?.withoutProductsCount?.toString() ?? CommonKeys.noValue.tr(context: context),
+          value:
+              value?.withoutProductsCount?.toString() ??
+              CommonKeys.noValue.tr(context: context),
           icon: AppIcons.info,
           tone: AppBadgeTone.neutral,
           filter: CategoryStatsFilter.withoutProducts,

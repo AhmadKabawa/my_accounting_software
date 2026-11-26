@@ -63,9 +63,9 @@ Widget buildCategoriesDataSection(
             : null,
         onDelete: canManage && node.canDelete
             ? () {
-                flows!.deleteItem(context, node).whenComplete(
-                  () => data.cubit.selectDetails(null),
-                );
+                flows!
+                    .deleteItem(context, node)
+                    .whenComplete(() => data.cubit.selectDetails(null));
               }
             : null,
       );
@@ -135,7 +135,8 @@ Widget buildCategoriesDataSection(
             DataTableColumn<CategoryNode>(
               labelKey: CategoriesKeys.updatedAt,
               priority: DataTableColumnPriority.secondary,
-              cellBuilder: (cellContext, node) => node.category.updatedAt == null
+              cellBuilder: (cellContext, node) =>
+                  node.category.updatedAt == null
                   ? const AppText(CommonKeys.noValue)
                   : AppText.raw(
                       MaterialLocalizations.of(

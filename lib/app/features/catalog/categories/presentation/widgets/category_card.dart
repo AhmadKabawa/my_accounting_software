@@ -34,7 +34,10 @@ class CategoryCard extends StatelessWidget {
             children: [
               const AppText(CategoriesKeys.products),
               context.ui.spacing.gap(AppSpacing.xs, axis: Axis.horizontal),
-              AppText.raw(node.category.productCount?.toString() ?? CommonKeys.noValue.tr(context: context)),
+              AppText.raw(
+                node.category.productCount?.toString() ??
+                    CommonKeys.noValue.tr(context: context),
+              ),
             ],
           ),
           Row(
