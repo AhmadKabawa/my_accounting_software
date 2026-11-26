@@ -52,7 +52,7 @@ Future<bool?> showCategoryEditor(
       imageUploader: (upload) async {
         final result = await sl<UploadCategoryImageUseCase>()(upload);
         return result.leftMap(
-          (failure) => failure.statusCode == 403
+          (failure) => failure is PermissionFailure
               ? PermissionFailure(
                   messageKey: CategoriesKeys.imageUploadPermission,
                 )
