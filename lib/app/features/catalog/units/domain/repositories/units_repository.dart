@@ -4,8 +4,10 @@ import 'package:accounting_software/app/core/foundation/types/paginated_result.d
 import 'package:accounting_software/app/features/catalog/units/domain/entity/catalog_unit.dart';
 import 'package:accounting_software/app/features/catalog/units/domain/entity/unit_draft.dart';
 import 'package:accounting_software/app/features/catalog/units/domain/entity/unit_list_query.dart';
+import 'package:accounting_software/app/features/catalog/units/domain/entity/unit_stats.dart';
 
 abstract interface class UnitsRepository {
+  Future<Either<Failure, UnitStats>> getUnitStats();
   Future<Either<Failure, PaginatedResult<CatalogUnit>>> getUnits(
     UnitListQuery query,
   );

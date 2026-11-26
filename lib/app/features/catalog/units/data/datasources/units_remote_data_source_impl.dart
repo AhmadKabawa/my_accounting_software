@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
@@ -12,11 +13,36 @@ import 'package:accounting_software/app/features/catalog/units/domain/entity/uni
 import 'package:accounting_software/app/features/catalog/units/domain/entity/unit_list_query.dart';
 
 class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
-  const UnitsRemoteDataSourceImpl(this._apiClient);
+  UnitsRemoteDataSourceImpl(this._apiClient);
   final IApiClient _apiClient;
 
+  bool _includeUsageCounts = true;
+
   @override
-  Future<ApiResult<PaginatedResult<UnitModel>>> getUnits(UnitListQuery query) {
+  Future<ApiResult<PaginatedResult<UnitModel>>> getUnits(
+    UnitListQuery query,
+  ) async {
+    final preferred = await _getUnits(
+      query,
+      select: _includeUsageCounts ? UnitsEndpoint.select : UnitsEndpoint.baseSelect,
+    );
+    if (preferred case ApiFailure<PaginatedResult<UnitModel>>(
+      :final exception,
+    )) {
+      if (_includeUsageCounts &&
+          exception is ApiException &&
+          exception.statusCode == 400) {
+        _includeUsageCounts = false;
+        return _getUnits(query, select: UnitsEndpoint.baseSelect);
+      }
+    }
+    return preferred;
+  }
+
+  Future<ApiResult<PaginatedResult<UnitModel>>> _getUnits(
+    UnitListQuery query, {
+    required String select,
+  }) {
     final term = PostgrestValue.escapeFilter(query.search.trim());
     return _apiClient.getPaginated<UnitModel>(
       UnitsEndpoint.collection,
@@ -25,8 +51,8 @@ class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
       limit: query.pageSize,
       parser: PaginatedParserPresets.supabase,
       queryParameters: {
-        'select': UnitsEndpoint.select,
-        'order': 'name.asc,id.asc',
+        'select': select,
+        'order': "name.${query.sortAscending ? 'asc' : 'desc'},id.asc",
         if (term.isNotEmpty)
           'or': '(name.ilike."*$term*",symbol.ilike."*$term*")',
         if (query.status == UnitStatusFilter.active) 'is_active': 'eq.true',

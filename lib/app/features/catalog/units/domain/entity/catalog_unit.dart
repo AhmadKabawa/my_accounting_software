@@ -10,6 +10,7 @@ class CatalogUnit extends Equatable {
     required this.type,
     required this.isActive,
     required this.usageCount,
+    this.updatedAt,
   });
   final int id;
   final String name;
@@ -19,7 +20,8 @@ class CatalogUnit extends Equatable {
 
   /// Null means at least one usage count could not be read.
   final int? usageCount;
+  final DateTime? updatedAt;
   bool get canDelete => usageCount == 0;
   @override
-  List<Object?> get props => [id, name, symbol, type, isActive, usageCount];
+  List<Object?> get props => [id, name, symbol, type, isActive, usageCount, updatedAt];
 }

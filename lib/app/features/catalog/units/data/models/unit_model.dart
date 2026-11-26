@@ -8,6 +8,7 @@ class UnitModel {
     required this.type,
     required this.isActive,
     required this.usageCount,
+    this.updatedAt,
   });
   final int id;
   final String name;
@@ -15,6 +16,7 @@ class UnitModel {
   final UnitType type;
   final bool isActive;
   final int? usageCount;
+  final DateTime? updatedAt;
 
   factory UnitModel.fromJson(Map<String, dynamic> json) {
     final rawId = json['id'];
@@ -36,6 +38,7 @@ class UnitModel {
       usageCount: products == null || attributes == null
           ? null
           : products + attributes,
+      updatedAt: DateTime.tryParse(json['updated_at']?.toString() ?? ''),
     );
   }
 
@@ -60,5 +63,6 @@ class UnitModel {
     type: type,
     isActive: isActive,
     usageCount: usageCount,
+    updatedAt: updatedAt,
   );
 }

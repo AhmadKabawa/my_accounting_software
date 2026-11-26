@@ -24,6 +24,13 @@ void main() {
       expect(cleared.page, 1);
     });
 
+    test('sort direction is part of the server query and resets the page', () {
+      const query = UnitListQuery(page: 4);
+      final sorted = query.withSort(false);
+      expect(sorted.sortAscending, isFalse);
+      expect(sorted.page, 1);
+    });
+
     test('changing type can explicitly clear a previous type', () {
       const query = UnitListQuery(type: UnitType.length);
       expect(query.copyWith(clearType: true).type, isNull);

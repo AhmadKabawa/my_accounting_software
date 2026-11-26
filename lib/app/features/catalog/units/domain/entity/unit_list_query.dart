@@ -11,6 +11,7 @@ class UnitListQuery extends Equatable implements PagedQuery<UnitListQuery> {
     this.type,
     this.page = 1,
     this.pageSize = 25,
+    this.sortAscending = true,
   });
   @override
   final String search;
@@ -20,6 +21,7 @@ class UnitListQuery extends Equatable implements PagedQuery<UnitListQuery> {
   final int page;
   @override
   final int pageSize;
+  final bool sortAscending;
   @override
   bool get hasActiveFilters =>
       search.isNotEmpty || status != UnitStatusFilter.all || type != null;
@@ -36,13 +38,17 @@ class UnitListQuery extends Equatable implements PagedQuery<UnitListQuery> {
     bool clearType = false,
     int? page,
     int? pageSize,
+    bool? sortAscending,
   }) => UnitListQuery(
     search: search ?? this.search,
     status: status ?? this.status,
     type: clearType ? null : type ?? this.type,
     page: page ?? this.page,
     pageSize: pageSize ?? this.pageSize,
+    sortAscending: sortAscending ?? this.sortAscending,
   );
+  UnitListQuery withSort(bool ascending) =>
+      copyWith(sortAscending: ascending, page: 1);
   @override
-  List<Object?> get props => [search, status, type, page, pageSize];
+  List<Object?> get props => [search, status, type, page, pageSize, sortAscending];
 }
