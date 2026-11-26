@@ -31,6 +31,23 @@ void main() {
       expect(sorted.page, 1);
     });
 
+    test('status and type filter updates can reset pagination', () {
+      const query = UnitListQuery(
+        status: UnitStatusFilter.active,
+        type: UnitType.weight,
+        page: 5,
+      );
+      final statusChanged = query.copyWith(
+        status: UnitStatusFilter.inactive,
+        page: 1,
+      );
+      final typeChanged = query.copyWith(type: UnitType.volume, page: 1);
+      expect(statusChanged.page, 1);
+      expect(statusChanged.status, UnitStatusFilter.inactive);
+      expect(typeChanged.page, 1);
+      expect(typeChanged.type, UnitType.volume);
+    });
+
     test('changing type can explicitly clear a previous type', () {
       const query = UnitListQuery(type: UnitType.length);
       expect(query.copyWith(clearType: true).type, isNull);

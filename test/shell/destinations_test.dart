@@ -108,6 +108,14 @@ void main() {
     },
   };
 
+  test('catalog sidebar exposes Units immediately after Brands', () {
+    final children = appDestinations[1].item.children;
+    final brandIndex = children.indexWhere((item) => item.path == '/catalog/brands');
+    final unitsIndex = children.indexWhere((item) => item.path == '/catalog/units');
+    expect(unitsIndex, isNonNegative);
+    expect(unitsIndex, brandIndex + 1);
+  });
+
   test('filters destinations for each documented system role', () {
     expect(rolePermissions.keys, {
       'SUPER_ADMIN',

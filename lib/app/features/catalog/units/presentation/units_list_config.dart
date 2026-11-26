@@ -149,7 +149,11 @@ get unitsListConfig => CrudListConfig(
             labelKey: CommonKeys.updatedAt,
             priority: DataTableColumnPriority.secondary,
             cellBuilder: (_, unit) =>
-                AppText.raw(unit.updatedAt?.toLocal().toString() ?? '—'),
+                AppText.raw(unit.updatedAt == null
+                ? '—'
+                : MaterialLocalizations.of(context).formatShortDate(
+                    unit.updatedAt!.toLocal(),
+                  )),
           ),
           DataTableColumn(
             labelKey: UnitsKeys.usage,
