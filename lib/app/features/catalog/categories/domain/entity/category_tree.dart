@@ -1,5 +1,6 @@
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_node.dart';
+import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_list_query.dart';
 
 /// The category hierarchy built from the flat table rows. Pure Dart.
 ///
@@ -85,6 +86,15 @@ class CategoryTree {
 
   int get length => _byId.length;
   bool get isEmpty => _byId.isEmpty;
+  int get activeCount => _byId.values.where((item) => item.isActive).length;
+  int get inactiveCount => length - activeCount;
+  int get rootCount => _roots.length;
+  int get leafCount => _byId.keys.where((id) => childrenOf(id).isEmpty).length;
+
+  /// Null means at least one row has an unknown product relation count.
+  int? get withoutProductsCount => _byId.values.any((item) => item.productCount == null)
+      ? null
+      : _byId.values.where((item) => item.productCount == 0).length;
 
   Category? byId(int id) => _byId[id];
 
@@ -164,25 +174,62 @@ class CategoryTree {
     return rows;
   }
 
-  /// A filtered tree loses its context, so matches come back flat, in tree
-  /// order, each carrying its [CategoryNode.ancestors]. [isActive] null keeps
-  /// both states.
-  List<CategoryNode> filtered({String search = '', bool? isActive}) {
+  /// Filtered results are flat and retain the full ancestor path.
+  List<CategoryNode> filtered({
+    String search = '',
+    bool? isActive,
+    CategoryLevelFilter level = CategoryLevelFilter.all,
+    CategoryUsageFilter usage = CategoryUsageFilter.all,
+    CategorySortField sortField = CategorySortField.sortOrder,
+    bool sortAscending = true,
+  }) {
     final term = search.trim().toLowerCase();
     final rows = <CategoryNode>[];
     void walk(Category category) {
+      final kids = childrenOf(category.id);
       final matchesText =
           term.isEmpty ||
           category.name.toLowerCase().contains(term) ||
           category.slug.toLowerCase().contains(term);
       final matchesState = isActive == null || category.isActive == isActive;
-      if (matchesText && matchesState) {
+      final matchesLevel = switch (level) {
+        CategoryLevelFilter.all => true,
+        CategoryLevelFilter.roots => depthOf(category.id) == 0,
+        CategoryLevelFilter.leaves => kids.isEmpty,
+      };
+      final count = category.productCount;
+      final matchesUsage = switch (usage) {
+        CategoryUsageFilter.all => true,
+        CategoryUsageFilter.withProducts => count != null && count > 0,
+        CategoryUsageFilter.withoutProducts => count == 0,
+      };
+      if (matchesText && matchesState && matchesLevel && matchesUsage) {
         rows.add(_node(category, expanded: false, flat: true));
       }
-      childrenOf(category.id).forEach(walk);
+      kids.forEach(walk);
     }
 
     _roots.forEach(walk);
+    int compare(CategoryNode a, CategoryNode b) {
+      final ac = a.category.productCount;
+      final bc = b.category.productCount;
+      if (sortField == CategorySortField.productCount && (ac == null) != (bc == null)) {
+        return ac == null ? 1 : -1;
+      }
+      final result = switch (sortField) {
+        CategorySortField.name => a.category.name.toLowerCase().compareTo(
+          b.category.name.toLowerCase(),
+        ),
+        CategorySortField.sortOrder => a.category.sortOrder.compareTo(
+          b.category.sortOrder,
+        ),
+        CategorySortField.productCount => (ac ?? 0).compareTo(bc ?? 0),
+      };
+      final ordered = sortAscending ? result : -result;
+      return ordered != 0 ? ordered : _compare(a.category, b.category);
+    }
+
+    rows.sort(compare);
     return rows;
   }
 }
