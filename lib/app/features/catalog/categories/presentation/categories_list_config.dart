@@ -182,7 +182,7 @@ get categoriesListConfig => CrudListConfig(
         required ValueChanged<int> selectChild,
       }) {
         final flows = data.flows;
-        final canManage = context.can(data.permission);
+        final canManage = context.can(data.permission) && flows != null;
 
         void addChild() {
           if (!canManage) return;

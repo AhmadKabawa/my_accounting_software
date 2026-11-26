@@ -742,7 +742,7 @@ void main() {
 
     _listCubit(tester).setUsage(CategoryUsageFilter.withProducts);
     await tester.pumpAndSettle();
-    expect(_listCubit(tester).state.result.items.map((node) => node.id), [1]);
+    expect(_listCubit(tester).state.result!.items.map((node) => node.id), [1]);
 
     _listCubit(tester).setUsage(CategoryUsageFilter.withoutProducts);
     await tester.pumpAndSettle();
