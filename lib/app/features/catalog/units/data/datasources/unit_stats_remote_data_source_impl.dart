@@ -35,14 +35,13 @@ class UnitStatsRemoteDataSourceImpl implements UnitStatsRemoteDataSource {
     );
   }
 
-  Future<ApiResult<PaginatedResult<int>>> _count(
-    Map<String, dynamic> query,
-  ) => _apiClient.getPaginated<int>(
-    UnitsEndpoint.collection,
-    fromJson: (json) => json['id'] as int,
-    queryParameters: query,
-    parser: PaginatedParserPresets.supabase,
-    page: 1,
-    limit: 1,
-  );
+  Future<ApiResult<PaginatedResult<int>>> _count(Map<String, dynamic> query) =>
+      _apiClient.getPaginated<int>(
+        UnitsEndpoint.collection,
+        fromJson: (json) => json['id'] as int,
+        queryParameters: query,
+        parser: PaginatedParserPresets.supabase,
+        page: 1,
+        limit: 1,
+      );
 }

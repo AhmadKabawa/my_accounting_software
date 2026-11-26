@@ -23,5 +23,13 @@ class CatalogUnit extends Equatable {
   final DateTime? updatedAt;
   bool get canDelete => usageCount == 0;
   @override
-  List<Object?> get props => [id, name, symbol, type, isActive, usageCount, updatedAt];
+  List<Object?> get props => [
+    id,
+    name,
+    symbol,
+    type,
+    isActive,
+    usageCount,
+    updatedAt,
+  ];
 }

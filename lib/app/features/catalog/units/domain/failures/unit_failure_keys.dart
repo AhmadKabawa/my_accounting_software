@@ -13,10 +13,7 @@ enum UnitFailureKeys implements AppKey {
     ar: 'تعذر التحقق من استخدام الوحدة؛ الحذف غير متاح.',
     en: 'Unit usage could not be verified; deletion is blocked.',
   ),
-  invalidUnitType(
-    ar: 'نوع الوحدة غير صالح.',
-    en: 'The unit type is invalid.',
-  );
+  invalidUnitType(ar: 'نوع الوحدة غير صالح.', en: 'The unit type is invalid.');
 
   const UnitFailureKeys({required this.ar, required this.en});
   @override

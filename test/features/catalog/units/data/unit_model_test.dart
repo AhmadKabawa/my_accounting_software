@@ -4,8 +4,12 @@ import 'package:accounting_software/app/features/catalog/units/domain/entity/cat
 
 void main() {
   Map<String, dynamic> json({
-    Object? products = const [{'count': 2}],
-    Object? attributes = const [{'count': 3}],
+    Object? products = const [
+      {'count': 2},
+    ],
+    Object? attributes = const [
+      {'count': 3},
+    ],
   }) => {
     'id': 7,
     'name': 'Piece',
@@ -27,12 +31,15 @@ void main() {
   });
 
   test('missing or malformed usage count remains unknown', () {
+    expect(UnitModel.fromJson(json(attributes: null)).usageCount, isNull);
     expect(
-      UnitModel.fromJson(json(attributes: null)).usageCount,
-      isNull,
-    );
-    expect(
-      UnitModel.fromJson(json(products: const [{'count': 'unknown'}])).usageCount,
+      UnitModel.fromJson(
+        json(
+          products: const [
+            {'count': 'unknown'},
+          ],
+        ),
+      ).usageCount,
       isNull,
     );
   });

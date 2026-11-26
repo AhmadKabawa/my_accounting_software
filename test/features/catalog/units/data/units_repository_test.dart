@@ -22,8 +22,12 @@ void main() {
     'unit_type': 'piece',
     'is_active': true,
     'updated_at': '2026-11-20T12:30:00Z',
-    'product_variants': const [{'count': 2}],
-    'attributes': const [{'count': 1}],
+    'product_variants': const [
+      {'count': 2},
+    ],
+    'attributes': const [
+      {'count': 1},
+    ],
   };
 
   late FakeCatalogApiClient api;
@@ -92,11 +96,7 @@ void main() {
   test('PATCH omits unchanged active state and conversion fields', () async {
     await repository.updateUnit(
       id: 7,
-      draft: const UnitDraft(
-        name: 'Piece',
-        symbol: 'pc',
-        type: UnitType.piece,
-      ),
+      draft: const UnitDraft(name: 'Piece', symbol: 'pc', type: UnitType.piece),
     );
 
     final request = api.lastRequest;
@@ -110,20 +110,19 @@ void main() {
     expect(request.options?.headers?['Prefer'], 'return=representation');
   });
 
-  test('23505 and 409 map to one translated duplicate-symbol failure', () async {
-    api.nextPostFailure = ApiException.conflict(errorCode: '23505');
+  test(
+    '23505 and 409 map to one translated duplicate-symbol failure',
+    () async {
+      api.nextPostFailure = ApiException.conflict(errorCode: '23505');
 
-    final result = await repository.createUnit(
-      const UnitDraft(
-        name: 'Piece',
-        symbol: 'pc',
-        type: UnitType.piece,
-      ),
-    );
+      final result = await repository.createUnit(
+        const UnitDraft(name: 'Piece', symbol: 'pc', type: UnitType.piece),
+      );
 
-    final failure = result.fold((value) => value, (_) => null);
-    expect(failure?.messageKey, UnitFailureKeys.duplicateSymbol);
-  });
+      final failure = result.fold((value) => value, (_) => null);
+      expect(failure?.messageKey, UnitFailureKeys.duplicateSymbol);
+    },
+  );
 
   test('23503 delete failure maps to translated in-use failure', () async {
     api.nextDeleteFailure = ApiException.conflict(errorCode: '23503');
@@ -134,35 +133,38 @@ void main() {
     expect(failure?.messageKey, UnitFailureKeys.inUse);
   });
 
-  test('statistics are server-derived, not calculated from the current page', () async {
-    final result = await repository.getUnitStats();
+  test(
+    'statistics are server-derived, not calculated from the current page',
+    () async {
+      final result = await repository.getUnitStats();
 
-    final stats = result.fold((_) => null, (value) => value);
-    expect(stats, const UnitStats(total: 20, active: 14, inactive: 6));
-    expect(api.requests, hasLength(2));
-    expect(api.requests[0].query, {'select': 'id'});
-    expect(api.requests[1].query, {
-      'select': 'id',
-      'is_active': 'eq.true',
-    });
-  });
+      final stats = result.fold((_) => null, (value) => value);
+      expect(stats, const UnitStats(total: 20, active: 14, inactive: 6));
+      expect(api.requests, hasLength(2));
+      expect(api.requests[0].query, {'select': 'id'});
+      expect(api.requests[1].query, {'select': 'id', 'is_active': 'eq.true'});
+    },
+  );
 
-  test('count projection 400 retries once without counts and caches fallback', () async {
-    final remote = UnitsRemoteDataSourceImpl(api);
-    api.nextPaginatedFailure = ApiException.badRequest();
+  test(
+    'count projection 400 retries once without counts and caches fallback',
+    () async {
+      final remote = UnitsRemoteDataSourceImpl(api);
+      api.nextPaginatedFailure = ApiException.badRequest();
 
-    final first = await remote.getUnits(const UnitListQuery());
-    final second = await remote.getUnits(const UnitListQuery(page: 2));
+      final first = await remote.getUnits(const UnitListQuery());
+      final second = await remote.getUnits(const UnitListQuery(page: 2));
 
-    expect(first, isA<ApiSuccess<PaginatedResult<UnitModel>>>());
-    expect(second, isA<ApiSuccess<PaginatedResult<UnitModel>>>());
-    expect(api.requests[0].query['select'], UnitsEndpoint.select);
-    expect(api.requests[1].query['select'], UnitsEndpoint.baseSelect);
-    expect(api.requests[2].query['select'], UnitsEndpoint.baseSelect);
-    final unit = (second as ApiSuccess<PaginatedResult<UnitModel>>)
-        .data.items.first;
-    expect(unit.usageCount, isNull);
-  });
+      expect(first, isA<ApiSuccess<PaginatedResult<UnitModel>>>());
+      expect(second, isA<ApiSuccess<PaginatedResult<UnitModel>>>());
+      expect(api.requests[0].query['select'], UnitsEndpoint.select);
+      expect(api.requests[1].query['select'], UnitsEndpoint.baseSelect);
+      expect(api.requests[2].query['select'], UnitsEndpoint.baseSelect);
+      final unit =
+          (second as ApiSuccess<PaginatedResult<UnitModel>>).data.items.first;
+      expect(unit.usageCount, isNull);
+    },
+  );
 
   test('count projection does not retry on permission failure', () async {
     final remote = UnitsRemoteDataSourceImpl(api);

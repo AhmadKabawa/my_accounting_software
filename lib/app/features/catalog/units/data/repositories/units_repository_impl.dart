@@ -26,7 +26,9 @@ class UnitsRepositoryImpl with RepositoryExecutor implements UnitsRepository {
     final result = await _statsRemote.getUnitStats();
     return switch (result) {
       ApiSuccess<UnitStats>(:final data) => Right(data),
-      ApiFailure<UnitStats>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<UnitStats>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
@@ -111,9 +113,7 @@ class UnitsRepositoryImpl with RepositoryExecutor implements UnitsRepository {
     final result = await request();
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) => Left(
-        mapFailure(exception),
-      ),
+      ApiFailure<Unit>(:final exception) => Left(mapFailure(exception)),
     };
   });
 }

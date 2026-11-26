@@ -73,12 +73,17 @@ class FakeCatalogApiClient extends Fake implements IApiClient {
       return ApiFailure<PaginatedResult<T>>(failure);
     }
     if (query['select'] == 'id' &&
-        query['is_active'] == 'eq.true' &&
-        activeStatsFailure case final failure?) {
+            query['is_active'] == 'eq.true' &&
+            activeStatsFailure
+        case final failure?) {
       return ApiFailure<PaginatedResult<T>>(failure);
     }
     final isCount = query['select'] == 'id';
-    final source = isCount ? <Map<String, dynamic>>[{'id': 1}] : rows;
+    final source = isCount
+        ? <Map<String, dynamic>>[
+            {'id': 1},
+          ]
+        : rows;
     final items = source.map(fromJson).toList();
     final count = _countFor(query, isCount);
     return ApiSuccess(

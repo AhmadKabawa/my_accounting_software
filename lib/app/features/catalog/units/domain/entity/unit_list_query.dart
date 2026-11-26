@@ -50,5 +50,12 @@ class UnitListQuery extends Equatable implements PagedQuery<UnitListQuery> {
   UnitListQuery withSort(bool ascending) =>
       copyWith(sortAscending: ascending, page: 1);
   @override
-  List<Object?> get props => [search, status, type, page, pageSize, sortAscending];
+  List<Object?> get props => [
+    search,
+    status,
+    type,
+    page,
+    pageSize,
+    sortAscending,
+  ];
 }

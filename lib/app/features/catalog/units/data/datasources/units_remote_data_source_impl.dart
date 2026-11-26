@@ -24,7 +24,9 @@ class UnitsRemoteDataSourceImpl implements UnitsRemoteDataSource {
   ) async {
     final preferred = await _getUnits(
       query,
-      select: _includeUsageCounts ? UnitsEndpoint.select : UnitsEndpoint.baseSelect,
+      select: _includeUsageCounts
+          ? UnitsEndpoint.select
+          : UnitsEndpoint.baseSelect,
     );
     if (preferred case ApiFailure<PaginatedResult<UnitModel>>(
       :final exception,
