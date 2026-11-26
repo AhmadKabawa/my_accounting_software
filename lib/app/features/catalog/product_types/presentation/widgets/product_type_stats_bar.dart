@@ -34,14 +34,14 @@ class ProductTypeStatsBar extends StatelessWidget {
       StatItem(
         labelKey: ProductTypesKeys.activeStats,
         value: stats?.active.toString(),
-        icon: AppIcons.success,
+        icon: AppIcons.info,
         tone: AppBadgeTone.success,
         filter: ProductTypeStatusFilter.active,
       ),
       StatItem(
         labelKey: ProductTypesKeys.inactiveStats,
         value: stats?.inactive.toString(),
-        icon: AppIcons.block,
+        icon: AppIcons.info,
         tone: AppBadgeTone.neutral,
         filter: ProductTypeStatusFilter.inactive,
       ),
