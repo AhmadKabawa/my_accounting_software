@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_draft.dart';
 import 'package:accounting_software/app/features/catalog/categories/domain/repositories/categories_repository.dart';
@@ -41,7 +42,7 @@ class FakeCategoriesRepository implements CategoriesRepository {
       description: draft.description,
       image: draft.image,
       sortOrder: draft.sortOrder,
-      isActive: true,
+      isActive: draft.isActive ?? true,
       productCount: 0,
     );
     categories = [...categories, created];
@@ -63,6 +64,10 @@ class FakeCategoriesRepository implements CategoriesRepository {
     deletedIds.add(id);
     return mutationResult;
   }
+
+  @override
+  Future<Either<Failure, String>> uploadImage(ImageUpload image) async =>
+      const Right('https://cdn.example.test/categories/image.webp');
 
   @override
   Future<Either<Failure, Unit>> setActive({
