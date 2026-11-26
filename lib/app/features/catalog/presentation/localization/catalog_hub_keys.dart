@@ -18,6 +18,9 @@ enum CatalogHubKeys implements AppKey {
     ar: 'نظّم المنتجات ضمن تصنيفات رئيسية وفرعية واضحة.',
     en: 'Organize products into clear parent categories and subcategories.',
   ),
+  unitsDescription(ar: 'إدارة وحدات القياس والرموز وأنواعها.', en: 'Manage measurement units, symbols and types.'),
+  optionSetsDescription(ar: 'إدارة مجموعات الخيارات والقيم المرتبطة بها.', en: 'Manage option sets and their values.'),
+  attributesDescription(ar: 'إدارة خصائص المنتجات وأنواع البيانات والارتباطات.', en: 'Manage product attributes, data types and references.'),
   open(ar: 'فتح', en: 'Open');
 
   const CatalogHubKeys({required this.ar, required this.en});
