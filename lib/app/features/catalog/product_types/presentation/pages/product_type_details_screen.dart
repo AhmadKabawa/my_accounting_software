@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
@@ -85,7 +86,6 @@ class _ProductTypeDetailsBody extends StatelessWidget {
                 InlineBanner(
                   messageKey: state.failure.messageKey,
                   variant: InlineBannerVariant.error,
-                  action: AppText(ProductTypesKeys.retry),
                 )
               else if (state is ProductTypeDetailsLoaded) ...[
                 if (state.updateFailure != null)
@@ -171,7 +171,12 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
                 optionLabel: (item) => item.name,
                 value: widget.state.genderOptions
                     .where((item) => item.id == _genderId)
-                    .firstOrNull,
+                    .toList(growable: false)
+                    .isEmpty
+                ? null
+                : widget.state.genderOptions
+                    .where((item) => item.id == _genderId)
+                    .first,
                 onChanged: (item) => setState(() => _genderId = item?.id),
                 mode: SearchableDropdownMode.panel,
               ),
@@ -214,12 +219,16 @@ class _SizeGroupsSectionState extends State<_SizeGroupsSection> {
                   ),
                 ),
                 DataTableColumn(
-                  labelKey: ProductTypesKeys.sizeGroups,
-                  cellBuilder: (_, item) => AppText.raw(item.sizeSystemName ?? '—'),
+                  labelKey: ProductTypesKeys.sizeSystem,
+                  cellBuilder: (_, item) => item.sizeSystemName == null
+                      ? const AppText(CommonKeys.noValue)
+                      : AppText.raw(item.sizeSystemName!),
                 ),
                 DataTableColumn(
                   labelKey: ProductTypesKeys.gender,
-                  cellBuilder: (_, item) => AppText.raw(item.genderName ?? '—'),
+                  cellBuilder: (_, item) => item.genderName == null
+                      ? const AppText(CommonKeys.noValue)
+                      : AppText.raw(item.genderName!),
                 ),
                 DataTableColumn(
                   labelKey: ProductTypesKeys.isDefault,
@@ -335,7 +344,7 @@ class _AttributesSection extends StatelessWidget {
                   ),
                 ),
                 DataTableColumn(
-                  labelKey: ProductTypesKeys.descriptionLabel,
+                  labelKey: ProductTypesKeys.dataType,
                   cellBuilder: (_, item) => AppText.raw(item.dataType),
                 ),
                 DataTableColumn(
