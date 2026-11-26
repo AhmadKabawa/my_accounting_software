@@ -34,6 +34,11 @@ jobs:
           flutter-version: '3.38.1'
           cache: true
 
+      # dart format resolves package-based analysis_options includes.
+      - name: Get dependencies
+        timeout-minutes: 5
+        run: flutter pub get
+
       - name: Auto-format and commit on push
         id: result
         if: ${{ github.event_name == 'push' }}
