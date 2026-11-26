@@ -22,6 +22,17 @@ class ProductTypesRepositoryImpl
   final ProductTypesRemoteDataSource _remote;
 
   @override
+  Future<Either<Failure, ProductType>> getById(int id) => execute(() async {
+    final result = await _remote.getById(id);
+    return switch (result) {
+      ApiSuccess<ProductTypeModel>(:final data) => Right(data.toEntity()),
+      ApiFailure<ProductTypeModel>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
+    };
+  });
+
+  @override
   Future<Either<Failure, PaginatedResult<ProductType>>> getPage(
     ProductTypeListQuery query,
   ) => execute(() async {
