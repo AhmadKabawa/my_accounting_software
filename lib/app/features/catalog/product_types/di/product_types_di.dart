@@ -12,8 +12,6 @@ import 'package:accounting_software/app/features/catalog/product_types/domain/re
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_types_list/product_types_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_form/product_type_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_stats/product_type_stats_cubit.dart';
-import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_form/product_type_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_stats/product_type_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_details/product_type_details_cubit.dart';
 
 void initProductTypesDI() {
