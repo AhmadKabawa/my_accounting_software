@@ -17,6 +17,8 @@ class FakeCategoriesRepository implements CategoriesRepository {
   Either<Failure, Unit> mutationResult = const Right(unit);
   Either<Failure, Category>? createResult;
   Either<Failure, Category>? updateResult;
+  CategoryDraft? lastCreatedDraft;
+  CategoryDraft? lastUpdatedDraft;
 
   @override
   Future<Either<Failure, List<Category>>> getAll() async {
@@ -27,6 +29,7 @@ class FakeCategoriesRepository implements CategoriesRepository {
   @override
   Future<Either<Failure, Category>> create(CategoryDraft draft) async {
     createCalls++;
+    lastCreatedDraft = draft;
     if (createResult != null) return createResult!;
     final nextId =
         categories.fold<int>(
@@ -55,6 +58,7 @@ class FakeCategoriesRepository implements CategoriesRepository {
     required CategoryDraft draft,
   }) async {
     updateCalls++;
+    lastUpdatedDraft = draft;
     return updateResult ??
         Right(categories.firstWhere((item) => item.id == id));
   }
