@@ -46,13 +46,14 @@ Widget buildCategoriesDataSection(
       required VoidCallback close,
       required ValueChanged<int> selectChild,
     }) {
+      final tree = data.cubit.tree;
+      if (tree == null) return const SizedBox.shrink();
+
       void addChild() {
         if (!canManage) return;
-        showCategoryEditor(
-          context,
-          tree: data.cubit.tree,
-          initialParentId: node.id,
-        ).then((saved) {
+        showCategoryEditor(context, tree: tree, initialParentId: node.id).then((
+          saved,
+        ) {
           if (saved == true && context.mounted) {
             flows.onSaved(data.cubit, isNew: true);
           }
@@ -61,22 +62,22 @@ Widget buildCategoriesDataSection(
 
       return CategoryDetailsPanel(
         node: node,
-        tree: data.cubit.tree!,
+        tree: tree,
         width: width,
         canManage: canManage,
         onClose: close,
         onSelectChild: selectChild,
-        onEdit: canManage ? () => flows!.edit(context, item: node) : null,
+        onEdit: canManage ? () => flows.edit(context, item: node) : null,
         onAddChild: canManage ? addChild : null,
         onToggleStatus: canManage
-            ? () => flows!.toggleStatus(context, node)
+            ? () => flows.toggleStatus(context, node)
             : null,
         onDuplicate: canManage
-            ? () => flows!.edit(context, item: node, duplicate: true)
+            ? () => flows.edit(context, item: node, duplicate: true)
             : null,
         onDelete: canManage && node.canDelete
             ? () {
-                flows!
+                flows
                     .deleteItem(context, node)
                     .whenComplete(() => data.cubit.selectDetails(null));
               }

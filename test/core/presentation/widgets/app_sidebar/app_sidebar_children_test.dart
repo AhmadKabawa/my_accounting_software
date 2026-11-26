@@ -7,6 +7,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_navigation
 import 'package:accounting_software/app/core/presentation/widgets/app_sidebar/app_sidebar.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
@@ -147,6 +149,8 @@ void main() {
     final catalog = appDestinations[1].item;
     expect(catalog.children.map((child) => child.path), [
       BrandsRoutes.brands.path,
+      UnitsRoutes.units.path,
+      OptionSetsRoutes.optionSets.path,
       ColorsRoutes.colors.path,
       CategoriesRoutes.categories.path,
     ]);
