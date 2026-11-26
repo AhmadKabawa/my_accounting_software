@@ -43,6 +43,9 @@ final Set<String> protectedRoutes = {
   CategoriesRoutes.categories.path,
   TagsRoutes.tags.path,
   SportsRoutes.sports.path,
+  UnitsRoutes.units.path,
+  OptionSetsRoutes.optionSets.path,
+  AttributesRoutes.attributes.path,
   CatalogRoutes.hub.path,
   CatalogRoutes.masterData.path,
 };
