@@ -5,7 +5,6 @@ import 'package:accounting_software/app/core/presentation/design_system/responsi
 import 'package:accounting_software/app/core/presentation/design_system/responsive/engine/screen_engine.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
@@ -173,27 +172,6 @@ Widget buildCategoriesDataSection(
                 : null,
           ),
           gridBuilder: (_, node) => CategoryCard(node: node),
-          extraRowActions: canManage
-              ? (actionContext, node) => [
-                  AppRowAction(
-                    icon: AppIcons.add,
-                    labelKey: CategoriesKeys.addChild,
-                    onPressed: () {
-                      final tree = data.cubit.tree;
-                      if (tree == null) return;
-                      showCategoryEditor(
-                        actionContext,
-                        tree: tree,
-                        initialParentId: node.id,
-                      ).then((saved) {
-                        if (saved == true && actionContext.mounted) {
-                          flows.onSaved(data.cubit, isNew: true);
-                        }
-                      });
-                    },
-                  ),
-                ]
-              : null,
           onRowTap: (node) {
             if (ScreenEngine.isDesktop(context)) {
               data.cubit.selectDetails(node.id);

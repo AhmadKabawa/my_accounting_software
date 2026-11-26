@@ -84,14 +84,10 @@ class CategoryListQuery extends Equatable
       status == value ? this : _copy(status: value);
 
   CategoryListQuery withLevel(CategoryLevelFilter value) =>
-      level == value && usage == CategoryUsageFilter.all
-      ? this
-      : _copy(level: value, usage: CategoryUsageFilter.all);
+      level == value ? this : _copy(level: value);
 
   CategoryListQuery withUsage(CategoryUsageFilter value) =>
-      usage == value && level == CategoryLevelFilter.all
-      ? this
-      : _copy(usage: value, level: CategoryLevelFilter.all);
+      usage == value ? this : _copy(usage: value);
 
   CategoryListQuery withSort({
     required CategorySortField field,

@@ -11,7 +11,6 @@ import 'package:accounting_software/app/core/access/domain/get_my_access_usecase
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
-import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
 import 'package:accounting_software/app/core/localization/keys/image_keys.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
@@ -38,15 +37,6 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import '../../../../helpers/localized_app.dart';
 import '../../../../helpers/memory_storage.dart';
 import '../support/fake_categories_repository.dart';
-
-class _PassThroughFileDropTargetAdapter implements FileDropTargetAdapter {
-  @override
-  Widget build({
-    required Widget child,
-    required DroppedImagesCallback onFilesDropped,
-    required ValueChanged<bool> onHover,
-  }) => child;
-}
 
 class _ImagePicker implements ImagePickerPort {
   _ImagePicker(this.image);
@@ -114,9 +104,6 @@ void _register(
   sl.registerFactory<FlashMessages>(FlashMessages.new);
   sl.registerLazySingleton<UploadCategoryImageUseCase>(
     () => UploadCategoryImageUseCase(repository),
-  );
-  sl.registerSingleton<FileDropTargetAdapter>(
-    _PassThroughFileDropTargetAdapter(),
   );
   if (imagePicker != null) {
     sl.registerSingleton<ImagePickerPort>(imagePicker);
