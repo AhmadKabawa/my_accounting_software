@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload_cubit.dart';
+import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
+import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
@@ -20,10 +23,18 @@ class CategoryEditorFields extends StatelessWidget {
     super.key,
     required this.cubit,
     required this.scope,
+    required this.imageUploader,
+    required this.onImageBusyChanged,
+    this.imagePicker,
+    this.dropTargetAdapter,
   });
 
   final CategoryFormCubit cubit;
   final CrudEditorScope scope;
+  final ImageUploader imageUploader;
+  final ValueChanged<bool> onImageBusyChanged;
+  final ImagePickerPort? imagePicker;
+  final FileDropTargetAdapter? dropTargetAdapter;
 
   @override
   Widget build(BuildContext context) {
