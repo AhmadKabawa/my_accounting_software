@@ -124,5 +124,5 @@ class ProductTypesRemoteDataSourceImpl implements ProductTypesRemoteDataSource {
   };
 
   String _escapeFilterValue(String value) =>
-      value.replaceAll(r'\\', r'\\\\').replaceAll('"', r'\\"');
+      value.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
 }
