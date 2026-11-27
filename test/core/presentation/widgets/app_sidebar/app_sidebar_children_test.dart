@@ -11,6 +11,9 @@ import 'package:accounting_software/app/features/catalog/units/presentation/rout
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
 final _items = [
@@ -153,6 +156,9 @@ void main() {
       OptionSetsRoutes.optionSets.path,
       ColorsRoutes.colors.path,
       CategoriesRoutes.categories.path,
+      ProductTypesRoutes.productTypes.path,
+      TagsRoutes.tags.path,
+      SportsRoutes.sports.path,
     ]);
   });
 }
