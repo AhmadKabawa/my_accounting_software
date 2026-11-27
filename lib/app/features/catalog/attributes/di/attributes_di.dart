@@ -7,6 +7,9 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/repos
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/get_attributes_use_case.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/create_attribute_use_case.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/update_attribute_use_case.dart';
+import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/set_attribute_active_use_case.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attributes_list/attributes_list_cubit.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_form/attribute_form_cubit.dart';
 
 void initAttributesDI() {
   sl.registerLazySingleton<AttributesRemoteDataSource>(
@@ -18,4 +21,7 @@ void initAttributesDI() {
   sl.registerLazySingleton(() => GetAttributesUseCase(sl()));
   sl.registerLazySingleton(() => CreateAttributeUseCase(sl()));
   sl.registerLazySingleton(() => UpdateAttributeUseCase(sl()));
+  sl.registerLazySingleton(() => SetAttributeActiveUseCase(sl()));
+  sl.registerFactory(() => AttributesListCubit(getAttributes: sl(), setActive: sl(), flashMessages: sl()));
+  sl.registerFactory(() => AttributeFormCubit(createAttribute: sl(), updateAttribute: sl(), flashMessages: sl()));
 }
