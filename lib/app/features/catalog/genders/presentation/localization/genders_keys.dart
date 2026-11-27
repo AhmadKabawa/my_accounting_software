@@ -4,6 +4,7 @@ enum GendersKeys implements AppKey {
   title(ar: 'الأجناس', en: 'Genders'),
   add(ar: 'إضافة جنس', en: 'Add gender'),
   edit(ar: 'تعديل الجنس', en: 'Edit gender'),
+  duplicateTitle(ar: 'نسخ الجنس', en: 'Duplicate gender'),
   name(ar: 'الاسم', en: 'Name'),
   code(ar: 'الرمز', en: 'Code'),
   sortOrder(ar: 'ترتيب الظهور', en: 'Display order'),

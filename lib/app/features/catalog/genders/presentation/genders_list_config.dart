@@ -177,6 +177,15 @@ get gendersListConfig => CrudListConfig(
             GenderStatusBadge(gender),
           ],
         ),
+        gridBuilder: (_, gender) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppText.raw(gender.name, type: AppTextType.titleMedium),
+            AppText.raw(gender.code),
+            AppText.raw(gender.sortOrder.toString()),
+            GenderStatusBadge(gender),
+          ],
+        ),
         icon: AppIcons.catalog,
         emptyTitleKey: GendersKeys.empty,
         emptyDescriptionKey: GendersKeys.noResults,

@@ -4,6 +4,7 @@ import 'package:accounting_software/app/features/catalog/genders/presentation/lo
 const genderEditorLabels = CrudEditorLabels(
   addTitle: GendersKeys.add,
   editTitle: GendersKeys.edit,
+  duplicateTitle: GendersKeys.duplicateTitle,
   subtitle: GendersKeys.editorSubtitle,
   save: GendersKeys.save,
   cancel: GendersKeys.cancel,
