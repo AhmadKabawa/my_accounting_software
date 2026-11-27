@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type.dart';
@@ -174,11 +175,9 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
               labelKey: FabricTypesKeys.description,
               maxLines: 3,
             ),
-            SwitchListTile(
+            AppSwitch(
               value: _active,
-              title: AppText(
-                _active ? FabricTypesKeys.active : FabricTypesKeys.inactive,
-              ),
+              labelKey: _active ? FabricTypesKeys.active : FabricTypesKeys.inactive,
               onChanged: (value) => setState(() => _active = value),
             ),
           ],
