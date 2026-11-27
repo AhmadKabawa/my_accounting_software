@@ -10,35 +10,34 @@ class BrandStatsRemoteDataSourceImpl implements BrandStatsRemoteDataSource {
   final IApiClient _apiClient;
 
   @override
-  Future<ApiResult<BrandStats>> getBrandStats() =>
-      _apiClient.post<BrandStats>(
-        BrandsEndpoint.statsRpc,
-        data: const <String, dynamic>{},
-        fromJsonList: (rows) {
-          if (rows.length != 1 || rows.single is! Map<String, dynamic>) {
-            throw const FormatException('Expected one brand_stats row');
-          }
-          final row = rows.single as Map<String, dynamic>;
-          int readInt(String key) {
-            final value = row[key];
-            if (value is num) return value.toInt();
-            return int.tryParse(value?.toString() ?? '') ?? 0;
-          }
+  Future<ApiResult<BrandStats>> getBrandStats() => _apiClient.post<BrandStats>(
+    BrandsEndpoint.statsRpc,
+    data: const <String, dynamic>{},
+    fromJsonList: (rows) {
+      if (rows.length != 1 || rows.single is! Map<String, dynamic>) {
+        throw const FormatException('Expected one brand_stats row');
+      }
+      final row = rows.single as Map<String, dynamic>;
+      int readInt(String key) {
+        final value = row[key];
+        if (value is num) return value.toInt();
+        return int.tryParse(value?.toString() ?? '') ?? 0;
+      }
 
-          final brandId = row['most_used_brand_id'];
-          return BrandStats(
-            total: readInt('total'),
-            active: readInt('active'),
-            inactive: readInt('inactive'),
-            withProducts: readInt('with_products'),
-            withoutProducts: readInt('without_products'),
-            mostUsedBrandId: brandId == null
-                ? null
-                : brandId is num
-                    ? brandId.toInt()
-                    : int.tryParse(brandId.toString()),
-            mostUsedCount: readInt('most_used_count'),
-          );
-        },
+      final brandId = row['most_used_brand_id'];
+      return BrandStats(
+        total: readInt('total'),
+        active: readInt('active'),
+        inactive: readInt('inactive'),
+        withProducts: readInt('with_products'),
+        withoutProducts: readInt('without_products'),
+        mostUsedBrandId: brandId == null
+            ? null
+            : brandId is num
+            ? brandId.toInt()
+            : int.tryParse(brandId.toString()),
+        mostUsedCount: readInt('most_used_count'),
       );
+    },
+  );
 }

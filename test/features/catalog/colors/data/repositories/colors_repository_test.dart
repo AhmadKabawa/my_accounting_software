@@ -39,17 +39,20 @@ void main() {
     });
   });
 
-  test('keeps the color list available when the usage view is not readable', () async {
-    api.usageFailure = ApiException.forbidden();
+  test(
+    'keeps the color list available when the usage view is not readable',
+    () async {
+      api.usageFailure = ApiException.forbidden();
 
-    final result = await repository.getColors(const ColorListQuery());
+      final result = await repository.getColors(const ColorListQuery());
 
-    result.fold((_) => fail('Expected the base color page'), (page) {
-      expect(page.items.single.id, 7);
-      expect(page.items.single.productCount, isNull);
-      expect(page.items.single.componentCount, isNull);
-    });
-  });
+      result.fold((_) => fail('Expected the base color page'), (page) {
+        expect(page.items.single.id, 7);
+        expect(page.items.single.productCount, isNull);
+        expect(page.items.single.componentCount, isNull);
+      });
+    },
+  );
 
   test('builds search, status, sort and pagination parameters', () async {
     await repository.getColors(

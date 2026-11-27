@@ -88,8 +88,8 @@ class ProductTypeLinksRepositoryImpl
   /// database error rather than showing the wrong message.
   Failure _mapDefaultSizeGroupFailure(AppException exception) {
     if (exception is ApiException && exception.errorCode == '23505') {
-      final diagnostic =
-          '${exception.message} ${exception.details}'.toLowerCase();
+      final diagnostic = '${exception.message} ${exception.details}'
+          .toLowerCase();
       if (diagnostic.contains('ux_pt_size_groups_one_default') ||
           diagnostic.contains('product_type_id, gender_id')) {
         return const ProductTypeDefaultSizeGroupConflictFailure();

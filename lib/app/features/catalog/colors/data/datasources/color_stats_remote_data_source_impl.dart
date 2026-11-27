@@ -10,28 +10,27 @@ class ColorStatsRemoteDataSourceImpl implements ColorStatsRemoteDataSource {
   final IApiClient _apiClient;
 
   @override
-  Future<ApiResult<ColorStats>> getColorStats() =>
-      _apiClient.post<ColorStats>(
-        ColorsEndpoint.statsRpc,
-        data: const <String, dynamic>{},
-        fromJsonList: (rows) {
-          if (rows.length != 1 || rows.single is! Map<String, dynamic>) {
-            throw const FormatException('Expected one color_stats row');
-          }
-          final row = rows.single as Map<String, dynamic>;
-          int readInt(String key) {
-            final value = row[key];
-            if (value is num) return value.toInt();
-            return int.tryParse(value?.toString() ?? '') ?? 0;
-          }
+  Future<ApiResult<ColorStats>> getColorStats() => _apiClient.post<ColorStats>(
+    ColorsEndpoint.statsRpc,
+    data: const <String, dynamic>{},
+    fromJsonList: (rows) {
+      if (rows.length != 1 || rows.single is! Map<String, dynamic>) {
+        throw const FormatException('Expected one color_stats row');
+      }
+      final row = rows.single as Map<String, dynamic>;
+      int readInt(String key) {
+        final value = row[key];
+        if (value is num) return value.toInt();
+        return int.tryParse(value?.toString() ?? '') ?? 0;
+      }
 
-          return ColorStats(
-            total: readInt('total'),
-            active: readInt('active'),
-            inactive: readInt('inactive'),
-            used: readInt('used'),
-            unused: readInt('unused'),
-          );
-        },
+      return ColorStats(
+        total: readInt('total'),
+        active: readInt('active'),
+        inactive: readInt('inactive'),
+        used: readInt('used'),
+        unused: readInt('unused'),
       );
+    },
+  );
 }

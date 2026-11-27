@@ -12,7 +12,10 @@ enum ColorsKeys implements AppKey {
     en: 'English letters, for example RED or BLK',
   ),
   hexCode(ar: 'قيمة اللون (HEX)', en: 'Color value (HEX)'),
-  productUsage(ar: 'الاستخدام (منتجات / مكونات)', en: 'Usage (products / components)'),
+  productUsage(
+    ar: 'الاستخدام (منتجات / مكونات)',
+    en: 'Usage (products / components)',
+  ),
   hexHint(ar: 'اختياري، مثل #1A2B3C', en: 'Optional, for example #1A2B3C'),
   sortOrder(ar: 'ترتيب الظهور (اختياري)', en: 'Display order (optional)'),
   sortOrderHint(

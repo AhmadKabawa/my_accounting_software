@@ -11,9 +11,7 @@ class _LinksRemote extends Fake implements ProductTypeLinksRemoteDataSource {
   ApiException? writeFailure;
 
   @override
-  Future<ApiResult<Unit>> createSizeGroupLink(
-    Map<String, dynamic> body,
-  ) async {
+  Future<ApiResult<Unit>> createSizeGroupLink(Map<String, dynamic> body) async {
     final failure = writeFailure;
     return failure == null ? const ApiSuccess(unit) : ApiFailure(failure);
   }
@@ -66,10 +64,9 @@ void main() {
         details: 'Key (product_type_id, size_group_id) already exists',
       );
 
-      final result = await repository.patchSizeGroupLink(
-        9,
-        {'is_default': true},
-      );
+      final result = await repository.patchSizeGroupLink(9, {
+        'is_default': true,
+      });
 
       expect(result.isLeft(), isTrue);
       expect(

@@ -29,35 +29,55 @@ class _StatsApiClient extends Fake implements IApiClient {
     requestedPath = path;
     requestedBody = data;
     if (failure != null) return ApiFailure<T>(failure!);
-    return ApiSuccess<T>(fromJsonList!([row ?? {
-      'total': 14, 'active': 9, 'inactive': 5, 'with_products': 6,
-      'without_products': 8, 'most_used_brand_id': 4, 'most_used_count': 11,
-    }]));
+    return ApiSuccess<T>(
+      fromJsonList!([
+        row ??
+            {
+              'total': 14,
+              'active': 9,
+              'inactive': 5,
+              'with_products': 6,
+              'without_products': 8,
+              'most_used_brand_id': 4,
+              'most_used_count': 11,
+            },
+      ]),
+    );
   }
 }
 
 void main() {
-  test('calls the brand_stats RPC once and maps all returned aggregates', () async {
-    final api = _StatsApiClient();
-    final result = await BrandStatsRemoteDataSourceImpl(api).getBrandStats();
-    expect(result, isA<ApiSuccess>());
-    final stats = (result as ApiSuccess).data;
-    expect(stats.total, 14);
-    expect(stats.active, 9);
-    expect(stats.inactive, 5);
-    expect(stats.withProducts, 6);
-    expect(stats.withoutProducts, 8);
-    expect(stats.mostUsedBrandId, 4);
-    expect(stats.mostUsedCount, 11);
-    expect(api.requestedPath, BrandsEndpoint.statsRpc);
-    expect(api.requestedBody, isEmpty);
-  });
+  test(
+    'calls the brand_stats RPC once and maps all returned aggregates',
+    () async {
+      final api = _StatsApiClient();
+      final result = await BrandStatsRemoteDataSourceImpl(api).getBrandStats();
+      expect(result, isA<ApiSuccess>());
+      final stats = (result as ApiSuccess).data;
+      expect(stats.total, 14);
+      expect(stats.active, 9);
+      expect(stats.inactive, 5);
+      expect(stats.withProducts, 6);
+      expect(stats.withoutProducts, 8);
+      expect(stats.mostUsedBrandId, 4);
+      expect(stats.mostUsedCount, 11);
+      expect(api.requestedPath, BrandsEndpoint.statsRpc);
+      expect(api.requestedBody, isEmpty);
+    },
+  );
 
   test('preserves a nullable most-used brand and zero aggregates', () async {
-    final api = _StatsApiClient(row: const {
-      'total': 0, 'active': 0, 'inactive': 0, 'with_products': 0,
-      'without_products': 0, 'most_used_brand_id': null, 'most_used_count': 0,
-    });
+    final api = _StatsApiClient(
+      row: const {
+        'total': 0,
+        'active': 0,
+        'inactive': 0,
+        'with_products': 0,
+        'without_products': 0,
+        'most_used_brand_id': null,
+        'most_used_count': 0,
+      },
+    );
     final result = await BrandStatsRemoteDataSourceImpl(api).getBrandStats();
     final stats = (result as ApiSuccess).data;
     expect(stats.total, 0);

@@ -41,13 +41,9 @@ class CategoriesRepositoryImpl
         for (var page = 2; page <= data.totalPages; page++) {
           final next = await _remote.getPage(page: page, limit: pageSize);
           switch (next) {
-            case ApiFailure<PaginatedResult<CategoryModel>>(
-              :final exception,
-            ):
+            case ApiFailure<PaginatedResult<CategoryModel>>(:final exception):
               return Left(ExceptionMapper.map(exception));
-            case ApiSuccess<PaginatedResult<CategoryModel>>(
-              data: final more,
-            ):
+            case ApiSuccess<PaginatedResult<CategoryModel>>(data: final more):
               models.addAll(more.items);
           }
         }
@@ -134,8 +130,8 @@ class CategoriesRepositoryImpl
   }
 
   bool _isCycleViolation(ApiException exception) {
-    final diagnostic =
-        '${exception.message} ${exception.details}'.toLowerCase();
+    final diagnostic = '${exception.message} ${exception.details}'
+        .toLowerCase();
     return diagnostic.contains('categories_parent_no_cycle') ||
         diagnostic.contains('category cycle') ||
         (diagnostic.contains('parent_id') && diagnostic.contains('cycle'));

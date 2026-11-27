@@ -21,7 +21,12 @@ class BrandStats extends Equatable {
 
   @override
   List<Object?> get props => [
-    total, active, inactive, withProducts, withoutProducts,
-    mostUsedBrandId, mostUsedCount,
+    total,
+    active,
+    inactive,
+    withProducts,
+    withoutProducts,
+    mostUsedBrandId,
+    mostUsedCount,
   ];
 }

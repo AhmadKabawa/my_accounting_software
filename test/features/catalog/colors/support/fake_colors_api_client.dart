@@ -62,7 +62,6 @@ class FakeColorsApiClient extends Fake implements IApiClient {
     );
   }
 
-
   @override
   Future<ApiResult<T>> get<T>(
     AppEndpoint path, {
@@ -78,11 +77,7 @@ class FakeColorsApiClient extends Fake implements IApiClient {
     if (failure != null) return ApiFailure<T>(failure);
     return ApiSuccess<T>(
       fromJsonList!([
-        {
-          'color_id': 7,
-          'product_count': 4,
-          'component_count': 9,
-        },
+        {'color_id': 7, 'product_count': 4, 'component_count': 9},
       ]),
     );
   }

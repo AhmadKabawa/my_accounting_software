@@ -41,18 +41,17 @@ class ColorModel {
     );
   }
 
-  ColorModel withUsage({int? productCount, int? componentCount}) =>
-      ColorModel(
-        id: id,
-        name: name,
-        code: code,
-        hexCode: hexCode,
-        isActive: isActive,
-        sortOrder: sortOrder,
-        createdAt: createdAt,
-        productCount: productCount,
-        componentCount: componentCount,
-      );
+  ColorModel withUsage({int? productCount, int? componentCount}) => ColorModel(
+    id: id,
+    name: name,
+    code: code,
+    hexCode: hexCode,
+    isActive: isActive,
+    sortOrder: sortOrder,
+    createdAt: createdAt,
+    productCount: productCount,
+    componentCount: componentCount,
+  );
 
   CatalogColor toEntity() => CatalogColor(
     id: id,

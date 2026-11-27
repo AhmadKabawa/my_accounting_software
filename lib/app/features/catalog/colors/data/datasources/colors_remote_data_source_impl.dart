@@ -62,8 +62,7 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
     final usageByColorId = {
       for (final row
           in (usageResult as ApiSuccess<List<Map<String, dynamic>>>).data)
-        if (row['color_id'] != null)
-          (row['color_id'] as num).toInt(): row,
+        if (row['color_id'] != null) (row['color_id'] as num).toInt(): row,
     };
     final enrichedItems = [
       for (final color in page.items)
