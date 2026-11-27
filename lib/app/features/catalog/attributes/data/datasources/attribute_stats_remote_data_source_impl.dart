@@ -8,6 +8,9 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/entit
 
 class AttributeStatsRemoteDataSourceImpl
     implements AttributeStatsRemoteDataSource {
+  static const _countPage = 1;
+  static const _countLimit = 1;
+
   const AttributeStatsRemoteDataSourceImpl(this._apiClient);
   final IApiClient _apiClient;
   @override
@@ -43,7 +46,7 @@ class AttributeStatsRemoteDataSourceImpl
     fromJson: (json) => json['id'] as int,
     queryParameters: {'select': 'id', ...filters},
     parser: PaginatedParserPresets.supabase,
-    page: 1,
-    limit: 1,
+    page: _countPage,
+    limit: _countLimit,
   );
 }

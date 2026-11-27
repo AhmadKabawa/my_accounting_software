@@ -5,7 +5,6 @@ import 'package:accounting_software/app/features/catalog/attributes/presentation
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/get_attribute_unit_choices_use_case.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/get_attribute_option_set_choices_use_case.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_lookups/attribute_lookups_cubit.dart';
-import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_lookups/attribute_lookups_state.dart';
 import '../support/fake_attributes_repository.dart';
 
 class _Failure extends Failure {

@@ -91,24 +91,10 @@ class FakeAttributesRepository implements AttributesRepository {
 
   @override
   Future<Either<Failure, List<AttributeUnitChoice>>> getUnitChoices() async =>
-      const Right([
-        AttributeUnitChoice(
-          id: 2,
-          name: 'Kilogram',
-          symbol: 'kg',
-          isActive: true,
-        ),
-      ]);
+      unitChoicesResult;
   @override
   Future<Either<Failure, List<AttributeOptionSetChoice>>>
-  getOptionSetChoices() async => const Right([
-    AttributeOptionSetChoice(
-      id: 3,
-      name: 'Sizes',
-      code: 'SIZES',
-      isActive: true,
-    ),
-  ]);
+  getOptionSetChoices() async => optionSetChoicesResult;
 
   static const attribute = CatalogAttribute(
     id: 7,
