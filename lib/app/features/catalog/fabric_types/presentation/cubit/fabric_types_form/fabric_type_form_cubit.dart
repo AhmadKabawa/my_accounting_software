@@ -5,8 +5,8 @@ import 'package:accounting_software/app/core/presentation/widgets/app_message/fl
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type_draft.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/failures/fabric_type_failures.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/create_fabricType_use_case.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/update_fabricType_use_case.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/create_fabric_type_use_case.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/update_fabric_type_use_case.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/localization/fabric_types_keys.dart';
 enum FabricTypeFormStatus{idle,saving}
 sealed class FabricTypeFormEffect{const FabricTypeFormEffect();}
