@@ -22,30 +22,43 @@ Future<void> _openEditor(
   CatalogAttribute? attribute,
   bool duplicate = false,
 }) async {
-  await tester.pumpWidget(buildTestApp(
-    home: Builder(builder: (context) => Scaffold(
-      body: TextButton(
-        onPressed: () => showAppFormDialog<bool>(
-          context,
-          (_) => MultiBlocProvider(
-            providers: [
-              BlocProvider(create: (_) => AttributeFormCubit(
-                createAttribute: CreateAttributeUseCase(repository),
-                updateAttribute: UpdateAttributeUseCase(repository),
-                flashMessages: FlashMessages(),
-              )),
-              BlocProvider(create: (_) => AttributeLookupsCubit(
-                getUnits: GetAttributeUnitChoicesUseCase(repository),
-                getOptionSets: GetAttributeOptionSetChoicesUseCase(repository),
-              )..load()),
-            ],
-            child: AttributeEditorDialog(attribute: attribute, duplicate: duplicate),
+  await tester.pumpWidget(
+    buildTestApp(
+      home: Builder(
+        builder: (context) => Scaffold(
+          body: TextButton(
+            onPressed: () => showAppFormDialog<bool>(
+              context,
+              (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (_) => AttributeFormCubit(
+                      createAttribute: CreateAttributeUseCase(repository),
+                      updateAttribute: UpdateAttributeUseCase(repository),
+                      flashMessages: FlashMessages(),
+                    ),
+                  ),
+                  BlocProvider(
+                    create: (_) => AttributeLookupsCubit(
+                      getUnits: GetAttributeUnitChoicesUseCase(repository),
+                      getOptionSets: GetAttributeOptionSetChoicesUseCase(
+                        repository,
+                      ),
+                    )..load(),
+                  ),
+                ],
+                child: AttributeEditorDialog(
+                  attribute: attribute,
+                  duplicate: duplicate,
+                ),
+              ),
+            ),
+            child: const Text('Open editor'),
           ),
         ),
-        child: const Text('Open editor'),
       ),
-    )),
-  ));
+    ),
+  );
   await tester.tap(find.text('Open editor'));
   await tester.pumpAndSettle();
 }
@@ -57,27 +70,41 @@ CatalogAttribute _attribute({
   int? links = 0,
   int? values = 0,
 }) => CatalogAttribute(
-  id: 8, name: 'Material', code: 'MATERIAL', dataType: type,
-  unitId: unitId, unitName: unitId == null ? null : 'Kilogram',
-  unitSymbol: unitId == null ? null : 'kg', optionSetId: optionSetId,
+  id: 8,
+  name: 'Material',
+  code: 'MATERIAL',
+  dataType: type,
+  unitId: unitId,
+  unitName: unitId == null ? null : 'Kilogram',
+  unitSymbol: unitId == null ? null : 'kg',
+  optionSetId: optionSetId,
   optionSetName: optionSetId == null ? null : 'Sizes',
   optionSetCode: optionSetId == null ? null : 'SIZES',
-  isFilterable: true, isActive: true,
-  linkedProductTypesCount: links, valueCount: values,
+  isFilterable: true,
+  isActive: true,
+  linkedProductTypesCount: links,
+  valueCount: values,
 );
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets('trim-equivalent name changes do not mark the editor dirty', (tester) async {
+  testWidgets('trim-equivalent name changes do not mark the editor dirty', (
+    tester,
+  ) async {
     final repository = FakeAttributesRepository();
     await _openEditor(tester, repository, attribute: _attribute());
     await tester.enterText(find.byType(TextFormField).first, 'Material ');
     await tester.pump();
-    expect(tester.widget<AppFormDialog>(find.byType(AppFormDialog)).dirty, isFalse);
+    expect(
+      tester.widget<AppFormDialog>(find.byType(AppFormDialog)).dirty,
+      isFalse,
+    );
   });
 
-  testWidgets('changing type clears the option-set relationship before PATCH', (tester) async {
+  testWidgets('changing type clears the option-set relationship before PATCH', (
+    tester,
+  ) async {
     final repository = FakeAttributesRepository();
     await _openEditor(tester, repository, attribute: _attribute());
     await tester.tap(find.byType(SearchableDropdown<AttributeDataType>));
@@ -92,31 +119,48 @@ void main() {
     expect(repository.updatedDrafts.single.$2.unitId, isNull);
   });
 
-  testWidgets('used attribute locks data type and option set pickers', (tester) async {
+  testWidgets('used attribute locks data type and option set pickers', (
+    tester,
+  ) async {
     final repository = FakeAttributesRepository();
     await _openEditor(tester, repository, attribute: _attribute(links: 1));
     final typePicker = tester.widget<SearchableDropdown<AttributeDataType>>(
       find.byType(SearchableDropdown<AttributeDataType>),
     );
-    final setPicker = tester.widget<SearchableDropdown<AttributeOptionSetChoice>>(
-      find.byType(SearchableDropdown<AttributeOptionSetChoice>),
-    );
+    final setPicker = tester
+        .widget<SearchableDropdown<AttributeOptionSetChoice>>(
+          find.byType(SearchableDropdown<AttributeOptionSetChoice>),
+        );
     expect(typePicker.enabled, isFalse);
     expect(setPicker.enabled, isFalse);
   });
 
-  testWidgets('duplicate copies type and filterable state, activates and creates a -copy code', (tester) async {
-    final repository = FakeAttributesRepository();
-    await _openEditor(tester, repository, attribute: _attribute(), duplicate: true);
-    final code = tester.widget<TextFormField>(find.byType(TextFormField).at(1)).controller!.text;
-    expect(code, endsWith('-copy'));
-    expect(code.length, lessThanOrEqualTo(80));
-    await tester.tap(find.text('Save'));
-    await tester.pumpAndSettle();
-    expect(repository.createdDrafts, hasLength(1));
-    expect(repository.createdDrafts.single.dataType, AttributeDataType.option);
-    expect(repository.createdDrafts.single.optionSetId, 3);
-    expect(repository.createdDrafts.single.isFilterable, isTrue);
-    expect(repository.createdDrafts.single.isActive, isTrue);
-  });
+  testWidgets(
+    'duplicate copies type and filterable state, activates and creates a -copy code',
+    (tester) async {
+      final repository = FakeAttributesRepository();
+      await _openEditor(
+        tester,
+        repository,
+        attribute: _attribute(),
+        duplicate: true,
+      );
+      final code = tester
+          .widget<TextFormField>(find.byType(TextFormField).at(1))
+          .controller!
+          .text;
+      expect(code, endsWith('-copy'));
+      expect(code.length, lessThanOrEqualTo(80));
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+      expect(repository.createdDrafts, hasLength(1));
+      expect(
+        repository.createdDrafts.single.dataType,
+        AttributeDataType.option,
+      );
+      expect(repository.createdDrafts.single.optionSetId, 3);
+      expect(repository.createdDrafts.single.isFilterable, isTrue);
+      expect(repository.createdDrafts.single.isActive, isTrue);
+    },
+  );
 }
