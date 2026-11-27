@@ -90,6 +90,21 @@ class FakeBrandsApiClient extends Fake implements IApiClient {
     lastOptions = options;
     lastBody = data is Map<String, dynamic> ? data : null;
     if (postFailure case final failure?) return ApiFailure<T>(failure);
+    if (path.toStringPath() == '/rest/v1/rpc/brand_stats') {
+      return ApiSuccess<T>(
+        fromJsonList!([
+          {
+            'total': statsTotalCount,
+            'active': statsActiveCount,
+            'inactive': statsTotalCount - statsActiveCount,
+            'with_products': 6,
+            'without_products': statsTotalCount - 6,
+            'most_used_brand_id': 12,
+            'most_used_count': 3,
+          },
+        ]),
+      );
+    }
     if (fromJsonList != null) {
       return ApiSuccess<T>(fromJsonList([_brandJson]));
     }
