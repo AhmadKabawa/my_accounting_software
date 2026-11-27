@@ -73,6 +73,18 @@ class ColorStatsSection extends StatelessWidget {
           tone: AppBadgeTone.neutral,
           filter: ColorStatusFilter.inactive,
         ),
+        StatItem(
+          labelKey: ColorsKeys.usedColors,
+          value: stats?.used.toString(),
+          icon: AppIcons.success,
+          tone: AppBadgeTone.success,
+        ),
+        StatItem(
+          labelKey: ColorsKeys.unusedColors,
+          value: stats?.unused.toString(),
+          icon: AppIcons.block,
+          tone: AppBadgeTone.neutral,
+        ),
       ],
       selected: selectedFilter,
       onSelected: onStatusSelected,
