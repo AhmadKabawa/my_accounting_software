@@ -1,4 +1,5 @@
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
+import 'package:accounting_software/app/core/foundation/validation/slug.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 
 /// Brand form rules, built on the shared [AppValidator] (the project's single
@@ -7,7 +8,6 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/loc
 abstract final class BrandFieldValidators {
   static const maxName = 150;
   static const maxSlug = 150;
-  static final _slugPattern = RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*$');
 
   static String? name(String? value) => AppValidator.validate(
     value,
@@ -24,7 +24,7 @@ abstract final class BrandFieldValidators {
     [ValidationRule.required, ValidationRule.maxLength, ValidationRule.pattern],
     params: {
       ValidationRule.maxLength: maxSlug,
-      ValidationRule.pattern: _slugPattern,
+      ValidationRule.pattern: Slug.pattern,
     },
     customKeys: {
       ValidationRule.required: BrandsKeys.slugRequired,
