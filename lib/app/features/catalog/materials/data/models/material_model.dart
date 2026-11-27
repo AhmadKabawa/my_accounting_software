@@ -21,11 +21,11 @@ class MaterialModel {
     if (id == null) throw const FormatException('Invalid material id');
     return MaterialModel(
       id: id,
-      name: json['name'] as String,
-      code: json['code'] as String,
-      isActive: json['is_active'] as bool? ?? true,
+      name: _requiredString(json, 'name'),
+      code: _requiredString(json, 'code'),
+      isActive: _boolean(json['is_active'], fallback: true),
       materialType: _parseMaterialType(json['material_type']),
-      description: json['description'] as String?,
+      description: _optionalString(json['description']),
     );
   }
   CatalogMaterial toEntity() => CatalogMaterial(
