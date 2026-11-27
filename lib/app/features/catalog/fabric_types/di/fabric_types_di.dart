@@ -3,7 +3,7 @@ import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/data/datasources/fabric_types_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/data/datasources/fabric_types_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/data/repositories/fabric_types_repository_impl.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/repository/fabric_types_repository.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/repositories/fabric_types_repository.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/get_fabric_types_use_case.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/create_fabric_type_use_case.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/update_fabric_type_use_case.dart';
