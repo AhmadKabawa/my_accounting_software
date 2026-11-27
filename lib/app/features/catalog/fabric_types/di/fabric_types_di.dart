@@ -5,10 +5,10 @@ import 'package:accounting_software/app/features/catalog/fabric_types/data/datas
 import 'package:accounting_software/app/features/catalog/fabric_types/data/repositories/fabric_types_repository_impl.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/repository/fabric_types_repository.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/get_fabric_types_use_case.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/create_fabricType_use_case.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/update_fabricType_use_case.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/delete_fabricType_use_case.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/set_fabricType_active_use_case.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/create_fabric_type_use_case.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/update_fabric_type_use_case.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/delete_fabric_type_use_case.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/set_fabric_type_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/cubit/fabric_types_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/cubit/fabric_types_form/fabric_type_form_cubit.dart';
 void initFabricTypesDI(){
