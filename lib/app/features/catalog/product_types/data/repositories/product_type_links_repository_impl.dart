@@ -1,17 +1,16 @@
 import 'package:dartz/dartz.dart';
-import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
 import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
-import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failures.dart';
 import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
-import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/features/catalog/product_types/data/datasources/product_type_links_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_attribute_link.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_link_option.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_option_set_link.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_size_group_link.dart';
+import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failures.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/repositories/product_type_links_repository.dart';
 
 class ProductTypeLinksRepositoryImpl
@@ -60,7 +59,7 @@ class ProductTypeLinksRepositoryImpl
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
       ApiFailure<Unit>(:final exception) => Left(
-        _mapDefaultSizeGroupFailure(exception, body),
+        _mapDefaultSizeGroupFailure(exception),
       ),
     };
   });
@@ -87,10 +86,7 @@ class ProductTypeLinksRepositoryImpl
   /// product type and gender. Map only diagnostics that identify that index;
   /// other unique violations (for example a duplicate link) keep their generic
   /// database error rather than showing the wrong message.
-  Failure _mapDefaultSizeGroupFailure(
-    AppException exception,
-    Map<String, dynamic> body,
-  ) {
+  Failure _mapDefaultSizeGroupFailure(AppException exception) {
     if (exception is ApiException && exception.errorCode == '23505') {
       final diagnostic =
           '${exception.message} ${exception.details}'.toLowerCase();
