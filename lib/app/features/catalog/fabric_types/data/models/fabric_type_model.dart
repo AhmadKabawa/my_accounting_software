@@ -48,5 +48,12 @@ class FabricTypeModel {
     'description': description,
     'is_active': isActive,
   };
- static FabricCategory? _parseFabricCategory(Object? raw){for(final value in FabricCategory.values){if(value.name==raw)return value;}return null;}
+ static String _requiredString(Map<String, dynamic> json, String key) {
+    final value = json[key];
+    if (value is String && value.trim().isNotEmpty) return value;
+    throw FormatException('Invalid $key');
+  }
+  static String? _optionalString(Object? value) => value is String ? value : null;
+  static bool _boolean(Object? value, {required bool fallback}) => value is bool ? value : fallback;
+  static FabricCategory? _parseFabricCategory(Object? raw){for(final value in FabricCategory.values){if(value.name==raw)return value;}return null;}
 }
