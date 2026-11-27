@@ -45,9 +45,7 @@ class MaterialsRepositoryImpl
         final r = await _remote.createMaterial(d);
         return switch (r) {
           ApiSuccess<MaterialModel>(:final data) => Right(data.toEntity()),
-          ApiFailure<MaterialModel>(:final exception) => Left(
-            ExceptionMapper.map(exception),
-          ),
+          ApiFailure<MaterialModel>(:final exception) => Left(_mapWriteFailure(exception)),
         };
       });
   @override
@@ -86,4 +84,5 @@ class MaterialsRepositoryImpl
       ),
     };
   });
+  Failure _mapWriteFailure(AppException exception) => exception is ApiException && exception.errorCode == '23505' ? const MaterialDuplicateFailure() : ExceptionMapper.map(exception);
 }
