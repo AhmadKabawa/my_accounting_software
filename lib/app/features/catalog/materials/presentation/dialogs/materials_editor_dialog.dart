@@ -78,7 +78,7 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
 
   @override
   Widget build(BuildContext context) =>
-      CrudEditorDialog<MaterialFormCubit, MaterialFormStatus, MaterialFormEffect>(
+      CrudEditorDialog<MaterialFormCubit, MaterialFormState, MaterialFormEffect>(
         cubit: context.read<MaterialFormCubit>(),
         fields: _fields,
         mode: widget.item == null ? CrudEditorMode.add : CrudEditorMode.edit,
@@ -90,7 +90,7 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
           save: MaterialsKeys.save,
           cancel: MaterialsKeys.cancel,
         ),
-        isSaving: (status) => status == MaterialFormStatus.saving,
+        isSaving: (status) => status is MaterialFormSaving,
         extraDirty: _extraDirty,
         onReset: _resetExternalFields,
         outcome: (effect) => switch (effect) {
