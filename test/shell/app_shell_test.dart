@@ -603,12 +603,14 @@ void main() {
     expect(_location(env.router), '/branch-1');
     expect(find.text(ShellKeys.branch.en), findsOneWidget);
   });
-  test('catalog sidebar places product types after categories', () {
+  test('catalog sidebar places gender and age groups before product types', () {
     final children = appDestinations[1].item.children;
     final categoriesIndex = children.indexWhere(
       (child) => child.path == '/catalog/categories',
     );
     expect(categoriesIndex, greaterThanOrEqualTo(0));
-    expect(children[categoriesIndex + 1].path, '/catalog/product-types');
+    expect(children[categoriesIndex + 1].path, '/catalog/genders');
+    expect(children[categoriesIndex + 2].path, '/catalog/age-groups');
+    expect(children[categoriesIndex + 3].path, '/catalog/product-types');
   });
 }
