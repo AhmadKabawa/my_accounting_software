@@ -79,7 +79,6 @@ class AttributesFilterBar {
       clearable: false,
       mode: SearchableDropdownMode.panel,
       deferPanelRefresh: true,
-      deferPanelRefresh: true,
       allOptionLabel: AttributesKeys.all,
       onChanged: (v) => onStatusChanged(v ?? AttributeStatusFilter.all),
     ),
