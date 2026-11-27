@@ -42,7 +42,10 @@ const _labels = CrudLabels(
 AppKey _typeLabel(BuildContext context, AttributeDataType type) =>
     AttributesFilterBar.typeLabel(type);
 
-Future<void> _deleteAttribute(BuildContext context, CatalogAttribute item) async {
+Future<void> _deleteAttribute(
+  BuildContext context,
+  CatalogAttribute item,
+) async {
   var used = false;
   final cubit = context.read<AttributesListCubit>();
   final confirmed = await showConfirmDialog(
@@ -70,14 +73,18 @@ Future<void> _deleteAttribute(BuildContext context, CatalogAttribute item) async
     targetName: item.name,
     severity: ConfirmDialogSeverity.warning,
     confirmLabelKey: AttributesKeys.deactivate,
-    onConfirm: () async => (await cubit.deactivate(item.id)).fold(
-      (failure) => failure.messageKey,
-      (_) => null,
-    ),
+    onConfirm: () async => (await cubit.deactivate(
+      item.id,
+    )).fold((failure) => failure.messageKey, (_) => null),
   );
 }
 
-CrudListConfig<CatalogAttribute, AttributeListQuery, AttributesListCubit, AttributesListEffect>
+CrudListConfig<
+  CatalogAttribute,
+  AttributeListQuery,
+  AttributesListCubit,
+  AttributesListEffect
+>
 get attributesListConfig => CrudListConfig(
   screenId: 'catalog.attributes',
   titleKey: AttributesKeys.title,
@@ -96,40 +103,52 @@ get attributesListConfig => CrudListConfig(
     applyTable: (_, _) {},
   ),
   filterControls: (slot) => AttributesFilterBar.controls(
-    slot.context, slot.state.query,
+    slot.context,
+    slot.state.query,
     onStatusChanged: slot.cubit.setStatus,
     onTypeChanged: slot.cubit.setDataType,
     onFilterableChanged: slot.cubit.setFilterable,
   ),
   activeFilters: (slot) => AttributesFilterBar.activeFilters(
-    slot.context, slot.state.query,
+    slot.context,
+    slot.state.query,
     onSearchChanged: slot.cubit.searchChanged,
     onStatusChanged: slot.cubit.setStatus,
     onTypeChanged: slot.cubit.setDataType,
     onFilterableChanged: slot.cubit.setFilterable,
   ),
-  breadcrumb: (context) => AppBreadcrumb(items: [
-    AppBreadcrumbItem(label: NavKeys.catalog, onTap: () => context.go(CatalogRoutes.hub.path)),
-    const AppBreadcrumbItem(label: AttributesKeys.title),
-  ]),
+  breadcrumb: (context) => AppBreadcrumb(
+    items: [
+      AppBreadcrumbItem(
+        label: NavKeys.catalog,
+        onTap: () => context.go(CatalogRoutes.hub.path),
+      ),
+      const AppBreadcrumbItem(label: AttributesKeys.title),
+    ],
+  ),
   viewModes: const [AppViewMode.table, AppViewMode.cards],
   capabilities: const CrudCapabilities(duplicate: true, bulkSelection: false),
   providersWrapper: (child) => BlocProvider<AttributeStatsCubit>(
-    create: (_) => sl<AttributeStatsCubit>()..load(), child: child,
+    create: (_) => sl<AttributeStatsCubit>()..load(),
+    child: child,
   ),
   isMutationEffect: (effect) => effect is AttributesMutatedEffect,
   onMutated: (context) => context.read<AttributeStatsCubit>().refresh(),
   statsBuilder: (slot) => BlocBuilder<AttributeStatsCubit, AttributeStatsState>(
     builder: (context, stats) => AttributeStatsSection(
-      stats: stats.stats, selectedFilter: slot.state.query.status,
+      stats: stats.stats,
+      selectedFilter: slot.state.query.status,
       onStatusSelected: slot.cubit.setStatus,
-      loading: stats.status == AttributeStatsStatus.initial || stats.status == AttributeStatsStatus.loading,
+      loading:
+          stats.status == AttributeStatsStatus.initial ||
+          stats.status == AttributeStatsStatus.loading,
       failure: stats.failure?.messageKey,
       onRetry: context.read<AttributeStatsCubit>().refresh,
     ),
   ),
   flows: CrudFlowsConfig<CatalogAttribute, AttributesListCubit>(
-    showEditor: (context, {item, duplicate = false}) => showAttributeEditor(context, attribute: item, duplicate: duplicate),
+    showEditor: (context, {item, duplicate = false}) =>
+        showAttributeEditor(context, attribute: item, duplicate: duplicate),
     onSaved: (cubit, {required isNew}) => cubit.onSaved(isNew: isNew),
     itemLabel: (item) => item.name,
     activate: (cubit, item) => cubit.activate(item.id),
@@ -137,29 +156,97 @@ get attributesListConfig => CrudListConfig(
     isActive: (item) => item.isActive,
     labels: _labels,
   ),
-  dataSection: (data) => CrudDataSection<CatalogAttribute, AttributeListQuery, AttributesListCubit>(
-    data: data,
-    columns: [
-      DataTableColumn(labelKey: AttributesKeys.attributeName, sortKey: 'name', priority: DataTableColumnPriority.primary, flex: 3, cellBuilder: (_, item) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [AppText.raw(item.name), AppText.raw(item.code)])),
-      DataTableColumn(labelKey: AttributesKeys.dataType, priority: DataTableColumnPriority.primary, cellBuilder: (context, item) => AppText(_typeLabel(context, item.dataType))),
-      DataTableColumn(labelKey: AttributesKeys.unit, priority: DataTableColumnPriority.secondary, cellBuilder: (_, item) => AppText.raw(item.dataType == AttributeDataType.option ? item.optionSetName ?? '—' : item.unitName ?? '—')),
-      DataTableColumn(labelKey: AttributesKeys.filterable, priority: DataTableColumnPriority.secondary, cellBuilder: (_, item) => AppText(item.isFilterable ? AttributesKeys.filterableOn : AttributesKeys.notFilterable)),
-      DataTableColumn(labelKey: AttributesKeys.linkedProductTypes, numeric: true, priority: DataTableColumnPriority.secondary, cellBuilder: (_, item) => AppText.raw(item.linkedProductTypesCount?.toString() ?? '—')),
-    ],
-    labels: _labels,
-    statusColumn: CrudStatusColumnConfig<CatalogAttribute>(
-      labelKey: AttributesKeys.status, isActive: (item) => item.isActive,
-      badgeBuilder: (_, item) => AppText(item.isActive ? AttributesKeys.active : AttributesKeys.inactive),
-    ),
-    extraRowActions: (context, item) => item.canDelete
-        ? [AppRowAction(icon: AppIcons.delete, labelKey: AttributesKeys.delete, destructive: true, onPressed: () => _deleteAttribute(context, item))]
-        : const [],
-    cardBuilder: (context, item) => AppCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [AppText.raw(item.name), AppText.raw(item.code), AppText(_typeLabel(context, item.dataType)), AppText(item.isActive ? AttributesKeys.active : AttributesKeys.inactive)])),
-    gridBuilder: (context, item) => AppCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [AppText.raw(item.name), AppText.raw(item.code)])),
-    icon: AppIcons.catalog,
-    emptyTitleKey: AttributesKeys.empty,
-    emptyDescriptionKey: AttributesKeys.emptyDescription,
-    noResultsTitleKey: AttributesKeys.noResults,
-    noResultsDescriptionKey: AttributesKeys.noResultsDescription,
-  ),
+  dataSection: (data) =>
+      CrudDataSection<
+        CatalogAttribute,
+        AttributeListQuery,
+        AttributesListCubit
+      >(
+        data: data,
+        columns: [
+          DataTableColumn(
+            labelKey: AttributesKeys.attributeName,
+            sortKey: 'name',
+            priority: DataTableColumnPriority.primary,
+            flex: 3,
+            cellBuilder: (_, item) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [AppText.raw(item.name), AppText.raw(item.code)],
+            ),
+          ),
+          DataTableColumn(
+            labelKey: AttributesKeys.dataType,
+            priority: DataTableColumnPriority.primary,
+            cellBuilder: (context, item) =>
+                AppText(_typeLabel(context, item.dataType)),
+          ),
+          DataTableColumn(
+            labelKey: AttributesKeys.unit,
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (_, item) => AppText.raw(
+              item.dataType == AttributeDataType.option
+                  ? item.optionSetName ?? '—'
+                  : item.unitName ?? '—',
+            ),
+          ),
+          DataTableColumn(
+            labelKey: AttributesKeys.filterable,
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (_, item) => AppText(
+              item.isFilterable
+                  ? AttributesKeys.filterableOn
+                  : AttributesKeys.notFilterable,
+            ),
+          ),
+          DataTableColumn(
+            labelKey: AttributesKeys.linkedProductTypes,
+            numeric: true,
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (_, item) =>
+                AppText.raw(item.linkedProductTypesCount?.toString() ?? '—'),
+          ),
+        ],
+        labels: _labels,
+        statusColumn: CrudStatusColumnConfig<CatalogAttribute>(
+          labelKey: AttributesKeys.status,
+          isActive: (item) => item.isActive,
+          badgeBuilder: (_, item) => AppText(
+            item.isActive ? AttributesKeys.active : AttributesKeys.inactive,
+          ),
+        ),
+        extraRowActions: (context, item) => item.canDelete
+            ? [
+                AppRowAction(
+                  icon: AppIcons.delete,
+                  labelKey: AttributesKeys.delete,
+                  destructive: true,
+                  onPressed: () => _deleteAttribute(context, item),
+                ),
+              ]
+            : const [],
+        cardBuilder: (context, item) => AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText.raw(item.name),
+              AppText.raw(item.code),
+              AppText(_typeLabel(context, item.dataType)),
+              AppText(
+                item.isActive ? AttributesKeys.active : AttributesKeys.inactive,
+              ),
+            ],
+          ),
+        ),
+        gridBuilder: (context, item) => AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [AppText.raw(item.name), AppText.raw(item.code)],
+          ),
+        ),
+        icon: AppIcons.catalog,
+        emptyTitleKey: AttributesKeys.empty,
+        emptyDescriptionKey: AttributesKeys.emptyDescription,
+        noResultsTitleKey: AttributesKeys.noResults,
+        noResultsDescriptionKey: AttributesKeys.noResultsDescription,
+      ),
 );

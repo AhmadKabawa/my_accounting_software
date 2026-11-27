@@ -46,7 +46,8 @@ class AttributesListCubit
   ) => _getAttributes(query);
 
   @override
-  Future<Either<Failure, Unit>> deleteItem(CatalogAttribute item) => _deleteAttribute(item.id);
+  Future<Either<Failure, Unit>> deleteItem(CatalogAttribute item) =>
+      _deleteAttribute(item.id);
 
   @override
   Failure? beforeDelete(CatalogAttribute item) => item.canDelete
