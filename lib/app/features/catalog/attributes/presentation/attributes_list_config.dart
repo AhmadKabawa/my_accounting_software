@@ -148,8 +148,8 @@ get attributesListConfig => CrudListConfig(
             priority: DataTableColumnPriority.secondary,
             cellBuilder: (_, item) => AppText.raw(
               item.dataType == AttributeDataType.option
-                  ? item.optionSetName ?? '—'
-                  : item.unitName ?? '—',
+                  ? item.optionSetName ?? AttributesKeys.unknown.tr(context: context)
+                  : item.unitName ?? AttributesKeys.unknown.tr(context: context),
             ),
           ),
           DataTableColumn(
@@ -166,7 +166,7 @@ get attributesListConfig => CrudListConfig(
             numeric: true,
             priority: DataTableColumnPriority.secondary,
             cellBuilder: (_, item) =>
-                AppText.raw(item.linkedProductTypesCount?.toString() ?? '—'),
+                AppText.raw(item.linkedProductTypesCount?.toString() ?? AttributesKeys.unknown.tr(context: context)),
           ),
         ],
         labels: _labels,
