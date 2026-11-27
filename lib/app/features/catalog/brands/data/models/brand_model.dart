@@ -59,6 +59,18 @@ class BrandModel {
     return null;
   }
 
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'slug': slug,
+    'logo': logo,
+    'description': description,
+    'is_active': isActive,
+    if (productCount != null) 'products': {'count': productCount},
+    if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+    if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
+  };
+
   Brand toEntity() => Brand(
     id: id,
     name: name,
