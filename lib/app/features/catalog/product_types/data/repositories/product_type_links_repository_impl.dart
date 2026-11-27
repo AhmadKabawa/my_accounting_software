@@ -1,5 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
+import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
+import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failures.dart';
 import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/product_types/data/datasources/product_type_links_remote_data_source.dart';
@@ -50,20 +55,52 @@ class ProductTypeLinksRepositoryImpl
   @override
   Future<Either<Failure, Unit>> createSizeGroupLink(
     Map<String, dynamic> body,
-  ) =>
-      execute(() async => (await _remote.createSizeGroupLink(body)).toEither());
+  ) => execute(() async {
+    final result = await _remote.createSizeGroupLink(body);
+    return switch (result) {
+      ApiSuccess<Unit>() => const Right(unit),
+      ApiFailure<Unit>(:final exception) => Left(
+        _mapDefaultSizeGroupFailure(exception, body),
+      ),
+    };
+  });
 
   @override
   Future<Either<Failure, Unit>> patchSizeGroupLink(
     int id,
     Map<String, dynamic> body,
-  ) => execute(
-    () async => (await _remote.patchSizeGroupLink(id, body)).toEither(),
-  );
+  ) => execute(() async {
+    final result = await _remote.patchSizeGroupLink(id, body);
+    return switch (result) {
+      ApiSuccess<Unit>() => const Right(unit),
+      ApiFailure<Unit>(:final exception) => Left(
+        _mapDefaultSizeGroupFailure(exception, body),
+      ),
+    };
+  });
 
   @override
   Future<Either<Failure, Unit>> deleteSizeGroupLink(int id) =>
       execute(() async => (await _remote.deleteSizeGroupLink(id)).toEither());
+
+  /// The partial unique index prevents two default size groups for the same
+  /// product type and gender. Map only diagnostics that identify that index;
+  /// other unique violations (for example a duplicate link) keep their generic
+  /// database error rather than showing the wrong message.
+  Failure _mapDefaultSizeGroupFailure(
+    AppException exception,
+    Map<String, dynamic> body,
+  ) {
+    if (exception is ApiException && exception.errorCode == '23505') {
+      final diagnostic =
+          '${exception.message} ${exception.details}'.toLowerCase();
+      if (diagnostic.contains('ux_pt_size_groups_one_default') ||
+          diagnostic.contains('product_type_id, gender_id')) {
+        return const ProductTypeDefaultSizeGroupConflictFailure();
+      }
+    }
+    return ExceptionMapper.map(exception);
+  }
 
   @override
   Future<Either<Failure, Unit>> createAttributeLink(
