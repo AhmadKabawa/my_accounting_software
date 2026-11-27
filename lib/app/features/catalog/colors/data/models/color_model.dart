@@ -9,6 +9,8 @@ class ColorModel {
     required this.isActive,
     required this.sortOrder,
     this.createdAt,
+    this.productCount,
+    this.componentCount,
   });
 
   final int id;
@@ -18,6 +20,8 @@ class ColorModel {
   final bool isActive;
   final int sortOrder;
   final DateTime? createdAt;
+  final int? productCount;
+  final int? componentCount;
 
   factory ColorModel.fromJson(Map<String, dynamic> json) {
     final rawId = json['id'];
@@ -32,8 +36,23 @@ class ColorModel {
       isActive: json['is_active'] as bool? ?? true,
       sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
       createdAt: DateTime.tryParse(json['created_at']?.toString() ?? ''),
+      productCount: (json['product_count'] as num?)?.toInt(),
+      componentCount: (json['component_count'] as num?)?.toInt(),
     );
   }
+
+  ColorModel withUsage({int? productCount, int? componentCount}) =>
+      ColorModel(
+        id: id,
+        name: name,
+        code: code,
+        hexCode: hexCode,
+        isActive: isActive,
+        sortOrder: sortOrder,
+        createdAt: createdAt,
+        productCount: productCount,
+        componentCount: componentCount,
+      );
 
   CatalogColor toEntity() => CatalogColor(
     id: id,
@@ -43,5 +62,7 @@ class ColorModel {
     isActive: isActive,
     sortOrder: sortOrder,
     createdAt: createdAt,
+    productCount: productCount,
+    componentCount: componentCount,
   );
 }
