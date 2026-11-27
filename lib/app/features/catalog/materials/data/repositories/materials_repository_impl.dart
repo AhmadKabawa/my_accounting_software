@@ -56,9 +56,7 @@ class MaterialsRepositoryImpl
     final r = await _remote.updateMaterial(id: id, draft: draft);
     return switch (r) {
       ApiSuccess<MaterialModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<MaterialModel>(:final exception) => Left(
-        ExceptionMapper.map(exception),
-      ),
+      ApiFailure<MaterialModel>(:final exception) => Left(_mapWriteFailure(exception)),
     };
   });
   @override
