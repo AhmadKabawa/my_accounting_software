@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
@@ -9,7 +8,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_view/
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_stats/product_type_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_stats/product_type_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/widgets/product_type_stats_bar.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
@@ -19,7 +17,6 @@ import 'package:accounting_software/app/features/catalog/product_types/presentat
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_types_list/product_types_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/dialogs/product_type_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
-import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/widgets/product_types_data_section.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/widgets/product_types_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
