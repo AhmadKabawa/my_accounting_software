@@ -43,5 +43,5 @@ class MaterialModel {
     'description': description,
     'is_active': isActive,
   };
- MaterialType? _parseMaterialType(Object? raw){for(final value in MaterialType.values){if(value.name==raw)return value;}return null;}
+ static MaterialType? _parseMaterialType(Object? raw){for(final value in MaterialType.values){if(value.name==raw)return value;}return null;}
 }
