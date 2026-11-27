@@ -76,12 +76,10 @@ void main() {
         sortAscending: false,
       ),
     );
-    expect(api.lastQueryParameters['order'], 'id.desc');
+    expect(api.lastQueryParameters['order'], 'created_at.desc,id.asc');
   });
 
-  test(
-    'gets total and active statistics with two lightweight count requests',
-    () async {
+  test('gets brand aggregates through the database RPC', () async {
       api.statsTotalCount = 14;
       api.statsActiveCount = 9;
 
@@ -91,23 +89,19 @@ void main() {
         expect(stats.total, 14);
         expect(stats.active, 9);
         expect(stats.inactive, 5);
+        expect(stats.withProducts, 6);
+        expect(stats.withoutProducts, 8);
+        expect(stats.mostUsedBrandId, 12);
+        expect(stats.mostUsedCount, 3);
       });
-      expect(api.paginatedQueries, hasLength(2));
-      expect(
-        api.paginatedQueries.every((query) => query['select'] == 'id'),
-        isTrue,
-      );
-      expect(
-        api.paginatedQueries.every((query) => !query.containsKey('products')),
-        isTrue,
-      );
-      expect(api.lastPage, 1);
-      expect(api.lastLimit, 1);
+      expect(api.lastPath, '/rest/v1/rpc/brand_stats');
+      expect(api.lastBody, isEmpty);
+      expect(api.paginatedQueries, isEmpty);
     },
   );
 
-  test('fails the aggregate when the active count request fails', () async {
-    api.activeStatsFailure = ApiException.forbidden();
+  test('propagates a permission failure from the stats RPC', () async {
+    api.postFailure = ApiException.forbidden();
 
     final result = await repository.getBrandStats();
 
