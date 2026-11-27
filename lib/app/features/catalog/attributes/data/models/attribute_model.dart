@@ -11,6 +11,7 @@ class AttributeModel {
     required this.unitSymbol,
     required this.optionSetId,
     required this.optionSetName,
+    required this.optionSetCode,
     required this.isFilterable,
     required this.isActive,
     required this.linkedProductTypesCount,
@@ -25,6 +26,7 @@ class AttributeModel {
   final String? unitSymbol;
   final int? optionSetId;
   final String? optionSetName;
+  final String? optionSetCode;
   final bool isFilterable;
   final bool isActive;
   final int? linkedProductTypesCount;
@@ -52,6 +54,7 @@ class AttributeModel {
       unitSymbol: unit?['symbol'] as String?,
       optionSetId: _intOrNull(json['option_set_id']),
       optionSetName: optionSet?['name'] as String?,
+      optionSetCode: optionSet?['code'] as String?,
       isFilterable: json['is_filterable'] as bool? ?? false,
       isActive: json['is_active'] as bool? ?? true,
       linkedProductTypesCount: _count(json['product_type_attributes']),
@@ -87,6 +90,7 @@ class AttributeModel {
     unitSymbol: unitSymbol,
     optionSetId: optionSetId,
     optionSetName: optionSetName,
+    optionSetCode: optionSetCode,
     isFilterable: isFilterable,
     isActive: isActive,
     linkedProductTypesCount: linkedProductTypesCount,
