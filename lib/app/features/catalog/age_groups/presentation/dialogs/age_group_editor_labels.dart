@@ -4,6 +4,7 @@ import 'package:accounting_software/app/features/catalog/age_groups/presentation
 const ageGroupEditorLabels = CrudEditorLabels(
   addTitle: AgeGroupsKeys.add,
   editTitle: AgeGroupsKeys.edit,
+  duplicateTitle: AgeGroupsKeys.duplicateTitle,
   subtitle: AgeGroupsKeys.title,
   save: AgeGroupsKeys.save,
   cancel: AgeGroupsKeys.cancel,

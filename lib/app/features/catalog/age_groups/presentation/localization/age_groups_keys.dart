@@ -4,6 +4,7 @@ enum AgeGroupsKeys implements AppKey {
   title(ar: 'الفئات العمرية', en: 'Age groups'),
   add(ar: 'إضافة فئة عمرية', en: 'Add age group'),
   edit(ar: 'تعديل الفئة العمرية', en: 'Edit age group'),
+  duplicateTitle(ar: 'نسخ الفئة العمرية', en: 'Duplicate age group'),
   name(ar: 'الاسم', en: 'Name'),
   minAge(ar: 'أقل عمر', en: 'Minimum age'),
   maxAge(ar: 'أعلى عمر', en: 'Maximum age'),
