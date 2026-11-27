@@ -87,4 +87,5 @@ class FabricTypesRepositoryImpl
       ),
     };
   });
+  Failure _mapWriteFailure(AppException exception) => exception is ApiException && exception.errorCode == '23505' ? const FabricTypeDuplicateFailure() : ExceptionMapper.map(exception);
 }
