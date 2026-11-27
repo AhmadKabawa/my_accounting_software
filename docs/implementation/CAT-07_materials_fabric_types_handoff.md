@@ -36,7 +36,7 @@ This branch now contains the Materials and Fabric Types domain, data, presentati
 - AppKey/localization registry must be updated for all new labels and messages.
 - Use current design tokens/context.ui; no raw color/size literals.
 - Feature DI, catalog composition root, routing and Catalog hub entry must be wired consistently with existing features.
-- Ensure edit/create/duplicate forms have correct dirty-state behavior and unsaved-change protection.
+- Ensure create/edit forms have correct dirty-state behavior and unsaved-change protection; duplicate mode is disabled by design until a safe seed is defined.
 - Do not delete referenced records; follow the existing delete guard/soft-disable convention and backend semantics.
 - Do not claim tests/build/analyze have run from this branch. Those checks must be run by the Flutter workspace team.
 
@@ -49,12 +49,12 @@ Field coverage, integration impact and UI/UX implementation decisions are record
 
 1. Format and analyze; resolve all diagnostics.
 2. Run architecture/UI quality tests and feature-import/platform-isolation/localization checks.
-3. Unit tests for query/filter/sort, create/edit validation, normalization, error mapping and duplicate seeds.
+3. Unit tests added for query/filter/sort, model mapping, field validation and repository mapping of `23505`/`23503`; add Cubit/widget coverage and run the complete suite.
 4. Widget tests for editor dirty-state/guard, active toggle, error/loading/empty states, responsive table/card/grid, RTL/LTR and light/dark.
 5. Verify the API/database contract for both tables and uniqueness constraints before merge.
 6. Confirm Catalog hub/navigation and DI startup have no duplicate registrations or missing routes.
 7. Verify duplicate mode is intentionally disabled in the shared list until a domain-safe duplicate seed flow is added.
-7. Report exact test commands/results and commit SHA; keep this branch separate until review.
+8. Report exact test commands/results and commit SHA; keep this branch separate until review.
 
 ## Schema confirmation
 
