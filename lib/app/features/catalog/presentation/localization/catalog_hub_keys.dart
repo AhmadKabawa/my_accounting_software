@@ -34,6 +34,10 @@ enum CatalogHubKeys implements AppKey {
     ar: 'أدر الأجناس المستخدمة في مجموعات المقاسات.',
     en: 'Manage genders referenced by size groups.',
   ),
+  ageGroupsDescription(
+    ar: 'أدر الفئات العمرية التي تُستخدم لتصنيف المنتجات.',
+    en: 'Manage age groups used to classify products.',
+  ),
   sportsDescription(
     ar: 'حدّد الرياضات التي تناسبها منتجاتك مثل كرة القدم والجري.',
     en: 'Define the sports your products suit, such as football and running.',

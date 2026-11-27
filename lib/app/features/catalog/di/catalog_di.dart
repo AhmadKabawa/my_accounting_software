@@ -4,6 +4,7 @@ import 'package:accounting_software/app/features/catalog/categories/di/categorie
 import 'package:accounting_software/app/features/catalog/tags/di/tags_di.dart';
 import 'package:accounting_software/app/features/catalog/sports/di/sports_di.dart';
 import 'package:accounting_software/app/features/catalog/genders/di/genders_di.dart';
+import 'package:accounting_software/app/features/catalog/age_groups/di/age_groups_di.dart';
 import 'package:accounting_software/app/features/catalog/units/di/units_di.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/di/option_sets_di.dart';
 import 'package:accounting_software/app/features/catalog/attributes/di/attributes_di.dart';
@@ -17,6 +18,7 @@ void initCatalogDI() {
   initTagsDI();
   initSportsDI();
   initGendersDI();
+  initAgeGroupsDI();
   initUnitsDI();
   initOptionSetsDI();
   initAttributesDI();

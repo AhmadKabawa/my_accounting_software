@@ -37,6 +37,8 @@ import 'package:accounting_software/app/features/catalog/colors/domain/failures/
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
 import 'package:accounting_software/app/features/catalog/genders/presentation/localization/genders_keys.dart';
 import 'package:accounting_software/app/features/catalog/genders/domain/failures/gender_failure_keys.dart';
+import 'package:accounting_software/app/features/catalog/age_groups/presentation/localization/age_groups_keys.dart';
+import 'package:accounting_software/app/features/catalog/age_groups/domain/failures/age_group_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/failures/size_system_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
 import 'package:accounting_software/app/features/catalog/sports/domain/failures/sport_failure_keys.dart';
@@ -77,6 +79,8 @@ final List<AppKey> allKeys = <AppKey>[
   ...SportsKeys.values,
   ...GendersKeys.values,
   ...GenderFailureKeys.values,
+  ...AgeGroupsKeys.values,
+  ...AgeGroupFailureKeys.values,
   ...SizeSystemFailureKeys.values,
   ...SportFailureKeys.values,
   ...TagsKeys.values,
