@@ -19,6 +19,15 @@ enum MaterialSortField {
   }
 }
 
+class MaterialSort extends Equatable {
+  const MaterialSort(this.field, this.ascending);
+  final MaterialSortField field;
+  final bool ascending;
+
+  @override
+  List<Object?> get props => [field, ascending];
+}
+
 class MaterialListQuery extends Equatable
     implements PagedQuery<MaterialListQuery> {
   const MaterialListQuery({
@@ -27,6 +36,7 @@ class MaterialListQuery extends Equatable
     this.type,
     this.sortField = MaterialSortField.name,
     this.sortAscending = true,
+    this.thenSorts = const [],
     this.page = 1,
     this.pageSize = 25,
   });
@@ -37,10 +47,16 @@ class MaterialListQuery extends Equatable
   final String? type;
   final MaterialSortField sortField;
   final bool sortAscending;
+  final List<MaterialSort> thenSorts;
   @override
   final int page;
   @override
   final int pageSize;
+
+  List<MaterialSort> get sorts => [
+    MaterialSort(sortField, sortAscending),
+    ...thenSorts,
+  ];
 
   @override
   bool get hasActiveFilters =>
@@ -62,6 +78,24 @@ class MaterialListQuery extends Equatable
     page: 1,
   );
 
+  MaterialListQuery withSorts(List<MaterialSort> values) {
+    if (values.isEmpty || hasSameSorts(values)) return this;
+    final primary = values.first;
+    return copyWith(
+      sortField: primary.field,
+      sortAscending: primary.ascending,
+      thenSorts: values.skip(1).toList(),
+      page: 1,
+    );
+  }
+
+  bool hasSameSorts(List<MaterialSort> values) {
+    if (values.isEmpty || values.length != sorts.length) return false;
+    return values.asMap().entries.every(
+      (entry) => entry.value == sorts[entry.key],
+    );
+  }
+
   MaterialListQuery copyWith({
     String? search,
     MaterialStatusFilter? status,
@@ -69,6 +103,7 @@ class MaterialListQuery extends Equatable
     bool clearType = false,
     MaterialSortField? sortField,
     bool? sortAscending,
+    List<MaterialSort>? thenSorts,
     int? page,
     int? pageSize,
   }) => MaterialListQuery(
@@ -77,6 +112,7 @@ class MaterialListQuery extends Equatable
     type: clearType ? null : type ?? this.type,
     sortField: sortField ?? this.sortField,
     sortAscending: sortAscending ?? this.sortAscending,
+    thenSorts: thenSorts ?? this.thenSorts,
     page: page ?? this.page,
     pageSize: pageSize ?? this.pageSize,
   );
@@ -88,6 +124,7 @@ class MaterialListQuery extends Equatable
     type,
     sortField,
     sortAscending,
+    thenSorts,
     page,
     pageSize,
   ];
