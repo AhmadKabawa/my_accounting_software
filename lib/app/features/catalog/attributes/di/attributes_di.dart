@@ -44,6 +44,7 @@ void initAttributesDI() {
     () => AttributesListCubit(
       getAttributes: sl(),
       setActive: sl(),
+      deleteAttribute: sl(),
       flashMessages: sl(),
     ),
   );

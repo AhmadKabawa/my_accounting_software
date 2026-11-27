@@ -8,6 +8,7 @@ import 'package:accounting_software/app/core/presentation/widgets/app_message/fl
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_list_query.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/get_attributes_use_case.dart';
+import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/delete_attribute_use_case.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/set_attribute_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attributes_list/attributes_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
@@ -22,9 +23,11 @@ class AttributesListCubit
   AttributesListCubit({
     required GetAttributesUseCase getAttributes,
     required SetAttributeActiveUseCase setActive,
+    required DeleteAttributeUseCase deleteAttribute,
     required FlashMessages flashMessages,
   }) : _getAttributes = getAttributes,
        _setActive = setActive,
+       _deleteAttribute = deleteAttribute,
        super(
          initialQuery: const AttributeListQuery(
            page: AppConfig.defaultPage,
@@ -35,6 +38,7 @@ class AttributesListCubit
 
   final GetAttributesUseCase _getAttributes;
   final SetAttributeActiveUseCase _setActive;
+  final DeleteAttributeUseCase _deleteAttribute;
 
   @override
   Future<Either<Failure, PagedResult<CatalogAttribute>>> fetch(
@@ -42,10 +46,7 @@ class AttributesListCubit
   ) => _getAttributes(query);
 
   @override
-  Future<Either<Failure, Unit>> deleteItem(CatalogAttribute item) =>
-      Future.value(
-        const Left(ValidationFailure(messageKey: AttributesKeys.deleteBlocked)),
-      );
+  Future<Either<Failure, Unit>> deleteItem(CatalogAttribute item) => _deleteAttribute(item.id);
 
   @override
   Failure? beforeDelete(CatalogAttribute item) => item.canDelete
