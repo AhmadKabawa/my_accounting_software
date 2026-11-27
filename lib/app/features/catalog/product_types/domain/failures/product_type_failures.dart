@@ -18,5 +18,5 @@ class ProductTypeDuplicateFailure extends Failure {
 
 class ProductTypeDefaultSizeGroupConflictFailure extends Failure {
   const ProductTypeDefaultSizeGroupConflictFailure()
-    : super(messageKey: ProductTypeFailureKeys.defaultSizeGroupConflict);
+    : super(messageKey: ProductTypeFailureKeys.defaultSizeGroupConflict, statusCode: 409);
 }
