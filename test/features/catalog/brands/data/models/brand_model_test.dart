@@ -11,6 +11,8 @@ void main() {
         'logo': 'https://example.com/logo.png',
         'description': 'Supplier brand',
         'is_active': false,
+        'created_at': '2026-11-27T10:00:00Z',
+        'updated_at': '2026-11-28T10:00:00Z',
         'products': [
           {'count': 7},
         ],
@@ -21,9 +23,12 @@ void main() {
       expect(model.slug, 'northwind');
       expect(model.isActive, isFalse);
       expect(model.productCount, 7);
+      expect(model.createdAt, DateTime.parse('2026-11-27T10:00:00Z'));
+      expect(model.updatedAt, DateTime.parse('2026-11-28T10:00:00Z'));
       expect(model.toEntity().productCount, 7);
       expect(model.toJson()['id'], 42);
       expect(model.toJson()['is_active'], isFalse);
+      expect(model.toJson()['created_at'], '2026-11-27T10:00:00.000Z');
     });
 
     test('treats an empty embedded relation as zero products', () {
