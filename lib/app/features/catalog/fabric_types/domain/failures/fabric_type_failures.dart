@@ -1,0 +1,1 @@
+import 'package:accounting_software/app/core/error/failures/failure.dart';import 'package:accounting_software/app/features/catalog/fabric_types/presentation/localization/fabric_types_keys.dart';class FabricTypeDuplicateFailure extends Failure{const FabricTypeDuplicateFailure():super(messageKey:FabricTypesKeys.duplicateError,statusCode:409);}
