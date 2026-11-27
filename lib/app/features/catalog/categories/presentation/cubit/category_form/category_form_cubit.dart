@@ -75,9 +75,14 @@ class CategoryFormCubit
 
   /// Available parent rows with full paths; the edited category and its
   /// descendants are excluded to prevent a local cycle.
-  late final List<CategoryNode> _parentOptions = _buildParentOptions();
+  List<CategoryNode> get parentOptions => _buildParentOptions();
 
-  List<CategoryNode> get parentOptions => _parentOptions;
+  bool get hasSiblingNameConflict => state.name.trim().isNotEmpty &&
+      (_tree?.childrenOf(state.parentId).any((item) =>
+              item.id != _category?.id &&
+              item.name.trim().toLowerCase() ==
+                  state.name.trim().toLowerCase()) ??
+          false);
 
   List<CategoryNode> _buildParentOptions() {
     final tree = _tree;
@@ -87,7 +92,8 @@ class CategoryFormCubit
         : {...tree.descendantIds(_category.id), _category.id};
     return tree
         .visible(expandedIds: tree.parentIds)
-        .where((node) => !excluded.contains(node.id))
+        .where((node) => !excluded.contains(node.id) &&
+            (node.category.isActive || node.id == state.parentId))
         .toList(growable: false);
   }
 

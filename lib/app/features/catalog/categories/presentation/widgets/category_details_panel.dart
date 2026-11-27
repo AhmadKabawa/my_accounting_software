@@ -3,6 +3,7 @@ import 'package:accounting_software/app/core/localization/keys/common_keys.dart'
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_details_panel/app_details_panel.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_image/app_image.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
@@ -135,14 +136,13 @@ class CategoryDetailsPanel extends StatelessWidget {
                   final childNode = visibleNodes.firstWhere(
                     (candidate) => candidate.id == child.id,
                   );
-                  return Semantics(
-                    button: true,
-                    child: ListTile(
-                      dense: true,
-                      title: AppText.raw(child.name),
-                      trailing: const AppIcon(AppIcons.chevronEnd),
-                      onTap: () => onSelectChild(childNode.id),
-                    ),
+                  return AppButton.raw(
+                    child.name,
+                    onPressed: () => onSelectChild(childNode.id),
+                    variant: AppButtonVariant.text,
+                    size: AppButtonSize.small,
+                    icon: AppIcons.chevronEnd,
+                    expand: true,
                   );
                 },
               ),

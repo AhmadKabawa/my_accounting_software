@@ -50,6 +50,31 @@ class CategoryEditorFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        AppText(CategoriesKeys.placementSection, type: AppTextType.titleSmall),
+        context.ui.spacing.gap(AppSpacing.sm),
+        SearchableDropdown<CategoryNode>(
+          options: parentOptions,
+          labelKey: CategoriesKeys.parent,
+          optionLabel: cubit.parentOptionLabel,
+          optionSubtitle: (node) => node.category.slug,
+          value: selectedParent,
+          clearable: true,
+          mode: SearchableDropdownMode.panel,
+          allOptionLabel: CategoriesKeys.noParent,
+          onChanged: (node) {
+            if (scope.busy) return;
+            cubit.setParent(node?.id);
+            scope.clearFailure();
+            scope.changed();
+          },
+        ),
+        context.ui.spacing.gap(AppSpacing.xs),
+        AppText(
+          CategoriesKeys.parentHint,
+          type: AppTextType.bodySmall,
+          color: context.ui.theme.colors.onSurfaceVariant,
+        ),
+
         AppText(CategoriesKeys.identitySection, type: AppTextType.titleSmall),
         context.ui.spacing.gap(AppSpacing.sm),
         AppTextField(
@@ -70,6 +95,12 @@ class CategoryEditorFields extends StatelessWidget {
           state.errorFor('name'),
           state.name.trim().isNotEmpty,
         ),
+        if (cubit.hasSiblingNameConflict)
+          AppText(
+            CategoriesKeys.siblingNameWarning,
+            type: AppTextType.bodySmall,
+            color: context.ui.theme.semanticColors.warning,
+          ),
         context.ui.spacing.gap(AppSpacing.md),
         AppTextField(
           controller: scope.fields['slug'],
@@ -161,30 +192,6 @@ class CategoryEditorFields extends StatelessWidget {
         context.ui.spacing.gap(AppSpacing.md),
 
         context.ui.spacing.gap(AppSpacing.lg),
-        AppText(CategoriesKeys.placementSection, type: AppTextType.titleSmall),
-        context.ui.spacing.gap(AppSpacing.sm),
-        SearchableDropdown<CategoryNode>(
-          options: parentOptions,
-          labelKey: CategoriesKeys.parent,
-          optionLabel: cubit.parentOptionLabel,
-          optionSubtitle: (node) => node.category.slug,
-          value: selectedParent,
-          clearable: true,
-          mode: SearchableDropdownMode.panel,
-          allOptionLabel: CategoriesKeys.noParent,
-          onChanged: (node) {
-            if (scope.busy) return;
-            cubit.setParent(node?.id);
-            scope.clearFailure();
-            scope.changed();
-          },
-        ),
-        context.ui.spacing.gap(AppSpacing.xs),
-        AppText(
-          CategoriesKeys.parentHint,
-          type: AppTextType.bodySmall,
-          color: context.ui.theme.colors.onSurfaceVariant,
-        ),
       ],
     );
   }

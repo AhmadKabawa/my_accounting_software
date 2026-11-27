@@ -13,6 +13,7 @@ import 'package:accounting_software/app/features/catalog/categories/domain/entit
 import 'package:accounting_software/app/features/catalog/categories/domain/entity/category_node.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/categories_list/categories_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/dialogs/category_editor_launcher.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/category_row_actions.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/categories_flat_results_note.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/categories_tree_toolbar.dart';
@@ -160,6 +161,15 @@ Widget buildCategoriesDataSection(
             ),
           ],
           labels: categoriesCrudLabels,
+          extraRowActions: (actionContext, node) =>
+              buildCategoryExtraRowActions(
+                context: actionContext,
+                node: node,
+                tree: data.cubit.tree,
+                onSaved: () {
+                  flows?.onSaved(data.cubit, isNew: true);
+                },
+              ),
           statusColumn: CrudStatusColumnConfig<CategoryNode>(
             labelKey: CategoriesKeys.status,
             isActive: (node) => node.category.isActive,
