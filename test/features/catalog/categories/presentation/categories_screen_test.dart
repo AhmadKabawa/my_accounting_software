@@ -32,6 +32,7 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_details_panel.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/dialogs/category_duplicate_seed.dart';
 import '../../../../helpers/localized_app.dart';
 import '../../../../helpers/memory_storage.dart';
@@ -820,7 +821,10 @@ void main() {
 
     await tester.tap(find.text('Root').first);
     await tester.pumpAndSettle();
-    final editAction = find.byTooltip(CategoriesKeys.edit.en).last;
+    final editAction = find.descendant(
+      of: find.byType(CategoryDetailsPanel),
+      matching: find.byTooltip(CategoriesKeys.edit.en),
+    );
     await tester.ensureVisible(editAction);
     await tester.pumpAndSettle();
     await tester.tap(editAction);
@@ -833,13 +837,23 @@ void main() {
       findsOneWidget,
     );
     await tester.enterText(_categoryNameInput(), 'Root Updated');
-    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(Dialog).last,
+        matching: find.text(CategoriesKeys.save.en),
+      ),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip(CategoriesKeys.addChild.en));
     await tester.pumpAndSettle();
     await tester.enterText(_categoryNameInput(), 'Panel child');
-    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(Dialog).last,
+        matching: find.text(CategoriesKeys.save.en),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(repository.updateCalls, 1);
