@@ -9,7 +9,8 @@ class SetAttributeActiveParams {
   final bool isActive;
 }
 
-class SetAttributeActiveUseCase extends UseCase<Unit, SetAttributeActiveParams> {
+class SetAttributeActiveUseCase
+    extends UseCase<Unit, SetAttributeActiveParams> {
   SetAttributeActiveUseCase(this._repository);
   final AttributesRepository _repository;
 

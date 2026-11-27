@@ -42,11 +42,20 @@ enum AttributesKeys implements AppKey {
   linkedProductTypes(ar: 'أنواع المنتجات المرتبطة', en: 'Linked product types'),
   unknown(ar: 'غير معروف', en: 'Unknown'),
   empty(ar: 'لا توجد خصائص', en: 'No attributes'),
-  emptyDescription(ar: 'أنشئ أول خاصية للكتالوج', en: 'Create the first catalog attribute'),
+  emptyDescription(
+    ar: 'أنشئ أول خاصية للكتالوج',
+    en: 'Create the first catalog attribute',
+  ),
   noResults(ar: 'لا توجد نتائج', en: 'No results'),
-  noResultsDescription(ar: 'جرّب تغيير البحث أو الفلاتر', en: 'Try changing the search or filters'),
+  noResultsDescription(
+    ar: 'جرّب تغيير البحث أو الفلاتر',
+    en: 'Try changing the search or filters',
+  ),
   delete(ar: 'حذف', en: 'Delete'),
-  deleteBlocked(ar: 'لا يمكن حذف خاصية مستخدمة أو تعذر التحقق من استخدامها', en: 'Cannot delete an attribute that is used or has unknown usage'),
+  deleteBlocked(
+    ar: 'لا يمكن حذف خاصية مستخدمة أو تعذر التحقق من استخدامها',
+    en: 'Cannot delete an attribute that is used or has unknown usage',
+  ),
   deleted(ar: 'تم حذف الخاصية', en: 'Attribute deleted'),
   statusUpdated(ar: 'تم تحديث حالة الخاصية', en: 'Attribute status updated'),
   saved(ar: 'تم حفظ الخاصية', en: 'Attribute saved'),
@@ -55,12 +64,30 @@ enum AttributesKeys implements AppKey {
   optionSetName(ar: 'مجموعة الخيارات', en: 'Option set'),
   filterableOn(ar: 'قابلة للتصفية', en: 'Filterable'),
   notFilterable(ar: 'غير قابلة للتصفية', en: 'Not filterable'),
-  duplicateCode(ar: 'رمز الخاصية مستخدم مسبقاً', en: 'Attribute code already exists'),
-  invalidRelation(ar: 'مجموعة الخيارات غير متوافقة مع نوع الخاصية', en: 'Option set does not match attribute type'),
-  inUse(ar: 'الخاصية مستخدمة ولا يمكن تغيير نوعها أو حذفها', en: 'Attribute is in use and cannot be changed or deleted'),
-  nameTooLong(ar: 'يجب ألا يتجاوز الاسم 150 حرفاً', en: 'Name must be at most 150 characters'),
-  codeTooLong(ar: 'يجب ألا يتجاوز الرمز 80 حرفاً', en: 'Code must be at most 80 characters'),
-  confirmDeactivate(ar: 'سيمنع الإيقاف إسناد قيم جديدة وفق ERP27. القيم الحالية تبقى محفوظة.', en: 'Deactivation blocks new values under ERP27; existing values remain'),
+  duplicateCode(
+    ar: 'رمز الخاصية مستخدم مسبقاً',
+    en: 'Attribute code already exists',
+  ),
+  invalidRelation(
+    ar: 'مجموعة الخيارات غير متوافقة مع نوع الخاصية',
+    en: 'Option set does not match attribute type',
+  ),
+  inUse(
+    ar: 'الخاصية مستخدمة ولا يمكن تغيير نوعها أو حذفها',
+    en: 'Attribute is in use and cannot be changed or deleted',
+  ),
+  nameTooLong(
+    ar: 'يجب ألا يتجاوز الاسم 150 حرفاً',
+    en: 'Name must be at most 150 characters',
+  ),
+  codeTooLong(
+    ar: 'يجب ألا يتجاوز الرمز 80 حرفاً',
+    en: 'Code must be at most 80 characters',
+  ),
+  confirmDeactivate(
+    ar: 'سيمنع الإيقاف إسناد قيم جديدة وفق ERP27. القيم الحالية تبقى محفوظة.',
+    en: 'Deactivation blocks new values under ERP27; existing values remain',
+  ),
   activate(ar: 'تفعيل', en: 'Activate'),
   deactivate(ar: 'إيقاف', en: 'Deactivate'),
   confirmDelete(ar: 'هل تريد حذف هذه الخاصية؟', en: 'Delete this attribute?');

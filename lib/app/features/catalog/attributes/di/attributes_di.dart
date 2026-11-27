@@ -22,6 +22,18 @@ void initAttributesDI() {
   sl.registerLazySingleton(() => CreateAttributeUseCase(sl()));
   sl.registerLazySingleton(() => UpdateAttributeUseCase(sl()));
   sl.registerLazySingleton(() => SetAttributeActiveUseCase(sl()));
-  sl.registerFactory(() => AttributesListCubit(getAttributes: sl(), setActive: sl(), flashMessages: sl()));
-  sl.registerFactory(() => AttributeFormCubit(createAttribute: sl(), updateAttribute: sl(), flashMessages: sl()));
+  sl.registerFactory(
+    () => AttributesListCubit(
+      getAttributes: sl(),
+      setActive: sl(),
+      flashMessages: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => AttributeFormCubit(
+      createAttribute: sl(),
+      updateAttribute: sl(),
+      flashMessages: sl(),
+    ),
+  );
 }

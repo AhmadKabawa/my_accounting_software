@@ -13,22 +13,27 @@ enum AttributeFormStatus { idle, saving }
 sealed class AttributeFormEffect {
   const AttributeFormEffect();
 }
+
 class AttributeSavedEffect extends AttributeFormEffect {
   const AttributeSavedEffect(this.id);
   final int id;
 }
+
 class AttributeSaveFailedEffect extends AttributeFormEffect {
   const AttributeSaveFailedEffect(this.messageKey);
   final AppKey messageKey;
 }
 
-class AttributeFormCubit extends BaseCubit<AttributeFormStatus, AttributeFormEffect> {
+class AttributeFormCubit
+    extends BaseCubit<AttributeFormStatus, AttributeFormEffect> {
   AttributeFormCubit({
     required CreateAttributeUseCase createAttribute,
     required UpdateAttributeUseCase updateAttribute,
     required FlashMessages flashMessages,
-  }) : _create = createAttribute, _update = updateAttribute,
-       _flash = flashMessages, super(AttributeFormStatus.idle);
+  }) : _create = createAttribute,
+       _update = updateAttribute,
+       _flash = flashMessages,
+       super(AttributeFormStatus.idle);
 
   final CreateAttributeUseCase _create;
   final UpdateAttributeUseCase _update;
@@ -37,8 +42,9 @@ class AttributeFormCubit extends BaseCubit<AttributeFormStatus, AttributeFormEff
   Future<void> save({required AttributeDraft draft, int? id}) async {
     if (isClosed || state == AttributeFormStatus.saving) return;
     emit(AttributeFormStatus.saving);
-    final result = id == null ? await _create(draft) :
-        await _update(UpdateAttributeParams(id: id, draft: draft));
+    final result = id == null
+        ? await _create(draft)
+        : await _update(UpdateAttributeParams(id: id, draft: draft));
     if (isClosed) return;
     result.fold(
       (failure) => emitEffect(AttributeSaveFailedEffect(failure.messageKey)),

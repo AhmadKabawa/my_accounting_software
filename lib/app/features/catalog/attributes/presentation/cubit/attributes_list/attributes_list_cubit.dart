@@ -12,8 +12,13 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/useca
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attributes_list/attributes_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
 
-class AttributesListCubit extends PagedListCubit<CatalogAttribute,
-    AttributeListQuery, AttributesListEffect> {
+class AttributesListCubit
+    extends
+        PagedListCubit<
+          CatalogAttribute,
+          AttributeListQuery,
+          AttributesListEffect
+        > {
   AttributesListCubit({
     required GetAttributesUseCase getAttributes,
     required SetAttributeActiveUseCase setActive,
@@ -38,7 +43,9 @@ class AttributesListCubit extends PagedListCubit<CatalogAttribute,
 
   @override
   Future<Either<Failure, Unit>> deleteItem(CatalogAttribute item) =>
-      Future.value(const Left(ValidationFailure(messageKey: AttributesKeys.deleteBlocked)));
+      Future.value(
+        const Left(ValidationFailure(messageKey: AttributesKeys.deleteBlocked)),
+      );
 
   @override
   Failure? beforeDelete(CatalogAttribute item) => item.canDelete
