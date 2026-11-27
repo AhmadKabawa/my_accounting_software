@@ -9,6 +9,8 @@ import 'package:accounting_software/app/core/access/models/access_snapshot.dart'
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/localization/keys/catalog_ui_keys.dart';
+import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failures.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
@@ -84,6 +86,8 @@ final _sample = ProductType(
 
 class _FakeProductTypesRepository implements ProductTypesRepository {
   final List<ProductTypeListQuery> queries = [];
+  Failure? deleteFailure;
+  bool deactivated = false;
 
   @override
   Future<Either<Failure, PaginatedResult<ProductType>>> getPage(
@@ -117,10 +121,16 @@ class _FakeProductTypesRepository implements ProductTypesRepository {
   Future<Either<Failure, Unit>> setActive({
     required int id,
     required bool isActive,
-  }) async => const Right(unit);
+  }) async {
+    if (!isActive) deactivated = true;
+    return const Right(unit);
+  }
 
   @override
-  Future<Either<Failure, Unit>> delete(int id) async => const Right(unit);
+  Future<Either<Failure, Unit>> delete(int id) async {
+    final failure = deleteFailure;
+    return failure == null ? const Right(unit) : Left(failure);
+  }
 }
 
 void _register(_FakeProductTypesRepository repository) {
@@ -170,7 +180,7 @@ void main() {
             expect(find.text('Shoes'), findsWidgets);
             expect(find.text('SHOE'), findsWidgets);
             expect(find.text(ProductTypesKeys.updatedAt.en), findsNothing);
-            expect(find.text(ProductTypesKeys.unusedStats.en), findsNothing);
+            expect(find.text(ProductTypesKeys.unusedStats.en), findsOneWidget);
             expect(find.textContaining('{'), findsNothing);
             expect(find.textContaining('@'), findsNothing);
             expect(tester.takeException(), isNull);
@@ -210,4 +220,33 @@ void main() {
     expect(find.text(ProductTypesKeys.add.en), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+
+  testWidgets('a 23503 delete failure offers direct deactivation', (tester) async {
+    final repository = _FakeProductTypesRepository()
+      ..deleteFailure = const ProductTypeInUseFailure();
+    _register(repository);
+    await pumpScreenMatrix(
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(ProductTypesKeys.delete.en).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(ProductTypesKeys.delete.en).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text(ProductTypesKeys.inUseTitle.en), findsOneWidget);
+    await tester.tap(find.text(ProductTypesKeys.deactivate.en).last);
+    await tester.pumpAndSettle();
+
+    expect(repository.deactivated, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
 }
