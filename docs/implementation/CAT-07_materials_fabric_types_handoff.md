@@ -2,9 +2,9 @@
 
 Branch: `feat/catalog-materials-fabric-types`
 Base: `integration/catalog-scope-1`
-Status: implementation handoff/checklist (not Flutter source implementation)
+Status: source implementation committed; awaiting Flutter workspace verification
 
-This branch is reserved for the Materials and Fabric Types CRUD screens. The CAT-07 specification is the source of truth for fields and constraints; the shared CRUD recipe is the source of truth for wiring.
+This branch now contains the Materials and Fabric Types domain, data, presentation, dependency-injection, route, localization and Catalog Hub implementation. The CAT-07 specification and DATA_MODEL.md are the source of truth for fields and constraints; the shared CRUD recipe is the source of truth for wiring.
 
 ## Materials (`materials`)
 
@@ -14,7 +14,8 @@ This branch is reserved for the Materials and Fabric Types CRUD screens. The CAT
 - `is_active` defaults true; code-level behavior must support disabling/reactivating.
 - Include search, paging, sorting only on fields supported by the remote query, empty/loading/error states, and permissions per catalog conventions.
 - Trim names/codes on submit and prevent duplicate code; use the repository's existing exception/failure translation pipeline.
-- Display name/code, active status, type and description as appropriate across table/card/grid view modes.
+- Display name/code and active status across table/card/grid view modes; type and description are available in the editor and type is filterable.
+- SQLSTATE `23505` maps to a duplicate-code message; `23503` maps to an in-use delete failure.
 
 ## Fabric Types (`fabric_types`)
 
@@ -23,7 +24,8 @@ This branch is reserved for the Materials and Fabric Types CRUD screens. The CAT
 - `fabric_category` allowed values: `knit`, `woven`, `fleece`.
 - `is_named_fabric` is specified as boolean, default false; do not silently omit this field from entity/editor/query/display where applicable.
 - `is_active` defaults true; code-level behavior must support disabling/reactivating.
-- Include search, paging, supported sorting, states, permissions and all three data-view modes.
+- Include search, paging, supported sorting, status/category filters, states, permissions and all three data-view modes.
+- SQLSTATE `23505` maps to a duplicate-code message; `23503` maps to an in-use delete failure.
 - Trim values on submit and prevent duplicate code using the existing error handling.
 
 ## Shared implementation expectations
@@ -45,8 +47,9 @@ This branch is reserved for the Materials and Fabric Types CRUD screens. The CAT
 4. Widget tests for editor dirty-state/guard, active toggle, error/loading/empty states, responsive table/card/grid, RTL/LTR and light/dark.
 5. Verify the API/database contract for both tables and uniqueness constraints before merge.
 6. Confirm Catalog hub/navigation and DI startup have no duplicate registrations or missing routes.
+7. Verify duplicate mode is intentionally disabled in the shared list until a domain-safe duplicate seed flow is added.
 7. Report exact test commands/results and commit SHA; keep this branch separate until review.
 
-## Spec ambiguity to confirm against schema
+## Schema confirmation
 
-The CAT-07 spec records `is_named_fabric` default false for Fabric Types but its user-facing summary/standard table operations do not clarify the semantics. Preserve the field as a boolean without inventing behavior until schema and product requirements are checked.
+`docs/backend/DATA_MODEL.md` confirms `materials` columns (`name`, `code`, `material_type`, `description`, `is_active`) and `fabric_types` columns (`name`, `code`, `fabric_category`, `is_named_fabric`, `description`, `is_active`), with unique `code` on both tables. Allowed enum values are confirmed by the schema. `is_named_fabric` is stored and editable as a boolean defaulting to false; no additional business meaning has been invented.
