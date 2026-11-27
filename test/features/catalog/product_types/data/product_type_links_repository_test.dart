@@ -11,7 +11,9 @@ class _LinksRemote extends Fake implements ProductTypeLinksRemoteDataSource {
   ApiException? writeFailure;
 
   @override
-  Future<ApiResult<Unit>> createSizeGroupLink(Map<String, dynamic> body) async {
+  Future<ApiResult<Unit>> createSizeGroupLink(
+    Map<String, dynamic> body,
+  ) async {
     final failure = writeFailure;
     return failure == null ? const ApiSuccess(unit) : ApiFailure(failure);
   }
@@ -55,19 +57,25 @@ void main() {
     );
   });
 
-  test('does not mislabel another unique violation as default conflict', () async {
-    remote.writeFailure = ApiException.conflict(
-      errorCode: '23505',
-      serverMessage: 'duplicate link',
-      details: 'Key (product_type_id, size_group_id) already exists',
-    );
+  test(
+    'does not mislabel another unique violation as default conflict',
+    () async {
+      remote.writeFailure = ApiException.conflict(
+        errorCode: '23505',
+        serverMessage: 'duplicate link',
+        details: 'Key (product_type_id, size_group_id) already exists',
+      );
 
-    final result = await repository.patchSizeGroupLink(9, {'is_default': true});
+      final result = await repository.patchSizeGroupLink(
+        9,
+        {'is_default': true},
+      );
 
-    expect(result.isLeft(), isTrue);
-    expect(
-      result.fold((failure) => failure, (_) => null),
-      isNot(isA<ProductTypeDefaultSizeGroupConflictFailure>()),
-    );
-  });
+      expect(result.isLeft(), isTrue);
+      expect(
+        result.fold((failure) => failure, (_) => null),
+        isNot(isA<ProductTypeDefaultSizeGroupConflictFailure>()),
+      );
+    },
+  );
 }
