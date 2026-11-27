@@ -15,6 +15,7 @@ void main() {
     unitSymbol: null,
     optionSetId: null,
     optionSetName: null,
+    optionSetCode: null,
     isFilterable: true,
     isActive: true,
     linkedProductTypesCount: links,

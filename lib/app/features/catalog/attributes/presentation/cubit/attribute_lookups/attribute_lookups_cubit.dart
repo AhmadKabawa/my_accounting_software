@@ -24,13 +24,9 @@ class AttributeLookupsCubit extends BaseCubit<AttributeLookupsState, Never> {
         clearOptionSetFailure: true,
       ),
     );
-    final results = await Future.wait([
-      _getUnits(NoParams()),
-      _getOptionSets(NoParams()),
-    ]);
+    final units = await _getUnits(NoParams());
+    final sets = await _getOptionSets(NoParams());
     if (isClosed || version != _version) return;
-    final units = results[0];
-    final sets = results[1];
     emit(
       state.copyWith(
         loading: false,
