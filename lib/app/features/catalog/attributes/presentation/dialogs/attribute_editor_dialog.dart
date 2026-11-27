@@ -4,6 +4,7 @@ import 'package:accounting_software/app/core/foundation/validation/app_validator
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/widgets/attribute_editor_lookup_fields.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -116,86 +117,6 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
     ),
   );
 
-  Widget _unitPicker(AttributeLookupsState state) {
-    final options = [...state.units];
-    if (_unitId != null &&
-        !options.any((v) => v.id == _unitId) &&
-        widget.attribute?.unitId == _unitId) {
-      options.add(
-        AttributeUnitChoice(
-          id: widget.attribute!.unitId!,
-          name: widget.attribute!.unitName ?? '',
-          symbol: widget.attribute!.unitSymbol ?? '',
-          isActive: false,
-        ),
-      );
-    }
-    AttributeUnitChoice? selected;
-    for (final option in options) {
-      if (option.id == _unitId) selected = option;
-    }
-    return SearchableDropdown<AttributeUnitChoice>(
-      options: options,
-      labelKey: AttributesKeys.unit,
-      optionLabel: (v) => v.name,
-      optionSubtitle: (v) => v.symbol,
-      value: selected,
-      loading: state.loading,
-      errorKey: state.unitFailure?.messageKey,
-      clearable: true,
-      mode: SearchableDropdownMode.panel,
-      onChanged: (v) => setState(() => _unitId = v?.id),
-    );
-  }
-
-  Widget _optionSetPicker(AttributeLookupsState state) {
-    final options = [...state.optionSets];
-    if (_optionSetId != null &&
-        !options.any((v) => v.id == _optionSetId) &&
-        widget.attribute?.optionSetId == _optionSetId) {
-      options.add(
-        AttributeOptionSetChoice(
-          id: widget.attribute!.optionSetId!,
-          name: widget.attribute!.optionSetName ?? '',
-          code: widget.attribute!.optionSetCode ?? '',
-          isActive: false,
-        ),
-      );
-    }
-    AttributeOptionSetChoice? selected;
-    for (final option in options) {
-      if (option.id == _optionSetId) selected = option;
-    }
-    return FormField<int>(
-      key: ValueKey(_type),
-      initialValue: _optionSetId,
-      validator: (value) => value == null
-          ? AttributesKeys.required.tr(context: context)
-          : null,
-      builder: (field) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SearchableDropdown<AttributeOptionSetChoice>(
-            options: options,
-            labelKey: AttributesKeys.optionSet,
-            optionLabel: (v) => v.name,
-            optionSubtitle: (v) => v.code,
-            value: selected,
-            loading: state.loading,
-            errorKey: state.optionSetFailure?.messageKey,
-            clearable: true,
-            enabled: !_locked,
-            mode: SearchableDropdownMode.panel,
-            onChanged: (value) {
-              field.didChange(value?.id);
-              setState(() => _optionSetId = value?.id);
-            },
-          ),
-          if (field.hasError) AppText.raw(field.errorText!),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) =>
@@ -291,11 +212,11 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                   ],
                   if (_type == AttributeDataType.number) ...[
                     context.ui.spacing.gap(AppSpacing.sm),
-                    _unitPicker(lookups),
+                    AttributeUnitPicker(attribute: widget.attribute, selectedId: _unitId, state: lookups, onChanged: (id) => setState(() => _unitId = id)),
                   ],
                   if (_type == AttributeDataType.option) ...[
                     context.ui.spacing.gap(AppSpacing.sm),
-                    _optionSetPicker(lookups),
+                    AttributeOptionSetPicker(attribute: widget.attribute, selectedId: _optionSetId, state: lookups, locked: _locked, onChanged: (id) => setState(() => _optionSetId = id)),
                   ],
                   context.ui.spacing.gap(AppSpacing.sm),
                   AppSwitch(

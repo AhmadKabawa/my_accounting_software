@@ -12,7 +12,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_data_view/
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_data_section.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
@@ -25,6 +24,7 @@ import 'package:accounting_software/app/features/catalog/attributes/presentation
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_stats/attribute_stats_cubit.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_stats/attribute_stats_state.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/dialogs/attribute_editor_launcher.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/widgets/attribute_delete_action.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/widgets/attributes_filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/sections/attribute_stats_section.dart';
@@ -42,42 +42,6 @@ const _labels = CrudLabels(
 AppKey _typeLabel(BuildContext context, AttributeDataType type) =>
     AttributesFilterBar.typeLabel(type);
 
-Future<void> _deleteAttribute(
-  BuildContext context,
-  CatalogAttribute item,
-) async {
-  var used = false;
-  final cubit = context.read<AttributesListCubit>();
-  final confirmed = await showConfirmDialog(
-    context,
-    titleKey: AttributesKeys.delete,
-    messageKey: AttributesKeys.confirmDelete,
-    targetName: item.name,
-    severity: ConfirmDialogSeverity.critical,
-    onConfirm: () async {
-      final result = await cubit.delete(item);
-      return result.fold((failure) {
-        if (failure.messageKey == AttributesKeys.inUse) {
-          used = true;
-          return null;
-        }
-        return failure.messageKey;
-      }, (_) => null);
-    },
-  );
-  if (!confirmed || !used || !context.mounted) return;
-  await showConfirmDialog(
-    context,
-    titleKey: AttributesKeys.deactivateInstead,
-    messageKey: AttributesKeys.confirmDeactivate,
-    targetName: item.name,
-    severity: ConfirmDialogSeverity.warning,
-    confirmLabelKey: AttributesKeys.deactivate,
-    onConfirm: () async => (await cubit.deactivate(
-      item.id,
-    )).fold((failure) => failure.messageKey, (_) => null),
-  );
-}
 
 CrudListConfig<
   CatalogAttribute,
@@ -220,7 +184,7 @@ get attributesListConfig => CrudListConfig(
                   icon: AppIcons.delete,
                   labelKey: AttributesKeys.delete,
                   destructive: true,
-                  onPressed: () => _deleteAttribute(context, item),
+                  onPressed: () => confirmDeleteAttribute(context, item),
                 ),
               ]
             : const [],
