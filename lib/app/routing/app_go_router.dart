@@ -53,9 +53,6 @@ import 'package:accounting_software/app/features/catalog/sports/presentation/pag
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
-import 'package:accounting_software/app/features/catalog/product_types/presentation/pages/product_types_screen.dart';
-import 'package:accounting_software/app/features/catalog/product_types/presentation/pages/product_type_details_screen.dart';
-import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
@@ -306,30 +303,6 @@ class AppRouter {
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: CategoriesListPage()),
               ),
-              GoRoute(
-                path: ProductTypesRoutes.productTypes.path,
-                name: ProductTypesRoutes.productTypes.name,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: ProductTypesScreen()),
-              ),
-              GoRoute(
-                path: ProductTypesRoutes.detailsPath,
-                name: 'catalog.productTypeDetails',
-                pageBuilder: (context, state) {
-                  final id = int.tryParse(state.pathParameters['id'] ?? '');
-                  return NoTransitionPage(
-                    child: id == null
-                        ? NotFoundScreen(location: state.uri.toString())
-                        : ProductTypeDetailsScreen(productTypeId: id),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          /// ───────── PROFILE ─────────
-          StatefulShellBranch(
-            routes: [
               GoRoute(
                 path: ColorsRoutes.colors.path,
                 name: ColorsRoutes.colors.name,
