@@ -1,0 +1,1 @@
+import 'package:accounting_software/app/core/routing/route_item.dart';abstract final class FabricTypesRoutes{static const fabricTypes=RouteItem('/catalog/fabric-types','catalog.fabric.types');static const List<RouteItem> all=[fabricTypes];}
