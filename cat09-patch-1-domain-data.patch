@@ -1,0 +1,2933 @@
+diff --git a/lib/app/features/catalog/size_systems/groups/data/datasources/size_groups_remote_data_source.dart b/lib/app/features/catalog/size_systems/groups/data/datasources/size_groups_remote_data_source.dart
+new file mode 100644
+index 0000000..0728dd5
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/data/datasources/size_groups_remote_data_source.dart
+@@ -0,0 +1,23 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/data/models/size_group_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart';
++
++abstract class SizeGroupsRemoteDataSource {
++  Future<ApiResult<PaginatedResult<SizeGroupModel>>> getSizeGroups(
++    SizeGroupListQuery query,
++  );
++  Future<ApiResult<SizeGroupModel>> createSizeGroup(SizeGroupDraft draft);
++  Future<ApiResult<SizeGroupModel>> updateSizeGroup({
++    required int id,
++    required SizeGroupDraft draft,
++  });
++  Future<ApiResult<Unit>> deleteSizeGroup(int id);
++  Future<ApiResult<Unit>> setSizeGroupActive({
++    required int id,
++    required bool isActive,
++  });
++  Future<ApiResult<List<GenderOptionModel>>> getGenders();
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/data/datasources/size_groups_remote_data_source_impl.dart b/lib/app/features/catalog/size_systems/groups/data/datasources/size_groups_remote_data_source_impl.dart
+new file mode 100644
+index 0000000..e46e832
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/data/datasources/size_groups_remote_data_source_impl.dart
+@@ -0,0 +1,152 @@
++import 'package:dartz/dartz.dart';
++import 'package:dio/dio.dart';
++import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/core/network/api_client_interface.dart';
++import 'package:accounting_software/app/core/network/postgrest_helpers.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/data/datasources/size_groups_remote_data_source.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/data/models/size_group_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/data/size_groups_endpoint.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/data/size_query_helpers.dart';
++
++class SizeGroupsRemoteDataSourceImpl implements SizeGroupsRemoteDataSource {
++  SizeGroupsRemoteDataSourceImpl(this._apiClient);
++  final IApiClient _apiClient;
++
++  /// Upper bound for the gender picker; the table is a small reference list.
++  static const _gendersLimit = 200;
++
++  // After a 400 on the relation projection, stay on the safe projection.
++  bool _includeCounts = true;
++
++  @override
++  Future<ApiResult<PaginatedResult<SizeGroupModel>>> getSizeGroups(
++    SizeGroupListQuery query,
++  ) async {
++    final preferred = await _fetch(
++      query,
++      _includeCounts
++          ? SizeGroupsEndpoint.select
++          : SizeGroupsEndpoint.selectWithoutCounts,
++    );
++    if (preferred case ApiFailure<PaginatedResult<SizeGroupModel>>(
++      :final exception,
++    )) {
++      if (_includeCounts &&
++          exception is ApiException &&
++          exception.statusCode == 400) {
++        _includeCounts = false;
++        return _fetch(query, SizeGroupsEndpoint.selectWithoutCounts);
++      }
++    }
++    return preferred;
++  }
++
++  Future<ApiResult<PaginatedResult<SizeGroupModel>>> _fetch(
++    SizeGroupListQuery query,
++    String select,
++  ) {
++    final search = SizeQueryHelpers.searchFilter(query.search, const [
++      'name',
++      'code',
++    ]);
++    final status = SizeQueryHelpers.statusFilter(query.status);
++    return _apiClient.getPaginated<SizeGroupModel>(
++      SizeGroupsEndpoint.collection,
++      fromJson: SizeGroupModel.fromJson,
++      page: query.page,
++      limit: query.pageSize,
++      parser: PaginatedParserPresets.supabase,
++      queryParameters: {
++        'select': select,
++        'size_system_id': 'eq.${query.sizeSystemId}',
++        'order': SizeQueryHelpers.order(
++          query.sortField.column,
++          query.sortAscending,
++        ),
++        if (search != null) 'or': search,
++        if (status != null) 'is_active': status,
++        if (query.genderId != null) 'gender_id': 'eq.${query.genderId}',
++      },
++    );
++  }
++
++  @override
++  Future<ApiResult<List<GenderOptionModel>>> getGenders() async {
++    final result = await _apiClient.getPaginated<GenderOptionModel>(
++      SizeGroupsEndpoint.genders,
++      fromJson: GenderOptionModel.fromJson,
++      page: 1,
++      limit: _gendersLimit,
++      parser: PaginatedParserPresets.supabase,
++      queryParameters: {
++        'select': SizeGroupsEndpoint.gendersSelect,
++        'order': SizeGroupsEndpoint.gendersOrder,
++      },
++    );
++    return switch (result) {
++      ApiSuccess<PaginatedResult<GenderOptionModel>>(:final data) =>
++        ApiSuccess(data.items),
++      ApiFailure<PaginatedResult<GenderOptionModel>>(:final exception) =>
++        ApiFailure<List<GenderOptionModel>>(exception),
++    };
++  }
++
++  @override
++  Future<ApiResult<SizeGroupModel>> createSizeGroup(SizeGroupDraft draft) =>
++      _apiClient.post<SizeGroupModel>(
++        SizeGroupsEndpoint.collection,
++        data: _draftJson(draft),
++        options: Options(headers: {'Prefer': 'return=representation'}),
++        fromJsonList: _single,
++      );
++
++  @override
++  Future<ApiResult<SizeGroupModel>> updateSizeGroup({
++    required int id,
++    required SizeGroupDraft draft,
++  }) => _apiClient.patch<SizeGroupModel>(
++    SizeGroupsEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++    data: _draftJson(draft),
++    options: Options(headers: {'Prefer': 'return=representation'}),
++    fromJsonList: _single,
++  );
++
++  @override
++  Future<ApiResult<Unit>> deleteSizeGroup(int id) => _apiClient.delete(
++    SizeGroupsEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++  );
++
++  @override
++  Future<ApiResult<Unit>> setSizeGroupActive({
++    required int id,
++    required bool isActive,
++  }) => _apiClient.patch<Unit>(
++    SizeGroupsEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++    data: {'is_active': isActive},
++    options: Options(headers: {'Prefer': 'return=minimal'}),
++    fromJson: (_) => unit,
++  );
++
++  SizeGroupModel _single(List<dynamic> rows) => PostgrestValue.single(
++    rows,
++    SizeGroupModel.fromJson,
++    what: 'size group',
++  );
++
++  Map<String, dynamic> _draftJson(SizeGroupDraft draft) => {
++    'size_system_id': draft.sizeSystemId,
++    'gender_id': draft.genderId,
++    'name': draft.name.trim(),
++    'code': draft.code.trim(),
++    'description': PostgrestValue.nullableTrim(draft.description),
++    'is_active': draft.isActive,
++  };
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/data/models/size_group_model.dart b/lib/app/features/catalog/size_systems/groups/data/models/size_group_model.dart
+new file mode 100644
+index 0000000..78921d5
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/data/models/size_group_model.dart
+@@ -0,0 +1,91 @@
++import 'package:accounting_software/app/features/catalog/size_systems/shared/data/embedded_count.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/gender_option.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group.dart';
++
++class SizeGroupModel {
++  const SizeGroupModel({
++    required this.id,
++    required this.sizeSystemId,
++    this.genderId,
++    required this.name,
++    required this.code,
++    this.description,
++    required this.isActive,
++    this.sizeCount,
++    this.productTypeCount,
++    this.productUsageCount,
++    this.updatedAt,
++  });
++
++  final int id;
++  final int sizeSystemId;
++  final int? genderId;
++  final String name;
++  final String code;
++  final String? description;
++  final bool isActive;
++  final int? sizeCount;
++  final int? productTypeCount;
++  final int? productUsageCount;
++  final DateTime? updatedAt;
++
++  factory SizeGroupModel.fromJson(Map<String, dynamic> json) {
++    final id = readInt(json['id']);
++    final systemId = readInt(json['size_system_id']);
++    if (id == null || systemId == null) {
++      throw const FormatException('Invalid size group row');
++    }
++    return SizeGroupModel(
++      id: id,
++      sizeSystemId: systemId,
++      genderId: readInt(json['gender_id']),
++      name: json['name'] as String,
++      code: json['code'] as String,
++      description: json['description'] as String?,
++      isActive: json['is_active'] as bool? ?? true,
++      sizeCount: readEmbeddedCount(json['sizes']),
++      productTypeCount: readEmbeddedCount(json['product_type_size_groups']),
++      productUsageCount: readEmbeddedCount(json['product_size_groups']),
++      updatedAt: DateTime.tryParse('${json['updated_at'] ?? ''}'),
++    );
++  }
++
++  SizeGroup toEntity() => SizeGroup(
++    id: id,
++    sizeSystemId: sizeSystemId,
++    genderId: genderId,
++    name: name,
++    code: code,
++    description: description,
++    isActive: isActive,
++    sizeCount: sizeCount,
++    productTypeCount: productTypeCount,
++    productUsageCount: productUsageCount,
++    updatedAt: updatedAt,
++  );
++}
++
++class GenderOptionModel {
++  const GenderOptionModel({
++    required this.id,
++    required this.name,
++    required this.isActive,
++  });
++
++  final int id;
++  final String name;
++  final bool isActive;
++
++  factory GenderOptionModel.fromJson(Map<String, dynamic> json) {
++    final id = readInt(json['id']);
++    if (id == null) throw const FormatException('Invalid gender id');
++    return GenderOptionModel(
++      id: id,
++      name: json['name'] as String,
++      isActive: json['is_active'] as bool? ?? true,
++    );
++  }
++
++  GenderOption toEntity() =>
++      GenderOption(id: id, name: name, isActive: isActive);
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/data/repositories/size_groups_repository_impl.dart b/lib/app/features/catalog/size_systems/groups/data/repositories/size_groups_repository_impl.dart
+new file mode 100644
+index 0000000..057b305
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/data/repositories/size_groups_repository_impl.dart
+@@ -0,0 +1,122 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
++import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
++import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/data/datasources/size_groups_remote_data_source.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/data/models/size_group_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/gender_option.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/repositories/size_groups_repository.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/failures/size_system_failures.dart';
++
++class SizeGroupsRepositoryImpl
++    with RepositoryExecutor
++    implements SizeGroupsRepository {
++  const SizeGroupsRepositoryImpl(this._remote);
++  final SizeGroupsRemoteDataSource _remote;
++
++  static const _uniqueViolation = '23505';
++  static const _foreignKeyViolation = '23503';
++
++  @override
++  Future<Either<Failure, PaginatedResult<SizeGroup>>> getSizeGroups(
++    SizeGroupListQuery query,
++  ) => execute(() async {
++    final result = await _remote.getSizeGroups(query);
++    return switch (result) {
++      ApiSuccess<PaginatedResult<SizeGroupModel>>(:final data) => Right(
++        PaginatedResult<SizeGroup>(
++          items: data.items.map((model) => model.toEntity()).toList(),
++          totalCount: data.totalCount,
++          currentPage: data.currentPage,
++          totalPages: data.totalPages,
++          isFromCache: data.isFromCache,
++        ),
++      ),
++      ApiFailure<PaginatedResult<SizeGroupModel>>(:final exception) => Left(
++        ExceptionMapper.map(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, List<GenderOption>>> getGenders() =>
++      execute(() async {
++        final result = await _remote.getGenders();
++        return switch (result) {
++          ApiSuccess<List<GenderOptionModel>>(:final data) => Right(
++            data.map((model) => model.toEntity()).toList(),
++          ),
++          ApiFailure<List<GenderOptionModel>>(:final exception) => Left(
++            ExceptionMapper.map(exception),
++          ),
++        };
++      });
++
++  @override
++  Future<Either<Failure, SizeGroup>> createSizeGroup(SizeGroupDraft draft) =>
++      execute(() async {
++        final result = await _remote.createSizeGroup(draft);
++        return switch (result) {
++          ApiSuccess<SizeGroupModel>(:final data) => Right(data.toEntity()),
++          ApiFailure<SizeGroupModel>(:final exception) => Left(
++            _mapWriteFailure(exception),
++          ),
++        };
++      });
++
++  @override
++  Future<Either<Failure, SizeGroup>> updateSizeGroup({
++    required int id,
++    required SizeGroupDraft draft,
++  }) => execute(() async {
++    final result = await _remote.updateSizeGroup(id: id, draft: draft);
++    return switch (result) {
++      ApiSuccess<SizeGroupModel>(:final data) => Right(data.toEntity()),
++      ApiFailure<SizeGroupModel>(:final exception) => Left(
++        _mapWriteFailure(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, Unit>> deleteSizeGroup(int id) => execute(() async {
++    final result = await _remote.deleteSizeGroup(id);
++    return switch (result) {
++      ApiSuccess<Unit>() => const Right(unit),
++      ApiFailure<Unit>(:final exception) => Left(_mapDeleteFailure(exception)),
++    };
++  });
++
++  @override
++  Future<Either<Failure, Unit>> setSizeGroupActive({
++    required int id,
++    required bool isActive,
++  }) => execute(() async {
++    final result = await _remote.setSizeGroupActive(id: id, isActive: isActive);
++    return switch (result) {
++      ApiSuccess<Unit>() => const Right(unit),
++      ApiFailure<Unit>(:final exception) => Left(
++        ExceptionMapper.map(exception),
++      ),
++    };
++  });
++
++  Failure _mapDeleteFailure(AppException exception) =>
++      exception is ApiException && exception.errorCode == _foreignKeyViolation
++      ? const SizeGroupInUseFailure()
++      : ExceptionMapper.map(exception);
++
++  Failure _mapWriteFailure(AppException exception) =>
++      exception is ApiException &&
++          (exception.errorCode == _uniqueViolation ||
++              exception.statusCode == 409)
++      ? const SizeCodeDuplicateFailure()
++      : ExceptionMapper.map(exception);
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/data/size_groups_endpoint.dart b/lib/app/features/catalog/size_systems/groups/data/size_groups_endpoint.dart
+new file mode 100644
+index 0000000..a006387
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/data/size_groups_endpoint.dart
+@@ -0,0 +1,21 @@
++import 'package:accounting_software/app/core/network/api_end_points.dart';
++
++abstract final class SizeGroupsEndpoint {
++  static const collection = AppEndpoint('/rest/v1/size_groups');
++
++  /// Light read source for the gender picker/filter (id, name, is_active).
++  static const genders = AppEndpoint('/rest/v1/genders');
++  static const gendersSelect = 'id,name,is_active';
++  static const gendersOrder = 'name.asc,id.asc';
++
++  static const _base =
++      'id,size_system_id,gender_id,name,code,description,is_active,updated_at';
++
++  /// Preferred projection with the three usage counts.
++  static const select =
++      '$_base,sizes(count),product_type_size_groups(count),'
++      'product_size_groups(count)';
++
++  /// Safe fallback when PostgREST rejects the embedded relations (HTTP 400).
++  static const selectWithoutCounts = _base;
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/domain/entity/gender_option.dart b/lib/app/features/catalog/size_systems/groups/domain/entity/gender_option.dart
+new file mode 100644
+index 0000000..252aafe
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/domain/entity/gender_option.dart
+@@ -0,0 +1,18 @@
++import 'package:equatable/equatable.dart';
++
++/// Lightweight read-only view of `genders` owned by this feature (the genders
++/// screen belongs to another module): id, name and activity only.
++class GenderOption extends Equatable {
++  const GenderOption({
++    required this.id,
++    required this.name,
++    required this.isActive,
++  });
++
++  final int id;
++  final String name;
++  final bool isActive;
++
++  @override
++  List<Object?> get props => [id, name, isActive];
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/domain/entity/size_group.dart b/lib/app/features/catalog/size_systems/groups/domain/entity/size_group.dart
+new file mode 100644
+index 0000000..579efe1
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/domain/entity/size_group.dart
+@@ -0,0 +1,51 @@
++import 'package:equatable/equatable.dart';
++
++/// A row of `size_groups` (men's shoes, kids' clothes...) inside one system.
++class SizeGroup extends Equatable {
++  const SizeGroup({
++    required this.id,
++    required this.sizeSystemId,
++    this.genderId,
++    required this.name,
++    required this.code,
++    this.description,
++    required this.isActive,
++    this.sizeCount,
++    this.productTypeCount,
++    this.productUsageCount,
++    this.updatedAt,
++  });
++
++  final int id;
++  final int sizeSystemId;
++  final int? genderId;
++  final String name;
++  final String code;
++  final String? description;
++  final bool isActive;
++
++  /// Embedded relation counts; null means unknown (never treated as 0).
++  final int? sizeCount;
++  final int? productTypeCount;
++  final int? productUsageCount;
++  final DateTime? updatedAt;
++
++  /// Deletion is offered only when every usage count is known and zero.
++  bool get canDelete =>
++      sizeCount == 0 && productTypeCount == 0 && productUsageCount == 0;
++
++  @override
++  List<Object?> get props => [
++    id,
++    sizeSystemId,
++    genderId,
++    name,
++    code,
++    description,
++    isActive,
++    sizeCount,
++    productTypeCount,
++    productUsageCount,
++    updatedAt,
++  ];
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/domain/entity/size_group_draft.dart b/lib/app/features/catalog/size_systems/groups/domain/entity/size_group_draft.dart
+new file mode 100644
+index 0000000..a8082ab
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/domain/entity/size_group_draft.dart
+@@ -0,0 +1,30 @@
++import 'package:equatable/equatable.dart';
++
++class SizeGroupDraft extends Equatable {
++  const SizeGroupDraft({
++    required this.sizeSystemId,
++    this.genderId,
++    required this.name,
++    required this.code,
++    this.description,
++    this.isActive = true,
++  });
++
++  /// Fixed by the route context, never edited in the form.
++  final int sizeSystemId;
++  final int? genderId;
++  final String name;
++  final String code;
++  final String? description;
++  final bool isActive;
++
++  @override
++  List<Object?> get props => [
++    sizeSystemId,
++    genderId,
++    name,
++    code,
++    description,
++    isActive,
++  ];
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart b/lib/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart
+new file mode 100644
+index 0000000..dc820cf
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart
+@@ -0,0 +1,117 @@
++import 'package:equatable/equatable.dart';
++import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/size_status_filter.dart';
++
++enum SizeGroupSortField {
++  name('name'),
++  code('code'),
++  updated('updated_at');
++
++  const SizeGroupSortField(this.column);
++  final String column;
++
++  static SizeGroupSortField? tryParse(String? name) {
++    for (final value in values) {
++      if (value.name == name) return value;
++    }
++    return null;
++  }
++}
++
++class SizeGroupListQuery extends Equatable
++    implements PagedQuery<SizeGroupListQuery> {
++  const SizeGroupListQuery({
++    required this.sizeSystemId,
++    this.search = '',
++    this.status = SizeStatusFilter.all,
++    this.genderId,
++    this.sortField = SizeGroupSortField.name,
++    this.sortAscending = true,
++    this.page = 1,
++    this.pageSize = 25,
++  });
++
++  /// The parent system; every request is scoped to it.
++  final int sizeSystemId;
++  @override
++  final String search;
++  final SizeStatusFilter status;
++
++  /// Null means "any gender".
++  final int? genderId;
++  final SizeGroupSortField sortField;
++  final bool sortAscending;
++  @override
++  final int page;
++  @override
++  final int pageSize;
++
++  @override
++  bool get hasActiveFilters =>
++      search.isNotEmpty || status != SizeStatusFilter.all || genderId != null;
++
++  @override
++  SizeGroupListQuery withSearch(String value) =>
++      copyWith(search: value, page: 1);
++
++  @override
++  SizeGroupListQuery withPage(int value) => copyWith(page: value);
++
++  @override
++  SizeGroupListQuery cleared() => SizeGroupListQuery(
++    sizeSystemId: sizeSystemId,
++    sortField: sortField,
++    sortAscending: sortAscending,
++    pageSize: pageSize,
++  );
++
++  SizeGroupListQuery withStatus(SizeStatusFilter value) =>
++      status == value ? this : copyWith(status: value, page: 1);
++
++  SizeGroupListQuery withGender(int? value) => genderId == value
++      ? this
++      : SizeGroupListQuery(
++          sizeSystemId: sizeSystemId,
++          search: search,
++          status: status,
++          genderId: value,
++          sortField: sortField,
++          sortAscending: sortAscending,
++          pageSize: pageSize,
++        );
++
++  SizeGroupListQuery withSort(SizeGroupSortField field, bool ascending) =>
++      sortField == field && sortAscending == ascending
++      ? this
++      : copyWith(sortField: field, sortAscending: ascending, page: 1);
++
++  SizeGroupListQuery copyWith({
++    String? search,
++    SizeStatusFilter? status,
++    SizeGroupSortField? sortField,
++    bool? sortAscending,
++    int? page,
++    int? pageSize,
++  }) => SizeGroupListQuery(
++    sizeSystemId: sizeSystemId,
++    search: search ?? this.search,
++    status: status ?? this.status,
++    genderId: genderId,
++    sortField: sortField ?? this.sortField,
++    sortAscending: sortAscending ?? this.sortAscending,
++    page: page ?? this.page,
++    pageSize: pageSize ?? this.pageSize,
++  );
++
++  @override
++  List<Object?> get props => [
++    sizeSystemId,
++    search,
++    status,
++    genderId,
++    sortField,
++    sortAscending,
++    page,
++    pageSize,
++  ];
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/domain/repositories/size_groups_repository.dart b/lib/app/features/catalog/size_systems/groups/domain/repositories/size_groups_repository.dart
+new file mode 100644
+index 0000000..2a82dfd
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/domain/repositories/size_groups_repository.dart
+@@ -0,0 +1,26 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/gender_option.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart';
++
++abstract class SizeGroupsRepository {
++  Future<Either<Failure, PaginatedResult<SizeGroup>>> getSizeGroups(
++    SizeGroupListQuery query,
++  );
++  Future<Either<Failure, SizeGroup>> createSizeGroup(SizeGroupDraft draft);
++  Future<Either<Failure, SizeGroup>> updateSizeGroup({
++    required int id,
++    required SizeGroupDraft draft,
++  });
++  Future<Either<Failure, Unit>> deleteSizeGroup(int id);
++  Future<Either<Failure, Unit>> setSizeGroupActive({
++    required int id,
++    required bool isActive,
++  });
++
++  /// Read-only genders for the picker/filter. May legitimately be empty.
++  Future<Either<Failure, List<GenderOption>>> getGenders();
++}
+diff --git a/lib/app/features/catalog/size_systems/groups/domain/usecase/size_groups_use_cases.dart b/lib/app/features/catalog/size_systems/groups/domain/usecase/size_groups_use_cases.dart
+new file mode 100644
+index 0000000..27fd146
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/groups/domain/usecase/size_groups_use_cases.dart
+@@ -0,0 +1,86 @@
++import 'package:dartz/dartz.dart';
++import 'package:equatable/equatable.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/foundation/base/use_case.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/gender_option.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/repositories/size_groups_repository.dart';
++
++class GetSizeGroupsUseCase
++    extends UseCase<PaginatedResult<SizeGroup>, SizeGroupListQuery> {
++  GetSizeGroupsUseCase(this._repository);
++  final SizeGroupsRepository _repository;
++
++  @override
++  Future<Either<Failure, PaginatedResult<SizeGroup>>> call(
++    SizeGroupListQuery params,
++  ) => _repository.getSizeGroups(params);
++}
++
++class GetGenderOptionsUseCase extends UseCase<List<GenderOption>, NoParams> {
++  GetGenderOptionsUseCase(this._repository);
++  final SizeGroupsRepository _repository;
++
++  @override
++  Future<Either<Failure, List<GenderOption>>> call(NoParams params) =>
++      _repository.getGenders();
++}
++
++class CreateSizeGroupUseCase extends UseCase<SizeGroup, SizeGroupDraft> {
++  CreateSizeGroupUseCase(this._repository);
++  final SizeGroupsRepository _repository;
++
++  @override
++  Future<Either<Failure, SizeGroup>> call(SizeGroupDraft params) =>
++      _repository.createSizeGroup(params);
++}
++
++class UpdateSizeGroupParams extends Equatable {
++  const UpdateSizeGroupParams({required this.id, required this.draft});
++  final int id;
++  final SizeGroupDraft draft;
++
++  @override
++  List<Object?> get props => [id, draft];
++}
++
++class UpdateSizeGroupUseCase
++    extends UseCase<SizeGroup, UpdateSizeGroupParams> {
++  UpdateSizeGroupUseCase(this._repository);
++  final SizeGroupsRepository _repository;
++
++  @override
++  Future<Either<Failure, SizeGroup>> call(UpdateSizeGroupParams params) =>
++      _repository.updateSizeGroup(id: params.id, draft: params.draft);
++}
++
++class DeleteSizeGroupUseCase extends UseCase<Unit, int> {
++  DeleteSizeGroupUseCase(this._repository);
++  final SizeGroupsRepository _repository;
++
++  @override
++  Future<Either<Failure, Unit>> call(int params) =>
++      _repository.deleteSizeGroup(params);
++}
++
++class SetSizeGroupActiveParams extends Equatable {
++  const SetSizeGroupActiveParams({required this.id, required this.isActive});
++  final int id;
++  final bool isActive;
++
++  @override
++  List<Object?> get props => [id, isActive];
++}
++
++class SetSizeGroupActiveUseCase
++    extends UseCase<Unit, SetSizeGroupActiveParams> {
++  SetSizeGroupActiveUseCase(this._repository);
++  final SizeGroupsRepository _repository;
++
++  @override
++  Future<Either<Failure, Unit>> call(SetSizeGroupActiveParams params) =>
++      _repository.setSizeGroupActive(id: params.id, isActive: params.isActive);
++}
+diff --git a/lib/app/features/catalog/size_systems/shared/data/embedded_count.dart b/lib/app/features/catalog/size_systems/shared/data/embedded_count.dart
+new file mode 100644
+index 0000000..887cf4e
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/shared/data/embedded_count.dart
+@@ -0,0 +1,19 @@
++/// PostgREST returns an embedded count as `[{count: n}]`. Missing or malformed
++/// relation data is unknown, not zero: the UI must not enable deletion.
++int? readEmbeddedCount(dynamic value) {
++  if (value is num) return value.toInt();
++  if (value is Map<String, dynamic>) {
++    final count = value['count'];
++    return count is num ? count.toInt() : null;
++  }
++  if (value is List && value.isNotEmpty) {
++    final first = value.first;
++    if (first is Map<String, dynamic>) {
++      final count = first['count'];
++      return count is num ? count.toInt() : null;
++    }
++  }
++  return null;
++}
++
++int? readInt(dynamic value) => value is int ? value : int.tryParse('$value');
+diff --git a/lib/app/features/catalog/size_systems/shared/data/size_query_helpers.dart b/lib/app/features/catalog/size_systems/shared/data/size_query_helpers.dart
+new file mode 100644
+index 0000000..a82d417
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/shared/data/size_query_helpers.dart
+@@ -0,0 +1,22 @@
++import 'package:accounting_software/app/core/network/postgrest_helpers.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/size_status_filter.dart';
++
++/// PostgREST query fragments shared by the size data sources.
++abstract final class SizeQueryHelpers {
++  /// `or=(col.ilike."*term*",...)` or null for a blank search.
++  static String? searchFilter(String raw, List<String> columns) {
++    final term = PostgrestValue.escapeFilter(raw.trim());
++    if (term.isEmpty) return null;
++    return '(${columns.map((c) => '$c.ilike."*$term*"').join(',')})';
++  }
++
++  static String? statusFilter(SizeStatusFilter status) => switch (status) {
++    SizeStatusFilter.all => null,
++    SizeStatusFilter.active => 'eq.true',
++    SizeStatusFilter.inactive => 'eq.false',
++  };
++
++  /// Primary sort plus an `id` tie-breaker so page boundaries stay stable.
++  static String order(String column, bool ascending) =>
++      '$column.${ascending ? 'asc' : 'desc'},id.asc';
++}
+diff --git a/lib/app/features/catalog/size_systems/shared/domain/failures/size_system_failure_keys.dart b/lib/app/features/catalog/size_systems/shared/domain/failures/size_system_failure_keys.dart
+new file mode 100644
+index 0000000..0d0a799
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/shared/domain/failures/size_system_failure_keys.dart
+@@ -0,0 +1,27 @@
++import 'package:accounting_software/app/core/localization/translations/app_key.dart';
++
++enum SizeSystemFailureKeys implements AppKey {
++  systemInUse(
++    ar: 'النظام يحتوي مجموعات أو مستخدم، أوقفه بدل حذفه',
++    en: 'This system has groups or is in use. Deactivate it instead.',
++  ),
++  groupInUse(
++    ar: 'المجموعة تحتوي مقاسات أو مرتبطة بأنواع منتجات أو منتجات، أوقفها بدل حذفها',
++    en: 'This group has sizes or is linked to product types or products. '
++        'Deactivate it instead.',
++  ),
++  sizeInUse(
++    ar: 'المقاس مستخدم في منتجات، أوقفه بدل حذفه',
++    en: 'This size is used in products. Deactivate it instead.',
++  );
++
++  const SizeSystemFailureKeys({required this.ar, required this.en});
++
++  @override
++  final String ar;
++  @override
++  final String en;
++
++  @override
++  String get key => 'sizeSystems.failure.$name';
++}
+diff --git a/lib/app/features/catalog/size_systems/shared/domain/failures/size_system_failures.dart b/lib/app/features/catalog/size_systems/shared/domain/failures/size_system_failures.dart
+new file mode 100644
+index 0000000..a3ec65d
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/shared/domain/failures/size_system_failures.dart
+@@ -0,0 +1,25 @@
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/localization/keys/error_keys.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/failures/size_system_failure_keys.dart';
++
++class SizeSystemInUseFailure extends Failure {
++  const SizeSystemInUseFailure()
++    : super(messageKey: SizeSystemFailureKeys.systemInUse, statusCode: 409);
++}
++
++class SizeGroupInUseFailure extends Failure {
++  const SizeGroupInUseFailure()
++    : super(messageKey: SizeSystemFailureKeys.groupInUse, statusCode: 409);
++}
++
++class SizeInUseFailure extends Failure {
++  const SizeInUseFailure()
++    : super(messageKey: SizeSystemFailureKeys.sizeInUse, statusCode: 409);
++}
++
++/// A UNIQUE code was repeated (SQLSTATE 23505 / HTTP 409): system and group
++/// codes are globally unique, size codes are unique inside their group.
++class SizeCodeDuplicateFailure extends Failure {
++  const SizeCodeDuplicateFailure()
++    : super(messageKey: ErrorKeys.conflict, statusCode: 409);
++}
+diff --git a/lib/app/features/catalog/size_systems/shared/domain/range/size_range_generator.dart b/lib/app/features/catalog/size_systems/shared/domain/range/size_range_generator.dart
+new file mode 100644
+index 0000000..1985165
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/shared/domain/range/size_range_generator.dart
+@@ -0,0 +1,98 @@
++import 'package:dartz/dartz.dart';
++import 'package:decimal/decimal.dart';
++import 'package:equatable/equatable.dart';
++
++enum SizeRangeError { reversed, stepNotPositive, tooManyRows }
++
++class SizeRangeSpec extends Equatable {
++  const SizeRangeSpec({
++    required this.from,
++    required this.to,
++    required this.step,
++    this.codePrefix = '',
++  });
++
++  final Decimal from;
++  final Decimal to;
++  final Decimal step;
++  final String codePrefix;
++
++  @override
++  List<Object?> get props => [from, to, step, codePrefix];
++}
++
++class GeneratedSizeRow extends Equatable {
++  const GeneratedSizeRow({
++    required this.code,
++    required this.name,
++    required this.numericValue,
++    required this.sortOrder,
++  });
++
++  final String code;
++  final String name;
++  final Decimal numericValue;
++  final int sortOrder;
++
++  @override
++  List<Object?> get props => [code, name, numericValue, sortOrder];
++}
++
++class SizeRangePlan extends Equatable {
++  const SizeRangePlan({required this.rows, required this.skippedCodes});
++
++  /// Rows that will be saved, in generation order.
++  final List<GeneratedSizeRow> rows;
++
++  /// Codes already present in the group: skipped, reported to the user.
++  final List<String> skippedCodes;
++
++  @override
++  List<Object?> get props => [rows, skippedCodes];
++}
++
++/// Builds the preview of a numeric size range (e.g. 36 to 46 step 1 = 11 rows).
++///
++/// All arithmetic uses [Decimal], never `double`, so 0.1 steps stay exact.
++abstract final class SizeRangeGenerator {
++  /// Hard ceiling on generated rows (before skipping existing codes).
++  static const maxRows = 200;
++
++  static Either<SizeRangeError, SizeRangePlan> plan({
++    required SizeRangeSpec spec,
++    required Set<String> existingCodes,
++    int firstSortOrder = 0,
++  }) {
++    if (spec.step <= Decimal.zero) {
++      return const Left(SizeRangeError.stepNotPositive);
++    }
++    if (spec.from > spec.to) return const Left(SizeRangeError.reversed);
++
++    final existing = {for (final code in existingCodes) code.toUpperCase()};
++    final prefix = spec.codePrefix.trim().toUpperCase();
++    final rows = <GeneratedSizeRow>[];
++    final skipped = <String>[];
++    var generated = 0;
++    var sortOrder = firstSortOrder;
++
++    for (var value = spec.from; value <= spec.to; value += spec.step) {
++      generated++;
++      if (generated > maxRows) return const Left(SizeRangeError.tooManyRows);
++      final text = value.toString();
++      final code = '$prefix${text.replaceAll('.', '_')}';
++      if (existing.contains(code)) {
++        skipped.add(code);
++        continue;
++      }
++      rows.add(
++        GeneratedSizeRow(
++          code: code,
++          name: text,
++          numericValue: value,
++          sortOrder: sortOrder++,
++        ),
++      );
++    }
++    return Right(SizeRangePlan(rows: rows, skippedCodes: skipped));
++  }
++}
+diff --git a/lib/app/features/catalog/size_systems/shared/domain/size_status_filter.dart b/lib/app/features/catalog/size_systems/shared/domain/size_status_filter.dart
+new file mode 100644
+index 0000000..dcacc88
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/shared/domain/size_status_filter.dart
+@@ -0,0 +1,2 @@
++/// Status filter shared by the three size lists (systems, groups, sizes).
++enum SizeStatusFilter { all, active, inactive }
+diff --git a/lib/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source.dart b/lib/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source.dart
+new file mode 100644
+index 0000000..dfa0ba2
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source.dart
+@@ -0,0 +1,25 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/models/catalog_size_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart';
++
++abstract class SizesRemoteDataSource {
++  Future<ApiResult<PaginatedResult<CatalogSizeModel>>> getSizes(
++    CatalogSizeListQuery query,
++  );
++  Future<ApiResult<CatalogSizeModel>> createSize(CatalogSizeDraft draft);
++  Future<ApiResult<List<CatalogSizeModel>>> createSizes(
++    List<CatalogSizeDraft> drafts,
++  );
++  Future<ApiResult<CatalogSizeModel>> updateSize({
++    required int id,
++    required CatalogSizeDraft draft,
++  });
++  Future<ApiResult<Unit>> deleteSize(int id);
++  Future<ApiResult<Unit>> setSizeActive({
++    required int id,
++    required bool isActive,
++  });
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source_impl.dart b/lib/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source_impl.dart
+new file mode 100644
+index 0000000..928415b
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source_impl.dart
+@@ -0,0 +1,149 @@
++import 'package:dartz/dartz.dart';
++import 'package:dio/dio.dart';
++import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/core/network/api_client_interface.dart';
++import 'package:accounting_software/app/core/network/postgrest_helpers.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/data/size_query_helpers.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/models/catalog_size_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/sizes_endpoint.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart';
++
++class SizesRemoteDataSourceImpl implements SizesRemoteDataSource {
++  SizesRemoteDataSourceImpl(this._apiClient);
++  final IApiClient _apiClient;
++
++  // After a 400 on the relation projection, stay on the safe projection.
++  bool _includeCount = true;
++
++  @override
++  Future<ApiResult<PaginatedResult<CatalogSizeModel>>> getSizes(
++    CatalogSizeListQuery query,
++  ) async {
++    final preferred = await _fetch(
++      query,
++      _includeCount ? SizesEndpoint.select : SizesEndpoint.selectWithoutCount,
++    );
++    if (preferred case ApiFailure<PaginatedResult<CatalogSizeModel>>(
++      :final exception,
++    )) {
++      if (_includeCount &&
++          exception is ApiException &&
++          exception.statusCode == 400) {
++        _includeCount = false;
++        return _fetch(query, SizesEndpoint.selectWithoutCount);
++      }
++    }
++    return preferred;
++  }
++
++  Future<ApiResult<PaginatedResult<CatalogSizeModel>>> _fetch(
++    CatalogSizeListQuery query,
++    String select,
++  ) {
++    final search = SizeQueryHelpers.searchFilter(query.search, const [
++      'name',
++      'code',
++    ]);
++    final status = SizeQueryHelpers.statusFilter(query.status);
++    return _apiClient.getPaginated<CatalogSizeModel>(
++      SizesEndpoint.collection,
++      fromJson: CatalogSizeModel.fromJson,
++      page: query.page,
++      limit: query.pageSize,
++      parser: PaginatedParserPresets.supabase,
++      queryParameters: {
++        'select': select,
++        'size_group_id': 'eq.${query.sizeGroupId}',
++        'order': order(query),
++        if (search != null) 'or': search,
++        if (status != null) 'is_active': status,
++      },
++    );
++  }
++
++  /// The default order is the group's natural one: sort_order, then
++  /// numeric_value (nulls last), then id. Other sorts keep `id` as tiebreaker.
++  static String order(CatalogSizeListQuery query) {
++    final dir = query.sortAscending ? 'asc' : 'desc';
++    return switch (query.sortField) {
++      CatalogSizeSortField.order =>
++        'sort_order.$dir,numeric_value.$dir.nullslast,id.asc',
++      CatalogSizeSortField.value => 'numeric_value.$dir.nullslast,id.asc',
++      CatalogSizeSortField.name => 'name.$dir,id.asc',
++      CatalogSizeSortField.code => 'code.$dir,id.asc',
++    };
++  }
++
++  @override
++  Future<ApiResult<CatalogSizeModel>> createSize(CatalogSizeDraft draft) =>
++      _apiClient.post<CatalogSizeModel>(
++        SizesEndpoint.collection,
++        data: _draftJson(draft),
++        options: Options(headers: {'Prefer': 'return=representation'}),
++        fromJsonList: _single,
++      );
++
++  @override
++  Future<ApiResult<List<CatalogSizeModel>>> createSizes(
++    List<CatalogSizeDraft> drafts,
++  ) => _apiClient.post<List<CatalogSizeModel>>(
++    SizesEndpoint.collection,
++    data: [for (final draft in drafts) _draftJson(draft)],
++    options: Options(headers: {'Prefer': 'return=representation'}),
++    fromJsonList: (rows) => [
++      for (final row in rows)
++        CatalogSizeModel.fromJson(row as Map<String, dynamic>),
++    ],
++  );
++
++  @override
++  Future<ApiResult<CatalogSizeModel>> updateSize({
++    required int id,
++    required CatalogSizeDraft draft,
++  }) => _apiClient.patch<CatalogSizeModel>(
++    SizesEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++    data: _draftJson(draft),
++    options: Options(headers: {'Prefer': 'return=representation'}),
++    fromJsonList: _single,
++  );
++
++  @override
++  Future<ApiResult<Unit>> deleteSize(int id) => _apiClient.delete(
++    SizesEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++  );
++
++  @override
++  Future<ApiResult<Unit>> setSizeActive({
++    required int id,
++    required bool isActive,
++  }) => _apiClient.patch<Unit>(
++    SizesEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++    data: {'is_active': isActive},
++    options: Options(headers: {'Prefer': 'return=minimal'}),
++    fromJson: (_) => unit,
++  );
++
++  CatalogSizeModel _single(List<dynamic> rows) => PostgrestValue.single(
++    rows,
++    CatalogSizeModel.fromJson,
++    what: 'size',
++  );
++
++  /// `numeric_value` is sent as its exact decimal text, never a double.
++  Map<String, dynamic> _draftJson(CatalogSizeDraft draft) => {
++    'size_group_id': draft.sizeGroupId,
++    'name': draft.name.trim(),
++    'code': draft.code.trim(),
++    'numeric_value': draft.numericValue?.toString(),
++    'sort_order': draft.sortOrder,
++    'is_active': draft.isActive,
++  };
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/data/models/catalog_size_model.dart b/lib/app/features/catalog/size_systems/sizes/data/models/catalog_size_model.dart
+new file mode 100644
+index 0000000..e7da61f
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/data/models/catalog_size_model.dart
+@@ -0,0 +1,67 @@
++import 'package:decimal/decimal.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/data/embedded_count.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size.dart';
++
++class CatalogSizeModel {
++  const CatalogSizeModel({
++    required this.id,
++    required this.sizeGroupId,
++    required this.name,
++    required this.code,
++    this.numericValue,
++    required this.sortOrder,
++    required this.isActive,
++    this.productCount,
++    this.updatedAt,
++  });
++
++  final int id;
++  final int sizeGroupId;
++  final String name;
++  final String code;
++  final Decimal? numericValue;
++  final int sortOrder;
++  final bool isActive;
++  final int? productCount;
++  final DateTime? updatedAt;
++
++  factory CatalogSizeModel.fromJson(Map<String, dynamic> json) {
++    final id = readInt(json['id']);
++    final groupId = readInt(json['size_group_id']);
++    if (id == null || groupId == null) {
++      throw const FormatException('Invalid size row');
++    }
++    return CatalogSizeModel(
++      id: id,
++      sizeGroupId: groupId,
++      name: json['name'] as String,
++      code: json['code'] as String,
++      numericValue: _readDecimal(json['numeric_value']),
++      sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
++      isActive: json['is_active'] as bool? ?? true,
++      productCount: readEmbeddedCount(json['product_sizes']),
++      updatedAt: DateTime.tryParse('${json['updated_at'] ?? ''}'),
++    );
++  }
++
++  /// `numeric(8,2)` arrives as a JSON number or string; parsed through its
++  /// text so no binary floating point error is introduced.
++  static Decimal? _readDecimal(dynamic value) {
++    if (value == null) return null;
++    if (value is num) return Decimal.tryParse(value.toString());
++    if (value is String) return Decimal.tryParse(value);
++    return null;
++  }
++
++  CatalogSize toEntity() => CatalogSize(
++    id: id,
++    sizeGroupId: sizeGroupId,
++    name: name,
++    code: code,
++    numericValue: numericValue,
++    sortOrder: sortOrder,
++    isActive: isActive,
++    productCount: productCount,
++    updatedAt: updatedAt,
++  );
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/data/repositories/sizes_repository_impl.dart b/lib/app/features/catalog/size_systems/sizes/data/repositories/sizes_repository_impl.dart
+new file mode 100644
+index 0000000..dcdfb04
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/data/repositories/sizes_repository_impl.dart
+@@ -0,0 +1,120 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
++import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
++import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/failures/size_system_failures.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/models/catalog_size_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/repositories/sizes_repository.dart';
++
++class SizesRepositoryImpl with RepositoryExecutor implements SizesRepository {
++  const SizesRepositoryImpl(this._remote);
++  final SizesRemoteDataSource _remote;
++
++  static const _uniqueViolation = '23505';
++  static const _foreignKeyViolation = '23503';
++
++  @override
++  Future<Either<Failure, PaginatedResult<CatalogSize>>> getSizes(
++    CatalogSizeListQuery query,
++  ) => execute(() async {
++    final result = await _remote.getSizes(query);
++    return switch (result) {
++      ApiSuccess<PaginatedResult<CatalogSizeModel>>(:final data) => Right(
++        PaginatedResult<CatalogSize>(
++          items: data.items.map((model) => model.toEntity()).toList(),
++          totalCount: data.totalCount,
++          currentPage: data.currentPage,
++          totalPages: data.totalPages,
++          isFromCache: data.isFromCache,
++        ),
++      ),
++      ApiFailure<PaginatedResult<CatalogSizeModel>>(:final exception) => Left(
++        ExceptionMapper.map(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, CatalogSize>> createSize(CatalogSizeDraft draft) =>
++      execute(() async {
++        final result = await _remote.createSize(draft);
++        return switch (result) {
++          ApiSuccess<CatalogSizeModel>(:final data) => Right(data.toEntity()),
++          ApiFailure<CatalogSizeModel>(:final exception) => Left(
++            _mapWriteFailure(exception),
++          ),
++        };
++      });
++
++  @override
++  Future<Either<Failure, List<CatalogSize>>> createSizes(
++    List<CatalogSizeDraft> drafts,
++  ) => execute(() async {
++    final result = await _remote.createSizes(drafts);
++    return switch (result) {
++      ApiSuccess<List<CatalogSizeModel>>(:final data) => Right(
++        data.map((model) => model.toEntity()).toList(),
++      ),
++      ApiFailure<List<CatalogSizeModel>>(:final exception) => Left(
++        _mapWriteFailure(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, CatalogSize>> updateSize({
++    required int id,
++    required CatalogSizeDraft draft,
++  }) => execute(() async {
++    final result = await _remote.updateSize(id: id, draft: draft);
++    return switch (result) {
++      ApiSuccess<CatalogSizeModel>(:final data) => Right(data.toEntity()),
++      ApiFailure<CatalogSizeModel>(:final exception) => Left(
++        _mapWriteFailure(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, Unit>> deleteSize(int id) => execute(() async {
++    final result = await _remote.deleteSize(id);
++    return switch (result) {
++      ApiSuccess<Unit>() => const Right(unit),
++      ApiFailure<Unit>(:final exception) => Left(_mapDeleteFailure(exception)),
++    };
++  });
++
++  @override
++  Future<Either<Failure, Unit>> setSizeActive({
++    required int id,
++    required bool isActive,
++  }) => execute(() async {
++    final result = await _remote.setSizeActive(id: id, isActive: isActive);
++    return switch (result) {
++      ApiSuccess<Unit>() => const Right(unit),
++      ApiFailure<Unit>(:final exception) => Left(
++        ExceptionMapper.map(exception),
++      ),
++    };
++  });
++
++  Failure _mapDeleteFailure(AppException exception) =>
++      exception is ApiException && exception.errorCode == _foreignKeyViolation
++      ? const SizeInUseFailure()
++      : ExceptionMapper.map(exception);
++
++  Failure _mapWriteFailure(AppException exception) =>
++      exception is ApiException &&
++          (exception.errorCode == _uniqueViolation ||
++              exception.statusCode == 409)
++      ? const SizeCodeDuplicateFailure()
++      : ExceptionMapper.map(exception);
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/data/sizes_endpoint.dart b/lib/app/features/catalog/size_systems/sizes/data/sizes_endpoint.dart
+new file mode 100644
+index 0000000..b0ba361
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/data/sizes_endpoint.dart
+@@ -0,0 +1,15 @@
++import 'package:accounting_software/app/core/network/api_end_points.dart';
++
++abstract final class SizesEndpoint {
++  static const collection = AppEndpoint('/rest/v1/sizes');
++
++  static const _base =
++      'id,size_group_id,name,code,numeric_value,sort_order,is_active,'
++      'updated_at';
++
++  /// Preferred projection with the product usage count.
++  static const select = '$_base,product_sizes(count)';
++
++  /// Safe fallback when PostgREST rejects the embedded relation (HTTP 400).
++  static const selectWithoutCount = _base;
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size.dart b/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size.dart
+new file mode 100644
+index 0000000..fb3d1c8
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size.dart
+@@ -0,0 +1,46 @@
++import 'package:decimal/decimal.dart';
++import 'package:equatable/equatable.dart';
++
++/// A row of `sizes` inside one size group (named `CatalogSize` to avoid the
++/// Flutter `Size` type).
++class CatalogSize extends Equatable {
++  const CatalogSize({
++    required this.id,
++    required this.sizeGroupId,
++    required this.name,
++    required this.code,
++    this.numericValue,
++    required this.sortOrder,
++    required this.isActive,
++    this.productCount,
++    this.updatedAt,
++  });
++
++  final int id;
++  final int sizeGroupId;
++  final String name;
++  final String code;
++  final Decimal? numericValue;
++  final int sortOrder;
++  final bool isActive;
++
++  /// Embedded `product_sizes(count)`; null means unknown (never 0).
++  final int? productCount;
++  final DateTime? updatedAt;
++
++  /// Deletion is offered only when the usage count is known and zero.
++  bool get canDelete => productCount == 0;
++
++  @override
++  List<Object?> get props => [
++    id,
++    sizeGroupId,
++    name,
++    code,
++    numericValue,
++    sortOrder,
++    isActive,
++    productCount,
++    updatedAt,
++  ];
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart b/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart
+new file mode 100644
+index 0000000..b9061a9
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart
+@@ -0,0 +1,31 @@
++import 'package:decimal/decimal.dart';
++import 'package:equatable/equatable.dart';
++
++class CatalogSizeDraft extends Equatable {
++  const CatalogSizeDraft({
++    required this.sizeGroupId,
++    required this.name,
++    required this.code,
++    this.numericValue,
++    this.sortOrder = 0,
++    this.isActive = true,
++  });
++
++  /// Fixed by the route context, never edited in the form.
++  final int sizeGroupId;
++  final String name;
++  final String code;
++  final Decimal? numericValue;
++  final int sortOrder;
++  final bool isActive;
++
++  @override
++  List<Object?> get props => [
++    sizeGroupId,
++    name,
++    code,
++    numericValue,
++    sortOrder,
++    isActive,
++  ];
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart b/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart
+new file mode 100644
+index 0000000..3f24f0d
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart
+@@ -0,0 +1,97 @@
++import 'package:equatable/equatable.dart';
++import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/size_status_filter.dart';
++
++enum CatalogSizeSortField {
++  /// sort_order, then numeric_value, then id (the group's natural order).
++  order('sort_order'),
++  name('name'),
++  code('code'),
++  value('numeric_value');
++
++  const CatalogSizeSortField(this.column);
++  final String column;
++
++  static CatalogSizeSortField? tryParse(String? name) {
++    for (final value in values) {
++      if (value.name == name) return value;
++    }
++    return null;
++  }
++}
++
++class CatalogSizeListQuery extends Equatable
++    implements PagedQuery<CatalogSizeListQuery> {
++  const CatalogSizeListQuery({
++    required this.sizeGroupId,
++    this.search = '',
++    this.status = SizeStatusFilter.all,
++    this.sortField = CatalogSizeSortField.order,
++    this.sortAscending = true,
++    this.page = 1,
++    this.pageSize = 50,
++  });
++
++  /// The parent group; every request is scoped to it (D-SZ-2).
++  final int sizeGroupId;
++  @override
++  final String search;
++  final SizeStatusFilter status;
++  final CatalogSizeSortField sortField;
++  final bool sortAscending;
++  @override
++  final int page;
++  @override
++  final int pageSize;
++
++  @override
++  bool get hasActiveFilters =>
++      search.isNotEmpty || status != SizeStatusFilter.all;
++
++  @override
++  CatalogSizeListQuery withSearch(String value) =>
++      copyWith(search: value, page: 1);
++
++  @override
++  CatalogSizeListQuery withPage(int value) => copyWith(page: value);
++
++  @override
++  CatalogSizeListQuery cleared() =>
++      copyWith(search: '', status: SizeStatusFilter.all, page: 1);
++
++  CatalogSizeListQuery withStatus(SizeStatusFilter value) =>
++      status == value ? this : copyWith(status: value, page: 1);
++
++  CatalogSizeListQuery withSort(CatalogSizeSortField field, bool ascending) =>
++      sortField == field && sortAscending == ascending
++      ? this
++      : copyWith(sortField: field, sortAscending: ascending, page: 1);
++
++  CatalogSizeListQuery copyWith({
++    String? search,
++    SizeStatusFilter? status,
++    CatalogSizeSortField? sortField,
++    bool? sortAscending,
++    int? page,
++    int? pageSize,
++  }) => CatalogSizeListQuery(
++    sizeGroupId: sizeGroupId,
++    search: search ?? this.search,
++    status: status ?? this.status,
++    sortField: sortField ?? this.sortField,
++    sortAscending: sortAscending ?? this.sortAscending,
++    page: page ?? this.page,
++    pageSize: pageSize ?? this.pageSize,
++  );
++
++  @override
++  List<Object?> get props => [
++    sizeGroupId,
++    search,
++    status,
++    sortField,
++    sortAscending,
++    page,
++    pageSize,
++  ];
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/domain/repositories/sizes_repository.dart b/lib/app/features/catalog/size_systems/sizes/domain/repositories/sizes_repository.dart
+new file mode 100644
+index 0000000..64ec222
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/domain/repositories/sizes_repository.dart
+@@ -0,0 +1,28 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart';
++
++abstract class SizesRepository {
++  Future<Either<Failure, PaginatedResult<CatalogSize>>> getSizes(
++    CatalogSizeListQuery query,
++  );
++  Future<Either<Failure, CatalogSize>> createSize(CatalogSizeDraft draft);
++
++  /// One POST with an array body: PostgREST inserts it as one statement, so a
++  /// failing row (e.g. duplicate code) rejects the whole batch.
++  Future<Either<Failure, List<CatalogSize>>> createSizes(
++    List<CatalogSizeDraft> drafts,
++  );
++  Future<Either<Failure, CatalogSize>> updateSize({
++    required int id,
++    required CatalogSizeDraft draft,
++  });
++  Future<Either<Failure, Unit>> deleteSize(int id);
++  Future<Either<Failure, Unit>> setSizeActive({
++    required int id,
++    required bool isActive,
++  });
++}
+diff --git a/lib/app/features/catalog/size_systems/sizes/domain/usecase/sizes_use_cases.dart b/lib/app/features/catalog/size_systems/sizes/domain/usecase/sizes_use_cases.dart
+new file mode 100644
+index 0000000..ce4b014
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/sizes/domain/usecase/sizes_use_cases.dart
+@@ -0,0 +1,85 @@
++import 'package:dartz/dartz.dart';
++import 'package:equatable/equatable.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/foundation/base/use_case.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/repositories/sizes_repository.dart';
++
++class GetSizesUseCase
++    extends UseCase<PaginatedResult<CatalogSize>, CatalogSizeListQuery> {
++  GetSizesUseCase(this._repository);
++  final SizesRepository _repository;
++
++  @override
++  Future<Either<Failure, PaginatedResult<CatalogSize>>> call(
++    CatalogSizeListQuery params,
++  ) => _repository.getSizes(params);
++}
++
++class CreateSizeUseCase extends UseCase<CatalogSize, CatalogSizeDraft> {
++  CreateSizeUseCase(this._repository);
++  final SizesRepository _repository;
++
++  @override
++  Future<Either<Failure, CatalogSize>> call(CatalogSizeDraft params) =>
++      _repository.createSize(params);
++}
++
++class CreateSizesBatchUseCase
++    extends UseCase<List<CatalogSize>, List<CatalogSizeDraft>> {
++  CreateSizesBatchUseCase(this._repository);
++  final SizesRepository _repository;
++
++  @override
++  Future<Either<Failure, List<CatalogSize>>> call(
++    List<CatalogSizeDraft> params,
++  ) => _repository.createSizes(params);
++}
++
++class UpdateSizeParams extends Equatable {
++  const UpdateSizeParams({required this.id, required this.draft});
++  final int id;
++  final CatalogSizeDraft draft;
++
++  @override
++  List<Object?> get props => [id, draft];
++}
++
++class UpdateSizeUseCase extends UseCase<CatalogSize, UpdateSizeParams> {
++  UpdateSizeUseCase(this._repository);
++  final SizesRepository _repository;
++
++  @override
++  Future<Either<Failure, CatalogSize>> call(UpdateSizeParams params) =>
++      _repository.updateSize(id: params.id, draft: params.draft);
++}
++
++class DeleteSizeUseCase extends UseCase<Unit, int> {
++  DeleteSizeUseCase(this._repository);
++  final SizesRepository _repository;
++
++  @override
++  Future<Either<Failure, Unit>> call(int params) =>
++      _repository.deleteSize(params);
++}
++
++class SetSizeActiveParams extends Equatable {
++  const SetSizeActiveParams({required this.id, required this.isActive});
++  final int id;
++  final bool isActive;
++
++  @override
++  List<Object?> get props => [id, isActive];
++}
++
++class SetSizeActiveUseCase extends UseCase<Unit, SetSizeActiveParams> {
++  SetSizeActiveUseCase(this._repository);
++  final SizesRepository _repository;
++
++  @override
++  Future<Either<Failure, Unit>> call(SetSizeActiveParams params) =>
++      _repository.setSizeActive(id: params.id, isActive: params.isActive);
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/data/datasources/size_systems_remote_data_source.dart b/lib/app/features/catalog/size_systems/systems/data/datasources/size_systems_remote_data_source.dart
+new file mode 100644
+index 0000000..6988fe4
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/data/datasources/size_systems_remote_data_source.dart
+@@ -0,0 +1,24 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/data/models/size_system_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_stats.dart';
++
++abstract class SizeSystemsRemoteDataSource {
++  Future<ApiResult<PaginatedResult<SizeSystemModel>>> getSizeSystems(
++    SizeSystemListQuery query,
++  );
++  Future<ApiResult<SizeSystemStats>> getStats();
++  Future<ApiResult<SizeSystemModel>> createSizeSystem(SizeSystemDraft draft);
++  Future<ApiResult<SizeSystemModel>> updateSizeSystem({
++    required int id,
++    required SizeSystemDraft draft,
++  });
++  Future<ApiResult<Unit>> deleteSizeSystem(int id);
++  Future<ApiResult<Unit>> setSizeSystemActive({
++    required int id,
++    required bool isActive,
++  });
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/data/datasources/size_systems_remote_data_source_impl.dart b/lib/app/features/catalog/size_systems/systems/data/datasources/size_systems_remote_data_source_impl.dart
+new file mode 100644
+index 0000000..be304e3
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/data/datasources/size_systems_remote_data_source_impl.dart
+@@ -0,0 +1,165 @@
++import 'package:dartz/dartz.dart';
++import 'package:dio/dio.dart';
++import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/core/network/api_client_interface.dart';
++import 'package:accounting_software/app/core/network/postgrest_helpers.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/data/size_query_helpers.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/data/datasources/size_systems_remote_data_source.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/data/models/size_system_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/data/size_systems_endpoint.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_stats.dart';
++
++class SizeSystemsRemoteDataSourceImpl implements SizeSystemsRemoteDataSource {
++  SizeSystemsRemoteDataSourceImpl(this._apiClient);
++  final IApiClient _apiClient;
++
++  // After a 400 on the relation projection, stay on the safe projection.
++  bool _includeCount = true;
++
++  @override
++  Future<ApiResult<PaginatedResult<SizeSystemModel>>> getSizeSystems(
++    SizeSystemListQuery query,
++  ) async {
++    final preferred = await _fetch(
++      query,
++      _includeCount
++          ? SizeSystemsEndpoint.select
++          : SizeSystemsEndpoint.selectWithoutCount,
++    );
++    if (preferred case ApiFailure<PaginatedResult<SizeSystemModel>>(
++      :final exception,
++    )) {
++      if (_includeCount &&
++          exception is ApiException &&
++          exception.statusCode == 400) {
++        _includeCount = false;
++        return _fetch(query, SizeSystemsEndpoint.selectWithoutCount);
++      }
++    }
++    return preferred;
++  }
++
++  Future<ApiResult<PaginatedResult<SizeSystemModel>>> _fetch(
++    SizeSystemListQuery query,
++    String select,
++  ) {
++    final search = SizeQueryHelpers.searchFilter(query.search, const [
++      'name',
++      'code',
++    ]);
++    final status = SizeQueryHelpers.statusFilter(query.status);
++    return _apiClient.getPaginated<SizeSystemModel>(
++      SizeSystemsEndpoint.collection,
++      fromJson: SizeSystemModel.fromJson,
++      page: query.page,
++      limit: query.pageSize,
++      parser: PaginatedParserPresets.supabase,
++      queryParameters: {
++        'select': select,
++        'order': SizeQueryHelpers.order(
++          query.sortField.column,
++          query.sortAscending,
++        ),
++        if (search != null) 'or': search,
++        if (status != null) 'is_active': status,
++      },
++    );
++  }
++
++  @override
++  Future<ApiResult<SizeSystemStats>> getStats() async {
++    final total = await _count(const {});
++    if (total case ApiFailure<int>(:final exception)) {
++      return ApiFailure<SizeSystemStats>(exception);
++    }
++    final active = await _count(const {'is_active': 'eq.true'});
++    if (active case ApiFailure<int>(:final exception)) {
++      return ApiFailure<SizeSystemStats>(exception);
++    }
++    final totalCount = (total as ApiSuccess<int>).data;
++    final activeCount = (active as ApiSuccess<int>).data;
++    return ApiSuccess(
++      SizeSystemStats(
++        total: totalCount,
++        active: activeCount,
++        inactive: totalCount - activeCount,
++      ),
++    );
++  }
++
++  Future<ApiResult<int>> _count(Map<String, dynamic> filter) async {
++    final result = await _apiClient.getPaginated<int>(
++      SizeSystemsEndpoint.collection,
++      fromJson: (json) => json['id'] as int,
++      queryParameters: {'select': 'id', ...filter},
++      parser: PaginatedParserPresets.supabase,
++      page: 1,
++      limit: 1,
++    );
++    return switch (result) {
++      ApiSuccess<PaginatedResult<int>>(:final data) => ApiSuccess(
++        data.totalCount,
++      ),
++      ApiFailure<PaginatedResult<int>>(:final exception) => ApiFailure<int>(
++        exception,
++      ),
++    };
++  }
++
++  @override
++  Future<ApiResult<SizeSystemModel>> createSizeSystem(SizeSystemDraft draft) =>
++      _apiClient.post<SizeSystemModel>(
++        SizeSystemsEndpoint.collection,
++        data: _draftJson(draft),
++        options: Options(headers: {'Prefer': 'return=representation'}),
++        fromJsonList: _single,
++      );
++
++  @override
++  Future<ApiResult<SizeSystemModel>> updateSizeSystem({
++    required int id,
++    required SizeSystemDraft draft,
++  }) => _apiClient.patch<SizeSystemModel>(
++    SizeSystemsEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++    data: _draftJson(draft),
++    options: Options(headers: {'Prefer': 'return=representation'}),
++    fromJsonList: _single,
++  );
++
++  @override
++  Future<ApiResult<Unit>> deleteSizeSystem(int id) => _apiClient.delete(
++    SizeSystemsEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++  );
++
++  @override
++  Future<ApiResult<Unit>> setSizeSystemActive({
++    required int id,
++    required bool isActive,
++  }) => _apiClient.patch<Unit>(
++    SizeSystemsEndpoint.collection,
++    queryParameters: {'id': 'eq.$id'},
++    data: {'is_active': isActive},
++    options: Options(headers: {'Prefer': 'return=minimal'}),
++    fromJson: (_) => unit,
++  );
++
++  SizeSystemModel _single(List<dynamic> rows) => PostgrestValue.single(
++    rows,
++    SizeSystemModel.fromJson,
++    what: 'size system',
++  );
++
++  Map<String, dynamic> _draftJson(SizeSystemDraft draft) => {
++    'name': draft.name.trim(),
++    'code': draft.code.trim(),
++    'description': PostgrestValue.nullableTrim(draft.description),
++    'is_active': draft.isActive,
++  };
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/data/models/size_system_model.dart b/lib/app/features/catalog/size_systems/systems/data/models/size_system_model.dart
+new file mode 100644
+index 0000000..5d25907
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/data/models/size_system_model.dart
+@@ -0,0 +1,46 @@
++import 'package:accounting_software/app/features/catalog/size_systems/shared/data/embedded_count.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system.dart';
++
++class SizeSystemModel {
++  const SizeSystemModel({
++    required this.id,
++    required this.name,
++    required this.code,
++    this.description,
++    required this.isActive,
++    this.groupCount,
++    this.updatedAt,
++  });
++
++  final int id;
++  final String name;
++  final String code;
++  final String? description;
++  final bool isActive;
++  final int? groupCount;
++  final DateTime? updatedAt;
++
++  factory SizeSystemModel.fromJson(Map<String, dynamic> json) {
++    final id = readInt(json['id']);
++    if (id == null) throw const FormatException('Invalid size system id');
++    return SizeSystemModel(
++      id: id,
++      name: json['name'] as String,
++      code: json['code'] as String,
++      description: json['description'] as String?,
++      isActive: json['is_active'] as bool? ?? true,
++      groupCount: readEmbeddedCount(json['size_groups']),
++      updatedAt: DateTime.tryParse('${json['updated_at'] ?? ''}'),
++    );
++  }
++
++  SizeSystem toEntity() => SizeSystem(
++    id: id,
++    name: name,
++    code: code,
++    description: description,
++    isActive: isActive,
++    groupCount: groupCount,
++    updatedAt: updatedAt,
++  );
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/data/repositories/size_systems_repository_impl.dart b/lib/app/features/catalog/size_systems/systems/data/repositories/size_systems_repository_impl.dart
+new file mode 100644
+index 0000000..46bd33a
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/data/repositories/size_systems_repository_impl.dart
+@@ -0,0 +1,123 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/error/exceptions/api_exception.dart';
++import 'package:accounting_software/app/core/error/exceptions/app_exception.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/error/mappers/exception_mapper.dart';
++import 'package:accounting_software/app/core/foundation/base/repository_executor.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/failures/size_system_failures.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/data/datasources/size_systems_remote_data_source.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/data/models/size_system_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_stats.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/repositories/size_systems_repository.dart';
++
++class SizeSystemsRepositoryImpl
++    with RepositoryExecutor
++    implements SizeSystemsRepository {
++  const SizeSystemsRepositoryImpl(this._remote);
++  final SizeSystemsRemoteDataSource _remote;
++
++  static const _uniqueViolation = '23505';
++  static const _foreignKeyViolation = '23503';
++
++  @override
++  Future<Either<Failure, PaginatedResult<SizeSystem>>> getSizeSystems(
++    SizeSystemListQuery query,
++  ) => execute(() async {
++    final result = await _remote.getSizeSystems(query);
++    return switch (result) {
++      ApiSuccess<PaginatedResult<SizeSystemModel>>(:final data) => Right(
++        PaginatedResult<SizeSystem>(
++          items: data.items.map((model) => model.toEntity()).toList(),
++          totalCount: data.totalCount,
++          currentPage: data.currentPage,
++          totalPages: data.totalPages,
++          isFromCache: data.isFromCache,
++        ),
++      ),
++      ApiFailure<PaginatedResult<SizeSystemModel>>(:final exception) => Left(
++        ExceptionMapper.map(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, SizeSystemStats>> getStats() => execute(() async {
++    final result = await _remote.getStats();
++    return switch (result) {
++      ApiSuccess<SizeSystemStats>(:final data) => Right(data),
++      ApiFailure<SizeSystemStats>(:final exception) => Left(
++        ExceptionMapper.map(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, SizeSystem>> createSizeSystem(
++    SizeSystemDraft draft,
++  ) => execute(() async {
++    final result = await _remote.createSizeSystem(draft);
++    return switch (result) {
++      ApiSuccess<SizeSystemModel>(:final data) => Right(data.toEntity()),
++      ApiFailure<SizeSystemModel>(:final exception) => Left(
++        _mapWriteFailure(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, SizeSystem>> updateSizeSystem({
++    required int id,
++    required SizeSystemDraft draft,
++  }) => execute(() async {
++    final result = await _remote.updateSizeSystem(id: id, draft: draft);
++    return switch (result) {
++      ApiSuccess<SizeSystemModel>(:final data) => Right(data.toEntity()),
++      ApiFailure<SizeSystemModel>(:final exception) => Left(
++        _mapWriteFailure(exception),
++      ),
++    };
++  });
++
++  @override
++  Future<Either<Failure, Unit>> deleteSizeSystem(int id) => execute(() async {
++    final result = await _remote.deleteSizeSystem(id);
++    return switch (result) {
++      ApiSuccess<Unit>() => const Right(unit),
++      ApiFailure<Unit>(:final exception) => Left(_mapDeleteFailure(exception)),
++    };
++  });
++
++  @override
++  Future<Either<Failure, Unit>> setSizeSystemActive({
++    required int id,
++    required bool isActive,
++  }) => execute(() async {
++    final result = await _remote.setSizeSystemActive(
++      id: id,
++      isActive: isActive,
++    );
++    return switch (result) {
++      ApiSuccess<Unit>() => const Right(unit),
++      ApiFailure<Unit>(:final exception) => Left(
++        ExceptionMapper.map(exception),
++      ),
++    };
++  });
++
++  Failure _mapDeleteFailure(AppException exception) =>
++      exception is ApiException && exception.errorCode == _foreignKeyViolation
++      ? const SizeSystemInUseFailure()
++      : ExceptionMapper.map(exception);
++
++  Failure _mapWriteFailure(AppException exception) =>
++      exception is ApiException &&
++          (exception.errorCode == _uniqueViolation ||
++              exception.statusCode == 409)
++      ? const SizeCodeDuplicateFailure()
++      : ExceptionMapper.map(exception);
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/data/size_systems_endpoint.dart b/lib/app/features/catalog/size_systems/systems/data/size_systems_endpoint.dart
+new file mode 100644
+index 0000000..b580c28
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/data/size_systems_endpoint.dart
+@@ -0,0 +1,13 @@
++import 'package:accounting_software/app/core/network/api_end_points.dart';
++
++abstract final class SizeSystemsEndpoint {
++  static const collection = AppEndpoint('/rest/v1/size_systems');
++
++  /// Preferred projection with the linked group count.
++  static const select =
++      'id,name,code,description,is_active,updated_at,size_groups(count)';
++
++  /// Safe fallback when PostgREST rejects the embedded relation (HTTP 400).
++  static const selectWithoutCount =
++      'id,name,code,description,is_active,updated_at';
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/domain/entity/size_system.dart b/lib/app/features/catalog/size_systems/systems/domain/entity/size_system.dart
+new file mode 100644
+index 0000000..5a60521
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/domain/entity/size_system.dart
+@@ -0,0 +1,38 @@
++import 'package:equatable/equatable.dart';
++
++/// A row of `size_systems` (EU, US, UK...).
++class SizeSystem extends Equatable {
++  const SizeSystem({
++    required this.id,
++    required this.name,
++    required this.code,
++    this.description,
++    required this.isActive,
++    this.groupCount,
++    this.updatedAt,
++  });
++
++  final int id;
++  final String name;
++  final String code;
++  final String? description;
++  final bool isActive;
++
++  /// Null when the embedded relation count is unknown (never treated as 0).
++  final int? groupCount;
++  final DateTime? updatedAt;
++
++  /// Deletion is offered only when the group count is known and zero.
++  bool get canDelete => groupCount == 0;
++
++  @override
++  List<Object?> get props => [
++    id,
++    name,
++    code,
++    description,
++    isActive,
++    groupCount,
++    updatedAt,
++  ];
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_draft.dart b/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_draft.dart
+new file mode 100644
+index 0000000..0194978
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_draft.dart
+@@ -0,0 +1,18 @@
++import 'package:equatable/equatable.dart';
++
++class SizeSystemDraft extends Equatable {
++  const SizeSystemDraft({
++    required this.name,
++    required this.code,
++    this.description,
++    this.isActive = true,
++  });
++
++  final String name;
++  final String code;
++  final String? description;
++  final bool isActive;
++
++  @override
++  List<Object?> get props => [name, code, description, isActive];
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart b/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart
+new file mode 100644
+index 0000000..8e69a51
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart
+@@ -0,0 +1,90 @@
++import 'package:equatable/equatable.dart';
++import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/size_status_filter.dart';
++
++enum SizeSystemSortField {
++  name('name'),
++  code('code'),
++  updated('updated_at');
++
++  const SizeSystemSortField(this.column);
++  final String column;
++
++  static SizeSystemSortField? tryParse(String? name) {
++    for (final value in values) {
++      if (value.name == name) return value;
++    }
++    return null;
++  }
++}
++
++class SizeSystemListQuery extends Equatable
++    implements PagedQuery<SizeSystemListQuery> {
++  const SizeSystemListQuery({
++    this.search = '',
++    this.status = SizeStatusFilter.all,
++    this.sortField = SizeSystemSortField.name,
++    this.sortAscending = true,
++    this.page = 1,
++    this.pageSize = 25,
++  });
++
++  @override
++  final String search;
++  final SizeStatusFilter status;
++  final SizeSystemSortField sortField;
++  final bool sortAscending;
++  @override
++  final int page;
++  @override
++  final int pageSize;
++
++  @override
++  bool get hasActiveFilters =>
++      search.isNotEmpty || status != SizeStatusFilter.all;
++
++  @override
++  SizeSystemListQuery withSearch(String value) =>
++      copyWith(search: value, page: 1);
++
++  @override
++  SizeSystemListQuery withPage(int value) => copyWith(page: value);
++
++  @override
++  SizeSystemListQuery cleared() =>
++      copyWith(search: '', status: SizeStatusFilter.all, page: 1);
++
++  SizeSystemListQuery withStatus(SizeStatusFilter value) =>
++      status == value ? this : copyWith(status: value, page: 1);
++
++  SizeSystemListQuery withSort(SizeSystemSortField field, bool ascending) =>
++      sortField == field && sortAscending == ascending
++      ? this
++      : copyWith(sortField: field, sortAscending: ascending, page: 1);
++
++  SizeSystemListQuery copyWith({
++    String? search,
++    SizeStatusFilter? status,
++    SizeSystemSortField? sortField,
++    bool? sortAscending,
++    int? page,
++    int? pageSize,
++  }) => SizeSystemListQuery(
++    search: search ?? this.search,
++    status: status ?? this.status,
++    sortField: sortField ?? this.sortField,
++    sortAscending: sortAscending ?? this.sortAscending,
++    page: page ?? this.page,
++    pageSize: pageSize ?? this.pageSize,
++  );
++
++  @override
++  List<Object?> get props => [
++    search,
++    status,
++    sortField,
++    sortAscending,
++    page,
++    pageSize,
++  ];
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_stats.dart b/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_stats.dart
+new file mode 100644
+index 0000000..3316805
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/domain/entity/size_system_stats.dart
+@@ -0,0 +1,16 @@
++import 'package:equatable/equatable.dart';
++
++class SizeSystemStats extends Equatable {
++  const SizeSystemStats({
++    required this.total,
++    required this.active,
++    required this.inactive,
++  });
++
++  final int total;
++  final int active;
++  final int inactive;
++
++  @override
++  List<Object?> get props => [total, active, inactive];
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/domain/repositories/size_systems_repository.dart b/lib/app/features/catalog/size_systems/systems/domain/repositories/size_systems_repository.dart
+new file mode 100644
+index 0000000..f07fdc5
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/domain/repositories/size_systems_repository.dart
+@@ -0,0 +1,24 @@
++import 'package:dartz/dartz.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_stats.dart';
++
++abstract class SizeSystemsRepository {
++  Future<Either<Failure, PaginatedResult<SizeSystem>>> getSizeSystems(
++    SizeSystemListQuery query,
++  );
++  Future<Either<Failure, SizeSystemStats>> getStats();
++  Future<Either<Failure, SizeSystem>> createSizeSystem(SizeSystemDraft draft);
++  Future<Either<Failure, SizeSystem>> updateSizeSystem({
++    required int id,
++    required SizeSystemDraft draft,
++  });
++  Future<Either<Failure, Unit>> deleteSizeSystem(int id);
++  Future<Either<Failure, Unit>> setSizeSystemActive({
++    required int id,
++    required bool isActive,
++  });
++}
+diff --git a/lib/app/features/catalog/size_systems/systems/domain/usecase/size_systems_use_cases.dart b/lib/app/features/catalog/size_systems/systems/domain/usecase/size_systems_use_cases.dart
+new file mode 100644
+index 0000000..ed080d4
+--- /dev/null
++++ b/lib/app/features/catalog/size_systems/systems/domain/usecase/size_systems_use_cases.dart
+@@ -0,0 +1,86 @@
++import 'package:dartz/dartz.dart';
++import 'package:equatable/equatable.dart';
++import 'package:accounting_software/app/core/error/failures/failure.dart';
++import 'package:accounting_software/app/core/foundation/base/use_case.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_stats.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/repositories/size_systems_repository.dart';
++
++class GetSizeSystemsUseCase
++    extends UseCase<PaginatedResult<SizeSystem>, SizeSystemListQuery> {
++  GetSizeSystemsUseCase(this._repository);
++  final SizeSystemsRepository _repository;
++
++  @override
++  Future<Either<Failure, PaginatedResult<SizeSystem>>> call(
++    SizeSystemListQuery params,
++  ) => _repository.getSizeSystems(params);
++}
++
++class GetSizeSystemStatsUseCase extends UseCase<SizeSystemStats, NoParams> {
++  GetSizeSystemStatsUseCase(this._repository);
++  final SizeSystemsRepository _repository;
++
++  @override
++  Future<Either<Failure, SizeSystemStats>> call(NoParams params) =>
++      _repository.getStats();
++}
++
++class CreateSizeSystemUseCase extends UseCase<SizeSystem, SizeSystemDraft> {
++  CreateSizeSystemUseCase(this._repository);
++  final SizeSystemsRepository _repository;
++
++  @override
++  Future<Either<Failure, SizeSystem>> call(SizeSystemDraft params) =>
++      _repository.createSizeSystem(params);
++}
++
++class UpdateSizeSystemParams extends Equatable {
++  const UpdateSizeSystemParams({required this.id, required this.draft});
++  final int id;
++  final SizeSystemDraft draft;
++
++  @override
++  List<Object?> get props => [id, draft];
++}
++
++class UpdateSizeSystemUseCase
++    extends UseCase<SizeSystem, UpdateSizeSystemParams> {
++  UpdateSizeSystemUseCase(this._repository);
++  final SizeSystemsRepository _repository;
++
++  @override
++  Future<Either<Failure, SizeSystem>> call(UpdateSizeSystemParams params) =>
++      _repository.updateSizeSystem(id: params.id, draft: params.draft);
++}
++
++class DeleteSizeSystemUseCase extends UseCase<Unit, int> {
++  DeleteSizeSystemUseCase(this._repository);
++  final SizeSystemsRepository _repository;
++
++  @override
++  Future<Either<Failure, Unit>> call(int params) =>
++      _repository.deleteSizeSystem(params);
++}
++
++class SetSizeSystemActiveParams extends Equatable {
++  const SetSizeSystemActiveParams({required this.id, required this.isActive});
++  final int id;
++  final bool isActive;
++
++  @override
++  List<Object?> get props => [id, isActive];
++}
++
++class SetSizeSystemActiveUseCase
++    extends UseCase<Unit, SetSizeSystemActiveParams> {
++  SetSizeSystemActiveUseCase(this._repository);
++  final SizeSystemsRepository _repository;
++
++  @override
++  Future<Either<Failure, Unit>> call(SetSizeSystemActiveParams params) =>
++      _repository.setSizeSystemActive(id: params.id, isActive: params.isActive);
++}
+diff --git a/test/features/catalog/size_systems/list_queries_test.dart b/test/features/catalog/size_systems/list_queries_test.dart
+new file mode 100644
+index 0000000..55c5f82
+--- /dev/null
++++ b/test/features/catalog/size_systems/list_queries_test.dart
+@@ -0,0 +1,82 @@
++import 'package:flutter_test/flutter_test.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/domain/entity/size_group_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/size_status_filter.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source_impl.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/domain/entity/size_system_list_query.dart';
++
++void main() {
++  group('SizeSystemListQuery', () {
++    test('defaults: name ascending, page 1, no filters', () {
++      const query = SizeSystemListQuery();
++      expect(query.sortField, SizeSystemSortField.name);
++      expect(query.sortAscending, isTrue);
++      expect(query.page, 1);
++      expect(query.hasActiveFilters, isFalse);
++    });
++
++    test('search and status reset the page and mark filters active', () {
++      final query = const SizeSystemListQuery(page: 4)
++          .withSearch('eu')
++          .withStatus(SizeStatusFilter.active);
++      expect(query.page, 1);
++      expect(query.hasActiveFilters, isTrue);
++      expect(query.cleared().hasActiveFilters, isFalse);
++    });
++  });
++
++  group('SizeGroupListQuery', () {
++    test('is always scoped to its system, even after clearing', () {
++      final query = const SizeGroupListQuery(sizeSystemId: 9)
++          .withSearch('men')
++          .withGender(2);
++      expect(query.hasActiveFilters, isTrue);
++      final cleared = query.cleared();
++      expect(cleared.sizeSystemId, 9);
++      expect(cleared.genderId, isNull);
++      expect(cleared.search, isEmpty);
++    });
++
++    test('withGender(null) removes the gender filter', () {
++      final query = const SizeGroupListQuery(sizeSystemId: 1)
++          .withGender(3)
++          .withGender(null);
++      expect(query.genderId, isNull);
++    });
++
++    test('changing the gender goes back to page 1', () {
++      final query = const SizeGroupListQuery(
++        sizeSystemId: 1,
++        page: 3,
++      ).withGender(2);
++      expect(query.page, 1);
++    });
++  });
++
++  group('CatalogSizeListQuery and ordering', () {
++    test('is scoped to its group and sorts by the natural order by default', () {
++      const query = CatalogSizeListQuery(sizeGroupId: 4);
++      expect(query.sizeGroupId, 4);
++      expect(
++        SizesRemoteDataSourceImpl.order(query),
++        'sort_order.asc,numeric_value.asc.nullslast,id.asc',
++      );
++    });
++
++    test('other sorts keep id as the tie-breaker', () {
++      const query = CatalogSizeListQuery(sizeGroupId: 4);
++      expect(
++        SizesRemoteDataSourceImpl.order(
++          query.withSort(CatalogSizeSortField.name, false),
++        ),
++        'name.desc,id.asc',
++      );
++      expect(
++        SizesRemoteDataSourceImpl.order(
++          query.withSort(CatalogSizeSortField.value, true),
++        ),
++        'numeric_value.asc.nullslast,id.asc',
++      );
++    });
++  });
++}
+diff --git a/test/features/catalog/size_systems/models_test.dart b/test/features/catalog/size_systems/models_test.dart
+new file mode 100644
+index 0000000..da55dc2
+--- /dev/null
++++ b/test/features/catalog/size_systems/models_test.dart
+@@ -0,0 +1,147 @@
++import 'package:decimal/decimal.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/groups/data/models/size_group_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/data/embedded_count.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/models/catalog_size_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/systems/data/models/size_system_model.dart';
++
++void main() {
++  group('readEmbeddedCount', () {
++    test('reads [{count: n}], a map, a number', () {
++      expect(readEmbeddedCount([{'count': 3}]), 3);
++      expect(readEmbeddedCount({'count': 2}), 2);
++      expect(readEmbeddedCount(5), 5);
++    });
++
++    test('missing or malformed is unknown, never zero', () {
++      expect(readEmbeddedCount(null), isNull);
++      expect(readEmbeddedCount(<dynamic>[]), isNull);
++      expect(readEmbeddedCount([{'count': 'x'}]), isNull);
++    });
++  });
++
++  group('SizeSystemModel', () {
++    test('maps a row with a group count', () {
++      final system = SizeSystemModel.fromJson({
++        'id': 1,
++        'name': 'European',
++        'code': 'EU',
++        'description': null,
++        'is_active': true,
++        'updated_at': '2026-11-25T10:00:00Z',
++        'size_groups': [{'count': 0}],
++      }).toEntity();
++      expect(system.groupCount, 0);
++      expect(system.canDelete, isTrue);
++      expect(system.updatedAt, isNotNull);
++    });
++
++    test('an unknown group count blocks deletion', () {
++      final system = SizeSystemModel.fromJson({
++        'id': 1,
++        'name': 'European',
++        'code': 'EU',
++        'is_active': true,
++      }).toEntity();
++      expect(system.groupCount, isNull);
++      expect(system.canDelete, isFalse);
++    });
++
++    test('a row without a valid id is rejected', () {
++      expect(
++        () => SizeSystemModel.fromJson({'name': 'x', 'code': 'X'}),
++        throwsFormatException,
++      );
++    });
++  });
++
++  group('SizeGroupModel', () {
++    Map<String, dynamic> row({Object? sizes, Object? types, Object? usage}) => {
++      'id': 7,
++      'size_system_id': 1,
++      'gender_id': null,
++      'name': "Men's shoes",
++      'code': 'EU-M-SHOES',
++      'is_active': true,
++      'sizes': sizes,
++      'product_type_size_groups': types,
++      'product_size_groups': usage,
++    };
++
++    test('an empty gender is null, not an error', () {
++      final group = SizeGroupModel.fromJson(row()).toEntity();
++      expect(group.genderId, isNull);
++    });
++
++    test('deletable only when all three counts are known and zero', () {
++      final ok = SizeGroupModel.fromJson(
++        row(sizes: [{'count': 0}], types: [{'count': 0}], usage: [{'count': 0}]),
++      ).toEntity();
++      expect(ok.canDelete, isTrue);
++
++      final hasSizes = SizeGroupModel.fromJson(
++        row(sizes: [{'count': 2}], types: [{'count': 0}], usage: [{'count': 0}]),
++      ).toEntity();
++      expect(hasSizes.canDelete, isFalse);
++
++      final linked = SizeGroupModel.fromJson(
++        row(sizes: [{'count': 0}], types: [{'count': 1}], usage: [{'count': 0}]),
++      ).toEntity();
++      expect(linked.canDelete, isFalse);
++
++      final unknownUsage = SizeGroupModel.fromJson(
++        row(sizes: [{'count': 0}], types: [{'count': 0}]),
++      ).toEntity();
++      expect(unknownUsage.canDelete, isFalse);
++    });
++  });
++
++  group('GenderOptionModel', () {
++    test('maps id, name and activity', () {
++      final gender = GenderOptionModel.fromJson({
++        'id': 2,
++        'name': 'Women',
++        'is_active': false,
++      }).toEntity();
++      expect(gender.id, 2);
++      expect(gender.isActive, isFalse);
++    });
++  });
++
++  group('CatalogSizeModel', () {
++    Map<String, dynamic> row({Object? value, Object? usage}) => {
++      'id': 5,
++      'size_group_id': 7,
++      'name': '36',
++      'code': 'EU36',
++      'numeric_value': value,
++      'sort_order': 3,
++      'is_active': true,
++      'product_sizes': usage,
++    };
++
++    test('numeric_value parses from number, string and null exactly', () {
++      expect(
++        CatalogSizeModel.fromJson(row(value: 36.5)).numericValue,
++        Decimal.parse('36.5'),
++      );
++      expect(
++        CatalogSizeModel.fromJson(row(value: '36.50')).numericValue,
++        Decimal.parse('36.5'),
++      );
++      expect(CatalogSizeModel.fromJson(row()).numericValue, isNull);
++    });
++
++    test('CAT07-SZ-AC5: deletable only with a known zero usage count', () {
++      expect(
++        CatalogSizeModel.fromJson(row(usage: [{'count': 0}])).toEntity().canDelete,
++        isTrue,
++      );
++      expect(
++        CatalogSizeModel.fromJson(row(usage: [{'count': 4}])).toEntity().canDelete,
++        isFalse,
++      );
++      expect(CatalogSizeModel.fromJson(row()).toEntity().canDelete, isFalse);
++    });
++  });
++}
+diff --git a/test/features/catalog/size_systems/size_range_generator_test.dart b/test/features/catalog/size_systems/size_range_generator_test.dart
+new file mode 100644
+index 0000000..d91b938
+--- /dev/null
++++ b/test/features/catalog/size_systems/size_range_generator_test.dart
+@@ -0,0 +1,99 @@
++import 'package:dartz/dartz.dart';
++import 'package:decimal/decimal.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/range/size_range_generator.dart';
++
++SizeRangeSpec _spec(String from, String to, String step, [String prefix = '']) =>
++    SizeRangeSpec(
++      from: Decimal.parse(from),
++      to: Decimal.parse(to),
++      step: Decimal.parse(step),
++      codePrefix: prefix,
++    );
++
++SizeRangePlan _plan(
++  SizeRangeSpec spec, {
++  Set<String> existing = const {},
++  int firstSortOrder = 0,
++}) => SizeRangeGenerator.plan(
++  spec: spec,
++  existingCodes: existing,
++  firstSortOrder: firstSortOrder,
++).getOrElse(() => throw StateError('expected a plan'));
++
++void main() {
++  group('SizeRangeGenerator', () {
++    test('CAT07-SZ-AC3: 36 to 46 step 1 yields 11 sizes', () {
++      final plan = _plan(_spec('36', '46', '1', 'EU'));
++      expect(plan.rows, hasLength(11));
++      expect(plan.rows.first.code, 'EU36');
++      expect(plan.rows.first.name, '36');
++      expect(plan.rows.last.code, 'EU46');
++      expect(plan.skippedCodes, isEmpty);
++    });
++
++    test('sort order follows generation order from the first value', () {
++      final plan = _plan(_spec('36', '38', '1'), firstSortOrder: 10);
++      expect(plan.rows.map((r) => r.sortOrder), [10, 11, 12]);
++    });
++
++    test('CAT07-SZ-AC4: a reversed range is rejected', () {
++      final result = SizeRangeGenerator.plan(
++        spec: _spec('46', '36', '1'),
++        existingCodes: const {},
++      );
++      expect(result, const Left(SizeRangeError.reversed));
++    });
++
++    test('a non-positive step is rejected', () {
++      for (final step in ['0', '-1']) {
++        expect(
++          SizeRangeGenerator.plan(
++            spec: _spec('1', '5', step),
++            existingCodes: const {},
++          ),
++          const Left(SizeRangeError.stepNotPositive),
++        );
++      }
++    });
++
++    test('from == to yields exactly one row', () {
++      expect(_plan(_spec('40', '40', '1')).rows, hasLength(1));
++    });
++
++    test('0.1 steps are exact (no binary floating point drift)', () {
++      final plan = _plan(_spec('0', '0.5', '0.1'));
++      expect(plan.rows.map((r) => r.name), ['0', '0.1', '0.2', '0.3', '0.4', '0.5']);
++      expect(plan.rows.last.numericValue, Decimal.parse('0.5'));
++    });
++
++    test('decimal points become underscores in the code', () {
++      final plan = _plan(_spec('36', '37', '0.5', 'EU'));
++      expect(plan.rows.map((r) => r.code), ['EU36', 'EU36_5', 'EU37']);
++    });
++
++    test('existing codes are skipped (case-insensitive) and reported', () {
++      final plan = _plan(
++        _spec('36', '38', '1', 'eu'),
++        existing: {'EU37'},
++      );
++      expect(plan.rows.map((r) => r.code), ['EU36', 'EU38']);
++      expect(plan.skippedCodes, ['EU37']);
++    });
++
++    test('a range above the row ceiling is rejected', () {
++      final result = SizeRangeGenerator.plan(
++        spec: _spec('0', '${SizeRangeGenerator.maxRows}', '1'),
++        existingCodes: const {},
++      );
++      expect(result, const Left(SizeRangeError.tooManyRows));
++    });
++
++    test('exactly the ceiling is accepted', () {
++      final plan = _plan(
++        _spec('1', '${SizeRangeGenerator.maxRows}', '1'),
++      );
++      expect(plan.rows, hasLength(SizeRangeGenerator.maxRows));
++    });
++  });
++}
+diff --git a/test/features/catalog/size_systems/sizes_repository_test.dart b/test/features/catalog/size_systems/sizes_repository_test.dart
+new file mode 100644
+index 0000000..6386f4a
+--- /dev/null
++++ b/test/features/catalog/size_systems/sizes_repository_test.dart
+@@ -0,0 +1,117 @@
++import 'package:dartz/dartz.dart';
++import 'package:decimal/decimal.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:accounting_software/app/core/foundation/types/api_result.dart';
++import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/datasources/sizes_remote_data_source.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/models/catalog_size_model.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/data/repositories/sizes_repository_impl.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_draft.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/sizes/domain/entity/catalog_size_list_query.dart';
++
++class _FakeSizesRemote implements SizesRemoteDataSource {
++  List<CatalogSizeDraft>? lastBatch;
++  int batchCalls = 0;
++
++  CatalogSizeModel _model(int id, CatalogSizeDraft d) => CatalogSizeModel(
++    id: id,
++    sizeGroupId: d.sizeGroupId,
++    name: d.name,
++    code: d.code,
++    numericValue: d.numericValue,
++    sortOrder: d.sortOrder,
++    isActive: d.isActive,
++  );
++
++  @override
++  Future<ApiResult<List<CatalogSizeModel>>> createSizes(
++    List<CatalogSizeDraft> drafts,
++  ) async {
++    batchCalls++;
++    lastBatch = drafts;
++    return ApiSuccess([
++      for (var i = 0; i < drafts.length; i++) _model(i + 1, drafts[i]),
++    ]);
++  }
++
++  @override
++  Future<ApiResult<PaginatedResult<CatalogSizeModel>>> getSizes(
++    CatalogSizeListQuery query,
++  ) async => ApiSuccess(
++    PaginatedResult<CatalogSizeModel>(
++      items: const [
++        CatalogSizeModel(
++          id: 1,
++          sizeGroupId: 7,
++          name: '36',
++          code: 'EU36',
++          sortOrder: 0,
++          isActive: true,
++          productCount: 0,
++        ),
++      ],
++      totalCount: 1,
++      currentPage: 1,
++      totalPages: 1,
++      isFromCache: false,
++    ),
++  );
++
++  @override
++  Future<ApiResult<CatalogSizeModel>> createSize(CatalogSizeDraft draft) async =>
++      ApiSuccess(_model(1, draft));
++
++  @override
++  Future<ApiResult<CatalogSizeModel>> updateSize({
++    required int id,
++    required CatalogSizeDraft draft,
++  }) async => ApiSuccess(_model(id, draft));
++
++  @override
++  Future<ApiResult<Unit>> deleteSize(int id) async => ApiSuccess(unit);
++
++  @override
++  Future<ApiResult<Unit>> setSizeActive({
++    required int id,
++    required bool isActive,
++  }) async => ApiSuccess(unit);
++}
++
++void main() {
++  late _FakeSizesRemote remote;
++  late SizesRepositoryImpl repository;
++
++  setUp(() {
++    remote = _FakeSizesRemote();
++    repository = SizesRepositoryImpl(remote);
++  });
++
++  test('getSizes maps models to entities with the usage count', () async {
++    final result = await repository.getSizes(
++      const CatalogSizeListQuery(sizeGroupId: 7),
++    );
++    final page = result.getOrElse(() => throw StateError('expected a page'));
++    expect(page.items.single.code, 'EU36');
++    expect(page.items.single.canDelete, isTrue);
++    expect(page.totalCount, 1);
++  });
++
++  test('createSizes sends one batch call and returns every row', () async {
++    final drafts = [
++      for (var i = 36; i <= 46; i++)
++        CatalogSizeDraft(
++          sizeGroupId: 7,
++          name: '$i',
++          code: 'EU$i',
++          numericValue: Decimal.fromInt(i),
++          sortOrder: i - 36,
++        ),
++    ];
++    final result = await repository.createSizes(drafts);
++    final created = result.getOrElse(() => throw StateError('expected rows'));
++    expect(remote.batchCalls, 1);
++    expect(remote.lastBatch, hasLength(11));
++    expect(created, hasLength(11));
++    expect(created.first.numericValue, Decimal.fromInt(36));
++  });
++}
