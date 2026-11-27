@@ -38,6 +38,8 @@ enum CatalogHubKeys implements AppKey {
     ar: 'أنشئ وسوماً حرة لتصنيف المنتجات والبحث عنها بسرعة.',
     en: 'Create free-form tags to label products and find them quickly.',
   ),
+  materialsDescription(ar: 'إدارة الخامات وتركيبات المواد المستخدمة في المنتجات.', en: 'Manage materials and compositions used in products.'),
+  fabricTypesDescription(ar: 'إدارة أنواع الأقمشة وتصنيفاتها وخصائصها.', en: 'Manage fabric types, categories and properties.'),
   open(ar: 'فتح', en: 'Open');
 
   const CatalogHubKeys({required this.ar, required this.en});
