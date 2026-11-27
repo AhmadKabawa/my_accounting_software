@@ -77,11 +77,16 @@ class CategoryFormCubit
   /// descendants are excluded to prevent a local cycle.
   List<CategoryNode> get parentOptions => _buildParentOptions();
 
-  bool get hasSiblingNameConflict => state.name.trim().isNotEmpty &&
-      (_tree?.childrenOf(state.parentId).any((item) =>
-              item.id != _category?.id &&
-              item.name.trim().toLowerCase() ==
-                  state.name.trim().toLowerCase()) ??
+  bool get hasSiblingNameConflict =>
+      state.name.trim().isNotEmpty &&
+      (_tree
+              ?.childrenOf(state.parentId)
+              .any(
+                (item) =>
+                    item.id != _category?.id &&
+                    item.name.trim().toLowerCase() ==
+                        state.name.trim().toLowerCase(),
+              ) ??
           false);
 
   List<CategoryNode> _buildParentOptions() {
@@ -92,8 +97,11 @@ class CategoryFormCubit
         : {...tree.descendantIds(_category.id), _category.id};
     return tree
         .visible(expandedIds: tree.parentIds)
-        .where((node) => !excluded.contains(node.id) &&
-            (node.category.isActive || node.id == state.parentId))
+        .where(
+          (node) =>
+              !excluded.contains(node.id) &&
+              (node.category.isActive || node.id == state.parentId),
+        )
         .toList(growable: false);
   }
 

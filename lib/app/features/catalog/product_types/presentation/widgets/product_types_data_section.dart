@@ -112,7 +112,6 @@ class ProductTypesDataSection extends StatelessWidget {
       );
 }
 
-
 Future<void> _deleteProductType(
   BuildContext context,
   ProductType item,
@@ -141,9 +140,8 @@ Future<void> _deleteProductType(
     targetName: item.name,
     severity: ConfirmDialogSeverity.warning,
     confirmLabelKey: ProductTypesKeys.deactivate,
-    onConfirm: () async => (await cubit.deactivate(item.id)).fold(
-      (failure) => failure.messageKey,
-      (_) => null,
-    ),
+    onConfirm: () async => (await cubit.deactivate(
+      item.id,
+    )).fold((failure) => failure.messageKey, (_) => null),
   );
 }

@@ -850,7 +850,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('parent selector appears before category identity fields', (tester) async {
+  testWidgets('parent selector appears before category identity fields', (
+    tester,
+  ) async {
     setScreenSize(tester, const Size(1200, 900));
     _register(FakeCategoriesRepository(categories: []));
     await tester.pumpWidget(
@@ -862,9 +864,10 @@ void main() {
     await tester.pumpAndSettle();
 
     final parent = tester.getTopLeft(find.text(CategoriesKeys.parent.en).first);
-    final name = tester.getTopLeft(find.text(CategoriesKeys.categoryName.en).first);
+    final name = tester.getTopLeft(
+      find.text(CategoriesKeys.categoryName.en).first,
+    );
     expect(parent.dy, lessThan(name.dy));
     expect(tester.takeException(), isNull);
   });
-
 }

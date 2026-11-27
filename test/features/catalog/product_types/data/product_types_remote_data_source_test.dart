@@ -186,12 +186,14 @@ class _FakeApiClient implements IApiClient {
         false;
     final rows = includesCounts
         ? _rows
-        : _rows.map((row) => Map<String, dynamic>.of(row)
-            ..remove('products')
-            ..remove('product_type_size_groups')
-            ..remove('product_type_attributes')
-            ..remove('product_type_option_sets')
-            ..remove('product_type_care_instructions'));
+        : _rows.map(
+            (row) => Map<String, dynamic>.of(row)
+              ..remove('products')
+              ..remove('product_type_size_groups')
+              ..remove('product_type_attributes')
+              ..remove('product_type_option_sets')
+              ..remove('product_type_care_instructions'),
+          );
     final items = rows.map(fromJson).toList(growable: false);
     return ApiSuccess(
       PaginatedResult<T>(

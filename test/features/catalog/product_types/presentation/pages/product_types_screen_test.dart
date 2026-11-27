@@ -221,8 +221,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-
-  testWidgets('a 23503 delete failure offers direct deactivation', (tester) async {
+  testWidgets('a 23503 delete failure offers direct deactivation', (
+    tester,
+  ) async {
     final repository = _FakeProductTypesRepository()
       ..deleteFailure = const ProductTypeInUseFailure();
     _register(repository);
@@ -248,5 +249,4 @@ void main() {
     expect(repository.deactivated, isTrue);
     expect(tester.takeException(), isNull);
   });
-
 }

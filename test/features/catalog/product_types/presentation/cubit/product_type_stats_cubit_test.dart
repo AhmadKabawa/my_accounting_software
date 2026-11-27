@@ -10,21 +10,24 @@ import 'package:accounting_software/app/features/catalog/product_types/presentat
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_stats/product_type_stats_state.dart';
 
 void main() {
-  test('unused count includes all pages and only known zero-product types', () async {
-    final repository = _StatsRepository({
-      1: [_type(1, products: 0), _type(2, products: 4)],
-      2: [_type(3, products: 0)],
-    }, totalPages: 2);
-    final cubit = ProductTypeStatsCubit(repository: repository);
+  test(
+    'unused count includes all pages and only known zero-product types',
+    () async {
+      final repository = _StatsRepository({
+        1: [_type(1, products: 0), _type(2, products: 4)],
+        2: [_type(3, products: 0)],
+      }, totalPages: 2);
+      final cubit = ProductTypeStatsCubit(repository: repository);
 
-    await cubit.load();
+      await cubit.load();
 
-    final stats = (cubit.state as ProductTypeStatsLoaded).value;
-    expect(stats.total, 3);
-    expect(stats.unused, 2);
-    expect(repository.queries.map((query) => query.page), [1, 2]);
-    await cubit.close();
-  });
+      final stats = (cubit.state as ProductTypeStatsLoaded).value;
+      expect(stats.total, 3);
+      expect(stats.unused, 2);
+      expect(repository.queries.map((query) => query.page), [1, 2]);
+      await cubit.close();
+    },
+  );
 
   test('unused count is unknown if any product count is unknown', () async {
     final repository = _StatsRepository({
