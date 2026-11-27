@@ -42,7 +42,6 @@ const _labels = CrudLabels(
 AppKey _typeLabel(BuildContext context, AttributeDataType type) =>
     AttributesFilterBar.typeLabel(type);
 
-
 CrudListConfig<
   CatalogAttribute,
   AttributeListQuery,

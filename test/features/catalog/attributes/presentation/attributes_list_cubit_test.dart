@@ -48,14 +48,19 @@ void main() {
     await cubit.setPage(2);
     await cubit.setFilterable(AttributeFilterableFilter.filterable);
     expect(cubit.state.query.page, 1);
-    expect(repository.queries.last.filterable, AttributeFilterableFilter.filterable);
+    expect(
+      repository.queries.last.filterable,
+      AttributeFilterableFilter.filterable,
+    );
   });
 
   test('latest request wins over older in-flight response', () async {
     final repository = FakeAttributesRepository();
-    final pending = <Completer<Either<Failure, PaginatedResult<CatalogAttribute>>>>[];
+    final pending =
+        <Completer<Either<Failure, PaginatedResult<CatalogAttribute>>>>[];
     repository.onGet = (_) {
-      final request = Completer<Either<Failure, PaginatedResult<CatalogAttribute>>>();
+      final request =
+          Completer<Either<Failure, PaginatedResult<CatalogAttribute>>>();
       pending.add(request);
       return request.future;
     };
@@ -70,30 +75,52 @@ void main() {
     await cubit.close();
   });
 
-  test('unknown or positive usage blocks delete before repository call', () async {
-    final repository = FakeAttributesRepository();
-    final cubit = _cubit(repository);
-    final unknown = _attribute(links: null, values: 0);
-    final result = await cubit.delete(unknown);
-    expect(result.isLeft(), isTrue);
-    expect(repository.deletedIds, isEmpty);
-    await cubit.close();
-  });
+  test(
+    'unknown or positive usage blocks delete before repository call',
+    () async {
+      final repository = FakeAttributesRepository();
+      final cubit = _cubit(repository);
+      final unknown = _attribute(links: null, values: 0);
+      final result = await cubit.delete(unknown);
+      expect(result.isLeft(), isTrue);
+      expect(repository.deletedIds, isEmpty);
+      await cubit.close();
+    },
+  );
 }
 
-AttributesListCubit _cubit(FakeAttributesRepository repository) => AttributesListCubit(
-  getAttributes: GetAttributesUseCase(repository),
-  setActive: SetAttributeActiveUseCase(repository),
-  deleteAttribute: DeleteAttributeUseCase(repository),
-  flashMessages: FlashMessages(),
-);
+AttributesListCubit _cubit(FakeAttributesRepository repository) =>
+    AttributesListCubit(
+      getAttributes: GetAttributesUseCase(repository),
+      setActive: SetAttributeActiveUseCase(repository),
+      deleteAttribute: DeleteAttributeUseCase(repository),
+      flashMessages: FlashMessages(),
+    );
 
-PaginatedResult<CatalogAttribute> _page(String name) => PaginatedResult<CatalogAttribute>(
-  items: [_attribute(name: name)], totalCount: 1, currentPage: 1, totalPages: 1,
-);
-CatalogAttribute _attribute({String name = 'Material', int? links = 0, int? values = 0}) => CatalogAttribute(
-  id: 7, name: name, code: 'MATERIAL', dataType: AttributeDataType.text,
-  unitId: null, unitName: null, unitSymbol: null, optionSetId: null,
-  optionSetName: null, optionSetCode: null, isFilterable: true, isActive: true,
-  linkedProductTypesCount: links, valueCount: values,
+PaginatedResult<CatalogAttribute> _page(String name) =>
+    PaginatedResult<CatalogAttribute>(
+      items: [_attribute(name: name)],
+      totalCount: 1,
+      currentPage: 1,
+      totalPages: 1,
+    );
+CatalogAttribute _attribute({
+  String name = 'Material',
+  int? links = 0,
+  int? values = 0,
+}) => CatalogAttribute(
+  id: 7,
+  name: name,
+  code: 'MATERIAL',
+  dataType: AttributeDataType.text,
+  unitId: null,
+  unitName: null,
+  unitSymbol: null,
+  optionSetId: null,
+  optionSetName: null,
+  optionSetCode: null,
+  isFilterable: true,
+  isActive: true,
+  linkedProductTypesCount: links,
+  valueCount: values,
 );

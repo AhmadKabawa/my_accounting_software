@@ -74,9 +74,18 @@ enum AttributesKeys implements AppKey {
   optionSetName(ar: 'مجموعة الخيارات', en: 'Option set'),
   filterableOn(ar: 'قابلة للتصفية', en: 'Filterable'),
   notFilterable(ar: 'غير قابلة للتصفية', en: 'Not filterable'),
-  constraintViolation(ar: 'نوع الخاصية أو الارتباط غير صالح', en: 'Attribute type or relationship is invalid'),
-  erp27(ar: 'الخاصية موقوفة ولا تقبل قيماً جديدة', en: 'Inactive attribute cannot accept new values'),
-  erp28(ar: 'تعذر تنفيذ العملية بسبب قاعدة أعمال', en: 'Operation rejected by a business rule'),
+  constraintViolation(
+    ar: 'نوع الخاصية أو الارتباط غير صالح',
+    en: 'Attribute type or relationship is invalid',
+  ),
+  erp27(
+    ar: 'الخاصية موقوفة ولا تقبل قيماً جديدة',
+    en: 'Inactive attribute cannot accept new values',
+  ),
+  erp28(
+    ar: 'تعذر تنفيذ العملية بسبب قاعدة أعمال',
+    en: 'Operation rejected by a business rule',
+  ),
   duplicateCode(
     ar: 'رمز الخاصية مستخدم مسبقاً',
     en: 'Attribute code already exists',

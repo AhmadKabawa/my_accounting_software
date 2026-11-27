@@ -117,7 +117,6 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
     ),
   );
 
-
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<AttributeLookupsCubit, AttributeLookupsState>(
@@ -212,11 +211,22 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                   ],
                   if (_type == AttributeDataType.number) ...[
                     context.ui.spacing.gap(AppSpacing.sm),
-                    AttributeUnitPicker(attribute: widget.attribute, selectedId: _unitId, state: lookups, onChanged: (id) => setState(() => _unitId = id)),
+                    AttributeUnitPicker(
+                      attribute: widget.attribute,
+                      selectedId: _unitId,
+                      state: lookups,
+                      onChanged: (id) => setState(() => _unitId = id),
+                    ),
                   ],
                   if (_type == AttributeDataType.option) ...[
                     context.ui.spacing.gap(AppSpacing.sm),
-                    AttributeOptionSetPicker(attribute: widget.attribute, selectedId: _optionSetId, state: lookups, locked: _locked, onChanged: (id) => setState(() => _optionSetId = id)),
+                    AttributeOptionSetPicker(
+                      attribute: widget.attribute,
+                      selectedId: _optionSetId,
+                      state: lookups,
+                      locked: _locked,
+                      onChanged: (id) => setState(() => _optionSetId = id),
+                    ),
                   ],
                   context.ui.spacing.gap(AppSpacing.sm),
                   AppSwitch(

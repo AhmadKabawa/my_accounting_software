@@ -31,7 +31,17 @@ import '../../support/fake_attributes_repository.dart';
 class _AccessRepository implements AccessRepository {
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async => const Right(
-    AccessSnapshot(userId: 'test', username: 'test', email: null, isSuperAdmin: false, roles: [], permissions: {}, branches: [], warehouses: [], posTerminals: []),
+    AccessSnapshot(
+      userId: 'test',
+      username: 'test',
+      email: null,
+      isSuperAdmin: false,
+      roles: [],
+      permissions: {},
+      branches: [],
+      warehouses: [],
+      posTerminals: [],
+    ),
   );
 }
 
@@ -40,26 +50,40 @@ void main() {
   for (final width in [360.0, 600.0, 900.0, 1200.0]) {
     for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
       for (final dark in [false, true]) {
-        testWidgets('attributes screen renders $width $direction dark=$dark', (tester) async {
+        testWidgets('attributes screen renders $width $direction dark=$dark', (
+          tester,
+        ) async {
           final repository = FakeAttributesRepository();
           sl.registerFactory<FlashMessages>(FlashMessages.new);
-          sl.registerSingleton<AppSettingsManager>(AppSettingsManager(storage: MemoryStorage()));
-          sl.registerFactory<AttributesListCubit>(() => AttributesListCubit(
-            getAttributes: GetAttributesUseCase(repository),
-            setActive: SetAttributeActiveUseCase(repository),
-            deleteAttribute: DeleteAttributeUseCase(repository),
-            flashMessages: sl(),
-          ));
-          sl.registerFactory<AttributeStatsCubit>(() => AttributeStatsCubit(getStats: GetAttributeStatsUseCase(repository)));
-          sl.registerFactory<AttributeFormCubit>(() => AttributeFormCubit(
-            createAttribute: CreateAttributeUseCase(repository),
-            updateAttribute: UpdateAttributeUseCase(repository),
-            flashMessages: sl(),
-          ));
-          sl.registerFactory<AttributeLookupsCubit>(() => AttributeLookupsCubit(
-            getUnits: GetAttributeUnitChoicesUseCase(repository),
-            getOptionSets: GetAttributeOptionSetChoicesUseCase(repository),
-          ));
+          sl.registerSingleton<AppSettingsManager>(
+            AppSettingsManager(storage: MemoryStorage()),
+          );
+          sl.registerFactory<AttributesListCubit>(
+            () => AttributesListCubit(
+              getAttributes: GetAttributesUseCase(repository),
+              setActive: SetAttributeActiveUseCase(repository),
+              deleteAttribute: DeleteAttributeUseCase(repository),
+              flashMessages: sl(),
+            ),
+          );
+          sl.registerFactory<AttributeStatsCubit>(
+            () => AttributeStatsCubit(
+              getStats: GetAttributeStatsUseCase(repository),
+            ),
+          );
+          sl.registerFactory<AttributeFormCubit>(
+            () => AttributeFormCubit(
+              createAttribute: CreateAttributeUseCase(repository),
+              updateAttribute: UpdateAttributeUseCase(repository),
+              flashMessages: sl(),
+            ),
+          );
+          sl.registerFactory<AttributeLookupsCubit>(
+            () => AttributeLookupsCubit(
+              getUnits: GetAttributeUnitChoicesUseCase(repository),
+              getOptionSets: GetAttributeOptionSetChoicesUseCase(repository),
+            ),
+          );
           addTearDown(() async => sl.reset());
           await pumpScreenMatrix(
             tester,
@@ -68,7 +92,9 @@ void main() {
             dark: dark,
             home: Scaffold(
               body: BlocProvider<AccessCubit>(
-                create: (_) => AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))..load(),
+                create: (_) => AccessCubit(
+                  getMyAccess: GetMyAccessUseCase(_AccessRepository()),
+                )..load(),
                 child: const AttributesScreen(),
               ),
             ),

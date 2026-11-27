@@ -41,4 +41,3 @@ Future<void> confirmDeleteAttribute(
     )).fold((failure) => failure.messageKey, (_) => null),
   );
 }
-

@@ -47,10 +47,26 @@ class AttributesRepositoryImpl
 
   Failure _mapWriteFailure(AppException exception) {
     if (exception is ApiException) {
-      if (exception.errorCode == '23505' || exception.statusCode == 409) return const ValidationFailure(messageKey: AttributesKeys.duplicateCode, statusCode: 409);
-      if (exception.errorCode == '23514') return const ValidationFailure(messageKey: AttributesKeys.constraintViolation, statusCode: 422);
-      if (exception.errorCode == 'ERP27') return ValidationFailure(messageKey: AttributesKeys.erp27, statusCode: exception.statusCode);
-      if (exception.errorCode == 'ERP28') return ValidationFailure(messageKey: AttributesKeys.erp28, statusCode: exception.statusCode);
+      if (exception.errorCode == '23505' || exception.statusCode == 409)
+        return const ValidationFailure(
+          messageKey: AttributesKeys.duplicateCode,
+          statusCode: 409,
+        );
+      if (exception.errorCode == '23514')
+        return const ValidationFailure(
+          messageKey: AttributesKeys.constraintViolation,
+          statusCode: 422,
+        );
+      if (exception.errorCode == 'ERP27')
+        return ValidationFailure(
+          messageKey: AttributesKeys.erp27,
+          statusCode: exception.statusCode,
+        );
+      if (exception.errorCode == 'ERP28')
+        return ValidationFailure(
+          messageKey: AttributesKeys.erp28,
+          statusCode: exception.statusCode,
+        );
     }
     return ExceptionMapper.map(exception);
   }

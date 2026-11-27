@@ -4,13 +4,25 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/entit
 
 void main() {
   Map<String, dynamic> payload({
-    Object? links = const [{'count': 2}],
-    Object? values = const [{'count': 3}],
+    Object? links = const [
+      {'count': 2},
+    ],
+    Object? values = const [
+      {'count': 3},
+    ],
     String type = 'number',
   }) => {
-    'id': 4, 'name': 'Weight', 'code': 'WEIGHT', 'data_type': type,
-    'unit_id': 2, 'option_set_id': null, 'is_filterable': true, 'is_active': true,
-    'units': const [{'id': 2, 'name': 'Kilogram', 'symbol': 'kg'}],
+    'id': 4,
+    'name': 'Weight',
+    'code': 'WEIGHT',
+    'data_type': type,
+    'unit_id': 2,
+    'option_set_id': null,
+    'is_filterable': true,
+    'is_active': true,
+    'units': const [
+      {'id': 2, 'name': 'Kilogram', 'symbol': 'kg'},
+    ],
     'option_sets': null,
     'product_type_attributes': links,
     'product_attribute_values': values,
@@ -27,11 +39,26 @@ void main() {
   });
 
   test('unknown or malformed usage remains unsafe', () {
-    expect(AttributeModel.fromJson(payload(links: null)).toEntity().canDelete, isFalse);
-    expect(AttributeModel.fromJson(payload(values: const [{'count': 'unknown'}])).toEntity().canDelete, isFalse);
+    expect(
+      AttributeModel.fromJson(payload(links: null)).toEntity().canDelete,
+      isFalse,
+    );
+    expect(
+      AttributeModel.fromJson(
+        payload(
+          values: const [
+            {'count': 'unknown'},
+          ],
+        ),
+      ).toEntity().canDelete,
+      isFalse,
+    );
   });
 
   test('rejects unknown data type', () {
-    expect(() => AttributeModel.fromJson(payload(type: 'currency')), throwsFormatException);
+    expect(
+      () => AttributeModel.fromJson(payload(type: 'currency')),
+      throwsFormatException,
+    );
   });
 }
