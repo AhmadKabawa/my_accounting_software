@@ -83,6 +83,25 @@ void main() {
     );
   });
 
+  test('maps the categories cycle guard SQLSTATE to invalid parent', () async {
+    remote.updateFailure = ApiException.badRequest(
+      errorCode: '23514',
+      serverMessage: 'new row violates categories_parent_no_cycle',
+      details: 'categories_parent_no_cycle',
+    );
+
+    final result = await repository.update(
+      id: 1,
+      draft: const CategoryDraft(name: 'Shoes', slug: 'shoes', parentId: 2),
+    );
+
+    expect(result.isLeft(), isTrue);
+    expect(
+      result.fold((failure) => failure, (_) => null),
+      isA<CategoryInvalidParentFailure>(),
+    );
+  });
+
   test('does not map unrelated delete conflicts to in-use', () async {
     remote.deleteFailure = ApiException.conflict(errorCode: '23514');
 
