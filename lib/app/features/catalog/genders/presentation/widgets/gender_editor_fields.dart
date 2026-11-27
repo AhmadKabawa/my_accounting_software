@@ -53,9 +53,6 @@ class GenderEditorFields extends StatelessWidget {
           if (text.isEmpty) return GendersKeys.required.tr(context: context);
           if (text.length > 30)
             return GendersKeys.codeTooLong.tr(context: context);
-          if (!RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(text)) {
-            return GendersKeys.codeFormat.tr(context: context);
-          }
           return null;
         },
       ),

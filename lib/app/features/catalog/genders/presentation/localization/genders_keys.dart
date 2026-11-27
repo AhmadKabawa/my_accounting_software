@@ -33,10 +33,6 @@ enum GendersKeys implements AppKey {
     ar: 'الرمز يجب ألا يتجاوز 30 حرفاً',
     en: 'Code must be 30 characters or fewer',
   ),
-  codeFormat(
-    ar: 'استخدم أحرفاً إنجليزية وأرقاماً وشرطة فقط',
-    en: 'Use letters, numbers, underscores, and hyphens only',
-  ),
   sortFormat(
     ar: 'أدخل رقماً صحيحاً صفراً أو أكبر',
     en: 'Enter a non-negative integer',
