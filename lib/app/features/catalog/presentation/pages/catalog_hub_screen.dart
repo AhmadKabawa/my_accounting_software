@@ -24,7 +24,7 @@ import 'package:accounting_software/app/features/catalog/option_sets/presentatio
 import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
-import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';\nimport 'package:accounting_software/app/features/catalog/genders/presentation/localization/genders_keys.dart';\nimport 'package:accounting_software/app/features/catalog/genders/presentation/routing/genders_routes.dart';
 
 /// The Catalog tab: a hub that lists the catalog areas. Each area opens its own
 /// page inside the Catalog branch (so the bottom bar / sidebar stays on Catalog).

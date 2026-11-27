@@ -30,7 +30,7 @@ enum CatalogHubKeys implements AppKey {
     ar: 'نظّم المنتجات ضمن تصنيفات رئيسية وفرعية واضحة.',
     en: 'Organize products into clear parent categories and subcategories.',
   ),
-  sportsDescription(
+  gendersDescription(\n    ar: 'أدر الأجناس المستخدمة في مجموعات المقاسات.',\n    en: 'Manage genders referenced by size groups.',\n  ),\n  sportsDescription(
     ar: 'حدّد الرياضات التي تناسبها منتجاتك مثل كرة القدم والجري.',
     en: 'Define the sports your products suit, such as football and running.',
   ),

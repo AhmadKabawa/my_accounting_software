@@ -124,7 +124,7 @@ get gendersListConfig => CrudListConfig(
         sortKey: 'name',
         priority: DataTableColumnPriority.primary,
         flex: 3,
-        cellBuilder: (_, gender) => AppText(gender.name),
+        cellBuilder: (_, gender) => AppText.raw(gender.name),
       ),
       DataTableColumn(
         labelKey: GendersKeys.code,
@@ -153,9 +153,9 @@ get gendersListConfig => CrudListConfig(
     cardBuilder: (_, gender) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(gender.name, type: AppTextType.titleMedium),
+        AppText.raw(gender.name, type: AppTextType.titleMedium),
         AppText.raw(gender.code),
-        AppText.raw(gender.sortOrder.toString(), color: context.ui.theme.colors.onSurfaceVariant),
+        AppText.raw(gender.sortOrder.toString()),
         GenderStatusBadge(gender),
       ],
     ),
