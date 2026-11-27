@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/foundation/base/use_case.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type_list_query.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/repository/fabric_types_repository.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/repositories/fabric_types_repository.dart';
 
 class GetFabricTypesUseCase
     extends UseCase<PaginatedResult<CatalogFabricType>, FabricTypeListQuery> {
