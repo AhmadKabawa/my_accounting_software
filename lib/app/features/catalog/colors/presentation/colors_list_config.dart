@@ -179,7 +179,7 @@ get colorsListConfig => CrudListConfig(
             flex: 2,
             cellBuilder: (_, color) => AppText.raw(
               color.productCount == null || color.componentCount == null
-                  ? '—'
+                  ? ColorsKeys.usageUnknown.tr(context: _)
                   : '${color.productCount} / ${color.componentCount}',
             ),
           ),
