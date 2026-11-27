@@ -270,7 +270,7 @@ warehouses
 وسياسات RLS لكل جدول موثقة تفصيلياً في `DATA_MODEL.md`، القسم §8. يجب أن
 يرجع مطور Flutter إليه عند إنشاء Models/DTOs.
 
-### 2.3 Views -- 19 View
+### 2.3 Views -- 20 View
 
 **\[مؤكد من القاعدة وDATA_MODEL\]** كل Views التالية موجودة في `public`،
 وتُستخدم للقراءة/الاستعلامات المجمعة بحسب صلاحياتها:
@@ -295,6 +295,7 @@ warehouses
   `v_transfer_discrepancies`        فروقات الاستلام في التحويلات
   `v_user_access`                   ملخص أدوار وفروع ومحطات المستخدم
   `v_variant_attributes`            خصائص متغيرات المنتج
+  `v_color_usage`                   عدد المنتجات ومكونات الألوان (security_invoker)
   `v_variant_list_prices`           أسعار المتغيرات ضمن قوائم الأسعار
 
 أمثلة:
@@ -404,6 +405,15 @@ Authorization: Bearer <USER_ACCESS_TOKEN>
 **\[مؤكد من DATA_MODEL §10.1\]** الأسماء والتواقيع التالية مستخرجة من
 القاعدة. كل هذه الدوال في `public` ومُنحت صلاحية EXECUTE لدور
 `authenticated` وفق فحص الملف/القاعدة، ولا تمنح `anon` صلاحية الاستدعاء.
+
+#### إحصاءات البيانات الأساسية (CAT-07)
+
+| RPC | المعاملات | الإرجاع |
+|---|---|---|
+| `brand_stats` | لا شيء | `TABLE(total bigint, active bigint, inactive bigint, with_products bigint, without_products bigint, most_used_brand_id bigint, most_used_count bigint)` |
+| `color_stats` | لا شيء | `TABLE(total bigint, active bigint, inactive bigint, used bigint, unused bigint)` |
+
+**مؤكد من القاعدة:** الدالتان `SECURITY INVOKER`، وEXECUTE ممنوح لـ`authenticated` فقط (لا `anon`). لذلك تتأثر العدادات بصفوف RLS المرئية للمستدعي؛ لا تفترض أنها أعداد شاملة قبل التحقق بحسابات القراءة المحدودة.
 
 #### الهوية والوصول
 
@@ -879,7 +889,7 @@ Content-Type: image/webp
 expense-receipts/1/expense-123-receipt.webp
 ```
 
-**\[استخدام حالي\]** شعارات الماركات (CAT-07) تُرفع إلى `product-images/brands/<طابع>-<عشوائي>.<ext>` ويُخزَّن الرابط العام في `brands.logo`. **\[تحقق مطلوب\]** سياسة الكتابة تشترط `catalog.manage` بينما كتابة `brands` تشترط `masterdata.manage`؛ جرّب الرفع بدور يملك الثانية دون الأولى؛ التفاصيل والاقتراحات في [BACKEND_REQUESTS](BACKEND_REQUESTS.md) (B-01، B-02).
+**\[استخدام حالي\]** شعارات الماركات (CAT-07) تُرفع إلى `product-images/brands/<طابع>-<عشوائي>.<ext>` ويُخزَّن الرابط العام في `brands.logo`. **مؤكد من القاعدة بعد CAT-07:** سياسة `masterdata_images_insert` تسمح بـINSERT فقط في المجلدات `brands/`, `categories/`, `collections/` داخل `product-images` للمستخدم `authenticated` ذي `masterdata.manage`؛ ولا تمنح هذه السياسة صلاحيات `catalog.manage` أو الكتابة في بقية المجلدات. لا يزال اختبار الرفع بحسابات مخصصة مطلوباً قبل إغلاق التحقق التشغيلي.
 
 **\[قرار مطلوب\]** اعتماد naming convention موحد لصور المنتجات والألوان،
 بما في ذلك هل المسار يتضمن product_id أو color_id أو variant_id، وكيفية
@@ -891,16 +901,14 @@ expense-receipts/1/expense-123-receipt.webp
 -   `expense-receipts` خاص: استخدم authenticated download أو signed URL
     قصير العمر؛ لا تجعل bucket عاماً.
 -   صلاحيات Storage لا تغني عن صلاحيات صفوف ERP.
--   سياسات Storage في القاعدة: 8 سياسات، كلها لدور `authenticated`.
--   سياسات `product-images`: القراءة على bucket، والكتابة تتطلب
-    `catalog.manage`.
+-   سياسات Storage في القاعدة: 9 سياسات، كلها لدور `authenticated`.
+-   سياسات `product-images`: القراءة على bucket؛ سياسات `product_images_insert` / `product_images_update` / `product_images_delete` تتطلب `catalog.manage`، مع استثناء INSERT المحدود `masterdata_images_insert` للمجلدات `brands`, `categories`, `collections` ويتطلب `masterdata.manage`.
 -   سياسات `expense-receipts`: القراءة تتطلب صلاحية مالية مناسبة ونطاق
     فرع، والكتابة تتطلب `finance.expenses` مع صلاحية تشغيل على الفرع.
 -   upsert/استبدال الملف يحتاج مراعاة امتيازات INSERT + SELECT + UPDATE
     في Storage.
 
-**\[تحقق مطلوب\]** اختبار upload/download/signed URL بحساب مستخدم محدود
-الصلاحية، وليس بحساب مدير النظام فقط.
+**\[تحقق مطلوب — لم يُنفَّذ بعد\]** اختبار upload/download/signed URL بحساب مستخدم محدود الصلاحية، بما فيه حساب يملك `masterdata.manage` دون `catalog.manage` وحساب لا يملك `masterdata.manage`؛ يجب أن ينجح الأول في المجلدات الثلاثة المحددة ويُرفض الثاني.
 
 ------------------------------------------------------------------------
 
@@ -941,7 +949,13 @@ rate limit إن فُعّل. - `5xx`: خطأ خادم أو قاعدة/شبكة و
 `ERP16`: صلاحية غير كافية. - `ERP22`: حالة/مدخل غير صالح وفق سياق
 العملية.
 
-### 8.3 ما يحتاج توحيداً
+### 8.3 رموز قيود CAT-07
+
+- `23514` عند تحديث `categories.parent_id` إذا كان النقل ينشئ دورة: تعامل معه كرفض دورة. لا تعتمد على اسم القيد وحده لأن PostgREST قد لا يعيده دائماً.
+- `23503` عند حذف تصنيف أو ماركة قد يعني أن السجل مستخدم كهدف خصم أو مرتبطاً عبر FK؛ افحص `details` والجسم الفعلي إذا احتاجت الواجهة إلى التمييز.
+- لا تربط المنطق باسم constraint وحده؛ احتفظ بـSQLSTATE و`details` و`message` للتشخيص، مع عدم تحليل نص `message` كمعرّف ثابت.
+
+### 8.4 ما يحتاج توحيداً
 
 **\[قرار مطلوب\]** 1. اعتماد DTO موحد لأخطاء التطبيق: `httpStatus`,
 `code`, `key`, `message`, `details`. 2. توحيد تحويل أخطاء PostgREST إلى
