@@ -93,8 +93,11 @@ class CategoryFormCubit
         : {...tree.descendantIds(_category.id), _category.id};
     return tree
         .visible(expandedIds: tree.parentIds)
-        .where((node) => !excluded.contains(node.id) &&
-            (node.category.isActive || node.id == state.parentId))
+        .where(
+          (node) =>
+              !excluded.contains(node.id) &&
+              (node.category.isActive || node.id == state.parentId),
+        )
         .toList(growable: false);
   }
 

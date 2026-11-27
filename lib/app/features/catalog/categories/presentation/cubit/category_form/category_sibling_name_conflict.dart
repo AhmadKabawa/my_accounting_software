@@ -8,10 +8,12 @@ bool categoryHasSiblingNameConflict({
 }) {
   final normalized = name.trim().toLowerCase();
   if (normalized.isEmpty) return false;
-  return tree?.childrenOf(parentId).any(
-        (item) =>
-            item.id != categoryId &&
-            item.name.trim().toLowerCase() == normalized,
-      ) ??
+  return tree
+          ?.childrenOf(parentId)
+          .any(
+            (item) =>
+                item.id != categoryId &&
+                item.name.trim().toLowerCase() == normalized,
+          ) ??
       false;
 }

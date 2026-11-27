@@ -260,28 +260,25 @@ void _register(_FakeOptionSetsRepository repository) {
   addTearDown(() async => sl.reset());
 }
 
-Widget _home(_FakeOptionSetsRepository repository) =>
-    BlocProvider<AccessCubit>(
-      create: (_) => AccessCubit(
-        getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: true)),
-      )..load(),
-      child: Builder(
-        builder: (context) => Scaffold(
-          body: Column(
-            children: [
-              const Expanded(child: OptionSetsScreen()),
-              TextButton(
-                onPressed: () => showOptionSetEditor(
-                  context,
-                  optionSet: repository.optionSet,
-                ),
-                child: const Text('Edit set'),
-              ),
-            ],
+Widget _home(_FakeOptionSetsRepository repository) => BlocProvider<AccessCubit>(
+  create: (_) => AccessCubit(
+    getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: true)),
+  )..load(),
+  child: Builder(
+    builder: (context) => Scaffold(
+      body: Column(
+        children: [
+          const Expanded(child: OptionSetsScreen()),
+          TextButton(
+            onPressed: () =>
+                showOptionSetEditor(context, optionSet: repository.optionSet),
+            child: const Text('Edit set'),
           ),
-        ),
+        ],
       ),
-    );
+    ),
+  ),
+);
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
