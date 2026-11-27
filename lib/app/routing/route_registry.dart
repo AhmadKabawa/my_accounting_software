@@ -10,6 +10,9 @@ import 'package:accounting_software/app/features/catalog/sports/presentation/rou
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
+import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/routing/attributes_routes.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 
