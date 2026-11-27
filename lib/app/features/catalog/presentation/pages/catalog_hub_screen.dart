@@ -15,6 +15,8 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/loc
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
@@ -70,6 +72,12 @@ class CatalogHubScreen extends StatelessWidget {
               titleKey: CategoriesKeys.title,
               descriptionKey: CatalogHubKeys.categoriesDescription,
               onOpen: () => context.go(CategoriesRoutes.categories.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.catalog,
+              titleKey: ProductTypesKeys.title,
+              descriptionKey: ProductTypesKeys.hubDescription,
+              onOpen: () => context.go(ProductTypesRoutes.productTypes.path),
             ),
             _AreaCard(
               icon: AppIcons.colors,
