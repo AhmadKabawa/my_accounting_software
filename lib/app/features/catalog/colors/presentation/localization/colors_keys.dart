@@ -107,6 +107,7 @@ enum ColorsKeys implements AppKey {
   noSampleLabel(ar: 'بدون قيمة HEX', en: 'No HEX value'),
   sortByOrder(ar: 'الترتيب اليدوي', en: 'Manual order'),
   sortByName(ar: 'الاسم', en: 'Name'),
+  sortByNewest(ar: 'الأحدث', en: 'Newest'),
   sortByCode(ar: 'الاختصار', en: 'Abbreviation'),
   duplicate(ar: 'مضاعفة', en: 'Duplicate'),
   duplicateTitle(ar: 'مضاعفة لون', en: 'Duplicate color'),
