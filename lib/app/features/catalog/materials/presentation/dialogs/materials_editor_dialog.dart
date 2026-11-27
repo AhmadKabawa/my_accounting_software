@@ -104,7 +104,7 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
           children: [
             AppTextField(
               controller: _name,
-              labelKey: MaterialsKeys.name,
+              labelKey: MaterialsKeys.materialName,
               validator: MaterialFieldValidators.name,
               onChanged: (_) => scope.clearFailure(),
             ),
