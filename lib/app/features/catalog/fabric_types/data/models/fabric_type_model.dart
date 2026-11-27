@@ -27,9 +27,7 @@ class FabricTypeModel {
       code: json['code'] as String,
       isActive: json['is_active'] as bool? ?? true,
       isNamedFabric: json['is_named_fabric'] as bool? ?? false,
-      fabricCategory: FabricCategory.values
-          .where((e) => e.name == json['fabric_category'])
-          .firstOrNull,
+      fabricCategory: _parseFabricCategory(json['fabric_category']),
       description: json['description'] as String?,
     );
   }
