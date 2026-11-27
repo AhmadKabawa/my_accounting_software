@@ -9,6 +9,7 @@ import 'package:accounting_software/app/features/catalog/fabric_types/domain/ent
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type_draft.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/cubit/fabric_types_form/fabric_type_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/localization/fabric_types_keys.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/widgets/fabric_types_field_validators.dart';
 
 class FabricTypeEditorDialog extends StatefulWidget {
   const FabricTypeEditorDialog({super.key, this.item});
@@ -77,26 +78,6 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
     ),
   );
 
-  String? _validateName(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return FabricTypesKeys.required.tr(context: context);
-    }
-    if (value.trim().length > 100) {
-      return FabricTypesKeys.nameTooLong.tr(context: context);
-    }
-    return null;
-  }
-
-  String? _validateCode(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return FabricTypesKeys.required.tr(context: context);
-    }
-    if (value.trim().length > 50) {
-      return FabricTypesKeys.codeTooLong.tr(context: context);
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) =>
       CrudEditorDialog<
@@ -130,14 +111,14 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
             AppTextField(
               controller: _name,
               labelKey: FabricTypesKeys.name,
-              validator: _validateName,
+              validator: FabricTypeFieldValidators.name,
               onChanged: (_) => scope.clearFailure(),
             ),
             AppTextField(
               controller: _code,
               labelKey: FabricTypesKeys.code,
               textDirection: TextDirection.ltr,
-              validator: _validateCode,
+              validator: FabricTypeFieldValidators.code,
               onChanged: (_) => scope.clearFailure(),
             ),
             DropdownButtonFormField<FabricCategory?>(
