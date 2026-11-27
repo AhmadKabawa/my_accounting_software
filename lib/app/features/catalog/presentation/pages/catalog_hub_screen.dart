@@ -94,6 +94,12 @@ class CatalogHubScreen extends StatelessWidget {
               onOpen: () => context.go(TagsRoutes.tags.path),
             ),
             _AreaCard(
+              icon: AppIcons.catalog,
+              titleKey: GendersKeys.title,
+              descriptionKey: CatalogHubKeys.gendersDescription,
+              onOpen: () => context.go(GendersRoutes.genders.path),
+            ),
+            _AreaCard(
               icon: AppIcons.sports,
               titleKey: SportsKeys.title,
               descriptionKey: CatalogHubKeys.sportsDescription,
