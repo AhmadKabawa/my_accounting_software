@@ -16,21 +16,24 @@ void main() {
       expect(config.capabilities.bulkSelection, isTrue);
     });
 
-    test('wires feature-owned search, status, sorting, stats and providers', () {
-      final config = gendersListConfig;
+    test(
+      'wires feature-owned search, status, sorting, stats and providers',
+      () {
+        final config = gendersListConfig;
 
-      expect(config.sort.options.map((option) => option.key), [
-        'order',
-        'name',
-        'code',
-      ]);
-      expect(config.filterControls, isNotNull);
-      expect(config.activeFilters, isNotNull);
-      expect(config.statsBuilder, isNotNull);
-      expect(config.providersWrapper, isNotNull);
-      expect(config.isMutationEffect, isNotNull);
-      expect(config.onMutated, isNotNull);
-    });
+        expect(config.sort.options.map((option) => option.key), [
+          'order',
+          'name',
+          'code',
+        ]);
+        expect(config.filterControls, isNotNull);
+        expect(config.activeFilters, isNotNull);
+        expect(config.statsBuilder, isNotNull);
+        expect(config.providersWrapper, isNotNull);
+        expect(config.isMutationEffect, isNotNull);
+        expect(config.onMutated, isNotNull);
+      },
+    );
 
     test('wires create, edit, delete, status and bulk flows', () {
       final config = gendersListConfig;
@@ -51,8 +54,11 @@ void main() {
       expect(config.bulk!.deleteLabelKey, GendersKeys.bulkDelete);
     });
 
-    test('provides a data section with status and responsive card/grid builders', () {
-      expect(gendersListConfig.dataSection, isNotNull);
-    });
+    test(
+      'provides a data section with status and responsive card/grid builders',
+      () {
+        expect(gendersListConfig.dataSection, isNotNull);
+      },
+    );
   });
 }
