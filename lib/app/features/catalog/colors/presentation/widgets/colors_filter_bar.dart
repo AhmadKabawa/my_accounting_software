@@ -30,6 +30,7 @@ class ColorsFilterBar extends StatelessWidget {
   static const sortOptions = [
     FilterBarSortOption(key: 'order', label: ColorsKeys.sortByOrder),
     FilterBarSortOption(key: 'name', label: ColorsKeys.sortByName),
+    FilterBarSortOption(key: 'newest', label: ColorsKeys.sortByNewest),
     FilterBarSortOption(key: 'code', label: ColorsKeys.sortByCode),
   ];
 
