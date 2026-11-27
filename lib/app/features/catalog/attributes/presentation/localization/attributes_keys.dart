@@ -57,6 +57,8 @@ enum AttributesKeys implements AppKey {
     en: 'Try changing the search or filters',
   ),
   delete(ar: 'حذف', en: 'Delete'),
+  duplicate(ar: 'إنشاء نسخة', en: 'Duplicate'),
+  deactivateInstead(ar: 'إيقاف الخاصية بدلاً من حذفها', en: 'Deactivate instead of deleting'),
   deleteBlocked(
     ar: 'لا يمكن حذف خاصية مستخدمة أو تعذر التحقق من استخدامها',
     en: 'Cannot delete an attribute that is used or has unknown usage',

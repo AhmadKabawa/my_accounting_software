@@ -21,6 +21,8 @@ import 'package:accounting_software/app/features/catalog/units/presentation/loca
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/routing/attributes_routes.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
@@ -66,6 +68,12 @@ class CatalogHubScreen extends StatelessWidget {
               titleKey: OptionSetsKeys.title,
               descriptionKey: CatalogHubKeys.optionSetsDescription,
               onOpen: () => context.go(OptionSetsRoutes.optionSets.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.catalog,
+              titleKey: AttributesKeys.title,
+              descriptionKey: CatalogHubKeys.attributesDescription,
+              onOpen: () => context.go(AttributesRoutes.attributes.path),
             ),
             _AreaCard(
               icon: AppIcons.catalog,
