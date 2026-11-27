@@ -9,6 +9,8 @@ class CatalogColor extends Equatable {
     required this.isActive,
     required this.sortOrder,
     this.createdAt,
+    this.productCount,
+    this.componentCount,
   });
 
   final int id;
@@ -19,6 +21,10 @@ class CatalogColor extends Equatable {
   final int sortOrder;
   final DateTime? createdAt;
 
+  /// Nullable because the security-invoker usage view may be filtered by RLS.
+  final int? productCount;
+  final int? componentCount;
+
   @override
   List<Object?> get props => [
     id,
@@ -28,5 +34,7 @@ class CatalogColor extends Equatable {
     isActive,
     sortOrder,
     createdAt,
+    productCount,
+    componentCount,
   ];
 }
