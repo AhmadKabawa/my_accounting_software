@@ -322,7 +322,7 @@ rls: on | read: branch(branches.id) | write: perm[org.manage]
 cols: id:i8*=ID, name:v(150)!, slug:v(150)!, logo:v(500), description:t, is_active:b!=true, created_at:ts!=now +std
 uq (name); uq (slug)
 ck: brands_slug_format_check: slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'
-tg: guard_discount_target_ref=trg_block_delete_discount_target()@Bd, set_updated_at@Bu
+tg: guard_discount_target_ref=trg_block_delete_discount_target_ref('brand')@Bd, set_updated_at@Bu
 rls: on | read: true | write: perm[masterdata.manage]
 
 #### care_instructions
@@ -358,7 +358,7 @@ cols: id:i8*=ID, parent_id:i8, name:v(150)!, slug:v(150)!, description:t, image:
 fk: parent_id→categories
 uq (slug)
 ck: categories_check: (parent_id IS NULL) OR (parent_id <> id); categories_slug_format_check: slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'
-tg: categories_no_cycle=trg_categories_no_cycle()@Bu(of parent_id), guard_discount_target_ref=trg_block_delete_discount_target()@Bd, set_updated_at@Bu
+tg: categories_no_cycle=trg_categories_no_cycle()@Bu(of parent_id), guard_discount_target_ref=trg_block_delete_discount_target_ref('category')@Bd, set_updated_at@Bu
 rls: on | read: true | write: perm[masterdata.manage]
 
 #### collections
@@ -835,7 +835,7 @@ rls: on | read: true | write: perm[masterdata.manage]
 #### product_types
 cols: id:i8*=ID, name:v(150)!, code:v(50)!, description:t, is_active:b!=true, sort_order:i4=0 +std
 uq (code)
-tg: guard_discount_target_ref=trg_block_delete_discount_target()@Bd, set_updated_at@Bu
+tg: guard_discount_target_ref=trg_block_delete_discount_target_ref('product_type')@Bd, set_updated_at@Bu
 rls: on | read: true | write: perm[masterdata.manage]
 
 #### product_variants
@@ -843,7 +843,7 @@ cols: id:i8*=ID, product_id:i8!, sku:v(100)!, variant_key:v(200)!, variant_name:
 fk: product_color_id,product_id→product_colors.id,product_id; product_id,size_id→product_sizes.product_id,size_id; product_id→products; unit_id→units
 uq (product_id, variant_key); uq (sku)
 ux: ux_pv_one_default (product_id) WHERE is_default
-tg: audit=audit_row()@Aiud, guard_discount_target_ref=trg_block_delete_discount_target()@Bd, pv_variant_key=trg_pv_variant_key()@Biu(of size_id, product_color_id), set_updated_at@Bu
+tg: audit=audit_row()@Aiud, guard_discount_target_ref=trg_block_delete_discount_target_ref('product')@Bd, pv_variant_key=trg_pv_variant_key()@Biu(of size_id, product_color_id), set_updated_at@Bu
 rls: on | read: true | write: perm[catalog.manage]
 
 #### products
@@ -852,7 +852,7 @@ cols: id:i8*=ID, name:v(250)!, slug:v(250)!, product_type_id:i8!, brand_id:i8, o
 fk: brand_id→brands; origin_country_id→countries; product_type_id→product_types
 uq (slug)
 ix: ix_products_brand_model (brand_id, model_code) — يغطي products.brand_id
-tg: audit=audit_row()@Aiud, guard_discount_target_ref=trg_block_delete_discount_target()@Bd, product_publish_guard@Biu(of status, product_type_id), set_updated_at@Bu
+tg: audit=audit_row()@Aiud, guard_discount_target_ref=trg_block_delete_discount_target_ref('variant')@Bd, product_publish_guard@Biu(of status, product_type_id), set_updated_at@Bu
 rls: on | read: true | write: perm[catalog.manage]
 
 #### purchase_invoice_items
