@@ -10,8 +10,8 @@ enum BrandFailureKeys implements AppKey {
     en: 'Could not verify whether products are linked to this brand.',
   ),
   brandInUse(
-    ar: 'لا يمكن حذف الماركة لأنها مرتبطة بمنتجات. يمكنك إيقافها بدلاً من ذلك.',
-    en: 'This brand cannot be deleted because products reference it. Deactivate it instead.',
+    ar: 'لا يمكن حذف الماركة لأنها مرتبطة بمنتجات أو قواعد خصم. يمكنك إيقافها بدلاً من ذلك.',
+    en: 'This brand is referenced by products or discount rules. Deactivate it instead.',
   );
 
   const BrandFailureKeys({required this.ar, required this.en});
