@@ -10,7 +10,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text_field
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_draft.dart';
-import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_lookup_choices.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_form/attribute_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_lookups/attribute_lookups_cubit.dart';

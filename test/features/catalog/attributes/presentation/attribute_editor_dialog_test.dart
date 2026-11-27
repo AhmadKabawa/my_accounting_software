@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
+import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_lookup_choices.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/create_attribute_use_case.dart';
@@ -11,8 +13,8 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/useca
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_form/attribute_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_lookups/attribute_lookups_cubit.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/dialogs/attribute_editor_dialog.dart';
-import '../../../../../helpers/localized_app.dart';
-import '../../support/fake_attributes_repository.dart';
+import '../../../../helpers/localized_app.dart';
+import '../support/fake_attributes_repository.dart';
 
 Future<void> _openEditor(
   WidgetTester tester,

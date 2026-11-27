@@ -11,7 +11,7 @@ import 'package:accounting_software/app/features/catalog/attributes/domain/useca
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/set_attribute_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/delete_attribute_use_case.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attributes_list/attributes_list_cubit.dart';
-import '../../support/fake_attributes_repository.dart';
+import '../support/fake_attributes_repository.dart';
 
 void main() {
   test('search is debounced for 300ms', () {

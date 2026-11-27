@@ -23,10 +23,10 @@ import 'package:accounting_software/app/features/catalog/attributes/presentation
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_form/attribute_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_lookups/attribute_lookups_cubit.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/pages/attributes_screen.dart';
-import '../../../../../helpers/localized_app.dart';
-import '../../../../../helpers/memory_storage.dart';
-import '../../../../../helpers/screen_matrix.dart';
-import '../../support/fake_attributes_repository.dart';
+import '../../../../helpers/localized_app.dart';
+import '../../../../helpers/memory_storage.dart';
+import '../../../../helpers/screen_matrix.dart';
+import '../support/fake_attributes_repository.dart';
 
 class _AccessRepository implements AccessRepository {
   @override
