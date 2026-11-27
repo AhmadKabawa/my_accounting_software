@@ -80,25 +80,24 @@ void main() {
   });
 
   test('gets brand aggregates through the database RPC', () async {
-      api.statsTotalCount = 14;
-      api.statsActiveCount = 9;
+    api.statsTotalCount = 14;
+    api.statsActiveCount = 9;
 
-      final result = await repository.getBrandStats();
+    final result = await repository.getBrandStats();
 
-      result.fold((_) => fail('Expected aggregate statistics'), (stats) {
-        expect(stats.total, 14);
-        expect(stats.active, 9);
-        expect(stats.inactive, 5);
-        expect(stats.withProducts, 6);
-        expect(stats.withoutProducts, 8);
-        expect(stats.mostUsedBrandId, 12);
-        expect(stats.mostUsedCount, 3);
-      });
-      expect(api.lastPath, '/rest/v1/rpc/brand_stats');
-      expect(api.lastBody, isEmpty);
-      expect(api.paginatedQueries, isEmpty);
-    },
-  );
+    result.fold((_) => fail('Expected aggregate statistics'), (stats) {
+      expect(stats.total, 14);
+      expect(stats.active, 9);
+      expect(stats.inactive, 5);
+      expect(stats.withProducts, 6);
+      expect(stats.withoutProducts, 8);
+      expect(stats.mostUsedBrandId, 12);
+      expect(stats.mostUsedCount, 3);
+    });
+    expect(api.lastPath, '/rest/v1/rpc/brand_stats');
+    expect(api.lastBody, isEmpty);
+    expect(api.paginatedQueries, isEmpty);
+  });
 
   test('propagates a permission failure from the stats RPC', () async {
     api.postFailure = ApiException.forbidden();
