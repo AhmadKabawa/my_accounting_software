@@ -24,7 +24,7 @@ void main() {
       ),
     );
 
-    expect(find.byType(AppCard), findsNWidgets(3));
+    expect(find.byType(AppCard), findsNWidgets(5));
     await tester.tap(find.byType(AppCard).at(1));
     expect(selected, BrandStatusFilter.active);
 
@@ -54,7 +54,7 @@ void main() {
         .widgetList<AppCard>(find.byType(AppCard))
         .map((card) => card.selected)
         .toList();
-    expect(cards, [false, true, false]);
+    expect(cards, [false, true, false, false, false]);
   });
 
   testWidgets('shows placeholders while the stats are not loaded', (
@@ -65,7 +65,7 @@ void main() {
         home: Scaffold(body: BrandStatsBar(null, onFilterSelected: (_) {})),
       ),
     );
-    expect(find.byType(AppCard), findsNWidgets(3));
+    expect(find.byType(AppCard), findsNWidgets(5));
     expect(tester.takeException(), isNull);
   });
 }
