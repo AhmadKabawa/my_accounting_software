@@ -52,7 +52,11 @@ class AttributeUnitPicker extends StatelessWidget {
       errorKey: state.unitFailure?.messageKey,
       clearable: true,
       mode: SearchableDropdownMode.panel,
-      onChanged: (value) => onChanged(value?.id),
+      onChanged: (value) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) onChanged(value?.id);
+        });
+      },
     );
   }
 }
@@ -117,9 +121,12 @@ class AttributeOptionSetPicker extends StatelessWidget {
             enabled: !locked,
             mode: SearchableDropdownMode.panel,
             onChanged: (value) {
-              onChanged(value?.id);
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (field.mounted) field.validate();
+                if (!field.mounted) return;
+                onChanged(value?.id);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (field.mounted) field.validate();
+                });
               });
             },
           ),

@@ -209,12 +209,15 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                     mode: SearchableDropdownMode.panel,
                     onChanged: (v) {
                       if (v == null) return;
-                      setState(() {
-                        _type = v;
-                        _unitId = null;
-                        _optionSetId = null;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted) return;
+                        setState(() {
+                          _type = v;
+                          _unitId = null;
+                          _optionSetId = null;
+                        });
+                        scope.clearFailure();
                       });
-                      scope.clearFailure();
                     },
                   ),
                   if (_locked) ...[
