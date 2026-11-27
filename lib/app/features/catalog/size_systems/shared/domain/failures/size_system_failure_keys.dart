@@ -24,5 +24,5 @@ enum SizeSystemFailureKeys implements AppKey {
   final String en;
 
   @override
-  String get key => 'sizeSystems.failure.$name';
+  String get key => 'sizesystems.$name';
 }

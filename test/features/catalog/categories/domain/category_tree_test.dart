@@ -160,7 +160,7 @@ void main() {
 
   test('derives known no-product statistic and sorts flat results', () {
     final tree = CategoryTree([
-      _category(1, name: 'Zulu', sortOrder: 2, products: 4),
+      _category(1, name: 'Zulu', slug: 'zulu', sortOrder: 2, products: 4),
       _category(2, name: 'Alpha', sortOrder: 1, products: 0),
       _category(3, name: 'Beta', sortOrder: 3, products: 2),
     ]);
