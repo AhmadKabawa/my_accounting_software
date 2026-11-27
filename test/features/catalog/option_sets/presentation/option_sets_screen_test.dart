@@ -40,7 +40,6 @@ import 'package:accounting_software/app/features/catalog/option_sets/presentatio
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/dialogs/option_set_editor_launcher.dart';
 import '../../../../helpers/localized_app.dart';
-import '../../../../helpers/screen_matrix.dart';
 
 class _AccessRepository implements AccessRepository {
   _AccessRepository({required this.canManage});
@@ -261,25 +260,50 @@ void _register(_FakeOptionSetsRepository repository) {
   addTearDown(() async => sl.reset());
 }
 
-Widget _home(_FakeOptionSetsRepository repository) => BlocProvider<AccessCubit>(
-  create: (_) => AccessCubit(
-    getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: true)),
-  )..load(),
-  child: Builder(
-    builder: (context) => Scaffold(
-      body: Column(
-        children: [
-          const Expanded(child: OptionSetsScreen()),
-          TextButton(
-            onPressed: () =>
-                showOptionSetEditor(context, optionSet: repository.optionSet),
-            child: const Text('Edit set'),
-          ),
-        ],
+Widget _home(_FakeOptionSetsRepository repository) => Scaffold(
+  body: Column(
+    children: [
+      const Expanded(child: OptionSetsScreen()),
+      Builder(
+        builder: (context) => TextButton(
+          onPressed: () =>
+              showOptionSetEditor(context, optionSet: repository.optionSet),
+          child: const Text('Edit set'),
+        ),
       ),
-    ),
+    ],
   ),
 );
+
+Future<void> _pumpMatrix(
+  WidgetTester tester,
+  _FakeOptionSetsRepository repository, {
+  required double width,
+  required TextDirection direction,
+  required bool dark,
+}) async {
+  setScreenSize(tester, Size(width, 900));
+  final access = AccessCubit(
+    getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: true)),
+  )..load();
+  addTearDown(access.close);
+  await tester.pumpWidget(
+    BlocProvider<AccessCubit>.value(
+      value: access,
+      child: buildTestApp(
+        home: _home(repository),
+        direction: direction,
+        theme: dark ? AppTheme.dark() : AppTheme.light(),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  expect(
+    tester.takeException(),
+    isNull,
+    reason: 'Option Sets failed at width=$width, direction=$direction, dark=$dark',
+  );
+}
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
