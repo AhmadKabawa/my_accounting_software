@@ -97,8 +97,8 @@ class AttributeOptionSetPicker extends StatelessWidget {
     return FormField<int>(
       key: const ValueKey('attribute-option-set'),
       initialValue: selectedId,
-      validator: (value) =>
-          value == null || !options.any((option) => option.id == value)
+      validator: (_) =>
+          selectedId == null || !options.any((option) => option.id == selectedId)
           ? AttributesKeys.required.tr(context: context)
           : null,
       builder: (field) => Column(
@@ -116,8 +116,10 @@ class AttributeOptionSetPicker extends StatelessWidget {
             enabled: !locked,
             mode: SearchableDropdownMode.panel,
             onChanged: (value) {
-              field.didChange(value?.id);
               onChanged(value?.id);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (field.mounted) field.validate();
+              });
             },
           ),
           if (field.hasError) AppText.raw(field.errorText!),
