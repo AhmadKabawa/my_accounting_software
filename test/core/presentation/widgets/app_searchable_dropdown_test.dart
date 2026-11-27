@@ -74,22 +74,50 @@ void main() {
   testWidgets(
     'deferPanelRefresh safely refreshes an open panel after parent updates',
     (tester) async {
-      await pumpPicker(
-        tester,
-        mode: SearchableDropdownMode.panel,
-        deferPanelRefresh: true,
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      late StateSetter rebuildParent;
+      var revision = 0;
+      await tester.pumpWidget(
+        buildTestApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 1000,
+                child: StatefulBuilder(
+                  builder: (context, setState) {
+                    rebuildParent = setState;
+                    return Column(
+                      children: [
+                        Text('$revision'),
+                        SearchableDropdown<String>(
+                          options: revision == 0
+                              ? const ['Alpha', 'Beta']
+                              : const ['Alpha', 'Beta', 'Gamma'],
+                          labelKey: CatalogUiKeys.chooseOption,
+                          optionLabel: (option) => option,
+                          value: null,
+                          onChanged: (_) {},
+                          mode: SearchableDropdownMode.panel,
+                          deferPanelRefresh: true,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
       );
+
       await tester.tap(find.byType(SearchableDropdown<String>));
       await tester.pumpAndSettle();
-
-      await pumpPicker(
-        tester,
-        mode: SearchableDropdownMode.panel,
-        options: const ['Alpha', 'Beta', 'Gamma'],
-        deferPanelRefresh: true,
-      );
+      rebuildParent(() => revision++);
+      await tester.pump();
       expect(tester.takeException(), isNull);
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(tester.takeException(), isNull);
     },
   );
