@@ -53,7 +53,7 @@ class FabricTypesRemoteDataSourceImpl implements FabricTypesRemoteDataSource {
   }) => _api.patch<FabricTypeModel>(
     FabricTypesEndpoint.collection,
     queryParameters: {'id': 'eq.$id'},
-    data: _json(draft),
+    data: _updateJson(draft),
     options: Options(headers: {'Prefer': 'return=representation'}),
     fromJsonList: _single,
   );
@@ -82,6 +82,11 @@ class FabricTypesRemoteDataSourceImpl implements FabricTypesRemoteDataSource {
     FabricTypeModel.fromJson,
     what: 'fabric type',
   );
+  Map<String, dynamic> _updateJson(FabricTypeDraft draft) {
+    final json = _json(draft);
+    if (draft.isActive == null) json.remove('is_active');
+    return json;
+  }
   Map<String, dynamic> _json(FabricTypeDraft d) => {
     'name': d.name.trim(),
     'code': d.code.trim(),
