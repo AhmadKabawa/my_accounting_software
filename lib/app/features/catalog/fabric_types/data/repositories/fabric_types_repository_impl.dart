@@ -66,7 +66,7 @@ class FabricTypesRepositoryImpl
     return switch (r) {
       ApiSuccess<Unit>() => const Right(unit),
       ApiFailure<Unit>(:final exception) => Left(
-        ExceptionMapper.map(exception),
+        exception is ApiException && exception.errorCode == '23503' ? const FabricTypeInUseFailure() : ExceptionMapper.map(exception),
       ),
     };
   });
