@@ -27,8 +27,7 @@ class FabricTypesRemoteDataSourceImpl implements FabricTypesRemoteDataSource {
       parser: PaginatedParserPresets.supabase,
       queryParameters: {
         'select': FabricTypesEndpoint.select,
-        'order':
-            '${q.sortField.column}.${q.sortAscending ? 'asc' : 'desc'},name.asc,id.asc',
+        'order': _order(q),
         if (term.isNotEmpty)
           'or': '(name.ilike."*$term*",code.ilike."*$term*")',
         if (q.status == FabricTypeStatusFilter.active) 'is_active': 'eq.true',
@@ -74,6 +73,10 @@ class FabricTypesRemoteDataSourceImpl implements FabricTypesRemoteDataSource {
     options: Options(headers: {'Prefer': 'return=minimal'}),
     fromJson: (_) => unit,
   );
+  String _order(FabricTypeListQuery q) {
+    final primary = '${q.sortField.column}.${q.sortAscending ? 'asc' : 'desc'}';
+    return [primary, if (q.sortField != FabricTypeSortField.name) 'name.asc', 'id.asc'].join(',');
+  }
   FabricTypeModel _single(List<dynamic> rows) => PostgrestValue.single(
     rows,
     FabricTypeModel.fromJson,
