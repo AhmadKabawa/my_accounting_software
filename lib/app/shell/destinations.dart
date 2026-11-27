@@ -66,11 +66,6 @@ const appDestinations = [
           path: '/catalog/option-sets',
         ),
         NavBarChild(
-          label: ProductTypesKeys.title,
-          icon: AppIcons.catalog,
-          path: '/catalog/product-types',
-        ),
-        NavBarChild(
           label: ColorsKeys.title,
           icon: AppIcons.colors,
           path: '/catalog/colors',
@@ -79,6 +74,11 @@ const appDestinations = [
           label: CategoriesKeys.title,
           icon: AppIcons.catalog,
           path: '/catalog/categories',
+        ),
+        NavBarChild(
+          label: ProductTypesKeys.title,
+          icon: AppIcons.catalog,
+          path: '/catalog/product-types',
         ),
         NavBarChild(
           label: TagsKeys.title,

@@ -324,12 +324,6 @@ class AppRouter {
                   );
                 },
               ),
-            ],
-          ),
-
-          /// ───────── PROFILE ─────────
-          StatefulShellBranch(
-            routes: [
               GoRoute(
                 path: ColorsRoutes.colors.path,
                 name: ColorsRoutes.colors.name,
