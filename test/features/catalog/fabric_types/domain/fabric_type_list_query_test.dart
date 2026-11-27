@@ -34,6 +34,19 @@ void main() {
       expect(next.page, 2);
     });
 
+    test('preserves ordered multi-sort criteria', () {
+      const query = FabricTypeListQuery();
+      final sorted = query.withSorts(const [
+        FabricTypeSort(FabricTypeSortField.code, false),
+        FabricTypeSort(FabricTypeSortField.name, true),
+      ]);
+      expect(sorted.sorts, const [
+        FabricTypeSort(FabricTypeSortField.code, false),
+        FabricTypeSort(FabricTypeSortField.name, true),
+      ]);
+      expect(sorted.page, 1);
+    });
+
     test('sort field parser accepts known fields only', () {
       expect(FabricTypeSortField.tryParse('code'), FabricTypeSortField.code);
       expect(FabricTypeSortField.tryParse('not-a-field'), isNull);
