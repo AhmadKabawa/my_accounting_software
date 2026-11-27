@@ -75,7 +75,18 @@ class FakeColorsApiClient extends Fake implements IApiClient {
     lastOptions = options;
     lastBody = data as Map<String, dynamic>?;
     if (postFailure case final failure?) return ApiFailure<T>(failure);
-    return ApiSuccess<T>(fromJsonList!([colorJson]));
+    final response = path.toStringPath() == '/rest/v1/rpc/color_stats'
+        ? <Map<String, dynamic>>[
+            {
+              'total': totalCount,
+              'active': activeCount,
+              'inactive': totalCount - activeCount,
+              'used': 6,
+              'unused': 2,
+            },
+          ]
+        : <Map<String, dynamic>>[colorJson];
+    return ApiSuccess<T>(fromJsonList!(response));
   }
 
   @override
