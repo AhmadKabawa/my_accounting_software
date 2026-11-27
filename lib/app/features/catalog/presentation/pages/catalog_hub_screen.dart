@@ -25,9 +25,7 @@ import 'package:accounting_software/app/features/catalog/tags/presentation/local
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
-import 'package:accounting_software/app/features/catalog/materials/presentation/localization/materials_keys.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/presentation/localization/fabric_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
 
 /// The Catalog tab: a hub that lists the catalog areas. Each area opens its own
@@ -97,13 +95,13 @@ class CatalogHubScreen extends StatelessWidget {
             ),
             _AreaCard(
               icon: AppIcons.catalog,
-              titleKey: MaterialsKeys.title,
+              titleKey: CatalogHubKeys.materialsTitle,
               descriptionKey: CatalogHubKeys.materialsDescription,
               onOpen: () => context.go(MaterialsRoutes.materials.path),
             ),
             _AreaCard(
               icon: AppIcons.catalog,
-              titleKey: FabricTypesKeys.title,
+              titleKey: CatalogHubKeys.fabricTypesTitle,
               descriptionKey: CatalogHubKeys.fabricTypesDescription,
               onOpen: () => context.go(FabricTypesRoutes.fabricTypes.path),
             ),
