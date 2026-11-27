@@ -1,6 +1,6 @@
 # DATA_MODEL.md — نموذج بيانات النظام المحاسبي/ERP
 
-> **مُستخرَج مباشرةً من قاعدة البيانات** (مشروع Supabase `test vaude store with claude`، المعرّف `mgtkjmkaydqrugvhplci`) بتاريخ **2026-11-15**، بعد تطبيق migrations الدفعة `s1`–`s6`. لا شيء هنا مكتوب من الذاكرة: الأعمدة والعلاقات والقيود والسياسات والدوال والـ Views مقروءة من `pg_catalog`.
+> **مُستخرَج مباشرةً من قاعدة البيانات** (مشروع Supabase `test vaude store with claude`، المعرّف `mgtkjmkaydqrugvhplci`) بتاريخ **2026-11-27**، بعد تطبيق migrations الدفعتين `s1`–`s6` و`cat07_01`–`cat07_04c`. طُبّقت على القاعدة الحية migrations: `cat07_01_storage_masterdata_image_folders`, `cat07_02_created_at_brands_colors`, `cat07_03_stats_rpcs_and_color_usage_view`, `cat07_04a_categories_cycle_guard`, `cat07_04b_discount_target_delete_guards`, `cat07_04c_slug_format_and_default_size_group_index`. لا شيء هنا مكتوب من الذاكرة: الأعمدة والعلاقات والقيود والسياسات والدوال والـ Views مقروءة من `pg_catalog`.
 > التنسيق مضغوط عمداً (سطر لكل جدول). اقرأ **§1 الاصطلاحات** أولاً.
 
 ## الفهرس
@@ -51,12 +51,12 @@
 | العنصر | العدد | | العنصر | العدد |
 |---|---|---|---|---|
 | جداول public | **121** | | أعمدة (جداول public) | 1277 |
-| Views | **19** (0 materialized) | | PK | 121 |
+| Views | **20** (0 materialized) | | PK | 121 |
 | FK | 392 | | UNIQUE | 92 |
-| CHECK | 162 | | فهارس (public) | 585 |
-| سياسات RLS (public) | **460** | | سياسات storage | **8** |
-| Triggers (public) | **280** (30 اسماً مميزاً؛ الإجمالي 292 مع `realtime` 1 و`storage` 11، فحص 2026-11-16) | | دوال public | **55** |
-| دوال erp | **103** | | أعمدة identity | 100 |
+| CHECK | 164 | | فهارس (public) | 587 |
+| سياسات RLS (public) | **460** | | سياسات storage | **9** |
+| Triggers (public) | **286** | | دوال public | **57** |
+| دوال erp | **105** | | أعمدة identity | 100 |
 | ENUM types | 0 | | جداول مقسَّمة | 0 |
 | الصلاحيات `permissions` | 46 | | روابط `role_permissions` | 151 |
 | الأدوار | 7 | | `error_codes` | 29 |
@@ -170,7 +170,7 @@
 | `audit_logs.action` | CREATE, UPDATE, DELETE, POST, CANCEL, APPROVE, LOGIN, RATE_CHANGE, MANUAL_OVERRIDE |
 
 ### 4.3 الكتالوج
-| الجدول.العمود | القيم |
+| الجدول.العمود | القيم / القيد |
 |---|---|
 | `attributes.data_type` | text, number, boolean, date, json, option |
 | `barcodes.barcode_type` | EAN13, UPC, CODE128 |
@@ -181,7 +181,7 @@
 | `option_sets.selection_type` | single, multiple |
 | `products.authenticity_status` | original, non_original, unknown |
 | `seasons.season_type` | summer, winter, spring, autumn |
-| `units.unit_type` | weight, length, volume, piece |
+| `units.unit_type` | weight, length, volume, piece — CHECK `units_unit_type_check` موجود في القاعدة |
 
 ---
 
@@ -319,9 +319,10 @@ tg: audit=audit_row()@Aiud, set_updated_at@Bu
 rls: on | read: branch(branches.id) | write: perm[org.manage]
 
 #### brands
-cols: id:i8*=ID, name:v(150)!, slug:v(150)!, logo:v(500), description:t, is_active:b!=true +std
+cols: id:i8*=ID, name:v(150)!, slug:v(150)!, logo:v(500), description:t, is_active:b!=true, created_at:ts!=now +std
 uq (name); uq (slug)
-tg: set_updated_at@Bu
+ck: brands_slug_format_check: slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'
+tg: guard_discount_target_ref=trg_block_delete_discount_target()@Bd, set_updated_at@Bu
 rls: on | read: true | write: perm[masterdata.manage]
 
 #### care_instructions
@@ -356,8 +357,8 @@ rls: on | read: perm[finance.view,finance.manage,finance.payments,accounting.vie
 cols: id:i8*=ID, parent_id:i8, name:v(150)!, slug:v(150)!, description:t, image:v(500), sort_order:i4=0, is_active:b!=true +std
 fk: parent_id→categories
 uq (slug)
-ck: categories_check: (parent_id IS NULL) OR (parent_id <> id)
-tg: set_updated_at@Bu
+ck: categories_check: (parent_id IS NULL) OR (parent_id <> id); categories_slug_format_check: slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'
+tg: categories_no_cycle=trg_categories_no_cycle()@Bu(of parent_id), guard_discount_target_ref=trg_block_delete_discount_target()@Bd, set_updated_at@Bu
 rls: on | read: true | write: perm[masterdata.manage]
 
 #### collections
@@ -374,7 +375,7 @@ tg: audit=audit_row()@Aiud, set_updated_at@Bu
 rls: on | read: true | write: perm[catalog.manage]
 
 #### colors
-cols: id:i8*=ID, name:v(100)!, code:v(50)!, hex_code:v(9), is_active:b!=true, sort_order:i4=0 +std
+cols: id:i8*=ID, name:v(100)!, code:v(50)!, hex_code:v(9), is_active:b!=true, sort_order:i4=0, created_at:ts!=now +std
 uq (code)
 ck: colors_hex_code_check: (hex_code IS NULL) OR (hex_code ~ '^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$')
 tg: set_updated_at@Bu
@@ -419,6 +420,9 @@ rls: on | read: perm[parties.view,sales.view,sales.create,accounting.view] | wri
 cols: id:i8*=ID, discount_id:i8!, target_type:v(20)!, target_id:i8! +std
 fk: discount_id→discounts/cascade
 uq (discount_id, target_type, target_id)
+ix: ix_discount_targets_target (target_type, target_id)
+
+**حماية الحذف polymorphic:** `trg_guard_discount_target_ref` على `categories`, `brands`, `product_types`, `products`, `product_variants` يمنع حذف أي هدف مشار إليه في `discount_targets`؛ يرفع SQLSTATE `23503` بالقيد `discount_targets_target_ref`.
 tg: set_updated_at@Bu
 rls: on | read: true | write: perm[pricing.manage]
 
@@ -724,6 +728,7 @@ note: تركيبة اللون النهائي. part_name فارغ = على كام
 cols: id:i8*=ID, product_color_id:i8!, color_id:i8!, part_name:v, percentage:n!=100, is_primary:b!=false, sort_order:i4=0 +std
 fk: color_id→colors; product_color_id→product_colors/cascade
 ux: ux_pcc_component (product_color_id, COALESCE(part_name, ''), color_id); ux_pcc_one_primary (product_color_id) WHERE is_primary
+ix: ix_pcc_color_id (color_id)
 ck: product_color_components_part_name_check: (part_name IS NULL) OR (length(TRIM(BOTH FROM part_name)) > 0); product_color_components_percentage_check: percentage > 0 AND percentage <= 100
 tg: check_color_components=trg_check_color_components()@Aiud, set_updated_at@Bu
 rls: on | read: true | write: perm[catalog.manage]
@@ -823,14 +828,14 @@ rls: on | read: true | write: perm[masterdata.manage]
 #### product_type_size_groups
 cols: id:i8*=ID, product_type_id:i8!, size_group_id:i8!, gender_id:i8, is_default:b!=false, sort_order:i4=0 +std
 fk: gender_id→genders; product_type_id→product_types; size_group_id→size_groups
-ux: ux_pt_size_groups (product_type_id, size_group_id, gender_id) NULLS NOT DISTINCT
+ux: ux_pt_size_groups (product_type_id, size_group_id, gender_id) NULLS NOT DISTINCT; ux_pt_size_groups_one_default (product_type_id, gender_id) NULLS NOT DISTINCT WHERE is_default
 tg: set_updated_at@Bu
 rls: on | read: true | write: perm[masterdata.manage]
 
 #### product_types
 cols: id:i8*=ID, name:v(150)!, code:v(50)!, description:t, is_active:b!=true, sort_order:i4=0 +std
 uq (code)
-tg: set_updated_at@Bu
+tg: guard_discount_target_ref=trg_block_delete_discount_target()@Bd, set_updated_at@Bu
 rls: on | read: true | write: perm[masterdata.manage]
 
 #### product_variants
@@ -838,7 +843,7 @@ cols: id:i8*=ID, product_id:i8!, sku:v(100)!, variant_key:v(200)!, variant_name:
 fk: product_color_id,product_id→product_colors.id,product_id; product_id,size_id→product_sizes.product_id,size_id; product_id→products; unit_id→units
 uq (product_id, variant_key); uq (sku)
 ux: ux_pv_one_default (product_id) WHERE is_default
-tg: audit=audit_row()@Aiud, pv_variant_key=trg_pv_variant_key()@Biu(of size_id, product_color_id), set_updated_at@Bu
+tg: audit=audit_row()@Aiud, guard_discount_target_ref=trg_block_delete_discount_target()@Bd, pv_variant_key=trg_pv_variant_key()@Biu(of size_id, product_color_id), set_updated_at@Bu
 rls: on | read: true | write: perm[catalog.manage]
 
 #### products
@@ -846,7 +851,8 @@ note: المنتج/الموديل. status=published هو ما سيظهر في ا
 cols: id:i8*=ID, name:v(250)!, slug:v(250)!, product_type_id:i8!, brand_id:i8, origin_country_id:i8, authenticity_status:v(20)!='unknown', description:t, model_code:v(100), status:v(20)!='draft', created_at:ts!=now +std
 fk: brand_id→brands; origin_country_id→countries; product_type_id→product_types
 uq (slug)
-tg: audit=audit_row()@Aiud, product_publish_guard@Biu(of status, product_type_id), set_updated_at@Bu
+ix: ix_products_brand_model (brand_id, model_code) — يغطي products.brand_id
+tg: audit=audit_row()@Aiud, guard_discount_target_ref=trg_block_delete_discount_target()@Bd, product_publish_guard@Biu(of status, product_type_id), set_updated_at@Bu
 rls: on | read: true | write: perm[catalog.manage]
 
 #### purchase_invoice_items
@@ -1130,7 +1136,7 @@ rls: on | read: can_access_warehouse(id) | write: perm[org.manage]
 
 ---
 
-## 9) الـ Views (19)
+## 9) الـ Views (20)
 
 كلها في `public`. الأعمدة والأنواع مقروءة من `pg_attribute`؛ `from` = الجداول/الـ Views التي يعتمد عليها (من `pg_depend`). `invoker` = `security_invoker=true` (تحترم RLS للمستخدم). `barrier` = `security_barrier=true` **بلا** `security_invoker` أي تعمل بصلاحيات المالك (وتُقيّد نفسها داخلياً بصلاحية التكلفة) — 4 Views وهي ما ينبّه عليه مستشار الأمان. `grants`: `ALL` = authenticated يملك كل امتيازات DML الافتراضية على الـ View (الـ Views المجمَّعة لا تقبل الكتابة عملياً)، `SELECT` = قراءة فقط.
 
@@ -1207,6 +1213,10 @@ from: branches, employees, parties, pos_terminals, roles, user_branch_access, us
 cols: variant_id:i8, product_id:i8, sku:v(100), variant_name:v(250), is_active:b, size_id:i8, size_name:v(50), size_code:v(50), product_color_id:i8, color_name:v, color_components:j
 from: colors, product_color_components, product_colors, product_variants, sizes
 
+#### v_color_usage `[invoker, SELECT]`
+cols: color_id:i8, product_count:i8, component_count:i8
+from: colors, product_color_components, product_colors
+
 #### v_variant_list_prices  `[invoker, SELECT]`
 cols: variant_id:i8, product_id:i8, sku:v(100), variant_name:v(250), price_list_id:i8, price_list_code:v(50), price_type:v(20), currency_id:i8, currency_code:v(10), amount:n(20,4), valid_from:ts, valid_to:ts, is_current:b
 from: currencies, price_lists, product_variants, variant_prices
@@ -1219,7 +1229,13 @@ from: currencies, price_lists, product_variants, variant_prices
 
 الأسماء بلا بادئة = schema `public` (واجهة RPC للتطبيق). كلها `[DEFINER]` و`auth` (EXECUTE لـ authenticated وليس anon) ما لم يُذكر خلاف ذلك. `S` = stable، وغير ذلك volatile. الجميع يعيدون `jsonb` ما لم يُذكر.
 
-### 10.1 دوال public (55)
+### 10.1 دوال public (57)
+
+جميعها EXECUTE لـ `authenticated` فقط؛ الدوال الموسومة `[INVOKER]` تعمل بصلاحيات المستدعي وتحترم RLS، والبقية SECURITY DEFINER ما لم يُذكر خلاف ذلك.
+
+**إحصاءات البيانات الأساسية (CAT-07)**
+- `brand_stats() → TABLE(total bigint, active bigint, inactive bigint, with_products bigint, without_products bigint, most_used_brand_id bigint, most_used_count bigint)` [S، INVOKER، EXECUTE لـ authenticated فقط].
+- `color_stats() → TABLE(total bigint, active bigint, inactive bigint, used bigint, unused bigint)` [S، INVOKER، EXECUTE لـ authenticated فقط].
 
 **هوية ووصول**
 - `get_my_access() → jsonb` [S] · `my_has_permission(p_code text) → boolean` [S] · `complete_password_change() → void`
@@ -1306,11 +1322,12 @@ from: currencies, price_lists, product_variants, variant_prices
 | `product-images` | **نعم** | 5 MB | image/jpeg, image/png, image/webp |
 | `expense-receipts` | لا | 5 MB | image/jpeg, image/png, image/webp |
 
-**سياسات storage (8، كلها `authenticated`):**
+**سياسات storage (9، كلها `authenticated`):**
 | السياسة | العملية | الشرط |
 |---|---|---|
 | `product_images_read` | SELECT | `bucket_id='product-images'` |
 | `product_images_insert` / `_update` / `_delete` | INSERT / UPDATE / DELETE | `bucket_id='product-images'` AND `has_permission('catalog.manage')` |
+| `masterdata_images_insert` | INSERT فقط | `bucket_id='product-images'` AND المجلد الأول أحد `brands`, `categories`, `collections` AND `has_permission('masterdata.manage')` |
 | `expense_receipts_read` | SELECT | `bucket_id='expense-receipts'` AND `has_any_permission[finance.view,finance.expenses,accounting.view]` AND المجلد الأول رقم AND `can_access_branch(folder1)` |
 | `expense_receipts_insert` / `_update` / `_delete` | INSERT / UPDATE / DELETE | `bucket_id='expense-receipts'` AND `has_permission('finance.expenses')` AND المجلد الأول `^[0-9]+$` AND `can_access_branch(folder1, operate)` |
 
@@ -1378,3 +1395,21 @@ from: currencies, price_lists, product_variants, variant_prices
 | `s4_fix_audit_action_values_in_new_functions` | `audit_logs.action` له CHECK: استُعملت `POST`/`UPDATE` مع `new_values.operation`. |
 | `s5_fix_attach_receipt_null_creator_check` | `coalesce(created_by = auth.uid(), false)` لمنع تجاوز فحص الصلاحية عند `created_by` فارغ. |
 | `s6_fix_v_open_documents_exclude_non_posted_payments` | `v_open_documents`: المدفوع من دفعات `POSTED` فقط وبأنواع `DEBT`/`ADVANCE_APPLICATION`. اكتُشف بعد s1–s5 (راجع §9). أعمدة الـ View وأنواعها و`security_invoker` والصلاحيات دون تغيير. |
+
+
+## 15) سجل تغييرات CAT-07 (2026-11-27)
+
+طُبّقت migrations التالية على القاعدة الحية للمشروع `mgtkjmkaydqrugvhplci`، بالترتيب:
+
+| Migration | المضمون |
+|---|---|
+| `cat07_01_storage_masterdata_image_folders` | إضافة سياسة `storage.objects.masterdata_images_insert`: INSERT فقط إلى `product-images/brands/`, `categories/`, `collections/` للمستخدم `authenticated` ذي `masterdata.manage`. |
+| `cat07_02_created_at_brands_colors` | إضافة `created_at timestamptz NOT NULL DEFAULT now()` إلى `brands` و`colors`. القيم المعبأة للصفوف القديمة مشتقة تقريبياً من `updated_at` وليست تاريخ إنشاء موثوقاً. |
+| `cat07_03_stats_rpcs_and_color_usage_view` | إضافة `brand_stats()`, `color_stats()` (كلاهما SECURITY INVOKER، EXECUTE لـ authenticated فقط) وView `v_color_usage` مع `security_invoker=true`. |
+| `cat07_04a_categories_cycle_guard` | إضافة `trg_categories_no_cycle`، BEFORE UPDATE OF `parent_id`، مع advisory transaction lock؛ يرفض الدورة بـ SQLSTATE `23514` والقيد `categories_parent_no_cycle`. |
+| `cat07_04b_discount_target_delete_guards` | إضافة فهرس `ix_discount_targets_target` وحراس حذف `trg_guard_discount_target_ref` على `categories`, `brands`, `product_types`, `products`, `product_variants`؛ يرفض الحذف بـ `23503` والقيد `discount_targets_target_ref`. |
+| `cat07_04c_slug_format_and_default_size_group_index` | إضافة CHECK لصيغة slug على `categories` و`brands` بالنمط `^[a-z0-9]+(-[a-z0-9]+)*$`، وفهرس `ux_pt_size_groups_one_default` لافتراضي واحد لكل (نوع، جنس). |
+
+**ملاحظة created_at:** لا تُفسَّر قيمة `created_at` للصفوف الموجودة قبل migration على أنها تاريخ إنشاء دقيق؛ إنها تقدير من `updated_at` وقت التعبئة. الصفوف الجديدة تستخدم `now()` افتراضياً.
+
+**إعادة المطابقة مع القاعدة في 2026-11-27:** Views 20، دوال public 57، دوال erp 105، فهارس public 587، Triggers public 286، CHECK public 164، سياسات Storage 9، سياسات RLS في public 460، و`error_codes` 29. الأعداد تحققت بقراءة catalog؛ اختبارات السلوك والصلاحيات المذكورة في سجل التسليم لم تُنفّذ بعد.
