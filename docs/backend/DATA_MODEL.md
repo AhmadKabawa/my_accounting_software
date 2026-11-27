@@ -1360,6 +1360,8 @@ from: currencies, price_lists, product_variants, variant_prices
 
 ---
 
+- **Storage (`storage.objects`):** 9 سياسات، منها `masterdata_images_insert` (INSERT فقط على `product-images/brands/`, `categories/`, `collections/` مع `masterdata.manage`) إضافة إلى سياسات `catalog.manage` العامة لبقية عمليات الكتابة.
+
 ## 13) ملاحظات أمنية وفجوات معروفة
 
 > **سجل البنود الموحّد:** [`docs/OPEN_DECISIONS.md`](../OPEN_DECISIONS.md). يبقى هذا القسم للتفصيل التاريخي؛ لا تُضف فيه بنداً جديداً.
