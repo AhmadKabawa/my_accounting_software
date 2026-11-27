@@ -133,7 +133,7 @@ class AttributesRepositoryImpl
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
       ApiFailure<Unit>(:final exception) => Left(
-        ExceptionMapper.map(exception),
+        _mapWriteFailure(exception),
       ),
     };
   });

@@ -119,6 +119,20 @@ void main() {
     expect(repository.updatedDrafts.single.$2.unitId, isNull);
   });
 
+  testWidgets('option type cannot be saved without an option set', (tester) async {
+    final repository = FakeAttributesRepository();
+    await _openEditor(tester, repository);
+    await tester.enterText(find.byType(TextFormField).first, 'Material');
+    await tester.enterText(find.byType(TextFormField).at(1), 'MATERIAL');
+    await tester.tap(find.byType(SearchableDropdown<AttributeDataType>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Option').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(repository.createdDrafts, isEmpty);
+  });
+
   testWidgets('used attribute locks data type and option set pickers', (
     tester,
   ) async {

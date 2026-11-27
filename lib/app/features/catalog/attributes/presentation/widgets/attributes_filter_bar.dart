@@ -20,9 +20,6 @@ class AttributesFilterBar {
     AttributeDataType.json => AttributesKeys.json,
     AttributeDataType.option => AttributesKeys.option,
   };
-  static const sortOptions = [
-    FilterBarSortOption(key: 'name', label: AttributesKeys.sortByName),
-  ];
   static List<FilterBarFilter> activeFilters(
     BuildContext context,
     AttributeListQuery query, {

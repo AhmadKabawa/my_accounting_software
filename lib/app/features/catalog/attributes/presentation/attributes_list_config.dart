@@ -16,7 +16,6 @@ import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_list_query.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attributes_list/attributes_list_cubit.dart';
@@ -58,9 +57,8 @@ get attributesListConfig => CrudListConfig(
   rowId: (item) => item.id,
   itemLabel: (item) => item.name,
   sort: CrudSortConfig<AttributeListQuery, AttributesListCubit>(
-    options: AttributesFilterBar.sortOptions,
-    current: (_) => const [FilterBarSort('name', true)],
-    tableKey: (_) => 'name',
+    current: (_) => const [],
+    tableKey: (_) => null,
     tableAscending: (_) => true,
     apply: (_, _) {},
     applyTable: (_, _) {},
