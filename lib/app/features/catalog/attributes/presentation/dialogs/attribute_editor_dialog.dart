@@ -166,17 +166,34 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
     for (final option in options) {
       if (option.id == _optionSetId) selected = option;
     }
-    return SearchableDropdown<AttributeOptionSetChoice>(
-      options: options,
-      labelKey: AttributesKeys.optionSet,
-      optionLabel: (v) => v.name,
-      optionSubtitle: (v) => v.code,
-      value: selected,
-      loading: state.loading,
-      errorKey: state.optionSetFailure?.messageKey,
-      clearable: true,
-      mode: SearchableDropdownMode.panel,
-      onChanged: (v) => setState(() => _optionSetId = v?.id),
+    return FormField<int>(
+      key: ValueKey(_type),
+      initialValue: _optionSetId,
+      validator: (value) => value == null
+          ? AttributesKeys.required.tr(context: context)
+          : null,
+      builder: (field) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SearchableDropdown<AttributeOptionSetChoice>(
+            options: options,
+            labelKey: AttributesKeys.optionSet,
+            optionLabel: (v) => v.name,
+            optionSubtitle: (v) => v.code,
+            value: selected,
+            loading: state.loading,
+            errorKey: state.optionSetFailure?.messageKey,
+            clearable: true,
+            enabled: !_locked,
+            mode: SearchableDropdownMode.panel,
+            onChanged: (value) {
+              field.didChange(value?.id);
+              setState(() => _optionSetId = value?.id);
+            },
+          ),
+          if (field.hasError) AppText.raw(field.errorText!),
+        ],
+      ),
     );
   }
 
@@ -268,11 +285,10 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                       scope.clearFailure();
                     },
                   ),
-                  if (_locked)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Text(AttributesKeys.locked.tr(context: context)),
-                    ),
+                  if (_locked) ...[
+                    context.ui.spacing.gap(AppSpacing.xs),
+                    AppText(AttributesKeys.locked),
+                  ],
                   if (_type == AttributeDataType.number) ...[
                     context.ui.spacing.gap(AppSpacing.sm),
                     _unitPicker(lookups),

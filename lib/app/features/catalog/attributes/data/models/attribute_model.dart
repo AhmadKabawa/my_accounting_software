@@ -40,8 +40,9 @@ class AttributeModel {
     final types = AttributeDataType.values.where(
       (item) => item.name == rawType,
     );
-    if (types.isEmpty)
+    if (types.isEmpty) {
       throw const FormatException('Invalid attribute data type');
+    }
     final unit = _firstMap(json['units']);
     final optionSet = _firstMap(json['option_sets']);
     return AttributeModel(
