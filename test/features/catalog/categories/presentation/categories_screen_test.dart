@@ -824,7 +824,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       find.descendant(
-        of: find.byType(AlertDialog).last,
+        of: find.byType(Dialog).last,
         matching: find.text(CategoriesKeys.active.en),
       ),
       findsOneWidget,

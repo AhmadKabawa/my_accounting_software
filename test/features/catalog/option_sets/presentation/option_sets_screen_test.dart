@@ -332,7 +332,7 @@ void main() {
             await tester.pumpAndSettle();
             expect(
               find.descendant(
-                of: find.byType(AlertDialog).last,
+                of: find.byType(Dialog).last,
                 matching: find.text(OptionSetsKeys.selectionType.en),
               ),
               findsOneWidget,
@@ -360,7 +360,7 @@ void main() {
             await tester.tap(find.text(OptionSetsKeys.addOption.en));
             await tester.pumpAndSettle();
             var fields = find.descendant(
-              of: find.byType(AlertDialog).last,
+              of: find.byType(Dialog).last,
               matching: find.byType(TextFormField),
             );
             expect(fields, findsNWidgets(3));
@@ -376,7 +376,7 @@ void main() {
             );
             await tester.pumpAndSettle();
             fields = find.descendant(
-              of: find.byType(AlertDialog).last,
+              of: find.byType(Dialog).last,
               matching: find.byType(TextFormField),
             );
             await tester.enterText(fields.at(0), 'Small updated');
