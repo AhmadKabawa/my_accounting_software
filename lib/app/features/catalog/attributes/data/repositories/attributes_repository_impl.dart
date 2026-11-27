@@ -25,13 +25,16 @@ class AttributesRepositoryImpl
   final AttributeStatsRemoteDataSource _statsRemote;
 
   @override
-  Future<Either<Failure, AttributeStats>> getAttributeStats() => execute(() async {
-    final result = await _statsRemote.getAttributeStats();
-    return switch (result) {
-      ApiSuccess<AttributeStats>(:final data) => Right(data),
-      ApiFailure<AttributeStats>(:final exception) => Left(ExceptionMapper.map(exception)),
-    };
-  });
+  Future<Either<Failure, AttributeStats>> getAttributeStats() =>
+      execute(() async {
+        final result = await _statsRemote.getAttributeStats();
+        return switch (result) {
+          ApiSuccess<AttributeStats>(:final data) => Right(data),
+          ApiFailure<AttributeStats>(:final exception) => Left(
+            ExceptionMapper.map(exception),
+          ),
+        };
+      });
 
   @override
   Future<Either<Failure, Unit>> deleteAttribute(int id) => execute(() async {
@@ -44,7 +47,10 @@ class AttributesRepositoryImpl
 
   Failure _mapDeleteFailure(AppException exception) {
     if (exception is ApiException && exception.errorCode == '23503') {
-      return const ValidationFailure(messageKey: AttributesKeys.inUse, statusCode: 409);
+      return const ValidationFailure(
+        messageKey: AttributesKeys.inUse,
+        statusCode: 409,
+      );
     }
     return ExceptionMapper.map(exception);
   }

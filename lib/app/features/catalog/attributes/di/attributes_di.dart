@@ -27,7 +27,10 @@ void initAttributesDI() {
     () => AttributeStatsRemoteDataSourceImpl(sl<IApiClient>()),
   );
   sl.registerLazySingleton<AttributesRepository>(
-    () => AttributesRepositoryImpl(sl<AttributesRemoteDataSource>(), sl<AttributeStatsRemoteDataSource>()),
+    () => AttributesRepositoryImpl(
+      sl<AttributesRemoteDataSource>(),
+      sl<AttributeStatsRemoteDataSource>(),
+    ),
   );
   sl.registerLazySingleton(() => GetAttributesUseCase(sl()));
   sl.registerLazySingleton(() => GetAttributeStatsUseCase(sl()));
@@ -45,7 +48,9 @@ void initAttributesDI() {
     ),
   );
   sl.registerFactory(() => AttributeStatsCubit(getStats: sl()));
-  sl.registerFactory(() => AttributeLookupsCubit(getUnits: sl(), getOptionSets: sl()));
+  sl.registerFactory(
+    () => AttributeLookupsCubit(getUnits: sl(), getOptionSets: sl()),
+  );
   sl.registerFactory(
     () => AttributeFormCubit(
       createAttribute: sl(),
