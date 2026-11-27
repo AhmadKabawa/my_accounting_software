@@ -22,8 +22,6 @@ import 'package:accounting_software/app/features/home/presentation/localization/
 import 'package:accounting_software/app/features/on_boarding/presentation/localization/onboarding_keys.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failure_keys.dart';
-import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failure_keys.dart';
-import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
 import 'package:accounting_software/app/features/catalog/units/domain/failures/unit_failure_keys.dart';
@@ -78,8 +76,6 @@ final List<AppKey> allKeys = <AppKey>[
   ...ColorNameKeys.values,
   ...AppColorPickerKeys.values,
   ...BrandFailureKeys.values,
-  ...ProductTypesKeys.values,
-  ...ProductTypeFailureKeys.values,
   ...CatalogHubKeys.values,
   ...HomeKeys.values,
   ...OnboardingKeys.values,
