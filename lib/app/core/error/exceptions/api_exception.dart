@@ -63,11 +63,18 @@ class ApiException extends AppException {
 
   // ───────────── Client Errors ─────────────
 
-  factory ApiException.badRequest({String? serverMessage, int? statusCode}) {
+  factory ApiException.badRequest({
+    String? serverMessage,
+    int? statusCode,
+    String? errorCode,
+    String? details,
+  }) {
     return ApiException._(
       message: serverMessage ?? ErrorKeys.badRequest.key,
       statusCode: statusCode ?? 400,
       type: ApiExceptionType.badRequest,
+      errorCode: errorCode,
+      details: details,
     );
   }
 
@@ -79,11 +86,17 @@ class ApiException extends AppException {
     );
   }
 
-  factory ApiException.validationError({String? serverMessage}) {
+  factory ApiException.validationError({
+    String? serverMessage,
+    String? errorCode,
+    String? details,
+  }) {
     return ApiException._(
       message: serverMessage ?? ErrorKeys.validation.key,
       statusCode: 422,
       type: ApiExceptionType.validation,
+      errorCode: errorCode,
+      details: details,
     );
   }
 

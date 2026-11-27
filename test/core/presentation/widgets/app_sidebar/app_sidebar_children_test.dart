@@ -15,6 +15,8 @@ import 'package:accounting_software/app/features/catalog/tags/presentation/routi
 import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
+import 'package:accounting_software/app/features/catalog/genders/presentation/routing/genders_routes.dart';
+import 'package:accounting_software/app/features/catalog/age_groups/presentation/routing/age_groups_routes.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
@@ -161,6 +163,8 @@ void main() {
       AttributesRoutes.attributes.path,
       ColorsRoutes.colors.path,
       CategoriesRoutes.categories.path,
+      GendersRoutes.genders.path,
+      AgeGroupsRoutes.ageGroups.path,
       ProductTypesRoutes.productTypes.path,
       TagsRoutes.tags.path,
       SportsRoutes.sports.path,

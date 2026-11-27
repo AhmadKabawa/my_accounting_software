@@ -367,6 +367,8 @@ class ApiClient implements IApiClient {
     return switch (e.response?.statusCode) {
       400 => ApiException.badRequest(
         serverMessage: _extractMessage(e.response?.data),
+        errorCode: databaseError?.code,
+        details: databaseError?.details,
       ),
       401 => ApiException.unauthorized(
         serverMessage: _extractMessage(e.response?.data),
@@ -381,6 +383,8 @@ class ApiClient implements IApiClient {
       ),
       422 => ApiException.validationError(
         serverMessage: _extractMessage(e.response?.data),
+        errorCode: databaseError?.code,
+        details: databaseError?.details,
       ),
       503 => ApiException.serviceUnavailable(),
       _ => ApiException.server(

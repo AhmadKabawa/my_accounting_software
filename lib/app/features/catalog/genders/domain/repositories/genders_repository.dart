@@ -1,0 +1,24 @@
+import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_draft.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_list_query.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_stats.dart';
+
+abstract interface class GendersRepository {
+  Future<Either<Failure, GenderStats>> getGenderStats();
+  Future<Either<Failure, PaginatedResult<Gender>>> getGenders(
+    GenderListQuery query,
+  );
+  Future<Either<Failure, Gender>> createGender(GenderDraft draft);
+  Future<Either<Failure, Gender>> updateGender({
+    required int id,
+    required GenderDraft draft,
+  });
+  Future<Either<Failure, Unit>> deleteGender(int id);
+  Future<Either<Failure, Unit>> setGenderActive({
+    required int id,
+    required bool isActive,
+  });
+}

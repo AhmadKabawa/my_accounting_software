@@ -9,6 +9,8 @@ import 'package:accounting_software/app/features/catalog/sports/presentation/loc
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
+import 'package:accounting_software/app/features/catalog/genders/presentation/localization/genders_keys.dart';
+import 'package:accounting_software/app/features/catalog/age_groups/presentation/localization/age_groups_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
 
@@ -80,6 +82,16 @@ const appDestinations = [
           label: CategoriesKeys.title,
           icon: AppIcons.catalog,
           path: '/catalog/categories',
+        ),
+        NavBarChild(
+          label: GendersKeys.title,
+          icon: AppIcons.catalog,
+          path: '/catalog/genders',
+        ),
+        NavBarChild(
+          label: AgeGroupsKeys.title,
+          icon: AppIcons.catalog,
+          path: '/catalog/age-groups',
         ),
         NavBarChild(
           label: ProductTypesKeys.title,

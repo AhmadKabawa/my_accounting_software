@@ -1,0 +1,23 @@
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/base/use_case.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_draft.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/repositories/genders_repository.dart';
+
+class UpdateGenderParams extends Equatable {
+  const UpdateGenderParams({required this.id, required this.draft});
+  final int id;
+  final GenderDraft draft;
+  @override
+  List<Object?> get props => [id, draft];
+}
+
+class UpdateGenderUseCase extends UseCase<Gender, UpdateGenderParams> {
+  UpdateGenderUseCase(this._repo);
+  final GendersRepository _repo;
+  @override
+  Future<Either<Failure, Gender>> call(UpdateGenderParams p) =>
+      _repo.updateGender(id: p.id, draft: p.draft);
+}

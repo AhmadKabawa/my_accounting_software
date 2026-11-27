@@ -215,6 +215,21 @@ void main() {
     });
 
     test(
+      'a PostgREST check violation preserves SQLSTATE 23514 on HTTP 400',
+      () async {
+        final result = await clientFor(
+          '{"code":"23514","message":"check constraint violated","details":"min_age must not exceed max_age"}',
+          status: 400,
+        ).post<dynamic>(_endpoint);
+
+        final exception =
+            (result as ApiFailure<dynamic>).exception as ApiException;
+        expect(exception.errorCode, '23514');
+        expect(exception.details, 'min_age must not exceed max_age');
+      },
+    );
+
+    test(
       'a PostgREST conflict preserves its SQLSTATE code and details',
       () async {
         final result = await clientFor(
