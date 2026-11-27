@@ -27,8 +27,7 @@ class MaterialsRemoteDataSourceImpl implements MaterialsRemoteDataSource {
       parser: PaginatedParserPresets.supabase,
       queryParameters: {
         'select': MaterialsEndpoint.select,
-        'order':
-            '${q.sortField.column}.${q.sortAscending ? 'asc' : 'desc'},name.asc,id.asc',
+        'order': _order(q),
         if (term.isNotEmpty)
           'or': '(name.ilike."*$term*",code.ilike."*$term*")',
         if (q.status == MaterialStatusFilter.active) 'is_active': 'eq.true',
@@ -73,6 +72,10 @@ class MaterialsRemoteDataSourceImpl implements MaterialsRemoteDataSource {
     options: Options(headers: {'Prefer': 'return=minimal'}),
     fromJson: (_) => unit,
   );
+  String _order(MaterialListQuery q) {
+    final primary = '${q.sortField.column}.${q.sortAscending ? 'asc' : 'desc'}';
+    return [primary, if (q.sortField != MaterialSortField.name) 'name.asc', 'id.asc'].join(',');
+  }
   MaterialModel _single(List<dynamic> rows) =>
       PostgrestValue.single(rows, MaterialModel.fromJson, what: 'material');
   Map<String, dynamic> _json(MaterialDraft d) => {
