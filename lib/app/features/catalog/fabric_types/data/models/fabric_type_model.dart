@@ -23,12 +23,12 @@ class FabricTypeModel {
     if (id == null) throw const FormatException('Invalid fabric type id');
     return FabricTypeModel(
       id: id,
-      name: json['name'] as String,
-      code: json['code'] as String,
-      isActive: json['is_active'] as bool? ?? true,
-      isNamedFabric: json['is_named_fabric'] as bool? ?? false,
+      name: _requiredString(json, 'name'),
+      code: _requiredString(json, 'code'),
+      isActive: _boolean(json['is_active'], fallback: true),
+      isNamedFabric: _boolean(json['is_named_fabric'], fallback: false),
       fabricCategory: _parseFabricCategory(json['fabric_category']),
-      description: json['description'] as String?,
+      description: _optionalString(json['description']),
     );
   }
   CatalogFabricType toEntity() => CatalogFabricType(
