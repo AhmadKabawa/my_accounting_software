@@ -142,19 +142,19 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
             DropdownButtonFormField<FabricCategory?>(
               value: _selectedCategory,
               decoration: InputDecoration(
-                labelText: FabricTypesKeys.category.tr(context: context),
+                label: AppText(FabricTypesKeys.category),
               ),
               items: [
                 DropdownMenuItem<FabricCategory?>(
                   value: null,
-                  child: Text(
+                  child: AppText(
                     FabricTypesKeys.notSpecified.tr(context: context),
                   ),
                 ),
                 for (final category in FabricCategory.values)
                   DropdownMenuItem<FabricCategory?>(
                     value: category,
-                    child: Text(
+                    child: AppText(
                       switch (category) {
                         FabricCategory.knit =>
                           FabricTypesKeys.knit.tr(context: context),
