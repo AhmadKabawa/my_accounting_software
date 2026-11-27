@@ -73,7 +73,7 @@ class ProductTypeLinksRepositoryImpl
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
       ApiFailure<Unit>(:final exception) => Left(
-        _mapDefaultSizeGroupFailure(exception, body),
+        _mapDefaultSizeGroupFailure(exception),
       ),
     };
   });
