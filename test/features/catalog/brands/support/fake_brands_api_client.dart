@@ -19,7 +19,6 @@ class FakeBrandsApiClient extends Fake implements IApiClient {
   AppException? postFailure;
   AppException? patchFailure;
   AppException? deleteFailure;
-  AppException? activeStatsFailure;
   int statsTotalCount = 12;
   int statsActiveCount = 7;
   final List<Map<String, dynamic>> paginatedQueries = [];
@@ -55,9 +54,6 @@ class FakeBrandsApiClient extends Fake implements IApiClient {
     lastLimit = limit;
     final isCountRequest = lastQueryParameters['select'] == 'id';
     final isActiveRequest = lastQueryParameters['is_active'] == 'eq.true';
-    if (isCountRequest && isActiveRequest && activeStatsFailure != null) {
-      return ApiFailure<PaginatedResult<T>>(activeStatsFailure!);
-    }
     final json = isCountRequest ? {'id': 12} : _brandJson;
     final totalCount = !isCountRequest
         ? 1
