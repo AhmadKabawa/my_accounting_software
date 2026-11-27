@@ -6,6 +6,7 @@ enum ColorStatusFilter { all, active, inactive }
 enum ColorSortField {
   order('sort_order'),
   name('name'),
+  newest('created_at'),
   code('code');
 
   const ColorSortField(this.column);
