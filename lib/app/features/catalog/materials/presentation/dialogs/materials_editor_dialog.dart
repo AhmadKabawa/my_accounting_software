@@ -10,7 +10,7 @@ import 'package:accounting_software/app/features/catalog/materials/presentation/
 import 'package:accounting_software/app/features/catalog/materials/presentation/localization/materials_keys.dart';
 class MaterialEditorDialog extends StatefulWidget{const MaterialEditorDialog({super.key,this.item});final CatalogMaterial? item;@override State<MaterialEditorDialog> createState()=>_MaterialEditorDialogState();}
 class _MaterialEditorDialogState extends State<MaterialEditorDialog>{
- late final CrudEditorFields fields;bool active=true;bool named=false;MaterialType? selected;
+ late final CrudEditorFields fields;bool active=true;MaterialType? selected;
  TextEditingController get name=>fields['name'];TextEditingController get code=>fields['code'];TextEditingController get description=>fields['description'];
  @override void initState(){super.initState();final e=widget.item;active=e?.isActive??true;selected=e?.materialType;fields=CrudEditorFields(initialValues:{'name':e?.name??'','code':e?.code??'','description':e?.description??''});}
  @override void dispose(){fields.dispose();super.dispose();}
