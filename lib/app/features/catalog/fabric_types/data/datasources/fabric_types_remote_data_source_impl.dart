@@ -74,8 +74,12 @@ class FabricTypesRemoteDataSourceImpl implements FabricTypesRemoteDataSource {
     fromJson: (_) => unit,
   );
   String _order(FabricTypeListQuery q) {
-    final primary = '${q.sortField.column}.${q.sortAscending ? 'asc' : 'desc'}';
-    return [primary, if (q.sortField != FabricTypeSortField.name) 'name.asc', 'id.asc'].join(',');
+    final terms = [
+      for (final sort in q.sorts)
+        '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
+    ];
+    final hasName = q.sorts.any((sort) => sort.field == FabricTypeSortField.name);
+    return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
   }
   FabricTypeModel _single(List<dynamic> rows) => PostgrestValue.single(
     rows,
