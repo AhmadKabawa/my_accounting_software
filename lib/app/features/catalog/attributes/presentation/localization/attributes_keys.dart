@@ -2,6 +2,11 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 
 enum AttributesKeys implements AppKey {
   title(ar: 'الخصائص', en: 'Attributes'),
+  editorSubtitle(
+    ar: 'بيانات الخاصية ونوعها وارتباطاتها',
+    en: 'Attribute details, type and references',
+  ),
+  activeOnCreate(ar: 'فعّالة عند الإنشاء', en: 'Active on creation'),
   add(ar: 'إضافة خاصية', en: 'Add attribute'),
   edit(ar: 'تعديل الخاصية', en: 'Edit attribute'),
   attributeName(ar: 'اسم الخاصية', en: 'Attribute name'),
@@ -37,7 +42,77 @@ enum AttributesKeys implements AppKey {
   total(ar: 'إجمالي الخصائص', en: 'Total attributes'),
   activeCount(ar: 'الخصائص الفعالة', en: 'Active attributes'),
   inactiveCount(ar: 'الخصائص الموقوفة', en: 'Inactive attributes'),
-  filterableCount(ar: 'القابلة للتصفية', en: 'Filterable');
+  filterableCount(ar: 'القابلة للتصفية', en: 'Filterable'),
+  status(ar: 'الحالة', en: 'Status'),
+  linkedProductTypes(ar: 'أنواع المنتجات المرتبطة', en: 'Linked product types'),
+  unknown(ar: 'غير معروف', en: 'Unknown'),
+  empty(ar: 'لا توجد خصائص', en: 'No attributes'),
+  emptyDescription(
+    ar: 'أنشئ أول خاصية للكتالوج',
+    en: 'Create the first catalog attribute',
+  ),
+  noResults(ar: 'لا توجد نتائج', en: 'No results'),
+  noResultsDescription(
+    ar: 'جرّب تغيير البحث أو الفلاتر',
+    en: 'Try changing the search or filters',
+  ),
+  delete(ar: 'حذف', en: 'Delete'),
+  duplicate(ar: 'إنشاء نسخة', en: 'Duplicate'),
+  deactivateInstead(
+    ar: 'إيقاف الخاصية بدلاً من حذفها',
+    en: 'Deactivate instead of deleting',
+  ),
+  deleteBlocked(
+    ar: 'لا يمكن حذف خاصية مستخدمة أو تعذر التحقق من استخدامها',
+    en: 'Cannot delete an attribute that is used or has unknown usage',
+  ),
+  deleted(ar: 'تم حذف الخاصية', en: 'Attribute deleted'),
+  statusUpdated(ar: 'تم تحديث حالة الخاصية', en: 'Attribute status updated'),
+  saved(ar: 'تم حفظ الخاصية', en: 'Attribute saved'),
+  sortByName(ar: 'الاسم', en: 'Name'),
+  unitName(ar: 'الوحدة', en: 'Unit'),
+  optionSetName(ar: 'مجموعة الخيارات', en: 'Option set'),
+  filterableOn(ar: 'قابلة للتصفية', en: 'Filterable'),
+  notFilterable(ar: 'غير قابلة للتصفية', en: 'Not filterable'),
+  constraintViolation(
+    ar: 'نوع الخاصية أو الارتباط غير صالح',
+    en: 'Attribute type or relationship is invalid',
+  ),
+  erp27(
+    ar: 'الخاصية موقوفة ولا تقبل قيماً جديدة',
+    en: 'Inactive attribute cannot accept new values',
+  ),
+  erp28(
+    ar: 'تعذر تنفيذ العملية بسبب قاعدة أعمال',
+    en: 'Operation rejected by a business rule',
+  ),
+  duplicateCode(
+    ar: 'رمز الخاصية مستخدم مسبقاً',
+    en: 'Attribute code already exists',
+  ),
+  invalidRelation(
+    ar: 'مجموعة الخيارات غير متوافقة مع نوع الخاصية',
+    en: 'Option set does not match attribute type',
+  ),
+  inUse(
+    ar: 'الخاصية مستخدمة ولا يمكن تغيير نوعها أو حذفها',
+    en: 'Attribute is in use and cannot be changed or deleted',
+  ),
+  nameTooLong(
+    ar: 'يجب ألا يتجاوز الاسم 150 حرفاً',
+    en: 'Name must be at most 150 characters',
+  ),
+  codeTooLong(
+    ar: 'يجب ألا يتجاوز الرمز 80 حرفاً',
+    en: 'Code must be at most 80 characters',
+  ),
+  confirmDeactivate(
+    ar: 'سيمنع الإيقاف إسناد قيم جديدة وفق ERP27. القيم الحالية تبقى محفوظة.',
+    en: 'Deactivation blocks new values under ERP27; existing values remain',
+  ),
+  activate(ar: 'تفعيل', en: 'Activate'),
+  deactivate(ar: 'إيقاف', en: 'Deactivate'),
+  confirmDelete(ar: 'هل تريد حذف هذه الخاصية؟', en: 'Delete this attribute?');
 
   const AttributesKeys({required this.ar, required this.en});
   @override
