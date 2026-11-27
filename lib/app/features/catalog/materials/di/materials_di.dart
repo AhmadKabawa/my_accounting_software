@@ -3,7 +3,7 @@ import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/features/catalog/materials/data/datasources/materials_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/materials/data/datasources/materials_remote_data_source_impl.dart';
 import 'package:accounting_software/app/features/catalog/materials/data/repositories/materials_repository_impl.dart';
-import 'package:accounting_software/app/features/catalog/materials/domain/repository/materials_repository.dart';
+import 'package:accounting_software/app/features/catalog/materials/domain/repositories/materials_repository.dart';
 import 'package:accounting_software/app/features/catalog/materials/domain/usecase/get_materials_use_case.dart';
 import 'package:accounting_software/app/features/catalog/materials/domain/usecase/create_material_use_case.dart';
 import 'package:accounting_software/app/features/catalog/materials/domain/usecase/update_material_use_case.dart';
