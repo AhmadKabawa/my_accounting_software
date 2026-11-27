@@ -1,0 +1,1 @@
+import 'package:equatable/equatable.dart'; class GenderStats extends Equatable { const GenderStats({required this.total,required this.active,required this.inactive}); final int total,active,inactive; @override List<Object?> get props=>[total,active,inactive]; }
