@@ -9,6 +9,7 @@ import 'package:accounting_software/app/features/catalog/materials/domain/entity
 import 'package:accounting_software/app/features/catalog/materials/domain/entity/material_draft.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/cubit/materials_form/material_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/localization/materials_keys.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/widgets/materials_field_validators.dart';
 
 class MaterialEditorDialog extends StatefulWidget {
   const MaterialEditorDialog({super.key, this.item});
@@ -75,26 +76,6 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
     ),
   );
 
-  String? _validateName(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return MaterialsKeys.required.tr(context: context);
-    }
-    if (value.trim().length > 100) {
-      return MaterialsKeys.nameTooLong.tr(context: context);
-    }
-    return null;
-  }
-
-  String? _validateCode(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return MaterialsKeys.required.tr(context: context);
-    }
-    if (value.trim().length > 50) {
-      return MaterialsKeys.codeTooLong.tr(context: context);
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) =>
       CrudEditorDialog<MaterialFormCubit, MaterialFormStatus, MaterialFormEffect>(
@@ -124,14 +105,14 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
             AppTextField(
               controller: _name,
               labelKey: MaterialsKeys.name,
-              validator: _validateName,
+              validator: MaterialFieldValidators.name,
               onChanged: (_) => scope.clearFailure(),
             ),
             AppTextField(
               controller: _code,
               labelKey: MaterialsKeys.code,
               textDirection: TextDirection.ltr,
-              validator: _validateCode,
+              validator: MaterialFieldValidators.code,
               onChanged: (_) => scope.clearFailure(),
             ),
             DropdownButtonFormField<MaterialType?>(
