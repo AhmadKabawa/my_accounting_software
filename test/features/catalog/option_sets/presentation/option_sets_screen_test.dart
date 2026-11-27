@@ -301,7 +301,8 @@ Future<void> _pumpMatrix(
   expect(
     tester.takeException(),
     isNull,
-    reason: 'Option Sets failed at width=$width, direction=$direction, dark=$dark',
+    reason:
+        'Option Sets failed at width=$width, direction=$direction, dark=$dark',
   );
 }
 
