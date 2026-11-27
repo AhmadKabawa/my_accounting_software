@@ -1,0 +1,1 @@
+sealed class GendersListEffect{const GendersListEffect();}class GendersMutatedEffect extends GendersListEffect{const GendersMutatedEffect();}
