@@ -60,6 +60,8 @@ import 'package:accounting_software/app/features/catalog/units/presentation/page
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/pages/attributes_screen.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/routing/attributes_routes.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -299,6 +301,12 @@ class AppRouter {
                 name: OptionSetsRoutes.optionSets.name,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: OptionSetsScreen()),
+              ),
+              GoRoute(
+                path: AttributesRoutes.attributes.path,
+                name: AttributesRoutes.attributes.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: AttributesScreen()),
               ),
               GoRoute(
                 path: CategoriesRoutes.categories.path,

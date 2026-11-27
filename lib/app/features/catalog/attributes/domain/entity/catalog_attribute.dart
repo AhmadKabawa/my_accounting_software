@@ -13,6 +13,7 @@ class CatalogAttribute extends Equatable {
     required this.unitSymbol,
     required this.optionSetId,
     required this.optionSetName,
+    required this.optionSetCode,
     required this.isFilterable,
     required this.isActive,
     required this.linkedProductTypesCount,
@@ -27,6 +28,7 @@ class CatalogAttribute extends Equatable {
   final String? unitSymbol;
   final int? optionSetId;
   final String? optionSetName;
+  final String? optionSetCode;
   final bool isFilterable;
   final bool isActive;
 
@@ -53,6 +55,7 @@ class CatalogAttribute extends Equatable {
     unitSymbol,
     optionSetId,
     optionSetName,
+    optionSetCode,
     isFilterable,
     isActive,
     linkedProductTypesCount,

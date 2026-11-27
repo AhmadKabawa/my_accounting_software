@@ -120,6 +120,11 @@ void main() {
     expect(unitsIndex, brandIndex + 1);
   });
 
+  test('catalog sidebar exposes Attributes route', () {
+    final children = appDestinations[1].item.children;
+    expect(children.any((item) => item.path == '/catalog/attributes'), isTrue);
+  });
+
   test('filters destinations for each documented system role', () {
     expect(rolePermissions.keys, {
       'SUPER_ADMIN',
