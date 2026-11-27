@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/foundation/base/use_case.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/materials/domain/entity/material.dart';
 import 'package:accounting_software/app/features/catalog/materials/domain/entity/material_list_query.dart';
-import 'package:accounting_software/app/features/catalog/materials/domain/repository/materials_repository.dart';
+import 'package:accounting_software/app/features/catalog/materials/domain/repositories/materials_repository.dart';
 
 class GetMaterialsUseCase
     extends UseCase<PaginatedResult<CatalogMaterial>, MaterialListQuery> {
