@@ -4,7 +4,7 @@ on:
   push:
     branches: ['**']
   pull_request:
-    branches: [vscode]
+    branches: [main]
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:
@@ -54,7 +54,7 @@ jobs:
       github.event_name == 'pull_request' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/vscode')
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
