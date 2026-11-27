@@ -3,7 +3,6 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
-import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_draft.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/repositories/product_types_repository.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_type_form/product_type_form_effect.dart';
