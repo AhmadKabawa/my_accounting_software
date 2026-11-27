@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/sections/sport_details_section.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/sections/sport_identity_section.dart';
 
@@ -11,6 +12,8 @@ class SportEditorFieldsView extends StatelessWidget {
     required this.code,
     required this.description,
     required this.sortOrder,
+    required this.isActive,
+    required this.onActiveChanged,
     required this.onChanged,
   });
 
@@ -18,6 +21,8 @@ class SportEditorFieldsView extends StatelessWidget {
   final TextEditingController code;
   final TextEditingController description;
   final TextEditingController sortOrder;
+  final bool isActive;
+  final ValueChanged<bool> onActiveChanged;
   final VoidCallback onChanged;
 
   @override
@@ -25,6 +30,12 @@ class SportEditorFieldsView extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       SportIdentitySection(name: name, code: code, onChanged: onChanged),
+      context.ui.spacing.gap(AppSpacing.sm),
+      AppSwitch(
+        value: isActive,
+        labelKey: SportsKeys.active,
+        onChanged: onActiveChanged,
+      ),
       context.ui.spacing.gap(AppSpacing.md),
       SportDetailsSection(
         description: description,

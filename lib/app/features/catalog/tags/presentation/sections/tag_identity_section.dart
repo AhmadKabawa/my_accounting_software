@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
@@ -12,6 +13,8 @@ class TagIdentitySection extends StatelessWidget {
     super.key,
     required this.name,
     required this.slug,
+    required this.isActive,
+    required this.onActiveChanged,
     required this.onNameChanged,
     required this.onSlugChanged,
     required this.showSlugHint,
@@ -20,6 +23,8 @@ class TagIdentitySection extends StatelessWidget {
 
   final TextEditingController name;
   final TextEditingController slug;
+  final bool isActive;
+  final ValueChanged<bool> onActiveChanged;
   final ValueChanged<String> onNameChanged;
   final ValueChanged<String> onSlugChanged;
   final bool showSlugHint;
@@ -30,6 +35,12 @@ class TagIdentitySection extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       AppText(TagsKeys.identitySection, type: AppTextType.titleSmall),
+      context.ui.spacing.gap(AppSpacing.sm),
+      AppSwitch(
+        value: isActive,
+        labelKey: TagsKeys.active,
+        onChanged: onActiveChanged,
+      ),
       context.ui.spacing.gap(AppSpacing.sm),
       AppTextField(
         controller: name,

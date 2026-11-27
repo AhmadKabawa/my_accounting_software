@@ -39,7 +39,7 @@ class TagsRemoteDataSourceImpl implements TagsRemoteDataSource {
   Future<ApiResult<TagModel>> createTag(CatalogTagDraft draft) =>
       _apiClient.post<TagModel>(
         TagsEndpoint.collection,
-        data: _draftJson(draft),
+        data: _draftJson(draft, includeActiveDefault: true),
         options: Options(headers: {'Prefer': 'return=representation'}),
         fromJsonList: _single,
       );
@@ -88,9 +88,14 @@ class TagsRemoteDataSourceImpl implements TagsRemoteDataSource {
   TagModel _single(List<dynamic> rows) =>
       PostgrestValue.single(rows, TagModel.fromJson, what: 'tag');
 
-  Map<String, dynamic> _draftJson(CatalogTagDraft draft) => {
+  Map<String, dynamic> _draftJson(
+    CatalogTagDraft draft, {
+    bool includeActiveDefault = false,
+  }) => {
     'name': draft.name.trim(),
     'slug': draft.slug.trim(),
-    'is_active': draft.isActive,
+    if (includeActiveDefault) 'is_active': draft.isActive ?? true,
+    if (!includeActiveDefault && draft.isActive != null)
+      'is_active': draft.isActive,
   };
 }
