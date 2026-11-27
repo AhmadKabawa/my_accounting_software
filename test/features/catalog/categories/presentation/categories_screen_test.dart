@@ -822,7 +822,13 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(CategoriesKeys.edit.en).last);
     await tester.pumpAndSettle();
-    expect(find.text(CategoriesKeys.active.en), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AlertDialog).last,
+        matching: find.text(CategoriesKeys.active.en),
+      ),
+      findsOneWidget,
+    );
     await tester.enterText(_categoryNameInput(), 'Root Updated');
     await tester.tap(find.text(CategoriesKeys.save.en));
     await tester.pumpAndSettle();

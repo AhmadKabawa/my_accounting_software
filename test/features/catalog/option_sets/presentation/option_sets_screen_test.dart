@@ -330,7 +330,13 @@ void main() {
 
             await tester.tap(find.text(OptionSetsKeys.add.en).first);
             await tester.pumpAndSettle();
-            expect(find.text(OptionSetsKeys.selectionType.en), findsOneWidget);
+            expect(
+              find.descendant(
+                of: find.byType(AlertDialog).last,
+                matching: find.text(OptionSetsKeys.selectionType.en),
+              ),
+              findsOneWidget,
+            );
             expect(tester.takeException(), isNull);
             await tester.tap(find.text(OptionSetsKeys.cancel.en).last);
             await tester.pumpAndSettle();
@@ -353,7 +359,10 @@ void main() {
 
             await tester.tap(find.text(OptionSetsKeys.addOption.en));
             await tester.pumpAndSettle();
-            var fields = find.byType(TextFormField);
+            var fields = find.descendant(
+              of: find.byType(AlertDialog).last,
+              matching: find.byType(TextFormField),
+            );
             expect(fields, findsNWidgets(3));
             await tester.enterText(fields.at(0), 'Large');
             await tester.enterText(fields.at(1), 'L');
@@ -366,7 +375,10 @@ void main() {
               find.byTooltip(OptionSetsKeys.editOption.en).first,
             );
             await tester.pumpAndSettle();
-            fields = find.byType(TextFormField);
+            fields = find.descendant(
+              of: find.byType(AlertDialog).last,
+              matching: find.byType(TextFormField),
+            );
             await tester.enterText(fields.at(0), 'Small updated');
             await tester.enterText(fields.at(1), 'S2');
             await tester.enterText(fields.at(2), '3');
