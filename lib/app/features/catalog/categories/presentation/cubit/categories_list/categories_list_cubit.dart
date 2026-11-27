@@ -206,11 +206,7 @@ class CategoriesListCubit
         state.query.usage == CategoryUsageFilter.all) {
       return;
     }
-    _reproject(
-      state.query
-          .withUsage(CategoryUsageFilter.all)
-          .withLevel(level),
-    );
+    _reproject(state.query.withUsage(CategoryUsageFilter.all).withLevel(level));
   }
 
   void setUsage(CategoryUsageFilter usage) {
@@ -218,11 +214,7 @@ class CategoriesListCubit
         state.query.level == CategoryLevelFilter.all) {
       return;
     }
-    _reproject(
-      state.query
-          .withLevel(CategoryLevelFilter.all)
-          .withUsage(usage),
-    );
+    _reproject(state.query.withLevel(CategoryLevelFilter.all).withUsage(usage));
   }
 
   void setSort(CategorySortField field, bool ascending) {
