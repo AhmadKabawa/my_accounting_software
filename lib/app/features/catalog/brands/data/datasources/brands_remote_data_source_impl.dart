@@ -98,8 +98,7 @@ class BrandsRemoteDataSourceImpl implements BrandsRemoteDataSource {
       for (final sort in query.sorts)
         '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
     ];
-    final hasId = query.sorts.any((s) => s.field == BrandSortField.newest);
-    return [...terms, if (!hasId) 'id.asc'].join(',');
+    return [...terms, 'id.asc'].join(',');
   }
 
   BrandModel _singleBrandFromList(List<dynamic> rows) {
