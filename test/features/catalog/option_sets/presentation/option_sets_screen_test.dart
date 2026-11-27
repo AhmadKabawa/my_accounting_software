@@ -16,6 +16,7 @@ import 'package:accounting_software/app/core/storage/shared_preferences/app_sett
 import 'package:accounting_software/app/core/storage/storage_key.dart';
 import 'package:accounting_software/app/core/storage/storage_service.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
+import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_draft.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/entity/option_set_list_query.dart';
@@ -291,12 +292,12 @@ void main() {
           (tester) async {
             final repository = _FakeOptionSetsRepository();
             _register(repository);
-            await pumpScreenMatrix(
+            await _pumpMatrix(
               tester,
+              repository,
               width: width,
               direction: direction,
               dark: dark,
-              home: _home(repository),
             );
 
             expect(find.text('Size'), findsOneWidget);

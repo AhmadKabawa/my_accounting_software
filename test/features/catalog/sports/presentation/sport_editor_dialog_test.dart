@@ -1,16 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/sports/domain/entity/sport.dart';
 import 'package:accounting_software/app/features/catalog/sports/domain/entity/sport_draft.dart';
 import 'package:accounting_software/app/features/catalog/sports/domain/usecase/create_sport_use_case.dart';
 import 'package:accounting_software/app/features/catalog/sports/domain/usecase/update_sport_use_case.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/cubit/sport_form/sport_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/sports/presentation/dialogs/sport_editor_dialog.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/dialogs/sport_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
 import '../../../../helpers/localized_app.dart';
 
@@ -45,24 +45,22 @@ void main() {
         ),
       );
     });
+    await sl.reset();
     final cubit = SportFormCubit(
       createSport: create,
       updateSport: update,
       flashMessages: flash,
     );
-    addTearDown(cubit.close);
+    sl.registerFactory<SportFormCubit>(() => cubit);
+    addTearDown(() async => sl.reset());
     await tester.pumpWidget(
       buildTestApp(
-        home: Scaffold(
-          body: TextButton(
-            onPressed: () => showDialog<void>(
-              context: tester.element(find.byType(Scaffold)),
-              builder: (_) => BlocProvider.value(
-                value: cubit,
-                child: const SportEditorDialog(),
-              ),
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => showSportEditor(context),
+              child: const Text('Open'),
             ),
-            child: const Text('Open'),
           ),
         ),
       ),

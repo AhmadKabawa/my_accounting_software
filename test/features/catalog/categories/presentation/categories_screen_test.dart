@@ -820,7 +820,7 @@ void main() {
 
     await tester.tap(find.text('Root').first);
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip(CategoriesKeys.edit.en));
+    await tester.tap(find.byTooltip(CategoriesKeys.edit.en).last);
     await tester.pumpAndSettle();
     expect(find.text(CategoriesKeys.active.en), findsOneWidget);
     await tester.enterText(_categoryNameInput(), 'Root Updated');

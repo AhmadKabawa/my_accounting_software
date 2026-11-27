@@ -1,16 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/features/catalog/tags/domain/entity/catalog_tag.dart';
 import 'package:accounting_software/app/features/catalog/tags/domain/entity/catalog_tag_draft.dart';
 import 'package:accounting_software/app/features/catalog/tags/domain/usecase/create_tag_use_case.dart';
 import 'package:accounting_software/app/features/catalog/tags/domain/usecase/update_tag_use_case.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/cubit/tag_form/tag_form_cubit.dart';
-import 'package:accounting_software/app/features/catalog/tags/presentation/dialogs/tag_editor_dialog.dart';
+import 'package:accounting_software/app/features/catalog/tags/presentation/dialogs/tag_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
 import '../../../../helpers/localized_app.dart';
 
@@ -42,24 +42,22 @@ void main() {
         ),
       );
     });
+    await sl.reset();
     final cubit = TagFormCubit(
       createTag: create,
       updateTag: update,
       flashMessages: flash,
     );
-    addTearDown(cubit.close);
+    sl.registerFactory<TagFormCubit>(() => cubit);
+    addTearDown(() async => sl.reset());
     await tester.pumpWidget(
       buildTestApp(
-        home: Scaffold(
-          body: TextButton(
-            onPressed: () => showDialog<void>(
-              context: tester.element(find.byType(Scaffold)),
-              builder: (_) => BlocProvider.value(
-                value: cubit,
-                child: const TagEditorDialog(),
-              ),
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => showTagEditor(context),
+              child: const Text('Open'),
             ),
-            child: const Text('Open'),
           ),
         ),
       ),
