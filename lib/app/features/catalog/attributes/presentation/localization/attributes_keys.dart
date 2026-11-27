@@ -2,7 +2,10 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 
 enum AttributesKeys implements AppKey {
   title(ar: 'الخصائص', en: 'Attributes'),
-  editorSubtitle(ar: 'بيانات الخاصية ونوعها وارتباطاتها', en: 'Attribute details, type and references'),
+  editorSubtitle(
+    ar: 'بيانات الخاصية ونوعها وارتباطاتها',
+    en: 'Attribute details, type and references',
+  ),
   activeOnCreate(ar: 'فعّالة عند الإنشاء', en: 'Active on creation'),
   add(ar: 'إضافة خاصية', en: 'Add attribute'),
   edit(ar: 'تعديل الخاصية', en: 'Edit attribute'),
