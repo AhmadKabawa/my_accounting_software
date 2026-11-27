@@ -148,8 +148,10 @@ get attributesListConfig => CrudListConfig(
             priority: DataTableColumnPriority.secondary,
             cellBuilder: (context, item) => AppText.raw(
               item.dataType == AttributeDataType.option
-                  ? item.optionSetName ?? AttributesKeys.unknown.tr(context: context)
-                  : item.unitName ?? AttributesKeys.unknown.tr(context: context),
+                  ? item.optionSetName ??
+                        AttributesKeys.unknown.tr(context: context)
+                  : item.unitName ??
+                        AttributesKeys.unknown.tr(context: context),
             ),
           ),
           DataTableColumn(
