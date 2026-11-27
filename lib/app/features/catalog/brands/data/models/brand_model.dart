@@ -5,7 +5,7 @@ class BrandModel {
   factory BrandModel.fromJson(Map<String,dynamic> json) {
     final rawId=json['id']; final id=rawId is int?rawId:int.tryParse(rawId.toString());
     if(id==null) throw const FormatException('Invalid brand id');
-    return BrandModel(id:id,name:json['name'] as String,slug:json['slug'] as String,logo:json['logo'] as String?,description:json['description'] as String?,isActive:json['is_active'] as bool???true,productCount:_readProductCount(json['products']),createdAt:DateTime.tryParse(json['created_at']?.toString()??''),updatedAt:DateTime.tryParse(json['updated_at']?.toString()??''));
+    return BrandModel(id:id,name:json['name'] as String,slug:json['slug'] as String,logo:json['logo'] as String?,description:json['description'] as String?,isActive:json['is_active'] as bool? ?? true,productCount:_readProductCount(json['products']),createdAt:DateTime.tryParse(json['created_at']?.toString()??''),updatedAt:DateTime.tryParse(json['updated_at']?.toString()??''));
   }
   static int? _readProductCount(dynamic value) {
     if(value==null)return null; if(value is num)return value.toInt();
