@@ -13,18 +13,19 @@ This branch now contains the Materials and Fabric Types domain, data, presentati
 - `material_type` allowed values: `natural`, `synthetic`, `blended`.
 - `is_active` defaults true; code-level behavior must support disabling/reactivating.
 - Include search, paging, sorting only on fields supported by the remote query, empty/loading/error states, and permissions per catalog conventions.
-- Trim names/codes on submit and prevent duplicate code; use the repository's existing exception/failure translation pipeline.
+- Trim names/codes on submit and prevent duplicate code; use the repository's existing exception/failure translation pipeline. On edit, include `is_active` in PATCH only when changed.
 - Display name/code and active status across table/card/grid view modes; type and description are available in the editor and type is filterable.
-- SQLSTATE `23505` maps to a duplicate-code message; `23503` maps to an in-use delete failure.
+- SQLSTATE `23505` maps to a duplicate-code message; `23503` maps to an in-use/delete-instead-deactivate message.
 
 ## Fabric Types (`fabric_types`)
 
 - Required: `name` (max 100), `code` (max 50); unique `code`.
 - Optional: `fabric_category`, `description`.
 - `fabric_category` allowed values: `knit`, `woven`, `fleece`.
-- `is_named_fabric` is specified as boolean, default false; do not silently omit this field from entity/editor/query/display where applicable.
+- `is_named_fabric` is boolean default false. CAT-07 decision D-DT-3 says its meaning is undocumented and the field must not be exposed in UI; the implementation preserves it in the model and on edits, and defaults new rows to false.
 - `is_active` defaults true; code-level behavior must support disabling/reactivating.
 - Include search, paging, supported sorting, status/category filters, states, permissions and all three data-view modes.
+- Bulk activate/deactivate/delete is available through the shared engine; selection starts disabled. Duplicate mode is disabled until a safe unique-code seed is defined.
 - SQLSTATE `23505` maps to a duplicate-code message; `23503` maps to an in-use delete failure.
 - Trim values on submit and prevent duplicate code using the existing error handling.
 
@@ -39,6 +40,11 @@ This branch now contains the Materials and Fabric Types domain, data, presentati
 - Do not delete referenced records; follow the existing delete guard/soft-disable convention and backend semantics.
 - Do not claim tests/build/analyze have run from this branch. Those checks must be run by the Flutter workspace team.
 
+Field coverage, integration impact and UI/UX implementation decisions are recorded in:
+- `CAT-07_materials_fabric_types_field_coverage.md`
+- `CAT-07_materials_fabric_types_integration_impact.md`
+- `CAT-07_materials_fabric_types_uiux_spec.md`
+
 ## Verification checklist for the workspace team
 
 1. Format and analyze; resolve all diagnostics.
@@ -52,4 +58,4 @@ This branch now contains the Materials and Fabric Types domain, data, presentati
 
 ## Schema confirmation
 
-`docs/backend/DATA_MODEL.md` confirms `materials` columns (`name`, `code`, `material_type`, `description`, `is_active`) and `fabric_types` columns (`name`, `code`, `fabric_category`, `is_named_fabric`, `description`, `is_active`), with unique `code` on both tables. Allowed enum values are confirmed by the schema. `is_named_fabric` is stored and editable as a boolean defaulting to false; no additional business meaning has been invented.
+`docs/backend/DATA_MODEL.md` confirms `materials` columns (`name`, `code`, `material_type`, `description`, `is_active`) and `fabric_types` columns (`name`, `code`, `fabric_category`, `is_named_fabric`, `description`, `is_active`), with unique `code` on both tables. Allowed enum values are confirmed by the schema. `is_named_fabric` is stored as a boolean defaulting to false. CAT-07 D-DT-3 explicitly says not to expose it until its meaning is documented; the editor preserves its existing value without showing a control.
