@@ -130,8 +130,7 @@ class CategoryIdentity extends StatelessWidget {
                   ],
                 ),
               ),
-              if (!compact && node.childCount > 0)
-                Flexible(child: badge),
+              if (!compact && node.childCount > 0) Flexible(child: badge),
             ],
           ),
         );
