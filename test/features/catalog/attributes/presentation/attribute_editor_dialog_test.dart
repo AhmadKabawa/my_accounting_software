@@ -119,7 +119,9 @@ void main() {
     expect(repository.updatedDrafts.single.$2.unitId, isNull);
   });
 
-  testWidgets('option type cannot be saved without an option set', (tester) async {
+  testWidgets('option type cannot be saved without an option set', (
+    tester,
+  ) async {
     final repository = FakeAttributesRepository();
     await _openEditor(tester, repository);
     await tester.enterText(find.byType(TextFormField).first, 'Material');

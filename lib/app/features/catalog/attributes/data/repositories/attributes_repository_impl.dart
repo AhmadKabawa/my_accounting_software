@@ -132,9 +132,7 @@ class AttributesRepositoryImpl
     final result = await _remote.setAttributeActive(id: id, isActive: isActive);
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) => Left(
-        _mapWriteFailure(exception),
-      ),
+      ApiFailure<Unit>(:final exception) => Left(_mapWriteFailure(exception)),
     };
   });
 
