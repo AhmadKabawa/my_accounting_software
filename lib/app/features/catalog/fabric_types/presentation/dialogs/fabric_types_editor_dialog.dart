@@ -110,7 +110,7 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
           children: [
             AppTextField(
               controller: _name,
-              labelKey: FabricTypesKeys.name,
+              labelKey: FabricTypesKeys.fabricTypeName,
               validator: FabricTypeFieldValidators.name,
               onChanged: (_) => scope.clearFailure(),
             ),
