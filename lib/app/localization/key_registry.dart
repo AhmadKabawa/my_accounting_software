@@ -35,6 +35,7 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/colors/presentation/localization/colors_keys.dart';
 import 'package:accounting_software/app/features/catalog/colors/domain/failures/color_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
+import 'package:accounting_software/app/features/catalog/genders/presentation/localization/genders_keys.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/localization/tags_keys.dart';
 import 'package:accounting_software/app/features/catalog/sports/domain/failures/sport_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/tags/domain/failures/tag_failure_keys.dart';
@@ -72,6 +73,7 @@ final List<AppKey> allKeys = <AppKey>[
   ...ColorsKeys.values,
   ...ColorFailureKeys.values,
   ...SportsKeys.values,
+  ...GendersKeys.values,
   ...SportFailureKeys.values,
   ...TagsKeys.values,
   ...TagFailureKeys.values,

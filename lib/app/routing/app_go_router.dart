@@ -49,7 +49,9 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/rou
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/pages/tags_screen.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
+import 'package:accounting_software/app/features/catalog/genders/presentation/routing/genders_routes.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/pages/sports_screen.dart';
+import 'package:accounting_software/app/features/catalog/genders/presentation/pages/genders_screen.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
@@ -335,6 +337,11 @@ class AppRouter {
                 name: TagsRoutes.tags.name,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: TagsScreen()),
+              ),
+              GoRoute(
+                path: GendersRoutes.genders.path,
+                name: GendersRoutes.genders.name,
+                pageBuilder: (context, state) => const NoTransitionPage(child: GendersScreen()),
               ),
               GoRoute(
                 path: SportsRoutes.sports.path,

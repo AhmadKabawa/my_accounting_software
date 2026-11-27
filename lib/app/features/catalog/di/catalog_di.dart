@@ -3,6 +3,7 @@ import 'package:accounting_software/app/features/catalog/colors/di/colors_di.dar
 import 'package:accounting_software/app/features/catalog/categories/di/categories_di.dart';
 import 'package:accounting_software/app/features/catalog/tags/di/tags_di.dart';
 import 'package:accounting_software/app/features/catalog/sports/di/sports_di.dart';
+import 'package:accounting_software/app/features/catalog/genders/di/genders_di.dart';
 import 'package:accounting_software/app/features/catalog/units/di/units_di.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/di/option_sets_di.dart';
 import 'package:accounting_software/app/features/catalog/attributes/di/attributes_di.dart';
@@ -15,6 +16,7 @@ void initCatalogDI() {
   initCategoriesDI();
   initTagsDI();
   initSportsDI();
+  initGendersDI();
   initUnitsDI();
   initOptionSetsDI();
   initAttributesDI();
