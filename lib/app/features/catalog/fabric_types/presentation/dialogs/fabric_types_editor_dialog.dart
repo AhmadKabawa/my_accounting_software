@@ -108,19 +108,6 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
         builder: (context, scope) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppTextField(
-              controller: _name,
-              labelKey: FabricTypesKeys.fabricTypeName,
-              validator: FabricTypeFieldValidators.name,
-              onChanged: (_) => scope.clearFailure(),
-            ),
-            AppTextField(
-              controller: _code,
-              labelKey: FabricTypesKeys.code,
-              textDirection: TextDirection.ltr,
-              validator: FabricTypeFieldValidators.code,
-              onChanged: (_) => scope.clearFailure(),
-            ),
             DropdownButtonFormField<FabricCategory?>(
               value: _selectedCategory,
               decoration: InputDecoration(
@@ -150,6 +137,19 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
               ],
               onChanged: (value) =>
                   setState(() => _selectedCategory = value),
+            ),
+            AppTextField(
+              controller: _name,
+              labelKey: FabricTypesKeys.fabricTypeName,
+              validator: FabricTypeFieldValidators.name,
+              onChanged: (_) => scope.clearFailure(),
+            ),
+            AppTextField(
+              controller: _code,
+              labelKey: FabricTypesKeys.code,
+              textDirection: TextDirection.ltr,
+              validator: FabricTypeFieldValidators.code,
+              onChanged: (_) => scope.clearFailure(),
             ),
             AppTextField(
               controller: _description,
