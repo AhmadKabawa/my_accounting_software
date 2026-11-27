@@ -48,6 +48,18 @@ class BrandStatsBar extends StatelessWidget {
         tone: AppBadgeTone.neutral,
         filter: BrandStatusFilter.inactive,
       ),
+      StatItem(
+        labelKey: BrandsKeys.brandsWithProducts,
+        value: stats?.withProducts.toString(),
+        icon: AppIcons.success,
+        tone: AppBadgeTone.success,
+      ),
+      StatItem(
+        labelKey: BrandsKeys.brandsWithoutProducts,
+        value: stats?.withoutProducts.toString(),
+        icon: AppIcons.block,
+        tone: AppBadgeTone.neutral,
+      ),
     ],
     selected: selectedFilter,
     onSelected: onFilterSelected,
