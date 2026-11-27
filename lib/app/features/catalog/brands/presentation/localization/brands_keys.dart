@@ -92,6 +92,8 @@ enum BrandsKeys implements AppKey {
   totalBrands(ar: 'إجمالي الماركات', en: 'Total brands'),
   activeBrands(ar: 'الماركات النشطة', en: 'Active brands'),
   inactiveBrands(ar: 'الماركات الموقوفة', en: 'Inactive brands'),
+  brandsWithProducts(ar: 'ماركات بمنتجات', en: 'Brands with products'),
+  brandsWithoutProducts(ar: 'ماركات بلا منتجات', en: 'Brands without products'),
   uploadLogo(ar: 'رفع صورة', en: 'Upload image'),
   replaceLogo(ar: 'استبدال الصورة', en: 'Replace image'),
   removeLogo(ar: 'إزالة الشعار', en: 'Remove logo'),
