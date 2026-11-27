@@ -136,17 +136,17 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
             DropdownButtonFormField<MaterialType?>(
               value: _selectedType,
               decoration: InputDecoration(
-                labelText: MaterialsKeys.type.tr(context: context),
+                label: AppText(MaterialsKeys.type),
               ),
               items: [
                 DropdownMenuItem<MaterialType?>(
                   value: null,
-                  child: Text(MaterialsKeys.notSpecified.tr(context: context)),
+                  child: AppText(MaterialsKeys.notSpecified),
                 ),
                 for (final type in MaterialType.values)
                   DropdownMenuItem<MaterialType?>(
                     value: type,
-                    child: Text(
+                    child: AppText(
                       switch (type) {
                         MaterialType.natural =>
                           MaterialsKeys.natural.tr(context: context),
