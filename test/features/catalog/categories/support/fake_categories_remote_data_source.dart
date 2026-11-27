@@ -12,6 +12,7 @@ class FakeCategoriesRemoteDataSource implements CategoriesRemoteDataSource {
   final List<int> requestedPages = [];
   AppException? createFailure;
   AppException? deleteFailure;
+  AppException? updateFailure;
 
   CategoryModel get model => const CategoryModel(
     id: 1,
@@ -47,7 +48,9 @@ class FakeCategoriesRemoteDataSource implements CategoriesRemoteDataSource {
   Future<ApiResult<CategoryModel>> update({
     required int id,
     required CategoryDraft draft,
-  }) async => ApiSuccess(model);
+  }) async => updateFailure == null
+      ? ApiSuccess(model)
+      : ApiFailure(updateFailure!);
 
   @override
   Future<ApiResult<Unit>> delete(int id) async => deleteFailure == null
