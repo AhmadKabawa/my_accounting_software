@@ -102,19 +102,6 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
         builder: (context, scope) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppTextField(
-              controller: _name,
-              labelKey: MaterialsKeys.materialName,
-              validator: MaterialFieldValidators.name,
-              onChanged: (_) => scope.clearFailure(),
-            ),
-            AppTextField(
-              controller: _code,
-              labelKey: MaterialsKeys.code,
-              textDirection: TextDirection.ltr,
-              validator: MaterialFieldValidators.code,
-              onChanged: (_) => scope.clearFailure(),
-            ),
             DropdownButtonFormField<MaterialType?>(
               value: _selectedType,
               decoration: InputDecoration(
@@ -141,6 +128,19 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
                   ),
               ],
               onChanged: (value) => setState(() => _selectedType = value),
+            ),
+            AppTextField(
+              controller: _name,
+              labelKey: MaterialsKeys.materialName,
+              validator: MaterialFieldValidators.name,
+              onChanged: (_) => scope.clearFailure(),
+            ),
+            AppTextField(
+              controller: _code,
+              labelKey: MaterialsKeys.code,
+              textDirection: TextDirection.ltr,
+              validator: MaterialFieldValidators.code,
+              onChanged: (_) => scope.clearFailure(),
             ),
             AppTextField(
               controller: _description,
