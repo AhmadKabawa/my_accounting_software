@@ -82,7 +82,7 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
   Widget build(BuildContext context) =>
       CrudEditorDialog<
         FabricTypeFormCubit,
-        FabricTypeFormStatus,
+        FabricTypeFormState,
         FabricTypeFormEffect
       >(
         cubit: context.read<FabricTypeFormCubit>(),
