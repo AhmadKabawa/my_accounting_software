@@ -11,11 +11,13 @@ class AttributeUnitPicker extends StatelessWidget {
   const AttributeUnitPicker({
     super.key,
     required this.attribute,
+    required this.keepCurrentInactive,
     required this.selectedId,
     required this.state,
     required this.onChanged,
   });
   final CatalogAttribute? attribute;
+  final bool keepCurrentInactive;
   final int? selectedId;
   final AttributeLookupsState state;
   final ValueChanged<int?> onChanged;
@@ -23,7 +25,7 @@ class AttributeUnitPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = [...state.units];
-    if (selectedId != null &&
+    if (keepCurrentInactive && selectedId != null &&
         !options.any((v) => v.id == selectedId) &&
         attribute?.unitId == selectedId) {
       options.add(
@@ -58,12 +60,14 @@ class AttributeOptionSetPicker extends StatelessWidget {
   const AttributeOptionSetPicker({
     super.key,
     required this.attribute,
+    required this.keepCurrentInactive,
     required this.selectedId,
     required this.state,
     required this.locked,
     required this.onChanged,
   });
   final CatalogAttribute? attribute;
+  final bool keepCurrentInactive;
   final int? selectedId;
   final AttributeLookupsState state;
   final bool locked;
@@ -72,7 +76,7 @@ class AttributeOptionSetPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = [...state.optionSets];
-    if (selectedId != null &&
+    if (keepCurrentInactive && selectedId != null &&
         !options.any((v) => v.id == selectedId) &&
         attribute?.optionSetId == selectedId) {
       options.add(

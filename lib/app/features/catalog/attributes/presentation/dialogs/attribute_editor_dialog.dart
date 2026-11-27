@@ -96,16 +96,22 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
     AttributeDataType.option => AttributesKeys.option,
   };
 
-  bool get _locked => widget.attribute?.isInUse ?? false;
+  bool get _locked => !widget.duplicate && (widget.attribute?.isInUse ?? false);
 
-  Future<void> _save() => context.read<AttributeFormCubit>().save(
+  Future<void> _save() {
+    final lookups = context.read<AttributeLookupsCubit>().state;
+    final unitAvailable = lookups.units.any((value) => value.id == _unitId) ||
+        (!widget.duplicate && widget.attribute?.unitId == _unitId);
+    final optionSetAvailable = lookups.optionSets.any((value) => value.id == _optionSetId) ||
+        (!widget.duplicate && widget.attribute?.optionSetId == _optionSetId);
+    return context.read<AttributeFormCubit>().save(
     id: widget.duplicate ? null : widget.attribute?.id,
     draft: AttributeDraft(
       name: _name.text.trim(),
       code: _code.text.trim(),
       dataType: _type,
-      unitId: _type == AttributeDataType.number ? _unitId : null,
-      optionSetId: _type == AttributeDataType.option ? _optionSetId : null,
+      unitId: _type == AttributeDataType.number && unitAvailable ? _unitId : null,
+      optionSetId: _type == AttributeDataType.option && optionSetAvailable ? _optionSetId : null,
       isFilterable: _filterable,
       isActive:
           widget.attribute == null ||
@@ -115,6 +121,7 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
           : null,
     ),
   );
+  }
 
   @override
   Widget build(BuildContext context) =>
