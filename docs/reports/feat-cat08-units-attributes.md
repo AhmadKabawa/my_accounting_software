@@ -11,6 +11,7 @@
 - Usage-positive/unknown records lock `data_type` and `option_set_id`; delete is hidden. A raced FK 23503 offers deactivate with the ERP27 warning.
 - Added translated mapping for ERP27, ERP28, 23514, 23505 and 409. No raw server message is rendered.
 - Added repository/model, list Cubit, lookup Cubit, editor and responsive screen tests. The responsive matrix covers 360/600/900/1200, RTL/LTR and light/dark and checks `tester.takeException()`.
+- Added an optional Core `SearchableDropdown.deferPanelRefresh` parameter (default false) and a regression test. Attributes opts in to avoid a desktop overlay refresh during ancestor form rebuilds; existing callers retain the old behavior.
 
 ### Shared registration files changed
 - `lib/app/routing/app_go_router.dart`
@@ -19,14 +20,14 @@
 - `lib/app/features/catalog/attributes/di/attributes_di.dart`
 - `test/core/presentation/widgets/app_sidebar/app_sidebar_children_test.dart`
 - `test/shell/destinations_test.dart`
+- Shared Core: `lib/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart` and `test/core/presentation/widgets/app_searchable_dropdown_test.dart`.
 
 `route_registry.dart`, `route_guards.dart`, `catalog_di.dart` and `key_registry.dart` were checked and already contained the Attributes registration/key on the base branch, so they were not modified.
 
 ### Verification status and known failures
-- Run 45927564334 (commit 398e16a): Auto-format passed and Analyze passed; the full test job had not completed at the last check.
-- Run 45927763102 (then-current head e063873): queued at the last check. A passing result is not claimed.
-- Earlier run 45926349692 passed Analyze but its test job exposed CAT-08 quality-gate issues (overlong editor/config files and an unlocalized placeholder) plus failures in Categories/Product Types outside this feature. The editor/config were split, the placeholder was localized, and the sidebar route assertion was updated.
-- Run 45927242521 exposed undefined callback context references and a non-constant RouteItem path in the sidebar's const destination list. Those were corrected in subsequent commits; a fresh run is required to verify.
+- Run 45929138726 (head `df30df4`): Auto-format passed and Analyze passed. Full tests reported 20 failures: one CAT-08 editor test failed only because the test selected `Option` rather than the actual translated `Option set` label; fixed in commit `05cea81`. The remaining 19 failures were outside this feature: Categories tests, Product Types tests/UI quality gates, and the Size Systems key-registry test.
+- Run 45929612854 (head `3547cc7`): Auto-format and Analyze passed; its full test job was still running at last check and predates the selector correction.
+- Run 45929784410 (head `05cea81`): queued at last check; this run verifies the corrected editor test.
 - No local Flutter/Dart commands were run.
 
 ### Not yet verified
@@ -34,7 +35,6 @@
 - Chrome: 360 and 1200 px in RTL/LTR and light/dark, including editor validation, inactive current lookups, duplicate flow, overflow row actions and FK fallback.
 - No new backend endpoint/RPC/View has been requested yet. If PostgREST cannot provide the required counts reliably in the live schema, agree a view/RPC with Backend before merging.
 
----
 
 
 ## Stage 0 — architecture audit and specification correction (2026-11-26)
