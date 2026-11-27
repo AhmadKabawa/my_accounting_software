@@ -12,7 +12,7 @@ import 'package:accounting_software/app/features/catalog/fabric_types/data/model
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type_draft.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type_list_query.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/domain/repository/fabric_types_repository.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/repositories/fabric_types_repository.dart';
 
 class FabricTypesRepositoryImpl
     with RepositoryExecutor
