@@ -19,5 +19,12 @@ class FabricTypeDraft extends Equatable {
   final bool? isActive;
 
   @override
-  List<Object?> get props => [name, code, fabricCategory, description, isNamedFabric, isActive];
+  List<Object?> get props => [
+    name,
+    code,
+    fabricCategory,
+    description,
+    isNamedFabric,
+    isActive,
+  ];
 }

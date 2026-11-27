@@ -19,7 +19,8 @@ enum MaterialSortField {
   }
 }
 
-class MaterialListQuery extends Equatable implements PagedQuery<MaterialListQuery> {
+class MaterialListQuery extends Equatable
+    implements PagedQuery<MaterialListQuery> {
   const MaterialListQuery({
     this.search = '',
     this.status = MaterialStatusFilter.all,
@@ -42,16 +43,23 @@ class MaterialListQuery extends Equatable implements PagedQuery<MaterialListQuer
   final int pageSize;
 
   @override
-  bool get hasActiveFilters => search.isNotEmpty || status != MaterialStatusFilter.all || type != null;
+  bool get hasActiveFilters =>
+      search.isNotEmpty || status != MaterialStatusFilter.all || type != null;
 
   @override
-  MaterialListQuery withSearch(String value) => copyWith(search: value, page: 1);
+  MaterialListQuery withSearch(String value) =>
+      copyWith(search: value, page: 1);
 
   @override
   MaterialListQuery withPage(int value) => copyWith(page: value);
 
   @override
-  MaterialListQuery cleared() => copyWith(search: '', status: MaterialStatusFilter.all, type: null, page: 1);
+  MaterialListQuery cleared() => copyWith(
+    search: '',
+    status: MaterialStatusFilter.all,
+    type: null,
+    page: 1,
+  );
 
   MaterialListQuery copyWith({
     String? search,
@@ -73,5 +81,13 @@ class MaterialListQuery extends Equatable implements PagedQuery<MaterialListQuer
   );
 
   @override
-  List<Object?> get props => [search, status, type, sortField, sortAscending, page, pageSize];
+  List<Object?> get props => [
+    search,
+    status,
+    type,
+    sortField,
+    sortAscending,
+    page,
+    pageSize,
+  ];
 }

@@ -20,5 +20,12 @@ class CatalogMaterial extends Equatable {
   final bool isActive;
 
   @override
-  List<Object?> get props => [id, name, code, materialType, description, isActive];
+  List<Object?> get props => [
+    id,
+    name,
+    code,
+    materialType,
+    description,
+    isActive,
+  ];
 }

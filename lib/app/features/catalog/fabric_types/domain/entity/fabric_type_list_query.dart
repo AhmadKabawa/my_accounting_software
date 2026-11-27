@@ -19,7 +19,8 @@ enum FabricTypeSortField {
   }
 }
 
-class FabricTypeListQuery extends Equatable implements PagedQuery<FabricTypeListQuery> {
+class FabricTypeListQuery extends Equatable
+    implements PagedQuery<FabricTypeListQuery> {
   const FabricTypeListQuery({
     this.search = '',
     this.status = FabricTypeStatusFilter.all,
@@ -42,16 +43,26 @@ class FabricTypeListQuery extends Equatable implements PagedQuery<FabricTypeList
   final int pageSize;
 
   @override
-  bool get hasActiveFilters => search.isNotEmpty || status != FabricTypeStatusFilter.all || category != null;
+  bool get hasActiveFilters =>
+      search.isNotEmpty ||
+      status != FabricTypeStatusFilter.all ||
+      category != null;
 
   @override
-  FabricTypeListQuery withSearch(String value) => copyWith(search: value, page: 1);
+  FabricTypeListQuery withSearch(String value) =>
+      copyWith(search: value, page: 1);
 
   @override
   FabricTypeListQuery withPage(int value) => copyWith(page: value);
 
   @override
-  FabricTypeListQuery cleared() => copyWith(search: '', status: FabricTypeStatusFilter.all, category: null, clearCategory: true, page: 1);
+  FabricTypeListQuery cleared() => copyWith(
+    search: '',
+    status: FabricTypeStatusFilter.all,
+    category: null,
+    clearCategory: true,
+    page: 1,
+  );
 
   FabricTypeListQuery copyWith({
     String? search,
@@ -73,5 +84,13 @@ class FabricTypeListQuery extends Equatable implements PagedQuery<FabricTypeList
   );
 
   @override
-  List<Object?> get props => [search, status, category, sortField, sortAscending, page, pageSize];
+  List<Object?> get props => [
+    search,
+    status,
+    category,
+    sortField,
+    sortAscending,
+    page,
+    pageSize,
+  ];
 }
