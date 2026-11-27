@@ -21,6 +21,8 @@ class FakeColorsApiClient extends Fake implements IApiClient {
   AppException? postFailure;
   AppException? patchFailure;
   AppException? deleteFailure;
+  AppException? usageFailure;
+  Map<String, dynamic>? usageQuery;
 
   static const Map<String, dynamic> colorJson = {
     'id': 7,
@@ -57,6 +59,31 @@ class FakeColorsApiClient extends Fake implements IApiClient {
         currentPage: page,
         totalPages: 1,
       ),
+    );
+  }
+
+
+  @override
+  Future<ApiResult<T>> get<T>(
+    AppEndpoint path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    JsonFactory<T>? fromJson,
+    JsonListFactory<T>? fromJsonList,
+    CancelToken? cancelToken,
+    bool requiresAuth = true,
+  }) async {
+    usageQuery = queryParameters;
+    final failure = usageFailure;
+    if (failure != null) return ApiFailure<T>(failure);
+    return ApiSuccess<T>(
+      fromJsonList!([
+        {
+          'color_id': 7,
+          'product_count': 4,
+          'component_count': 9,
+        },
+      ]),
     );
   }
 
