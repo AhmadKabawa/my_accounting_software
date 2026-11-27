@@ -71,27 +71,28 @@ void main() {
     );
   }
 
-  testWidgets('deferPanelRefresh safely refreshes an open panel after parent updates', (
-    tester,
-  ) async {
-    await pumpPicker(
-      tester,
-      mode: SearchableDropdownMode.panel,
-      deferPanelRefresh: true,
-    );
-    await tester.tap(find.byType(SearchableDropdown<String>));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'deferPanelRefresh safely refreshes an open panel after parent updates',
+    (tester) async {
+      await pumpPicker(
+        tester,
+        mode: SearchableDropdownMode.panel,
+        deferPanelRefresh: true,
+      );
+      await tester.tap(find.byType(SearchableDropdown<String>));
+      await tester.pumpAndSettle();
 
-    await pumpPicker(
-      tester,
-      mode: SearchableDropdownMode.panel,
-      options: const ['Alpha', 'Beta', 'Gamma'],
-      deferPanelRefresh: true,
-    );
-    expect(tester.takeException(), isNull);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-  });
+      await pumpPicker(
+        tester,
+        mode: SearchableDropdownMode.panel,
+        options: const ['Alpha', 'Beta', 'Gamma'],
+        deferPanelRefresh: true,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'supports picker breakpoints, directions, themes and large text',
