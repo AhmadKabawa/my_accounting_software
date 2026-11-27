@@ -79,6 +79,7 @@ class AttributesFilterBar {
       clearable: false,
       mode: SearchableDropdownMode.panel,
       deferPanelRefresh: true,
+      deferPanelRefresh: true,
       allOptionLabel: AttributesKeys.all,
       onChanged: (v) => onStatusChanged(v ?? AttributeStatusFilter.all),
     ),
@@ -88,6 +89,7 @@ class AttributesFilterBar {
       optionLabel: (v) => typeLabel(v).tr(context: context),
       value: query.dataType,
       mode: SearchableDropdownMode.panel,
+      deferPanelRefresh: true,
       onChanged: onTypeChanged,
     ),
     SearchableDropdown<AttributeFilterableFilter>(
@@ -106,6 +108,7 @@ class AttributesFilterBar {
           : query.filterable,
       clearable: false,
       mode: SearchableDropdownMode.panel,
+      deferPanelRefresh: true,
       allOptionLabel: AttributesKeys.all,
       onChanged: (v) => onFilterableChanged(v ?? AttributeFilterableFilter.all),
     ),
