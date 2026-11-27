@@ -126,9 +126,10 @@ void main() {
     await _openEditor(tester, repository);
     await tester.enterText(find.byType(TextFormField).first, 'Material');
     await tester.enterText(find.byType(TextFormField).at(1), 'MATERIAL');
+    await tester.pumpAndSettle();
     await tester.tap(find.byType(SearchableDropdown<AttributeDataType>));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Option').last);
+    await tester.tap(find.text('Option set').last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
