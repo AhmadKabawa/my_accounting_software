@@ -172,6 +172,17 @@ get colorsListConfig => CrudListConfig(
             flex: 2,
             cellBuilder: (_, color) => ColorHexCell(color),
           ),
+          DataTableColumn(
+            labelKey: ColorsKeys.productUsage,
+            numeric: true,
+            priority: DataTableColumnPriority.secondary,
+            flex: 2,
+            cellBuilder: (_, color) => AppText.raw(
+              color.productCount == null || color.componentCount == null
+                  ? '—'
+                  : '${color.productCount} / ${color.componentCount}',
+            ),
+          ),
         ],
         labels: _crudLabels,
         statusColumn: CrudStatusColumnConfig<CatalogColor>(
