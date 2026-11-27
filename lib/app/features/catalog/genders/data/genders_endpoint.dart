@@ -1,0 +1,6 @@
+import 'package:accounting_software/app/core/network/api_end_points.dart';
+
+abstract final class GendersEndpoint {
+  static const collection = AppEndpoint('/rest/v1/genders');
+  static const select = 'id,name,code,is_active,sort_order,size_groups(count)';
+}

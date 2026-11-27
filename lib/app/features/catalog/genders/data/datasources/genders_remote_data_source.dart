@@ -1,0 +1,22 @@
+import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
+import 'package:accounting_software/app/features/catalog/genders/data/models/gender_model.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_draft.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_list_query.dart';
+
+abstract interface class GendersRemoteDataSource {
+  Future<ApiResult<PaginatedResult<GenderModel>>> getGenders(
+    GenderListQuery query,
+  );
+  Future<ApiResult<GenderModel>> createGender(GenderDraft draft);
+  Future<ApiResult<GenderModel>> updateGender({
+    required int id,
+    required GenderDraft draft,
+  });
+  Future<ApiResult<Unit>> deleteGender(int id);
+  Future<ApiResult<Unit>> setGenderActive({
+    required int id,
+    required bool isActive,
+  });
+}
