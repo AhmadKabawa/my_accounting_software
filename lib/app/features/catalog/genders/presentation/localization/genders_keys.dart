@@ -1,1 +1,59 @@
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';enum GendersKeys implements AppKey{title(ar:'الأجناس',en:'Genders'),add(ar:'إضافة جنس',en:'Add gender'),edit(ar:'تعديل الجنس',en:'Edit gender'),name(ar:'الاسم',en:'Name'),code(ar:'الرمز',en:'Code'),sortOrder(ar:'ترتيب الظهور',en:'Display order'),status(ar:'الحالة',en:'Status'),active(ar:'فعّال',en:'Active'),inactive(ar:'موقوف',en:'Inactive'),allStatuses(ar:'كل الحالات',en:'All statuses'),searchHint(ar:'ابحث بالاسم أو الرمز',en:'Search by name or code'),total(ar:'إجمالي الأجناس',en:'Total genders'),activeTotal(ar:'الأجناس الفعالة',en:'Active genders'),inactiveTotal(ar:'الأجناس الموقوفة',en:'Inactive genders'),empty(ar:'لا توجد أجناس',en:'No genders yet'),noResults(ar:'لا توجد نتائج مطابقة',en:'No matching results'),loadError(ar:'تعذر تحميل الأجناس',en:'Could not load genders'),saveError(ar:'تعذر حفظ الجنس',en:'Could not save gender'),duplicateError(ar:'الاسم أو الرمز مستخدم مسبقاً',en:'Name or code already exists'),required(ar:'هذا الحقل مطلوب',en:'Required'),nameTooLong(ar:'الاسم يجب ألا يتجاوز 50 حرفاً',en:'Name must be 50 characters or fewer'),codeTooLong(ar:'الرمز يجب ألا يتجاوز 30 حرفاً',en:'Code must be 30 characters or fewer'),codeFormat(ar:'استخدم أحرفاً إنجليزية وأرقاماً وشرطة فقط',en:'Use letters, numbers, and hyphens only'),sortFormat(ar:'أدخل رقماً صحيحاً صفراً أو أكبر',en:'Enter a non-negative integer'),save(ar:'حفظ',en:'Save'),cancel(ar:'إلغاء',en:'Cancel'),saved(ar:'تم حفظ الجنس',en:'Gender saved'),deleted(ar:'تم حذف الجنس',en:'Gender deleted'),delete(ar:'حذف',en:'Delete'),activate(ar:'إعادة تفعيل',en:'Reactivate'),deactivate(ar:'إيقاف',en:'Deactivate'),deleteTitle(ar:'حذف الجنس',en:'Delete gender'),deleteMessage(ar:'هل تريد حذف الجنس {name}؟',en:'Delete gender {name}?'),deactivateTitle(ar:'إيقاف الجنس',en:'Deactivate gender'),deactivateMessage(ar:'سيتم الاحتفاظ بالسجل وإيقافه',en:'This record will be retained and deactivated'),statusUpdated(ar:'تم تحديث الحالة',en:'Status updated'),identity(ar:'بيانات الجنس',en:'Gender details'),editorSubtitle(ar:'أدخل الاسم والرمز',en:'Enter name and code'),sortByOrder(ar:'الترتيب اليدوي',en:'Manual order'),sortByName(ar:'الاسم',en:'Name'),sortByCode(ar:'الرمز',en:'Code'),bulkActivate(ar:'تفعيل المحدد',en:'Activate selected'),bulkDeactivate(ar:'إيقاف المحدد',en:'Deactivate selected'),bulkDelete(ar:'حذف المحدد',en:'Delete selected'),bulkDeactivateTitle(ar:'إيقاف الأجناس المحددة',en:'Deactivate selected genders'),bulkDeactivateMessage(ar:'سيتم إيقاف {count} سجل',en:'{count} records will be deactivated'),bulkDeleteTitle(ar:'حذف الأجناس المحددة',en:'Delete selected genders'),bulkDeleteMessage(ar:'سيتم حذف {count} سجل',en:'{count} records will be deleted');const GendersKeys({required this.ar,required this.en});@override final String ar;@override final String en;@override String get key=>'genders.$name';}
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+
+enum GendersKeys implements AppKey {
+  title(ar: 'الأجناس', en: 'Genders'),
+  add(ar: 'إضافة جنس', en: 'Add gender'),
+  edit(ar: 'تعديل الجنس', en: 'Edit gender'),
+  name(ar: 'الاسم', en: 'Name'),
+  code(ar: 'الرمز', en: 'Code'),
+  sortOrder(ar: 'ترتيب الظهور', en: 'Display order'),
+  status(ar: 'الحالة', en: 'Status'),
+  active(ar: 'فعّال', en: 'Active'),
+  inactive(ar: 'موقوف', en: 'Inactive'),
+  allStatuses(ar: 'كل الحالات', en: 'All statuses'),
+  searchHint(ar: 'ابحث بالاسم أو الرمز', en: 'Search by name or code'),
+  total(ar: 'إجمالي الأجناس', en: 'Total genders'),
+  activeTotal(ar: 'الأجناس الفعالة', en: 'Active genders'),
+  inactiveTotal(ar: 'الأجناس الموقوفة', en: 'Inactive genders'),
+  empty(ar: 'لا توجد أجناس', en: 'No genders yet'),
+  noResults(ar: 'لا توجد نتائج مطابقة', en: 'No matching results'),
+  loadError(ar: 'تعذر تحميل الأجناس', en: 'Could not load genders'),
+  saveError(ar: 'تعذر حفظ الجنس', en: 'Could not save gender'),
+  duplicateError(ar: 'الاسم أو الرمز مستخدم مسبقاً', en: 'Name or code already exists'),
+  required(ar: 'هذا الحقل مطلوب', en: 'Required'),
+  nameTooLong(ar: 'الاسم يجب ألا يتجاوز 50 حرفاً', en: 'Name must be 50 characters or fewer'),
+  codeTooLong(ar: 'الرمز يجب ألا يتجاوز 30 حرفاً', en: 'Code must be 30 characters or fewer'),
+  codeFormat(ar: 'استخدم أحرفاً إنجليزية وأرقاماً وشرطة فقط', en: 'Use letters, numbers, underscores, and hyphens only'),
+  sortFormat(ar: 'أدخل رقماً صحيحاً صفراً أو أكبر', en: 'Enter a non-negative integer'),
+  save(ar: 'حفظ', en: 'Save'),
+  cancel(ar: 'إلغاء', en: 'Cancel'),
+  saved(ar: 'تم حفظ الجنس', en: 'Gender saved'),
+  deleted(ar: 'تم حذف الجنس', en: 'Gender deleted'),
+  delete(ar: 'حذف', en: 'Delete'),
+  activate(ar: 'إعادة تفعيل', en: 'Reactivate'),
+  deactivate(ar: 'إيقاف', en: 'Deactivate'),
+  deleteTitle(ar: 'حذف الجنس', en: 'Delete gender'),
+  deleteMessage(ar: 'هل تريد حذف الجنس {name}؟', en: 'Delete gender {name}?'),
+  deactivateTitle(ar: 'إيقاف الجنس', en: 'Deactivate gender'),
+  deactivateMessage(ar: 'سيتم الاحتفاظ بالسجل وإيقافه', en: 'This record will be retained and deactivated'),
+  statusUpdated(ar: 'تم تحديث الحالة', en: 'Status updated'),
+  identity(ar: 'بيانات الجنس', en: 'Gender details'),
+  editorSubtitle(ar: 'أدخل الاسم والرمز', en: 'Enter name and code'),
+  sortByOrder(ar: 'الترتيب اليدوي', en: 'Manual order'),
+  sortByName(ar: 'الاسم', en: 'Name'),
+  sortByCode(ar: 'الرمز', en: 'Code'),
+  bulkActivate(ar: 'تفعيل المحدد', en: 'Activate selected'),
+  bulkDeactivate(ar: 'إيقاف المحدد', en: 'Deactivate selected'),
+  bulkDelete(ar: 'حذف المحدد', en: 'Delete selected'),
+  bulkDeactivateTitle(ar: 'إيقاف الأجناس المحددة', en: 'Deactivate selected genders'),
+  bulkDeactivateMessage(ar: 'سيتم إيقاف {count} سجل', en: '{count} records will be deactivated'),
+  bulkDeleteTitle(ar: 'حذف الأجناس المحددة', en: 'Delete selected genders'),
+  bulkDeleteMessage(ar: 'سيتم حذف {count} سجل', en: '{count} records will be deleted'),
+  inUse(ar: 'لا يمكن حذف الجنس لارتباطه بمجموعات مقاسات. أوقفه بدلاً من ذلك.', en: 'This gender is used by size groups. Deactivate it instead.'),
+  usageUnknown(ar: 'تعذر التحقق من الاستخدام؛ تم منع الحذف حفاظاً على البيانات.', en: 'Usage could not be verified; deletion was blocked to protect data.');
+
+  const GendersKeys({required this.ar, required this.en});
+  @override final String ar;
+  @override final String en;
+  @override String get key => 'genders.$name';
+}

@@ -11,6 +11,7 @@ import 'package:accounting_software/app/features/catalog/genders/presentation/wi
 class GenderEditorDialog extends StatefulWidget {
   const GenderEditorDialog({super.key, this.gender});
   final Gender? gender;
+
   @override
   State<GenderEditorDialog> createState() => _GenderEditorDialogState();
 }
@@ -19,6 +20,7 @@ class _GenderEditorDialogState extends State<GenderEditorDialog> {
   late final CrudEditorFields _fields;
   late final bool _initialActive;
   bool _active = true;
+
   TextEditingController get _name => _fields['name'];
   TextEditingController get _code => _fields['code'];
   TextEditingController get _order => _fields['sortOrder'];
@@ -48,9 +50,7 @@ class _GenderEditorDialogState extends State<GenderEditorDialog> {
       name: _name.text.trim(),
       code: _code.text.trim(),
       sortOrder: int.parse(_order.text.trim()),
-      isActive: widget.gender == null || _active != widget.gender!.isActive
-          ? _active
-          : true,
+      isActive: widget.gender == null ? _active : (_active == _initialActive ? null : _active),
     ),
   );
 
