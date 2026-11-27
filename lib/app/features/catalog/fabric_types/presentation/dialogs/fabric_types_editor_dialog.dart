@@ -72,7 +72,7 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
       description: _description.text.trim().isEmpty
           ? null
           : _description.text.trim(),
-      isActive: _active,
+      isActive: widget.item == null || _active != _initialActive ? _active : null,
     ),
   );
 
