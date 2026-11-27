@@ -219,6 +219,7 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                     context.ui.spacing.gap(AppSpacing.sm),
                     AttributeUnitPicker(
                       attribute: widget.attribute,
+                      keepCurrentInactive: !widget.duplicate,
                       selectedId: _unitId,
                       state: lookups,
                       onChanged: (id) => setState(() => _unitId = id),
@@ -228,6 +229,7 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                     context.ui.spacing.gap(AppSpacing.sm),
                     AttributeOptionSetPicker(
                       attribute: widget.attribute,
+                      keepCurrentInactive: !widget.duplicate,
                       selectedId: _optionSetId,
                       state: lookups,
                       locked: _locked,

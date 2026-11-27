@@ -95,8 +95,9 @@ class AttributeOptionSetPicker extends StatelessWidget {
     return FormField<int>(
       key: const ValueKey('attribute-option-set'),
       initialValue: selectedId,
-      validator: (value) =>
-          value == null ? AttributesKeys.required.tr(context: context) : null,
+      validator: (value) => value == null || !options.any((option) => option.id == value)
+          ? AttributesKeys.required.tr(context: context)
+          : null,
       builder: (field) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
