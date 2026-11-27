@@ -181,7 +181,18 @@ class _FakeApiClient implements IApiClient {
     if (failFirstListWith400 && listCalls == 1) {
       return ApiFailure(ApiException.badRequest());
     }
-    final items = _rows.map(fromJson).toList(growable: false);
+    final includesCounts =
+        queryParameters?['select']?.toString().contains('products(count)') ??
+        false;
+    final rows = includesCounts
+        ? _rows
+        : _rows.map((row) => Map<String, dynamic>.of(row)
+            ..remove('products')
+            ..remove('product_type_size_groups')
+            ..remove('product_type_attributes')
+            ..remove('product_type_option_sets')
+            ..remove('product_type_care_instructions'));
+    final items = rows.map(fromJson).toList(growable: false);
     return ApiSuccess(
       PaginatedResult<T>(
         items: items,

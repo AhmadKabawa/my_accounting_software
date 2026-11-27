@@ -59,6 +59,9 @@ class ProductTypeStatsCubit extends BaseCubit<ProductTypeStatsState, void> {
           total: page.totalCount,
           active: items.where((item) => item.isActive).length,
           inactive: items.where((item) => !item.isActive).length,
+          unused: items.any((item) => item.productCount == null)
+              ? null
+              : items.where((item) => item.productCount == 0).length,
         ),
       ),
     );

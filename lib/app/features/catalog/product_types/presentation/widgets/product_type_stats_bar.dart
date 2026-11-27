@@ -45,6 +45,12 @@ class ProductTypeStatsBar extends StatelessWidget {
         tone: AppBadgeTone.neutral,
         filter: ProductTypeStatusFilter.inactive,
       ),
+      StatItem(
+        labelKey: ProductTypesKeys.unusedStats,
+        value: stats?.unused?.toString(),
+        icon: AppIcons.catalog,
+        tone: AppBadgeTone.info,
+      ),
     ],
     selected: selectedFilter,
     onSelected: onFilterSelected,
