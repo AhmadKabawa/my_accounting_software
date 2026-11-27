@@ -73,8 +73,12 @@ class MaterialsRemoteDataSourceImpl implements MaterialsRemoteDataSource {
     fromJson: (_) => unit,
   );
   String _order(MaterialListQuery q) {
-    final primary = '${q.sortField.column}.${q.sortAscending ? 'asc' : 'desc'}';
-    return [primary, if (q.sortField != MaterialSortField.name) 'name.asc', 'id.asc'].join(',');
+    final terms = [
+      for (final sort in q.sorts)
+        '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
+    ];
+    final hasName = q.sorts.any((sort) => sort.field == MaterialSortField.name);
+    return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
   }
   MaterialModel _single(List<dynamic> rows) =>
       PostgrestValue.single(rows, MaterialModel.fromJson, what: 'material');
