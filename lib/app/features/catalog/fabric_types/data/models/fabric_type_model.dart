@@ -48,5 +48,5 @@ class FabricTypeModel {
     'description': description,
     'is_active': isActive,
   };
- FabricCategory? _parseFabricCategory(Object? raw){for(final value in FabricCategory.values){if(value.name==raw)return value;}return null;}
+ static FabricCategory? _parseFabricCategory(Object? raw){for(final value in FabricCategory.values){if(value.name==raw)return value;}return null;}
 }
