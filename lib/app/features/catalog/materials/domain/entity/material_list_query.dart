@@ -58,6 +58,7 @@ class MaterialListQuery extends Equatable
     search: '',
     status: MaterialStatusFilter.all,
     type: null,
+    clearType: true,
     page: 1,
   );
 
