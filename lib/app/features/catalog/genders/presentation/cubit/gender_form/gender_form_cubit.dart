@@ -4,7 +4,7 @@ import 'package:accounting_software/app/core/presentation/state_management/base_
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/message_view_widgets.dart';
 import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_draft.dart';
-import 'package:accounting_software/app/features/catalog/genders/domain/failures/gender_failures.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/failures/gender_failures.dart';\nimport 'package:accounting_software/app/features/catalog/genders/domain/failures/gender_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/genders/domain/usecase/create_gender_use_case.dart';
 import 'package:accounting_software/app/features/catalog/genders/domain/usecase/update_gender_use_case.dart';
 import 'package:accounting_software/app/features/catalog/genders/presentation/cubit/gender_form/gender_form_effect.dart';
@@ -45,8 +45,8 @@ class GenderFormCubit extends BaseCubit<GenderFormStatus, GenderFormEffect> {
 
   AppKey _key(Failure failure) => switch (failure) {
     GenderDuplicateFailure() => GendersKeys.duplicateError,
-    GenderInUseFailure() => GendersKeys.inUse,
-    GenderUsageUnknownFailure() => GendersKeys.usageUnknown,
+    GenderInUseFailure() => GenderFailureKeys.inUse,
+    GenderUsageUnknownFailure() => GenderFailureKeys.usageUnknown,
     _ => failure.messageKey,
   };
 }
