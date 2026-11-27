@@ -184,23 +184,35 @@ void main() {
     },
   );
 
-
-  test('lookup requests are owned by Attributes and expose active choices only', () async {
-    api.rows = [{'id': 2, 'name': 'Kilogram', 'symbol': 'kg', 'is_active': true}];
-    final units = await repository.getUnitChoices();
-    expect(units.isRight(), isTrue);
-    expect(api.lastRequest.path, AttributesEndpoint.unitsLookup.toStringPath());
-    expect(api.lastRequest.query, {
-      'select': 'id,name,symbol,is_active',
-      'is_active': 'eq.true',
-      'order': 'name.asc,id.asc',
-    });
-    api.rows = [{'id': 3, 'name': 'Sizes', 'code': 'SIZES', 'is_active': true}];
-    final sets = await repository.getOptionSetChoices();
-    expect(sets.isRight(), isTrue);
-    expect(api.lastRequest.path, AttributesEndpoint.optionSetsLookup.toStringPath());
-    expect(api.lastRequest.query['is_active'], 'eq.true');
-  });
+  test(
+    'lookup requests are owned by Attributes and expose active choices only',
+    () async {
+      api.rows = [
+        {'id': 2, 'name': 'Kilogram', 'symbol': 'kg', 'is_active': true},
+      ];
+      final units = await repository.getUnitChoices();
+      expect(units.isRight(), isTrue);
+      expect(
+        api.lastRequest.path,
+        AttributesEndpoint.unitsLookup.toStringPath(),
+      );
+      expect(api.lastRequest.query, {
+        'select': 'id,name,symbol,is_active',
+        'is_active': 'eq.true',
+        'order': 'name.asc,id.asc',
+      });
+      api.rows = [
+        {'id': 3, 'name': 'Sizes', 'code': 'SIZES', 'is_active': true},
+      ];
+      final sets = await repository.getOptionSetChoices();
+      expect(sets.isRight(), isTrue);
+      expect(
+        api.lastRequest.path,
+        AttributesEndpoint.optionSetsLookup.toStringPath(),
+      );
+      expect(api.lastRequest.query['is_active'], 'eq.true');
+    },
+  );
 
   test('23503 delete race returns the in-use translation', () async {
     api.nextDeleteFailure = ApiException.conflict(errorCode: '23503');

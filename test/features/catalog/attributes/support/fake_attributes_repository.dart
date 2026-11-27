@@ -26,9 +26,15 @@ class FakeAttributesRepository implements AttributesRepository {
   Either<Failure, List<AttributeUnitChoice>> unitChoicesResult = const Right([
     AttributeUnitChoice(id: 2, name: 'Kilogram', symbol: 'kg', isActive: true),
   ]);
-  Either<Failure, List<AttributeOptionSetChoice>> optionSetChoicesResult = const Right([
-    AttributeOptionSetChoice(id: 3, name: 'Sizes', code: 'SIZES', isActive: true),
-  ]);
+  Either<Failure, List<AttributeOptionSetChoice>> optionSetChoicesResult =
+      const Right([
+        AttributeOptionSetChoice(
+          id: 3,
+          name: 'Sizes',
+          code: 'SIZES',
+          isActive: true,
+        ),
+      ]);
   @override
   Future<Either<Failure, PaginatedResult<CatalogAttribute>>> getAttributes(
     AttributeListQuery query,

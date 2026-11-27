@@ -8,7 +8,8 @@ import 'package:accounting_software/app/core/access/domain/get_my_access_usecase
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/error/failures/failure.dart' show ValidationFailure;
+import 'package:accounting_software/app/core/error/failures/failure.dart'
+    show ValidationFailure;
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/usecase/get_attributes_use_case.dart';
@@ -56,7 +57,9 @@ void main() {
           tester,
         ) async {
           final repository = FakeAttributesRepository()
-            ..statsResult = const Left(ValidationFailure(messageKey: AttributesKeys.loadError));
+            ..statsResult = const Left(
+              ValidationFailure(messageKey: AttributesKeys.loadError),
+            );
           sl.registerFactory<FlashMessages>(FlashMessages.new);
           sl.registerSingleton<AppSettingsManager>(
             AppSettingsManager(storage: MemoryStorage()),
