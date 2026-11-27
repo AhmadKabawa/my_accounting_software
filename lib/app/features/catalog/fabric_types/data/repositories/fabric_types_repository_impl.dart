@@ -46,9 +46,7 @@ class FabricTypesRepositoryImpl
     final r = await _remote.createFabricType(d);
     return switch (r) {
       ApiSuccess<FabricTypeModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<FabricTypeModel>(:final exception) => Left(
-        ExceptionMapper.map(exception),
-      ),
+      ApiFailure<FabricTypeModel>(:final exception) => Left(_mapWriteFailure(exception)),
     };
   });
   @override
@@ -59,9 +57,7 @@ class FabricTypesRepositoryImpl
     final r = await _remote.updateFabricType(id: id, draft: draft);
     return switch (r) {
       ApiSuccess<FabricTypeModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<FabricTypeModel>(:final exception) => Left(
-        ExceptionMapper.map(exception),
-      ),
+      ApiFailure<FabricTypeModel>(:final exception) => Left(_mapWriteFailure(exception)),
     };
   });
   @override
