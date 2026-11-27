@@ -18,16 +18,21 @@ import 'package:accounting_software/app/features/catalog/product_types/presentat
 import 'package:accounting_software/app/features/catalog/product_types/presentation/sections/product_type_detail_section_helpers.dart';
 
 class ProductTypeSizeGroupsSection extends StatefulWidget {
-  const ProductTypeSizeGroupsSection({required this.state, required this.canManage});
+  const ProductTypeSizeGroupsSection({
+    required this.state,
+    required this.canManage,
+  });
 
   final ProductTypeDetailsLoaded state;
   final bool canManage;
 
   @override
-  State<ProductTypeSizeGroupsSection> createState() => _ProductTypeSizeGroupsSectionState();
+  State<ProductTypeSizeGroupsSection> createState() =>
+      _ProductTypeSizeGroupsSectionState();
 }
 
-class _ProductTypeSizeGroupsSectionState extends State<ProductTypeSizeGroupsSection> {
+class _ProductTypeSizeGroupsSectionState
+    extends State<ProductTypeSizeGroupsSection> {
   int? _genderId;
   bool _default = false;
 

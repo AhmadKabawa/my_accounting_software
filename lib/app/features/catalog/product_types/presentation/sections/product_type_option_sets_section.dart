@@ -17,7 +17,10 @@ import 'package:accounting_software/app/features/catalog/product_types/presentat
 import 'package:accounting_software/app/features/catalog/product_types/presentation/sections/product_type_detail_section_helpers.dart';
 
 class ProductTypeOptionSetsSection extends StatelessWidget {
-  const ProductTypeOptionSetsSection({required this.state, required this.canManage});
+  const ProductTypeOptionSetsSection({
+    required this.state,
+    required this.canManage,
+  });
 
   final ProductTypeDetailsLoaded state;
   final bool canManage;
@@ -33,7 +36,10 @@ class ProductTypeOptionSetsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ProductTypeSectionTitle(ProductTypesKeys.optionSets, state.optionSets.length),
+          ProductTypeSectionTitle(
+            ProductTypesKeys.optionSets,
+            state.optionSets.length,
+          ),
           if (canManage && options.isNotEmpty)
             SearchableDropdown<ProductTypeLinkOption>(
               options: options,

@@ -80,19 +80,17 @@ class _MemoryStorage implements StorageService {
 }
 
 class _FakeOptionSetsRepository implements OptionSetsRepository {
-  _FakeOptionSetsRepository({
-    int usageCount = 1,
-    int optionCount = 1,
-  }) : optionSet = OptionSet(
-         id: 12,
-         name: 'Size',
-         code: 'SIZE',
-         selectionType: OptionSelectionType.single,
-         isActive: true,
-         options: const [],
-         usageCount: usageCount,
-         optionCount: optionCount,
-       );
+  _FakeOptionSetsRepository({int usageCount = 1, int optionCount = 1})
+    : optionSet = OptionSet(
+        id: 12,
+        name: 'Size',
+        code: 'SIZE',
+        selectionType: OptionSelectionType.single,
+        isActive: true,
+        options: const [],
+        usageCount: usageCount,
+        optionCount: optionCount,
+      );
 
   final OptionSet optionSet;
   final List<OptionSetListQuery> queries = [];
@@ -241,9 +239,7 @@ void _register(_FakeOptionSetsRepository repository) {
     ),
   );
   sl.registerFactory<OptionSetStatsCubit>(
-    () => OptionSetStatsCubit(
-      getStats: GetOptionSetStatsUseCase(repository),
-    ),
+    () => OptionSetStatsCubit(getStats: GetOptionSetStatsUseCase(repository)),
   );
   sl.registerFactory<OptionSetFormCubit>(
     () => OptionSetFormCubit(
@@ -299,14 +295,17 @@ void main() {
             await tester.tap(find.text(OptionSetsKeys.cancel.en).last);
             await tester.pumpAndSettle();
 
-            await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).first);
+            await tester.tap(
+              find.byTooltip(CatalogUiKeys.moreActions.en).first,
+            );
             await tester.pumpAndSettle();
             await tester.tap(find.text(OptionSetsKeys.edit.en).last);
             await tester.pumpAndSettle();
             expect(find.text(OptionSetsKeys.locked.en), findsOneWidget);
-            final selection = tester.widget<SearchableDropdown<OptionSelectionType>>(
-              find.byType(SearchableDropdown<OptionSelectionType>),
-            );
+            final selection = tester
+                .widget<SearchableDropdown<OptionSelectionType>>(
+                  find.byType(SearchableDropdown<OptionSelectionType>),
+                );
             expect(selection.enabled, isFalse);
             await tester.tap(find.text(OptionSetsKeys.cancel.en).last);
             await tester.pumpAndSettle();
@@ -327,7 +326,9 @@ void main() {
             await tester.pumpAndSettle();
             expect(repository.createdOptions.single.name, 'Large');
 
-            await tester.tap(find.byTooltip(OptionSetsKeys.editOption.en).first);
+            await tester.tap(
+              find.byTooltip(OptionSetsKeys.editOption.en).first,
+            );
             await tester.pumpAndSettle();
             fields = find.byType(TextFormField);
             await tester.enterText(fields.at(0), 'Small updated');
@@ -337,13 +338,17 @@ void main() {
             await tester.pumpAndSettle();
             expect(repository.updatedOptionIds, [41]);
 
-            await tester.tap(find.byTooltip(OptionSetsKeys.deactivate.en).first);
+            await tester.tap(
+              find.byTooltip(OptionSetsKeys.deactivate.en).first,
+            );
             await tester.pumpAndSettle();
             expect(repository.activeChanges, [(41, false)]);
 
             await tester.tap(find.text(OptionSetsKeys.cancel.en).last);
             await tester.pumpAndSettle();
-            await tester.tap(find.byTooltip(CatalogUiKeys.moreActions.en).first);
+            await tester.tap(
+              find.byTooltip(CatalogUiKeys.moreActions.en).first,
+            );
             await tester.pumpAndSettle();
             expect(find.text(OptionSetsKeys.delete.en), findsNothing);
             expect(tester.takeException(), isNull);

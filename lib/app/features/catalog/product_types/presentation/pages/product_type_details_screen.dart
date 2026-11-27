@@ -76,9 +76,7 @@ class _ProductTypeDetailsBody extends StatelessWidget {
                     onTap: () =>
                         context.go(ProductTypesRoutes.productTypes.path),
                   ),
-                  const AppBreadcrumbItem(
-                    label: ProductTypesKeys.detailTitle,
-                  ),
+                  const AppBreadcrumbItem(label: ProductTypesKeys.detailTitle),
                 ],
               ),
             ),
