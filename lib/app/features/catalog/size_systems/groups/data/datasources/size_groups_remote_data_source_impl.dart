@@ -89,8 +89,9 @@ class SizeGroupsRemoteDataSourceImpl implements SizeGroupsRemoteDataSource {
       },
     );
     return switch (result) {
-      ApiSuccess<PaginatedResult<GenderOptionModel>>(:final data) =>
-        ApiSuccess(data.items),
+      ApiSuccess<PaginatedResult<GenderOptionModel>>(:final data) => ApiSuccess(
+        data.items,
+      ),
       ApiFailure<PaginatedResult<GenderOptionModel>>(:final exception) =>
         ApiFailure<List<GenderOptionModel>>(exception),
     };
@@ -135,11 +136,8 @@ class SizeGroupsRemoteDataSourceImpl implements SizeGroupsRemoteDataSource {
     fromJson: (_) => unit,
   );
 
-  SizeGroupModel _single(List<dynamic> rows) => PostgrestValue.single(
-    rows,
-    SizeGroupModel.fromJson,
-    what: 'size group',
-  );
+  SizeGroupModel _single(List<dynamic> rows) =>
+      PostgrestValue.single(rows, SizeGroupModel.fromJson, what: 'size group');
 
   Map<String, dynamic> _draftJson(SizeGroupDraft draft) => {
     'size_system_id': draft.sizeSystemId,

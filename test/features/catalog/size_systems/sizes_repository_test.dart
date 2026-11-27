@@ -58,8 +58,9 @@ class _FakeSizesRemote implements SizesRemoteDataSource {
   );
 
   @override
-  Future<ApiResult<CatalogSizeModel>> createSize(CatalogSizeDraft draft) async =>
-      ApiSuccess(_model(1, draft));
+  Future<ApiResult<CatalogSizeModel>> createSize(
+    CatalogSizeDraft draft,
+  ) async => ApiSuccess(_model(1, draft));
 
   @override
   Future<ApiResult<CatalogSizeModel>> updateSize({

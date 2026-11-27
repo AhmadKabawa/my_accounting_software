@@ -131,11 +131,8 @@ class SizesRemoteDataSourceImpl implements SizesRemoteDataSource {
     fromJson: (_) => unit,
   );
 
-  CatalogSizeModel _single(List<dynamic> rows) => PostgrestValue.single(
-    rows,
-    CatalogSizeModel.fromJson,
-    what: 'size',
-  );
+  CatalogSizeModel _single(List<dynamic> rows) =>
+      PostgrestValue.single(rows, CatalogSizeModel.fromJson, what: 'size');
 
   /// `numeric_value` is sent as its exact decimal text, never a double.
   Map<String, dynamic> _draftJson(CatalogSizeDraft draft) => {

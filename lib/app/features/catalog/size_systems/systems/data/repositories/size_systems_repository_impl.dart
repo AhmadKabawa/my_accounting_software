@@ -57,17 +57,16 @@ class SizeSystemsRepositoryImpl
   });
 
   @override
-  Future<Either<Failure, SizeSystem>> createSizeSystem(
-    SizeSystemDraft draft,
-  ) => execute(() async {
-    final result = await _remote.createSizeSystem(draft);
-    return switch (result) {
-      ApiSuccess<SizeSystemModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<SizeSystemModel>(:final exception) => Left(
-        _mapWriteFailure(exception),
-      ),
-    };
-  });
+  Future<Either<Failure, SizeSystem>> createSizeSystem(SizeSystemDraft draft) =>
+      execute(() async {
+        final result = await _remote.createSizeSystem(draft);
+        return switch (result) {
+          ApiSuccess<SizeSystemModel>(:final data) => Right(data.toEntity()),
+          ApiFailure<SizeSystemModel>(:final exception) => Left(
+            _mapWriteFailure(exception),
+          ),
+        };
+      });
 
   @override
   Future<Either<Failure, SizeSystem>> updateSizeSystem({

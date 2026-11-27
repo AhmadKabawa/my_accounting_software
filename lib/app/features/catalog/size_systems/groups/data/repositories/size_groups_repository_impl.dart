@@ -46,18 +46,17 @@ class SizeGroupsRepositoryImpl
   });
 
   @override
-  Future<Either<Failure, List<GenderOption>>> getGenders() =>
-      execute(() async {
-        final result = await _remote.getGenders();
-        return switch (result) {
-          ApiSuccess<List<GenderOptionModel>>(:final data) => Right(
-            data.map((model) => model.toEntity()).toList(),
-          ),
-          ApiFailure<List<GenderOptionModel>>(:final exception) => Left(
-            ExceptionMapper.map(exception),
-          ),
-        };
-      });
+  Future<Either<Failure, List<GenderOption>>> getGenders() => execute(() async {
+    final result = await _remote.getGenders();
+    return switch (result) {
+      ApiSuccess<List<GenderOptionModel>>(:final data) => Right(
+        data.map((model) => model.toEntity()).toList(),
+      ),
+      ApiFailure<List<GenderOptionModel>>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
+    };
+  });
 
   @override
   Future<Either<Failure, SizeGroup>> createSizeGroup(SizeGroupDraft draft) =>

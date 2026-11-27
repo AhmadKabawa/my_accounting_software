@@ -8,7 +8,12 @@ import 'package:accounting_software/app/features/catalog/size_systems/systems/da
 void main() {
   group('readEmbeddedCount', () {
     test('reads [{count: n}], a map, a number', () {
-      expect(readEmbeddedCount([{'count': 3}]), 3);
+      expect(
+        readEmbeddedCount([
+          {'count': 3},
+        ]),
+        3,
+      );
       expect(readEmbeddedCount({'count': 2}), 2);
       expect(readEmbeddedCount(5), 5);
     });
@@ -16,7 +21,12 @@ void main() {
     test('missing or malformed is unknown, never zero', () {
       expect(readEmbeddedCount(null), isNull);
       expect(readEmbeddedCount(<dynamic>[]), isNull);
-      expect(readEmbeddedCount([{'count': 'x'}]), isNull);
+      expect(
+        readEmbeddedCount([
+          {'count': 'x'},
+        ]),
+        isNull,
+      );
     });
   });
 
@@ -29,7 +39,9 @@ void main() {
         'description': null,
         'is_active': true,
         'updated_at': '2026-11-25T10:00:00Z',
-        'size_groups': [{'count': 0}],
+        'size_groups': [
+          {'count': 0},
+        ],
       }).toEntity();
       expect(system.groupCount, 0);
       expect(system.canDelete, isTrue);
@@ -75,22 +87,59 @@ void main() {
 
     test('deletable only when all three counts are known and zero', () {
       final ok = SizeGroupModel.fromJson(
-        row(sizes: [{'count': 0}], types: [{'count': 0}], usage: [{'count': 0}]),
+        row(
+          sizes: [
+            {'count': 0},
+          ],
+          types: [
+            {'count': 0},
+          ],
+          usage: [
+            {'count': 0},
+          ],
+        ),
       ).toEntity();
       expect(ok.canDelete, isTrue);
 
       final hasSizes = SizeGroupModel.fromJson(
-        row(sizes: [{'count': 2}], types: [{'count': 0}], usage: [{'count': 0}]),
+        row(
+          sizes: [
+            {'count': 2},
+          ],
+          types: [
+            {'count': 0},
+          ],
+          usage: [
+            {'count': 0},
+          ],
+        ),
       ).toEntity();
       expect(hasSizes.canDelete, isFalse);
 
       final linked = SizeGroupModel.fromJson(
-        row(sizes: [{'count': 0}], types: [{'count': 1}], usage: [{'count': 0}]),
+        row(
+          sizes: [
+            {'count': 0},
+          ],
+          types: [
+            {'count': 1},
+          ],
+          usage: [
+            {'count': 0},
+          ],
+        ),
       ).toEntity();
       expect(linked.canDelete, isFalse);
 
       final unknownUsage = SizeGroupModel.fromJson(
-        row(sizes: [{'count': 0}], types: [{'count': 0}]),
+        row(
+          sizes: [
+            {'count': 0},
+          ],
+          types: [
+            {'count': 0},
+          ],
+        ),
       ).toEntity();
       expect(unknownUsage.canDelete, isFalse);
     });
@@ -134,11 +183,23 @@ void main() {
 
     test('CAT07-SZ-AC5: deletable only with a known zero usage count', () {
       expect(
-        CatalogSizeModel.fromJson(row(usage: [{'count': 0}])).toEntity().canDelete,
+        CatalogSizeModel.fromJson(
+          row(
+            usage: [
+              {'count': 0},
+            ],
+          ),
+        ).toEntity().canDelete,
         isTrue,
       );
       expect(
-        CatalogSizeModel.fromJson(row(usage: [{'count': 4}])).toEntity().canDelete,
+        CatalogSizeModel.fromJson(
+          row(
+            usage: [
+              {'count': 4},
+            ],
+          ),
+        ).toEntity().canDelete,
         isFalse,
       );
       expect(CatalogSizeModel.fromJson(row()).toEntity().canDelete, isFalse);

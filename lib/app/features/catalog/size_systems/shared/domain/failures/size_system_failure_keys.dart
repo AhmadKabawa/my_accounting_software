@@ -7,7 +7,8 @@ enum SizeSystemFailureKeys implements AppKey {
   ),
   groupInUse(
     ar: 'المجموعة تحتوي مقاسات أو مرتبطة بأنواع منتجات أو منتجات، أوقفها بدل حذفها',
-    en: 'This group has sizes or is linked to product types or products. '
+    en:
+        'This group has sizes or is linked to product types or products. '
         'Deactivate it instead.',
   ),
   sizeInUse(

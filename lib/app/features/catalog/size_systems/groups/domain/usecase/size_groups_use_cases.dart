@@ -47,8 +47,7 @@ class UpdateSizeGroupParams extends Equatable {
   List<Object?> get props => [id, draft];
 }
 
-class UpdateSizeGroupUseCase
-    extends UseCase<SizeGroup, UpdateSizeGroupParams> {
+class UpdateSizeGroupUseCase extends UseCase<SizeGroup, UpdateSizeGroupParams> {
   UpdateSizeGroupUseCase(this._repository);
   final SizeGroupsRepository _repository;
 

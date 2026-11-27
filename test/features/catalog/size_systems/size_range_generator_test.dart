@@ -3,13 +3,17 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/range/size_range_generator.dart';
 
-SizeRangeSpec _spec(String from, String to, String step, [String prefix = '']) =>
-    SizeRangeSpec(
-      from: Decimal.parse(from),
-      to: Decimal.parse(to),
-      step: Decimal.parse(step),
-      codePrefix: prefix,
-    );
+SizeRangeSpec _spec(
+  String from,
+  String to,
+  String step, [
+  String prefix = '',
+]) => SizeRangeSpec(
+  from: Decimal.parse(from),
+  to: Decimal.parse(to),
+  step: Decimal.parse(step),
+  codePrefix: prefix,
+);
 
 SizeRangePlan _plan(
   SizeRangeSpec spec, {
@@ -63,7 +67,14 @@ void main() {
 
     test('0.1 steps are exact (no binary floating point drift)', () {
       final plan = _plan(_spec('0', '0.5', '0.1'));
-      expect(plan.rows.map((r) => r.name), ['0', '0.1', '0.2', '0.3', '0.4', '0.5']);
+      expect(plan.rows.map((r) => r.name), [
+        '0',
+        '0.1',
+        '0.2',
+        '0.3',
+        '0.4',
+        '0.5',
+      ]);
       expect(plan.rows.last.numericValue, Decimal.parse('0.5'));
     });
 
@@ -73,10 +84,7 @@ void main() {
     });
 
     test('existing codes are skipped (case-insensitive) and reported', () {
-      final plan = _plan(
-        _spec('36', '38', '1', 'eu'),
-        existing: {'EU37'},
-      );
+      final plan = _plan(_spec('36', '38', '1', 'eu'), existing: {'EU37'});
       expect(plan.rows.map((r) => r.code), ['EU36', 'EU38']);
       expect(plan.skippedCodes, ['EU37']);
     });
@@ -90,9 +98,7 @@ void main() {
     });
 
     test('exactly the ceiling is accepted', () {
-      final plan = _plan(
-        _spec('1', '${SizeRangeGenerator.maxRows}', '1'),
-      );
+      final plan = _plan(_spec('1', '${SizeRangeGenerator.maxRows}', '1'));
       expect(plan.rows, hasLength(SizeRangeGenerator.maxRows));
     });
   });
