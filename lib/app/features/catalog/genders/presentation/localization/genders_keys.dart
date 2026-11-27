@@ -88,5 +88,5 @@ enum GendersKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'genders.$name';
+  String get key => 'genders.${toString().split('.').last}';
 }

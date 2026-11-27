@@ -11,6 +11,7 @@ import 'package:accounting_software/app/features/catalog/units/presentation/rout
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
+import 'package:accounting_software/app/features/catalog/genders/presentation/routing/genders_routes.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
 final _items = [
@@ -153,6 +154,7 @@ void main() {
       OptionSetsRoutes.optionSets.path,
       ColorsRoutes.colors.path,
       CategoriesRoutes.categories.path,
+      GendersRoutes.genders.path,
     ]);
   });
 }
