@@ -1,0 +1,3 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/widgets/fabric_type_field_validators.dart';
+void main(){group('FabricTypeFieldValidators',(){test('requires a name and code',(){expect(FabricTypeFieldValidators.name(' '),isNotNull);expect(FabricTypeFieldValidators.code(null),isNotNull);});test('enforces schema lengths',(){expect(FabricTypeFieldValidators.name('x'*101),isNotNull);expect(FabricTypeFieldValidators.code('x'*51),isNotNull);});test('accepts valid values',(){expect(FabricTypeFieldValidators.name('Jersey'),isNull);expect(FabricTypeFieldValidators.code('JER'),isNull);});});}
