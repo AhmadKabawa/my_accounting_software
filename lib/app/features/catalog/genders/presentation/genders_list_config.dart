@@ -52,7 +52,10 @@ get gendersListConfig => CrudListConfig(
   itemLabel: (gender) => gender.name,
   sort: CrudSortConfig<GenderListQuery, GendersListCubit>(
     options: GendersFilterBar.sortOptions,
-    current: (query) => [for (final sort in query.sorts) FilterBarSort(sort.field.name, sort.ascending)],
+    current: (query) => [
+      for (final sort in query.sorts)
+        FilterBarSort(sort.field.name, sort.ascending),
+    ],
     tableKey: (query) => query.sortField.name,
     tableAscending: (query) => query.sortAscending,
     apply: (cubit, sorts) => cubit.setSorts(
@@ -67,16 +70,26 @@ get gendersListConfig => CrudListConfig(
       if (field != null) cubit.setSorts([GenderSort(field, sort.ascending)]);
     },
   ),
-  filterControls: (slot) => GendersFilterBar.controls(slot.context, slot.state.query, onStatusChanged: slot.cubit.setStatus),
+  filterControls: (slot) => GendersFilterBar.controls(
+    slot.context,
+    slot.state.query,
+    onStatusChanged: slot.cubit.setStatus,
+  ),
   activeFilters: (slot) => GendersFilterBar.activeFilters(
-    slot.context, slot.state.query,
+    slot.context,
+    slot.state.query,
     onSearchChanged: slot.cubit.searchChanged,
     onStatusChanged: slot.cubit.setStatus,
   ),
-  breadcrumb: (context) => AppBreadcrumb(items: [
-    AppBreadcrumbItem(label: NavKeys.catalog, onTap: () => context.go(CatalogRoutes.hub.path)),
-    const AppBreadcrumbItem(label: GendersKeys.title),
-  ]),
+  breadcrumb: (context) => AppBreadcrumb(
+    items: [
+      AppBreadcrumbItem(
+        label: NavKeys.catalog,
+        onTap: () => context.go(CatalogRoutes.hub.path),
+      ),
+      const AppBreadcrumbItem(label: GendersKeys.title),
+    ],
+  ),
   viewModes: const [AppViewMode.table, AppViewMode.cards],
   capabilities: const CrudCapabilities(showCount: true, bulkSelection: true),
   providersWrapper: (child) => BlocProvider<GenderStatsCubit>(
@@ -89,12 +102,15 @@ get gendersListConfig => CrudListConfig(
     builder: (context, state) => GenderStatsBar(
       state.stats,
       selected: slot.state.query.status,
-      loading: state.status == GenderStatsStatus.initial || state.status == GenderStatsStatus.loading,
+      loading:
+          state.status == GenderStatsStatus.initial ||
+          state.status == GenderStatsStatus.loading,
       onSelected: slot.cubit.setStatus,
     ),
   ),
   flows: CrudFlowsConfig<Gender, GendersListCubit>(
-    showEditor: (context, {item, duplicate = false}) => showGenderEditor(context, gender: item),
+    showEditor: (context, {item, duplicate = false}) =>
+        showGenderEditor(context, gender: item),
     onSaved: (cubit, {required isNew}) => cubit.onGenderSaved(isNew: isNew),
     itemLabel: (gender) => gender.name,
     delete: (cubit, gender) => cubit.delete(gender),
@@ -116,53 +132,55 @@ get gendersListConfig => CrudListConfig(
     deactivate: (cubit, items) => cubit.bulkDeactivate(items),
     delete: (cubit, items) => cubit.bulkDelete(items),
   ),
-  dataSection: (data) => CrudDataSection<Gender, GenderListQuery, GendersListCubit>(
-    data: data,
-    columns: [
-      DataTableColumn(
-        labelKey: GendersKeys.name,
-        sortKey: 'name',
-        priority: DataTableColumnPriority.primary,
-        flex: 3,
-        cellBuilder: (_, gender) => AppText.raw(gender.name),
-      ),
-      DataTableColumn(
-        labelKey: GendersKeys.code,
-        sortKey: 'code',
-        priority: DataTableColumnPriority.secondary,
-        flex: 2,
-        cellBuilder: (_, gender) => Directionality(
-          textDirection: TextDirection.ltr,
-          child: AppText.raw(gender.code),
+  dataSection: (data) =>
+      CrudDataSection<Gender, GenderListQuery, GendersListCubit>(
+        data: data,
+        columns: [
+          DataTableColumn(
+            labelKey: GendersKeys.name,
+            sortKey: 'name',
+            priority: DataTableColumnPriority.primary,
+            flex: 3,
+            cellBuilder: (_, gender) => AppText.raw(gender.name),
+          ),
+          DataTableColumn(
+            labelKey: GendersKeys.code,
+            sortKey: 'code',
+            priority: DataTableColumnPriority.secondary,
+            flex: 2,
+            cellBuilder: (_, gender) => Directionality(
+              textDirection: TextDirection.ltr,
+              child: AppText.raw(gender.code),
+            ),
+          ),
+          DataTableColumn(
+            labelKey: GendersKeys.sortOrder,
+            sortKey: 'order',
+            numeric: true,
+            priority: DataTableColumnPriority.secondary,
+            cellBuilder: (_, gender) =>
+                AppText.raw(gender.sortOrder.toString()),
+          ),
+        ],
+        labels: _labels,
+        statusColumn: CrudStatusColumnConfig<Gender>(
+          labelKey: GendersKeys.status,
+          isActive: (gender) => gender.isActive,
+          badgeBuilder: (_, gender) => GenderStatusBadge(gender),
         ),
+        cardBuilder: (_, gender) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppText.raw(gender.name, type: AppTextType.titleMedium),
+            AppText.raw(gender.code),
+            AppText.raw(gender.sortOrder.toString()),
+            GenderStatusBadge(gender),
+          ],
+        ),
+        icon: AppIcons.catalog,
+        emptyTitleKey: GendersKeys.empty,
+        emptyDescriptionKey: GendersKeys.noResults,
+        noResultsTitleKey: GendersKeys.noResults,
+        noResultsDescriptionKey: GendersKeys.noResults,
       ),
-      DataTableColumn(
-        labelKey: GendersKeys.sortOrder,
-        sortKey: 'order',
-        numeric: true,
-        priority: DataTableColumnPriority.secondary,
-        cellBuilder: (_, gender) => AppText.raw(gender.sortOrder.toString()),
-      ),
-    ],
-    labels: _labels,
-    statusColumn: CrudStatusColumnConfig<Gender>(
-      labelKey: GendersKeys.status,
-      isActive: (gender) => gender.isActive,
-      badgeBuilder: (_, gender) => GenderStatusBadge(gender),
-    ),
-    cardBuilder: (_, gender) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppText.raw(gender.name, type: AppTextType.titleMedium),
-        AppText.raw(gender.code),
-        AppText.raw(gender.sortOrder.toString()),
-        GenderStatusBadge(gender),
-      ],
-    ),
-    icon: AppIcons.catalog,
-    emptyTitleKey: GendersKeys.empty,
-    emptyDescriptionKey: GendersKeys.noResults,
-    noResultsTitleKey: GendersKeys.noResults,
-    noResultsDescriptionKey: GendersKeys.noResults,
-  ),
 );

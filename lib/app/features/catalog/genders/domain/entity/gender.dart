@@ -23,5 +23,12 @@ class Gender extends Equatable {
   bool get canDelete => sizeGroupCount == 0;
 
   @override
-  List<Object?> get props => [id, name, code, isActive, sortOrder, sizeGroupCount];
+  List<Object?> get props => [
+    id,
+    name,
+    code,
+    isActive,
+    sortOrder,
+    sizeGroupCount,
+  ];
 }

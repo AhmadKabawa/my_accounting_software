@@ -10,7 +10,9 @@ void main() {
         'code': 'W',
         'is_active': true,
         'sort_order': 2,
-        'size_groups': [{'count': 4}],
+        'size_groups': [
+          {'count': 4},
+        ],
       });
       final entity = model.toEntity();
       expect(entity.id, 7);
@@ -40,7 +42,9 @@ void main() {
         'code': 'K',
         'is_active': false,
         'sort_order': 1,
-        'size_groups': [{'count': 0}],
+        'size_groups': [
+          {'count': 0},
+        ],
       }).toEntity();
       expect(entity.canDelete, isTrue);
     });

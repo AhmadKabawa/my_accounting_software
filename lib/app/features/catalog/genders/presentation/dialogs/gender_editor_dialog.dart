@@ -31,11 +31,13 @@ class _GenderEditorDialogState extends State<GenderEditorDialog> {
     final gender = widget.gender;
     _initialActive = gender?.isActive ?? true;
     _active = _initialActive;
-    _fields = CrudEditorFields(initialValues: {
-      'name': gender?.name ?? '',
-      'code': gender?.code ?? '',
-      'sortOrder': (gender?.sortOrder ?? 0).toString(),
-    });
+    _fields = CrudEditorFields(
+      initialValues: {
+        'name': gender?.name ?? '',
+        'code': gender?.code ?? '',
+        'sortOrder': (gender?.sortOrder ?? 0).toString(),
+      },
+    );
   }
 
   @override
@@ -50,7 +52,9 @@ class _GenderEditorDialogState extends State<GenderEditorDialog> {
       name: _name.text.trim(),
       code: _code.text.trim(),
       sortOrder: int.parse(_order.text.trim()),
-      isActive: widget.gender == null ? _active : (_active == _initialActive ? null : _active),
+      isActive: widget.gender == null
+          ? _active
+          : (_active == _initialActive ? null : _active),
     ),
   );
 
@@ -64,12 +68,15 @@ class _GenderEditorDialogState extends State<GenderEditorDialog> {
         isSaving: (status) => status == GenderFormStatus.saving,
         outcome: (effect) => switch (effect) {
           GenderSavedEffect() => const CrudEditorSuccess(),
-          GenderSaveFailedEffect(:final messageKey) => CrudEditorFailure(messageKey),
+          GenderSaveFailedEffect(:final messageKey) => CrudEditorFailure(
+            messageKey,
+          ),
         },
         onSave: _save,
         extraDirty: _active != _initialActive,
         onReset: () {
-          if (_active != _initialActive) setState(() => _active = _initialActive);
+          if (_active != _initialActive)
+            setState(() => _active = _initialActive);
         },
         builder: (context, scope) => GenderEditorFields(
           name: _name,
@@ -77,10 +84,14 @@ class _GenderEditorDialogState extends State<GenderEditorDialog> {
           sortOrder: _order,
           active: _active,
           onNameChanged: (_) => scope.clearFailure(),
-          onActiveChanged: scope.busy ? null : (value) {
-            setState(() => _active = value);
-            scope..clearFailure()..changed();
-          },
+          onActiveChanged: scope.busy
+              ? null
+              : (value) {
+                  setState(() => _active = value);
+                  scope
+                    ..clearFailure()
+                    ..changed();
+                },
         ),
       );
 }

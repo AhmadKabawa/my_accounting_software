@@ -49,15 +49,20 @@ class GenderListQuery extends Equatable implements PagedQuery<GenderListQuery> {
   @override
   final int pageSize;
 
-  List<GenderSort> get sorts => [GenderSort(sortField, sortAscending), ...thenSorts];
+  List<GenderSort> get sorts => [
+    GenderSort(sortField, sortAscending),
+    ...thenSorts,
+  ];
   @override
-  bool get hasActiveFilters => search.isNotEmpty || status != GenderStatusFilter.all;
+  bool get hasActiveFilters =>
+      search.isNotEmpty || status != GenderStatusFilter.all;
   @override
   GenderListQuery withSearch(String value) => copyWith(search: value, page: 1);
   @override
   GenderListQuery withPage(int value) => copyWith(page: value);
   @override
-  GenderListQuery cleared() => copyWith(search: '', status: GenderStatusFilter.all, page: 1);
+  GenderListQuery cleared() =>
+      copyWith(search: '', status: GenderStatusFilter.all, page: 1);
   GenderListQuery withStatus(GenderStatusFilter value) =>
       value == status ? this : copyWith(status: value, page: 1);
   GenderListQuery withSorts(List<GenderSort> values) {
@@ -69,12 +74,15 @@ class GenderListQuery extends Equatable implements PagedQuery<GenderListQuery> {
       page: 1,
     );
   }
+
   bool hasSameSorts(List<GenderSort> values) =>
       values.isNotEmpty &&
       sortField == values.first.field &&
       sortAscending == values.first.ascending &&
       thenSorts.length == values.skip(1).length &&
-      thenSorts.asMap().entries.every((entry) => entry.value == values.skip(1).elementAt(entry.key));
+      thenSorts.asMap().entries.every(
+        (entry) => entry.value == values.skip(1).elementAt(entry.key),
+      );
   GenderListQuery copyWith({
     String? search,
     GenderStatusFilter? status,
@@ -93,5 +101,13 @@ class GenderListQuery extends Equatable implements PagedQuery<GenderListQuery> {
     pageSize: pageSize ?? this.pageSize,
   );
   @override
-  List<Object?> get props => [search, status, sortField, sortAscending, thenSorts, page, pageSize];
+  List<Object?> get props => [
+    search,
+    status,
+    sortField,
+    sortAscending,
+    thenSorts,
+    page,
+    pageSize,
+  ];
 }

@@ -1,1 +1,20 @@
-import 'package:dartz/dartz.dart'; import 'package:equatable/equatable.dart'; import 'package:accounting_software/app/core/error/failures/failure.dart'; import 'package:accounting_software/app/core/foundation/base/use_case.dart'; import 'package:accounting_software/app/features/catalog/genders/domain/repositories/genders_repository.dart'; class DeleteGenderParams extends Equatable{const DeleteGenderParams(this.id);final int id;@override List<Object?> get props=>[id];} class DeleteGenderUseCase extends UseCase<Unit,DeleteGenderParams>{DeleteGenderUseCase(this._repo);final GendersRepository _repo;@override Future<Either<Failure,Unit>> call(DeleteGenderParams p)=>_repo.deleteGender(p.id);}
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/base/use_case.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/repositories/genders_repository.dart';
+
+class DeleteGenderParams extends Equatable {
+  const DeleteGenderParams(this.id);
+  final int id;
+  @override
+  List<Object?> get props => [id];
+}
+
+class DeleteGenderUseCase extends UseCase<Unit, DeleteGenderParams> {
+  DeleteGenderUseCase(this._repo);
+  final GendersRepository _repo;
+  @override
+  Future<Either<Failure, Unit>> call(DeleteGenderParams p) =>
+      _repo.deleteGender(p.id);
+}

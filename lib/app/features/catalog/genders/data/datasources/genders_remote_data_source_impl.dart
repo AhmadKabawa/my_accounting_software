@@ -16,7 +16,9 @@ class GendersRemoteDataSourceImpl implements GendersRemoteDataSource {
   final IApiClient _api;
 
   @override
-  Future<ApiResult<PaginatedResult<GenderModel>>> getGenders(GenderListQuery query) {
+  Future<ApiResult<PaginatedResult<GenderModel>>> getGenders(
+    GenderListQuery query,
+  ) {
     final term = PostgrestValue.escapeFilter(query.search.trim());
     return _api.getPaginated<GenderModel>(
       GendersEndpoint.collection,
@@ -27,9 +29,11 @@ class GendersRemoteDataSourceImpl implements GendersRemoteDataSource {
       queryParameters: {
         'select': GendersEndpoint.select,
         'order': _order(query),
-        if (term.isNotEmpty) 'or': '(name.ilike."*$term*",code.ilike."*$term*")',
+        if (term.isNotEmpty)
+          'or': '(name.ilike."*$term*",code.ilike."*$term*")',
         if (query.status == GenderStatusFilter.active) 'is_active': 'eq.true',
-        if (query.status == GenderStatusFilter.inactive) 'is_active': 'eq.false',
+        if (query.status == GenderStatusFilter.inactive)
+          'is_active': 'eq.false',
       },
     );
   }

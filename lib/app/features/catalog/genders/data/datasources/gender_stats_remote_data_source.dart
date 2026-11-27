@@ -1,1 +1,6 @@
-import 'package:accounting_software/app/core/foundation/types/api_result.dart';import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_stats.dart';abstract interface class GenderStatsRemoteDataSource{Future<ApiResult<GenderStats>> getGenderStats();}
+import 'package:accounting_software/app/core/foundation/types/api_result.dart';
+import 'package:accounting_software/app/features/catalog/genders/domain/entity/gender_stats.dart';
+
+abstract interface class GenderStatsRemoteDataSource {
+  Future<ApiResult<GenderStats>> getGenderStats();
+}

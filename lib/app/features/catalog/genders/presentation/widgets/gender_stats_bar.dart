@@ -8,7 +8,13 @@ import 'package:accounting_software/app/features/catalog/genders/domain/entity/g
 import 'package:accounting_software/app/features/catalog/genders/presentation/localization/genders_keys.dart';
 
 class GenderStatsBar extends StatelessWidget {
-  const GenderStatsBar(this.stats, {super.key, required this.onSelected, required this.selected, this.loading = false});
+  const GenderStatsBar(
+    this.stats, {
+    super.key,
+    required this.onSelected,
+    required this.selected,
+    this.loading = false,
+  });
   final GenderStats? stats;
   final ValueChanged<GenderStatusFilter> onSelected;
   final GenderStatusFilter selected;
@@ -16,9 +22,27 @@ class GenderStatsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListStatsBar<GenderStatusFilter>(
     items: [
-      StatItem(labelKey: GendersKeys.total, value: stats?.total.toString(), icon: AppIcons.catalog, tone: AppBadgeTone.info, filter: GenderStatusFilter.all),
-      StatItem(labelKey: GendersKeys.activeTotal, value: stats?.active.toString(), icon: AppIcons.success, tone: AppBadgeTone.success, filter: GenderStatusFilter.active),
-      StatItem(labelKey: GendersKeys.inactiveTotal, value: stats?.inactive.toString(), icon: AppIcons.block, tone: AppBadgeTone.neutral, filter: GenderStatusFilter.inactive),
+      StatItem(
+        labelKey: GendersKeys.total,
+        value: stats?.total.toString(),
+        icon: AppIcons.catalog,
+        tone: AppBadgeTone.info,
+        filter: GenderStatusFilter.all,
+      ),
+      StatItem(
+        labelKey: GendersKeys.activeTotal,
+        value: stats?.active.toString(),
+        icon: AppIcons.success,
+        tone: AppBadgeTone.success,
+        filter: GenderStatusFilter.active,
+      ),
+      StatItem(
+        labelKey: GendersKeys.inactiveTotal,
+        value: stats?.inactive.toString(),
+        icon: AppIcons.block,
+        tone: AppBadgeTone.neutral,
+        filter: GenderStatusFilter.inactive,
+      ),
     ],
     selected: selected,
     onSelected: onSelected,

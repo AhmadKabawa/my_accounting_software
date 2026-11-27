@@ -37,11 +37,10 @@ class GenderStatsRemoteDataSourceImpl implements GenderStatsRemoteDataSource {
       return ApiFailure<GenderStats>(activeResult.exception);
     }
 
-    final active = (activeResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
-    return ApiSuccess(GenderStats(
-      total: total,
-      active: active,
-      inactive: total - active,
-    ));
+    final active =
+        (activeResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
+    return ApiSuccess(
+      GenderStats(total: total, active: active, inactive: total - active),
+    );
   }
 }

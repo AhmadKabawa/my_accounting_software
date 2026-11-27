@@ -14,7 +14,8 @@ import 'package:accounting_software/app/features/catalog/genders/domain/usecase/
 import 'package:accounting_software/app/features/catalog/genders/presentation/cubit/genders_list/genders_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/genders/presentation/localization/genders_keys.dart';
 
-class GendersListCubit extends PagedListCubit<Gender, GenderListQuery, GendersListEffect> {
+class GendersListCubit
+    extends PagedListCubit<Gender, GenderListQuery, GendersListEffect> {
   GendersListCubit({
     required GetGendersUseCase get,
     required SetGenderActiveUseCase setActive,
@@ -23,20 +24,24 @@ class GendersListCubit extends PagedListCubit<Gender, GenderListQuery, GendersLi
   }) : _get = get,
        _setActive = setActive,
        _delete = delete,
-       super(initialQuery: const GenderListQuery(
-         page: AppConfig.defaultPage,
-         pageSize: AppConfig.defaultPageSize,
-       ));
+       super(
+         initialQuery: const GenderListQuery(
+           page: AppConfig.defaultPage,
+           pageSize: AppConfig.defaultPageSize,
+         ),
+       );
 
   final GetGendersUseCase _get;
   final SetGenderActiveUseCase _setActive;
   final DeleteGenderUseCase _delete;
 
   @override
-  Future<Either<Failure, PagedResult<Gender>>> fetch(GenderListQuery query) => _get(query);
+  Future<Either<Failure, PagedResult<Gender>>> fetch(GenderListQuery query) =>
+      _get(query);
 
   @override
-  Future<Either<Failure, Unit>> deleteItem(Gender item) => _delete(DeleteGenderParams(item.id));
+  Future<Either<Failure, Unit>> deleteItem(Gender item) =>
+      _delete(DeleteGenderParams(item.id));
 
   @override
   Failure? beforeDelete(Gender item) {
@@ -53,7 +58,8 @@ class GendersListCubit extends PagedListCubit<Gender, GenderListQuery, GendersLi
       GendersMutatedEffect.fromPaged(kind);
 
   Future<void> setStatus(GenderStatusFilter value) async {
-    if (state.query.status != value) await applyQueryAndLoad(state.query.withStatus(value));
+    if (state.query.status != value)
+      await applyQueryAndLoad(state.query.withStatus(value));
   }
 
   Future<void> setSorts(List<GenderSort> values) async {
@@ -79,14 +85,16 @@ class GendersListCubit extends PagedListCubit<Gender, GenderListQuery, GendersLi
 
   Future<BulkResult<Gender>> bulkActivate(Iterable<Gender> items) => runBulk(
     items: items,
-    action: (item) => _setActive(SetGenderActiveParams(id: item.id, isActive: true)),
+    action: (item) =>
+        _setActive(SetGenderActiveParams(id: item.id, isActive: true)),
     kind: PagedMutationKind.statusChanged,
     successMessage: GendersKeys.statusUpdated,
   );
 
   Future<BulkResult<Gender>> bulkDeactivate(Iterable<Gender> items) => runBulk(
     items: items,
-    action: (item) => _setActive(SetGenderActiveParams(id: item.id, isActive: false)),
+    action: (item) =>
+        _setActive(SetGenderActiveParams(id: item.id, isActive: false)),
     kind: PagedMutationKind.statusChanged,
     successMessage: GendersKeys.statusUpdated,
   );
@@ -103,6 +111,7 @@ class GendersListCubit extends PagedListCubit<Gender, GenderListQuery, GendersLi
     successMessage: GendersKeys.deleted,
   );
 
-  Future<void> onGenderSaved({required bool isNew}) =>
-      reloadAfterMutation(isNew ? PagedMutationKind.created : PagedMutationKind.updated);
+  Future<void> onGenderSaved({required bool isNew}) => reloadAfterMutation(
+    isNew ? PagedMutationKind.created : PagedMutationKind.updated,
+  );
 }

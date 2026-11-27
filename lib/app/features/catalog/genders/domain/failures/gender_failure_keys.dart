@@ -11,7 +11,10 @@ enum GenderFailureKeys implements AppKey {
   );
 
   const GenderFailureKeys({required this.ar, required this.en});
-  @override final String ar;
-  @override final String en;
-  @override String get key => 'genderfailures.$name';
+  @override
+  final String ar;
+  @override
+  final String en;
+  @override
+  String get key => 'genderfailures.$name';
 }

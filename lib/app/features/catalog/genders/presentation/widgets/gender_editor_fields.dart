@@ -37,7 +37,8 @@ class GenderEditorFields extends StatelessWidget {
         validator: (value) {
           final text = value?.trim() ?? '';
           if (text.isEmpty) return GendersKeys.required.tr(context: context);
-          if (text.length > 50) return GendersKeys.nameTooLong.tr(context: context);
+          if (text.length > 50)
+            return GendersKeys.nameTooLong.tr(context: context);
           return null;
         },
       ),
@@ -49,7 +50,8 @@ class GenderEditorFields extends StatelessWidget {
         validator: (value) {
           final text = value?.trim() ?? '';
           if (text.isEmpty) return GendersKeys.required.tr(context: context);
-          if (text.length > 30) return GendersKeys.codeTooLong.tr(context: context);
+          if (text.length > 30)
+            return GendersKeys.codeTooLong.tr(context: context);
           if (!RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(text)) {
             return GendersKeys.codeFormat.tr(context: context);
           }
@@ -64,7 +66,8 @@ class GenderEditorFields extends StatelessWidget {
         textDirection: TextDirection.ltr,
         validator: (value) {
           final parsed = int.tryParse((value ?? '').trim());
-          if (parsed == null || parsed < 0) return GendersKeys.sortFormat.tr(context: context);
+          if (parsed == null || parsed < 0)
+            return GendersKeys.sortFormat.tr(context: context);
           return null;
         },
       ),

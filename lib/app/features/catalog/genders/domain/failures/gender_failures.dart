@@ -4,15 +4,15 @@ import 'package:accounting_software/app/features/catalog/genders/domain/failures
 
 class GenderInUseFailure extends Failure {
   const GenderInUseFailure()
-      : super(messageKey: GenderFailureKeys.inUse, statusCode: 409);
+    : super(messageKey: GenderFailureKeys.inUse, statusCode: 409);
 }
 
 class GenderUsageUnknownFailure extends Failure {
   const GenderUsageUnknownFailure()
-      : super(messageKey: GenderFailureKeys.usageUnknown, statusCode: 409);
+    : super(messageKey: GenderFailureKeys.usageUnknown, statusCode: 409);
 }
 
 class GenderDuplicateFailure extends Failure {
   const GenderDuplicateFailure()
-      : super(messageKey: ErrorKeys.conflict, statusCode: 409);
+    : super(messageKey: ErrorKeys.conflict, statusCode: 409);
 }

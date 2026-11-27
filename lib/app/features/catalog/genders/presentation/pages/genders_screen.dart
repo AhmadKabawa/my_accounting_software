@@ -5,5 +5,6 @@ import 'package:accounting_software/app/features/catalog/genders/presentation/ge
 class GendersScreen extends StatelessWidget {
   const GendersScreen({super.key});
   @override
-  Widget build(BuildContext context) => CrudListScreen(config: gendersListConfig);
+  Widget build(BuildContext context) =>
+      CrudListScreen(config: gendersListConfig);
 }

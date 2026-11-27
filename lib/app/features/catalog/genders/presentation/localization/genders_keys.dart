@@ -19,12 +19,27 @@ enum GendersKeys implements AppKey {
   noResults(ar: 'لا توجد نتائج مطابقة', en: 'No matching results'),
   loadError(ar: 'تعذر تحميل الأجناس', en: 'Could not load genders'),
   saveError(ar: 'تعذر حفظ الجنس', en: 'Could not save gender'),
-  duplicateError(ar: 'الاسم أو الرمز مستخدم مسبقاً', en: 'Name or code already exists'),
+  duplicateError(
+    ar: 'الاسم أو الرمز مستخدم مسبقاً',
+    en: 'Name or code already exists',
+  ),
   required(ar: 'هذا الحقل مطلوب', en: 'Required'),
-  nameTooLong(ar: 'الاسم يجب ألا يتجاوز 50 حرفاً', en: 'Name must be 50 characters or fewer'),
-  codeTooLong(ar: 'الرمز يجب ألا يتجاوز 30 حرفاً', en: 'Code must be 30 characters or fewer'),
-  codeFormat(ar: 'استخدم أحرفاً إنجليزية وأرقاماً وشرطة فقط', en: 'Use letters, numbers, underscores, and hyphens only'),
-  sortFormat(ar: 'أدخل رقماً صحيحاً صفراً أو أكبر', en: 'Enter a non-negative integer'),
+  nameTooLong(
+    ar: 'الاسم يجب ألا يتجاوز 50 حرفاً',
+    en: 'Name must be 50 characters or fewer',
+  ),
+  codeTooLong(
+    ar: 'الرمز يجب ألا يتجاوز 30 حرفاً',
+    en: 'Code must be 30 characters or fewer',
+  ),
+  codeFormat(
+    ar: 'استخدم أحرفاً إنجليزية وأرقاماً وشرطة فقط',
+    en: 'Use letters, numbers, underscores, and hyphens only',
+  ),
+  sortFormat(
+    ar: 'أدخل رقماً صحيحاً صفراً أو أكبر',
+    en: 'Enter a non-negative integer',
+  ),
   save(ar: 'حفظ', en: 'Save'),
   cancel(ar: 'إلغاء', en: 'Cancel'),
   saved(ar: 'تم حفظ الجنس', en: 'Gender saved'),
@@ -35,7 +50,10 @@ enum GendersKeys implements AppKey {
   deleteTitle(ar: 'حذف الجنس', en: 'Delete gender'),
   deleteMessage(ar: 'هل تريد حذف الجنس {name}؟', en: 'Delete gender {name}?'),
   deactivateTitle(ar: 'إيقاف الجنس', en: 'Deactivate gender'),
-  deactivateMessage(ar: 'سيتم الاحتفاظ بالسجل وإيقافه', en: 'This record will be retained and deactivated'),
+  deactivateMessage(
+    ar: 'سيتم الاحتفاظ بالسجل وإيقافه',
+    en: 'This record will be retained and deactivated',
+  ),
   statusUpdated(ar: 'تم تحديث الحالة', en: 'Status updated'),
   identity(ar: 'بيانات الجنس', en: 'Gender details'),
   editorSubtitle(ar: 'أدخل الاسم والرمز', en: 'Enter name and code'),
@@ -45,15 +63,33 @@ enum GendersKeys implements AppKey {
   bulkActivate(ar: 'تفعيل المحدد', en: 'Activate selected'),
   bulkDeactivate(ar: 'إيقاف المحدد', en: 'Deactivate selected'),
   bulkDelete(ar: 'حذف المحدد', en: 'Delete selected'),
-  bulkDeactivateTitle(ar: 'إيقاف الأجناس المحددة', en: 'Deactivate selected genders'),
-  bulkDeactivateMessage(ar: 'سيتم إيقاف {count} سجل', en: '{count} records will be deactivated'),
+  bulkDeactivateTitle(
+    ar: 'إيقاف الأجناس المحددة',
+    en: 'Deactivate selected genders',
+  ),
+  bulkDeactivateMessage(
+    ar: 'سيتم إيقاف {count} سجل',
+    en: '{count} records will be deactivated',
+  ),
   bulkDeleteTitle(ar: 'حذف الأجناس المحددة', en: 'Delete selected genders'),
-  bulkDeleteMessage(ar: 'سيتم حذف {count} سجل', en: '{count} records will be deleted'),
-  inUse(ar: 'لا يمكن حذف الجنس لارتباطه بمجموعات مقاسات. أوقفه بدلاً من ذلك.', en: 'This gender is used by size groups. Deactivate it instead.'),
-  usageUnknown(ar: 'تعذر التحقق من الاستخدام؛ تم منع الحذف حفاظاً على البيانات.', en: 'Usage could not be verified; deletion was blocked to protect data.');
+  bulkDeleteMessage(
+    ar: 'سيتم حذف {count} سجل',
+    en: '{count} records will be deleted',
+  ),
+  inUse(
+    ar: 'لا يمكن حذف الجنس لارتباطه بمجموعات مقاسات. أوقفه بدلاً من ذلك.',
+    en: 'This gender is used by size groups. Deactivate it instead.',
+  ),
+  usageUnknown(
+    ar: 'تعذر التحقق من الاستخدام؛ تم منع الحذف حفاظاً على البيانات.',
+    en: 'Usage could not be verified; deletion was blocked to protect data.',
+  );
 
   const GendersKeys({required this.ar, required this.en});
-  @override final String ar;
-  @override final String en;
-  @override String get key => 'genders.$name';
+  @override
+  final String ar;
+  @override
+  final String en;
+  @override
+  String get key => 'genders.$name';
 }

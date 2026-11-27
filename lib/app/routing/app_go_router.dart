@@ -341,7 +341,8 @@ class AppRouter {
               GoRoute(
                 path: GendersRoutes.genders.path,
                 name: GendersRoutes.genders.name,
-                pageBuilder: (context, state) => const NoTransitionPage(child: GendersScreen()),
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: GendersScreen()),
               ),
               GoRoute(
                 path: SportsRoutes.sports.path,
