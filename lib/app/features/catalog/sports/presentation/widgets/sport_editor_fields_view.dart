@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/features/catalog/sports/presentation/localization/sports_keys.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/sections/sport_details_section.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/sections/sport_identity_section.dart';
 

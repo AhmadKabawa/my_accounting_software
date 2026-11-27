@@ -18,6 +18,7 @@ import 'package:accounting_software/app/features/catalog/product_types/presentat
 
 class ProductTypeAttributesSection extends StatelessWidget {
   const ProductTypeAttributesSection({
+    super.key,
     required this.state,
     required this.canManage,
   });

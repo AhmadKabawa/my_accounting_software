@@ -21,7 +21,7 @@ Future<void> confirmProductTypeLinkRemoval(
 }
 
 class ProductTypeSectionTitle extends StatelessWidget {
-  const ProductTypeSectionTitle(this.label, this.count);
+  const ProductTypeSectionTitle(this.label, this.count, {super.key});
 
   final AppKey label;
   final int count;

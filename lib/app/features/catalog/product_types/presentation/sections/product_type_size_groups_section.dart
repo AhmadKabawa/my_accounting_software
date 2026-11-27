@@ -19,6 +19,7 @@ import 'package:accounting_software/app/features/catalog/product_types/presentat
 
 class ProductTypeSizeGroupsSection extends StatefulWidget {
   const ProductTypeSizeGroupsSection({
+    super.key,
     required this.state,
     required this.canManage,
   });

@@ -103,10 +103,12 @@ class CategoryIdentity extends StatelessWidget {
                       children: [
                         Expanded(child: secondary),
                         if (compact && node.underInactiveAncestor)
-                          AppBadge(
-                            label: CategoriesKeys.underInactiveParent,
-                            size: AppBadgeSize.small,
-                            tone: AppBadgeTone.neutral,
+                          Flexible(
+                            child: AppBadge(
+                              label: CategoriesKeys.underInactiveParent,
+                              size: AppBadgeSize.small,
+                              tone: AppBadgeTone.neutral,
+                            ),
                           )
                         else if (compact && node.childCount > 0)
                           Flexible(child: badge),
@@ -128,7 +130,8 @@ class CategoryIdentity extends StatelessWidget {
                   ],
                 ),
               ),
-              if (!compact && node.childCount > 0) badge,
+              if (!compact && node.childCount > 0)
+                Flexible(child: badge),
             ],
           ),
         );
