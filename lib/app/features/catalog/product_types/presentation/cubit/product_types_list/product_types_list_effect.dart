@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_state.dart';
+import 'package:accounting_software/app/core/presentation/state_management/paged_list/paged_list_cubit.dart';
 
 enum ProductTypeMutationKind { created, updated, statusChanged, deleted }
 
