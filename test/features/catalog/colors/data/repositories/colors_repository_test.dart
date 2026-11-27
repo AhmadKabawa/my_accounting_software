@@ -29,7 +29,26 @@ void main() {
     expect(api.lastQueryParameters['order'], 'sort_order.asc,name.asc,id.asc');
     expect(api.lastQueryParameters.containsKey('or'), isFalse);
     expect(api.lastQueryParameters.containsKey('is_active'), isFalse);
-    expect(result.isRight(), isTrue);
+    expect(api.usageQuery, {
+      'select': 'color_id,product_count,component_count',
+      'color_id': 'in.(7)',
+    });
+    result.fold((_) => fail('Expected color page'), (page) {
+      expect(page.items.single.productCount, 4);
+      expect(page.items.single.componentCount, 9);
+    });
+  });
+
+  test('keeps the color list available when the usage view is not readable', () async {
+    api.usageFailure = ApiException.forbidden();
+
+    final result = await repository.getColors(const ColorListQuery());
+
+    result.fold((_) => fail('Expected the base color page'), (page) {
+      expect(page.items.single.id, 7);
+      expect(page.items.single.productCount, isNull);
+      expect(page.items.single.componentCount, isNull);
+    });
   });
 
   test('builds search, status, sort and pagination parameters', () async {
