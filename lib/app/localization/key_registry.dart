@@ -22,6 +22,10 @@ import 'package:accounting_software/app/features/home/presentation/localization/
 import 'package:accounting_software/app/features/on_boarding/presentation/localization/onboarding_keys.dart';
 import 'package:accounting_software/app/features/profile/presentation/localization/profile_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/domain/failures/brand_failure_keys.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/localization/materials_keys.dart';
+import 'package:accounting_software/app/features/catalog/materials/domain/failures/material_failure_keys.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/localization/fabric_types_keys.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/failures/fabric_type_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
@@ -81,6 +85,10 @@ final List<AppKey> allKeys = <AppKey>[
   ...ProductTypesKeys.values,
   ...ProductTypeFailureKeys.values,
   ...CatalogHubKeys.values,
+  ...MaterialsKeys.values,
+  ...MaterialFailureKeys.values,
+  ...FabricTypesKeys.values,
+  ...FabricTypeFailureKeys.values,
   ...HomeKeys.values,
   ...OnboardingKeys.values,
 ];
