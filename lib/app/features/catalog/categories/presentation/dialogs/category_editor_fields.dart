@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/platform/file_drop/file_drop_target
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
@@ -96,10 +97,10 @@ class CategoryEditorFields extends StatelessWidget {
           state.name.trim().isNotEmpty,
         ),
         if (cubit.hasSiblingNameConflict)
-          AppText(
-            CategoriesKeys.siblingNameWarning,
-            type: AppTextType.bodySmall,
-            color: context.ui.theme.semanticColors.warning,
+          const AppBadge(
+            label: CategoriesKeys.siblingNameWarning,
+            size: AppBadgeSize.small,
+            tone: AppBadgeTone.warning,
           ),
         context.ui.spacing.gap(AppSpacing.md),
         AppTextField(

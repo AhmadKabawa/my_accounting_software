@@ -305,8 +305,7 @@ void main() {
     await tester.tap(find.text(CategoriesKeys.addChild.en));
     await tester.pumpAndSettle();
 
-    final fields = find.byType(TextField);
-    await tester.enterText(fields.at(1), 'New child');
+    await tester.enterText(_categoryNameInput(), 'New child');
     await tester.pumpAndSettle();
     await tester.tap(find.text(CategoriesKeys.save.en));
     await tester.pumpAndSettle();
@@ -448,7 +447,7 @@ void main() {
       repository,
       imagePicker: _ImagePicker(
         PickedImage(
-          bytes: Uint8List.fromList([1, 2, 3]),
+          bytes: Uint8List.fromList([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
           fileName: 'category.png',
           mimeType: 'image/png',
         ),
@@ -490,7 +489,7 @@ void main() {
       repository,
       imagePicker: _ImagePicker(
         PickedImage(
-          bytes: Uint8List.fromList([1, 2, 3]),
+          bytes: Uint8List.fromList([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
           fileName: 'category.png',
           mimeType: 'image/png',
         ),
@@ -590,6 +589,8 @@ void main() {
       expect(find.text(CategoriesKeys.details.en), findsOneWidget);
       expect(find.text('Child'), findsWidgets);
 
+      await tester.ensureVisible(find.text('Child').last);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Child').last);
       await tester.pumpAndSettle();
       expect(find.text('Grandchild'), findsWidgets);

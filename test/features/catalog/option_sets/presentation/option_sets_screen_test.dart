@@ -37,6 +37,7 @@ import 'package:accounting_software/app/features/catalog/option_sets/presentatio
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/cubit/option_sets_list/option_sets_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
+import 'package:accounting_software/app/features/catalog/option_sets/presentation/dialogs/option_set_editor_launcher.dart';
 import '../../../../helpers/localized_app.dart';
 import '../../../../helpers/screen_matrix.dart';
 
@@ -259,12 +260,28 @@ void _register(_FakeOptionSetsRepository repository) {
   addTearDown(() async => sl.reset());
 }
 
-Widget _home() => BlocProvider<AccessCubit>(
-  create: (_) => AccessCubit(
-    getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: true)),
-  )..load(),
-  child: const Scaffold(body: OptionSetsScreen()),
-);
+Widget _home(_FakeOptionSetsRepository repository) =>
+    BlocProvider<AccessCubit>(
+      create: (_) => AccessCubit(
+        getMyAccess: GetMyAccessUseCase(_AccessRepository(canManage: true)),
+      )..load(),
+      child: Builder(
+        builder: (context) => Scaffold(
+          body: Column(
+            children: [
+              const Expanded(child: OptionSetsScreen()),
+              TextButton(
+                onPressed: () => showOptionSetEditor(
+                  context,
+                  optionSet: repository.optionSet,
+                ),
+                child: const Text('Edit set'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
@@ -282,7 +299,7 @@ void main() {
               width: width,
               direction: direction,
               dark: dark,
-              home: _home(),
+              home: _home(repository),
             );
 
             expect(find.text('Size'), findsOneWidget);
@@ -295,11 +312,7 @@ void main() {
             await tester.tap(find.text(OptionSetsKeys.cancel.en).last);
             await tester.pumpAndSettle();
 
-            await tester.tap(
-              find.byTooltip(CatalogUiKeys.moreActions.en).first,
-            );
-            await tester.pumpAndSettle();
-            await tester.tap(find.text(OptionSetsKeys.edit.en).last);
+            await tester.tap(find.text('Edit set'));
             await tester.pumpAndSettle();
             expect(find.text(OptionSetsKeys.locked.en), findsOneWidget);
             final selection = tester

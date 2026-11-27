@@ -52,8 +52,12 @@ class CategoryDetailsPanel extends StatelessWidget {
       closeLabelKey: CategoriesKeys.closeDetails,
       onClose: onClose,
       width: width,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height -
+            context.ui.spacing.xxxl * 3,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -186,6 +190,8 @@ class CategoryDetailsPanel extends StatelessWidget {
             ),
           ],
         ],
+          ),
+        ),
       ),
     );
   }
