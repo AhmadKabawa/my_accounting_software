@@ -5,7 +5,7 @@ void main() {
   test('sort fields map to whitelisted server columns', () {
     expect(BrandSortField.name.column, 'name');
     expect(BrandSortField.status.column, 'is_active');
-    expect(BrandSortField.newest.column, 'id');
+    expect(BrandSortField.newest.column, 'created_at');
     expect(BrandSortField.updated.column, 'updated_at');
     expect(BrandSortField.tryParse('status'), BrandSortField.status);
     expect(BrandSortField.tryParse('productCount'), isNull);
