@@ -47,6 +47,13 @@ class AttributesRemoteDataSourceImpl implements AttributesRemoteDataSource {
   }
 
   @override
+  Future<ApiResult<Unit>> deleteAttribute(int id) => _apiClient.delete(
+    AttributesEndpoint.collection,
+    queryParameters: {'id': 'eq.$id'},
+    options: Options(headers: {'Prefer': 'return=minimal'}),
+  );
+
+  @override
   Future<ApiResult<AttributeModel>> createAttribute(AttributeDraft draft) =>
       _apiClient.post(
         AttributesEndpoint.collection,

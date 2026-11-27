@@ -11,6 +11,7 @@ abstract interface class AttributesRemoteDataSource {
     AttributeListQuery query,
   );
   Future<ApiResult<AttributeModel>> createAttribute(AttributeDraft draft);
+  Future<ApiResult<Unit>> deleteAttribute(int id);
   Future<ApiResult<AttributeModel>> updateAttribute({
     required int id,
     required AttributeDraft draft,
