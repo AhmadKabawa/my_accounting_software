@@ -19,9 +19,9 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
   @override
   Future<ApiResult<PaginatedResult<ColorModel>>> getColors(
     ColorListQuery query,
-  ) {
+  ) async {
     final searchTerm = PostgrestValue.escapeFilter(query.search.trim());
-    return _apiClient.getPaginated<ColorModel>(
+    final result = await _apiClient.getPaginated<ColorModel>(
       ColorsEndpoint.collection,
       fromJson: ColorModel.fromJson,
       page: query.page,
@@ -36,6 +36,54 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
         if (query.status == ColorStatusFilter.active) 'is_active': 'eq.true',
         if (query.status == ColorStatusFilter.inactive) 'is_active': 'eq.false',
       },
+    );
+
+    if (result case ApiFailure<PaginatedResult<ColorModel>>()) return result;
+    final page = (result as ApiSuccess<PaginatedResult<ColorModel>>).data;
+    if (page.items.isEmpty) return result;
+
+    // The usage view is security_invoker. If its RLS-visible rows cannot be
+    // read, keep the catalog list usable and leave usage as unknown (null).
+    final ids = page.items.map((color) => color.id).join(',');
+    final usageResult = await _apiClient.get<List<Map<String, dynamic>>>(
+      ColorsEndpoint.usageView,
+      queryParameters: {
+        'select': 'color_id,product_count,component_count',
+        'color_id': 'in.($ids)',
+      },
+      fromJsonList: (rows) => rows
+          .map((row) => Map<String, dynamic>.from(row as Map))
+          .toList(growable: false),
+    );
+    if (usageResult case ApiFailure<List<Map<String, dynamic>>>()) {
+      return result;
+    }
+
+    final usageByColorId = {
+      for (final row
+          in (usageResult as ApiSuccess<List<Map<String, dynamic>>>).data)
+        if (row['color_id'] != null)
+          (row['color_id'] as num).toInt(): row,
+    };
+    final enrichedItems = [
+      for (final color in page.items)
+        if (usageByColorId[color.id] case final usage?)
+          color.withUsage(
+            productCount: (usage['product_count'] as num?)?.toInt(),
+            componentCount: (usage['component_count'] as num?)?.toInt(),
+          )
+        else
+          color,
+    ];
+
+    return ApiSuccess(
+      PaginatedResult<ColorModel>(
+        items: enrichedItems,
+        totalCount: page.totalCount,
+        currentPage: page.currentPage,
+        totalPages: page.totalPages,
+        isFromCache: page.isFromCache,
+      ),
     );
   }
 
@@ -78,8 +126,6 @@ class ColorsRemoteDataSourceImpl implements ColorsRemoteDataSource {
     fromJson: (_) => unit,
   );
 
-  /// All criteria are applied by PostgREST in priority order. An ID tie-breaker
-  /// keeps page boundaries stable when values are equal.
   String _order(ColorListQuery query) {
     final terms = [
       for (final sort in query.sorts)
