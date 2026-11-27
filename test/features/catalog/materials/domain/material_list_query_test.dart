@@ -34,6 +34,19 @@ void main() {
       expect(next.page, 2);
     });
 
+    test('preserves ordered multi-sort criteria', () {
+      const query = MaterialListQuery();
+      final sorted = query.withSorts(const [
+        MaterialSort(MaterialSortField.code, false),
+        MaterialSort(MaterialSortField.name, true),
+      ]);
+      expect(sorted.sorts, const [
+        MaterialSort(MaterialSortField.code, false),
+        MaterialSort(MaterialSortField.name, true),
+      ]);
+      expect(sorted.page, 1);
+    });
+
     test('sort field parser accepts known fields only', () {
       expect(MaterialSortField.tryParse('code'), MaterialSortField.code);
       expect(MaterialSortField.tryParse('not-a-field'), isNull);
