@@ -39,6 +39,8 @@ enum ColorsKeys implements AppKey {
   totalColors(ar: 'إجمالي الألوان', en: 'Total colors'),
   activeColors(ar: 'الألوان الفعالة', en: 'Active colors'),
   inactiveColors(ar: 'الألوان الموقوفة', en: 'Inactive colors'),
+  usedColors(ar: 'ألوان مستخدمة', en: 'Used colors'),
+  unusedColors(ar: 'ألوان غير مستخدمة', en: 'Unused colors'),
   empty(ar: 'لا توجد ألوان بعد', en: 'No colors yet'),
   emptyDescription(
     ar: 'أضف الألوان التي تتوفر بها منتجاتك لتختارها لاحقاً عند تعريف المنتج.',
