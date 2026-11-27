@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
-import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_attribute_link.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_option_set_link.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_size_group_link.dart';
