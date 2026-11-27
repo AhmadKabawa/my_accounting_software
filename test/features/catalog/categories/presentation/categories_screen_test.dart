@@ -820,7 +820,10 @@ void main() {
 
     await tester.tap(find.text('Root').first);
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip(CategoriesKeys.edit.en).last);
+    final editAction = find.byTooltip(CategoriesKeys.edit.en).last;
+    await tester.ensureVisible(editAction);
+    await tester.pumpAndSettle();
+    await tester.tap(editAction);
     await tester.pumpAndSettle();
     expect(
       find.descendant(

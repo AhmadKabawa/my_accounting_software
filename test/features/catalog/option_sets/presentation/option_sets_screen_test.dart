@@ -260,6 +260,9 @@ void _register(_FakeOptionSetsRepository repository) {
   addTearDown(() async => sl.reset());
 }
 
+Finder _editorSurface(double width) =>
+    find.byType(width < 600 ? BottomSheet : Dialog);
+
 Widget _home(_FakeOptionSetsRepository repository) => Scaffold(
   body: Column(
     children: [
@@ -332,7 +335,7 @@ void main() {
             await tester.pumpAndSettle();
             expect(
               find.descendant(
-                of: find.byType(Dialog).last,
+                of: _editorSurface(width),
                 matching: find.text(OptionSetsKeys.selectionType.en),
               ),
               findsOneWidget,
@@ -360,7 +363,7 @@ void main() {
             await tester.tap(find.text(OptionSetsKeys.addOption.en));
             await tester.pumpAndSettle();
             var fields = find.descendant(
-              of: find.byType(Dialog).last,
+              of: _editorSurface(width),
               matching: find.byType(TextFormField),
             );
             expect(fields, findsNWidgets(3));
@@ -376,7 +379,7 @@ void main() {
             );
             await tester.pumpAndSettle();
             fields = find.descendant(
-              of: find.byType(Dialog).last,
+              of: _editorSurface(width),
               matching: find.byType(TextFormField),
             );
             await tester.enterText(fields.at(0), 'Small updated');
