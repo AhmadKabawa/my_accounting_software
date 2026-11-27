@@ -24,9 +24,7 @@ class MaterialModel {
       name: json['name'] as String,
       code: json['code'] as String,
       isActive: json['is_active'] as bool? ?? true,
-      materialType: MaterialType.values
-          .where((e) => e.name == json['material_type'])
-          .firstOrNull,
+      materialType: _parseMaterialType(json['material_type']),
       description: json['description'] as String?,
     );
   }
