@@ -96,7 +96,7 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
           save: FabricTypesKeys.save,
           cancel: FabricTypesKeys.cancel,
         ),
-        isSaving: (status) => status == FabricTypeFormStatus.saving,
+        isSaving: (status) => status is FabricTypeFormSaving,
         extraDirty: _extraDirty,
         onReset: _resetExternalFields,
         outcome: (effect) => switch (effect) {
