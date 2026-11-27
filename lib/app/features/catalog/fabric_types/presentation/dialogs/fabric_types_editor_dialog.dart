@@ -20,10 +20,8 @@ class FabricTypeEditorDialog extends StatefulWidget {
 class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
   late final CrudEditorFields _fields;
   late final bool _initialActive;
-  late final bool _initialNamed;
   late final FabricCategory? _initialCategory;
   bool _active = true;
-  bool _named = false;
   FabricCategory? _selectedCategory;
 
   TextEditingController get _name => _fields['name'];
@@ -32,7 +30,6 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
 
   bool get _extraDirty =>
       _active != _initialActive ||
-      _named != _initialNamed ||
       _selectedCategory != _initialCategory;
 
   @override
@@ -40,10 +37,8 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
     super.initState();
     final item = widget.item;
     _initialActive = item?.isActive ?? true;
-    _initialNamed = item?.isNamedFabric ?? false;
     _initialCategory = item?.fabricCategory;
     _active = _initialActive;
-    _named = _initialNamed;
     _selectedCategory = _initialCategory;
     _fields = CrudEditorFields(
       initialValues: {
@@ -63,7 +58,6 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
   void _resetExternalFields() {
     setState(() {
       _active = _initialActive;
-      _named = _initialNamed;
       _selectedCategory = _initialCategory;
     });
   }
@@ -74,7 +68,7 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
       name: _name.text.trim(),
       code: _code.text.trim(),
       fabricCategory: _selectedCategory,
-      isNamedFabric: _named,
+      isNamedFabric: widget.item?.isNamedFabric ?? false,
       description: _description.text.trim().isEmpty
           ? null
           : _description.text.trim(),
@@ -179,11 +173,6 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
               controller: _description,
               labelKey: FabricTypesKeys.description,
               maxLines: 3,
-            ),
-            SwitchListTile(
-              value: _named,
-              title: AppText(FabricTypesKeys.named),
-              onChanged: (value) => setState(() => _named = value),
             ),
             SwitchListTile(
               value: _active,
