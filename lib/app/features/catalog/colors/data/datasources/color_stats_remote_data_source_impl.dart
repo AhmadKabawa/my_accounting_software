@@ -1,6 +1,4 @@
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
-import 'package:accounting_software/app/core/foundation/types/paginated_parser.dart';
-import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/core/network/api_client_interface.dart';
 import 'package:accounting_software/app/features/catalog/colors/data/colors_endpoint.dart';
 import 'package:accounting_software/app/features/catalog/colors/data/datasources/color_stats_remote_data_source.dart';
@@ -12,37 +10,28 @@ class ColorStatsRemoteDataSourceImpl implements ColorStatsRemoteDataSource {
   final IApiClient _apiClient;
 
   @override
-  Future<ApiResult<ColorStats>> getColorStats() async {
-    final totalResult = await _apiClient.getPaginated<int>(
-      ColorsEndpoint.collection,
-      fromJson: (json) => json['id'] as int,
-      queryParameters: const {'select': 'id'},
-      parser: PaginatedParserPresets.supabase,
-      page: 1,
-      limit: 1,
-    );
-    if (totalResult case ApiFailure<PaginatedResult<int>>(:final exception)) {
-      return ApiFailure<ColorStats>(exception);
-    }
-    final total =
-        (totalResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
+  Future<ApiResult<ColorStats>> getColorStats() =>
+      _apiClient.post<ColorStats>(
+        ColorsEndpoint.statsRpc,
+        data: const <String, dynamic>{},
+        fromJsonList: (rows) {
+          if (rows.length != 1 || rows.single is! Map<String, dynamic>) {
+            throw const FormatException('Expected one color_stats row');
+          }
+          final row = rows.single as Map<String, dynamic>;
+          int readInt(String key) {
+            final value = row[key];
+            if (value is num) return value.toInt();
+            return int.tryParse(value?.toString() ?? '') ?? 0;
+          }
 
-    final activeResult = await _apiClient.getPaginated<int>(
-      ColorsEndpoint.collection,
-      fromJson: (json) => json['id'] as int,
-      queryParameters: const {'select': 'id', 'is_active': 'eq.true'},
-      parser: PaginatedParserPresets.supabase,
-      page: 1,
-      limit: 1,
-    );
-    if (activeResult case ApiFailure<PaginatedResult<int>>(:final exception)) {
-      return ApiFailure<ColorStats>(exception);
-    }
-    final active =
-        (activeResult as ApiSuccess<PaginatedResult<int>>).data.totalCount;
-
-    return ApiSuccess(
-      ColorStats(total: total, active: active, inactive: total - active),
-    );
-  }
+          return ColorStats(
+            total: readInt('total'),
+            active: readInt('active'),
+            inactive: readInt('inactive'),
+            used: readInt('used'),
+            unused: readInt('unused'),
+          );
+        },
+      );
 }
