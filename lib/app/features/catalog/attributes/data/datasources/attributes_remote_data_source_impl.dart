@@ -9,6 +9,7 @@ import 'package:accounting_software/app/features/catalog/attributes/data/attribu
 import 'package:accounting_software/app/features/catalog/attributes/data/datasources/attributes_remote_data_source.dart';
 import 'package:accounting_software/app/features/catalog/attributes/data/models/attribute_model.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_draft.dart';
+import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_lookup_choices.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_list_query.dart';
 

@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
-import 'package:accounting_software/app/features/catalog/attributes/data/datasources/attributes_remote_data_source.dart';
+import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_lookup_choices.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_draft.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/attribute_list_query.dart';
 import 'package:accounting_software/app/features/catalog/attributes/domain/entity/catalog_attribute.dart';
