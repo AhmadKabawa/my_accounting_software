@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +32,7 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/widgets/category_details_panel.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/dialogs/category_duplicate_seed.dart';
 import '../../../../helpers/localized_app.dart';
 import '../../../../helpers/memory_storage.dart';
@@ -305,8 +305,7 @@ void main() {
     await tester.tap(find.text(CategoriesKeys.addChild.en));
     await tester.pumpAndSettle();
 
-    final fields = find.byType(TextField);
-    await tester.enterText(fields.at(1), 'New child');
+    await tester.enterText(_categoryNameInput(), 'New child');
     await tester.pumpAndSettle();
     await tester.tap(find.text(CategoriesKeys.save.en));
     await tester.pumpAndSettle();
@@ -448,7 +447,16 @@ void main() {
       repository,
       imagePicker: _ImagePicker(
         PickedImage(
-          bytes: Uint8List.fromList([1, 2, 3]),
+          bytes: Uint8List.fromList([
+            0x89,
+            0x50,
+            0x4e,
+            0x47,
+            0x0d,
+            0x0a,
+            0x1a,
+            0x0a,
+          ]),
           fileName: 'category.png',
           mimeType: 'image/png',
         ),
@@ -490,7 +498,16 @@ void main() {
       repository,
       imagePicker: _ImagePicker(
         PickedImage(
-          bytes: Uint8List.fromList([1, 2, 3]),
+          bytes: Uint8List.fromList([
+            0x89,
+            0x50,
+            0x4e,
+            0x47,
+            0x0d,
+            0x0a,
+            0x1a,
+            0x0a,
+          ]),
           fileName: 'category.png',
           mimeType: 'image/png',
         ),
@@ -590,6 +607,8 @@ void main() {
       expect(find.text(CategoriesKeys.details.en), findsOneWidget);
       expect(find.text('Child'), findsWidgets);
 
+      await tester.ensureVisible(find.text('Child').last);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Child').last);
       await tester.pumpAndSettle();
       expect(find.text('Grandchild'), findsWidgets);
@@ -802,17 +821,39 @@ void main() {
 
     await tester.tap(find.text('Root').first);
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip(CategoriesKeys.edit.en));
+    final editAction = find.descendant(
+      of: find.byType(CategoryDetailsPanel),
+      matching: find.byTooltip(CategoriesKeys.edit.en),
+    );
+    await tester.ensureVisible(editAction);
     await tester.pumpAndSettle();
-    expect(find.text(CategoriesKeys.active.en), findsOneWidget);
+    await tester.tap(editAction);
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byType(Dialog).last,
+        matching: find.text(CategoriesKeys.active.en),
+      ),
+      findsOneWidget,
+    );
     await tester.enterText(_categoryNameInput(), 'Root Updated');
-    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(Dialog).last,
+        matching: find.text(CategoriesKeys.save.en),
+      ),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip(CategoriesKeys.addChild.en));
     await tester.pumpAndSettle();
     await tester.enterText(_categoryNameInput(), 'Panel child');
-    await tester.tap(find.text(CategoriesKeys.save.en));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(Dialog).last,
+        matching: find.text(CategoriesKeys.save.en),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(repository.updateCalls, 1);
@@ -847,6 +888,27 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(_listCubit(tester).selectedId.value, isNull);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('parent selector appears before category identity fields', (
+    tester,
+  ) async {
+    setScreenSize(tester, const Size(1200, 900));
+    _register(FakeCategoriesRepository(categories: []));
+    await tester.pumpWidget(
+      buildTestApp(home: _home(), direction: TextDirection.ltr),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(CategoriesKeys.add.en).first);
+    await tester.pumpAndSettle();
+
+    final parent = tester.getTopLeft(find.text(CategoriesKeys.parent.en).first);
+    final name = tester.getTopLeft(
+      find.text(CategoriesKeys.categoryName.en).first,
+    );
+    expect(parent.dy, lessThan(name.dy));
     expect(tester.takeException(), isNull);
   });
 }

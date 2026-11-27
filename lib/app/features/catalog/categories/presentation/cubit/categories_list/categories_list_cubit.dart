@@ -202,13 +202,19 @@ class CategoriesListCubit
   }
 
   void setLevel(CategoryLevelFilter level) {
-    if (state.query.level == level) return;
-    _reproject(state.query.withLevel(level));
+    if (state.query.level == level &&
+        state.query.usage == CategoryUsageFilter.all) {
+      return;
+    }
+    _reproject(state.query.withUsage(CategoryUsageFilter.all).withLevel(level));
   }
 
   void setUsage(CategoryUsageFilter usage) {
-    if (state.query.usage == usage) return;
-    _reproject(state.query.withUsage(usage));
+    if (state.query.usage == usage &&
+        state.query.level == CategoryLevelFilter.all) {
+      return;
+    }
+    _reproject(state.query.withLevel(CategoryLevelFilter.all).withUsage(usage));
   }
 
   void setSort(CategorySortField field, bool ascending) {

@@ -1,0 +1,53 @@
+# CAT Scope 1 — CI baseline and triage
+
+> This file records the supplied baseline and subsequent evidence. “Fixed in source” is not equivalent to CI acceptance; the verification column links only to runs that actually include the relevant commit.
+
+- Original baseline: [45918456946](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45918456946).
+- Previous Categories baseline: [45889013226](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45889013226).
+- Original result: **1413 passed, 20 failed**.
+- Original classification: 12 Categories failures already present in 45889013226; 8 additional failures first observed in 45918456946.
+- Latest completed verification snapshot: [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). **Analyze succeeded**; 16 tests failed, comprising two remaining Categories tests and 14 failures in newly added Sports/Tags/Option Sets widget tests caused by test harness context setup.
+- Follow-up run: [45926586090](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926586090). Analyze succeeded; the level/usage filter test now passes. One Categories dialog test and the new Sports/Tags/Option Sets widget tests remain to be verified after commit `63776e7`.
+- No Flutter commands were run locally.
+
+## Original 20 failures
+
+| # | Test | Root cause identified | Change made | Verification |
+|---:|---|---|---|---|
+| 1 | `categories/domain/category_tree_test.dart` — derives known no-product statistic and sorts flat results | The fixture slug `category-1` contains the searched letter, so the correct name-or-slug search returned an extra row. The test intended a name-only match. | Changed that fixture slug to `zulu`; implementation retains name-and-slug search. Commit `a67a9ad`. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 2 | Categories — adding a subcategory saves once and reloads the tree | The editor test relied on a positional TextField index after the parent selector was moved above the identity fields. | Test now targets the category-name field by its dedicated finder; row action is wired through `CrudDataSection.extraRowActions`. Commits `cdfa83b`, `63776e7`. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 3 | Categories — adding a subcategory to a leaf uses the same editor flow | Same brittle positional field lookup; not a separate editor defect. | Same targeted name-field finder and shared editor callback. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 4 | Categories — editor uploads a selected image and saves its URL | Fake picker supplied three arbitrary bytes, not a valid PNG signature; validation rejected the file before upload. | Test fixture now supplies a valid PNG signature. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 5 | Categories — image upload shows a clear Storage permission error | Same invalid fake image prevented the test from reaching the simulated Storage 403 path. | Valid PNG fixture retained; 403 assertion unchanged. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 6 | Categories — desktop row opens side details panel and child navigation works | Details content had no bounded internal scroll area; the child row was outside the visible panel. | Panel content is scrollable and the test scrolls the target child into view before tapping. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 7 | Categories — read-only users see no write actions in rows or details | Category identity row overflowed by 5 px when badges competed for width. | Badges now use flexible constraints; permission assertions remain intact. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 8 | Categories — Tab reaches a category row and Enter opens its details | Same CategoryIdentity horizontal overflow. | Same flexible badge layout. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 9 | Categories — details panel closes with Escape | Same CategoryIdentity horizontal overflow prevented the screen from settling. | Same flexible badge layout. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 10 | Categories — level and usage filters are local on the full page | Selecting a usage filter preserved the previous level filter, while the screen contract treats the two filter groups as mutually exclusive. | `setLevel` clears usage and `setUsage` clears level before local projection. Commit `b278d4a`. | Passed in [45926586090](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926586090). |
+| 11 | Categories — details panel edit then add-child uses the shared editor flow | The test tapped an unqualified Edit tooltip; three matching edit controls existed. | Test now targets the last Edit tooltip, the details-panel action. Commit `63776e7`. | Awaiting run after commit `63776e7`. |
+| 12 | Categories — changing filters clears a details selection outside results | The same CategoryIdentity/details-panel layout overflow interfered with the interaction test; selection-reset logic itself was not the failure. | Flexible badge layout and scrollable details panel; selection assertions unchanged. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 13 | `localization/key_registry_test.dart` — AppKey key format | `SizeSystemFailureKeys` produced a three-segment key (`sizeSystems.failure.systemInUse`) rather than the required `section.name` format. | Normalized to `sizesystems.systemInUse`; enum remains registered. Commit `a67a9ad`. | Analyze and key registry test passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 14 | Architecture P-06 — presentation file line limit | `product_type_details_screen.dart` was 598 lines. | Split size groups, attributes and option sets into separate section widgets plus a shared helper. Commit `a67a9ad`. | Analyze/architecture gate passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 15 | Architecture P-08 — hard-coded placeholder text | `ProductTypesKeys.usageUnknown` used a literal em dash in both locales. | Replaced with localized “غير معروف” / “Unknown”. Commit `a67a9ad`. | Analyze/architecture gate passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 16 | Architecture P-10 — list pages use ListPageTemplate | The details page directly contained AppDataTable sections and was incorrectly classified as a list page by the protected gate. | Moved the table sections into dedicated section files; details page now composes them. Gate unchanged. Commit `a67a9ad`. | Analyze/architecture gate passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 17 | Product Types — relationship usage and code lock | A data-model test said relationships should not lock code, contradicting the domain contract and the domain entity test. | `codeLocked` now locks for any known relationship and for unknown usage; stale model-test expectation updated. Commits `1b8b768`, `e62a4a2`. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 18 | Product Types — unknown usage locks code | Previous implementation only considered productCount, not unknown relationship counts. | `codeLocked => !usageKnown || hasUsage`. Commit `1b8b768`. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 19 | Product Types — 400 fallback count retry leaves usage unknown | The fake API returned embedded relationship counts even when the retry query omitted those projections. | Test fake now removes embedded relation fields when `select` omits count projections; implementation contract unchanged. Commit `1b8b768`. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+| 20 | Sidebar — catalog destination children point at real routes | Test expectation still listed only five catalog destinations; the shell already had eight. | Updated expected route list and imports for Product Types, Tags and Sports. Commit `22526ec`. | Passed in [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526). |
+
+## Additional test-harness failures found after the baseline
+
+These were introduced by the new tests, not part of the original 20:
+
+| Test | Cause | Correction | Verification |
+|---|---|---|---|
+| Sports editor widget test | Test opened the editor with raw `showDialog`, bypassing `showAppFormDialog` and its Material surface. | Test now uses the production `showSportEditor` launcher and registers the Cubit through DI. | Awaiting run after `63776e7`. |
+| Tags editor widget test | Same missing Material surface in the test harness. | Test now uses `showTagEditor` and the production form-dialog launcher. | Awaiting run after `63776e7`. |
+| Option Sets 32-case widget matrix | Test placed AccessCubit below MaterialApp; dialog routes could not find it. | Test now places AccessCubit above MaterialApp, matching the app-level provider scope. | Awaiting run after `63776e7`. |
+
+## CI process notes
+
+- [45926463526](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926463526): Auto-format succeeded; Analyze succeeded; 16 tests failed as detailed above.
+- Earlier Auto-format push failures in [45925291572](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45925291572) and [45926361833](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/45926361833) were branch-update races while the formatter attempted its `[skip ci]` commit. Subsequent pushes were rebased onto the latest branch head after checking the formatter commit.
+- No tests were deleted, skipped, weakened, or changed to accept incorrect behavior. Architecture gates were not modified.
+- Final acceptance remains **zero new failures attributable to this branch and Analyze successful**. Chrome/Supabase manual verification remains outstanding.

@@ -78,7 +78,7 @@ enum ProductTypesKeys implements AppKey {
     ar: 'لا يمكن حذف هذا النوع. يمكنك إيقافه بدلاً من ذلك.',
     en: 'This type cannot be deleted. You can deactivate it instead.',
   ),
-  usageUnknown(ar: '—', en: '—'),
+  usageUnknown(ar: 'غير معروف', en: 'Unknown'),
   totalStats(ar: 'الكل', en: 'All'),
   activeStats(ar: 'النشطة', en: 'Active'),
   inactiveStats(ar: 'الموقوفة', en: 'Inactive'),

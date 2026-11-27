@@ -16,6 +16,7 @@ import 'package:accounting_software/app/features/catalog/categories/domain/useca
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_effect.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_form_state.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/localization/categories_keys.dart';
+import 'package:accounting_software/app/features/catalog/categories/presentation/cubit/category_form/category_sibling_name_conflict.dart';
 
 class CategoryFormCubit
     extends BaseCubit<CategoryFormState, CategoryFormEffect> {
@@ -75,9 +76,14 @@ class CategoryFormCubit
 
   /// Available parent rows with full paths; the edited category and its
   /// descendants are excluded to prevent a local cycle.
-  late final List<CategoryNode> _parentOptions = _buildParentOptions();
+  List<CategoryNode> get parentOptions => _buildParentOptions();
 
-  List<CategoryNode> get parentOptions => _parentOptions;
+  bool get hasSiblingNameConflict => categoryHasSiblingNameConflict(
+    tree: _tree,
+    parentId: state.parentId,
+    categoryId: _category?.id,
+    name: state.name,
+  );
 
   List<CategoryNode> _buildParentOptions() {
     final tree = _tree;
@@ -87,7 +93,11 @@ class CategoryFormCubit
         : {...tree.descendantIds(_category.id), _category.id};
     return tree
         .visible(expandedIds: tree.parentIds)
-        .where((node) => !excluded.contains(node.id))
+        .where(
+          (node) =>
+              !excluded.contains(node.id) &&
+              (node.category.isActive || node.id == state.parentId),
+        )
         .toList(growable: false);
   }
 

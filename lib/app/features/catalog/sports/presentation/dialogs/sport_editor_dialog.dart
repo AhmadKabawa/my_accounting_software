@@ -28,6 +28,8 @@ class SportEditorDialog extends StatefulWidget {
 
 class _SportEditorDialogState extends State<SportEditorDialog> {
   late final CrudEditorFields _fields;
+  late final bool _initialActive;
+  bool? _active;
 
   TextEditingController get _name => _fields['name'];
   TextEditingController get _code => _fields['code'];
@@ -39,6 +41,7 @@ class _SportEditorDialogState extends State<SportEditorDialog> {
     super.initState();
     final sport = widget.sport;
     final seed = widget.seed;
+    _initialActive = seed?.isActive ?? sport?.isActive ?? true;
     _fields = CrudEditorFields(
       initialValues: {
         'name': seed?.name ?? sport?.name ?? '',
@@ -72,7 +75,11 @@ class _SportEditorDialogState extends State<SportEditorDialog> {
           ? null
           : _description.text.trim(),
       sortOrder: int.tryParse(_sortOrder.text.trim()) ?? 0,
-      isActive: widget.seed?.isActive ?? widget.sport?.isActive ?? true,
+      isActive: widget.sport == null
+          ? (_active ?? _initialActive)
+          : (_active ?? _initialActive) == _initialActive
+          ? null
+          : _active,
     ),
   );
 
@@ -100,6 +107,8 @@ class _SportEditorDialogState extends State<SportEditorDialog> {
           code: _code,
           description: _description,
           sortOrder: _sortOrder,
+          isActive: _active ?? _initialActive,
+          onActiveChanged: (value) => setState(() => _active = value),
           onChanged: scope.clearFailure,
         ),
       );

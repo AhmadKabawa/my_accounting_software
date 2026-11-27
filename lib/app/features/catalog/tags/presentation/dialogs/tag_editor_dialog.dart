@@ -31,6 +31,8 @@ class _TagEditorDialogState extends State<TagEditorDialog> {
   late final CrudEditorFields _fields;
   bool _slugTouched = false;
   bool _settingSlug = false;
+  late final bool _initialActive;
+  bool? _active;
 
   TextEditingController get _name => _fields['name'];
   TextEditingController get _slug => _fields['slug'];
@@ -40,6 +42,7 @@ class _TagEditorDialogState extends State<TagEditorDialog> {
     super.initState();
     final tag = widget.tag;
     final seed = widget.seed;
+    _initialActive = seed?.isActive ?? tag?.isActive ?? true;
     // An existing tag keeps its slug; a duplicate seed already has its own.
     _slugTouched = tag != null || seed != null;
     _fields = CrudEditorFields(
@@ -96,7 +99,11 @@ class _TagEditorDialogState extends State<TagEditorDialog> {
     draft: CatalogTagDraft(
       name: _name.text.trim(),
       slug: _slug.text.trim(),
-      isActive: widget.seed?.isActive ?? widget.tag?.isActive ?? true,
+      isActive: widget.tag == null
+          ? (_active ?? _initialActive)
+          : (_active ?? _initialActive) == _initialActive
+          ? null
+          : _active,
     ),
   );
 
@@ -119,10 +126,15 @@ class _TagEditorDialogState extends State<TagEditorDialog> {
           ),
         },
         onSave: _save,
-        onReset: () => _slugTouched = widget.tag != null || widget.seed != null,
+        onReset: () {
+          _slugTouched = widget.tag != null || widget.seed != null;
+          _active = null;
+        },
         builder: (context, scope) => TagIdentitySection(
           name: _name,
           slug: _slug,
+          isActive: _active ?? _initialActive,
+          onActiveChanged: (value) => setState(() => _active = value),
           onNameChanged: (value) => _onNameChanged(value, scope),
           onSlugChanged: (_) => _onSlugChanged(scope),
           showSlugHint:

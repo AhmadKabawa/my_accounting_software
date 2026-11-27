@@ -58,7 +58,7 @@ void main() {
       expect(model.toEntity().codeLocked, isTrue);
     });
 
-    test('link usage protects deletion but does not lock the code', () {
+    test('link usage protects deletion and locks the code', () {
       final model = ProductTypeModel.fromJson({
         'id': 2,
         'name': 'Shirt',
@@ -81,7 +81,7 @@ void main() {
       });
 
       expect(model.toEntity().canDelete, isFalse);
-      expect(model.toEntity().codeLocked, isFalse);
+      expect(model.toEntity().codeLocked, isTrue);
     });
 
     test('treats empty embedded relations as zero', () {

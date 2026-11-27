@@ -6,14 +6,14 @@ class SportDraft extends Equatable {
     required this.code,
     this.description,
     this.sortOrder = 0,
-    this.isActive = true,
+    this.isActive,
   });
 
   final String name;
   final String code;
   final String? description;
   final int sortOrder;
-  final bool isActive;
+  final bool? isActive;
 
   @override
   List<Object?> get props => [name, code, description, sortOrder, isActive];

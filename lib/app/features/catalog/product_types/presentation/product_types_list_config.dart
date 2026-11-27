@@ -100,13 +100,10 @@ get productTypesListConfig => CrudListConfig(
     onSaved: (cubit, {required isNew}) =>
         cubit.onProductTypeSaved(isNew: isNew),
     itemLabel: (item) => item.name,
-    delete: (cubit, item) => cubit.delete(item),
     activate: (cubit, item) => cubit.activate(item.id),
     deactivate: (cubit, item) => cubit.deactivate(item.id),
     labels: _labels,
     isActive: (item) => item.isActive,
-    canDelete: (item) => item.canDelete,
-    hideDeleteWhenCannotDelete: true,
   ),
   dataSection: (data) => ProductTypesDataSection(data: data, labels: _labels),
 );

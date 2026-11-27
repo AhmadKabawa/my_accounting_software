@@ -5,6 +5,7 @@ import 'package:accounting_software/app/core/platform/file_drop/file_drop_target
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button_style.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
@@ -50,6 +51,31 @@ class CategoryEditorFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        AppText(CategoriesKeys.placementSection, type: AppTextType.titleSmall),
+        context.ui.spacing.gap(AppSpacing.sm),
+        SearchableDropdown<CategoryNode>(
+          options: parentOptions,
+          labelKey: CategoriesKeys.parent,
+          optionLabel: cubit.parentOptionLabel,
+          optionSubtitle: (node) => node.category.slug,
+          value: selectedParent,
+          clearable: true,
+          mode: SearchableDropdownMode.panel,
+          allOptionLabel: CategoriesKeys.noParent,
+          onChanged: (node) {
+            if (scope.busy) return;
+            cubit.setParent(node?.id);
+            scope.clearFailure();
+            scope.changed();
+          },
+        ),
+        context.ui.spacing.gap(AppSpacing.xs),
+        AppText(
+          CategoriesKeys.parentHint,
+          type: AppTextType.bodySmall,
+          color: context.ui.theme.colors.onSurfaceVariant,
+        ),
+
         AppText(CategoriesKeys.identitySection, type: AppTextType.titleSmall),
         context.ui.spacing.gap(AppSpacing.sm),
         AppTextField(
@@ -70,6 +96,12 @@ class CategoryEditorFields extends StatelessWidget {
           state.errorFor('name'),
           state.name.trim().isNotEmpty,
         ),
+        if (cubit.hasSiblingNameConflict)
+          const AppBadge(
+            label: CategoriesKeys.siblingNameWarning,
+            size: AppBadgeSize.small,
+            tone: AppBadgeTone.warning,
+          ),
         context.ui.spacing.gap(AppSpacing.md),
         AppTextField(
           controller: scope.fields['slug'],
@@ -161,30 +193,6 @@ class CategoryEditorFields extends StatelessWidget {
         context.ui.spacing.gap(AppSpacing.md),
 
         context.ui.spacing.gap(AppSpacing.lg),
-        AppText(CategoriesKeys.placementSection, type: AppTextType.titleSmall),
-        context.ui.spacing.gap(AppSpacing.sm),
-        SearchableDropdown<CategoryNode>(
-          options: parentOptions,
-          labelKey: CategoriesKeys.parent,
-          optionLabel: cubit.parentOptionLabel,
-          optionSubtitle: (node) => node.category.slug,
-          value: selectedParent,
-          clearable: true,
-          mode: SearchableDropdownMode.panel,
-          allOptionLabel: CategoriesKeys.noParent,
-          onChanged: (node) {
-            if (scope.busy) return;
-            cubit.setParent(node?.id);
-            scope.clearFailure();
-            scope.changed();
-          },
-        ),
-        context.ui.spacing.gap(AppSpacing.xs),
-        AppText(
-          CategoriesKeys.parentHint,
-          type: AppTextType.bodySmall,
-          color: context.ui.theme.colors.onSurfaceVariant,
-        ),
       ],
     );
   }

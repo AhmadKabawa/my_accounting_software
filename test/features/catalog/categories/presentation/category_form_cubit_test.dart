@@ -16,15 +16,16 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 
 import '../support/fake_categories_repository.dart';
 
-Category _category(int id, {int? parentId}) => Category(
-  id: id,
-  parentId: parentId,
-  name: 'Category $id',
-  slug: 'category-$id',
-  sortOrder: id,
-  isActive: true,
-  productCount: 0,
-);
+Category _category(int id, {int? parentId, String? name, bool active = true}) =>
+    Category(
+      id: id,
+      parentId: parentId,
+      name: name ?? 'Category $id',
+      slug: 'category-$id',
+      sortOrder: id,
+      isActive: active,
+      productCount: 0,
+    );
 
 CategoryFormCubit _cubit(
   FakeCategoriesRepository repository, {
@@ -129,6 +130,48 @@ void main() {
       await cubit.close();
     },
   );
+
+  test(
+    'parent options hide inactive rows except the currently selected parent',
+    () async {
+      final categories = [
+        _category(1),
+        _category(2, active: false),
+        _category(3, parentId: 2),
+        _category(4, active: false),
+      ];
+      final cubit = _cubit(
+        FakeCategoriesRepository(categories: categories),
+        category: categories[2],
+        tree: CategoryTree(categories),
+      );
+
+      expect(cubit.parentOptions.map((node) => node.id), [1, 2]);
+      cubit.setParent(1);
+      expect(cubit.parentOptions.map((node) => node.id), [1]);
+      await cubit.close();
+    },
+  );
+
+  test('duplicate sibling name is a non-blocking warning condition', () async {
+    final categories = [
+      _category(1),
+      _category(2, parentId: 1, name: 'Sport'),
+      _category(3, parentId: 1, name: 'Sports'),
+    ];
+    final cubit = _cubit(
+      FakeCategoriesRepository(categories: categories),
+      category: categories[2],
+      tree: CategoryTree(categories),
+    );
+
+    cubit.nameChanged(' sport ');
+    expect(cubit.hasSiblingNameConflict, isTrue);
+    expect(cubit.state.isValid, isTrue);
+    cubit.nameChanged('Athletics');
+    expect(cubit.hasSiblingNameConflict, isFalse);
+    await cubit.close();
+  });
 
   test('save emits success and returns to idle', () async {
     final repository = FakeCategoriesRepository(categories: [_category(1)]);

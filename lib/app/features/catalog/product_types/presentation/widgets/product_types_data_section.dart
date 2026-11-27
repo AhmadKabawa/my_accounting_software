@@ -9,7 +9,11 @@ import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_labels.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_row_actions/app_row_actions.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_confirm_dialog/confirm_dialog.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type.dart';
+import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failures.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_list_query.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/cubit/product_types_list/product_types_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
@@ -81,6 +85,17 @@ class ProductTypesDataSection extends StatelessWidget {
           ),
         ],
         labels: labels,
+        extraRowActions: (actionContext, item) => item.canDelete
+            ? [
+                AppRowAction(
+                  icon: AppIcons.delete,
+                  labelKey: ProductTypesKeys.delete,
+                  destructive: true,
+                  onPressed: () =>
+                      _deleteProductType(actionContext, item, data.cubit),
+                ),
+              ]
+            : const [],
         statusColumn: CrudStatusColumnConfig<ProductType>(
           labelKey: ProductTypesKeys.status,
           isActive: (item) => item.isActive,
@@ -95,4 +110,38 @@ class ProductTypesDataSection extends StatelessWidget {
         noResultsDescriptionKey: ProductTypesKeys.noResultsDescription,
         onRowTap: (item) => context.push(ProductTypesRoutes.details(item.id)),
       );
+}
+
+Future<void> _deleteProductType(
+  BuildContext context,
+  ProductType item,
+  ProductTypesListCubit cubit,
+) async {
+  Failure? deleteFailure;
+  await showConfirmDialog(
+    context,
+    titleKey: ProductTypesKeys.deleteTitle,
+    messageKey: ProductTypesKeys.deleteMessage,
+    messageArgs: {'name': item.name},
+    targetName: item.name,
+    severity: ConfirmDialogSeverity.critical,
+    confirmLabelKey: ProductTypesKeys.delete,
+    onConfirm: () async => (await cubit.delete(item)).fold((failure) {
+      deleteFailure = failure;
+      return failure is ProductTypeInUseFailure ? null : failure.messageKey;
+    }, (_) => null),
+  );
+
+  if (deleteFailure is! ProductTypeInUseFailure || !context.mounted) return;
+  await showConfirmDialog(
+    context,
+    titleKey: ProductTypesKeys.inUseTitle,
+    messageKey: ProductTypesKeys.inUseMessage,
+    targetName: item.name,
+    severity: ConfirmDialogSeverity.warning,
+    confirmLabelKey: ProductTypesKeys.deactivate,
+    onConfirm: () async => (await cubit.deactivate(
+      item.id,
+    )).fold((failure) => failure.messageKey, (_) => null),
+  );
 }

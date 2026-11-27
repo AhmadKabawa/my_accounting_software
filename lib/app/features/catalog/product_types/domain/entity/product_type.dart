@@ -48,9 +48,8 @@ class ProductType extends Equatable {
 
   bool get canDelete => usageKnown && !hasUsage;
 
-  /// The analysis decision locks the code based on product usage only.
-  /// Link counts still protect deletion, but do not independently lock code.
-  bool get codeLocked => productCount == null || productCount! > 0;
+  /// Code is immutable when any relationship is present or usage is unknown.
+  bool get codeLocked => !usageKnown || hasUsage;
 
   @override
   List<Object?> get props => [

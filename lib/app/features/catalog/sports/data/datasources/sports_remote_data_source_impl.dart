@@ -41,7 +41,7 @@ class SportsRemoteDataSourceImpl implements SportsRemoteDataSource {
   Future<ApiResult<SportModel>> createSport(SportDraft draft) =>
       _apiClient.post<SportModel>(
         SportsEndpoint.collection,
-        data: _draftJson(draft),
+        data: _draftJson(draft, includeActiveDefault: true),
         options: Options(headers: {'Prefer': 'return=representation'}),
         fromJsonList: _single,
       );
@@ -92,12 +92,17 @@ class SportsRemoteDataSourceImpl implements SportsRemoteDataSource {
   SportModel _single(List<dynamic> rows) =>
       PostgrestValue.single(rows, SportModel.fromJson, what: 'sport');
 
-  Map<String, dynamic> _draftJson(SportDraft draft) => {
+  Map<String, dynamic> _draftJson(
+    SportDraft draft, {
+    bool includeActiveDefault = false,
+  }) => {
     'name': draft.name.trim(),
     'code': draft.code.trim(),
     'description': _nullIfBlank(draft.description),
     'sort_order': draft.sortOrder,
-    'is_active': draft.isActive,
+    if (includeActiveDefault) 'is_active': draft.isActive ?? true,
+    if (!includeActiveDefault && draft.isActive != null)
+      'is_active': draft.isActive,
   };
 
   String? _nullIfBlank(String? value) {
