@@ -100,27 +100,33 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
 
   Future<void> _save() {
     final lookups = context.read<AttributeLookupsCubit>().state;
-    final unitAvailable = lookups.units.any((value) => value.id == _unitId) ||
+    final unitAvailable =
+        lookups.units.any((value) => value.id == _unitId) ||
         (!widget.duplicate && widget.attribute?.unitId == _unitId);
-    final optionSetAvailable = lookups.optionSets.any((value) => value.id == _optionSetId) ||
+    final optionSetAvailable =
+        lookups.optionSets.any((value) => value.id == _optionSetId) ||
         (!widget.duplicate && widget.attribute?.optionSetId == _optionSetId);
     return context.read<AttributeFormCubit>().save(
-    id: widget.duplicate ? null : widget.attribute?.id,
-    draft: AttributeDraft(
-      name: _name.text.trim(),
-      code: _code.text.trim(),
-      dataType: _type,
-      unitId: _type == AttributeDataType.number && unitAvailable ? _unitId : null,
-      optionSetId: _type == AttributeDataType.option && optionSetAvailable ? _optionSetId : null,
-      isFilterable: _filterable,
-      isActive:
-          widget.attribute == null ||
-              widget.duplicate ||
-              _active != widget.attribute!.isActive
-          ? _active
-          : null,
-    ),
-  );
+      id: widget.duplicate ? null : widget.attribute?.id,
+      draft: AttributeDraft(
+        name: _name.text.trim(),
+        code: _code.text.trim(),
+        dataType: _type,
+        unitId: _type == AttributeDataType.number && unitAvailable
+            ? _unitId
+            : null,
+        optionSetId: _type == AttributeDataType.option && optionSetAvailable
+            ? _optionSetId
+            : null,
+        isFilterable: _filterable,
+        isActive:
+            widget.attribute == null ||
+                widget.duplicate ||
+                _active != widget.attribute!.isActive
+            ? _active
+            : null,
+      ),
+    );
   }
 
   @override

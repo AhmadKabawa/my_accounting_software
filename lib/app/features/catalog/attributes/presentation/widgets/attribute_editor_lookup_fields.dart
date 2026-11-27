@@ -25,7 +25,8 @@ class AttributeUnitPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = [...state.units];
-    if (keepCurrentInactive && selectedId != null &&
+    if (keepCurrentInactive &&
+        selectedId != null &&
         !options.any((v) => v.id == selectedId) &&
         attribute?.unitId == selectedId) {
       options.add(
@@ -76,7 +77,8 @@ class AttributeOptionSetPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = [...state.optionSets];
-    if (keepCurrentInactive && selectedId != null &&
+    if (keepCurrentInactive &&
+        selectedId != null &&
         !options.any((v) => v.id == selectedId) &&
         attribute?.optionSetId == selectedId) {
       options.add(
@@ -95,7 +97,8 @@ class AttributeOptionSetPicker extends StatelessWidget {
     return FormField<int>(
       key: const ValueKey('attribute-option-set'),
       initialValue: selectedId,
-      validator: (value) => value == null || !options.any((option) => option.id == value)
+      validator: (value) =>
+          value == null || !options.any((option) => option.id == value)
           ? AttributesKeys.required.tr(context: context)
           : null,
       builder: (field) => Column(
