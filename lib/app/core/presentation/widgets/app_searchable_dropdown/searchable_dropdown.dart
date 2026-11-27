@@ -42,6 +42,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
     this.onAddNew,
     this.allOptionLabel,
     this.mode = SearchableDropdownMode.autocomplete,
+    this.deferPanelRefresh = false,
   });
 
   final List<T> options;
@@ -70,6 +71,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   /// `autocomplete` preserves the original editable/remote-search contract.
   /// `panel` shows the selected value in a trigger and opens a dedicated picker.
   final SearchableDropdownMode mode;
+  final bool deferPanelRefresh;
 
   @override
   State<SearchableDropdown<T>> createState() => _SearchableDropdownState<T>();
@@ -200,7 +202,14 @@ class _SearchableDropdownState<T extends Object>
       });
     }
 
-    _desktopPanelEntry?.markNeedsBuild();
+    if (widget.deferPanelRefresh) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _desktopPanelEntry?.markNeedsBuild();
+      });
+    } else {
+      _desktopPanelEntry?.markNeedsBuild();
+    }
   }
 
   String _lastQuery = '';

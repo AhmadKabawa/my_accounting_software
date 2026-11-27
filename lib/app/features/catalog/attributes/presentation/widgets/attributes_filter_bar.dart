@@ -78,6 +78,7 @@ class AttributesFilterBar {
       value: query.status == AttributeStatusFilter.all ? null : query.status,
       clearable: false,
       mode: SearchableDropdownMode.panel,
+      deferPanelRefresh: true,
       allOptionLabel: AttributesKeys.all,
       onChanged: (v) => onStatusChanged(v ?? AttributeStatusFilter.all),
     ),

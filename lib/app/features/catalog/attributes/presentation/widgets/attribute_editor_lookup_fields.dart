@@ -52,6 +52,7 @@ class AttributeUnitPicker extends StatelessWidget {
       errorKey: state.unitFailure?.messageKey,
       clearable: true,
       mode: SearchableDropdownMode.panel,
+      deferPanelRefresh: true,
       onChanged: (value) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) onChanged(value?.id);
@@ -120,6 +121,7 @@ class AttributeOptionSetPicker extends StatelessWidget {
             clearable: true,
             enabled: !locked,
             mode: SearchableDropdownMode.panel,
+            deferPanelRefresh: true,
             onChanged: (value) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (!field.mounted) return;

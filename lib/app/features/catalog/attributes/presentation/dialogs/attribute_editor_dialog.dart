@@ -207,6 +207,7 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                     enabled: !_locked,
                     clearable: false,
                     mode: SearchableDropdownMode.panel,
+                    deferPanelRefresh: true,
                     onChanged: (v) {
                       if (v == null) return;
                       WidgetsBinding.instance.addPostFrameCallback((_) {
