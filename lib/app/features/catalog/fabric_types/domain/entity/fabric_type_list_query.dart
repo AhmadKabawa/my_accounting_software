@@ -19,6 +19,15 @@ enum FabricTypeSortField {
   }
 }
 
+class FabricTypeSort extends Equatable {
+  const FabricTypeSort(this.field, this.ascending);
+  final FabricTypeSortField field;
+  final bool ascending;
+
+  @override
+  List<Object?> get props => [field, ascending];
+}
+
 class FabricTypeListQuery extends Equatable
     implements PagedQuery<FabricTypeListQuery> {
   const FabricTypeListQuery({
@@ -27,6 +36,7 @@ class FabricTypeListQuery extends Equatable
     this.category,
     this.sortField = FabricTypeSortField.name,
     this.sortAscending = true,
+    this.thenSorts = const [],
     this.page = 1,
     this.pageSize = 25,
   });
@@ -37,10 +47,16 @@ class FabricTypeListQuery extends Equatable
   final String? category;
   final FabricTypeSortField sortField;
   final bool sortAscending;
+  final List<FabricTypeSort> thenSorts;
   @override
   final int page;
   @override
   final int pageSize;
+
+  List<FabricTypeSort> get sorts => [
+    FabricTypeSort(sortField, sortAscending),
+    ...thenSorts,
+  ];
 
   @override
   bool get hasActiveFilters =>
@@ -64,6 +80,24 @@ class FabricTypeListQuery extends Equatable
     page: 1,
   );
 
+  FabricTypeListQuery withSorts(List<FabricTypeSort> values) {
+    if (values.isEmpty || hasSameSorts(values)) return this;
+    final primary = values.first;
+    return copyWith(
+      sortField: primary.field,
+      sortAscending: primary.ascending,
+      thenSorts: values.skip(1).toList(),
+      page: 1,
+    );
+  }
+
+  bool hasSameSorts(List<FabricTypeSort> values) {
+    if (values.isEmpty || values.length != sorts.length) return false;
+    return values.asMap().entries.every(
+      (entry) => entry.value == sorts[entry.key],
+    );
+  }
+
   FabricTypeListQuery copyWith({
     String? search,
     FabricTypeStatusFilter? status,
@@ -71,6 +105,7 @@ class FabricTypeListQuery extends Equatable
     bool clearCategory = false,
     FabricTypeSortField? sortField,
     bool? sortAscending,
+    List<FabricTypeSort>? thenSorts,
     int? page,
     int? pageSize,
   }) => FabricTypeListQuery(
@@ -79,6 +114,7 @@ class FabricTypeListQuery extends Equatable
     category: clearCategory ? null : category ?? this.category,
     sortField: sortField ?? this.sortField,
     sortAscending: sortAscending ?? this.sortAscending,
+    thenSorts: thenSorts ?? this.thenSorts,
     page: page ?? this.page,
     pageSize: pageSize ?? this.pageSize,
   );
@@ -90,6 +126,7 @@ class FabricTypeListQuery extends Equatable
     category,
     sortField,
     sortAscending,
+    thenSorts,
     page,
     pageSize,
   ];
