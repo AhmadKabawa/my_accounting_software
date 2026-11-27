@@ -14,29 +14,46 @@ import 'package:accounting_software/app/features/catalog/age_groups/domain/entit
 import 'package:accounting_software/app/features/catalog/age_groups/domain/failures/age_group_failures.dart';
 import 'package:accounting_software/app/features/catalog/age_groups/domain/repositories/age_groups_repository.dart';
 
-class AgeGroupsRepositoryImpl with RepositoryExecutor implements AgeGroupsRepository {
+class AgeGroupsRepositoryImpl
+    with RepositoryExecutor
+    implements AgeGroupsRepository {
   const AgeGroupsRepositoryImpl(this._remote);
   final AgeGroupsRemoteDataSource _remote;
   @override
-  Future<Either<Failure, PaginatedResult<AgeGroup>>> getAgeGroups(AgeGroupListQuery q) => execute(() async {
+  Future<Either<Failure, PaginatedResult<AgeGroup>>> getAgeGroups(
+    AgeGroupListQuery q,
+  ) => execute(() async {
     final r = await _remote.getAgeGroups(q);
     return switch (r) {
-      ApiSuccess<PaginatedResult<AgeGroupModel>>(:final data) => Right(PaginatedResult<AgeGroup>(
-        items: data.items.map((m) => m.toEntity()).toList(), totalCount: data.totalCount,
-        currentPage: data.currentPage, totalPages: data.totalPages, isFromCache: data.isFromCache)),
-      ApiFailure<PaginatedResult<AgeGroupModel>>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiSuccess<PaginatedResult<AgeGroupModel>>(:final data) => Right(
+        PaginatedResult<AgeGroup>(
+          items: data.items.map((m) => m.toEntity()).toList(),
+          totalCount: data.totalCount,
+          currentPage: data.currentPage,
+          totalPages: data.totalPages,
+          isFromCache: data.isFromCache,
+        ),
+      ),
+      ApiFailure<PaginatedResult<AgeGroupModel>>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
   @override
-  Future<Either<Failure, AgeGroup>> createAgeGroup(AgeGroupDraft d) => execute(() async {
-    final r = await _remote.createAgeGroup(d);
-    return switch (r) {
-      ApiSuccess<AgeGroupModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<AgeGroupModel>(:final exception) => Left(_write(exception)),
-    };
-  });
+  Future<Either<Failure, AgeGroup>> createAgeGroup(AgeGroupDraft d) => execute(
+    () async {
+      final r = await _remote.createAgeGroup(d);
+      return switch (r) {
+        ApiSuccess<AgeGroupModel>(:final data) => Right(data.toEntity()),
+        ApiFailure<AgeGroupModel>(:final exception) => Left(_write(exception)),
+      };
+    },
+  );
   @override
-  Future<Either<Failure, AgeGroup>> updateAgeGroup({required int id, required AgeGroupDraft draft}) => execute(() async {
+  Future<Either<Failure, AgeGroup>> updateAgeGroup({
+    required int id,
+    required AgeGroupDraft draft,
+  }) => execute(() async {
     final r = await _remote.updateAgeGroup(id: id, draft: draft);
     return switch (r) {
       ApiSuccess<AgeGroupModel>(:final data) => Right(data.toEntity()),
@@ -52,11 +69,16 @@ class AgeGroupsRepositoryImpl with RepositoryExecutor implements AgeGroupsReposi
     };
   });
   @override
-  Future<Either<Failure, Unit>> setAgeGroupActive({required int id, required bool isActive}) => execute(() async {
+  Future<Either<Failure, Unit>> setAgeGroupActive({
+    required int id,
+    required bool isActive,
+  }) => execute(() async {
     final r = await _remote.setAgeGroupActive(id: id, isActive: isActive);
     return switch (r) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<Unit>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
   Failure _write(AppException e) {
@@ -67,6 +89,8 @@ class AgeGroupsRepositoryImpl with RepositoryExecutor implements AgeGroupsReposi
       _ => ExceptionMapper.map(e),
     };
   }
+
   Failure _delete(AppException e) => e is ApiException && e.errorCode == '23503'
-      ? const AgeGroupInUseFailure() : ExceptionMapper.map(e);
+      ? const AgeGroupInUseFailure()
+      : ExceptionMapper.map(e);
 }

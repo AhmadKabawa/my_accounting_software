@@ -6,9 +6,17 @@ import 'package:accounting_software/app/features/catalog/age_groups/domain/entit
 import 'package:accounting_software/app/features/catalog/age_groups/domain/entity/age_group_list_query.dart';
 
 abstract interface class AgeGroupsRemoteDataSource {
-  Future<ApiResult<PaginatedResult<AgeGroupModel>>> getAgeGroups(AgeGroupListQuery query);
+  Future<ApiResult<PaginatedResult<AgeGroupModel>>> getAgeGroups(
+    AgeGroupListQuery query,
+  );
   Future<ApiResult<AgeGroupModel>> createAgeGroup(AgeGroupDraft draft);
-  Future<ApiResult<AgeGroupModel>> updateAgeGroup({required int id, required AgeGroupDraft draft});
+  Future<ApiResult<AgeGroupModel>> updateAgeGroup({
+    required int id,
+    required AgeGroupDraft draft,
+  });
   Future<ApiResult<Unit>> deleteAgeGroup(int id);
-  Future<ApiResult<Unit>> setAgeGroupActive({required int id, required bool isActive});
+  Future<ApiResult<Unit>> setAgeGroupActive({
+    required int id,
+    required bool isActive,
+  });
 }

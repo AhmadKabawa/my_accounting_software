@@ -12,6 +12,7 @@ class AgeGroupDraft extends Equatable {
   final int? minAge;
   final int? maxAge;
   final int sortOrder;
+
   /// Null preserves the stored value on PATCH.
   final bool? isActive;
   @override

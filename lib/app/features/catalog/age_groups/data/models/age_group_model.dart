@@ -2,7 +2,15 @@ import 'package:accounting_software/app/features/catalog/age_groups/domain/entit
 import 'package:accounting_software/app/features/catalog/size_systems/shared/data/embedded_count.dart';
 
 class AgeGroupModel {
-  const AgeGroupModel({required this.id, required this.name, this.minAge, this.maxAge, required this.isActive, required this.sortOrder, this.productCount});
+  const AgeGroupModel({
+    required this.id,
+    required this.name,
+    this.minAge,
+    this.maxAge,
+    required this.isActive,
+    required this.sortOrder,
+    this.productCount,
+  });
   final int id;
   final String name;
   final int? minAge;
@@ -25,5 +33,13 @@ class AgeGroupModel {
       productCount: readEmbeddedCount(json['product_age_groups']),
     );
   }
-  AgeGroup toEntity() => AgeGroup(id: id, name: name, minAge: minAge, maxAge: maxAge, isActive: isActive, sortOrder: sortOrder, productCount: productCount);
+  AgeGroup toEntity() => AgeGroup(
+    id: id,
+    name: name,
+    minAge: minAge,
+    maxAge: maxAge,
+    isActive: isActive,
+    sortOrder: sortOrder,
+    productCount: productCount,
+  );
 }

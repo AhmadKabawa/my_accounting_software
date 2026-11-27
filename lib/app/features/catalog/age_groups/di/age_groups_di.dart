@@ -7,14 +7,28 @@ import 'package:accounting_software/app/features/catalog/age_groups/domain/repos
 import 'package:accounting_software/app/features/catalog/age_groups/domain/usecase/age_groups_use_cases.dart';
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/cubit/age_group_form/age_group_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/cubit/age_groups_list/age_groups_list_cubit.dart';
-void initAgeGroupsDI(){
-  sl.registerLazySingleton<AgeGroupsRemoteDataSource>(()=>AgeGroupsRemoteDataSourceImpl(sl<IApiClient>()));
-  sl.registerLazySingleton<AgeGroupsRepository>(()=>AgeGroupsRepositoryImpl(sl()));
-  sl.registerLazySingleton(()=>GetAgeGroupsUseCase(sl()));
-  sl.registerLazySingleton(()=>CreateAgeGroupUseCase(sl()));
-  sl.registerLazySingleton(()=>UpdateAgeGroupUseCase(sl()));
-  sl.registerLazySingleton(()=>DeleteAgeGroupUseCase(sl()));
-  sl.registerLazySingleton(()=>SetAgeGroupActiveUseCase(sl()));
-  sl.registerFactory(()=>AgeGroupsListCubit(get:sl(),setActive:sl(),delete:sl(),flashMessages:sl()));
-  sl.registerFactory(()=>AgeGroupFormCubit(create:sl(),update:sl(),flashMessages:sl()));
+
+void initAgeGroupsDI() {
+  sl.registerLazySingleton<AgeGroupsRemoteDataSource>(
+    () => AgeGroupsRemoteDataSourceImpl(sl<IApiClient>()),
+  );
+  sl.registerLazySingleton<AgeGroupsRepository>(
+    () => AgeGroupsRepositoryImpl(sl()),
+  );
+  sl.registerLazySingleton(() => GetAgeGroupsUseCase(sl()));
+  sl.registerLazySingleton(() => CreateAgeGroupUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateAgeGroupUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteAgeGroupUseCase(sl()));
+  sl.registerLazySingleton(() => SetAgeGroupActiveUseCase(sl()));
+  sl.registerFactory(
+    () => AgeGroupsListCubit(
+      get: sl(),
+      setActive: sl(),
+      delete: sl(),
+      flashMessages: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => AgeGroupFormCubit(create: sl(), update: sl(), flashMessages: sl()),
+  );
 }

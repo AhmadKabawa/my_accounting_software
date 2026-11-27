@@ -5,4 +5,12 @@ import 'package:accounting_software/app/core/presentation/widgets/app_form_dialo
 import 'package:accounting_software/app/features/catalog/age_groups/domain/entity/age_group.dart';
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/cubit/age_group_form/age_group_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/dialogs/age_group_editor_dialog.dart';
-Future<bool?> showAgeGroupEditor(BuildContext context,{AgeGroup? ageGroup})=>showAppFormDialog<bool>(context,(_)=>BlocProvider(create:(_)=>sl<AgeGroupFormCubit>(),child:AgeGroupEditorDialog(ageGroup:ageGroup)));
+
+Future<bool?> showAgeGroupEditor(BuildContext context, {AgeGroup? ageGroup}) =>
+    showAppFormDialog<bool>(
+      context,
+      (_) => BlocProvider(
+        create: (_) => sl<AgeGroupFormCubit>(),
+        child: AgeGroupEditorDialog(ageGroup: ageGroup),
+      ),
+    );
