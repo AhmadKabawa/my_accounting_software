@@ -38,40 +38,48 @@ void main() {
     });
   });
 
-  test('PATCH omits is_active when unchanged and includes it when changed', () async {
-    final api = FakeCatalogApiClient()..writeRow = response;
-    final remote = TagsRemoteDataSourceImpl(api);
+  test(
+    'PATCH omits is_active when unchanged and includes it when changed',
+    () async {
+      final api = FakeCatalogApiClient()..writeRow = response;
+      final remote = TagsRemoteDataSourceImpl(api);
 
-    await remote.updateTag(
-      id: 9,
-      draft: const CatalogTagDraft(name: 'New Arrival', slug: 'new-arrival'),
-    );
-    expect(api.lastRequest.body!.containsKey('is_active'), isFalse);
+      await remote.updateTag(
+        id: 9,
+        draft: const CatalogTagDraft(name: 'New Arrival', slug: 'new-arrival'),
+      );
+      expect(api.lastRequest.body!.containsKey('is_active'), isFalse);
 
-    await remote.updateTag(
-      id: 9,
-      draft: const CatalogTagDraft(
-        name: 'New Arrival',
-        slug: 'new-arrival',
-        isActive: true,
-      ),
-    );
-    expect(api.lastRequest.body!['is_active'], isTrue);
-  });
+      await remote.updateTag(
+        id: 9,
+        draft: const CatalogTagDraft(
+          name: 'New Arrival',
+          slug: 'new-arrival',
+          isActive: true,
+        ),
+      );
+      expect(api.lastRequest.body!['is_active'], isTrue);
+    },
+  );
 
-  test('23505 for the unique name or slug maps to a tag duplicate failure', () async {
-    final api = FakeCatalogApiClient()
-      ..nextPostFailure = ApiException.conflict(errorCode: '23505');
-    final repository = TagsRepositoryImpl(
-      TagsRemoteDataSourceImpl(api),
-      _StatsRemote(),
-    );
+  test(
+    '23505 for the unique name or slug maps to a tag duplicate failure',
+    () async {
+      final api = FakeCatalogApiClient()
+        ..nextPostFailure = ApiException.conflict(errorCode: '23505');
+      final repository = TagsRepositoryImpl(
+        TagsRemoteDataSourceImpl(api),
+        _StatsRemote(),
+      );
 
-    final result = await repository.createTag(
-      const CatalogTagDraft(name: 'New Arrival', slug: 'new-arrival'),
-    );
+      final result = await repository.createTag(
+        const CatalogTagDraft(name: 'New Arrival', slug: 'new-arrival'),
+      );
 
-    expect(result.fold((failure) => failure, (_) => null),
-        isA<TagDuplicateFailure>());
-  });
+      expect(
+        result.fold((failure) => failure, (_) => null),
+        isA<TagDuplicateFailure>(),
+      );
+    },
+  );
 }

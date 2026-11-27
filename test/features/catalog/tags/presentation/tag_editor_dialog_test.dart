@@ -15,7 +15,9 @@ import 'package:accounting_software/app/features/catalog/tags/presentation/local
 import '../../../../helpers/localized_app.dart';
 
 class _CreateTag extends Mock implements CreateTagUseCase {}
+
 class _UpdateTag extends Mock implements UpdateTagUseCase {}
+
 class _FlashMessages extends Mock implements FlashMessages {}
 
 void main() {
@@ -31,12 +33,14 @@ void main() {
     CatalogTagDraft? saved;
     when(() => create(any())).thenAnswer((invocation) async {
       saved = invocation.positionalArguments.single as CatalogTagDraft;
-      return Right<Failure, CatalogTag>(const CatalogTag(
-        id: 9,
-        name: 'New Arrival',
-        slug: 'new-arrival',
-        isActive: false,
-      ));
+      return Right<Failure, CatalogTag>(
+        const CatalogTag(
+          id: 9,
+          name: 'New Arrival',
+          slug: 'new-arrival',
+          isActive: false,
+        ),
+      );
     });
     final cubit = TagFormCubit(
       createTag: create,

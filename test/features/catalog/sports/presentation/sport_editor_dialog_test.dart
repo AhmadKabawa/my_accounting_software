@@ -15,7 +15,9 @@ import 'package:accounting_software/app/features/catalog/sports/presentation/loc
 import '../../../../helpers/localized_app.dart';
 
 class _CreateSport extends Mock implements CreateSportUseCase {}
+
 class _UpdateSport extends Mock implements UpdateSportUseCase {}
+
 class _FlashMessages extends Mock implements FlashMessages {}
 
 void main() {
@@ -24,20 +26,24 @@ void main() {
     registerFallbackValue(const SportDraft(name: '', code: ''));
   });
 
-  testWidgets('sport editor switch reaches the form cubit draft', (tester) async {
+  testWidgets('sport editor switch reaches the form cubit draft', (
+    tester,
+  ) async {
     final create = _CreateSport();
     final update = _UpdateSport();
     final flash = _FlashMessages();
     SportDraft? saved;
     when(() => create(any())).thenAnswer((invocation) async {
       saved = invocation.positionalArguments.single as SportDraft;
-      return Right<Failure, Sport>(const Sport(
-        id: 8,
-        name: 'Running',
-        code: 'RUNNING',
-        isActive: false,
-        sortOrder: 0,
-      ));
+      return Right<Failure, Sport>(
+        const Sport(
+          id: 8,
+          name: 'Running',
+          code: 'RUNNING',
+          isActive: false,
+          sortOrder: 0,
+        ),
+      );
     });
     final cubit = SportFormCubit(
       createSport: create,

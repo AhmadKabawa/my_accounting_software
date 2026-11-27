@@ -43,26 +43,29 @@ void main() {
     });
   });
 
-  test('PATCH omits is_active when unchanged and includes it when changed', () async {
-    final api = FakeCatalogApiClient()..writeRow = response;
-    final remote = SportsRemoteDataSourceImpl(api);
+  test(
+    'PATCH omits is_active when unchanged and includes it when changed',
+    () async {
+      final api = FakeCatalogApiClient()..writeRow = response;
+      final remote = SportsRemoteDataSourceImpl(api);
 
-    await remote.updateSport(
-      id: 8,
-      draft: const SportDraft(name: 'Running', code: 'RUNNING'),
-    );
-    expect(api.lastRequest.body!.containsKey('is_active'), isFalse);
+      await remote.updateSport(
+        id: 8,
+        draft: const SportDraft(name: 'Running', code: 'RUNNING'),
+      );
+      expect(api.lastRequest.body!.containsKey('is_active'), isFalse);
 
-    await remote.updateSport(
-      id: 8,
-      draft: const SportDraft(
-        name: 'Running',
-        code: 'RUNNING',
-        isActive: true,
-      ),
-    );
-    expect(api.lastRequest.body!['is_active'], isTrue);
-  });
+      await remote.updateSport(
+        id: 8,
+        draft: const SportDraft(
+          name: 'Running',
+          code: 'RUNNING',
+          isActive: true,
+        ),
+      );
+      expect(api.lastRequest.body!['is_active'], isTrue);
+    },
+  );
 
   test('23505 is mapped to a sport duplicate failure', () async {
     final api = FakeCatalogApiClient()
@@ -76,7 +79,9 @@ void main() {
       const SportDraft(name: 'Running', code: 'RUNNING'),
     );
 
-    expect(result.fold((failure) => failure, (_) => null),
-        isA<SportDuplicateFailure>());
+    expect(
+      result.fold((failure) => failure, (_) => null),
+      isA<SportDuplicateFailure>(),
+    );
   });
 }
