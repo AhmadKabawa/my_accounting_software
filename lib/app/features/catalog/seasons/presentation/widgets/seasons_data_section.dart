@@ -1,4 +1,5 @@
-import 'package:flutter/season.dart' hide SeasonType;
+import 'package:flutter/material.dart';
+import 'package:accounting_software/app/core/foundation/date/date_only.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -36,13 +37,12 @@ Widget buildSeasonsDataSection(
       cellBuilder: (_, item) => AppText.raw(item.name),
     ),
     DataTableColumn(
-      labelKey: SeasonsKeys.code,
-      sortKey: 'code',
+      labelKey: SeasonsKeys.startDate,
+      sortKey: 'startDate',
       priority: DataTableColumnPriority.secondary,
       flex: 2,
-      cellBuilder: (_, item) => Directionality(
-        textDirection: TextDirection.ltr,
-        child: AppText.raw(item.code),
+      cellBuilder: (_, item) => AppText.raw(
+        item.startDate == null ? '—' : DateOnly.toApiString(item.startDate!),
       ),
     ),
     DataTableColumn(
@@ -50,9 +50,10 @@ Widget buildSeasonsDataSection(
       priority: DataTableColumnPriority.hiddenOnMobile,
       flex: 2,
       cellBuilder: (_, item) => AppText(switch (item.seasonType) {
-        SeasonType.natural => SeasonsKeys.natural,
-        SeasonType.synthetic => SeasonsKeys.synthetic,
-        SeasonType.blended => SeasonsKeys.blended,
+        SeasonType.summer => SeasonsKeys.summer,
+        SeasonType.winter => SeasonsKeys.winter,
+        SeasonType.spring => SeasonsKeys.spring,
+        SeasonType.autumn => SeasonsKeys.autumn,
         null => SeasonsKeys.notSpecified,
       }),
     ),
@@ -62,16 +63,17 @@ Widget buildSeasonsDataSection(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       AppText.raw(item.name, type: AppTextType.titleSmall),
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: AppText.raw(item.code),
-      ),
+      AppText.raw(item.code),
       AppText(switch (item.seasonType) {
-        SeasonType.natural => SeasonsKeys.natural,
-        SeasonType.synthetic => SeasonsKeys.synthetic,
-        SeasonType.blended => SeasonsKeys.blended,
+        SeasonType.summer => SeasonsKeys.summer,
+        SeasonType.winter => SeasonsKeys.winter,
+        SeasonType.spring => SeasonsKeys.spring,
+        SeasonType.autumn => SeasonsKeys.autumn,
         null => SeasonsKeys.notSpecified,
       }),
+      AppText.raw(item.startDate == null
+          ? '—'
+          : DateOnly.toApiString(item.startDate!)),
       AppBadge(
         label: item.isActive ? SeasonsKeys.active : SeasonsKeys.inactive,
         tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
@@ -83,16 +85,17 @@ Widget buildSeasonsDataSection(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       AppText.raw(item.name, type: AppTextType.titleSmall),
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: AppText.raw(item.code),
-      ),
+      AppText.raw(item.code),
       AppText(switch (item.seasonType) {
-        SeasonType.natural => SeasonsKeys.natural,
-        SeasonType.synthetic => SeasonsKeys.synthetic,
-        SeasonType.blended => SeasonsKeys.blended,
+        SeasonType.summer => SeasonsKeys.summer,
+        SeasonType.winter => SeasonsKeys.winter,
+        SeasonType.spring => SeasonsKeys.spring,
+        SeasonType.autumn => SeasonsKeys.autumn,
         null => SeasonsKeys.notSpecified,
       }),
+      AppText.raw(item.startDate == null
+          ? '—'
+          : DateOnly.toApiString(item.startDate!)),
       AppBadge(
         label: item.isActive ? SeasonsKeys.active : SeasonsKeys.inactive,
         tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,

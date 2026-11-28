@@ -6,7 +6,6 @@ import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
 import 'package:accounting_software/app/features/catalog/seasons/domain/entity/season.dart';
@@ -18,12 +17,7 @@ import 'package:accounting_software/app/features/catalog/seasons/presentation/di
 import 'package:accounting_software/app/features/catalog/seasons/presentation/localization/seasons_keys.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
-CrudListConfig<
-  CatalogSeason,
-  SeasonListQuery,
-  SeasonsListCubit,
-  SeasonsListEffect
->
+CrudListConfig<CatalogSeason, SeasonListQuery, SeasonsListCubit, SeasonsListEffect>
 get seasonsListConfig => CrudListConfig(
   screenId: 'catalog.seasons',
   titleKey: SeasonsKeys.title,
@@ -35,9 +29,8 @@ get seasonsListConfig => CrudListConfig(
   itemLabel: (e) => e.name,
   sort: CrudSortConfig<SeasonListQuery, SeasonsListCubit>(
     options: [
+      FilterBarSortOption(key: 'startDate', label: SeasonsKeys.sortByStartDate),
       FilterBarSortOption(key: 'name', label: SeasonsKeys.sortByName),
-      FilterBarSortOption(key: 'code', label: SeasonsKeys.sortByCode),
-      FilterBarSortOption(key: 'status', label: SeasonsKeys.sortByStatus),
     ],
     current: (q) => [
       for (final s in q.sorts) FilterBarSort(s.field.name, s.ascending),
@@ -59,16 +52,11 @@ get seasonsListConfig => CrudListConfig(
   ),
   filterControls: (slot) => [
     SearchableDropdown<SeasonStatusFilter>(
-      options: const [
-        SeasonStatusFilter.active,
-        SeasonStatusFilter.inactive,
-      ],
+      options: const [SeasonStatusFilter.active, SeasonStatusFilter.inactive],
       labelKey: SeasonsKeys.status,
-      optionLabel: (v) =>
-          (v == SeasonStatusFilter.active
-                  ? SeasonsKeys.active
-                  : SeasonsKeys.inactive)
-              .tr(context: slot.context),
+      optionLabel: (v) => (v == SeasonStatusFilter.active
+          ? SeasonsKeys.active
+          : SeasonsKeys.inactive).tr(context: slot.context),
       value: slot.state.query.status == SeasonStatusFilter.all
           ? null
           : slot.state.query.status,
@@ -78,12 +66,13 @@ get seasonsListConfig => CrudListConfig(
       onChanged: (v) => slot.cubit.setStatus(v ?? SeasonStatusFilter.all),
     ),
     SearchableDropdown<String>(
-      options: const ['natural', 'synthetic', 'blended'],
+      options: const ['summer', 'winter', 'spring', 'autumn'],
       labelKey: SeasonsKeys.type,
       optionLabel: (v) => switch (v) {
-        'natural' => SeasonsKeys.natural.tr(context: slot.context),
-        'synthetic' => SeasonsKeys.synthetic.tr(context: slot.context),
-        _ => SeasonsKeys.blended.tr(context: slot.context),
+        'summer' => SeasonsKeys.summer.tr(context: slot.context),
+        'winter' => SeasonsKeys.winter.tr(context: slot.context),
+        'spring' => SeasonsKeys.spring.tr(context: slot.context),
+        _ => SeasonsKeys.autumn.tr(context: slot.context),
       },
       value: slot.state.query.type,
       clearable: true,
@@ -104,9 +93,10 @@ get seasonsListConfig => CrudListConfig(
         id: 'type',
         label: SeasonsKeys.type,
         value: switch (slot.state.query.type) {
-          'natural' => SeasonsKeys.natural.tr(context: slot.context),
-          'synthetic' => SeasonsKeys.synthetic.tr(context: slot.context),
-          _ => SeasonsKeys.blended.tr(context: slot.context),
+          'summer' => SeasonsKeys.summer.tr(context: slot.context),
+          'winter' => SeasonsKeys.winter.tr(context: slot.context),
+          'spring' => SeasonsKeys.spring.tr(context: slot.context),
+          _ => SeasonsKeys.autumn.tr(context: slot.context),
         },
         onRemove: () => slot.cubit.setType(null),
       ),
@@ -114,11 +104,9 @@ get seasonsListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'status',
         label: SeasonsKeys.status,
-        value:
-            (slot.state.query.status == SeasonStatusFilter.active
-                    ? SeasonsKeys.active
-                    : SeasonsKeys.inactive)
-                .tr(context: slot.context),
+        value: (slot.state.query.status == SeasonStatusFilter.active
+            ? SeasonsKeys.active
+            : SeasonsKeys.inactive).tr(context: slot.context),
         onRemove: () => slot.cubit.setStatus(SeasonStatusFilter.all),
       ),
   ],
@@ -131,7 +119,7 @@ get seasonsListConfig => CrudListConfig(
       const AppBreadcrumbItem(label: SeasonsKeys.title),
     ],
   ),
-  capabilities: const CrudCapabilities(duplicate: false, bulkSelection: true),
+  capabilities: const CrudCapabilities(duplicate: false, bulkSelection: false),
   isMutationEffect: (e) => e is SeasonsMutatedEffect,
   flows: CrudFlowsConfig<CatalogSeason, SeasonsListCubit>(
     showEditor: (context, {item, duplicate = false}) =>
@@ -144,18 +132,6 @@ get seasonsListConfig => CrudListConfig(
     labels: seasonsCrudLabels,
     messageArgs: (e) => {'name': e.name},
     isActive: (e) => e.isActive,
-  ),
-  bulk: CrudBulkConfig<CatalogSeason, SeasonsListCubit>(
-    activateLabelKey: SeasonsKeys.bulkActivate,
-    deactivateLabelKey: SeasonsKeys.bulkDeactivate,
-    deleteLabelKey: SeasonsKeys.bulkDelete,
-    deactivateTitleKey: SeasonsKeys.bulkDeactivateTitle,
-    deactivateMessageKey: SeasonsKeys.bulkDeactivateMessage,
-    deleteTitleKey: SeasonsKeys.bulkDeleteTitle,
-    deleteMessageKey: SeasonsKeys.bulkDeleteMessage,
-    activate: (c, items) => c.bulkActivate(items),
-    deactivate: (c, items) => c.bulkDeactivate(items),
-    delete: (c, items) => c.bulkDelete(items),
   ),
   dataSection: buildSeasonsDataSection,
 );
