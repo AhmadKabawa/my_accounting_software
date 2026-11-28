@@ -32,7 +32,6 @@ void main() {
     );
   });
 
-
   testWidgets('stacks at the exact 280px mobile card-width boundary', (
     tester,
   ) async {

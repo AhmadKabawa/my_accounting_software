@@ -65,8 +65,7 @@ get careInstructionsListConfig => CrudListConfig(
     SearchableDropdown<CareType>(
       options: CareType.values,
       labelKey: CareInstructionsKeys.careType,
-      optionLabel: (value) =>
-          careTypeLabel(value).tr(context: slot.context),
+      optionLabel: (value) => careTypeLabel(value).tr(context: slot.context),
       value: slot.state.query.careType,
       clearable: true,
       mode: SearchableDropdownMode.panel,
@@ -94,10 +93,11 @@ get careInstructionsListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'status',
         label: CareInstructionsKeys.status,
-        value: (slot.state.query.status == CareInstructionStatusFilter.active
-                ? CareInstructionsKeys.active
-                : CareInstructionsKeys.inactive)
-            .tr(context: slot.context),
+        value:
+            (slot.state.query.status == CareInstructionStatusFilter.active
+                    ? CareInstructionsKeys.active
+                    : CareInstructionsKeys.inactive)
+                .tr(context: slot.context),
         onRemove: () => slot.cubit.setStatus(CareInstructionStatusFilter.all),
       ),
   ],

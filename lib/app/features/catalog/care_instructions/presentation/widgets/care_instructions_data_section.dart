@@ -24,71 +24,93 @@ const careInstructionsCrudLabels = CrudLabels(
 );
 
 Widget buildCareInstructionsDataSection(
-  CrudDataContext<CareInstruction, CareInstructionListQuery, CareInstructionsListCubit> data,
-) => CrudDataSection<CareInstruction, CareInstructionListQuery, CareInstructionsListCubit>(
-  data: data,
-  columns: [
-    DataTableColumn(
-      labelKey: CareInstructionsKeys.name,
-      priority: DataTableColumnPriority.primary,
-      flex: 3,
-      cellBuilder: (_, item) => AppText.raw(item.name),
-    ),
-    DataTableColumn(
-      labelKey: CareInstructionsKeys.code,
-      priority: DataTableColumnPriority.secondary,
-      flex: 2,
-      cellBuilder: (_, item) => Directionality(
-        textDirection: TextDirection.ltr,
-        child: AppText.raw(item.code),
+  CrudDataContext<
+    CareInstruction,
+    CareInstructionListQuery,
+    CareInstructionsListCubit
+  >
+  data,
+) =>
+    CrudDataSection<
+      CareInstruction,
+      CareInstructionListQuery,
+      CareInstructionsListCubit
+    >(
+      data: data,
+      columns: [
+        DataTableColumn(
+          labelKey: CareInstructionsKeys.name,
+          priority: DataTableColumnPriority.primary,
+          flex: 3,
+          cellBuilder: (_, item) => AppText.raw(item.name),
+        ),
+        DataTableColumn(
+          labelKey: CareInstructionsKeys.code,
+          priority: DataTableColumnPriority.secondary,
+          flex: 2,
+          cellBuilder: (_, item) => Directionality(
+            textDirection: TextDirection.ltr,
+            child: AppText.raw(item.code),
+          ),
+        ),
+        DataTableColumn(
+          labelKey: CareInstructionsKeys.careType,
+          priority: DataTableColumnPriority.secondary,
+          flex: 2,
+          cellBuilder: (_, item) => AppText(careTypeLabel(item.careType)),
+        ),
+      ],
+      labels: careInstructionsCrudLabels,
+      cardBuilder: (_, item) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppText.raw(item.name, type: AppTextType.titleSmall),
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: AppText.raw(item.code),
+          ),
+          AppText(careTypeLabel(item.careType)),
+          AppBadge(
+            label: item.isActive
+                ? CareInstructionsKeys.active
+                : CareInstructionsKeys.inactive,
+            tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
+            size: AppBadgeSize.small,
+          ),
+        ],
       ),
-    ),
-    DataTableColumn(
-      labelKey: CareInstructionsKeys.careType,
-      priority: DataTableColumnPriority.secondary,
-      flex: 2,
-      cellBuilder: (_, item) => AppText(careTypeLabel(item.careType)),
-    ),
-  ],
-  labels: careInstructionsCrudLabels,
-  cardBuilder: (_, item) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      AppText.raw(item.name, type: AppTextType.titleSmall),
-      Directionality(textDirection: TextDirection.ltr, child: AppText.raw(item.code)),
-      AppText(careTypeLabel(item.careType)),
-      AppBadge(
-        label: item.isActive ? CareInstructionsKeys.active : CareInstructionsKeys.inactive,
-        tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
-        size: AppBadgeSize.small,
+      gridBuilder: (_, item) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppText.raw(item.name, type: AppTextType.titleSmall),
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: AppText.raw(item.code),
+          ),
+          AppText(careTypeLabel(item.careType)),
+          AppBadge(
+            label: item.isActive
+                ? CareInstructionsKeys.active
+                : CareInstructionsKeys.inactive,
+            tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
+            size: AppBadgeSize.small,
+          ),
+        ],
       ),
-    ],
-  ),
-  gridBuilder: (_, item) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      AppText.raw(item.name, type: AppTextType.titleSmall),
-      Directionality(textDirection: TextDirection.ltr, child: AppText.raw(item.code)),
-      AppText(careTypeLabel(item.careType)),
-      AppBadge(
-        label: item.isActive ? CareInstructionsKeys.active : CareInstructionsKeys.inactive,
-        tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
-        size: AppBadgeSize.small,
+      statusColumn: CrudStatusColumnConfig<CareInstruction>(
+        labelKey: CareInstructionsKeys.status,
+        isActive: (item) => item.isActive,
+        badgeBuilder: (_, item) => AppBadge(
+          label: item.isActive
+              ? CareInstructionsKeys.active
+              : CareInstructionsKeys.inactive,
+          tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
+          size: AppBadgeSize.small,
+        ),
       ),
-    ],
-  ),
-  statusColumn: CrudStatusColumnConfig<CareInstruction>(
-    labelKey: CareInstructionsKeys.status,
-    isActive: (item) => item.isActive,
-    badgeBuilder: (_, item) => AppBadge(
-      label: item.isActive ? CareInstructionsKeys.active : CareInstructionsKeys.inactive,
-      tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
-      size: AppBadgeSize.small,
-    ),
-  ),
-  icon: AppIcons.catalog,
-  emptyTitleKey: CareInstructionsKeys.empty,
-  emptyDescriptionKey: CareInstructionsKeys.emptyDescription,
-  noResultsTitleKey: CareInstructionsKeys.noResults,
-  noResultsDescriptionKey: CareInstructionsKeys.noResultsDescription,
-);
+      icon: AppIcons.catalog,
+      emptyTitleKey: CareInstructionsKeys.empty,
+      emptyDescriptionKey: CareInstructionsKeys.emptyDescription,
+      noResultsTitleKey: CareInstructionsKeys.noResults,
+      noResultsDescriptionKey: CareInstructionsKeys.noResultsDescription,
+    );
