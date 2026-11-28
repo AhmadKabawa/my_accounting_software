@@ -34,6 +34,7 @@ jobs:
             flutter test test/core/foundation/validation/app_validator_test.dart
             flutter test test/core/presentation/widgets/app_date_picker_field_test.dart
           else
+            flutter test test/core/presentation/widgets/app_page_header_test.dart
             flutter test test/features/catalog/care_instructions
           fi
       - name: Commit formatting changes
