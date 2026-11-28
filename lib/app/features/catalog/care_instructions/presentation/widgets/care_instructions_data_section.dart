@@ -57,7 +57,7 @@ Widget buildCareInstructionsDataSection(
     children: [
       AppText.raw(item.name, type: AppTextType.titleSmall),
       Directionality(textDirection: TextDirection.ltr, child: AppText.raw(item.code)),
-      AppText(_typeLabel(item.careType)),
+      AppText(careTypeLabel(item.careType)),
       AppBadge(
         label: item.isActive ? CareInstructionsKeys.active : CareInstructionsKeys.inactive,
         tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
@@ -70,7 +70,7 @@ Widget buildCareInstructionsDataSection(
     children: [
       AppText.raw(item.name, type: AppTextType.titleSmall),
       Directionality(textDirection: TextDirection.ltr, child: AppText.raw(item.code)),
-      AppText(_typeLabel(item.careType)),
+      AppText(careTypeLabel(item.careType)),
       AppBadge(
         label: item.isActive ? CareInstructionsKeys.active : CareInstructionsKeys.inactive,
         tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,

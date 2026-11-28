@@ -16,5 +16,5 @@ enum CareInstructionFailureKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'catalog.careInstructions.failure.$name';
+  String get key => 'careinstructionfailure.$name';
 }
