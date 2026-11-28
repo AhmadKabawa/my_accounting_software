@@ -1,0 +1,55 @@
+name: Temporary merge formatting and validation
+
+on:
+  push:
+    branches:
+      - merge/catalog-scope1-four-branches
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  format-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout merge branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.1'
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Apply Dart formatting
+        run: dart format lib test
+
+      - name: Commit formatted files and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib test
+          git rm .github/workflows/temp-format-merge.yml
+          git commit -m "style: format merged catalog features"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run full test suite
+        if: always()
+        run: flutter test
+
+      - name: Trigger official Flutter CI on formatted commit
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run flutter-ci.yml --ref "${GITHUB_REF_NAME}"
