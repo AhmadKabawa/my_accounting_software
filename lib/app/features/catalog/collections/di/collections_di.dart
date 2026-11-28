@@ -43,7 +43,6 @@ void initCollectionsDI() {
     () => CollectionFormCubit(
       create: sl(),
       update: sl(),
-      uploadImage: sl(),
       flashMessages: sl<FlashMessages>(),
     ),
   );
