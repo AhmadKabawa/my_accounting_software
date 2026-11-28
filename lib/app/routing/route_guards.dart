@@ -7,26 +7,7 @@ import 'package:accounting_software/app/features/auth/domain/session/session_gat
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
 import 'package:accounting_software/app/features/on_boarding/presentation/routing/on_boarding_routes.dart';
-import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
-import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
-import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
-import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
-import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
-import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
-import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
-import 'package:accounting_software/app/features/catalog/attributes/presentation/routing/attributes_routes.dart';
-import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
-import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
-import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
-import 'package:accounting_software/app/features/catalog/genders/presentation/routing/genders_routes.dart';
-import 'package:accounting_software/app/features/catalog/age_groups/presentation/routing/age_groups_routes.dart';
-import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
-import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
-import 'package:accounting_software/app/features/catalog/care_instructions/presentation/routing/care_instructions_routes.dart';
-import 'package:accounting_software/app/features/catalog/seasons/presentation/routing/seasons_routes.dart';
-import 'package:accounting_software/app/features/catalog/collections/presentation/routing/collections_routes.dart';
-import 'package:accounting_software/app/features/catalog/size_systems/presentation/routing/size_systems_routes.dart';
 
 Set<String> buildPublicRoutes({
   bool signupEnabled = AppConfig.signupEnabled,
