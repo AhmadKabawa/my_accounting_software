@@ -109,8 +109,7 @@ abstract class AccessRoutingLogic {
   static String? resolve({
     required bool allowed,
     RouteItem fallback = HomeRoutes.home,
-  }) =>
-      allowed ? null : fallback.path;
+  }) => allowed ? null : fallback.path;
 
   /// Builds a UI navigation guard without depending on the global router.
   /// The caller supplies the permission reader, keeping routing policy pure
@@ -120,6 +119,5 @@ abstract class AccessRoutingLogic {
     required bool Function(Permission permission) can,
     RouteItem fallback = HomeRoutes.home,
   }) =>
-      (context, state) =>
-          resolve(allowed: can(permission), fallback: fallback);
+      (context, state) => resolve(allowed: can(permission), fallback: fallback);
 }
