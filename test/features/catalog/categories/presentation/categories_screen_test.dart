@@ -155,36 +155,35 @@ void main() {
   setUpAll(() => useTranslations(const Locale('en')));
   tearDown(() async => sl.reset());
 
-  testWidgets(
-    'category screen fits narrow RTL and desktop dark layouts',
-    (tester) async {
-      final repository = FakeCategoriesRepository(
-        categories: _sampleCategories(),
-      );
-      _register(repository);
+  testWidgets('category screen fits narrow RTL and desktop dark layouts', (
+    tester,
+  ) async {
+    final repository = FakeCategoriesRepository(
+      categories: _sampleCategories(),
+    );
+    _register(repository);
 
-      await pumpScreenMatrix(
-        tester,
-        width: 280,
-        direction: TextDirection.rtl,
-        dark: false,
-        textScale: 1.5,
-        home: _home(),
-      );
-      expect(find.byType(CategoriesListPage), findsOneWidget);
-      expect(tester.takeException(), isNull);
+    await pumpScreenMatrix(
+      tester,
+      width: 280,
+      direction: TextDirection.rtl,
+      dark: false,
+      textScale: 1.5,
+      home: _home(),
+    );
+    expect(find.byType(CategoriesListPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
 
-      await pumpScreenMatrix(
-        tester,
-        width: 1200,
-        direction: TextDirection.ltr,
-        dark: true,
-        home: _home(),
-      );
-      expect(find.byType(CategoriesListPage), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    await pumpScreenMatrix(
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: true,
+      home: _home(),
+    );
+    expect(find.byType(CategoriesListPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('status filters and search stay safe in the full list page', (
     tester,
