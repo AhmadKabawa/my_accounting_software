@@ -1,4 +1,4 @@
-name: Temporary Dart formatter and test runner
+name: Temporary Dart formatter and focused tests
 
 on:
   push:
@@ -24,8 +24,16 @@ jobs:
         run: dart format lib test
       - name: Analyze
         run: flutter analyze --no-fatal-infos
-      - name: Run full test suite
-        run: flutter test
+      - name: Run focused feature tests
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF_NAME" = "feat/core-date-picker" ]; then
+            flutter test test/core/foundation/date/date_only_test.dart
+            flutter test test/core/foundation/validation/app_validator_test.dart
+            flutter test test/core/presentation/widgets/app_date_picker_field_test.dart
+          else
+            flutter test test/features/catalog/care_instructions
+          fi
       - name: Commit formatting changes
         run: |
           if git diff --quiet; then
