@@ -868,13 +868,15 @@ void main() {
       findsOneWidget,
     );
     await tester.enterText(_categoryNameInput(), 'Root Updated');
-    await tester.tap(
-      find.descendant(
-        of: find.byType(Dialog).last,
-        matching: find.text(CategoriesKeys.save.en),
-      ),
+    final editSave = find.descendant(
+      of: find.byType(Dialog).last,
+      matching: find.text(CategoriesKeys.save.en),
     );
+    await tester.ensureVisible(editSave);
     await tester.pumpAndSettle();
+    await tester.tap(editSave);
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsNothing);
     expect(find.byType(CategoryDetailsPanel), findsOneWidget);
 
     final panelAddChild = find.descendant(
