@@ -29,6 +29,8 @@ import 'package:accounting_software/app/features/catalog/fabric_types/presentati
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/failures/fabric_type_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/seasons/presentation/localization/seasons_keys.dart';
 import 'package:accounting_software/app/features/catalog/seasons/domain/failures/season_failure_keys.dart';
+import 'package:accounting_software/app/features/catalog/collections/presentation/localization/collections_keys.dart';
+import 'package:accounting_software/app/features/catalog/collections/domain/failures/collection_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/failures/product_type_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/localization/brands_keys.dart';
@@ -105,6 +107,8 @@ final List<AppKey> allKeys = <AppKey>[
   ...FabricTypeFailureKeys.values,
   ...SeasonsKeys.values,
   ...SeasonFailureKeys.values,
+  ...CollectionsKeys.values,
+  ...CollectionFailureKeys.values,
   ...HomeKeys.values,
   ...OnboardingKeys.values,
 ];
