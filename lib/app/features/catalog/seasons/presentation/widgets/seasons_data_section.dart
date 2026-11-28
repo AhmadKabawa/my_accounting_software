@@ -105,7 +105,6 @@ Widget buildSeasonsDataSection(
   ),
   statusColumn: CrudStatusColumnConfig<CatalogSeason>(
     labelKey: SeasonsKeys.status,
-    sortKey: 'status',
     isActive: (item) => item.isActive,
     badgeBuilder: (_, item) => AppBadge(
       label: item.isActive ? SeasonsKeys.active : SeasonsKeys.inactive,
