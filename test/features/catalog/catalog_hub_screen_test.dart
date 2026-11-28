@@ -37,7 +37,7 @@ void main() {
       dark: true,
       home: const Scaffold(body: CatalogHubScreen()),
     );
-    expect(find.byType(AppCard), findsNWidgets(16));
+    expect(find.byType(AppCard), findsNWidgets(17));
     expect(tester.takeException(), isNull);
   });
 
