@@ -52,20 +52,67 @@
 - **B-31:** الفهرس الفريد الجزئي لضمان افتراضي واحد لمجموعة المقاسات لكل نوع وجنس يبقى طلب Backend؛ لا تعتبر الواجهة بديلاً عن قيد قاعدة البيانات.
 
 
-## 5. فجوات CAT-07 أنظمة المقاسات — بعد دمج add-sports
+## 5. CAT-07 أنظمة المقاسات — مطابقة المخطط الحي بعد دمج add-sports
 
-دخلت طبقات Domain/Data واختباراتها إلى فرع التكامل عبر PR #13. التغيير يغطي كيانات الأنظمة والمجموعات والمقاسات، المستودعات ومصادر البيانات ونقاط REST، ومولّد نطاق المقاسات. لا يتضمن هذا الدمج شاشات Presentation أو ربط DI أو Routing أو مفاتيح واجهة لهذه الوحدة.
+دخلت طبقات Domain/Data واختباراتها إلى فرع التكامل عبر PR #13. فُحص مخطط قاعدة Supabase النشطة `mgtkjmkaydqrugvhplci` (PostgreSQL 17.11) في 2026-11-28 بقراءة كتالوج PostgreSQL. هذه المطابقة تثبت وجود البنية والعلاقات والسياسات، ولا تثبت نجاح طلبات PostgREST الفعلية.
+
+### 5.1 مطابقة العلاقات والأعمدة
+
+| المفترض في التطبيق/التحليل | الموجود في القاعدة الحية | الفرق/النتيجة |
+|---|---|---|
+| `size_systems → size_groups` | FK: `size_groups.size_system_id → size_systems.id` | مطابق |
+| `size_groups → sizes` | FK: `sizes.size_group_id → size_groups.id` | مطابق |
+| `size_groups → product_type_size_groups` | FK: `product_type_size_groups.size_group_id → size_groups.id` | مطابق |
+| `size_groups → product_size_groups` | FK: `product_size_groups.size_group_id → size_groups.id` | مطابق |
+| `sizes → product_sizes` | FK: `product_sizes.size_id → sizes.id` | مطابق |
+| `genders(id,name,is_active)` | الأعمدة موجودة؛ كما يوجد `code` و`sort_order` و`updated_at` وحقلا `uuid` و`origin_node_id` | إسقاط التطبيق `id,name,is_active` صحيح كقراءة جزئية |
+| إحصاء استخدام الألوان | `v_color_usage` موجود ويعيد `color_id, product_count, component_count` | موجود؛ وخصيصة `security_invoker=true` مثبتة |
+| علاقات عدادات المجموعة | العلاقات الثلاث التي يطلبها إسقاط التطبيق موجودة | يمكن التحقق من أسماء العلاقات في المخطط؛ لم يُنفذ GET فعلي عبر PostgREST في هذه المهمة |
+
+### 5.2 القيود والفهارس الفريدة
+
+| الجدول | الموجود فعلاً |
+|---|---|
+| `size_systems` | PK على `id`، UNIQUE على `code`، وفهرس UUID فريد |
+| `size_groups` | PK على `id`، UNIQUE على `code`، وفهرس UUID فريد |
+| `sizes` | PK على `id`، UNIQUE مركب على `(size_group_id, code)`، وفهرس UUID فريد |
+| `product_size_groups` | PK مركب `(product_id,size_group_id)`، وفهرس UUID فريد، وفهرس جزئي فريد `ux_psg_one_default` على `product_id WHERE is_default` |
+| `product_sizes` | PK مركب `(product_id,size_id)`، وفهرس UUID فريد |
+| `product_type_size_groups` | PK على `id`، وفهرس UUID فريد، وفريد `(product_type_id,size_group_id,gender_id) NULLS NOT DISTINCT`، وفهرس جزئي افتراضي واحد `(product_type_id,gender_id) NULLS NOT DISTINCT WHERE is_default` |
+
+### 5.3 سياسات RLS الفعلية للكتابة
+
+كل الجداول المذكورة مفعّل عليها RLS، ولها سياسة قراءة `authenticated` بشرط `true`. سياسات الكتابة تفصل بين مجموعتين من الصلاحيات:
+
+| الجداول | INSERT / UPDATE / DELETE |
+|---|---|
+| `genders`, `size_systems`, `size_groups`, `sizes`, `product_type_size_groups` | `erp.has_permission('masterdata.manage')` |
+| `product_size_groups`, `product_sizes` | `erp.has_permission('catalog.manage')` |
+
+دالة `erp.has_permission(text)` تقارن `permissions.code = p_code`؛ أي إن قيمة الصلاحية حساسة لاختلاف النص. الاسم الموجود في السياسات هو `masterdata.manage` بحروف صغيرة، وليس `masterData.manage`. يجب أن تتطابق قيمة permission code المرسلة تماماً مع هذا النص.
+
+### 5.4 عمليات PostgREST والذرّية والصلاحيات
+
+| الاختبار المطلوب | النتيجة |
+|---|---|
+| POST بمصفوفة: هل العملية ذرّية؟ | لم يُنفّذ طلب POST فعلي؛ لا توجد نتيجة سلوكية مثبتة لهذه القاعدة في هذا التقرير |
+| PATCH لمستخدم بلا `masterdata.manage` | لم يُنفّذ بطلب JWT لمستخدم اختبار |
+| DELETE لمستخدم بلا `masterdata.manage` | لم يُنفّذ بطلب JWT لمستخدم اختبار |
+| POST/PATCH/DELETE على `product_size_groups` و`product_sizes` دون `catalog.manage` | لم تُختبر بطلبات فعلية |
+
+لم تُرسل عمليات كتابة إلى بيانات الكتالوج الحية؛ أدوات SQL المتاحة هنا تعمل بسياق إداري ولا توفر جلسة PostgREST موثقة لمستخدم اختبار منزوع الصلاحية. لا يجوز اعتبار تعريف RLS وحده دليلاً على HTTP status أو عدد الصفوف المتأثرة أو ذرّية POST المصفوفي. يلزم اختبار API منفصل بحساب اختبار حقيقي على بيانات معزولة، وتسجيل status/body ونتيجة القراءة اللاحقة.
+
+### 5.5 حالة تنفيذ CAT-07 أنظمة المقاسات
 
 | المجال | الموجود بعد الدمج | ما لم يثبت/ما يزال ناقصاً |
 |---|---|---|
-| الأنظمة | Domain/Data وعمليات القراءة والإنشاء والتعديل والحذف/الإيقاف والإحصاءات | شاشة القائمة والمحرر، DI، Route، ربط الصلاحيات والواجهة |
-| المجموعات | Domain/Data، قراءة genders كقائمة مرجعية، عدادات الاستخدام | شاشة المجموعات ومحررها، ربطها بالنظام عبر التنقل، DI وRoute |
-| المقاسات | Domain/Data، القراءة والكتابة الجماعية، الترتيب الطبيعي وعدّاد الاستخدام | شاشة المقاسات، محرر/إضافة المقاسات، ربطها بالمجموعة، DI وRoute |
-| توليد النطاق | مولّد Domain دقيق باستخدام Decimal واختبارات له | حوار المعاينة قبل الحفظ وربطه بواجهة المقاسات والتحقق الفعلي من POST المصفوفي على PostgREST |
-| التحقق | أضيفت اختبارات Query وModels وRange Generator وSizes Repository | لا تعتبر هذه الاختبارات ناجحة حتى يكتمل CI على فرع التكامل؛ كما لم يثبت الاتصال بـ Supabase الحي |
+| الأنظمة | Domain/Data وعمليات القراءة والإنشاء والتعديل والحذف/الإيقاف والإحصاءات | لا تزال واجهات الأنظمة وDI وRoute وربط الصلاحيات مطلوبة/بحاجة تحقق |
+| المجموعات | Domain/Data، قراءة genders بإسقاط `id,name,is_active`، وعدادات الاستخدام | يلزم تحقق PostgREST فعلي من الإسقاطات والعدادات وسلوك الصلاحيات |
+| المقاسات | Domain/Data، القراءة والكتابة الجماعية، الترتيب الطبيعي والعداد | يلزم إثبات POST المصفوفي عبر API؛ لا توجد نتيجة ذرّية موثقة بعد |
+| توليد النطاق | مولّد Domain دقيق باستخدام Decimal واختبارات له | حوار المعاينة قبل الحفظ وربطه بواجهة المقاسات؛ لا يُفترض أن إنشاء المصفوفة ناجح حتى يختبر عبر API |
+| CI | توجد اختبارات Query وModels وRange Generator وSizes Repository | نجاح وجود الاختبارات لا يثبت تشغيلها؛ تُراجع نتيجة CI الخاصة بالـ SHA المقصود |
 
-**القرار:** نحتفظ بتنفيذ Domain/Data كما دُمج، ولا نعتبر CAT-07 أنظمة المقاسات مكتملة وظيفياً. تُنفذ الواجهات الثلاث المتتابعة وفق §23.1 من المواصفة، بعد التحقق من توفر جدول genders وربط المسارات والاعتماديات. تبقى size_ranges خارج المرحلة الأولى وفق D-SZ-1.
-
+**القرار:** نحتفظ بتنفيذ Domain/Data كما دُمج، ولا نعتبر CAT-07 أنظمة المقاسات مكتملة وظيفياً. تُنفذ الواجهات الثلاث المتتابعة وفق §23.1 من المواصفة. تبقى `size_ranges` خارج المرحلة الأولى وفق D-SZ-1.
 ## 6. طلبات Backend منفصلة عن واجهات المستخدم
 
 تظل الطلبات التالية مفتوحة في `docs/backend/BACKEND_REQUESTS.md`، ولا تُعتبر منجزة بمجرد اكتمال الشاشات:
