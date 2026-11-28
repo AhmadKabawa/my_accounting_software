@@ -11,14 +11,28 @@ import 'package:accounting_software/app/features/catalog/fabric_types/domain/use
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/usecase/set_fabric_type_active_use_case.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/cubit/fabric_types_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/cubit/fabric_types_form/fabric_type_form_cubit.dart';
-void initFabricTypesDI(){
- sl.registerLazySingleton<FabricTypesRemoteDataSource>(()=>FabricTypesRemoteDataSourceImpl(sl<IApiClient>()));
- sl.registerLazySingleton<FabricTypesRepository>(()=>FabricTypesRepositoryImpl(sl<FabricTypesRemoteDataSource>()));
- sl.registerLazySingleton(()=>GetFabricTypesUseCase(sl()));
- sl.registerLazySingleton(()=>CreateFabricTypeUseCase(sl()));
- sl.registerLazySingleton(()=>UpdateFabricTypeUseCase(sl()));
- sl.registerLazySingleton(()=>DeleteFabricTypeUseCase(sl()));
- sl.registerLazySingleton(()=>SetFabricTypeActiveUseCase(sl()));
- sl.registerFactory(()=>FabricTypesListCubit(getItems:sl(),setActive:sl(),deleteItem:sl(),flashMessages:sl()));
- sl.registerFactory(()=>FabricTypeFormCubit(create:sl(),update:sl(),flashMessages:sl()));
+
+void initFabricTypesDI() {
+  sl.registerLazySingleton<FabricTypesRemoteDataSource>(
+    () => FabricTypesRemoteDataSourceImpl(sl<IApiClient>()),
+  );
+  sl.registerLazySingleton<FabricTypesRepository>(
+    () => FabricTypesRepositoryImpl(sl<FabricTypesRemoteDataSource>()),
+  );
+  sl.registerLazySingleton(() => GetFabricTypesUseCase(sl()));
+  sl.registerLazySingleton(() => CreateFabricTypeUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateFabricTypeUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteFabricTypeUseCase(sl()));
+  sl.registerLazySingleton(() => SetFabricTypeActiveUseCase(sl()));
+  sl.registerFactory(
+    () => FabricTypesListCubit(
+      getItems: sl(),
+      setActive: sl(),
+      deleteItem: sl(),
+      flashMessages: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => FabricTypeFormCubit(create: sl(), update: sl(), flashMessages: sl()),
+  );
 }

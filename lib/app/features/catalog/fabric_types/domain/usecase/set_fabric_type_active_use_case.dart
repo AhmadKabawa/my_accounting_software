@@ -1,1 +1,19 @@
-import 'package:dartz/dartz.dart';import 'package:accounting_software/app/core/error/failures/failure.dart';import 'package:accounting_software/app/core/foundation/base/use_case.dart';import 'package:accounting_software/app/features/catalog/fabric_types/domain/repositories/fabric_types_repository.dart';class SetFabricTypeActiveParams{const SetFabricTypeActiveParams({required this.id,required this.isActive});final int id;final bool isActive;}class SetFabricTypeActiveUseCase extends UseCase<Unit,SetFabricTypeActiveParams>{SetFabricTypeActiveUseCase(this._r);final FabricTypesRepository _r;@override Future<Either<Failure,Unit>> call(SetFabricTypeActiveParams p)=>_r.setFabricTypeActive(id:p.id,isActive:p.isActive);}
+import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/base/use_case.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/repositories/fabric_types_repository.dart';
+
+class SetFabricTypeActiveParams {
+  const SetFabricTypeActiveParams({required this.id, required this.isActive});
+  final int id;
+  final bool isActive;
+}
+
+class SetFabricTypeActiveUseCase
+    extends UseCase<Unit, SetFabricTypeActiveParams> {
+  SetFabricTypeActiveUseCase(this._r);
+  final FabricTypesRepository _r;
+  @override
+  Future<Either<Failure, Unit>> call(SetFabricTypeActiveParams p) =>
+      _r.setFabricTypeActive(id: p.id, isActive: p.isActive);
+}

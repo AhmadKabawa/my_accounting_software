@@ -45,7 +45,9 @@ class MaterialsRepositoryImpl
         final r = await _remote.createMaterial(d);
         return switch (r) {
           ApiSuccess<MaterialModel>(:final data) => Right(data.toEntity()),
-          ApiFailure<MaterialModel>(:final exception) => Left(_mapWriteFailure(exception)),
+          ApiFailure<MaterialModel>(:final exception) => Left(
+            _mapWriteFailure(exception),
+          ),
         };
       });
   @override
@@ -56,7 +58,9 @@ class MaterialsRepositoryImpl
     final r = await _remote.updateMaterial(id: id, draft: draft);
     return switch (r) {
       ApiSuccess<MaterialModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<MaterialModel>(:final exception) => Left(_mapWriteFailure(exception)),
+      ApiFailure<MaterialModel>(:final exception) => Left(
+        _mapWriteFailure(exception),
+      ),
     };
   });
   @override
@@ -65,7 +69,9 @@ class MaterialsRepositoryImpl
     return switch (r) {
       ApiSuccess<Unit>() => const Right(unit),
       ApiFailure<Unit>(:final exception) => Left(
-        exception is ApiException && exception.errorCode == '23503' ? const MaterialInUseFailure() : ExceptionMapper.map(exception),
+        exception is ApiException && exception.errorCode == '23503'
+            ? const MaterialInUseFailure()
+            : ExceptionMapper.map(exception),
       ),
     };
   });
@@ -82,5 +88,8 @@ class MaterialsRepositoryImpl
       ),
     };
   });
-  Failure _mapWriteFailure(AppException exception) => exception is ApiException && exception.errorCode == '23505' ? const MaterialDuplicateFailure() : ExceptionMapper.map(exception);
+  Failure _mapWriteFailure(AppException exception) =>
+      exception is ApiException && exception.errorCode == '23505'
+      ? const MaterialDuplicateFailure()
+      : ExceptionMapper.map(exception);
 }

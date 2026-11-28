@@ -46,7 +46,9 @@ class FabricTypesRepositoryImpl
     final r = await _remote.createFabricType(d);
     return switch (r) {
       ApiSuccess<FabricTypeModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<FabricTypeModel>(:final exception) => Left(_mapWriteFailure(exception)),
+      ApiFailure<FabricTypeModel>(:final exception) => Left(
+        _mapWriteFailure(exception),
+      ),
     };
   });
   @override
@@ -57,7 +59,9 @@ class FabricTypesRepositoryImpl
     final r = await _remote.updateFabricType(id: id, draft: draft);
     return switch (r) {
       ApiSuccess<FabricTypeModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<FabricTypeModel>(:final exception) => Left(_mapWriteFailure(exception)),
+      ApiFailure<FabricTypeModel>(:final exception) => Left(
+        _mapWriteFailure(exception),
+      ),
     };
   });
   @override
@@ -66,7 +70,9 @@ class FabricTypesRepositoryImpl
     return switch (r) {
       ApiSuccess<Unit>() => const Right(unit),
       ApiFailure<Unit>(:final exception) => Left(
-        exception is ApiException && exception.errorCode == '23503' ? const FabricTypeInUseFailure() : ExceptionMapper.map(exception),
+        exception is ApiException && exception.errorCode == '23503'
+            ? const FabricTypeInUseFailure()
+            : ExceptionMapper.map(exception),
       ),
     };
   });
@@ -83,5 +89,8 @@ class FabricTypesRepositoryImpl
       ),
     };
   });
-  Failure _mapWriteFailure(AppException exception) => exception is ApiException && exception.errorCode == '23505' ? const FabricTypeDuplicateFailure() : ExceptionMapper.map(exception);
+  Failure _mapWriteFailure(AppException exception) =>
+      exception is ApiException && exception.errorCode == '23505'
+      ? const FabricTypeDuplicateFailure()
+      : ExceptionMapper.map(exception);
 }

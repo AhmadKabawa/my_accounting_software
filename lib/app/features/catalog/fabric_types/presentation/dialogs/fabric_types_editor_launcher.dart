@@ -1,1 +1,19 @@
-import 'package:flutter/material.dart';import 'package:flutter_bloc/flutter_bloc.dart';import 'package:accounting_software/app/core/di/service_locator.dart';import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type.dart';import 'package:accounting_software/app/features/catalog/fabric_types/presentation/cubit/fabric_types_form/fabric_type_form_cubit.dart';import 'package:accounting_software/app/features/catalog/fabric_types/presentation/dialogs/fabric_types_editor_dialog.dart';Future<bool?> showFabricTypeEditor(BuildContext context,{CatalogFabricType? item,bool duplicate=false})=>showAppFormDialog<bool>(context,(_)=>BlocProvider(create:(_)=>sl<FabricTypeFormCubit>(),child:FabricTypeEditorDialog(item:item)));
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/cubit/fabric_types_form/fabric_type_form_cubit.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/dialogs/fabric_types_editor_dialog.dart';
+
+Future<bool?> showFabricTypeEditor(
+  BuildContext context, {
+  CatalogFabricType? item,
+  bool duplicate = false,
+}) => showAppFormDialog<bool>(
+  context,
+  (_) => BlocProvider(
+    create: (_) => sl<FabricTypeFormCubit>(),
+    child: FabricTypeEditorDialog(item: item),
+  ),
+);

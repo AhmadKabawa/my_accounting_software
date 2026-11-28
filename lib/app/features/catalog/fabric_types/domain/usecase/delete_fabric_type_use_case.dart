@@ -1,1 +1,17 @@
-import 'package:dartz/dartz.dart';import 'package:accounting_software/app/core/error/failures/failure.dart';import 'package:accounting_software/app/core/foundation/base/use_case.dart';import 'package:accounting_software/app/features/catalog/fabric_types/domain/repositories/fabric_types_repository.dart';class DeleteFabricTypeParams{const DeleteFabricTypeParams(this.id);final int id;}class DeleteFabricTypeUseCase extends UseCase<Unit,DeleteFabricTypeParams>{DeleteFabricTypeUseCase(this._r);final FabricTypesRepository _r;@override Future<Either<Failure,Unit>> call(DeleteFabricTypeParams p)=>_r.deleteFabricType(p.id);}
+import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/base/use_case.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/domain/repositories/fabric_types_repository.dart';
+
+class DeleteFabricTypeParams {
+  const DeleteFabricTypeParams(this.id);
+  final int id;
+}
+
+class DeleteFabricTypeUseCase extends UseCase<Unit, DeleteFabricTypeParams> {
+  DeleteFabricTypeUseCase(this._r);
+  final FabricTypesRepository _r;
+  @override
+  Future<Either<Failure, Unit>> call(DeleteFabricTypeParams p) =>
+      _r.deleteFabricType(p.id);
+}

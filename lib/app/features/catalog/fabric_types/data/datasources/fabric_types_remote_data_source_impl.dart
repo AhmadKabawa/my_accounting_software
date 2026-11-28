@@ -78,9 +78,12 @@ class FabricTypesRemoteDataSourceImpl implements FabricTypesRemoteDataSource {
       for (final sort in q.sorts)
         '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
     ];
-    final hasName = q.sorts.any((sort) => sort.field == FabricTypeSortField.name);
+    final hasName = q.sorts.any(
+      (sort) => sort.field == FabricTypeSortField.name,
+    );
     return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
   }
+
   FabricTypeModel _single(List<dynamic> rows) => PostgrestValue.single(
     rows,
     FabricTypeModel.fromJson,
@@ -91,6 +94,7 @@ class FabricTypesRemoteDataSourceImpl implements FabricTypesRemoteDataSource {
     if (draft.isActive == null) json.remove('is_active');
     return json;
   }
+
   Map<String, dynamic> _json(FabricTypeDraft d) => {
     'name': d.name.trim(),
     'code': d.code.trim(),

@@ -80,6 +80,7 @@ class MaterialsRemoteDataSourceImpl implements MaterialsRemoteDataSource {
     final hasName = q.sorts.any((sort) => sort.field == MaterialSortField.name);
     return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
   }
+
   MaterialModel _single(List<dynamic> rows) =>
       PostgrestValue.single(rows, MaterialModel.fromJson, what: 'material');
   Map<String, dynamic> _updateJson(MaterialDraft draft) {
@@ -87,6 +88,7 @@ class MaterialsRemoteDataSourceImpl implements MaterialsRemoteDataSource {
     if (draft.isActive == null) json.remove('is_active');
     return json;
   }
+
   Map<String, dynamic> _json(MaterialDraft d) => {
     'name': d.name.trim(),
     'code': d.code.trim(),
