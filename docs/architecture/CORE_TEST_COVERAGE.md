@@ -184,3 +184,8 @@
 - test/features/catalog/colors/presentation/widgets/color_presets_test.dart: 24 palette entries and HexColor.isValid validation for every entry.
 - test/architecture/ui_quality_gate_test.dart: presentation-file classifier self-checks and the 250-line gate now include dialogs/ in addition to pages/widgets/sections.
 - Verification: GitHub Actions run 45505581060 passed Auto-format Dart, Analyze, the full suite (1,187 tests), and Catalog UI widget tests (172 tests). This verifies the tests listed above on the branch revision tested by that run.
+
+
+## Date-only picker tests (2026-11-28)
+- `date_only_test`: `yyyy-MM-dd` conversion, month/year boundaries, leap years and invalid dates.
+- `app_date_picker_field_test`: opening, selecting, clearing, disabled state, date bounds and narrow layout. These tests are present but have not been executed in this environment.
