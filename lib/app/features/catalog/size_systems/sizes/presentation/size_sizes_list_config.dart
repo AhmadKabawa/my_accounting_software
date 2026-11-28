@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
@@ -146,8 +148,10 @@ sizesListConfig(int systemId, int groupId, {SizeRouteContext? labels}) =>
                 sortKey: 'value',
                 numeric: true,
                 priority: DataTableColumnPriority.secondary,
-                cellBuilder: (_, size) =>
-                    AppText.raw(size.numericValue?.toString() ?? '—'),
+                cellBuilder: (context, size) => AppText.raw(
+                  size.numericValue?.toString() ??
+                      CommonKeys.noValue.tr(context: context),
+                ),
               ),
               DataTableColumn(
                 labelKey: SizeSystemsKeys.sortOrder,
@@ -186,7 +190,10 @@ Widget _card(BuildContext context, CatalogSize size) => Column(
   children: [
     AppText.raw(size.name, type: AppTextType.titleMedium),
     SizeCodeText(size.code),
-    AppText.raw(size.numericValue?.toString() ?? '—'),
+    AppText.raw(
+      size.numericValue?.toString() ??
+          CommonKeys.noValue.tr(context: context),
+    ),
     SizeCountText(size.productCount),
     SizeStatusBadge(isActive: size.isActive),
   ],
