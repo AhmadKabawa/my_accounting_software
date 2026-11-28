@@ -887,13 +887,15 @@ void main() {
     await tester.tap(panelAddChild);
     await tester.pumpAndSettle();
     await tester.enterText(_categoryNameInput(), 'Panel child');
-    await tester.tap(
-      find.descendant(
-        of: find.byType(Dialog).last,
-        matching: find.text(CategoriesKeys.save.en),
-      ),
+    final addChildSave = find.descendant(
+      of: find.byType(Dialog).last,
+      matching: find.text(CategoriesKeys.save.en),
     );
+    await tester.ensureVisible(addChildSave);
     await tester.pumpAndSettle();
+    await tester.tap(addChildSave);
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsNothing);
 
     expect(repository.updateCalls, 1);
     expect(repository.createCalls, 1);
