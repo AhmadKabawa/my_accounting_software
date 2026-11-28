@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
@@ -19,6 +20,8 @@ import 'package:accounting_software/app/features/access/presentation/routing/acc
 import 'package:accounting_software/app/features/home/presentation/routing/home_go_routes.dart';
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_go_routes.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
+import 'package:accounting_software/app/features/auth/presentation/cubit/profile/profile_cubit.dart';
+import 'package:accounting_software/app/features/profile/presentation/pages/profile_screen.dart';
 import 'package:accounting_software/app/routing/route_registry.dart';
 import 'package:accounting_software/app/features/profile/presentation/routing/profile_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/cubit/splash_cubit.dart';
@@ -107,7 +110,17 @@ class AppRouter {
               session: session,
             ),
           ),
-          StatefulShellBranch(routes: buildProfileGoRoutes()),
+          StatefulShellBranch(
+            routes: buildProfileGoRoutes(
+              buildPage: () => MultiBlocProvider(
+                providers: [
+                  BlocProvider<SessionCubit>.value(value: sl<SessionCubit>()),
+                  BlocProvider<ProfileCubit>(create: (_) => sl<ProfileCubit>()),
+                ],
+                child: const ProfileScreen(),
+              ),
+            ),
+          ),
         ],
       ),
     ];
