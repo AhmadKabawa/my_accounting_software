@@ -202,7 +202,7 @@ class _FabricTypesRepository implements FabricTypesRepository {
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  for (final width in [360.0, 600.0, 900.0, 1200.0]) {
+  for (final width in [280.0, 360.0, 600.0, 900.0, 1200.0]) {
     for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
       for (final dark in [false, true]) {
         testWidgets(
@@ -217,6 +217,7 @@ void main() {
               width: width,
               direction: direction,
               dark: dark,
+              textScale: width == 280 ? 1.5 : 1,
               home: BlocProvider<AccessCubit>(
                 create: (_) => AccessCubit(
                   getMyAccess: GetMyAccessUseCase(_AccessRepository()),
@@ -243,6 +244,7 @@ void main() {
               width: width,
               direction: direction,
               dark: dark,
+              textScale: width == 280 ? 1.5 : 1,
               home: BlocProvider<AccessCubit>(
                 create: (_) => AccessCubit(
                   getMyAccess: GetMyAccessUseCase(_AccessRepository()),
