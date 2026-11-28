@@ -56,6 +56,10 @@ enum CatalogHubKeys implements AppKey {
     ar: 'إدارة أنواع الأقمشة وتصنيفاتها وخصائصها.',
     en: 'Manage fabric types, categories and properties.',
   ),
+  seasonsDescription(
+    ar: 'أدر المواسم التي تُستخدم لتصنيف المنتجات وفتراتها.',
+    en: 'Manage product seasons and their date ranges.',
+  ),
   open(ar: 'فتح', en: 'Open');
 
   const CatalogHubKeys({required this.ar, required this.en});
