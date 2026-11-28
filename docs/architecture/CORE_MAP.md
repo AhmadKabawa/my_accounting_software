@@ -17,14 +17,14 @@
 | `access/` | الدور الحالي والصلاحيات وفحص إظهار عناصر الواجهة | `access/cubit/access_cubit.dart` |
 | `di/` | تسجيل خدمات Core في GetIt | `di/service_locator.dart` |
 | `error/` | الاستثناءات الداخلية، Failure، التحويل والترجمة | `error/mappers/exception_mapper.dart` |
-| `foundation/` | أنواع ونتائج مشتركة، إعدادات، Logger، UseCases، التحقق، تاريخ بلا وقت، سياسة ورفع الصور | `foundation/types/api_result.dart` و`foundation/image/` |
+| `foundation/` | أنواع ونتائج مشتركة، إعدادات، Logger، UseCases، التحقق، سياسة ورفع الصور | `foundation/types/api_result.dart` و`foundation/image/` |
 | `localization/` | اللغة الحالية، مفاتيح الترجمة، تحميل الترجمات واتجاه النص | `localization/cubit/locale_cubit.dart` |
 | `network/` | Dio وواجهته، Interceptors، الاتصال، الإلغاء، عقد Realtime ورفع Storage | `network/api_client_interface.dart` و`network/storage/storage_image_uploader.dart` |
 | `platform/` | قدرات المنصة، اختيار الصور والسحب والإفلات وتنفيذاتها المعزولة | `platform/platform_capabilities.dart` و`platform/file_drop/` |
 | `presentation/design_system/responsive/` | القياس والـ Tokens وواجهات Responsive | `presentation/design_system/responsive/extension/ui_extension.dart` |
 | `presentation/design_system/theme/` | Light/Dark Theme والألوان والطباعة وThemeCubit | `presentation/design_system/theme/app_theme.dart` |
 | `presentation/state_management/` | BaseCubit وEffects وBlocObserver | `presentation/state_management/base_cubit.dart` |
-| `presentation/widgets/` | Widgets موحدة مشتركة، ومنها `AppDatePickerField` | `presentation/widgets/app_*` |
+| `presentation/widgets/` | Widgets موحدة مشتركة | `presentation/widgets/app_*` |
 | `routing/` | `RouteItem`، transitions، observer ومساعدات GoRouter (المسارات نفسها في الميزات) | `routing/route_item.dart` |
 | `storage/` | عقد التخزين وتطبيقات SharedPreferences وSecure وHive | `storage/storage_service.dart` |
 
@@ -331,3 +331,8 @@
 - CrudEditorFields owns named TextEditingControllers and their dirty comparison/disposal. CrudEditorLabels carries feature AppKeys. CrudEditorScope exposes form/fields/busy/change/failure operations to the feature-owned field builder.
 - Feature Cubits, effects, draft construction, field validation, duplicate seeds, and extra work such as logo upload remain feature-owned. extraBusy and extraDirty extend the common guard without moving business behavior into Core.
 - AppColorPicker supports compact phone presentation, immediate pointer ownership while dragging the SV/Hue surfaces, responsive preset hit targets, and semantic increase/decrease actions. Its HEX/alpha behavior remains unchanged.
+
+
+## Date-only picker integration (2026-11-28)
+- `foundation/date/date_only.dart`: Date-only parsing/formatting helpers for PostgreSQL `date` values.
+- `presentation/widgets/app_date_picker_field/`: shared `AppDatePickerField` component; feature screens should reuse it instead of invoking `showDatePicker` directly.

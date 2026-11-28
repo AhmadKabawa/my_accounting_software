@@ -72,6 +72,10 @@ import 'package:accounting_software/app/features/catalog/fabric_types/presentati
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/pages/fabric_types_screen.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/routing/care_instructions_routes.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/pages/care_instructions_screen.dart';
+import 'package:accounting_software/app/features/catalog/seasons/presentation/routing/seasons_routes.dart';
+import 'package:accounting_software/app/features/catalog/seasons/presentation/pages/seasons_screen.dart';
+import 'package:accounting_software/app/features/catalog/collections/presentation/routing/collections_routes.dart';
+import 'package:accounting_software/app/features/catalog/collections/presentation/pages/collections_screen.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -383,6 +387,18 @@ class AppRouter {
                 name: CareInstructionsRoutes.careInstructions.name,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: CareInstructionsScreen()),
+              ),
+              GoRoute(
+                path: SeasonsRoutes.seasons.path,
+                name: SeasonsRoutes.seasons.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: SeasonsScreen()),
+              ),
+              GoRoute(
+                path: CollectionsRoutes.collections.path,
+                name: CollectionsRoutes.collections.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: CollectionsScreen()),
               ),
               GoRoute(
                 path: SportsRoutes.sports.path,
