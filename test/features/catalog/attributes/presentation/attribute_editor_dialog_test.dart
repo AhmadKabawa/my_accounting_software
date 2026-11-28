@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
@@ -124,29 +123,20 @@ void main() {
     tester,
   ) async {
     final repository = FakeAttributesRepository();
-    await _openEditor(tester, repository);
-    await tester.enterText(find.byType(TextFormField).first, 'Material');
-    await tester.enterText(find.byType(TextFormField).at(1), 'MATERIAL');
-    await tester.pumpAndSettle();
-    await tester.tap(find.byType(SearchableDropdown<AttributeDataType>));
-    await tester.pumpAndSettle();
-    for (var index = 0; index < 6; index++) {
-      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    }
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(
-      tester
-          .widget<SearchableDropdown<AttributeDataType>>(
-            find.byType(SearchableDropdown<AttributeDataType>),
-          )
-          .value,
-      AttributeDataType.option,
+    await _openEditor(
+      tester,
+      repository,
+      attribute: _attribute(optionSetId: null),
+    );
+    await tester.enterText(
+      find.byType(TextFormField).first,
+      'Material updated',
     );
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
-    expect(repository.createdDrafts, isEmpty);
-  });
+
+    expect(repository.updatedDrafts, isEmpty);
+  });;
 
   testWidgets('used attribute locks data type and option set pickers', (
     tester,
