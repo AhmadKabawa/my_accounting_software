@@ -6,8 +6,8 @@ abstract final class ProductTypesRoutes {
     'catalog.productTypes',
   );
 
-  // Dynamic detail routes are registered in GoRouter directly and included
-  // in the route catalogue so they receive the same protected classification.
+  // Dynamic detail routes are registered in GoRouter directly and added to
+  // the complete route registry in app/routing/route_registry.dart.
   static const detailsPath = '/catalog/product-types/:id';
   static const productTypeDetailsName = 'catalog.productTypeDetails';
 
