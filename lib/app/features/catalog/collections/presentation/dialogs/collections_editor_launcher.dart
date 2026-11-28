@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/foundation/image/image_upload_cubit.dart';
 import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
