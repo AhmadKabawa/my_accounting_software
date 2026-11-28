@@ -9,9 +9,17 @@ import 'package:accounting_software/app/core/presentation/widgets/app_text_field
 /// raw Material date picker themselves.
 class AppDatePickerField extends StatelessWidget {
   const AppDatePickerField({
-    super.key, required this.label, required this.value, required this.onChanged,
-    this.firstDate, this.lastDate, this.errorText, this.validator, this.helper,
-    this.enabled = true, this.clearable = false,
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    this.firstDate,
+    this.lastDate,
+    this.errorText,
+    this.validator,
+    this.helper,
+    this.enabled = true,
+    this.clearable = false,
   });
 
   final AppKey label;
