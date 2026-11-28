@@ -8,4 +8,18 @@
 - Result: **success** (formatting and static analysis passed; the full Flutter test suite was intentionally skipped as recorded in the commit message).
 - URL: https://github.com/AhmadKabawa/my_accounting_software/actions/runs/46092249506
 
-This baseline is not validation of changes on `fix/scope-1-catalog-review`; that branch still requires CI.
+## Scope 1 review branch
+
+- Branch: `fix/scope-1-catalog-review`
+- Code head: `2b1a40a9121873846d3a58d86f1d11868436d538`
+- Workflow: Flutter CI, run #2645
+- Result: **success** for Dart formatting and static analysis.
+- URL: https://github.com/AhmadKabawa/my_accounting_software/actions/runs/46097047456
+- The workflow's `Full test suite` job was skipped for this feature-branch push. This is not evidence that the updated tests pass; they remain unexecuted in this workflow.
+- Static analysis completed with `flutter analyze --no-fatal-infos`; informational lints remain in the repository, with no analyzer errors or fatal warnings in this run.
+
+## Validation boundaries
+
+- No local Flutter/Dart commands were run.
+- No live Supabase/PostgREST checks were performed.
+- No merge was performed.
