@@ -43,8 +43,8 @@ class AppDatePickerField extends StatelessWidget {
     final initial = selected.isBefore(first)
         ? first
         : selected.isAfter(last)
-            ? last
-            : selected;
+        ? last
+        : selected;
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
@@ -58,28 +58,30 @@ class AppDatePickerField extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = AppTextFieldStyle(context);
     final validationError = errorText ?? validator?.call(value);
-    final decoration = style.decoration(
-      label: label.tr(context: context),
-      suffix: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (clearable && value != null)
-            IconButton(
-              tooltip: DatePickerKeys.clear.tr(context: context),
-              onPressed: enabled ? () => onChanged(null) : null,
-              icon: AppIcon(AppIcons.close, color: style.iconColor),
-            ),
-          IconButton(
-            tooltip: DatePickerKeys.open.tr(context: context),
-            onPressed: enabled ? () => _openPicker(context) : null,
-            icon: AppIcon(AppIcons.calendar, color: style.iconColor),
+    final decoration = style
+        .decoration(
+          label: label.tr(context: context),
+          suffix: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (clearable && value != null)
+                IconButton(
+                  tooltip: DatePickerKeys.clear.tr(context: context),
+                  onPressed: enabled ? () => onChanged(null) : null,
+                  icon: AppIcon(AppIcons.close, color: style.iconColor),
+                ),
+              IconButton(
+                tooltip: DatePickerKeys.open.tr(context: context),
+                onPressed: enabled ? () => _openPicker(context) : null,
+                icon: AppIcon(AppIcons.calendar, color: style.iconColor),
+              ),
+            ],
           ),
-        ],
-      ),
-    ).copyWith(
-      helperText: helper?.tr(context: context),
-      errorText: validationError,
-    );
+        )
+        .copyWith(
+          helperText: helper?.tr(context: context),
+          errorText: validationError,
+        );
 
     return TextFormField(
       key: ValueKey<String?>(

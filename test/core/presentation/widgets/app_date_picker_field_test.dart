@@ -89,28 +89,27 @@ void main() {
     expect(find.byType(DatePickerDialog), findsNothing);
   });
 
-  testWidgets(
-    '280px RTL dark layout at 1.5 scale has no overflow',
-    (tester) async {
-      tester.view.physicalSize = const Size(280, 700);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        buildTestApp(
-          direction: TextDirection.rtl,
-          textScale: 1.5,
-          theme: AppTheme.dark(),
-          home: Scaffold(
-            body: AppDatePickerField(
-              label: CommonKeys.updatedAt,
-              value: DateTime(2026, 11, 27),
-              clearable: true,
-              onChanged: (_) {},
-            ),
+  testWidgets('280px RTL dark layout at 1.5 scale has no overflow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(280, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      buildTestApp(
+        direction: TextDirection.rtl,
+        textScale: 1.5,
+        theme: AppTheme.dark(),
+        home: Scaffold(
+          body: AppDatePickerField(
+            label: CommonKeys.updatedAt,
+            value: DateTime(2026, 11, 27),
+            clearable: true,
+            onChanged: (_) {},
           ),
         ),
-      );
-      expect(tester.takeException(), isNull);
-    },
-  );
+      ),
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
