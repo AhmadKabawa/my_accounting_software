@@ -41,23 +41,88 @@ class CatalogHubScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final groups = [
       _CatalogGroup(CatalogHubKeys.groupProductDefinition, [
-        _CatalogArea(AppIcons.brands, BrandsKeys.title, CatalogHubKeys.brandsDescription, () => context.go(BrandsRoutes.brands.path)),
-        _CatalogArea(AppIcons.catalog, CategoriesKeys.title, CatalogHubKeys.categoriesDescription, () => context.go(CategoriesRoutes.categories.path)),
-        _CatalogArea(AppIcons.productTypes, ProductTypesKeys.title, ProductTypesKeys.hubDescription, () => context.go(ProductTypesRoutes.productTypes.path)),
-        _CatalogArea(AppIcons.units, UnitsKeys.title, CatalogHubKeys.unitsDescription, () => context.go(UnitsRoutes.units.path)),
+        _CatalogArea(
+          AppIcons.brands,
+          BrandsKeys.title,
+          CatalogHubKeys.brandsDescription,
+          () => context.go(BrandsRoutes.brands.path),
+        ),
+        _CatalogArea(
+          AppIcons.catalog,
+          CategoriesKeys.title,
+          CatalogHubKeys.categoriesDescription,
+          () => context.go(CategoriesRoutes.categories.path),
+        ),
+        _CatalogArea(
+          AppIcons.productTypes,
+          ProductTypesKeys.title,
+          ProductTypesKeys.hubDescription,
+          () => context.go(ProductTypesRoutes.productTypes.path),
+        ),
+        _CatalogArea(
+          AppIcons.units,
+          UnitsKeys.title,
+          CatalogHubKeys.unitsDescription,
+          () => context.go(UnitsRoutes.units.path),
+        ),
       ]),
       _CatalogGroup(CatalogHubKeys.groupProperties, [
-        _CatalogArea(AppIcons.attributes, AttributesKeys.title, CatalogHubKeys.attributesDescription, () => context.go(AttributesRoutes.attributes.path)),
-        _CatalogArea(AppIcons.optionSets, OptionSetsKeys.title, CatalogHubKeys.optionSetsDescription, () => context.go(OptionSetsRoutes.optionSets.path)),
-        _CatalogArea(AppIcons.colors, ColorsKeys.title, CatalogHubKeys.colorsDescription, () => context.go(ColorsRoutes.colors.path)),
-        _CatalogArea(AppIcons.materials, CatalogHubKeys.materialsTitle, CatalogHubKeys.materialsDescription, () => context.go(MaterialsRoutes.materials.path)),
-        _CatalogArea(AppIcons.fabricTypes, CatalogHubKeys.fabricTypesTitle, CatalogHubKeys.fabricTypesDescription, () => context.go(FabricTypesRoutes.fabricTypes.path)),
+        _CatalogArea(
+          AppIcons.attributes,
+          AttributesKeys.title,
+          CatalogHubKeys.attributesDescription,
+          () => context.go(AttributesRoutes.attributes.path),
+        ),
+        _CatalogArea(
+          AppIcons.optionSets,
+          OptionSetsKeys.title,
+          CatalogHubKeys.optionSetsDescription,
+          () => context.go(OptionSetsRoutes.optionSets.path),
+        ),
+        _CatalogArea(
+          AppIcons.colors,
+          ColorsKeys.title,
+          CatalogHubKeys.colorsDescription,
+          () => context.go(ColorsRoutes.colors.path),
+        ),
+        _CatalogArea(
+          AppIcons.materials,
+          CatalogHubKeys.materialsTitle,
+          CatalogHubKeys.materialsDescription,
+          () => context.go(MaterialsRoutes.materials.path),
+        ),
+        _CatalogArea(
+          AppIcons.fabricTypes,
+          CatalogHubKeys.fabricTypesTitle,
+          CatalogHubKeys.fabricTypesDescription,
+          () => context.go(FabricTypesRoutes.fabricTypes.path),
+        ),
       ]),
       _CatalogGroup(CatalogHubKeys.groupClassification, [
-        _CatalogArea(AppIcons.tags, TagsKeys.title, CatalogHubKeys.tagsDescription, () => context.go(TagsRoutes.tags.path)),
-        _CatalogArea(AppIcons.sports, SportsKeys.title, CatalogHubKeys.sportsDescription, () => context.go(SportsRoutes.sports.path)),
-        _CatalogArea(AppIcons.genders, GendersKeys.title, CatalogHubKeys.gendersDescription, () => context.go(GendersRoutes.genders.path)),
-        _CatalogArea(AppIcons.ageGroups, AgeGroupsKeys.title, CatalogHubKeys.ageGroupsDescription, () => context.go(AgeGroupsRoutes.ageGroups.path)),
+        _CatalogArea(
+          AppIcons.tags,
+          TagsKeys.title,
+          CatalogHubKeys.tagsDescription,
+          () => context.go(TagsRoutes.tags.path),
+        ),
+        _CatalogArea(
+          AppIcons.sports,
+          SportsKeys.title,
+          CatalogHubKeys.sportsDescription,
+          () => context.go(SportsRoutes.sports.path),
+        ),
+        _CatalogArea(
+          AppIcons.genders,
+          GendersKeys.title,
+          CatalogHubKeys.gendersDescription,
+          () => context.go(GendersRoutes.genders.path),
+        ),
+        _CatalogArea(
+          AppIcons.ageGroups,
+          AgeGroupsKeys.title,
+          CatalogHubKeys.ageGroupsDescription,
+          () => context.go(AgeGroupsRoutes.ageGroups.path),
+        ),
       ]),
     ];
     return AppPageBody(
@@ -66,7 +131,11 @@ class CatalogHubScreen extends StatelessWidget {
         children: [
           AppPageHeader(
             titleKey: CatalogHubKeys.title,
-            subtitle: AppText(CatalogHubKeys.subtitle, type: AppTextType.bodyMedium, color: context.ui.theme.colors.onSurfaceVariant),
+            subtitle: AppText(
+              CatalogHubKeys.subtitle,
+              type: AppTextType.bodyMedium,
+              color: context.ui.theme.colors.onSurfaceVariant,
+            ),
           ),
           context.ui.spacing.gap(AppSpacing.lg),
           for (final group in groups) ...[
@@ -77,7 +146,12 @@ class CatalogHubScreen extends StatelessWidget {
               runSpacing: context.ui.spacing.md,
               children: [
                 for (final area in group.areas)
-                  _AreaCard(icon: area.icon, titleKey: area.title, descriptionKey: area.description, onOpen: area.open),
+                  _AreaCard(
+                    icon: area.icon,
+                    titleKey: area.title,
+                    descriptionKey: area.description,
+                    onOpen: area.open,
+                  ),
               ],
             ),
             context.ui.spacing.gap(AppSpacing.lg),
@@ -103,7 +177,12 @@ class _CatalogArea {
 }
 
 class _AreaCard extends StatelessWidget {
-  const _AreaCard({required this.icon, required this.titleKey, required this.descriptionKey, required this.onOpen});
+  const _AreaCard({
+    required this.icon,
+    required this.titleKey,
+    required this.descriptionKey,
+    required this.onOpen,
+  });
   final AppIconData icon;
   final AppKey titleKey;
   final AppKey descriptionKey;
@@ -124,9 +203,18 @@ class _AreaCard extends StatelessWidget {
           context.ui.spacing.gap(AppSpacing.sm),
           AppText(titleKey, type: AppTextType.titleMedium),
           context.ui.spacing.gap(AppSpacing.xs),
-          AppText(descriptionKey, type: AppTextType.bodySmall, color: context.ui.theme.colors.onSurfaceVariant),
+          AppText(
+            descriptionKey,
+            type: AppTextType.bodySmall,
+            color: context.ui.theme.colors.onSurfaceVariant,
+          ),
           context.ui.spacing.gap(AppSpacing.sm),
-          AppButton(CatalogHubKeys.open, variant: AppButtonVariant.outlined, size: AppButtonSize.small, onPressed: onOpen),
+          AppButton(
+            CatalogHubKeys.open,
+            variant: AppButtonVariant.outlined,
+            size: AppButtonSize.small,
+            onPressed: onOpen,
+          ),
         ],
       ),
     ),
