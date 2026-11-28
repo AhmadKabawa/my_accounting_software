@@ -10,8 +10,7 @@ List<RouteBase> buildHomeGoRoutes({
   GoRoute(
     path: HomeRoutes.home.path,
     name: HomeRoutes.home.name,
-    pageBuilder: (context, state) => NoTransitionPage(
-      child: HomeScreen(registeredRoutes: registeredRoutes),
-    ),
+    pageBuilder: (context, state) =>
+        NoTransitionPage(child: HomeScreen(registeredRoutes: registeredRoutes)),
   ),
 ];

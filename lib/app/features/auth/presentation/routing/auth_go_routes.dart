@@ -85,8 +85,8 @@ List<RouteBase> buildAuthGoRoutes({
       name: AuthRoutes.resetPassword.name,
       redirect: (context, state) =>
           (state.uri.queryParameters['email'] ?? '').isEmpty
-              ? AuthRoutes.forgotPassword.path
-              : null,
+          ? AuthRoutes.forgotPassword.path
+          : null,
       pageBuilder: (context, state) => RouteTransitions.slide(
         context,
         state,

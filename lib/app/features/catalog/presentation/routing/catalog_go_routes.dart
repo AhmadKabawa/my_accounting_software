@@ -50,8 +50,7 @@ List<RouteBase> buildCatalogRoutes({required AccessCubit accessCubit}) => [
   GoRoute(
     path: CatalogRoutes.hub.path,
     name: CatalogRoutes.hub.name,
-    redirect: (context, state) =>
-        _catalogRedirect(accessCubit, context, state),
+    redirect: (context, state) => _catalogRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: CatalogHubScreen()),
   ),
@@ -59,7 +58,8 @@ List<RouteBase> buildCatalogRoutes({required AccessCubit accessCubit}) => [
     path: CatalogRoutes.masterData.path,
     name: CatalogRoutes.masterData.name,
     redirect: (context, state) =>
-        _catalogRedirect(accessCubit, context, state) ?? catalogMasterDataRedirect(),
+        _catalogRedirect(accessCubit, context, state) ??
+        catalogMasterDataRedirect(),
   ),
   GoRoute(
     path: BrandsRoutes.brands.path,

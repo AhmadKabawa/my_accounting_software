@@ -104,9 +104,7 @@ class AppRouter {
             initialLocation: CatalogRoutes.hub.path,
             routes: buildCatalogRoutes(accessCubit: accessCubit),
           ),
-          StatefulShellBranch(
-            routes: buildProfileGoRoutes(),
-          ),
+          StatefulShellBranch(routes: buildProfileGoRoutes()),
         ],
       ),
     ];
