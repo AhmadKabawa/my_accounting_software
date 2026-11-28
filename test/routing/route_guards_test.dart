@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
+import 'package:accounting_software/app/core/access/permission.dart';
+import 'package:accounting_software/app/features/access/presentation/routing/access_routes.dart';
+import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/size_systems/presentation/routing/size_systems_routes.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
@@ -319,6 +323,49 @@ void main() {
     test('authenticated users are moved away from login/register', () {
       expect(run('/login', auth: authed), '/home');
       expect(run('/register', auth: authed, signupEnabled: true), '/home');
+    });
+  });
+
+  group('catalog permission route guard', () {
+    test('denies a direct catalog destination when catalog.manage is absent', () {
+      expect(
+        AccessRoutingLogic.resolve(
+          isResolved: true,
+          allowed: false,
+          fallback: AccessRoutes.denied,
+        ),
+        AccessRoutes.denied.path,
+      );
+    });
+
+    test('allows catalog navigation when catalog.manage is granted', () {
+      expect(
+        AccessRoutingLogic.resolve(
+          isResolved: true,
+          allowed: true,
+          fallback: AccessRoutes.denied,
+        ),
+        isNull,
+      );
+    });
+
+    test('does not deny while the access snapshot is still loading', () {
+      expect(
+        AccessRoutingLogic.resolve(
+          isResolved: false,
+          allowed: false,
+          fallback: AccessRoutes.denied,
+        ),
+        isNull,
+      );
+    });
+
+    test('dynamic catalog routes are part of the protected registry', () {
+      expect(protectedRoutes, contains(ProductTypesRoutes.productTypeDetails.path));
+      expect(protectedRoutes, contains(SizeSystemsRoutes.groupsRoute.path));
+      expect(protectedRoutes, contains(SizeSystemsRoutes.sizesRoute.path));
+      expect(protectedRoutes, contains(AccessRoutes.denied.path));
+      expect(Permission('catalog.manage').value, 'catalog.manage');
     });
   });
 }
