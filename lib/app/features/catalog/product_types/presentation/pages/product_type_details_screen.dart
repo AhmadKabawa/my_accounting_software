@@ -8,11 +8,10 @@ import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
-
+import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_body/app_page_body.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_header/app_page_header.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
@@ -105,7 +104,8 @@ class _ProductTypeDetailsBody extends StatelessWidget {
                   context.ui.spacing.gap(AppSpacing.sm),
                   AppButton(
                     ProductTypesKeys.retry,
-                    onPressed: () => context.read<ProductTypeDetailsCubit>().load(productTypeId),
+                    onPressed: () =>
+                        context.read<ProductTypeDetailsCubit>().load(productTypeId),
                   ),
                 ],
               )
