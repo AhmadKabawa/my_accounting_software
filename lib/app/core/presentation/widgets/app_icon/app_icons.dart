@@ -18,6 +18,14 @@ abstract final class AppIcons {
   static const brands = AppIconData.material(Icons.sell_outlined);
   static const colors = AppIconData.material(Icons.palette_outlined);
   static const catalog = AppIconData.material(Icons.category_outlined);
+  static const productTypes = AppIconData.material(Icons.inventory_2_outlined);
+  static const units = AppIconData.material(Icons.straighten_outlined);
+  static const optionSets = AppIconData.material(Icons.list_alt_outlined);
+  static const attributes = AppIconData.material(Icons.tune_outlined);
+  static const materials = AppIconData.material(Icons.layers_outlined);
+  static const fabricTypes = AppIconData.material(Icons.texture_outlined);
+  static const genders = AppIconData.material(Icons.people_outline);
+  static const ageGroups = AppIconData.material(Icons.cake_outlined);
   static const sports = AppIconData.material(Icons.sports_soccer_outlined);
   static const tags = AppIconData.material(Icons.label_outline);
   static const add = AppIconData.material(Icons.add);

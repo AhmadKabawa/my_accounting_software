@@ -34,112 +34,146 @@ import 'package:accounting_software/app/features/catalog/age_groups/presentation
 import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
 
-/// The Catalog tab: a hub that lists the catalog areas. Each area opens its own
-/// page inside the Catalog branch (so the bottom bar / sidebar stays on Catalog).
 class CatalogHubScreen extends StatelessWidget {
   const CatalogHubScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => AppPageBody(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AppPageHeader(
-          titleKey: CatalogHubKeys.title,
-          subtitle: AppText(
-            CatalogHubKeys.subtitle,
-            type: AppTextType.bodyMedium,
-            color: context.ui.theme.colors.onSurfaceVariant,
+  Widget build(BuildContext context) {
+    final groups = [
+      _CatalogGroup(CatalogHubKeys.groupProductDefinition, [
+        _CatalogArea(
+          AppIcons.brands,
+          BrandsKeys.title,
+          CatalogHubKeys.brandsDescription,
+          () => context.go(BrandsRoutes.brands.path),
+        ),
+        _CatalogArea(
+          AppIcons.catalog,
+          CategoriesKeys.title,
+          CatalogHubKeys.categoriesDescription,
+          () => context.go(CategoriesRoutes.categories.path),
+        ),
+        _CatalogArea(
+          AppIcons.productTypes,
+          ProductTypesKeys.title,
+          ProductTypesKeys.hubDescription,
+          () => context.go(ProductTypesRoutes.productTypes.path),
+        ),
+        _CatalogArea(
+          AppIcons.units,
+          UnitsKeys.title,
+          CatalogHubKeys.unitsDescription,
+          () => context.go(UnitsRoutes.units.path),
+        ),
+      ]),
+      _CatalogGroup(CatalogHubKeys.groupProperties, [
+        _CatalogArea(
+          AppIcons.attributes,
+          AttributesKeys.title,
+          CatalogHubKeys.attributesDescription,
+          () => context.go(AttributesRoutes.attributes.path),
+        ),
+        _CatalogArea(
+          AppIcons.optionSets,
+          OptionSetsKeys.title,
+          CatalogHubKeys.optionSetsDescription,
+          () => context.go(OptionSetsRoutes.optionSets.path),
+        ),
+        _CatalogArea(
+          AppIcons.colors,
+          ColorsKeys.title,
+          CatalogHubKeys.colorsDescription,
+          () => context.go(ColorsRoutes.colors.path),
+        ),
+        _CatalogArea(
+          AppIcons.materials,
+          CatalogHubKeys.materialsTitle,
+          CatalogHubKeys.materialsDescription,
+          () => context.go(MaterialsRoutes.materials.path),
+        ),
+        _CatalogArea(
+          AppIcons.fabricTypes,
+          CatalogHubKeys.fabricTypesTitle,
+          CatalogHubKeys.fabricTypesDescription,
+          () => context.go(FabricTypesRoutes.fabricTypes.path),
+        ),
+      ]),
+      _CatalogGroup(CatalogHubKeys.groupClassification, [
+        _CatalogArea(
+          AppIcons.tags,
+          TagsKeys.title,
+          CatalogHubKeys.tagsDescription,
+          () => context.go(TagsRoutes.tags.path),
+        ),
+        _CatalogArea(
+          AppIcons.sports,
+          SportsKeys.title,
+          CatalogHubKeys.sportsDescription,
+          () => context.go(SportsRoutes.sports.path),
+        ),
+        _CatalogArea(
+          AppIcons.genders,
+          GendersKeys.title,
+          CatalogHubKeys.gendersDescription,
+          () => context.go(GendersRoutes.genders.path),
+        ),
+        _CatalogArea(
+          AppIcons.ageGroups,
+          AgeGroupsKeys.title,
+          CatalogHubKeys.ageGroupsDescription,
+          () => context.go(AgeGroupsRoutes.ageGroups.path),
+        ),
+      ]),
+    ];
+    return AppPageBody(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppPageHeader(
+            titleKey: CatalogHubKeys.title,
+            subtitle: AppText(
+              CatalogHubKeys.subtitle,
+              type: AppTextType.bodyMedium,
+              color: context.ui.theme.colors.onSurfaceVariant,
+            ),
           ),
-        ),
-        context.ui.spacing.gap(AppSpacing.md),
-        Wrap(
-          spacing: context.ui.spacing.md,
-          runSpacing: context.ui.spacing.md,
-          children: [
-            _AreaCard(
-              icon: AppIcons.brands,
-              titleKey: BrandsKeys.title,
-              descriptionKey: CatalogHubKeys.brandsDescription,
-              onOpen: () => context.go(BrandsRoutes.brands.path),
+          context.ui.spacing.gap(AppSpacing.lg),
+          for (final group in groups) ...[
+            AppText(group.title, type: AppTextType.titleLarge),
+            context.ui.spacing.gap(AppSpacing.sm),
+            Wrap(
+              spacing: context.ui.spacing.md,
+              runSpacing: context.ui.spacing.md,
+              children: [
+                for (final area in group.areas)
+                  _AreaCard(
+                    icon: area.icon,
+                    titleKey: area.title,
+                    descriptionKey: area.description,
+                    onOpen: area.open,
+                  ),
+              ],
             ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: UnitsKeys.title,
-              descriptionKey: CatalogHubKeys.unitsDescription,
-              onOpen: () => context.go(UnitsRoutes.units.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: OptionSetsKeys.title,
-              descriptionKey: CatalogHubKeys.optionSetsDescription,
-              onOpen: () => context.go(OptionSetsRoutes.optionSets.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: AttributesKeys.title,
-              descriptionKey: CatalogHubKeys.attributesDescription,
-              onOpen: () => context.go(AttributesRoutes.attributes.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: CategoriesKeys.title,
-              descriptionKey: CatalogHubKeys.categoriesDescription,
-              onOpen: () => context.go(CategoriesRoutes.categories.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: ProductTypesKeys.title,
-              descriptionKey: ProductTypesKeys.hubDescription,
-              onOpen: () => context.go(ProductTypesRoutes.productTypes.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.colors,
-              titleKey: ColorsKeys.title,
-              descriptionKey: CatalogHubKeys.colorsDescription,
-              onOpen: () => context.go(ColorsRoutes.colors.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.tags,
-              titleKey: TagsKeys.title,
-              descriptionKey: CatalogHubKeys.tagsDescription,
-              onOpen: () => context.go(TagsRoutes.tags.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: CatalogHubKeys.materialsTitle,
-              descriptionKey: CatalogHubKeys.materialsDescription,
-              onOpen: () => context.go(MaterialsRoutes.materials.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: CatalogHubKeys.fabricTypesTitle,
-              descriptionKey: CatalogHubKeys.fabricTypesDescription,
-              onOpen: () => context.go(FabricTypesRoutes.fabricTypes.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.sports,
-              titleKey: SportsKeys.title,
-              descriptionKey: CatalogHubKeys.sportsDescription,
-              onOpen: () => context.go(SportsRoutes.sports.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: GendersKeys.title,
-              descriptionKey: CatalogHubKeys.gendersDescription,
-              onOpen: () => context.go(GendersRoutes.genders.path),
-            ),
-            _AreaCard(
-              icon: AppIcons.catalog,
-              titleKey: AgeGroupsKeys.title,
-              descriptionKey: CatalogHubKeys.ageGroupsDescription,
-              onOpen: () => context.go(AgeGroupsRoutes.ageGroups.path),
-            ),
+            context.ui.spacing.gap(AppSpacing.lg),
           ],
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
+}
+
+class _CatalogGroup {
+  const _CatalogGroup(this.title, this.areas);
+  final AppKey title;
+  final List<_CatalogArea> areas;
+}
+
+class _CatalogArea {
+  const _CatalogArea(this.icon, this.title, this.description, this.open);
+  final AppIconData icon;
+  final AppKey title;
+  final AppKey description;
+  final VoidCallback open;
 }
 
 class _AreaCard extends StatelessWidget {
@@ -149,7 +183,6 @@ class _AreaCard extends StatelessWidget {
     required this.descriptionKey,
     required this.onOpen,
   });
-
   final AppIconData icon;
   final AppKey titleKey;
   final AppKey descriptionKey;

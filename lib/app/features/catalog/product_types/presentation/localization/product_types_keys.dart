@@ -115,8 +115,8 @@ enum ProductTypesKeys implements AppKey {
     en: 'Only the link row will be removed; existing products will not change. Continue?',
   ),
   publishedProductsWarning(
-    ar: 'يوجد {count} منتج منشور. قد يمنع التحقق من النشر تغيير حالة منتج لاحقاً.',
-    en: '{count} products are published. The publish guard may reject a later product status change.',
+    ar: 'توجد منتجات منشورة مرتبطة بهذا النوع. قد يمنع التحقق من النشر بعض التغييرات على روابطه.',
+    en: 'Published products use this type. The publish guard may reject changes to its linked settings.',
   ),
   busy(ar: 'جارٍ المعالجة', en: 'Processing'),
   retry(ar: 'إعادة المحاولة', en: 'Retry');

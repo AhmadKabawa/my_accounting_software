@@ -8,6 +8,7 @@ import 'package:accounting_software/app/features/catalog/fabric_types/domain/ent
 import 'package:accounting_software/app/features/catalog/fabric_types/domain/entity/fabric_type_draft.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/cubit/fabric_types_form/fabric_type_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/localization/fabric_types_keys.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/fabric_category_labels.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/widgets/fabric_type_field_validators.dart';
 
 class FabricTypeEditorDialog extends StatefulWidget {
@@ -122,11 +123,7 @@ class _FabricTypeEditorDialogState extends State<FabricTypeEditorDialog> {
                 for (final category in FabricCategory.values)
                   DropdownMenuItem<FabricCategory?>(
                     value: category,
-                    child: AppText(switch (category) {
-                      FabricCategory.knit => FabricTypesKeys.knit,
-                      FabricCategory.woven => FabricTypesKeys.woven,
-                      FabricCategory.fleece => FabricTypesKeys.fleece,
-                    }),
+                    child: AppText(fabricCategoryLabel(category)),
                   ),
               ],
               onChanged: (value) => setState(() => _selectedCategory = value),

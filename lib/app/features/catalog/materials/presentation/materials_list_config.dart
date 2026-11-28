@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
@@ -16,6 +16,7 @@ import 'package:accounting_software/app/features/catalog/materials/presentation/
 import 'package:accounting_software/app/features/catalog/materials/presentation/widgets/materials_data_section.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/dialogs/materials_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/localization/materials_keys.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/material_type_labels.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 CrudListConfig<
@@ -77,18 +78,14 @@ get materialsListConfig => CrudListConfig(
       allOptionLabel: MaterialsKeys.allStatuses,
       onChanged: (v) => slot.cubit.setStatus(v ?? MaterialStatusFilter.all),
     ),
-    SearchableDropdown<String>(
-      options: const ['natural', 'synthetic', 'blended'],
+    SearchableDropdown<MaterialType>(
+      options: MaterialType.values,
       labelKey: MaterialsKeys.type,
-      optionLabel: (v) => switch (v) {
-        'natural' => MaterialsKeys.natural.tr(context: slot.context),
-        'synthetic' => MaterialsKeys.synthetic.tr(context: slot.context),
-        _ => MaterialsKeys.blended.tr(context: slot.context),
-      },
-      value: slot.state.query.type,
+      optionLabel: (v) => materialTypeLabel(v).tr(context: slot.context),
+      value: MaterialType.tryParse(slot.state.query.type),
       clearable: true,
       mode: SearchableDropdownMode.panel,
-      onChanged: slot.cubit.setType,
+      onChanged: (value) => slot.cubit.setType(value?.name),
     ),
   ],
   activeFilters: (slot) => [
@@ -103,11 +100,9 @@ get materialsListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'type',
         label: MaterialsKeys.type,
-        value: switch (slot.state.query.type) {
-          'natural' => MaterialsKeys.natural.tr(context: slot.context),
-          'synthetic' => MaterialsKeys.synthetic.tr(context: slot.context),
-          _ => MaterialsKeys.blended.tr(context: slot.context),
-        },
+        value: materialTypeLabel(
+          MaterialType.tryParse(slot.state.query.type),
+        ).tr(context: slot.context),
         onRemove: () => slot.cubit.setType(null),
       ),
     if (slot.state.query.status != MaterialStatusFilter.all)

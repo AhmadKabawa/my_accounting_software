@@ -61,9 +61,17 @@ final _productType = ProductType(
 );
 
 class _FakeTypesRepository implements ProductTypesRepository {
+  Failure? loadFailure;
+  int getByIdCalls = 0;
+
   @override
-  Future<Either<Failure, ProductType>> getById(int id) async =>
-      Right(_productType);
+  Future<Either<Failure, ProductType>> getById(int id) async {
+    getByIdCalls++;
+    final failure = loadFailure;
+    return failure != null && getByIdCalls == 1
+        ? Left(failure)
+        : Right(_productType);
+  }
 
   @override
   Future<Either<Failure, PaginatedResult<ProductType>>> getPage(
@@ -93,6 +101,9 @@ class _FakeTypesRepository implements ProductTypesRepository {
 }
 
 class _FakeLinksRepository implements ProductTypeLinksRepository {
+  _FakeLinksRepository({this.publishedCount = 0});
+
+  final int publishedCount;
   @override
   Future<Either<Failure, List<ProductTypeSizeGroupLink>>> getSizeGroupLinks(
     int id,
@@ -178,14 +189,14 @@ class _FakeLinksRepository implements ProductTypeLinksRepository {
   @override
   Future<Either<Failure, int>> getPublishedProductCount(
     int productTypeId,
-  ) async => const Right(0);
+  ) async => Right(publishedCount);
 }
 
-void _register() {
-  final types = _FakeTypesRepository();
+void _register({int publishedCount = 0, Failure? loadFailure}) {
+  final types = _FakeTypesRepository()..loadFailure = loadFailure;
   sl.registerFactory<ProductTypeDetailsCubit>(
     () => ProductTypeDetailsCubit(
-      repository: _FakeLinksRepository(),
+      repository: _FakeLinksRepository(publishedCount: publishedCount),
       productTypesRepository: types,
     ),
   );
@@ -202,7 +213,7 @@ Widget _home({required bool canManage}) => BlocProvider<AccessCubit>(
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  for (final width in [360.0, 600.0, 900.0, 1200.0]) {
+  for (final width in [280.0, 360.0, 600.0, 900.0, 1200.0]) {
     for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
       for (final dark in [false, true]) {
         testWidgets(
@@ -214,6 +225,7 @@ void main() {
               width: width,
               direction: direction,
               dark: dark,
+              textScale: width == 280 ? 1.5 : 1,
               home: _home(canManage: true),
             );
 
@@ -227,6 +239,45 @@ void main() {
       }
     }
   }
+
+  testWidgets('failed details can be retried from the inline error state', (
+    tester,
+  ) async {
+    _register(loadFailure: const ServerFailure());
+    await pumpScreenMatrix(
+      tester,
+      width: 900,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    expect(find.text(ProductTypesKeys.retry.en), findsOneWidget);
+    // The first request fails; retrying the action restores loaded data.
+    await tester.tap(find.text(ProductTypesKeys.retry.en));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Shoes'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('published products are shown in a warning banner', (
+    tester,
+  ) async {
+    _register(publishedCount: 2);
+    await pumpScreenMatrix(
+      tester,
+      width: 900,
+      direction: TextDirection.rtl,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    expect(
+      find.text(ProductTypesKeys.publishedProductsWarning.en),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('read-only users see sections without write controls', (
     tester,

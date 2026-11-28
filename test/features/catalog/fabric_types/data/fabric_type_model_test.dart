@@ -20,6 +20,12 @@ void main() {
       expect(model.toEntity().name, 'Jersey');
       expect(model.toJson()['is_named_fabric'], isTrue);
     });
+    test('parses known fabric category names and rejects unknown values', () {
+      expect(FabricCategory.tryParse('knit'), FabricCategory.knit);
+      expect(FabricCategory.tryParse('woven'), FabricCategory.woven);
+      expect(FabricCategory.tryParse('unknown'), isNull);
+      expect(FabricCategory.tryParse(null), isNull);
+    });
     test('defaults nullable named flag to false', () {
       final model = FabricTypeModel.fromJson({
         'id': 3,

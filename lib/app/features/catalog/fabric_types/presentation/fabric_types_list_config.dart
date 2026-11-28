@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
@@ -16,6 +16,7 @@ import 'package:accounting_software/app/features/catalog/fabric_types/presentati
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/widgets/fabric_types_data_section.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/dialogs/fabric_types_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/localization/fabric_types_keys.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/fabric_category_labels.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 CrudListConfig<
@@ -77,18 +78,14 @@ get fabricTypesListConfig => CrudListConfig(
       allOptionLabel: FabricTypesKeys.allStatuses,
       onChanged: (v) => slot.cubit.setStatus(v ?? FabricTypeStatusFilter.all),
     ),
-    SearchableDropdown<String>(
-      options: const ['knit', 'woven', 'fleece'],
+    SearchableDropdown<FabricCategory>(
+      options: FabricCategory.values,
       labelKey: FabricTypesKeys.category,
-      optionLabel: (v) => switch (v) {
-        'knit' => FabricTypesKeys.knit.tr(context: slot.context),
-        'woven' => FabricTypesKeys.woven.tr(context: slot.context),
-        _ => FabricTypesKeys.fleece.tr(context: slot.context),
-      },
-      value: slot.state.query.category,
+      optionLabel: (v) => fabricCategoryLabel(v).tr(context: slot.context),
+      value: FabricCategory.tryParse(slot.state.query.category),
       clearable: true,
       mode: SearchableDropdownMode.panel,
-      onChanged: slot.cubit.setCategory,
+      onChanged: (value) => slot.cubit.setCategory(value?.name),
     ),
   ],
   activeFilters: (slot) => [
@@ -103,11 +100,9 @@ get fabricTypesListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'category',
         label: FabricTypesKeys.category,
-        value: switch (slot.state.query.category) {
-          'knit' => FabricTypesKeys.knit.tr(context: slot.context),
-          'woven' => FabricTypesKeys.woven.tr(context: slot.context),
-          _ => FabricTypesKeys.fleece.tr(context: slot.context),
-        },
+        value: fabricCategoryLabel(
+          FabricCategory.tryParse(slot.state.query.category),
+        ).tr(context: slot.context),
         onRemove: () => slot.cubit.setCategory(null),
       ),
     if (slot.state.query.status != FabricTypeStatusFilter.all)

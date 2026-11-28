@@ -18,6 +18,12 @@ void main() {
       expect(model.toEntity().name, 'Cotton');
       expect(model.toJson()['material_type'], 'natural');
     });
+    test('parses known material type names and rejects unknown values', () {
+      expect(MaterialType.tryParse('natural'), MaterialType.natural);
+      expect(MaterialType.tryParse('synthetic'), MaterialType.synthetic);
+      expect(MaterialType.tryParse('unknown'), isNull);
+      expect(MaterialType.tryParse(null), isNull);
+    });
     test('rejects invalid identifier', () {
       expect(
         () => MaterialModel.fromJson({

@@ -27,7 +27,7 @@ class FabricTypeModel {
       code: _requiredString(json, 'code'),
       isActive: _boolean(json['is_active'], fallback: true),
       isNamedFabric: _boolean(json['is_named_fabric'], fallback: false),
-      fabricCategory: _parseFabricCategory(json['fabric_category']),
+      fabricCategory: FabricCategory.tryParse(json['fabric_category']),
       description: _optionalString(json['description']),
     );
   }
@@ -58,10 +58,4 @@ class FabricTypeModel {
       value is String ? value : null;
   static bool _boolean(Object? value, {required bool fallback}) =>
       value is bool ? value : fallback;
-  static FabricCategory? _parseFabricCategory(Object? raw) {
-    for (final value in FabricCategory.values) {
-      if (value.name == raw) return value;
-    }
-    return null;
-  }
 }
