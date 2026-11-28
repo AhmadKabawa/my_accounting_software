@@ -340,8 +340,18 @@ class AppRouter {
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: TagsScreen()),
               ),
-              GoRoute(path: MaterialsRoutes.materials.path,name: MaterialsRoutes.materials.name,pageBuilder: (context,state)=>const NoTransitionPage(child:MaterialsScreen())),
-              GoRoute(path: FabricTypesRoutes.fabricTypes.path,name: FabricTypesRoutes.fabricTypes.name,pageBuilder: (context,state)=>const NoTransitionPage(child:FabricTypesScreen())),
+              GoRoute(
+                path: MaterialsRoutes.materials.path,
+                name: MaterialsRoutes.materials.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: MaterialsScreen()),
+              ),
+              GoRoute(
+                path: FabricTypesRoutes.fabricTypes.path,
+                name: FabricTypesRoutes.fabricTypes.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: FabricTypesScreen()),
+              ),
               GoRoute(
                 path: SportsRoutes.sports.path,
                 name: SportsRoutes.sports.name,

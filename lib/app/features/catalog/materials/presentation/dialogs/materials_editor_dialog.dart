@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MaterialType;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
@@ -9,7 +8,7 @@ import 'package:accounting_software/app/features/catalog/materials/domain/entity
 import 'package:accounting_software/app/features/catalog/materials/domain/entity/material_draft.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/cubit/materials_form/material_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/localization/materials_keys.dart';
-import 'package:accounting_software/app/features/catalog/materials/presentation/widgets/materials_field_validators.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/widgets/material_field_validators.dart';
 
 class MaterialEditorDialog extends StatefulWidget {
   const MaterialEditorDialog({super.key, this.item});
@@ -72,13 +71,19 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
       description: _description.text.trim().isEmpty
           ? null
           : _description.text.trim(),
-      isActive: widget.item == null || _active != _initialActive ? _active : null,
+      isActive: widget.item == null || _active != _initialActive
+          ? _active
+          : null,
     ),
   );
 
   @override
   Widget build(BuildContext context) =>
-      CrudEditorDialog<MaterialFormCubit, MaterialFormState, MaterialFormEffect>(
+      CrudEditorDialog<
+        MaterialFormCubit,
+        MaterialFormState,
+        MaterialFormEffect
+      >(
         cubit: context.read<MaterialFormCubit>(),
         fields: _fields,
         mode: widget.item == null ? CrudEditorMode.add : CrudEditorMode.edit,
@@ -95,18 +100,17 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
         onReset: _resetExternalFields,
         outcome: (effect) => switch (effect) {
           MaterialSavedEffect() => const CrudEditorSuccess(),
-          MaterialSaveFailedEffect(:final messageKey) =>
-            CrudEditorFailure(messageKey),
+          MaterialSaveFailedEffect(:final messageKey) => CrudEditorFailure(
+            messageKey,
+          ),
         },
         onSave: _save,
         builder: (context, scope) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             DropdownButtonFormField<MaterialType?>(
-              value: _selectedType,
-              decoration: InputDecoration(
-                label: AppText(MaterialsKeys.type),
-              ),
+              initialValue: _selectedType,
+              decoration: InputDecoration(label: AppText(MaterialsKeys.type)),
               items: [
                 DropdownMenuItem<MaterialType?>(
                   value: null,
@@ -115,16 +119,11 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
                 for (final type in MaterialType.values)
                   DropdownMenuItem<MaterialType?>(
                     value: type,
-                    child: AppText(
-                      switch (type) {
-                        MaterialType.natural =>
-                          MaterialsKeys.natural.tr(context: context),
-                        MaterialType.synthetic =>
-                          MaterialsKeys.synthetic.tr(context: context),
-                        MaterialType.blended =>
-                          MaterialsKeys.blended.tr(context: context),
-                      },
-                    ),
+                    child: AppText(switch (type) {
+                      MaterialType.natural => MaterialsKeys.natural,
+                      MaterialType.synthetic => MaterialsKeys.synthetic,
+                      MaterialType.blended => MaterialsKeys.blended,
+                    }),
                   ),
               ],
               onChanged: (value) => setState(() => _selectedType = value),
