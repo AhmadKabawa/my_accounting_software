@@ -107,10 +107,10 @@ String? resolveRedirect({
 abstract class AccessRoutingLogic {
   /// Pure decision used by route redirects and unit tests.
   static String? resolve({
-    required bool isResolved,
     required bool allowed,
     RouteItem fallback = HomeRoutes.home,
-  }) => !isResolved || allowed ? null : fallback.path;
+  }) =>
+      allowed ? null : fallback.path;
 
   /// Builds a UI navigation guard without depending on the global router.
   /// The caller supplies the permission reader, keeping routing policy pure
@@ -118,12 +118,8 @@ abstract class AccessRoutingLogic {
   static GoRouterRedirect require(
     Permission permission, {
     required bool Function(Permission permission) can,
-    bool Function()? isResolved,
     RouteItem fallback = HomeRoutes.home,
   }) =>
-      (context, state) => resolve(
-        isResolved: isResolved?.call() ?? true,
-        allowed: can(permission),
-        fallback: fallback,
-      );
+      (context, state) =>
+          resolve(allowed: can(permission), fallback: fallback);
 }
