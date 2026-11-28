@@ -69,8 +69,14 @@ enum SizeSystemsKeys implements AppKey {
     en: '{name} will no longer appear in new selections.',
   ),
   emptySystems(ar: 'لا توجد أنظمة مقاسات بعد', en: 'No size systems yet'),
-  emptyGroups(ar: 'لا توجد مجموعات في هذا النظام', en: 'No groups in this system'),
-  emptySizes(ar: 'لا توجد مقاسات في هذه المجموعة', en: 'No sizes in this group'),
+  emptyGroups(
+    ar: 'لا توجد مجموعات في هذا النظام',
+    en: 'No groups in this system',
+  ),
+  emptySizes(
+    ar: 'لا توجد مقاسات في هذه المجموعة',
+    en: 'No sizes in this group',
+  ),
   noResults(ar: 'لا نتائج مطابقة', en: 'No matching results'),
   required(ar: 'هذا الحقل مطلوب', en: 'This field is required'),
   nameTooLong(ar: 'الاسم أطول من المسموح', en: 'The name is too long'),

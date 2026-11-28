@@ -113,74 +113,72 @@ class _SizeRangeDialogState extends State<SizeRangeDialog> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      CrudEditorDialog<SizeRangeCubit, SizeRangeStatus, SizeRangeEffect>(
-        cubit: context.read<SizeRangeCubit>(),
-        fields: _fields,
-        mode: CrudEditorMode.add,
-        labels: sizeRangeEditorLabels,
-        isSaving: (status) => status == SizeRangeStatus.saving,
-        outcome: (effect) => switch (effect) {
-          SizeRangeSavedEffect() => const CrudEditorSuccess(),
-          SizeRangeFailedEffect(:final messageKey) => CrudEditorFailure(
-            messageKey,
-          ),
-        },
-        onSave: _save,
-        onReset: () {},
-        builder: (context, scope) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AppTextField(
-              controller: _from,
-              labelKey: SizeSystemsKeys.rangeFrom,
-              onChanged: (_) => scope.clearFailure(),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              textDirection: TextDirection.ltr,
-              validator: (value) => _number(context, value),
-            ),
-            context.ui.spacing.gap(AppSpacing.sm),
-            AppTextField(
-              controller: _to,
-              labelKey: SizeSystemsKeys.rangeTo,
-              onChanged: (_) => scope.clearFailure(),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              textDirection: TextDirection.ltr,
-              validator: (value) =>
-                  _number(context, value) ??
-                  _rangeError(context, _plan().error),
-            ),
-            context.ui.spacing.gap(AppSpacing.sm),
-            AppTextField(
-              controller: _step,
-              labelKey: SizeSystemsKeys.rangeStep,
-              onChanged: (_) => scope.clearFailure(),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              textDirection: TextDirection.ltr,
-              validator: (value) {
-                final invalid = _number(context, value);
-                if (invalid != null) return invalid;
-                final step = Decimal.tryParse(value!.trim());
-                return step != null && step <= Decimal.zero
-                    ? SizeSystemsKeys.rangeStepPositive.tr(context: context)
-                    : null;
-              },
-            ),
-            context.ui.spacing.gap(AppSpacing.sm),
-            AppTextField(
-              controller: _prefix,
-              labelKey: SizeSystemsKeys.rangePrefix,
-              onChanged: (_) => scope.clearFailure(),
-              textDirection: TextDirection.ltr,
-            ),
-            context.ui.spacing.gap(AppSpacing.md),
-            ListenableBuilder(
-              listenable: Listenable.merge([_from, _to, _step, _prefix]),
-              builder: (context, _) => _RangePreview(result: _plan()),
-            ),
-          ],
+  Widget build(
+    BuildContext context,
+  ) => CrudEditorDialog<SizeRangeCubit, SizeRangeStatus, SizeRangeEffect>(
+    cubit: context.read<SizeRangeCubit>(),
+    fields: _fields,
+    mode: CrudEditorMode.add,
+    labels: sizeRangeEditorLabels,
+    isSaving: (status) => status == SizeRangeStatus.saving,
+    outcome: (effect) => switch (effect) {
+      SizeRangeSavedEffect() => const CrudEditorSuccess(),
+      SizeRangeFailedEffect(:final messageKey) => CrudEditorFailure(messageKey),
+    },
+    onSave: _save,
+    onReset: () {},
+    builder: (context, scope) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppTextField(
+          controller: _from,
+          labelKey: SizeSystemsKeys.rangeFrom,
+          onChanged: (_) => scope.clearFailure(),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          textDirection: TextDirection.ltr,
+          validator: (value) => _number(context, value),
         ),
-      );
+        context.ui.spacing.gap(AppSpacing.sm),
+        AppTextField(
+          controller: _to,
+          labelKey: SizeSystemsKeys.rangeTo,
+          onChanged: (_) => scope.clearFailure(),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          textDirection: TextDirection.ltr,
+          validator: (value) =>
+              _number(context, value) ?? _rangeError(context, _plan().error),
+        ),
+        context.ui.spacing.gap(AppSpacing.sm),
+        AppTextField(
+          controller: _step,
+          labelKey: SizeSystemsKeys.rangeStep,
+          onChanged: (_) => scope.clearFailure(),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          textDirection: TextDirection.ltr,
+          validator: (value) {
+            final invalid = _number(context, value);
+            if (invalid != null) return invalid;
+            final step = Decimal.tryParse(value!.trim());
+            return step != null && step <= Decimal.zero
+                ? SizeSystemsKeys.rangeStepPositive.tr(context: context)
+                : null;
+          },
+        ),
+        context.ui.spacing.gap(AppSpacing.sm),
+        AppTextField(
+          controller: _prefix,
+          labelKey: SizeSystemsKeys.rangePrefix,
+          onChanged: (_) => scope.clearFailure(),
+          textDirection: TextDirection.ltr,
+        ),
+        context.ui.spacing.gap(AppSpacing.md),
+        ListenableBuilder(
+          listenable: Listenable.merge([_from, _to, _step, _prefix]),
+          builder: (context, _) => _RangePreview(result: _plan()),
+        ),
+      ],
+    ),
+  );
 }
 
 class _RangePreview extends StatelessWidget {

@@ -40,7 +40,8 @@ class SizeSystemEditorFields extends StatelessWidget {
         textCapitalization: TextCapitalization.words,
         validator: (value) {
           final text = value?.trim() ?? '';
-          if (text.isEmpty) return SizeSystemsKeys.required.tr(context: context);
+          if (text.isEmpty)
+            return SizeSystemsKeys.required.tr(context: context);
           if (text.length > nameMax) {
             return SizeSystemsKeys.nameTooLong.tr(context: context);
           }
@@ -55,7 +56,8 @@ class SizeSystemEditorFields extends StatelessWidget {
         textDirection: TextDirection.ltr,
         validator: (value) {
           final text = value?.trim() ?? '';
-          if (text.isEmpty) return SizeSystemsKeys.required.tr(context: context);
+          if (text.isEmpty)
+            return SizeSystemsKeys.required.tr(context: context);
           if (text.length > codeMax) {
             return SizeSystemsKeys.codeTooLong.tr(context: context);
           }

@@ -32,13 +32,12 @@ class SizeFormCubit extends BaseCubit<SizeFormStatus, SizeFormEffect> {
         ? await _create(draft)
         : await _update(UpdateSizeParams(id: id, draft: draft));
     if (isClosed) return;
-    result.fold(
-      (failure) => emitEffect(SizeSaveFailedEffect(_key(failure))),
-      (size) {
-        emitEffect(SizeSavedEffect(size));
-        _flash.post(SizeSystemsKeys.saved, MessageType.success);
-      },
-    );
+    result.fold((failure) => emitEffect(SizeSaveFailedEffect(_key(failure))), (
+      size,
+    ) {
+      emitEffect(SizeSavedEffect(size));
+      _flash.post(SizeSystemsKeys.saved, MessageType.success);
+    });
     if (!isClosed) emit(SizeFormStatus.idle);
   }
 

@@ -45,13 +45,12 @@ class SizeRangeCubit extends BaseCubit<SizeRangeStatus, SizeRangeEffect> {
         ),
     ]);
     if (isClosed) return;
-    result.fold(
-      (failure) => emitEffect(SizeRangeFailedEffect(_key(failure))),
-      (created) {
-        emitEffect(SizeRangeSavedEffect(created.length));
-        _flash.post(SizeSystemsKeys.rangeSaved, MessageType.success);
-      },
-    );
+    result.fold((failure) => emitEffect(SizeRangeFailedEffect(_key(failure))), (
+      created,
+    ) {
+      emitEffect(SizeRangeSavedEffect(created.length));
+      _flash.post(SizeSystemsKeys.rangeSaved, MessageType.success);
+    });
     if (!isClosed) emit(SizeRangeStatus.idle);
   }
 

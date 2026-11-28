@@ -154,7 +154,8 @@ sizesListConfig(int systemId, int groupId, {SizeRouteContext? labels}) =>
                 sortKey: 'order',
                 numeric: true,
                 priority: DataTableColumnPriority.secondary,
-                cellBuilder: (_, size) => AppText.raw(size.sortOrder.toString()),
+                cellBuilder: (_, size) =>
+                    AppText.raw(size.sortOrder.toString()),
               ),
               DataTableColumn(
                 labelKey: SizeSystemsKeys.productCount,
@@ -167,7 +168,8 @@ sizesListConfig(int systemId, int groupId, {SizeRouteContext? labels}) =>
             statusColumn: CrudStatusColumnConfig<CatalogSize>(
               labelKey: SizeSystemsKeys.status,
               isActive: (size) => size.isActive,
-              badgeBuilder: (_, size) => SizeStatusBadge(isActive: size.isActive),
+              badgeBuilder: (_, size) =>
+                  SizeStatusBadge(isActive: size.isActive),
             ),
             cardBuilder: _card,
             gridBuilder: _card,

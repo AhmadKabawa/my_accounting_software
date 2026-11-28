@@ -6,11 +6,13 @@ import 'package:accounting_software/app/features/catalog/size_systems/systems/do
 import 'package:accounting_software/app/features/catalog/size_systems/systems/presentation/cubit/size_system_form/size_system_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/size_systems/systems/presentation/dialogs/size_system_editor_dialog.dart';
 
-Future<bool?> showSizeSystemEditor(BuildContext context, {SizeSystem? system}) =>
-    showAppFormDialog<bool>(
-      context,
-      (_) => BlocProvider(
-        create: (_) => sl<SizeSystemFormCubit>(),
-        child: SizeSystemEditorDialog(system: system),
-      ),
-    );
+Future<bool?> showSizeSystemEditor(
+  BuildContext context, {
+  SizeSystem? system,
+}) => showAppFormDialog<bool>(
+  context,
+  (_) => BlocProvider(
+    create: (_) => sl<SizeSystemFormCubit>(),
+    child: SizeSystemEditorDialog(system: system),
+  ),
+);

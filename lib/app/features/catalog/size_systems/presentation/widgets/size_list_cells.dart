@@ -18,8 +18,10 @@ class SizeCodeText extends StatelessWidget {
   final String code;
 
   @override
-  Widget build(BuildContext context) =>
-      Directionality(textDirection: TextDirection.ltr, child: AppText.raw(code));
+  Widget build(BuildContext context) => Directionality(
+    textDirection: TextDirection.ltr,
+    child: AppText.raw(code),
+  );
 }
 
 String formatSizeDate(DateTime? value) {

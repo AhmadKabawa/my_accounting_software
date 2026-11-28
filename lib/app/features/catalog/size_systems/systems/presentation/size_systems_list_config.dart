@@ -175,7 +175,8 @@ get sizeSystemsListConfig => CrudListConfig(
         statusColumn: CrudStatusColumnConfig<SizeSystem>(
           labelKey: SizeSystemsKeys.status,
           isActive: (system) => system.isActive,
-          badgeBuilder: (_, system) => SizeStatusBadge(isActive: system.isActive),
+          badgeBuilder: (_, system) =>
+              SizeStatusBadge(isActive: system.isActive),
         ),
         cardBuilder: _card,
         gridBuilder: _card,

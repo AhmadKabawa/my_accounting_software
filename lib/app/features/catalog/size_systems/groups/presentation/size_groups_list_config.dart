@@ -128,10 +128,9 @@ sizeGroupsListConfig(int systemId, {SizeRouteContext? labels}) =>
               id: 'gender',
               label: SizeSystemsKeys.gender,
               value:
-                  slot.context
-                      .read<GenderOptionsCubit>()
-                      .state
-                      .nameOf(slot.state.query.genderId) ??
+                  slot.context.read<GenderOptionsCubit>().state.nameOf(
+                    slot.state.query.genderId,
+                  ) ??
                   '—',
               onRemove: () => slot.cubit.setGender(null),
             ),
@@ -170,7 +169,8 @@ sizeGroupsListConfig(int systemId, {SizeRouteContext? labels}) =>
       dataSection: (data) =>
           CrudDataSection<SizeGroup, SizeGroupListQuery, SizeGroupsListCubit>(
             data: data,
-            onRowTap: (group) => _openSizes(data.context, systemId, group, labels),
+            onRowTap: (group) =>
+                _openSizes(data.context, systemId, group, labels),
             extraRowActions: (context, group) => [
               AppRowAction(
                 icon: AppIcons.catalog,
@@ -212,7 +212,8 @@ sizeGroupsListConfig(int systemId, {SizeRouteContext? labels}) =>
                 labelKey: SizeSystemsKeys.productTypeCount,
                 numeric: true,
                 priority: DataTableColumnPriority.secondary,
-                cellBuilder: (_, group) => SizeCountText(group.productTypeCount),
+                cellBuilder: (_, group) =>
+                    SizeCountText(group.productTypeCount),
               ),
             ],
             labels: _labels,
