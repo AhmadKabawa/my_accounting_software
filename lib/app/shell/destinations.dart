@@ -13,6 +13,7 @@ import 'package:accounting_software/app/features/catalog/genders/presentation/lo
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/localization/age_groups_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
+import 'package:accounting_software/app/features/catalog/size_systems/presentation/localization/size_systems_keys.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/catalog_hub_keys.dart';
 import 'package:accounting_software/app/features/catalog/seasons/presentation/localization/seasons_keys.dart';
 import 'package:accounting_software/app/features/catalog/collections/presentation/localization/collections_keys.dart';
@@ -75,6 +76,11 @@ const appDestinations = [
           label: AttributesKeys.title,
           icon: AppIcons.catalog,
           path: '/catalog/attributes',
+        ),
+        NavBarChild(
+          label: SizeSystemsKeys.systemsTitle,
+          icon: AppIcons.catalog,
+          path: '/catalog/size-systems',
         ),
         NavBarChild(
           label: ColorsKeys.title,
