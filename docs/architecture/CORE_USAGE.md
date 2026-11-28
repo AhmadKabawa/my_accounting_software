@@ -631,3 +631,9 @@ CrudSelectionScope<Brand>(
 CrudBulkActions owns the single result-dialog call. Complete success shows only the success flash; partial or complete failure is reported by the result dialog only. Bulk requests are sequential, not a transaction. Keep selection limited to the current page; recommend at most 50 records per batch (100 is the configured page-size ceiling and should be reserved for light operations).
 
 CrudConfirmations.delete uses the shared critical delete confirmation; CrudConfirmations.status activates immediately and confirms deactivation. Feature Cubits own all mutations and failure mapping.
+
+
+## Date-only values and picker (2026-11-28)
+- For a date without a time, use `DateOnly` to serialize/parse `yyyy-MM-dd` without UTC offsets.
+- For UI selection, use `AppDatePickerField`; do not call `showDatePicker` directly from feature code.
+- For optional start/end values, use `AppValidator.validateDateRange(start: ..., end: ...)` and the approved blocking rule when the end precedes the start.
