@@ -23,6 +23,12 @@ class CatalogSeason extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, name, code, seasonType, startDate, endDate, isActive,
+    id,
+    name,
+    code,
+    seasonType,
+    startDate,
+    endDate,
+    isActive,
   ];
 }

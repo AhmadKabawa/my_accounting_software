@@ -15,8 +15,7 @@ import 'package:accounting_software/app/features/catalog/collections/data/models
 import 'package:accounting_software/app/features/catalog/collections/domain/entity/collection_draft.dart';
 import 'package:accounting_software/app/features/catalog/collections/domain/entity/collection_list_query.dart';
 
-class CollectionsRemoteDataSourceImpl
-    implements CollectionsRemoteDataSource {
+class CollectionsRemoteDataSourceImpl implements CollectionsRemoteDataSource {
   const CollectionsRemoteDataSourceImpl(this._api, this._storage);
   final IApiClient _api;
   final StorageImageUploader _storage;
@@ -37,8 +36,10 @@ class CollectionsRemoteDataSourceImpl
         'order': _order(query),
         if (term.isNotEmpty)
           'or': '(name.ilike."*$term*",code.ilike."*$term*")',
-        if (query.status == CollectionStatusFilter.active) 'is_active': 'eq.true',
-        if (query.status == CollectionStatusFilter.inactive) 'is_active': 'eq.false',
+        if (query.status == CollectionStatusFilter.active)
+          'is_active': 'eq.true',
+        if (query.status == CollectionStatusFilter.inactive)
+          'is_active': 'eq.false',
       },
     );
   }
@@ -83,29 +84,27 @@ class CollectionsRemoteDataSourceImpl
   );
 
   @override
-  Future<ApiResult<String>> uploadImage(ImageUpload image) =>
-      _storage.upload(
-        target: const StorageTarget(
-          bucket: CollectionsEndpoint.imageBucket,
-          folder: CollectionsEndpoint.imageFolder,
-        ),
-        image: image,
-      );
+  Future<ApiResult<String>> uploadImage(ImageUpload image) => _storage.upload(
+    target: const StorageTarget(
+      bucket: CollectionsEndpoint.imageBucket,
+      folder: CollectionsEndpoint.imageFolder,
+    ),
+    image: image,
+  );
 
   String _order(CollectionListQuery query) {
     final terms = [
       for (final sort in query.sorts)
         '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
     ];
-    final hasName = query.sorts.any((sort) => sort.field == CollectionSortField.name);
+    final hasName = query.sorts.any(
+      (sort) => sort.field == CollectionSortField.name,
+    );
     return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
   }
 
-  CollectionModel _single(List<dynamic> rows) => PostgrestValue.single(
-    rows,
-    CollectionModel.fromJson,
-    what: 'collection',
-  );
+  CollectionModel _single(List<dynamic> rows) =>
+      PostgrestValue.single(rows, CollectionModel.fromJson, what: 'collection');
 
   Map<String, dynamic> _updateJson(CollectionDraft draft) {
     final json = _json(draft);

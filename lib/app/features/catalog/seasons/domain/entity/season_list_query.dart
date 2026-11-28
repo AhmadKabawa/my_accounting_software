@@ -25,8 +25,7 @@ class SeasonSort extends Equatable {
   List<Object?> get props => [field, ascending];
 }
 
-class SeasonListQuery extends Equatable
-    implements PagedQuery<SeasonListQuery> {
+class SeasonListQuery extends Equatable implements PagedQuery<SeasonListQuery> {
   const SeasonListQuery({
     this.search = '',
     this.status = SeasonStatusFilter.all,
@@ -60,8 +59,7 @@ class SeasonListQuery extends Equatable
       search.isNotEmpty || status != SeasonStatusFilter.all || type != null;
 
   @override
-  SeasonListQuery withSearch(String value) =>
-      copyWith(search: value, page: 1);
+  SeasonListQuery withSearch(String value) => copyWith(search: value, page: 1);
 
   @override
   SeasonListQuery withPage(int value) => copyWith(page: value);
@@ -116,6 +114,13 @@ class SeasonListQuery extends Equatable
 
   @override
   List<Object?> get props => [
-    search, status, type, sortField, sortAscending, thenSorts, page, pageSize,
+    search,
+    status,
+    type,
+    sortField,
+    sortAscending,
+    thenSorts,
+    page,
+    pageSize,
   ];
 }

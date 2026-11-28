@@ -17,7 +17,12 @@ import 'package:accounting_software/app/features/catalog/collections/presentatio
 import 'package:accounting_software/app/features/catalog/collections/presentation/localization/collections_keys.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
-CrudListConfig<CatalogCollection, CollectionListQuery, CollectionsListCubit, CollectionsListEffect>
+CrudListConfig<
+  CatalogCollection,
+  CollectionListQuery,
+  CollectionsListCubit,
+  CollectionsListEffect
+>
 get collectionsListConfig => CrudListConfig(
   screenId: 'catalog.collections',
   titleKey: CollectionsKeys.title,
@@ -51,11 +56,16 @@ get collectionsListConfig => CrudListConfig(
   ),
   filterControls: (slot) => [
     SearchableDropdown<CollectionStatusFilter>(
-      options: const [CollectionStatusFilter.active, CollectionStatusFilter.inactive],
+      options: const [
+        CollectionStatusFilter.active,
+        CollectionStatusFilter.inactive,
+      ],
       labelKey: CollectionsKeys.status,
-      optionLabel: (v) => (v == CollectionStatusFilter.active
-          ? CollectionsKeys.active
-          : CollectionsKeys.inactive).tr(context: slot.context),
+      optionLabel: (v) =>
+          (v == CollectionStatusFilter.active
+                  ? CollectionsKeys.active
+                  : CollectionsKeys.inactive)
+              .tr(context: slot.context),
       value: slot.state.query.status == CollectionStatusFilter.all
           ? null
           : slot.state.query.status,
@@ -77,9 +87,11 @@ get collectionsListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'status',
         label: CollectionsKeys.status,
-        value: (slot.state.query.status == CollectionStatusFilter.active
-            ? CollectionsKeys.active
-            : CollectionsKeys.inactive).tr(context: slot.context),
+        value:
+            (slot.state.query.status == CollectionStatusFilter.active
+                    ? CollectionsKeys.active
+                    : CollectionsKeys.inactive)
+                .tr(context: slot.context),
         onRemove: () => slot.cubit.setStatus(CollectionStatusFilter.all),
       ),
   ],

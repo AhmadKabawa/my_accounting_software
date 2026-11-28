@@ -65,11 +65,8 @@ class CollectionListQuery extends Equatable
   CollectionListQuery withPage(int value) => copyWith(page: value);
 
   @override
-  CollectionListQuery cleared() => copyWith(
-    search: '',
-    status: CollectionStatusFilter.all,
-    page: 1,
-  );
+  CollectionListQuery cleared() =>
+      copyWith(search: '', status: CollectionStatusFilter.all, page: 1);
 
   CollectionListQuery withSorts(List<CollectionSort> values) {
     if (values.isEmpty || hasSameSorts(values)) return this;
@@ -109,6 +106,12 @@ class CollectionListQuery extends Equatable
 
   @override
   List<Object?> get props => [
-    search, status, sortField, sortAscending, thenSorts, page, pageSize,
+    search,
+    status,
+    sortField,
+    sortAscending,
+    thenSorts,
+    page,
+    pageSize,
   ];
 }

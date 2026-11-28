@@ -23,6 +23,13 @@ class CatalogCollection extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, name, code, isActive, description, image, startDate, endDate,
+    id,
+    name,
+    code,
+    isActive,
+    description,
+    image,
+    startDate,
+    endDate,
   ];
 }

@@ -70,9 +70,9 @@ Widget buildSeasonsDataSection(
         SeasonType.autumn => SeasonsKeys.autumn,
         null => SeasonsKeys.notSpecified,
       }),
-      AppText.raw(item.startDate == null
-          ? '—'
-          : DateOnly.toApiString(item.startDate!)),
+      AppText.raw(
+        item.startDate == null ? '—' : DateOnly.toApiString(item.startDate!),
+      ),
       AppBadge(
         label: item.isActive ? SeasonsKeys.active : SeasonsKeys.inactive,
         tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
@@ -92,9 +92,9 @@ Widget buildSeasonsDataSection(
         SeasonType.autumn => SeasonsKeys.autumn,
         null => SeasonsKeys.notSpecified,
       }),
-      AppText.raw(item.startDate == null
-          ? '—'
-          : DateOnly.toApiString(item.startDate!)),
+      AppText.raw(
+        item.startDate == null ? '—' : DateOnly.toApiString(item.startDate!),
+      ),
       AppBadge(
         label: item.isActive ? SeasonsKeys.active : SeasonsKeys.inactive,
         tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,

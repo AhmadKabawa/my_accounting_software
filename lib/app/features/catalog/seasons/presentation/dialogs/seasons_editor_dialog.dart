@@ -53,10 +53,7 @@ class _SeasonEditorDialogState extends State<SeasonEditorDialog> {
     _startDate = _initialStartDate;
     _endDate = _initialEndDate;
     _fields = CrudEditorFields(
-      initialValues: {
-        'name': item?.name ?? '',
-        'code': item?.code ?? '',
-      },
+      initialValues: {'name': item?.name ?? '', 'code': item?.code ?? ''},
     );
   }
 
@@ -95,11 +92,7 @@ class _SeasonEditorDialogState extends State<SeasonEditorDialog> {
       start: _startDate,
       end: _endDate,
     );
-    return CrudEditorDialog<
-      SeasonFormCubit,
-      SeasonFormState,
-      SeasonFormEffect
-    >(
+    return CrudEditorDialog<SeasonFormCubit, SeasonFormState, SeasonFormEffect>(
       cubit: context.read<SeasonFormCubit>(),
       fields: _fields,
       mode: widget.item == null ? CrudEditorMode.add : CrudEditorMode.edit,

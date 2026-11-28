@@ -21,6 +21,12 @@ class CollectionDraft extends Equatable {
 
   @override
   List<Object?> get props => [
-    name, code, description, image, startDate, endDate, isActive,
+    name,
+    code,
+    description,
+    image,
+    startDate,
+    endDate,
+    isActive,
   ];
 }

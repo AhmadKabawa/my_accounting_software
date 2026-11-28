@@ -9,7 +9,8 @@ class SetCollectionActiveParams {
   final bool isActive;
 }
 
-class SetCollectionActiveUseCase extends UseCase<Unit, SetCollectionActiveParams> {
+class SetCollectionActiveUseCase
+    extends UseCase<Unit, SetCollectionActiveParams> {
   SetCollectionActiveUseCase(this._r);
   final CollectionsRepository _r;
   @override

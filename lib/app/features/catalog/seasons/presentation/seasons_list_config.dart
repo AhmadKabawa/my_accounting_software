@@ -17,7 +17,12 @@ import 'package:accounting_software/app/features/catalog/seasons/presentation/di
 import 'package:accounting_software/app/features/catalog/seasons/presentation/localization/seasons_keys.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
-CrudListConfig<CatalogSeason, SeasonListQuery, SeasonsListCubit, SeasonsListEffect>
+CrudListConfig<
+  CatalogSeason,
+  SeasonListQuery,
+  SeasonsListCubit,
+  SeasonsListEffect
+>
 get seasonsListConfig => CrudListConfig(
   screenId: 'catalog.seasons',
   titleKey: SeasonsKeys.title,
@@ -53,9 +58,11 @@ get seasonsListConfig => CrudListConfig(
     SearchableDropdown<SeasonStatusFilter>(
       options: const [SeasonStatusFilter.active, SeasonStatusFilter.inactive],
       labelKey: SeasonsKeys.status,
-      optionLabel: (v) => (v == SeasonStatusFilter.active
-          ? SeasonsKeys.active
-          : SeasonsKeys.inactive).tr(context: slot.context),
+      optionLabel: (v) =>
+          (v == SeasonStatusFilter.active
+                  ? SeasonsKeys.active
+                  : SeasonsKeys.inactive)
+              .tr(context: slot.context),
       value: slot.state.query.status == SeasonStatusFilter.all
           ? null
           : slot.state.query.status,
@@ -103,9 +110,11 @@ get seasonsListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'status',
         label: SeasonsKeys.status,
-        value: (slot.state.query.status == SeasonStatusFilter.active
-            ? SeasonsKeys.active
-            : SeasonsKeys.inactive).tr(context: slot.context),
+        value:
+            (slot.state.query.status == SeasonStatusFilter.active
+                    ? SeasonsKeys.active
+                    : SeasonsKeys.inactive)
+                .tr(context: slot.context),
         onRemove: () => slot.cubit.setStatus(SeasonStatusFilter.all),
       ),
   ],

@@ -20,6 +20,11 @@ class SeasonDraft extends Equatable {
 
   @override
   List<Object?> get props => [
-    name, code, seasonType, startDate, endDate, isActive,
+    name,
+    code,
+    seasonType,
+    startDate,
+    endDate,
+    isActive,
   ];
 }

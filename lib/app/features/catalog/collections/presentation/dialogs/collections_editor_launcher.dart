@@ -34,9 +34,11 @@ Future<bool?> showCollectionEditor(
               : failure,
         );
       },
-      imagePicker: imagePicker ??
+      imagePicker:
+          imagePicker ??
           (sl.isRegistered<ImagePickerPort>() ? sl<ImagePickerPort>() : null),
-      dropTargetAdapter: dropTargetAdapter ??
+      dropTargetAdapter:
+          dropTargetAdapter ??
           (sl.isRegistered<FileDropTargetAdapter>()
               ? sl<FileDropTargetAdapter>()
               : null),

@@ -15,7 +15,12 @@ import 'package:accounting_software/app/features/catalog/collections/domain/fail
 
 class _FakeCollectionsRemote implements CollectionsRemoteDataSource {
   ApiResult<CollectionModel> createResult = const ApiSuccess(
-    CollectionModel(id: 1, name: 'Summer capsule', code: 'SUM-CAP', isActive: true),
+    CollectionModel(
+      id: 1,
+      name: 'Summer capsule',
+      code: 'SUM-CAP',
+      isActive: true,
+    ),
   );
   ApiResult<Unit> deleteResult = const ApiSuccess(unit);
   ApiResult<String> uploadResult = const ApiSuccess(
@@ -59,9 +64,7 @@ void main() {
     test('maps unique code conflict to duplicate failure', () async {
       final remote = _FakeCollectionsRemote()
         ..createResult = ApiFailure(ApiException.conflict(errorCode: '23505'));
-      final result = await CollectionsRepositoryImpl(
-        remote,
-      ).createCollection(
+      final result = await CollectionsRepositoryImpl(remote).createCollection(
         const CollectionDraft(name: 'Summer capsule', code: 'SUM-CAP'),
       );
       expect(
@@ -73,7 +76,9 @@ void main() {
     test('maps foreign key delete rejection to in-use failure', () async {
       final remote = _FakeCollectionsRemote()
         ..deleteResult = ApiFailure(ApiException.conflict(errorCode: '23503'));
-      final result = await CollectionsRepositoryImpl(remote).deleteCollection(1);
+      final result = await CollectionsRepositoryImpl(
+        remote,
+      ).deleteCollection(1);
       expect(
         result.fold((failure) => failure, (_) => null),
         isA<CollectionInUseFailure>(),
@@ -81,15 +86,14 @@ void main() {
     });
 
     test('returns uploaded image URL from the repository', () async {
-      final result = await CollectionsRepositoryImpl(
-        _FakeCollectionsRemote(),
-      ).uploadImage(
-        ImageUpload(
-          bytes: Uint8List.fromList([0xff, 0xd8, 0xff]),
-          fileName: 'collection.jpg',
-          mimeType: 'image/jpeg',
-        ),
-      );
+      final result = await CollectionsRepositoryImpl(_FakeCollectionsRemote())
+          .uploadImage(
+            ImageUpload(
+              bytes: Uint8List.fromList([0xff, 0xd8, 0xff]),
+              fileName: 'collection.jpg',
+              mimeType: 'image/jpeg',
+            ),
+          );
       expect(
         result.fold((failure) => failure, (url) => url),
         'https://cdn.example.test/collections/summer.webp',

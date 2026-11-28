@@ -175,8 +175,7 @@ class _CollectionEditorDialogState extends State<CollectionEditorDialog> {
           CollectionImageSection(
             image: _image,
             collectionName: _name,
-            uploader: (upload) =>
-                widget.imageUploader(upload),
+            uploader: (upload) => widget.imageUploader(upload),
             picker: widget.imagePicker,
             dropTargetAdapter: widget.dropTargetAdapter,
             onChanged: (value) {
@@ -192,7 +191,9 @@ class _CollectionEditorDialogState extends State<CollectionEditorDialog> {
           ),
           AppSwitch(
             value: _active,
-            labelKey: _active ? CollectionsKeys.active : CollectionsKeys.inactive,
+            labelKey: _active
+                ? CollectionsKeys.active
+                : CollectionsKeys.inactive,
             onChanged: (value) => setState(() => _active = value),
           ),
         ],

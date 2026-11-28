@@ -14,12 +14,7 @@ import 'package:accounting_software/app/features/catalog/seasons/presentation/lo
 import 'package:accounting_software/app/features/catalog/seasons/presentation/cubit/seasons_list_effect.dart';
 
 class SeasonsListCubit
-    extends
-        PagedListCubit<
-          CatalogSeason,
-          SeasonListQuery,
-          SeasonsListEffect
-        > {
+    extends PagedListCubit<CatalogSeason, SeasonListQuery, SeasonsListEffect> {
   SeasonsListCubit({
     required GetSeasonsUseCase getItems,
     required SetSeasonActiveUseCase setActive,
@@ -78,8 +73,7 @@ class SeasonsListCubit
     Iterable<CatalogSeason> items,
   ) => runBulk(
     items: items,
-    action: (item) =>
-        _set(SetSeasonActiveParams(id: item.id, isActive: true)),
+    action: (item) => _set(SetSeasonActiveParams(id: item.id, isActive: true)),
     kind: PagedMutationKind.statusChanged,
     successMessage: SeasonsKeys.statusUpdated,
   );
@@ -87,19 +81,17 @@ class SeasonsListCubit
     Iterable<CatalogSeason> items,
   ) => runBulk(
     items: items,
-    action: (item) =>
-        _set(SetSeasonActiveParams(id: item.id, isActive: false)),
+    action: (item) => _set(SetSeasonActiveParams(id: item.id, isActive: false)),
     kind: PagedMutationKind.statusChanged,
     successMessage: SeasonsKeys.statusUpdated,
   );
-  Future<BulkResult<CatalogSeason>> bulkDelete(
-    Iterable<CatalogSeason> items,
-  ) => runBulk(
-    items: items,
-    action: (item) => _delete(DeleteSeasonParams(item.id)),
-    kind: PagedMutationKind.deleted,
-    successMessage: SeasonsKeys.deleted,
-  );
+  Future<BulkResult<CatalogSeason>> bulkDelete(Iterable<CatalogSeason> items) =>
+      runBulk(
+        items: items,
+        action: (item) => _delete(DeleteSeasonParams(item.id)),
+        kind: PagedMutationKind.deleted,
+        successMessage: SeasonsKeys.deleted,
+      );
   Future<void> onSaved({required bool isNew}) => reloadAfterMutation(
     isNew ? PagedMutationKind.created : PagedMutationKind.updated,
   );

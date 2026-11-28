@@ -36,8 +36,9 @@ class CollectionsRepositoryImpl
           isFromCache: data.isFromCache,
         ),
       ),
-      ApiFailure<PaginatedResult<CollectionModel>>(:final exception) =>
-        Left(ExceptionMapper.map(exception)),
+      ApiFailure<PaginatedResult<CollectionModel>>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
@@ -48,8 +49,9 @@ class CollectionsRepositoryImpl
     final result = await _remote.createCollection(draft);
     return switch (result) {
       ApiSuccess<CollectionModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<CollectionModel>(:final exception) =>
-        Left(_mapWriteFailure(exception)),
+      ApiFailure<CollectionModel>(:final exception) => Left(
+        _mapWriteFailure(exception),
+      ),
     };
   });
 
@@ -61,24 +63,24 @@ class CollectionsRepositoryImpl
     final result = await _remote.updateCollection(id: id, draft: draft);
     return switch (result) {
       ApiSuccess<CollectionModel>(:final data) => Right(data.toEntity()),
-      ApiFailure<CollectionModel>(:final exception) =>
-        Left(_mapWriteFailure(exception)),
+      ApiFailure<CollectionModel>(:final exception) => Left(
+        _mapWriteFailure(exception),
+      ),
     };
   });
 
   @override
-  Future<Either<Failure, Unit>> deleteCollection(int id) =>
-      execute(() async {
-        final result = await _remote.deleteCollection(id);
-        return switch (result) {
-          ApiSuccess<Unit>() => const Right(unit),
-          ApiFailure<Unit>(:final exception) => Left(
-            exception is ApiException && exception.errorCode == '23503'
-                ? const CollectionInUseFailure()
-                : ExceptionMapper.map(exception),
-          ),
-        };
-      });
+  Future<Either<Failure, Unit>> deleteCollection(int id) => execute(() async {
+    final result = await _remote.deleteCollection(id);
+    return switch (result) {
+      ApiSuccess<Unit>() => const Right(unit),
+      ApiFailure<Unit>(:final exception) => Left(
+        exception is ApiException && exception.errorCode == '23503'
+            ? const CollectionInUseFailure()
+            : ExceptionMapper.map(exception),
+      ),
+    };
+  });
 
   @override
   Future<Either<Failure, Unit>> setCollectionActive({
@@ -91,7 +93,9 @@ class CollectionsRepositoryImpl
     );
     return switch (result) {
       ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) => Left(ExceptionMapper.map(exception)),
+      ApiFailure<Unit>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
     };
   });
 
@@ -101,8 +105,9 @@ class CollectionsRepositoryImpl
         final result = await _remote.uploadImage(image);
         return switch (result) {
           ApiSuccess<String>(:final data) => Right(data),
-          ApiFailure<String>(:final exception) =>
-            Left(ExceptionMapper.map(exception)),
+          ApiFailure<String>(:final exception) => Left(
+            ExceptionMapper.map(exception),
+          ),
         };
       });
 

@@ -5,7 +5,8 @@ import 'package:accounting_software/app/features/catalog/collections/domain/enti
 import 'package:accounting_software/app/features/catalog/collections/domain/entity/collection.dart';
 import 'package:accounting_software/app/features/catalog/collections/domain/repositories/collections_repository.dart';
 
-class CreateCollectionUseCase extends UseCase<CatalogCollection, CollectionDraft> {
+class CreateCollectionUseCase
+    extends UseCase<CatalogCollection, CollectionDraft> {
   CreateCollectionUseCase(this._r);
   final CollectionsRepository _r;
   @override

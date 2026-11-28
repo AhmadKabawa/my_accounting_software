@@ -51,7 +51,8 @@ class CollectionsListCubit
       CollectionsMutatedEffect(switch (kind) {
         PagedMutationKind.created => CollectionsMutationKind.created,
         PagedMutationKind.updated => CollectionsMutationKind.updated,
-        PagedMutationKind.statusChanged => CollectionsMutationKind.statusChanged,
+        PagedMutationKind.statusChanged =>
+          CollectionsMutationKind.statusChanged,
         PagedMutationKind.deleted => CollectionsMutationKind.deleted,
       });
   Future<void> setStatus(CollectionStatusFilter value) =>

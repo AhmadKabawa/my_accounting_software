@@ -8,15 +8,19 @@ import 'package:accounting_software/app/features/catalog/collections/domain/coll
 
 void main() {
   group('collection image policy', () {
-    test('uses the dedicated collections folder in the public image bucket', () {
-      expect(CollectionsEndpoint.imageBucket, 'product-images');
-      expect(CollectionsEndpoint.imageFolder, 'collections');
-      expect(collectionImagePolicy.maxBytes, 5 * 1024 * 1024);
-      expect(
-        collectionImagePolicy.allowedMimeTypes,
-        {'image/jpeg', 'image/png', 'image/webp'},
-      );
-    });
+    test(
+      'uses the dedicated collections folder in the public image bucket',
+      () {
+        expect(CollectionsEndpoint.imageBucket, 'product-images');
+        expect(CollectionsEndpoint.imageFolder, 'collections');
+        expect(collectionImagePolicy.maxBytes, 5 * 1024 * 1024);
+        expect(collectionImagePolicy.allowedMimeTypes, {
+          'image/jpeg',
+          'image/png',
+          'image/webp',
+        });
+      },
+    );
 
     test('accepts a JPEG signature within the size limit', () {
       final upload = ImageUpload(

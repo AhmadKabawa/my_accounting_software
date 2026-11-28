@@ -26,98 +26,118 @@ const collectionsCrudLabels = CrudLabels(
 );
 
 Widget buildCollectionsDataSection(
-  CrudDataContext<CatalogCollection, CollectionListQuery, CollectionsListCubit> data,
-) => CrudDataSection<CatalogCollection, CollectionListQuery, CollectionsListCubit>(
-  data: data,
-  columns: [
-    DataTableColumn(
-      labelKey: CollectionsKeys.collectionName,
-      sortKey: 'name',
-      priority: DataTableColumnPriority.primary,
-      flex: 3,
-      cellBuilder: (_, item) => AppText.raw(item.name),
-    ),
-    DataTableColumn(
-      labelKey: CollectionsKeys.code,
-      priority: DataTableColumnPriority.secondary,
-      flex: 2,
-      cellBuilder: (_, item) => Directionality(
-        textDirection: TextDirection.ltr,
-        child: AppText.raw(item.code),
-      ),
-    ),
-    DataTableColumn(
-      labelKey: CollectionsKeys.startDate,
-      priority: DataTableColumnPriority.hiddenOnMobile,
-      flex: 2,
-      cellBuilder: (_, item) => AppText.raw(
-        item.startDate == null ? '—' : DateOnly.toApiString(item.startDate!),
-      ),
-    ),
-  ],
-  labels: collectionsCrudLabels,
-  cardBuilder: (_, item) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      AppLogoThumb(
-        url: item.image,
-        label: item.name,
-        size: AppLogoSize.small,
-        fallbackIcon: AppIcons.catalog,
-      ),
-      const SizedBox(width: 12),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppText.raw(item.name, type: AppTextType.titleSmall),
-            AppText.raw(item.code),
-            AppText.raw(item.startDate == null
+  CrudDataContext<CatalogCollection, CollectionListQuery, CollectionsListCubit>
+  data,
+) =>
+    CrudDataSection<
+      CatalogCollection,
+      CollectionListQuery,
+      CollectionsListCubit
+    >(
+      data: data,
+      columns: [
+        DataTableColumn(
+          labelKey: CollectionsKeys.collectionName,
+          sortKey: 'name',
+          priority: DataTableColumnPriority.primary,
+          flex: 3,
+          cellBuilder: (_, item) => AppText.raw(item.name),
+        ),
+        DataTableColumn(
+          labelKey: CollectionsKeys.code,
+          priority: DataTableColumnPriority.secondary,
+          flex: 2,
+          cellBuilder: (_, item) => Directionality(
+            textDirection: TextDirection.ltr,
+            child: AppText.raw(item.code),
+          ),
+        ),
+        DataTableColumn(
+          labelKey: CollectionsKeys.startDate,
+          priority: DataTableColumnPriority.hiddenOnMobile,
+          flex: 2,
+          cellBuilder: (_, item) => AppText.raw(
+            item.startDate == null
                 ? '—'
-                : DateOnly.toApiString(item.startDate!)),
-            AppBadge(
-              label: item.isActive ? CollectionsKeys.active : CollectionsKeys.inactive,
-              tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
-              size: AppBadgeSize.small,
+                : DateOnly.toApiString(item.startDate!),
+          ),
+        ),
+      ],
+      labels: collectionsCrudLabels,
+      cardBuilder: (_, item) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppLogoThumb(
+            url: item.image,
+            label: item.name,
+            size: AppLogoSize.small,
+            fallbackIcon: AppIcons.catalog,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText.raw(item.name, type: AppTextType.titleSmall),
+                AppText.raw(item.code),
+                AppText.raw(
+                  item.startDate == null
+                      ? '—'
+                      : DateOnly.toApiString(item.startDate!),
+                ),
+                AppBadge(
+                  label: item.isActive
+                      ? CollectionsKeys.active
+                      : CollectionsKeys.inactive,
+                  tone: item.isActive
+                      ? AppBadgeTone.success
+                      : AppBadgeTone.neutral,
+                  size: AppBadgeSize.small,
+                ),
+              ],
             ),
-          ],
+          ),
+        ],
+      ),
+      gridBuilder: (_, item) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppLogoThumb(
+            url: item.image,
+            label: item.name,
+            size: AppLogoSize.small,
+            fallbackIcon: AppIcons.catalog,
+          ),
+          AppText.raw(item.name, type: AppTextType.titleSmall),
+          AppText.raw(item.code),
+          AppText.raw(
+            item.startDate == null
+                ? '—'
+                : DateOnly.toApiString(item.startDate!),
+          ),
+          AppBadge(
+            label: item.isActive
+                ? CollectionsKeys.active
+                : CollectionsKeys.inactive,
+            tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
+            size: AppBadgeSize.small,
+          ),
+        ],
+      ),
+      statusColumn: CrudStatusColumnConfig<CatalogCollection>(
+        labelKey: CollectionsKeys.status,
+        isActive: (item) => item.isActive,
+        badgeBuilder: (_, item) => AppBadge(
+          label: item.isActive
+              ? CollectionsKeys.active
+              : CollectionsKeys.inactive,
+          tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
+          size: AppBadgeSize.small,
         ),
       ),
-    ],
-  ),
-  gridBuilder: (_, item) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      AppLogoThumb(
-        url: item.image,
-        label: item.name,
-        size: AppLogoSize.small,
-        fallbackIcon: AppIcons.catalog,
-      ),
-      AppText.raw(item.name, type: AppTextType.titleSmall),
-      AppText.raw(item.code),
-      AppText.raw(item.startDate == null
-          ? '—'
-          : DateOnly.toApiString(item.startDate!)),
-      AppBadge(
-        label: item.isActive ? CollectionsKeys.active : CollectionsKeys.inactive,
-        tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
-        size: AppBadgeSize.small,
-      ),
-    ],
-  ),
-  statusColumn: CrudStatusColumnConfig<CatalogCollection>(
-    labelKey: CollectionsKeys.status,
-    isActive: (item) => item.isActive,
-    badgeBuilder: (_, item) => AppBadge(
-      label: item.isActive ? CollectionsKeys.active : CollectionsKeys.inactive,
-      tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
-      size: AppBadgeSize.small,
-    ),
-  ),
-  icon: AppIcons.catalog,
-  emptyTitleKey: CollectionsKeys.empty,
-  emptyDescriptionKey: CollectionsKeys.emptyDescription,
-  noResultsTitleKey: CollectionsKeys.noResults,
-  noResultsDescriptionKey: CollectionsKeys.noResultsDescription,
-);
+      icon: AppIcons.catalog,
+      emptyTitleKey: CollectionsKeys.empty,
+      emptyDescriptionKey: CollectionsKeys.emptyDescription,
+      noResultsTitleKey: CollectionsKeys.noResults,
+      noResultsDescriptionKey: CollectionsKeys.noResultsDescription,
+    );

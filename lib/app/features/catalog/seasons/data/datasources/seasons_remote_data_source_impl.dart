@@ -33,7 +33,8 @@ class SeasonsRemoteDataSourceImpl implements SeasonsRemoteDataSource {
         if (term.isNotEmpty)
           'or': '(name.ilike."*$term*",code.ilike."*$term*")',
         if (query.status == SeasonStatusFilter.active) 'is_active': 'eq.true',
-        if (query.status == SeasonStatusFilter.inactive) 'is_active': 'eq.false',
+        if (query.status == SeasonStatusFilter.inactive)
+          'is_active': 'eq.false',
         if (query.type != null) 'season_type': 'eq.${query.type}',
       },
     );

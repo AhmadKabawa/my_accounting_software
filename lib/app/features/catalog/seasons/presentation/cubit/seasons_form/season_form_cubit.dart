@@ -38,8 +38,7 @@ final class SeasonSaveFailedEffect extends SeasonFormEffect {
   final AppKey messageKey;
 }
 
-class SeasonFormCubit
-    extends BaseCubit<SeasonFormState, SeasonFormEffect> {
+class SeasonFormCubit extends BaseCubit<SeasonFormState, SeasonFormEffect> {
   SeasonFormCubit({
     required CreateSeasonUseCase create,
     required UpdateSeasonUseCase update,

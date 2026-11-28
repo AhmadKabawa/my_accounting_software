@@ -11,8 +11,7 @@ class UpdateSeasonParams {
   final SeasonDraft draft;
 }
 
-class UpdateSeasonUseCase
-    extends UseCase<CatalogSeason, UpdateSeasonParams> {
+class UpdateSeasonUseCase extends UseCase<CatalogSeason, UpdateSeasonParams> {
   UpdateSeasonUseCase(this._r);
   final SeasonsRepository _r;
   @override
