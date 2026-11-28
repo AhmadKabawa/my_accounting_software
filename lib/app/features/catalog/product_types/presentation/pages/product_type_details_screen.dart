@@ -9,7 +9,6 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_body/app_page_body.dart';
@@ -117,15 +116,9 @@ class _ProductTypeDetailsBody extends StatelessWidget {
                   variant: InlineBannerVariant.error,
                 ),
               if ((state.publishedProductCount ?? 0) > 0)
-                AppCard(
-                  child: AppText.raw(
-                    ProductTypesKeys.publishedProductsWarning.tr(
-                      context: context,
-                      namedArgs: {
-                        'count': state.publishedProductCount.toString(),
-                      },
-                    ),
-                  ),
+                InlineBanner(
+                  messageKey: ProductTypesKeys.publishedProductsWarning,
+                  variant: InlineBannerVariant.warning,
                 ),
               ProductTypeSizeGroupsSection(state: state, canManage: canManage),
               context.ui.spacing.gap(AppSpacing.md),
