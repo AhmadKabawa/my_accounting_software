@@ -24,7 +24,7 @@ class MaterialModel {
       name: _requiredString(json, 'name'),
       code: _requiredString(json, 'code'),
       isActive: _boolean(json['is_active'], fallback: true),
-      materialType: _parseMaterialType(json['material_type']),
+      materialType: MaterialType.tryParse(json['material_type'] as String?),
       description: _optionalString(json['description']),
     );
   }
@@ -53,10 +53,4 @@ class MaterialModel {
       value is String ? value : null;
   static bool _boolean(Object? value, {required bool fallback}) =>
       value is bool ? value : fallback;
-  static MaterialType? _parseMaterialType(Object? raw) {
-    for (final value in MaterialType.values) {
-      if (value.name == raw) return value;
-    }
-    return null;
-  }
 }

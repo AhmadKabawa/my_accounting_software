@@ -77,18 +77,14 @@ get materialsListConfig => CrudListConfig(
       allOptionLabel: MaterialsKeys.allStatuses,
       onChanged: (v) => slot.cubit.setStatus(v ?? MaterialStatusFilter.all),
     ),
-    SearchableDropdown<String>(
-      options: const ['natural', 'synthetic', 'blended'],
+    SearchableDropdown<MaterialType>(
+      options: MaterialType.values,
       labelKey: MaterialsKeys.type,
-      optionLabel: (v) => switch (v) {
-        'natural' => MaterialsKeys.natural.tr(context: slot.context),
-        'synthetic' => MaterialsKeys.synthetic.tr(context: slot.context),
-        _ => MaterialsKeys.blended.tr(context: slot.context),
-      },
-      value: slot.state.query.type,
+      optionLabel: (v) => _materialTypeLabel(v).tr(context: slot.context),
+      value: MaterialType.tryParse(slot.state.query.type),
       clearable: true,
       mode: SearchableDropdownMode.panel,
-      onChanged: slot.cubit.setType,
+      onChanged: (value) => slot.cubit.setType(value?.name),
     ),
   ],
   activeFilters: (slot) => [
@@ -103,11 +99,9 @@ get materialsListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'type',
         label: MaterialsKeys.type,
-        value: switch (slot.state.query.type) {
-          'natural' => MaterialsKeys.natural.tr(context: slot.context),
-          'synthetic' => MaterialsKeys.synthetic.tr(context: slot.context),
-          _ => MaterialsKeys.blended.tr(context: slot.context),
-        },
+        value: _materialTypeLabel(
+          MaterialType.tryParse(slot.state.query.type),
+        ).tr(context: slot.context),
         onRemove: () => slot.cubit.setType(null),
       ),
     if (slot.state.query.status != MaterialStatusFilter.all)
@@ -159,3 +153,11 @@ get materialsListConfig => CrudListConfig(
   ),
   dataSection: buildMaterialsDataSection,
 );
+
+
+AppKey _materialTypeLabel(MaterialType? type) => switch (type) {
+  MaterialType.natural => MaterialsKeys.natural,
+  MaterialType.synthetic => MaterialsKeys.synthetic,
+  MaterialType.blended => MaterialsKeys.blended,
+  null => MaterialsKeys.notSpecified,
+};

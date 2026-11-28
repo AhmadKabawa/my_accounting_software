@@ -1,6 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-enum FabricCategory { knit, woven, fleece }
+enum FabricCategory {
+  knit,
+  woven,
+  fleece;
+
+  static FabricCategory? tryParse(String? value) {
+    for (final category in values) {
+      if (category.name == value) return category;
+    }
+    return null;
+  }
+}
 
 class CatalogFabricType extends Equatable {
   const CatalogFabricType({

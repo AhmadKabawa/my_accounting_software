@@ -1,6 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-enum MaterialType { natural, synthetic, blended }
+enum MaterialType {
+  natural,
+  synthetic,
+  blended;
+
+  static MaterialType? tryParse(String? value) {
+    for (final type in values) {
+      if (type.name == value) return type;
+    }
+    return null;
+  }
+}
 
 class CatalogMaterial extends Equatable {
   const CatalogMaterial({

@@ -77,18 +77,14 @@ get fabricTypesListConfig => CrudListConfig(
       allOptionLabel: FabricTypesKeys.allStatuses,
       onChanged: (v) => slot.cubit.setStatus(v ?? FabricTypeStatusFilter.all),
     ),
-    SearchableDropdown<String>(
-      options: const ['knit', 'woven', 'fleece'],
+    SearchableDropdown<FabricCategory>(
+      options: FabricCategory.values,
       labelKey: FabricTypesKeys.category,
-      optionLabel: (v) => switch (v) {
-        'knit' => FabricTypesKeys.knit.tr(context: slot.context),
-        'woven' => FabricTypesKeys.woven.tr(context: slot.context),
-        _ => FabricTypesKeys.fleece.tr(context: slot.context),
-      },
-      value: slot.state.query.category,
+      optionLabel: (v) => _fabricCategoryLabel(v).tr(context: slot.context),
+      value: FabricCategory.tryParse(slot.state.query.category),
       clearable: true,
       mode: SearchableDropdownMode.panel,
-      onChanged: slot.cubit.setCategory,
+      onChanged: (value) => slot.cubit.setCategory(value?.name),
     ),
   ],
   activeFilters: (slot) => [
@@ -103,11 +99,9 @@ get fabricTypesListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'category',
         label: FabricTypesKeys.category,
-        value: switch (slot.state.query.category) {
-          'knit' => FabricTypesKeys.knit.tr(context: slot.context),
-          'woven' => FabricTypesKeys.woven.tr(context: slot.context),
-          _ => FabricTypesKeys.fleece.tr(context: slot.context),
-        },
+        value: _fabricCategoryLabel(
+          FabricCategory.tryParse(slot.state.query.category),
+        ).tr(context: slot.context),
         onRemove: () => slot.cubit.setCategory(null),
       ),
     if (slot.state.query.status != FabricTypeStatusFilter.all)
@@ -159,3 +153,11 @@ get fabricTypesListConfig => CrudListConfig(
   ),
   dataSection: buildFabricTypesDataSection,
 );
+
+
+AppKey _fabricCategoryLabel(FabricCategory? category) => switch (category) {
+  FabricCategory.knit => FabricTypesKeys.knit,
+  FabricCategory.woven => FabricTypesKeys.woven,
+  FabricCategory.fleece => FabricTypesKeys.fleece,
+  null => FabricTypesKeys.notSpecified,
+};
