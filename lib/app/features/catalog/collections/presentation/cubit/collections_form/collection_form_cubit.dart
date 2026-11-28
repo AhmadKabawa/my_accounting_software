@@ -51,11 +51,7 @@ class CollectionFormCubit
 
   final CreateCollectionUseCase _create;
   final UpdateCollectionUseCase _update;
-  final UploadCollectionImageUseCase _uploadImage;
   final FlashMessages _flash;
-
-  Future<Either<Failure, String>> uploadImage(ImageUpload image) =>
-      _uploadImage(image);
 
   Future<void> save({required CollectionDraft draft, int? id}) async {
     if (state is CollectionFormSaving || isClosed) return;
