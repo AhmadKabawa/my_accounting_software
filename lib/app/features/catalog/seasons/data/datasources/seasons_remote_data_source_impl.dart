@@ -83,8 +83,7 @@ class SeasonsRemoteDataSourceImpl implements SeasonsRemoteDataSource {
       for (final sort in query.sorts)
         '${sort.field.column}.${sort.ascending ? 'asc' : 'desc'}',
     ];
-    final hasName = query.sorts.any((sort) => sort.field == SeasonSortField.name);
-    return [...terms, if (!hasName) 'name.asc', 'id.asc'].join(',');
+    return [...terms, 'name.asc', 'id.asc'].join(',');
   }
 
   SeasonModel _single(List<dynamic> rows) =>
