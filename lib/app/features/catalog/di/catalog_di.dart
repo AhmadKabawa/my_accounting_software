@@ -8,6 +8,7 @@ import 'package:accounting_software/app/features/catalog/age_groups/di/age_group
 import 'package:accounting_software/app/features/catalog/units/di/units_di.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/di/option_sets_di.dart';
 import 'package:accounting_software/app/features/catalog/attributes/di/attributes_di.dart';
+import 'package:accounting_software/app/features/catalog/size_systems/di/size_systems_di.dart';
 import 'package:accounting_software/app/features/catalog/product_types/di/product_types_di.dart';
 import 'package:accounting_software/app/features/catalog/materials/di/materials_di.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/di/fabric_types_di.dart';
@@ -27,6 +28,7 @@ void initCatalogDI() {
   initUnitsDI();
   initOptionSetsDI();
   initAttributesDI();
+  initSizeSystemsDI();
   initProductTypesDI();
   initMaterialsDI();
   initFabricTypesDI();
