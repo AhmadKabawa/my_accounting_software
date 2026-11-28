@@ -63,9 +63,8 @@ class SeasonListQuery extends Equatable
       search.isNotEmpty || status != SeasonStatusFilter.all || type != null;
 
   @override
-  SeasonListQuery withSearch(String value) {
-    return copyWith(search: value, page: 1);
-  }
+  SeasonListQuery withSearch(String value) =>
+      copyWith(search: value, page: 1);
 
   @override
   SeasonListQuery withPage(int value) => copyWith(page: value);
