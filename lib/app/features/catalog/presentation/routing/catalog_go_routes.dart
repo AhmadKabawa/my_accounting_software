@@ -24,22 +24,76 @@ List<RouteBase> buildCatalogRoutes({
   required AccessCubit accessCubit,
   required bool Function() isAuthenticated,
 }) => [
-  ...buildCatalogFeatureGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildBrandsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildUnitsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildOptionSetsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildAttributesGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildSizeSystemsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildCategoriesGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildProductTypesGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildColorsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildTagsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildGendersGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildAgeGroupsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildMaterialsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildFabricTypesGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildCareInstructionsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildSeasonsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildCollectionsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
-  ...buildSportsGoRoutes(accessCubit: accessCubit, isAuthenticated: isAuthenticated),
+  ...buildCatalogFeatureGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildBrandsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildUnitsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildOptionSetsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildAttributesGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildSizeSystemsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildCategoriesGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildProductTypesGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildColorsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildTagsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildGendersGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildAgeGroupsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildMaterialsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildFabricTypesGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildCareInstructionsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildSeasonsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildCollectionsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
+  ...buildSportsGoRoutes(
+    accessCubit: accessCubit,
+    isAuthenticated: isAuthenticated,
+  ),
 ];
