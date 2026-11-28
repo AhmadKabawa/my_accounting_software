@@ -235,9 +235,9 @@ void main() {
 
   test('ambiguous count projection retries without embedded counts', () async {
     final remote = OptionSetsRemoteDataSourceImpl(api);
-    api.nextPaginatedFailure = ApiException.badRequest(
+    api.nextPaginatedFailure = ApiException.server(
       statusCode: 300,
-      errorCode: 'PGRST201',
+      serverMessage: 'Ambiguous PostgREST relationship',
     );
     final result = await remote.getOptionSets(const OptionSetListQuery());
     expect(result, isA<ApiSuccess<PaginatedResult<OptionSetModel>>>());
