@@ -11,6 +11,7 @@ import 'package:accounting_software/app/features/catalog/care_instructions/domai
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/entity/care_instruction_list_query.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/cubit/care_instructions_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/localization/care_instructions_keys.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/care_type_presentation.dart';
 
 const careInstructionsCrudLabels = CrudLabels(
   edit: CareInstructionsKeys.edit,
@@ -22,14 +23,6 @@ const careInstructionsCrudLabels = CrudLabels(
   deactivateConfirmationTitle: CareInstructionsKeys.deactivateTitle,
   deactivateConfirmationMessage: CareInstructionsKeys.deactivateMessage,
 );
-
-AppKey _typeLabel(CareType type) => switch (type) {
-  CareType.washing => CareInstructionsKeys.washing,
-  CareType.drying => CareInstructionsKeys.drying,
-  CareType.ironing => CareInstructionsKeys.ironing,
-  CareType.bleaching => CareInstructionsKeys.bleaching,
-  CareType.dryCleaning => CareInstructionsKeys.dryCleaning,
-};
 
 Widget buildCareInstructionsDataSection(
   CrudDataContext<CareInstruction, CareInstructionListQuery, CareInstructionsListCubit> data,
@@ -55,7 +48,7 @@ Widget buildCareInstructionsDataSection(
       labelKey: CareInstructionsKeys.careType,
       priority: DataTableColumnPriority.secondary,
       flex: 2,
-      cellBuilder: (_, item) => AppText(_typeLabel(item.careType)),
+      cellBuilder: (_, item) => AppText(careTypeLabel(item.careType)),
     ),
   ],
   labels: careInstructionsCrudLabels,

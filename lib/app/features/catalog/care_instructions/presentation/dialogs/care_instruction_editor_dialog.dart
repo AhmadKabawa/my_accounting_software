@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/entity/care_instruction.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/entity/care_instruction_draft.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/care_type_presentation.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/cubit/care_instruction_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/localization/care_instructions_keys.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/widgets/care_instruction_field_validators.dart';
@@ -24,9 +25,9 @@ class _CareInstructionEditorDialogState
     extends State<CareInstructionEditorDialog> {
   late final CrudEditorFields _fields;
   late final bool _initialActive;
-  late final CareType _initialType;
+  late final CareType? _initialType;
   bool _active = true;
-  CareType _selectedType = CareType.washing;
+  CareType? _selectedType;
 
   TextEditingController get _name => _fields['name'];
   TextEditingController get _code => _fields['code'];
@@ -39,7 +40,7 @@ class _CareInstructionEditorDialogState
     super.initState();
     final item = widget.item;
     _initialActive = item?.isActive ?? true;
-    _initialType = item?.careType ?? CareType.washing;
+    _initialType = item?.careType;
     _active = _initialActive;
     _selectedType = _initialType;
     _fields = CrudEditorFields(
@@ -62,20 +63,24 @@ class _CareInstructionEditorDialogState
     _selectedType = _initialType;
   });
 
-  Future<void> _save() => context.read<CareInstructionFormCubit>().save(
-    id: widget.item?.id,
-    draft: CareInstructionDraft(
-      name: _name.text.trim(),
-      code: _code.text.trim(),
-      careType: _selectedType,
-      description: _description.text.trim().isEmpty
-          ? null
-          : _description.text.trim(),
-      isActive: widget.item == null || _active != _initialActive
-          ? _active
-          : null,
-    ),
-  );
+  Future<void> _save() async {
+    final careType = _selectedType;
+    if (careType == null) return;
+    await context.read<CareInstructionFormCubit>().save(
+      id: widget.item?.id,
+      draft: CareInstructionDraft(
+        name: _name.text.trim(),
+        code: _code.text.trim(),
+        careType: careType,
+        description: _description.text.trim().isEmpty
+            ? null
+            : _description.text.trim(),
+        isActive: widget.item == null || _active != _initialActive
+            ? _active
+            : null,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) =>
@@ -88,7 +93,7 @@ class _CareInstructionEditorDialogState
         fields: _fields,
         mode: widget.item == null ? CrudEditorMode.add : CrudEditorMode.edit,
         labels: const CrudEditorLabels(
-          addTitle: CareInstructionsKeys.add,
+          addTitle: CareInstructionsKeys.addTitle,
           editTitle: CareInstructionsKeys.edit,
           duplicateTitle: CareInstructionsKeys.edit,
           subtitle: CareInstructionsKeys.description,
@@ -112,6 +117,7 @@ class _CareInstructionEditorDialogState
               decoration: InputDecoration(
                 label: AppText(CareInstructionsKeys.careType),
               ),
+              hint: AppText(CareInstructionsKeys.careType),
               validator: (value) => value == null
                   ? CareInstructionsKeys.required.tr(context: context)
                   : null,
@@ -119,7 +125,7 @@ class _CareInstructionEditorDialogState
                 for (final type in CareType.values)
                   DropdownMenuItem(
                     value: type,
-                    child: AppText(_careTypeKey(type)),
+                    child: AppText(careTypeLabel(type)),
                   ),
               ],
               onChanged: (value) {
@@ -154,12 +160,4 @@ class _CareInstructionEditorDialogState
           ],
         ),
       );
-
-  AppKey _careTypeKey(CareType type) => switch (type) {
-    CareType.washing => CareInstructionsKeys.washing,
-    CareType.drying => CareInstructionsKeys.drying,
-    CareType.ironing => CareInstructionsKeys.ironing,
-    CareType.bleaching => CareInstructionsKeys.bleaching,
-    CareType.dryCleaning => CareInstructionsKeys.dryCleaning,
-  };
 }

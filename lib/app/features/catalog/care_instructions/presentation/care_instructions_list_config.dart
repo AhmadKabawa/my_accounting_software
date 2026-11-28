@@ -14,16 +14,9 @@ import 'package:accounting_software/app/features/catalog/care_instructions/prese
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/cubit/care_instructions_list_effect.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/dialogs/care_instruction_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/localization/care_instructions_keys.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/care_type_presentation.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/widgets/care_instructions_data_section.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
-
-AppKey careTypeLabel(CareType type) => switch (type) {
-  CareType.washing => CareInstructionsKeys.washing,
-  CareType.drying => CareInstructionsKeys.drying,
-  CareType.ironing => CareInstructionsKeys.ironing,
-  CareType.bleaching => CareInstructionsKeys.bleaching,
-  CareType.dryCleaning => CareInstructionsKeys.dryCleaning,
-};
 
 CrudListConfig<
   CareInstruction,
@@ -72,7 +65,8 @@ get careInstructionsListConfig => CrudListConfig(
     SearchableDropdown<CareType>(
       options: CareType.values,
       labelKey: CareInstructionsKeys.careType,
-      optionLabel: (value) => careTypeLabel(value).tr(context: slot.context),
+      optionLabel: (value) =>
+          careTypeLabel(value).tr(context: slot.context),
       value: slot.state.query.careType,
       clearable: true,
       mode: SearchableDropdownMode.panel,
@@ -100,11 +94,10 @@ get careInstructionsListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'status',
         label: CareInstructionsKeys.status,
-        value:
-            (slot.state.query.status == CareInstructionStatusFilter.active
-                    ? CareInstructionsKeys.active
-                    : CareInstructionsKeys.inactive)
-                .tr(context: slot.context),
+        value: (slot.state.query.status == CareInstructionStatusFilter.active
+                ? CareInstructionsKeys.active
+                : CareInstructionsKeys.inactive)
+            .tr(context: slot.context),
         onRemove: () => slot.cubit.setStatus(CareInstructionStatusFilter.all),
       ),
   ],
@@ -114,7 +107,7 @@ get careInstructionsListConfig => CrudListConfig(
         label: NavKeys.catalog,
         onTap: () => context.go(CatalogRoutes.hub.path),
       ),
-      const AppBreadcrumbItem(label: CareInstructionsKeys.title),
+      const AppBreadcrumbItem(label: CareInstructionsKeys.breadcrumbTitle),
     ],
   ),
   capabilities: const CrudCapabilities(duplicate: false, bulkSelection: false),

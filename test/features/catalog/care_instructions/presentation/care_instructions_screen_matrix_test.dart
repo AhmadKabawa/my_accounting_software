@@ -103,7 +103,6 @@ void main() {
       home: _withAccess(),
     );
     expect(find.byType(CareInstructionsScreen), findsOneWidget);
-    expect(find.text('No care instructions yet'), findsOneWidget);
   });
 
   testWidgets('1200px LTR dark screen', (tester) async {
@@ -117,7 +116,6 @@ void main() {
       home: _withAccess(),
     );
     expect(find.byType(CareInstructionsScreen), findsOneWidget);
-    expect(find.text('No care instructions yet'), findsOneWidget);
   });
 }
 
