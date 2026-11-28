@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/date/date_only.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -40,9 +41,9 @@ Widget buildSeasonsDataSection(
       sortKey: 'startDate',
       priority: DataTableColumnPriority.secondary,
       flex: 2,
-      cellBuilder: (_, item) => AppText.raw(
-        item.startDate == null ? '—' : DateOnly.toApiString(item.startDate!),
-      ),
+      cellBuilder: (_, item) => item.startDate == null
+          ? AppText(CommonKeys.noValue)
+          : AppText.raw(DateOnly.toApiString(item.startDate!)),
     ),
     DataTableColumn(
       labelKey: SeasonsKeys.type,
@@ -70,9 +71,9 @@ Widget buildSeasonsDataSection(
         SeasonType.autumn => SeasonsKeys.autumn,
         null => SeasonsKeys.notSpecified,
       }),
-      AppText.raw(
-        item.startDate == null ? '—' : DateOnly.toApiString(item.startDate!),
-      ),
+      item.startDate == null
+          ? AppText(CommonKeys.noValue)
+          : AppText.raw(DateOnly.toApiString(item.startDate!)),
       AppBadge(
         label: item.isActive ? SeasonsKeys.active : SeasonsKeys.inactive,
         tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,
@@ -92,9 +93,9 @@ Widget buildSeasonsDataSection(
         SeasonType.autumn => SeasonsKeys.autumn,
         null => SeasonsKeys.notSpecified,
       }),
-      AppText.raw(
-        item.startDate == null ? '—' : DateOnly.toApiString(item.startDate!),
-      ),
+      item.startDate == null
+          ? AppText(CommonKeys.noValue)
+          : AppText.raw(DateOnly.toApiString(item.startDate!)),
       AppBadge(
         label: item.isActive ? SeasonsKeys.active : SeasonsKeys.inactive,
         tone: item.isActive ? AppBadgeTone.success : AppBadgeTone.neutral,

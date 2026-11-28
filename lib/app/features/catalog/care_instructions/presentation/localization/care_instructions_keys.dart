@@ -77,5 +77,5 @@ enum CareInstructionsKeys implements AppKey {
   @override
   final String en;
   @override
-  String get key => 'careinstructions.$name';
+  String get key => 'careinstructions.${this.name}';
 }

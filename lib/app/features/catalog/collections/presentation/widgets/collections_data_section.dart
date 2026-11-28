@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/date/date_only.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_badge/app_badge.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
@@ -56,15 +58,13 @@ Widget buildCollectionsDataSection(
           labelKey: CollectionsKeys.startDate,
           priority: DataTableColumnPriority.hiddenOnMobile,
           flex: 2,
-          cellBuilder: (_, item) => AppText.raw(
-            item.startDate == null
-                ? '—'
-                : DateOnly.toApiString(item.startDate!),
-          ),
+          cellBuilder: (_, item) => item.startDate == null
+              ? AppText(CommonKeys.noValue)
+              : AppText.raw(DateOnly.toApiString(item.startDate!)),
         ),
       ],
       labels: collectionsCrudLabels,
-      cardBuilder: (_, item) => Row(
+      cardBuilder: (context, item) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppLogoThumb(
@@ -73,18 +73,16 @@ Widget buildCollectionsDataSection(
             size: AppLogoSize.small,
             fallbackIcon: AppIcons.catalog,
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.ui.spacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppText.raw(item.name, type: AppTextType.titleSmall),
                 AppText.raw(item.code),
-                AppText.raw(
-                  item.startDate == null
-                      ? '—'
-                      : DateOnly.toApiString(item.startDate!),
-                ),
+                item.startDate == null
+                    ? AppText(CommonKeys.noValue)
+                    : AppText.raw(DateOnly.toApiString(item.startDate!)),
                 AppBadge(
                   label: item.isActive
                       ? CollectionsKeys.active
@@ -110,11 +108,9 @@ Widget buildCollectionsDataSection(
           ),
           AppText.raw(item.name, type: AppTextType.titleSmall),
           AppText.raw(item.code),
-          AppText.raw(
-            item.startDate == null
-                ? '—'
-                : DateOnly.toApiString(item.startDate!),
-          ),
+          item.startDate == null
+              ? AppText(CommonKeys.noValue)
+              : AppText.raw(DateOnly.toApiString(item.startDate!)),
           AppBadge(
             label: item.isActive
                 ? CollectionsKeys.active
