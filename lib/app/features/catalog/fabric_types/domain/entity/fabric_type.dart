@@ -5,7 +5,7 @@ enum FabricCategory {
   woven,
   fleece;
 
-  static FabricCategory? tryParse(String? value) {
+  static FabricCategory? tryParse(Object? value) {
     for (final category in values) {
       if (category.name == value) return category;
     }

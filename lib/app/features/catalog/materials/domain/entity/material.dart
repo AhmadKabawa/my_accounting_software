@@ -5,7 +5,7 @@ enum MaterialType {
   synthetic,
   blended;
 
-  static MaterialType? tryParse(String? value) {
+  static MaterialType? tryParse(Object? value) {
     for (final type in values) {
       if (type.name == value) return type;
     }

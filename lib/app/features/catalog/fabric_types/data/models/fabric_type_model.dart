@@ -27,7 +27,7 @@ class FabricTypeModel {
       code: _requiredString(json, 'code'),
       isActive: _boolean(json['is_active'], fallback: true),
       isNamedFabric: _boolean(json['is_named_fabric'], fallback: false),
-      fabricCategory: FabricCategory.tryParse(json['fabric_category'] as String?),
+      fabricCategory: FabricCategory.tryParse(json['fabric_category']),
       description: _optionalString(json['description']),
     );
   }

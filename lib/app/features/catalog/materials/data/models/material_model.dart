@@ -24,7 +24,7 @@ class MaterialModel {
       name: _requiredString(json, 'name'),
       code: _requiredString(json, 'code'),
       isActive: _boolean(json['is_active'], fallback: true),
-      materialType: MaterialType.tryParse(json['material_type'] as String?),
+      materialType: MaterialType.tryParse(json['material_type']),
       description: _optionalString(json['description']),
     );
   }
