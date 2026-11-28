@@ -27,6 +27,8 @@ Future<String?> catalogAccessRedirect(
     );
   }
 
+  if (!context.mounted) return null;
+
   return AccessRoutingLogic.require(
     const Permission('catalog.manage'),
     can: accessCubit.can,
