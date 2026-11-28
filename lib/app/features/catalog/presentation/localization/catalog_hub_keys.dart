@@ -60,6 +60,10 @@ enum CatalogHubKeys implements AppKey {
     ar: 'أدر المواسم التي تُستخدم لتصنيف المنتجات وفتراتها.',
     en: 'Manage product seasons and their date ranges.',
   ),
+  collectionsDescription(
+    ar: 'أدر مجموعات المنتجات وصورها والفترات المرتبطة بها.',
+    en: 'Manage product collections, images and date ranges.',
+  ),
   open(ar: 'فتح', en: 'Open');
 
   const CatalogHubKeys({required this.ar, required this.en});
