@@ -12,9 +12,9 @@ import '../../helpers/screen_matrix.dart';
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets(
-    'hub groups catalog areas and fits a narrow RTL viewport',
-    (tester) async {
+  testWidgets('hub groups catalog areas and fits a narrow RTL viewport', (
+    tester,
+  ) async {
       await pumpScreenMatrix(
         tester,
         width: 280,
@@ -41,9 +41,7 @@ void main() {
     },
   );
 
-  testWidgets(
-    'catalog hub area opens its configured route',
-    (tester) async {
+  testWidgets('catalog hub area opens its configured route', (tester) async {
       final router = GoRouter(
         initialLocation: '/',
         routes: [
@@ -53,9 +51,8 @@ void main() {
           ),
           GoRoute(
             path: BrandsRoutes.brands.path,
-            builder: (context, state) => const Scaffold(
-              body: Text('brands-destination'),
-            ),
+            builder: (context, state) =>
+                const Scaffold(body: Text('brands-destination')),
           ),
         ],
       );

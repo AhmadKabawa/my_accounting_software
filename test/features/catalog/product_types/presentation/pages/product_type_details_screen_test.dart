@@ -240,9 +240,9 @@ void main() {
     }
   }
 
-  testWidgets(
-    'failed details can be retried from the inline error state',
-    (tester) async {
+  testWidgets('failed details can be retried from the inline error state', (
+    tester,
+  ) async {
       _register(loadFailure: const ServerFailure());
       await pumpScreenMatrix(
         tester,
@@ -261,9 +261,9 @@ void main() {
     },
   );
 
-  testWidgets(
-    'published products are shown in a warning banner',
-    (tester) async {
+  testWidgets('published products are shown in a warning banner', (
+    tester,
+  ) async {
       _register(publishedCount: 2);
       await pumpScreenMatrix(
         tester,

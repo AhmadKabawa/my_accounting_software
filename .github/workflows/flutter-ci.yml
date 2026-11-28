@@ -38,11 +38,6 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Inspect Dart formatter output for Scope 1 widget tests
-        run: |
-          dart format --output=show test/features/catalog/catalog_hub_screen_test.dart | diff -u test/features/catalog/catalog_hub_screen_test.dart - || true
-          dart format --output=show test/features/catalog/product_types/presentation/pages/product_type_details_screen_test.dart | diff -u test/features/catalog/product_types/presentation/pages/product_type_details_screen_test.dart - || true
-
       - name: Verify Dart formatting
         run: dart format --output=none --set-exit-if-changed lib test
 
