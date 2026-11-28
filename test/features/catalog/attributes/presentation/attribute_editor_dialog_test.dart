@@ -136,7 +136,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.updatedDrafts, isEmpty);
-  });;
+  });
 
   testWidgets('used attribute locks data type and option set pickers', (
     tester,
