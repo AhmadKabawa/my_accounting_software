@@ -1,8 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
-import 'package:accounting_software/app/routing/app_go_router.dart';
 import 'package:accounting_software/app/core/routing/route_item.dart';
+import 'package:accounting_software/app/routing/route_registry.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
@@ -45,31 +45,12 @@ Set<String> buildPublicRoutes({
 
 final Set<String> publicRoutes = buildPublicRoutes();
 
-final Set<String> protectedRoutes = {
-  AuthRoutes.selectBranch.path,
-  AuthRoutes.changePassword.path,
-  HomeRoutes.home.path,
-  ProfileRoutes.profile.path,
-  BrandsRoutes.brands.path,
-  ColorsRoutes.colors.path,
-  CategoriesRoutes.categories.path,
-  GendersRoutes.genders.path,
-  AgeGroupsRoutes.ageGroups.path,
-  TagsRoutes.tags.path,
-  SportsRoutes.sports.path,
-  UnitsRoutes.units.path,
-  OptionSetsRoutes.optionSets.path,
-  AttributesRoutes.attributes.path,
-  SizeSystemsRoutes.sizeSystems.path,
-  ProductTypesRoutes.productTypes.path,
-  MaterialsRoutes.materials.path,
-  FabricTypesRoutes.fabricTypes.path,
-  CareInstructionsRoutes.careInstructions.path,
-  SeasonsRoutes.seasons.path,
-  CollectionsRoutes.collections.path,
-  CatalogRoutes.hub.path,
-  CatalogRoutes.masterData.path,
-};
+/// Session-protected paths are derived from the feature route registry.
+/// Adding a route to a feature's all list automatically classifies it here.
+final Set<String> protectedRoutes = allRoutes
+    .map((route) => route.path)
+    .where((path) => !publicRoutes.contains(path))
+    .toSet();
 
 /// Pure navigation policy. A forced password change is evaluated before
 /// branch selection and before every other authenticated destination.
@@ -143,10 +124,13 @@ String? resolveRedirect({
 
 /// UX-only permission routing. The database remains the security boundary.
 abstract class AccessRoutingLogic {
+  /// Builds a UI navigation guard without depending on the global router.
+  /// The caller supplies the permission reader, keeping routing policy pure
+  /// and breaking the route_guards.dart <-> app_go_router.dart import cycle.
   static GoRouterRedirect require(
     Permission permission, {
+    required bool Function(Permission permission) can,
     RouteItem fallback = HomeRoutes.home,
   }) =>
-      (context, state) =>
-          AppRouter.accessCubit.can(permission) ? null : fallback.path;
+      (context, state) => can(permission) ? null : fallback.path;
 }
