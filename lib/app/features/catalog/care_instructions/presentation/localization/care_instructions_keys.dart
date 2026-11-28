@@ -19,7 +19,7 @@ enum CareInstructionsKeys implements AppKey {
   active(ar: 'فعّالة', en: 'Active'),
   inactive(ar: 'موقوفة', en: 'Inactive'),
   allStatuses(ar: 'كل الحالات', en: 'All statuses'),
-  searchHint(ar: 'ابحث بالاسم أو الرمز', en: 'Search by name or code'),
+  searchHint(ar: 'بحث بالاسم/الرمز', en: 'Search name/code'),
   empty(ar: 'لا توجد تعليمات عناية', en: 'No care instructions yet'),
   emptyDescription(ar: 'أضف تعليمات العناية المستخدمة للمنتجات.', en: 'Add care instructions used by products.'),
   noResults(ar: 'لا توجد نتائج', en: 'No matching care instructions'),
