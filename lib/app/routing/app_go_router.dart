@@ -66,6 +66,12 @@ import 'package:accounting_software/app/features/catalog/option_sets/presentatio
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/pages/attributes_screen.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/routing/attributes_routes.dart';
+// [cat09:begin]
+import 'package:accounting_software/app/features/catalog/size_systems/groups/presentation/pages/size_groups_screen.dart';
+import 'package:accounting_software/app/features/catalog/size_systems/presentation/routing/size_systems_routes.dart';
+import 'package:accounting_software/app/features/catalog/size_systems/sizes/presentation/pages/sizes_screen.dart';
+import 'package:accounting_software/app/features/catalog/size_systems/systems/presentation/pages/size_systems_screen.dart';
+// [cat09:end]
 import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/pages/materials_screen.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
@@ -316,6 +322,54 @@ class AppRouter {
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: AttributesScreen()),
               ),
+              // [cat09:begin]
+              GoRoute(
+                path: SizeSystemsRoutes.sizeSystems.path,
+                name: SizeSystemsRoutes.sizeSystems.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: SizeSystemsScreen()),
+              ),
+              GoRoute(
+                path: SizeSystemsRoutes.groupsPath,
+                name: SizeSystemsRoutes.groupsName,
+                pageBuilder: (context, state) {
+                  final systemId = int.tryParse(
+                    state.pathParameters['systemId'] ?? '',
+                  );
+                  final extra = state.extra;
+                  return NoTransitionPage(
+                    child: systemId == null
+                        ? NotFoundScreen(location: state.uri.toString())
+                        : SizeGroupsScreen(
+                            systemId: systemId,
+                            labels: extra is SizeRouteContext ? extra : null,
+                          ),
+                  );
+                },
+              ),
+              GoRoute(
+                path: SizeSystemsRoutes.sizesPath,
+                name: SizeSystemsRoutes.sizesName,
+                pageBuilder: (context, state) {
+                  final systemId = int.tryParse(
+                    state.pathParameters['systemId'] ?? '',
+                  );
+                  final groupId = int.tryParse(
+                    state.pathParameters['groupId'] ?? '',
+                  );
+                  final extra = state.extra;
+                  return NoTransitionPage(
+                    child: systemId == null || groupId == null
+                        ? NotFoundScreen(location: state.uri.toString())
+                        : SizesScreen(
+                            systemId: systemId,
+                            groupId: groupId,
+                            labels: extra is SizeRouteContext ? extra : null,
+                          ),
+                  );
+                },
+              ),
+              // [cat09:end]
               GoRoute(
                 path: CategoriesRoutes.categories.path,
                 name: CategoriesRoutes.categories.name,

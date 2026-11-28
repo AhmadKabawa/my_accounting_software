@@ -13,6 +13,9 @@ import 'package:accounting_software/app/features/catalog/genders/presentation/lo
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/localization/age_groups_keys.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
+// [cat09:begin]
+import 'package:accounting_software/app/features/catalog/size_systems/presentation/localization/size_systems_keys.dart';
+// [cat09:end]
 import 'package:accounting_software/app/features/catalog/presentation/localization/catalog_hub_keys.dart';
 
 /// One place the shell can go to: what to show ([item], the model shared by
@@ -74,6 +77,13 @@ const appDestinations = [
           icon: AppIcons.catalog,
           path: '/catalog/attributes',
         ),
+        // [cat09:begin]
+        NavBarChild(
+          label: SizeSystemsKeys.systemsTitle,
+          icon: AppIcons.catalog,
+          path: '/catalog/size-systems',
+        ),
+        // [cat09:end]
         NavBarChild(
           label: ColorsKeys.title,
           icon: AppIcons.colors,

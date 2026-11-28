@@ -32,6 +32,9 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/loc
 import 'package:accounting_software/app/features/catalog/units/presentation/localization/units_keys.dart';
 import 'package:accounting_software/app/features/catalog/units/domain/failures/unit_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/failures/size_system_failure_keys.dart';
+// [cat09:begin]
+import 'package:accounting_software/app/features/catalog/size_systems/presentation/localization/size_systems_keys.dart';
+// [cat09:end]
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/localization/option_sets_keys.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/domain/failures/option_set_failure_keys.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
@@ -74,6 +77,9 @@ final List<AppKey> allKeys = <AppKey>[
   ...UnitsKeys.values,
   ...UnitFailureKeys.values,
   ...SizeSystemFailureKeys.values,
+  // [cat09:begin]
+  ...SizeSystemsKeys.values,
+  // [cat09:end]
   ...OptionSetsKeys.values,
   ...OptionSetFailureKeys.values,
   ...AttributesKeys.values,

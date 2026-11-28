@@ -1,0 +1,22 @@
+diff a/lib/app/features/catalog/presentation/pages/catalog_hub_screen.dart b/lib/app/features/catalog/presentation/pages/catalog_hub_screen.dart	(rejected hunks)
+@@ -31,3 +31,7 @@
+ import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
+ import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
++// [cat09:begin]
++import 'package:accounting_software/app/features/catalog/size_systems/presentation/localization/size_systems_keys.dart';
++import 'package:accounting_software/app/features/catalog/size_systems/presentation/routing/size_systems_routes.dart';
++// [cat09:end]
+ import 'package:accounting_software/app/features/catalog/care_instructions/presentation/localization/care_instructions_keys.dart';
+@@ -104,4 +108,12 @@
+           () => context.go(FabricTypesRoutes.fabricTypes.path),
+         ),
++        // [cat09:begin]
++        _CatalogArea(
++          AppIcons.catalog,
++          SizeSystemsKeys.systemsTitle,
++          SizeSystemsKeys.hubDescription,
++          () => context.go(SizeSystemsRoutes.sizeSystems.path),
++        ),
++        // [cat09:end]
+       ]),
+       _CatalogGroup(CatalogHubKeys.groupClassification, [
