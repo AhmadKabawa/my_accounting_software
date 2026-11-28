@@ -48,7 +48,7 @@ void main() {
       routes: [
         ...buildCatalogRoutes(
           accessCubit: accessCubit,
-          session: _FakeSessionGate(),
+          isAuthenticated: () => true,
         ),
         GoRoute(
           path: AccessRoutes.denied.path,
