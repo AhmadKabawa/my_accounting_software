@@ -62,6 +62,11 @@ enum CatalogHubKeys implements AppKey {
     ar: 'إدارة أنواع الأقمشة وتصنيفاتها وخصائصها.',
     en: 'Manage fabric types, categories and properties.',
   ),
+  careInstructionsTitle(ar: 'تعليمات العناية', en: 'Care instructions'),
+  careInstructionsDescription(
+    ar: 'إدارة إرشادات الغسيل والتجفيف والكيّ والعناية بالمنتجات.',
+    en: 'Manage washing, drying, ironing and other product care guidance.',
+  ),
   open(ar: 'فتح', en: 'Open');
 
   const CatalogHubKeys({required this.ar, required this.en});

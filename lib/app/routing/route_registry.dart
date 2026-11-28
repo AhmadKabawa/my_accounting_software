@@ -18,6 +18,7 @@ import 'package:accounting_software/app/features/catalog/attributes/presentation
 import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/routing/care_instructions_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 
 /// Build the route catalogue for the selected feature flags. Disabled
@@ -50,6 +51,7 @@ List<RouteItem> buildRouteRegistry({
   ...ProductTypesRoutes.all,
   ...MaterialsRoutes.all,
   ...FabricTypesRoutes.all,
+  ...CareInstructionsRoutes.all,
   ...UnitsRoutes.all,
   ...OptionSetsRoutes.all,
   ...AttributesRoutes.all,

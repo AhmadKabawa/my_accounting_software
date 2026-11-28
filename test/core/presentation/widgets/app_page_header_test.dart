@@ -32,6 +32,40 @@ void main() {
     );
   });
 
+  testWidgets('stacks at the exact 280px mobile card-width boundary', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(280, 760);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      buildTestApp(
+        direction: TextDirection.rtl,
+        textScale: 1.5,
+        home: Scaffold(
+          body: SizedBox(
+            width: 280,
+            child: AppPageHeader(
+              titleKey: TemplateKeys.defaultError,
+              primaryAction: const SizedBox(
+                width: 260,
+                height: 48,
+                child: Text('Action'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getTopLeft(find.text('Action')).dy,
+      greaterThanOrEqualTo(
+        tester.getBottomLeft(find.text(TemplateKeys.defaultError.en)).dy,
+      ),
+    );
+  });
+
   testWidgets('wide width keeps the action beside the heading', (tester) async {
     await tester.pumpWidget(
       buildTestApp(
