@@ -6,6 +6,12 @@ import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/features/access/presentation/routing/access_routes.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 
+/// Both permissions are accepted because the existing master-data screens and
+/// backend request B-01 explicitly support masterdata.manage without catalog.manage.
+bool hasCatalogRouteAccess(AccessCubit accessCubit) =>
+    accessCubit.can(const Permission('catalog.manage')) ||
+    accessCubit.can(const Permission('masterdata.manage'));
+
 /// Waits for the authenticated user's server access snapshot before deciding.
 /// A pending session is left to the app-level session redirect; an authenticated
 /// session with a missing/failed access snapshot is denied (fail closed).
@@ -31,7 +37,7 @@ Future<String?> catalogAccessRedirect(
 
   return AccessRoutingLogic.require(
     const Permission('catalog.manage'),
-    can: accessCubit.can,
+    can: (_) => hasCatalogRouteAccess(accessCubit),
     fallback: AccessRoutes.denied,
   )(context, state);
 }
