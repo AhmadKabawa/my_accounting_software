@@ -191,7 +191,7 @@ void main() {
     });
 
     test('every classified path belongs to a registered route', () {
-      final routeCatalog = buildRouteRegistry(
+      final routeCatalog = buildRegisteredRouteRegistry(
         signupEnabled: true,
         forgotPasswordEnabled: true,
         onboardingEnabled: true,
@@ -214,7 +214,7 @@ void main() {
     });
 
     test('route paths and names are unique across features', () {
-      final routeCatalog = buildRouteRegistry(
+      final routeCatalog = buildRegisteredRouteRegistry(
         signupEnabled: true,
         forgotPasswordEnabled: true,
         onboardingEnabled: true,
