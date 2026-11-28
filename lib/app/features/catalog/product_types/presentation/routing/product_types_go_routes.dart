@@ -20,7 +20,7 @@ List<RouteBase> buildProductTypesGoRoutes({
   ),
   GoRoute(
     path: ProductTypesRoutes.detailsPath,
-    name: ProductTypesRoutes.productTypeDetails.name,
+    name: ProductTypesRoutes.productTypeDetailsName,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, isAuthenticated, context, state),
     pageBuilder: (context, state) {
