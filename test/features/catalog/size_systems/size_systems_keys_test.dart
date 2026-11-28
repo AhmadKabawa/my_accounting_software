@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/features/catalog/size_systems/presentation/localization/size_systems_keys.dart';
 import 'package:accounting_software/app/features/catalog/size_systems/shared/domain/failures/size_system_failure_keys.dart';
 
@@ -12,7 +13,7 @@ void main() {
 
   test('keys follow the registry shape: lowercase section, one dot', () {
     final shape = RegExp(r'^[a-z]+\.[A-Za-z0-9]+$');
-    for (final key in [
+    for (final key in <AppKey>[
       ...SizeSystemsKeys.values,
       ...SizeSystemFailureKeys.values,
     ]) {
