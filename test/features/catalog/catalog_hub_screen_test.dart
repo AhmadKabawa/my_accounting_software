@@ -6,8 +6,8 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/loc
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/catalog_hub_keys.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/catalog_hub_screen.dart';
-import '../../../helpers/localized_app.dart';
-import '../../../helpers/screen_matrix.dart';
+import '../../helpers/localized_app.dart';
+import '../../helpers/screen_matrix.dart';
 
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
