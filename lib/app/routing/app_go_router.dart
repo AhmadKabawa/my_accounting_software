@@ -107,7 +107,7 @@ class AppRouter {
             initialLocation: CatalogRoutes.hub.path,
             routes: buildCatalogRoutes(
               accessCubit: accessCubit,
-              session: session,
+              isAuthenticated: () => session.current is SessionAuthenticated,
             ),
           ),
           StatefulShellBranch(
