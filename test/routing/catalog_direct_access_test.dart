@@ -13,6 +13,7 @@ import 'package:accounting_software/app/features/auth/domain/session/session_gat
 import 'package:accounting_software/app/features/access/presentation/routing/access_routes.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_go_routes.dart';
+import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_route_guard.dart';
 
 class _FakeSessionGate implements SessionGate {
   @override
@@ -79,6 +80,19 @@ void main() {
     router.dispose();
     await accessCubit.close();
   }
+
+  test('masterdata.manage preserves access to reference-data routes', () async {
+    final accessCubit = AccessCubit(
+      getMyAccess: GetMyAccessUseCase(
+        _FakeAccessRepository(const {Permission('masterdata.manage')}),
+      ),
+    );
+    await accessCubit.load();
+
+    expect(hasCatalogRouteAccess(accessCubit), isTrue);
+
+    await accessCubit.close();
+  });
 
   testWidgets(
     'direct catalog URL redirects to access denied without catalog.manage',
