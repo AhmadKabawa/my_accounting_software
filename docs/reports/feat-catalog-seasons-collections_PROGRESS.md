@@ -48,6 +48,6 @@
 
 ## حالة PR
 
-- لا يوجد PR مفتوح.
+- يوجد Draft PR رقم 23 باتجاه `integration/catalog-scope-1-combined`؛ ليس جاهزاً للدمج.
 - لا يوجد دمج في `integration/catalog-scope-1-combined`.
 - لا تعتبر الميزتان جاهزتين للدمج حتى اجتياز الفحوصات والمراجعة أعلاه.
