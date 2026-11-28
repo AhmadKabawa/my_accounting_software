@@ -62,7 +62,7 @@ void main() {
 
   test('key equals "<section>.<name>" with a non-empty section', () {
     for (final k in allKeys) {
-      expect(k.key, matches(RegExp(r'^[a-z]+(?:\.[a-z]+)*\.[A-Za-z0-9]+), reason: k.key);
+      expect(k.key, matches(RegExp(r'^[a-z]+(?:\.[a-z]+)*\.[A-Za-z0-9]+$')), reason: k.key);
     }
   });
 
