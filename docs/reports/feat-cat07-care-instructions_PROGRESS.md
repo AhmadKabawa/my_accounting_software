@@ -1,20 +1,23 @@
 # feat/cat07-care-instructions — Progress
 
 ## الحالة
-- أُنشئ الفرع من `integration/catalog-scope-1-combined`.
-- قُرئ عقد جدول `care_instructions` من DATA_MODEL ومصفوفة CAT-07؛ الجدول والقيود والعلاقات موجودة.
-- أُضيفت طبقات domain/data وtyped CareType مع tryParse وتحويل dry_cleaning.
-- أُضيفت شاشة CRUD مع فلتر الحالة ونوع العناية، بحث الاسم/الرمز، وترتيب ثابت sort_order ثم name.
-- تُقرأ أعداد علاقات الاستخدام لإخفاء الحذف للسجل المستخدم، مع تحويل SQLSTATE 23503 إلى Failure مترجم.
-- لم تُضف حقول icon أو sort_order إلى جسم الكتابة؛ الجسم محصور في name/code/care_type/description/is_active.
-- لم تُضف إجراءات جماعية.
-- اكتمل تسجيل DI والمسار والحارس ومفاتيح الترجمة وبطاقة Hub في commit مستقل بعد إعادة فحص الفرع الأساسي (لم يكن قد تغيّر).
-- لم تُعدّل product_types أو size_systems.
+- أُنشئت ميزة Feature-first كاملة لتعليمات العناية: typed entity/enum، model، endpoint، remote data source، repository، use cases، DI، list Cubit، form Cubit، editor، وCRUD list config.
+- العقد المستخدم مطابق لجدول `care_instructions`: `name`, `code`, `care_type`, `description`, `is_active`. لم يُرسل `icon` أو `sort_order` أو أي حقل خارج المصفوفة؛ `sort_order` يُقرأ ويُستخدم في ترتيب القائمة، ويُترك افتراضياً في الإنشاء.
+- `CareType.tryParse` يغطي القيم الخمس، وتسمية النوع موحدة في `care_type_presentation.dart`.
+- البحث بالاسم والرمز، وفلتر الحالة والنوع، والترتيب `sort_order` ثم `name`، وبطاقات الهاتف، ومنع العمليات الجماعية.
+- الكتابة محمية بـ `masterData.manage`. يُخفى الحذف عندما تشير علاقات الاستخدام إلى ارتباط، وSQLSTATE 23503 يُترجم إلى «أوقِف بدلاً من الحذف»؛ 23505 إلى رسالة تكرار واحدة.
+- سُجّل المسار `/catalog/care-instructions` في route registry/guards/router، وسُجل DI ومفاتيح الترجمة، وأضيفت بطاقة Hub.
+- جرى تحديث حالة `care_instructions` فقط في رأس `CAT-07_descriptive_tables.md`.
+- أُصلح حد الاستجابة في Core `AppPageHeader` عند عرض 280px، مع اختبار حدّي مستقل؛ كان السبب أن حد البطاقة يُقاس بـ adaptiveScale فينخفض تحت عرض الهاتف الفعلي.
+- لم تُلمس `size_systems` أو `product_types` domain/data.
 
-## CI
-- لم يُفتح PR بعد؛ لم يبدأ CI.
+## CI والاختبارات
+- آخر تشغيل تحقق مخصص: نجاح التنسيق، `flutter pub get`، `flutter analyze --no-fatal-infos`، واختبارات `AppPageHeader` وميزة `care_instructions`، run [46098232739](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/46098232739).
+- هذا التشغيل شمل اختبارات payload exact fields، قراءة الاستخدام، 23505/23503، حدود الحقول، Form Cubit، ومصفوفة الشاشة 280px RTL بمقياس 1.5 و1200px LTR داكن.
+- التشغيل الرسمي للفرع على آخر commit بعد إزالة ملف التحقق المؤقت سيُتابع قبل إغلاق المهمة.
 
-## المتبقي
-- تحديث حالة care_instructions وحدها في رأس مواصفة CAT-07.
-- مراجعة CI وإصلاح أي فشل.
-- لا يوجد اختبار حي حتى الآن لرفض القيم أو أسماء القيود أو RLS.
+## Backend والقيود
+- لا يوجد طلب Backend جديد؛ العقد والجدول والعلاقات موثقة في DATA_MODEL ووثائق backend، لذلك لم يُضف شيء إلى `BACKEND_REQUESTS.md`.
+- لم يُجرَ اتصال حي بـ Supabase. لم تُختبر فعلياً استجابات رفض القيم، أسماء قيود UNIQUE/FK على الخادم، أو سلوك RLS للمستخدمين/الأدوار.
+- لا تحقق بصري على Chrome أو أجهزة فعلية.
+- PR مفتوح باتجاه `integration/catalog-scope-1-combined` ولم يُدمج.
