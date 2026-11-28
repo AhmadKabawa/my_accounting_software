@@ -5,6 +5,6 @@ abstract final class OptionSetsEndpoint {
   static const optionsCollection = AppEndpoint('/rest/v1/options');
   static const baseSelect = 'id,name,code,selection_type,is_active';
   static const select =
-      'id,name,code,selection_type,is_active,options(count),attributes(count),product_type_option_sets(count)';
+      'id,name,code,selection_type,is_active,options!options_option_set_id_fkey(count),attributes!attributes_option_set_id_fkey(count),product_type_option_sets!product_type_option_sets_option_set_id_fkey(count)';
   static const optionsSelect = 'id,name,code,sort_order,is_active';
 }
