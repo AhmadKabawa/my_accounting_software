@@ -33,9 +33,9 @@ class OptionSetsRemoteDataSourceImpl implements OptionSetsRemoteDataSource {
     )) {
       if (_includeCounts &&
           exception is ApiException &&
-          (exception.errorCode == 'PGRST201' ||
-              exception.statusCode == 300 ||
-              exception.statusCode == 400)) {
+          (exception.errorCode == 'PGRST200' ||
+              exception.errorCode == 'PGRST201' ||
+              exception.statusCode == 300)) {
         _includeCounts = false;
         return _getOptionSets(query, select: OptionSetsEndpoint.baseSelect);
       }
