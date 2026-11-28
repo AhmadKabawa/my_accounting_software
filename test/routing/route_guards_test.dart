@@ -343,7 +343,6 @@ void main() {
     test('allows catalog navigation when catalog.manage is granted', () {
       expect(
         AccessRoutingLogic.resolve(
-          isResolved: true,
           allowed: true,
           fallback: AccessRoutes.denied,
         ),
