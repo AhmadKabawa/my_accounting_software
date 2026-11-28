@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
+import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/features/access/presentation/routing/access_routes.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
@@ -11,11 +12,10 @@ import 'package:accounting_software/app/features/auth/domain/session/session_gat
 /// session with a missing/failed access snapshot is denied (fail closed).
 Future<String?> catalogAccessRedirect(
   AccessCubit accessCubit,
-  SessionGate session,
   BuildContext context,
   GoRouterState state,
 ) async {
-  if (session.current is! SessionAuthenticated) return null;
+  if (sl<SessionGate>().current is! SessionAuthenticated) return null;
 
   if (accessCubit.state.status == AccessStatus.initial) {
     await accessCubit.load();
