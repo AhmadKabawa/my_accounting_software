@@ -20,7 +20,7 @@ List<RouteBase> buildCatalogFeatureGoRoutes({
     path: CatalogRoutes.masterData.path,
     name: CatalogRoutes.masterData.name,
     redirect: (context, state) async =>
-        await catalogAccessRedirect(accessCubit, session, context, state) ??
+        await catalogAccessRedirect(accessCubit, isAuthenticated, context, state) ??
         catalogMasterDataRedirect(),
   ),
 ];
