@@ -66,6 +66,10 @@ import 'package:accounting_software/app/features/catalog/option_sets/presentatio
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/pages/attributes_screen.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/routing/attributes_routes.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/pages/materials_screen.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/pages/fabric_types_screen.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -361,6 +365,12 @@ class AppRouter {
                     const NoTransitionPage(child: AgeGroupsScreen()),
               ),
               GoRoute(
+                path: MaterialsRoutes.materials.path,
+                name: MaterialsRoutes.materials.name,
+                    const NoTransitionPage(child: MaterialsScreen()),
+                path: FabricTypesRoutes.fabricTypes.path,
+                name: FabricTypesRoutes.fabricTypes.name,
+                    const NoTransitionPage(child: FabricTypesScreen()),
                 path: SportsRoutes.sports.path,
                 name: SportsRoutes.sports.name,
                 pageBuilder: (context, state) =>

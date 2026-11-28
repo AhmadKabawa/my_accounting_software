@@ -1,0 +1,17 @@
+import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/base/use_case.dart';
+import 'package:accounting_software/app/features/catalog/materials/domain/repositories/materials_repository.dart';
+
+class DeleteMaterialParams {
+  const DeleteMaterialParams(this.id);
+  final int id;
+}
+
+class DeleteMaterialUseCase extends UseCase<Unit, DeleteMaterialParams> {
+  DeleteMaterialUseCase(this._r);
+  final MaterialsRepository _r;
+  @override
+  Future<Either<Failure, Unit>> call(DeleteMaterialParams p) =>
+      _r.deleteMaterial(p.id);
+}

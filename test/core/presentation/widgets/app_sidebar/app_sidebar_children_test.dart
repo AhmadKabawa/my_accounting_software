@@ -17,6 +17,9 @@ import 'package:accounting_software/app/features/catalog/age_groups/presentation
 import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/presentation/localization/catalog_hub_keys.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
 final _items = [
@@ -41,6 +44,7 @@ Future<void> _pump(
   ValueChanged<String>? onChild,
   bool collapsed = false,
   ValueChanged<int>? onIndex,
+  List<NavBarItem>? items,
 }) async {
   tester.view.physicalSize = const Size(1400, 900);
   tester.view.devicePixelRatio = 1;
@@ -49,7 +53,7 @@ Future<void> _pump(
     buildTestApp(
       home: Scaffold(
         body: AppSidebar(
-          items: _items,
+          items: items ?? _items,
           activeIndex: activeIndex,
           onIndexChanged: onIndex ?? (_) {},
           activePath: activePath,
@@ -70,6 +74,19 @@ void main() {
 
     await _pump(tester, activeIndex: 1);
     expect(find.text('Brands'), findsOneWidget);
+  });
+
+  testWidgets('catalog sidebar shows materials and fabric types', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      activeIndex: 1,
+      items: [for (final destination in appDestinations) destination.item],
+    );
+
+    expect(find.text(CatalogHubKeys.materialsTitle.en), findsOneWidget);
+    expect(find.text(CatalogHubKeys.fabricTypesTitle.en), findsOneWidget);
   });
 
   testWidgets('a collapsed sidebar hides children', (tester) async {
@@ -165,6 +182,8 @@ void main() {
       ProductTypesRoutes.productTypes.path,
       TagsRoutes.tags.path,
       SportsRoutes.sports.path,
+      MaterialsRoutes.materials.path,
+      FabricTypesRoutes.fabricTypes.path,
     ]);
   });
 }

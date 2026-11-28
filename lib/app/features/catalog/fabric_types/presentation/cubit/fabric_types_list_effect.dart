@@ -1,0 +1,10 @@
+sealed class FabricTypesListEffect {
+  const FabricTypesListEffect();
+}
+
+enum FabricTypesMutationKind { created, updated, statusChanged, deleted }
+
+class FabricTypesMutatedEffect extends FabricTypesListEffect {
+  const FabricTypesMutatedEffect(this.kind);
+  final FabricTypesMutationKind kind;
+}

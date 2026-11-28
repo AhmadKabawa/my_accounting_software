@@ -1,0 +1,21 @@
+import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/base/use_case.dart';
+import 'package:accounting_software/app/features/catalog/materials/domain/entity/material_draft.dart';
+import 'package:accounting_software/app/features/catalog/materials/domain/entity/material.dart';
+import 'package:accounting_software/app/features/catalog/materials/domain/repositories/materials_repository.dart';
+
+class UpdateMaterialParams {
+  const UpdateMaterialParams(this.id, this.draft);
+  final int id;
+  final MaterialDraft draft;
+}
+
+class UpdateMaterialUseCase
+    extends UseCase<CatalogMaterial, UpdateMaterialParams> {
+  UpdateMaterialUseCase(this._r);
+  final MaterialsRepository _r;
+  @override
+  Future<Either<Failure, CatalogMaterial>> call(UpdateMaterialParams p) =>
+      _r.updateMaterial(id: p.id, draft: p.draft);
+}
