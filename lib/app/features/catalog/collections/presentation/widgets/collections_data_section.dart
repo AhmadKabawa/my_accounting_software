@@ -81,8 +81,8 @@ Widget buildCollectionsDataSection(
                 AppText.raw(item.name, type: AppTextType.titleSmall),
                 AppText.raw(item.code),
                 item.startDate == null
-                  ? AppText(CommonKeys.noValue)
-                  : AppText.raw(DateOnly.toApiString(item.startDate!)),
+                    ? AppText(CommonKeys.noValue)
+                    : AppText.raw(DateOnly.toApiString(item.startDate!)),
                 AppBadge(
                   label: item.isActive
                       ? CollectionsKeys.active
@@ -109,8 +109,8 @@ Widget buildCollectionsDataSection(
           AppText.raw(item.name, type: AppTextType.titleSmall),
           AppText.raw(item.code),
           item.startDate == null
-            ? AppText(CommonKeys.noValue)
-            : AppText.raw(DateOnly.toApiString(item.startDate!)),
+              ? AppText(CommonKeys.noValue)
+              : AppText.raw(DateOnly.toApiString(item.startDate!)),
           AppBadge(
             label: item.isActive
                 ? CollectionsKeys.active
