@@ -48,7 +48,6 @@ Widget buildCollectionsDataSection(
     ),
     DataTableColumn(
       labelKey: CollectionsKeys.startDate,
-      sortKey: 'startDate',
       priority: DataTableColumnPriority.hiddenOnMobile,
       flex: 2,
       cellBuilder: (_, item) => AppText.raw(

@@ -17,18 +17,17 @@ void main() {
       expect(next.hasActiveFilters, isTrue);
     });
 
-    test('cleared removes filters and preserves sorting', () {
+    test('cleared removes filters and preserves name ordering', () {
       const query = CollectionListQuery(
         search: 'capsule',
         status: CollectionStatusFilter.inactive,
-        sortField: CollectionSortField.startDate,
         sortAscending: false,
         page: 4,
       );
       final cleared = query.cleared();
       expect(cleared.search, isEmpty);
       expect(cleared.status, CollectionStatusFilter.all);
-      expect(cleared.sortField, CollectionSortField.startDate);
+      expect(cleared.sortField, CollectionSortField.name);
       expect(cleared.sortAscending, isFalse);
       expect(cleared.page, 1);
     });

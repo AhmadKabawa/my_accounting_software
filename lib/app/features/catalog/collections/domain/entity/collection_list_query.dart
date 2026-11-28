@@ -4,8 +4,7 @@ import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 enum CollectionStatusFilter { all, active, inactive }
 
 enum CollectionSortField {
-  name('name'),
-  startDate('start_date');
+  name('name');
 
   const CollectionSortField(this.column);
   final String column;

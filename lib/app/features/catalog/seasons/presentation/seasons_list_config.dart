@@ -30,7 +30,6 @@ get seasonsListConfig => CrudListConfig(
   sort: CrudSortConfig<SeasonListQuery, SeasonsListCubit>(
     options: [
       FilterBarSortOption(key: 'startDate', label: SeasonsKeys.sortByStartDate),
-      FilterBarSortOption(key: 'name', label: SeasonsKeys.sortByName),
     ],
     current: (q) => [
       for (final s in q.sorts) FilterBarSort(s.field.name, s.ascending),

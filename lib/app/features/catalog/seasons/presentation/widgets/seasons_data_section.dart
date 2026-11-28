@@ -31,7 +31,6 @@ Widget buildSeasonsDataSection(
   columns: [
     DataTableColumn(
       labelKey: SeasonsKeys.seasonName,
-      sortKey: 'name',
       priority: DataTableColumnPriority.primary,
       flex: 3,
       cellBuilder: (_, item) => AppText.raw(item.name),

@@ -4,8 +4,7 @@ import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 enum SeasonStatusFilter { all, active, inactive }
 
 enum SeasonSortField {
-  startDate('start_date'),
-  name('name');
+  startDate('start_date');
 
   const SeasonSortField(this.column);
   final String column;
