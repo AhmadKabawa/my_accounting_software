@@ -105,6 +105,24 @@ void main() {
     expect(check('', [ValidationRule.pattern], p: p), isNotNull);
   });
 
+  test('date range allows missing endpoints and rejects an earlier end', () {
+    expect(AppValidator.validateDateRange(), isNull);
+    expect(
+      AppValidator.validateDateRange(
+        start: DateTime(2026, 11, 27),
+        end: DateTime(2026, 11, 26),
+      ),
+      isNotNull,
+    );
+    expect(
+      AppValidator.validateDateRange(
+        start: DateTime(2026, 11, 27, 23),
+        end: DateTime(2026, 11, 27),
+      ),
+      isNull,
+    );
+  });
+
   test('httpUrl accepts only absolute http/https URLs with a host', () {
     expect(check('https://a.com/x.png', [ValidationRule.httpUrl]), isNull);
     expect(check('http://a.com', [ValidationRule.httpUrl]), isNull);

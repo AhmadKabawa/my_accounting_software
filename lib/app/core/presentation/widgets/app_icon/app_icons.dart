@@ -61,6 +61,7 @@ abstract final class AppIcons {
 
   // Pickers (ScopeSelector).
   static const expand = AppIconData.material(Icons.expand_more);
+  static const calendar = AppIconData.material(Icons.calendar_today_outlined);
   static const search = AppIconData.material(Icons.search);
   static const sortNeutral = AppIconData.material(Icons.unfold_more);
   static const sortAscending = AppIconData.material(Icons.arrow_upward);
