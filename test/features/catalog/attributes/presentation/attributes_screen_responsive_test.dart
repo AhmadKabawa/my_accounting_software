@@ -96,6 +96,7 @@ void main() {
             width: width,
             direction: direction,
             dark: dark,
+            textScale: width == 280 ? 1.5 : 1,
             home: Scaffold(
               body: BlocProvider<AccessCubit>(
                 create: (_) => AccessCubit(
