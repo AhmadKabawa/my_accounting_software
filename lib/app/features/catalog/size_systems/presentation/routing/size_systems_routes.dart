@@ -16,8 +16,8 @@ abstract final class SizeSystemsRoutes {
     'catalog.sizeSystems',
   );
 
-  // Dynamic routes are registered in GoRouter directly and included in the
-  // route catalogue so they receive the same protected classification.
+  // Dynamic routes are registered in GoRouter directly and added to the
+  // complete route registry in app/routing/route_registry.dart.
   static const groupsPath = '/catalog/size-systems/:systemId';
   static const groupsName = 'catalog.sizeSystemGroups';
   static const sizesPath = '/catalog/size-systems/:systemId/groups/:groupId';
