@@ -100,7 +100,7 @@ get materialsListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'type',
         label: MaterialsKeys.type,
-        value: _materialTypeLabel(
+        value: materialTypeLabel(
           MaterialType.tryParse(slot.state.query.type),
         ).tr(context: slot.context),
         onRemove: () => slot.cubit.setType(null),
@@ -154,10 +154,3 @@ get materialsListConfig => CrudListConfig(
   ),
   dataSection: buildMaterialsDataSection,
 );
-
-AppKey _materialTypeLabel(MaterialType? type) => switch (type) {
-  MaterialType.natural => MaterialsKeys.natural,
-  MaterialType.synthetic => MaterialsKeys.synthetic,
-  MaterialType.blended => MaterialsKeys.blended,
-  null => MaterialsKeys.notSpecified,
-};

@@ -100,7 +100,7 @@ get fabricTypesListConfig => CrudListConfig(
       FilterBarFilter(
         id: 'category',
         label: FabricTypesKeys.category,
-        value: _fabricCategoryLabel(
+        value: fabricCategoryLabel(
           FabricCategory.tryParse(slot.state.query.category),
         ).tr(context: slot.context),
         onRemove: () => slot.cubit.setCategory(null),
@@ -154,10 +154,3 @@ get fabricTypesListConfig => CrudListConfig(
   ),
   dataSection: buildFabricTypesDataSection,
 );
-
-AppKey _fabricCategoryLabel(FabricCategory? category) => switch (category) {
-  FabricCategory.knit => FabricTypesKeys.knit,
-  FabricCategory.woven => FabricTypesKeys.woven,
-  FabricCategory.fleece => FabricTypesKeys.fleece,
-  null => FabricTypesKeys.notSpecified,
-};
