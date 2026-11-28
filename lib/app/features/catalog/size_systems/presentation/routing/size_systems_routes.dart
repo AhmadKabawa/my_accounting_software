@@ -16,8 +16,8 @@ abstract final class SizeSystemsRoutes {
     'catalog.sizeSystems',
   );
 
-  // Dynamic routes are registered in GoRouter directly. The registry exposes
-  // only the stable list destination for home-route discovery.
+  // Dynamic routes are registered in GoRouter directly and included in the
+  // route catalogue so they receive the same protected classification.
   static const groupsPath = '/catalog/size-systems/:systemId';
   static const groupsName = 'catalog.sizeSystemGroups';
   static const sizesPath = '/catalog/size-systems/:systemId/groups/:groupId';
