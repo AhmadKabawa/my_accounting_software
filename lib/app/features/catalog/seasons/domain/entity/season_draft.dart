@@ -6,7 +6,6 @@ class SeasonDraft extends Equatable {
     required this.name,
     required this.code,
     this.seasonType,
-    this.description,
     this.startDate,
     this.endDate,
     this.isActive,
@@ -15,13 +14,12 @@ class SeasonDraft extends Equatable {
   final String name;
   final String code;
   final SeasonType? seasonType;
-  final String? description;
   final DateTime? startDate;
   final DateTime? endDate;
   final bool? isActive;
 
   @override
   List<Object?> get props => [
-    name, code, seasonType, description, startDate, endDate, isActive,
+    name, code, seasonType, startDate, endDate, isActive,
   ];
 }

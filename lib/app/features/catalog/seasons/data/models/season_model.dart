@@ -8,7 +8,6 @@ class SeasonModel {
     required this.code,
     required this.isActive,
     this.seasonType,
-    this.description,
     this.startDate,
     this.endDate,
   });
@@ -18,7 +17,6 @@ class SeasonModel {
   final String code;
   final bool isActive;
   final SeasonType? seasonType;
-  final String? description;
   final DateTime? startDate;
   final DateTime? endDate;
 
@@ -32,7 +30,6 @@ class SeasonModel {
       code: _requiredString(json, 'code'),
       isActive: json['is_active'] is bool ? json['is_active'] as bool : true,
       seasonType: _parseType(json['season_type']),
-      description: _optionalString(json['description']),
       startDate: DateOnly.fromApiString(json['start_date'] as String?),
       endDate: DateOnly.fromApiString(json['end_date'] as String?),
     );
@@ -44,7 +41,6 @@ class SeasonModel {
     code: code,
     isActive: isActive,
     seasonType: seasonType,
-    description: description,
     startDate: startDate,
     endDate: endDate,
   );
@@ -54,9 +50,6 @@ class SeasonModel {
     if (value is String && value.trim().isNotEmpty) return value;
     throw FormatException('Invalid $key');
   }
-
-  static String? _optionalString(Object? value) =>
-      value is String ? value : null;
 
   static SeasonType? _parseType(Object? raw) {
     for (final value in SeasonType.values) {

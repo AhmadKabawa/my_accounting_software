@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
-import 'package:accounting_software/app/core/localization/keys/date_picker_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_date_picker_field/app_date_picker_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text/app_text.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_switch/app_switch.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_editor/crud_editor.dart';
 import 'package:accounting_software/app/features/catalog/seasons/domain/entity/season.dart';
 import 'package:accounting_software/app/features/catalog/seasons/domain/entity/season_draft.dart';
@@ -34,7 +32,6 @@ class _SeasonEditorDialogState extends State<SeasonEditorDialog> {
 
   TextEditingController get _name => _fields['name'];
   TextEditingController get _code => _fields['code'];
-  TextEditingController get _description => _fields['description'];
 
   bool get _extraDirty =>
       _active != _initialActive ||
@@ -58,7 +55,6 @@ class _SeasonEditorDialogState extends State<SeasonEditorDialog> {
       initialValues: {
         'name': item?.name ?? '',
         'code': item?.code ?? '',
-        'description': item?.description ?? '',
       },
     );
   }
@@ -86,9 +82,6 @@ class _SeasonEditorDialogState extends State<SeasonEditorDialog> {
       seasonType: _selectedType,
       startDate: _startDate,
       endDate: _endDate,
-      description: _description.text.trim().isEmpty
-          ? null
-          : _description.text.trim(),
       isActive: widget.item == null || _active != _initialActive
           ? _active
           : null,
@@ -113,7 +106,7 @@ class _SeasonEditorDialogState extends State<SeasonEditorDialog> {
         addTitle: SeasonsKeys.add,
         editTitle: SeasonsKeys.edit,
         duplicateTitle: SeasonsKeys.duplicate,
-        subtitle: SeasonsKeys.description,
+        subtitle: SeasonsKeys.editorSubtitle,
         save: SeasonsKeys.save,
         cancel: SeasonsKeys.cancel,
       ),
@@ -177,11 +170,6 @@ class _SeasonEditorDialogState extends State<SeasonEditorDialog> {
             textDirection: TextDirection.ltr,
             validator: SeasonFieldValidators.code,
             onChanged: (_) => scope.clearFailure(),
-          ),
-          AppTextField(
-            controller: _description,
-            labelKey: SeasonsKeys.description,
-            maxLines: 3,
           ),
           AppSwitch(
             value: _active,
