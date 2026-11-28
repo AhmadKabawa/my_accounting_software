@@ -25,7 +25,7 @@ import 'package:accounting_software/app/features/catalog/seasons/presentation/ro
 import 'package:accounting_software/app/features/catalog/collections/presentation/routing/collections_routes.dart';
 import 'package:accounting_software/app/features/splash/presentation/routing/splash_routes.dart';
 
-/// Build the route catalogue for the selected feature flags. Disabled
+/// Build stable feature destinations for dashboard discovery. Disabled
 /// features are absent from the registry, not merely hidden in the UI.
 List<RouteItem> buildRouteRegistry({
   bool signupEnabled = AppConfig.signupEnabled,
