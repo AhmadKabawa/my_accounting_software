@@ -17,14 +17,14 @@
 | `access/` | الدور الحالي والصلاحيات وفحص إظهار عناصر الواجهة | `access/cubit/access_cubit.dart` |
 | `di/` | تسجيل خدمات Core في GetIt | `di/service_locator.dart` |
 | `error/` | الاستثناءات الداخلية، Failure، التحويل والترجمة | `error/mappers/exception_mapper.dart` |
-| `foundation/` | أنواع ونتائج مشتركة، إعدادات، Logger، UseCases، التحقق، سياسة ورفع الصور | `foundation/types/api_result.dart` و`foundation/image/` |
+| `foundation/` | أنواع ونتائج مشتركة، إعدادات، Logger، UseCases، التحقق، تاريخ بلا وقت، سياسة ورفع الصور | `foundation/types/api_result.dart` و`foundation/image/` |
 | `localization/` | اللغة الحالية، مفاتيح الترجمة، تحميل الترجمات واتجاه النص | `localization/cubit/locale_cubit.dart` |
 | `network/` | Dio وواجهته، Interceptors، الاتصال، الإلغاء، عقد Realtime ورفع Storage | `network/api_client_interface.dart` و`network/storage/storage_image_uploader.dart` |
 | `platform/` | قدرات المنصة، اختيار الصور والسحب والإفلات وتنفيذاتها المعزولة | `platform/platform_capabilities.dart` و`platform/file_drop/` |
 | `presentation/design_system/responsive/` | القياس والـ Tokens وواجهات Responsive | `presentation/design_system/responsive/extension/ui_extension.dart` |
 | `presentation/design_system/theme/` | Light/Dark Theme والألوان والطباعة وThemeCubit | `presentation/design_system/theme/app_theme.dart` |
 | `presentation/state_management/` | BaseCubit وEffects وBlocObserver | `presentation/state_management/base_cubit.dart` |
-| `presentation/widgets/` | Widgets موحدة مشتركة | `presentation/widgets/app_*` |
+| `presentation/widgets/` | Widgets موحدة مشتركة، ومنها `AppDatePickerField` | `presentation/widgets/app_*` |
 | `routing/` | `RouteItem`، transitions، observer ومساعدات GoRouter (المسارات نفسها في الميزات) | `routing/route_item.dart` |
 | `storage/` | عقد التخزين وتطبيقات SharedPreferences وSecure وHive | `storage/storage_service.dart` |
 

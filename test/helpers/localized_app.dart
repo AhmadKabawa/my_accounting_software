@@ -4,6 +4,7 @@ import 'package:easy_localization/src/localization.dart';
 import 'package:easy_localization/src/translations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
@@ -21,9 +22,6 @@ void useTranslations(Locale locale) {
   );
 }
 
-/// What `EasyLocalization` provides in the real app: without a
-/// `Localization` delegate in the tree, `AppKey.tr(context: context)` (used by
-/// `AppText`) throws.
 class _LocalizationDelegate extends LocalizationsDelegate<Localization> {
   const _LocalizationDelegate();
 
@@ -38,18 +36,14 @@ class _LocalizationDelegate extends LocalizationsDelegate<Localization> {
   bool shouldReload(covariant LocalizationsDelegate<Localization> old) => false;
 }
 
-/// A [MaterialApp] with the app theme, the localization delegate, a forced
-/// text [direction] (RTL by default, as the product is Arabic-first) and an
-/// optional [textScale]. Pass [home], or a [router] for go_router tests.
-///
-/// The locale stays `en` on purpose: the Material delegates have no Arabic
-/// here. The language of the texts is chosen with [useTranslations].
+/// A [MaterialApp] with the app theme and both Material localization delegates.
 Widget buildTestApp({
   Widget? home,
   RouterConfig<Object>? router,
   ThemeData? theme,
   TextDirection direction = TextDirection.rtl,
   double textScale = 1,
+  Locale? locale,
 }) {
   Widget builder(BuildContext context, Widget? child) => Directionality(
     textDirection: direction,
@@ -61,27 +55,35 @@ Widget buildTestApp({
     ),
   );
 
-  const delegates = <LocalizationsDelegate<dynamic>>[_LocalizationDelegate()];
+  const delegates = <LocalizationsDelegate<dynamic>>[
+    _LocalizationDelegate(),
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ];
+  const supportedLocales = [Locale('en', 'US'), Locale('en'), Locale('ar')];
   final appTheme = theme ?? AppTheme.light();
 
   if (router != null) {
     return MaterialApp.router(
       routerConfig: router,
       theme: appTheme,
+      locale: locale,
+      supportedLocales: supportedLocales,
       localizationsDelegates: delegates,
       builder: builder,
     );
   }
   return MaterialApp(
     theme: appTheme,
+    locale: locale,
+    supportedLocales: supportedLocales,
     localizationsDelegates: delegates,
     builder: builder,
     home: home,
   );
 }
 
-/// Sets the logical screen size of a widget test (device pixel ratio 1) and
-/// restores it afterwards.
 void setScreenSize(WidgetTester tester, Size size) {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
