@@ -61,12 +61,9 @@ void main() {
   });
 
   test('key equals "<section>.<name>" with a non-empty section', () {
+    final validKey = RegExp(r'^[a-z]+\.[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*');
     for (final k in allKeys) {
-      expect(
-        k.key,
-        matches(RegExp(r'^[a-z]+\.[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*
-        reason: k.key,
-      );
+      expect(validKey.stringMatch(k.key), k.key, reason: k.key);
     }
   });
 
