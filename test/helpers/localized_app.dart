@@ -4,6 +4,7 @@ import 'package:easy_localization/src/localization.dart';
 import 'package:easy_localization/src/translations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/localization/translations/asset_loader.dart';
 import 'package:accounting_software/app/core/presentation/design_system/theme/app_theme.dart';
@@ -61,7 +62,12 @@ Widget buildTestApp({
     ),
   );
 
-  const delegates = <LocalizationsDelegate<dynamic>>[_LocalizationDelegate()];
+  const delegates = <LocalizationsDelegate<dynamic>>[
+    _LocalizationDelegate(),
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ];
   final appTheme = theme ?? AppTheme.light();
 
   if (router != null) {

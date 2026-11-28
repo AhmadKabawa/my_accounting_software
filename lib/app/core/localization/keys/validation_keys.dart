@@ -47,6 +47,10 @@ enum ValidationKeys implements AppKey {
   fieldMaxLength(
     ar: 'يجب ألا يتجاوز {length} حرفاً',
     en: 'Must not exceed {length} characters',
+  ),
+  endBeforeStart(
+    ar: 'تاريخ النهاية لا يمكن أن يسبق تاريخ البداية',
+    en: 'End date cannot be before start date',
   );
 
   const ValidationKeys({required this.ar, required this.en});

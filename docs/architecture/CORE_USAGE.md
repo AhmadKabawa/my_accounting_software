@@ -22,7 +22,8 @@
 | طلب شبكة | `IApiClient` + `<Feature>Endpoints` | `network/` + `features/<f>/data/` |
 | تحويل خطأ | `ExceptionMapper` ثم `Failure.messageKey` | `error/` |
 | إعداداً أو قيمة بيئة | `AppConfig` | `foundation/config/app_config.dart` |
-| تحققاً من حقل نموذج | `AppValidator` | `foundation/validation/app_validator.dart` |
+| تحققاً من حقل نموذج أو ترتيب فترة | `AppValidator` و`validateDateRange` | `foundation/validation/app_validator.dart` |
+| اختيار تاريخ فقط | `AppDatePickerField`؛ التحويل `yyyy-MM-dd` عبر `DateOnly` | `presentation/widgets/app_date_picker_field/` و`foundation/date/date_only.dart` |
 | مبلغاً مالياً أو تنسيقه | `Money` + `AmountFormatter` | `foundation/money/` |
 | تخزيناً | `PrefsStorageService` / `SecureStorageService` / Hive | `storage/` |
 | تنقلاً | `<Feature>Routes` + GoRouter | `features/<f>/presentation/routing/` |

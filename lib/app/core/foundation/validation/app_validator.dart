@@ -150,6 +150,16 @@ class AppValidator {
     return null;
   }
 
+  /// Validates an optional date range; the end cannot precede the start.
+  static String? validateDateRange({DateTime? start, DateTime? end}) {
+    if (start == null || end == null) return null;
+    final startDate = DateTime(start.year, start.month, start.day);
+    final endDate = DateTime(end.year, end.month, end.day);
+    return endDate.isBefore(startDate)
+        ? ValidationKeys.endBeforeStart.tr()
+        : null;
+  }
+
   /// Translation Helper
   static String _translate(
     ValidationRule rule,
