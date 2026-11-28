@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/routing/not_found_screen.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
-import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_route_guard.dart';
 import 'package:accounting_software/app/features/catalog/size_systems/presentation/routing/size_systems_routes.dart';
 import 'package:accounting_software/app/features/catalog/size_systems/systems/presentation/pages/size_systems_screen.dart';
@@ -10,13 +9,13 @@ import 'package:accounting_software/app/features/catalog/size_systems/sizes/pres
 
 List<RouteBase> buildSizeSystemsGoRoutes({
   required AccessCubit accessCubit,
-  required SessionGate session,
+  required bool Function() isAuthenticated,
 }) => [
   GoRoute(
     path: SizeSystemsRoutes.sizeSystems.path,
     name: SizeSystemsRoutes.sizeSystems.name,
     redirect: (context, state) =>
-        catalogAccessRedirect(accessCubit, session, context, state),
+        catalogAccessRedirect(accessCubit, isAuthenticated, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: SizeSystemsScreen()),
   ),
