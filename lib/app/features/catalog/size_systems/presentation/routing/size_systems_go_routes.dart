@@ -23,7 +23,7 @@ List<RouteBase> buildSizeSystemsGoRoutes({required AccessCubit accessCubit, requ
         path: SizeSystemsRoutes.groupsPath,
         name: SizeSystemsRoutes.groupsName,
         redirect: (context, state) =>
-            catalogAccessRedirect(accessCubit, context, state),
+            catalogAccessRedirect(accessCubit, session, context, state),
         pageBuilder: (context, state) {
           final systemId = int.tryParse(state.pathParameters['systemId'] ?? '');
           final extra = state.extra;
@@ -41,7 +41,7 @@ List<RouteBase> buildSizeSystemsGoRoutes({required AccessCubit accessCubit, requ
         path: SizeSystemsRoutes.sizesPath,
         name: SizeSystemsRoutes.sizesName,
         redirect: (context, state) =>
-            catalogAccessRedirect(accessCubit, context, state),
+            catalogAccessRedirect(accessCubit, session, context, state),
         pageBuilder: (context, state) {
           final systemId = int.tryParse(state.pathParameters['systemId'] ?? '');
           final groupId = int.tryParse(state.pathParameters['groupId'] ?? '');
