@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_feature_go_routes.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_go_routes.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_go_routes.dart';
@@ -20,23 +21,26 @@ import 'package:accounting_software/app/features/catalog/collections/presentatio
 import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_go_routes.dart';
 
 /// Aggregates the Catalog sub-feature route modules without owning routes.
-List<RouteBase> buildCatalogRoutes({required AccessCubit accessCubit}) => [
-  ...buildCatalogFeatureGoRoutes(accessCubit: accessCubit),
-  ...buildBrandsGoRoutes(accessCubit: accessCubit),
-  ...buildUnitsGoRoutes(accessCubit: accessCubit),
-  ...buildOptionSetsGoRoutes(accessCubit: accessCubit),
-  ...buildAttributesGoRoutes(accessCubit: accessCubit),
-  ...buildSizeSystemsGoRoutes(accessCubit: accessCubit),
-  ...buildCategoriesGoRoutes(accessCubit: accessCubit),
-  ...buildProductTypesGoRoutes(accessCubit: accessCubit),
-  ...buildColorsGoRoutes(accessCubit: accessCubit),
-  ...buildTagsGoRoutes(accessCubit: accessCubit),
-  ...buildGendersGoRoutes(accessCubit: accessCubit),
-  ...buildAgeGroupsGoRoutes(accessCubit: accessCubit),
-  ...buildMaterialsGoRoutes(accessCubit: accessCubit),
-  ...buildFabricTypesGoRoutes(accessCubit: accessCubit),
-  ...buildCareInstructionsGoRoutes(accessCubit: accessCubit),
-  ...buildSeasonsGoRoutes(accessCubit: accessCubit),
-  ...buildCollectionsGoRoutes(accessCubit: accessCubit),
-  ...buildSportsGoRoutes(accessCubit: accessCubit),
+List<RouteBase> buildCatalogRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
+  ...buildCatalogFeatureGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildBrandsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildUnitsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildOptionSetsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildAttributesGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildSizeSystemsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildCategoriesGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildProductTypesGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildColorsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildTagsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildGendersGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildAgeGroupsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildMaterialsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildFabricTypesGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildCareInstructionsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildSeasonsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildCollectionsGoRoutes(accessCubit: accessCubit, session: session),
+  ...buildSportsGoRoutes(accessCubit: accessCubit, session: session),
 ];
