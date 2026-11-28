@@ -76,10 +76,7 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
         attributeOptions: attributeOptions.getOrElse(() => const []),
         optionSetOptions: optionOptions.getOrElse(() => const []),
         genderOptions: genders.getOrElse(() => const []),
-        publishedProductCount: publishedCount.fold(
-          (_) => null,
-          (count) => count,
-        ),
+        publishedProductCount: _publishedProductCount,
       ),
     );
   }
