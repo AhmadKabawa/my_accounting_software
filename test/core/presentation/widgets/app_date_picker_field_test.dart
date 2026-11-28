@@ -157,14 +157,20 @@ void main() {
     await tester.pumpWidget(
       buildTestApp(
         locale: const Locale('en'),
-        home: Builder(builder: (context) => Text(DateOnly.format(context, DateTime(2026, 11, 27)))),
+        home: Builder(
+          builder: (context) =>
+              Text(DateOnly.format(context, DateTime(2026, 11, 27))),
+        ),
       ),
     );
     final english = tester.widget<Text>(find.byType(Text)).data;
     await tester.pumpWidget(
       buildTestApp(
         locale: const Locale('ar'),
-        home: Builder(builder: (context) => Text(DateOnly.format(context, DateTime(2026, 11, 27)))),
+        home: Builder(
+          builder: (context) =>
+              Text(DateOnly.format(context, DateTime(2026, 11, 27))),
+        ),
       ),
     );
     final arabic = tester.widget<Text>(find.byType(Text)).data;

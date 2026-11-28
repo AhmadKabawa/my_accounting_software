@@ -61,11 +61,7 @@ Widget buildTestApp({
     GlobalWidgetsLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
   ];
-  const supportedLocales = [
-    Locale('en', 'US'),
-    Locale('en'),
-    Locale('ar'),
-  ];
+  const supportedLocales = [Locale('en', 'US'), Locale('en'), Locale('ar')];
   final appTheme = theme ?? AppTheme.light();
 
   if (router != null) {

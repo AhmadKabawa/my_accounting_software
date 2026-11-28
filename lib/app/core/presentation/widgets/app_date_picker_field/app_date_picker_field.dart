@@ -44,8 +44,8 @@ class AppDatePickerField extends StatelessWidget {
     final initial = selected.isBefore(first)
         ? first
         : selected.isAfter(last)
-            ? last
-            : selected;
+        ? last
+        : selected;
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
