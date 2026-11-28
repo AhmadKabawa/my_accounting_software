@@ -1,53 +1,61 @@
 # Progress — feat/catalog-seasons-collections
 
-## الحالة الحالية
+## الحالة النهائية
 
-- الفرع: `feat/catalog-seasons-collections`.
-- الهدف: `integration/catalog-scope-1-combined`.
-- آخر تحديث: 2026-11-28.
-- التنفيذ البرمجي للميزتين وصل إلى مرحلة تكامل أولي، لكنه **غير معتمد للدمج**؛ لم تُشغّل أدوات Dart/Flutter ولم تُراجع نتائج CI بعد التغييرات.
+- الفرع الهدف: `integration/catalog-scope-1-combined`.
+- تاريخ التكامل: 2026-11-28.
+- تم دمج الفروع الأربعة بالترتيب المطلوب:
+  1. `feat/core-date-picker` — كان موجوداً مسبقاً في تاريخ فرع التكامل.
+  2. `fix/scope-1-catalog-review` — كان مدمجاً مسبقاً عبر PR #22.
+  3. `feat/cat07-care-instructions`.
+  4. `feat/catalog-seasons-collections`.
+- تم دمج الميزتين الأخيرتين بدمجين متسلسلين، ثم دمج PR التكامل #24 في الفرع الهدف.
+- Merge commit: `171ff50aa5fe56230e3816cef2001486e912b7b1`.
+- PR التكامل: https://github.com/AhmadKabawa/my_accounting_software/pull/24
 
 ## Core Date Picker
 
-- دُمج فرع `feat/core-date-picker` داخل فرع التنفيذ بعملية **merge commit ذات parentين**، وليس cherry-pick.
-- يتضمن الدمج `DateOnly`, `AppDatePickerField`, تحقق نطاق التاريخ، مفاتيح الترجمة والاختبارات.
-- لم يُجرَ تشغيل محلي لـ `dart format`, `flutter analyze` أو `flutter test`.
+- موجود في الفرع الهدف قبل دمج الميزتين الأخيرتين.
+- يتضمن `DateOnly`, `AppDatePickerField`, تحقق نطاق التاريخ، مفاتيح الترجمة والاختبارات.
+- تم الحفاظ على هذه التغييرات أثناء حل تعارضات التسجيل والملفات المشتركة.
 
 ## Seasons
 
-- أُنشئت طبقات domain/data/presentation/DI، مع كيان typed وDraft وPagedQuery.
-- الحقول المطابقة لجدول قاعدة البيانات: `name`, `code`, `season_type`, `start_date`, `end_date`, `is_active`. لم يُضف حقل description لأنه غير موجود في عقد الجدول.
-- استعلام PostgREST يفلتر بالنوع والحالة والبحث، والفرز الافتراضي `start_date`, ثم `name`, ثم `id`.
-- أُضيف نموذج التحرير مع `AppDatePickerField`، وصفحة القائمة، route ثابت، DI، مفاتيح الترجمة وبطاقة Catalog Hub.
-- الإجراءات الجماعية معطلة كما يحدد CAT-07.
-- أُضيفت اختبارات للـ query/model؛ لم تُشغّل.
+- طبقات domain/data/presentation/DI مع كيان typed وDraft وPagedQuery.
+- الحقول المطابقة لعقد الجدول: `name`, `code`, `season_type`, `start_date`, `end_date`, `is_active`.
+- PostgREST filters للنوع والحالة والبحث، والفرز الافتراضي `start_date`, ثم `name`, ثم `id`.
+- نموذج التحرير يستخدم `AppDatePickerField`، مع صفحة القائمة وroute وDI ومفاتيح الترجمة وبطاقة Catalog Hub.
+- الإجراءات الجماعية معطلة وفق CAT-07.
 
 ## Collections
 
-- أُنشئت طبقات domain/data/presentation/DI، مع typed entity/draft/query وPostgREST repository.
+- طبقات domain/data/presentation/DI مع typed entity/draft/query وPostgREST repository.
 - الحقول: `name`, `code`, `description`, `image`, `start_date`, `end_date`, `is_active`.
-- أُضيف `AppDatePickerField` للتاريخين، و`AppImageUploadField` للرفع إلى `product-images/collections/` وفق سياسة 5 MB وJPEG/PNG/WebP.
-- أُضيف route ثابت، DI، مفاتيح الترجمة وبطاقة Catalog Hub.
-- أُضيفت اختبارات للـ query/model؛ لم تُشغّل.
+- يستخدم `AppDatePickerField` للتاريخين و`AppImageUploadField` للرفع إلى `product-images/collections/`.
+- سياسة الرفع الموثقة: 5 MB وJPEG/PNG/WebP.
+- route وDI ومفاتيح الترجمة وبطاقة Catalog Hub مضافة.
 
-## الربط والتوثيق
+## حل تعارضات التكامل
 
-- تم ربط الميزتين في `catalog_di.dart`, `route_registry.dart`, `app_go_router.dart`, `key_registry.dart` و`CatalogHubScreen`.
-- تم تحديث `CAT-07_descriptive_tables.md` لتسجيل تنفيذ Core Date Picker والميزتين وحالة التحقق.
-- تم توثيق استخدام سياسة Storage المعتمدة B-32؛ لم يتم اختبار رفع حي أو صلاحيات Supabase في هذه الجلسة.
-- لم تُلمس `product_types` أو `size_systems`.
+- جُمعت تسجيلات Catalog DI للميزات الثلاث.
+- جُمعت GoRouter routes وroute registry وتصنيف المسارات المحمية.
+- حُفظ تصميم Catalog Hub المجمع وأضيفت بطاقات تعليمات العناية والمواسم والمجموعات.
+- جُمعت مفاتيح الترجمة في `key_registry.dart` مع الاحتفاظ بمفاتيح DatePicker.
+- جُمعت تغييرات CAT-07، وتم تحديث اختبار عدد بطاقات Catalog Hub.
+- عولجت مشكلة تكرار مفاتيح CareInstructions، وحماية مسارات Seasons/Collections، والقيم البديلة غير المترجمة، واستخدام spacing token.
+- لم تُغيّر ملفات `product_types` أو `size_systems`.
 
-## القرارات/القيود المتبقية
+## التحقق
 
-1. قرار D-DT-1 معتمد: الكود يمنع حفظ `start_date > end_date` في الواجهة. لا يوجد CHECK في قاعدة البيانات بحسب DATA_MODEL، لذا لا يحمي الكتابات الخارجية.
-2. لا يوجد Flutter/Dart SDK في بيئة التنفيذ؛ لذلك لا يمكن تأكيد التنسيق أو التحليل أو الاختبارات.
-3. اختبارات Repository وواجهات CRUD/رفع الصور لم تكتمل بعد.
-4. يجب تشغيل Dart 3.38.1 formatter، ثم `flutter analyze` و`flutter test`، وإصلاح كل النتائج قبل طلب المراجعة.
-5. يجب اختبار Storage فعلياً بحساب يملك `masterdata.manage` دون `catalog.manage` وبحساب لا يملك `masterdata.manage`.
-6. يجب مراجعة diff كاملاً ومزامنة الفرع مع الهدف قبل فتح PR.
+- Dart formatting: **نجح** على commit `318c4309765b7281310e7c7644955606a732e958`.
+- `flutter analyze`: **نجح**.
+- `flutter test`: **1639 اختباراً ناجحاً و26 فاشلاً**.
+- لم تظهر ملفات اختبارات Care Instructions أو Seasons أو Collections ضمن قائمة الاختبارات الفاشلة.
+- الإخفاقات الـ26 المتبقية تخص ملفات/ميزات أخرى غير معدّلة في هذا الدمج: ترتيب AppSidebar، تدفق محرر Categories، مصفوفة تخطيطات Option Sets، محرر Attributes، تنسيق مفتاح Materials، حد طول ملف محرر Attributes، وأرقام ثابتة في Product Types.
+- لم يُجرَ اختبار حي لـ Supabase/PostgREST أو Storage؛ يلزم اختبار صلاحيات ورفع الصور في بيئة Supabase الفعلية.
 
-## حالة PR
+## قيود/قرارات معروفة
 
-- يوجد Draft PR رقم 23 باتجاه `integration/catalog-scope-1-combined`؛ ليس جاهزاً للدمج.
-- لا يوجد دمج في `integration/catalog-scope-1-combined`.
-- لا تعتبر الميزتان جاهزتين للدمج حتى اجتياز الفحوصات والمراجعة أعلاه.
+1. قرار D-DT-1: يمنع التطبيق حفظ `start_date > end_date`. لا يوجد CHECK في قاعدة البيانات بحسب DATA_MODEL، لذلك لا يحمي الكتابات الخارجية.
+2. يلزم اختبار Storage بحساب يملك `masterdata.manage` دون `catalog.manage` وبحساب لا يملك `masterdata.manage`.
+3. حالة الاختبارات العامة موثقة أعلاه؛ لا تُنسب إخفاقات الوحدات غير المعدّلة إلى ميزات هذا الدمج.
