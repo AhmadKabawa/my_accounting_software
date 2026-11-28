@@ -9,12 +9,9 @@ abstract final class ProductTypesRoutes {
   // Dynamic detail routes are registered in GoRouter directly and included
   // in the route catalogue so they receive the same protected classification.
   static const detailsPath = '/catalog/product-types/:id';
-  static const productTypeDetails = RouteItem(
-    detailsPath,
-    'catalog.productTypeDetails',
-  );
+  static const productTypeDetailsName = 'catalog.productTypeDetails';
 
   static String details(int id) => '/catalog/product-types/$id';
 
-  static const List<RouteItem> all = [productTypes, productTypeDetails];
+  static const List<RouteItem> all = [productTypes];
 }
