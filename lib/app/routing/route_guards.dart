@@ -28,7 +28,7 @@ final Set<String> publicRoutes = buildPublicRoutes();
 
 /// Session-protected paths are derived from the feature route registry.
 /// Adding a route to a feature's all list automatically classifies it here.
-final Set<String> protectedRoutes = allRoutes
+final Set<String> protectedRoutes = registeredRoutes
     .map((route) => route.path)
     .where((path) => !publicRoutes.contains(path))
     .toSet();
