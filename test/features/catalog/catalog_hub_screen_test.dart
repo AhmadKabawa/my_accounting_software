@@ -29,6 +29,16 @@ void main() {
     expect(find.text(CatalogHubKeys.groupClassification.en), findsOneWidget);
     expect(find.byType(AppCard), findsNWidgets(13));
     expect(tester.takeException(), isNull);
+
+    await pumpScreenMatrix(
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: true,
+      home: const Scaffold(body: CatalogHubScreen()),
+    );
+    expect(find.byType(AppCard), findsNWidgets(13));
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('catalog hub area opens its configured route', (tester) async {
