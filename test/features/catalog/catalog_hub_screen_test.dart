@@ -12,7 +12,9 @@ import '../../helpers/screen_matrix.dart';
 void main() {
   setUpAll(() => useTranslations(const Locale('en')));
 
-  testWidgets('hub groups catalog areas and fits a narrow RTL viewport', (
+  testWidgets(
+    'hub groups catalog areas and fits a narrow RTL viewport',
+    (
     tester,
   ) async {
     await pumpScreenMatrix(
@@ -24,14 +26,25 @@ void main() {
       home: const Scaffold(body: CatalogHubScreen()),
     );
 
-    expect(find.text(CatalogHubKeys.groupProductDefinition.en), findsOneWidget);
-    expect(find.text(CatalogHubKeys.groupProperties.en), findsOneWidget);
-    expect(find.text(CatalogHubKeys.groupClassification.en), findsOneWidget);
+    expect(
+      find.text(CatalogHubKeys.groupProductDefinition.en),
+      findsOneWidget,
+    );
+    expect(
+      find.text(CatalogHubKeys.groupProperties.en),
+      findsOneWidget,
+    );
+    expect(
+      find.text(CatalogHubKeys.groupClassification.en),
+      findsOneWidget,
+    );
     expect(find.byType(AppCard), findsNWidgets(13));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('catalog hub area opens its configured route', (tester) async {
+  testWidgets(
+    'catalog hub area opens its configured route',
+    (tester) async {
     final router = GoRouter(
       initialLocation: '/',
       routes: [

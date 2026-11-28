@@ -62,10 +62,7 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
       return;
     }
 
-    _publishedProductCount = publishedCount.fold(
-      (_) => null,
-      (count) => count,
-    );
+    _publishedProductCount = publishedCount.fold((_) => null, (count) => count);
     emit(
       ProductTypeDetailsLoaded(
         productType: productType.getOrElse(
