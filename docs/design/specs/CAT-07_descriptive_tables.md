@@ -70,7 +70,7 @@ S52 يطلب «قالباً عاماً واحداً» لتسعة جداول: ا�
 | فهرس الجداول | بطاقات `AppCard` (9) بعدّاد القيم النشطة (اختياري D-DT-2) |
 | القائمة والنموذج | كما في المشتركة C8 |
 | حقول مختلفة حسب الجدول | تعريف typed لكل جدول يستخدم `AppTextField` و`SearchableDropdown` و`AppValidator`؛ **لا** `DynamicFormRenderer` (C43، مخصص لخصائص المنتج) |
-| منتقي تاريخ | **غير موجود في Core** (بحث `DatePicker`/`showDatePicker` في `lib/app/core` لم يجد شيئاً، 2026-11-26) — فجوة تُسجَّل وتُبنى في Core قبل `seasons` و`collections` (قاعدة فجوة الـ Core) |
+| منتقي تاريخ | أُضيف `AppDatePickerField` إلى Core عبر دمج `feat/core-date-picker`؛ وتستخدمه ميزتا `seasons` و`collections` مع تمثيل API بصيغة `yyyy-MM-dd` دون UTC offset |
 
 ## 10. البحث والفلاتر والفرز
 - **البحث:** `name` وما يوجد من `code` أو `slug`.
@@ -83,7 +83,7 @@ S52 يطلب «قالباً عاماً واحداً» لتسعة جداول: ا�
 ## 12. النماذج
 تُشتق من المصفوفة في §6. قواعد خاصة:
 - `age_groups`: `min_age ≤ max_age` (واجهة وقاعدة)، وكلاهما اختياري.
-- `seasons` و`collections`: **`start_date ≤ end_date` غير مفروض في القاعدة** (لم يُعثر على CHECK في DATA_MODEL)؛ تحقق واجهة غير مانع أو مانع — D-DT-1.
+- `seasons` و`collections`: **`start_date ≤ end_date` غير مفروض في القاعدة**؛ النموذج الحالي يطبق تحققاً مانعاً في الواجهة، ويظل القرار D-DT-1 بحاجة اعتماد نهائي قبل اعتبار هذا السلوك محسوماً.
 - `fabric_types.is_named_fabric`: مفتاح منطقي؛ معناه غير موثق (D-DT-3).
 - `care_instructions.icon`: نص ≤ 255؛ صيغته (مفتاح أيقونة أم رابط) غير موثقة (D-DT-4)، ولا تُعرض له معاينة قبل الحسم.
 - `collections.image`: **صُحّح** — يتبع الماركات والتصنيفات فعلاً: رفع عبر `AppImageUploadField` إلى `product-images/collections/` (5 MB، JPEG/PNG/WebP)؛ لا إدخال URL يدوي. الرفع الحي يتطلب سياسة Storage (نمط B-01/B-25).
@@ -127,7 +127,7 @@ S52 يطلب «قالباً عاماً واحداً» لتسعة جداول: ا�
 ### 23.2 فجوات
 | # | البند | الدليل | القرار المعتمد |
 |---|---|---|---|
-| R-1 | لا `DatePicker` في Core | بحث الكود | بناء `AppDatePickerField` في Core (معتمد) قبل `seasons`/`collections`؛ تُرجأ الجداول التي تحتاجه |
+| R-1 | لا `DatePicker` في Core | بحث الكود | أُضيف `AppDatePickerField` إلى Core ودُمج في فرع تنفيذ المواسم والمجموعات؛ يُعاد استخدامه بدلاً من `showDatePicker` المباشر |
 | R-2 | تسعة جداول وبطاقة مركز واحدة | `CatalogHubScreen` يعرض بطاقة لكل قسم | بطاقة واحدة «البيانات المرجعية» ← صفحة فهرس بتسع بطاقات؛ كل جدول مسار `/catalog/reference-data/:table` |
 | R-3 | مسار ديناميكي بمعامل `:table` | — | يُسجَّل كل جدول صراحةً ثابتاً في `route_registry` (لا تحميل ديناميكي) حتى يطبق حارس المسارات |
 | R-4 | الإجراءات الجماعية | — | مفعّلة افتراضياً للجداول الكبيرة نسبياً (الوسوم، الخامات)، معطّلة للأجناس والمواسم (D-C6) |
@@ -139,7 +139,7 @@ S52 يطلب «قالباً عاماً واحداً» لتسعة جداول: ا�
 ### 23.3 قرار مسارات التنفيذ (D-DT-7)
 
 تُسجّل ميزات `genders` و`age_groups` و`materials` في `route_registry` بمسارات مسطحة وثابتة (`/catalog/genders`، `/catalog/age-groups`، `/catalog/materials`) كما هو نمط `sports` و`tags` و`units` في الكود. لا تعتمد هذه الميزات على `/catalog/reference-data/:table` ولا على تسجيل ديناميكي. هذا تعديل على قرار المسار الوارد في §0 وR-2؛ سبب الانحراف تقليل مخاطرة تسجيل Route ديناميكي واتباع النمط الحالي.### 23.4 الترتيب المعدّل
-`genders` ← `sports` ← `age_groups` ← (استخراج القشرة) ← `tags` ← `materials` ← `fabric_types` ← `care_instructions` ← (`AppDatePickerField` في Core) ← `seasons` ← `collections`.
+`genders` ← `sports` ← `age_groups` ← (استخراج القشرة) ← `tags` ← `materials` ← `fabric_types` ← `care_instructions` ← `AppDatePickerField` في Core ← `seasons` ← `collections` (بدأ تنفيذ الميزتين؛ التحقق والقبول ما زالا معلقين).
 
 ### 23.5 معايير قبول جديدة
 - [ ] CAT07-DT-AC6: كل جدول له كيان typed واختبار Repository يطابق مصفوفة §6.
@@ -147,3 +147,14 @@ S52 يطلب «قالباً عاماً واحداً» لتسعة جداول: ا�
 - [ ] CAT07-DT-AC8: بطاقة واحدة في المركز تفتح الفهرس، وكل جدول مسار ثابت مسجل.
 
 **لا يمكن إثباته من المستودع:** رسالة رفض `age_groups_check` الحية، وأي بيانات مبذورة في الجداول التسعة.
+
+### 23.6 حالة التنفيذ البرمجي (2026-11-28)
+
+- أُدمج فرع Core Date Picker كـ merge commit في فرع التنفيذ؛ لم يُستخدم cherry-pick.
+- أُنشئت وحدتا seasons وcollections بمسارات ثابتة مستقلة، وربطتا بالـ DI وRoute Registry وCatalog Hub ومفاتيح الترجمة.
+- seasons: الحقول المطبقة هي name, code, season_type, start_date, end_date, is_active؛ الفرز الافتراضي start_date، ثم name، ثم id، دون إجراءات جماعية.
+- collections: الحقول المطبقة هي name, code, description, image, start_date, end_date, is_active؛ رفع الصورة عبر AppImageUploadField إلى product-images/collections/ مع حد 5 MB وJPEG/PNG/WebP.
+- أضيفت اختبارات وحدات للـ query/model، لكن لم تُشغّل في هذه البيئة. لا تُعد هذه الحالة اجتيازاً لمعايير القبول.
+- لم يُختبر الاتصال الحي بـ Supabase أو Storage، ولا تُثبت سياسة B-32 نجاح الرفع التشغيلي.
+- قرار D-DT-1 الخاص بمنع/السماح بحفظ نطاق تاريخ غير صالح مطبق حالياً كتحقق مانع في الواجهة، لكنه ما زال بحاجة اعتماد صريح.
+- ما زالت اختبارات Repository، فحص Flutter/Dart، مراجعة الكود النهائية، ومزامنة/CI مطلوبة قبل PR أو الدمج.
