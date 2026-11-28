@@ -14,6 +14,8 @@ import 'package:accounting_software/app/features/catalog/age_groups/presentation
 import 'package:accounting_software/app/features/catalog/product_types/presentation/localization/product_types_keys.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/catalog_hub_keys.dart';
+import 'package:accounting_software/app/features/catalog/seasons/presentation/localization/seasons_keys.dart';
+import 'package:accounting_software/app/features/catalog/collections/presentation/localization/collections_keys.dart';
 
 /// One place the shell can go to: what to show ([item], the model shared by
 /// the bottom bar, the rail and the sidebar), which `StatefulShellBranch` it
@@ -103,6 +105,21 @@ const appDestinations = [
           label: TagsKeys.title,
           icon: AppIcons.tags,
           path: '/catalog/tags',
+        ),
+        NavBarChild(
+          label: CatalogHubKeys.careInstructionsTitle,
+          icon: AppIcons.catalog,
+          path: '/catalog/care-instructions',
+        ),
+        NavBarChild(
+          label: SeasonsKeys.title,
+          icon: AppIcons.catalog,
+          path: '/catalog/seasons',
+        ),
+        NavBarChild(
+          label: CollectionsKeys.title,
+          icon: AppIcons.catalog,
+          path: '/catalog/collections',
         ),
         NavBarChild(
           label: CatalogHubKeys.materialsTitle,

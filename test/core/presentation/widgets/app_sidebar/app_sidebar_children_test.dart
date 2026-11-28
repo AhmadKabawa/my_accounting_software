@@ -19,6 +19,11 @@ import 'package:accounting_software/app/features/catalog/tags/presentation/routi
 import 'package:accounting_software/app/features/catalog/product_types/presentation/routing/product_types_routes.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/routing/care_instructions_routes.dart';
+import 'package:accounting_software/app/features/catalog/seasons/presentation/localization/seasons_keys.dart';
+import 'package:accounting_software/app/features/catalog/seasons/presentation/routing/seasons_routes.dart';
+import 'package:accounting_software/app/features/catalog/collections/presentation/localization/collections_keys.dart';
+import 'package:accounting_software/app/features/catalog/collections/presentation/routing/collections_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/localization/catalog_hub_keys.dart';
 import 'package:accounting_software/app/shell/destinations.dart';
 
@@ -45,8 +50,9 @@ Future<void> _pump(
   bool collapsed = false,
   ValueChanged<int>? onIndex,
   List<NavBarItem>? items,
+  double height = 900,
 }) async {
-  tester.view.physicalSize = const Size(1400, 900);
+  tester.view.physicalSize = Size(1400, height);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
@@ -76,17 +82,21 @@ void main() {
     expect(find.text('Brands'), findsOneWidget);
   });
 
-  testWidgets('catalog sidebar shows materials and fabric types', (
+  testWidgets('catalog sidebar shows all linked catalog features', (
     tester,
   ) async {
     await _pump(
       tester,
       activeIndex: 1,
       items: [for (final destination in appDestinations) destination.item],
+      height: 1600,
     );
-
+    await tester.pumpAndSettle();
     expect(find.text(CatalogHubKeys.materialsTitle.en), findsOneWidget);
     expect(find.text(CatalogHubKeys.fabricTypesTitle.en), findsOneWidget);
+    expect(find.text(CatalogHubKeys.careInstructionsTitle.en), findsOneWidget);
+    expect(find.text(SeasonsKeys.title.en), findsOneWidget);
+    expect(find.text(CollectionsKeys.title.en), findsOneWidget);
   });
 
   testWidgets('a collapsed sidebar hides children', (tester) async {
@@ -181,9 +191,12 @@ void main() {
       AgeGroupsRoutes.ageGroups.path,
       ProductTypesRoutes.productTypes.path,
       TagsRoutes.tags.path,
-      SportsRoutes.sports.path,
+      CareInstructionsRoutes.careInstructions.path,
+      SeasonsRoutes.seasons.path,
+      CollectionsRoutes.collections.path,
       MaterialsRoutes.materials.path,
       FabricTypesRoutes.fabricTypes.path,
+      SportsRoutes.sports.path,
     ]);
   });
 }
