@@ -1,4 +1,4 @@
-import 'package:flutter/season.dart';
+import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_screen.dart';
 import 'package:accounting_software/app/features/catalog/seasons/presentation/seasons_list_config.dart';
 
