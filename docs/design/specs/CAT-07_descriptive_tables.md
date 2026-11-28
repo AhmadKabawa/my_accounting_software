@@ -154,7 +154,7 @@ S52 يطلب «قالباً عاماً واحداً» لتسعة جداول: ا�
 - أُنشئت وحدتا seasons وcollections بمسارات ثابتة مستقلة، وربطتا بالـ DI وRoute Registry وCatalog Hub ومفاتيح الترجمة.
 - seasons: الحقول المطبقة هي name, code, season_type, start_date, end_date, is_active؛ الفرز الافتراضي start_date، ثم name، ثم id، دون إجراءات جماعية.
 - collections: الحقول المطبقة هي name, code, description, image, start_date, end_date, is_active؛ رفع الصورة عبر AppImageUploadField إلى product-images/collections/ مع حد 5 MB وJPEG/PNG/WebP.
-- أضيفت اختبارات وحدات للـ query/model، لكن لم تُشغّل في هذه البيئة. لا تُعد هذه الحالة اجتيازاً لمعايير القبول.
+- أضيفت اختبارات وحدات للـ query/model/repository، واختبار سياسة صورة المجموعة؛ لم تُشغّل في هذه البيئة. لا تُعد هذه الحالة اجتيازاً لمعايير القبول.
 - لم يُختبر الاتصال الحي بـ Supabase أو Storage، ولا تُثبت سياسة B-32 نجاح الرفع التشغيلي.
 - قرار D-DT-1 معتمد كتحقق مانع في الواجهة؛ يبقى غياب CHECK في قاعدة البيانات قيداً على الكتابات الخارجية.
 - ما زالت اختبارات Repository، فحص Flutter/Dart، مراجعة الكود النهائية، ومزامنة/CI مطلوبة قبل PR أو الدمج.
