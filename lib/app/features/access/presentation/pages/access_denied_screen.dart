@@ -14,6 +14,7 @@ class AccessDeniedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final gap = context.ui.spacing.gap(AppSpacing.lg, axis: Axis.vertical);
     return Scaffold(
       body: Center(
         child: Padding(
