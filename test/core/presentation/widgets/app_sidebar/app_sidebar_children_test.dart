@@ -10,6 +10,7 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/rou
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/routing/attributes_routes.dart';
+import 'package:accounting_software/app/features/catalog/size_systems/presentation/routing/size_systems_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/genders/presentation/routing/genders_routes.dart';
@@ -94,6 +95,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(CatalogHubKeys.materialsTitle.en), findsOneWidget);
     expect(find.text(CatalogHubKeys.fabricTypesTitle.en), findsOneWidget);
+    expect(find.text('Size systems'), findsOneWidget);
     expect(find.text(CatalogHubKeys.careInstructionsTitle.en), findsOneWidget);
     expect(find.text(SeasonsKeys.title.en), findsOneWidget);
     expect(find.text(CollectionsKeys.title.en), findsOneWidget);
@@ -185,6 +187,7 @@ void main() {
       UnitsRoutes.units.path,
       OptionSetsRoutes.optionSets.path,
       AttributesRoutes.attributes.path,
+      SizeSystemsRoutes.sizeSystems.path,
       ColorsRoutes.colors.path,
       CategoriesRoutes.categories.path,
       GendersRoutes.genders.path,
