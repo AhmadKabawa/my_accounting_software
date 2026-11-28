@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
-import 'package:accounting_software/app/core/localization/keys/date_picker_keys.dart';
 import 'package:accounting_software/app/core/foundation/image/image_upload_cubit.dart';
 import 'package:accounting_software/app/core/platform/file_drop/file_drop_target.dart';
 import 'package:accounting_software/app/core/platform/image_picker/image_picker_port.dart';
@@ -177,7 +176,7 @@ class _CollectionEditorDialogState extends State<CollectionEditorDialog> {
             image: _image,
             collectionName: _name,
             uploader: (upload) =>
-                context.read<CollectionFormCubit>().uploadImage(upload),
+                widget.imageUploader(upload),
             picker: widget.imagePicker,
             dropTargetAdapter: widget.dropTargetAdapter,
             onChanged: (value) {
