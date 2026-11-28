@@ -21,6 +21,8 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/genders/presentation/routing/genders_routes.dart';
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/routing/age_groups_routes.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
+import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
 
 Set<String> buildPublicRoutes({
   bool signupEnabled = AppConfig.signupEnabled,
@@ -55,6 +57,8 @@ final Set<String> protectedRoutes = {
   OptionSetsRoutes.optionSets.path,
   AttributesRoutes.attributes.path,
   ProductTypesRoutes.productTypes.path,
+  MaterialsRoutes.materials.path,
+  FabricTypesRoutes.fabricTypes.path,
   CatalogRoutes.hub.path,
   CatalogRoutes.masterData.path,
 };
