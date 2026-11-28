@@ -85,11 +85,11 @@ class _ProductTypeDetailsBody extends StatelessWidget {
                 state is ProductTypeDetailsInitial)
               Column(
                 children: [
-                  const AppSkeleton.card(height: 120),
+                  AppSkeleton.card(height: AppComponentSize.cardHeight.of(context)),
                   context.ui.spacing.gap(AppSpacing.md),
-                  const AppSkeleton.card(height: 180),
+                  AppSkeleton.card(height: AppComponentSize.cardHeight.of(context)),
                   context.ui.spacing.gap(AppSpacing.md),
-                  const AppSkeleton.card(height: 180),
+                  AppSkeleton.card(height: AppComponentSize.cardHeight.of(context)),
                 ],
               )
             else if (state is ProductTypeDetailsFailed)
