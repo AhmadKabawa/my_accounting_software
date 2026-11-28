@@ -4,7 +4,6 @@ import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/routing/route_guards.dart';
 import 'package:accounting_software/app/features/access/presentation/routing/access_routes.dart';
-import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 
 /// Both permissions are accepted because the existing master-data screens and
 /// backend request B-01 explicitly support masterdata.manage without catalog.manage.
@@ -17,11 +16,11 @@ bool hasCatalogRouteAccess(AccessCubit accessCubit) =>
 /// session with a missing/failed access snapshot is denied (fail closed).
 Future<String?> catalogAccessRedirect(
   AccessCubit accessCubit,
-  SessionGate session,
+  bool Function() isAuthenticated,
   BuildContext context,
   GoRouterState state,
 ) async {
-  if (session.current is! SessionAuthenticated) return null;
+  if (!isAuthenticated()) return null;
 
   if (accessCubit.state.status == AccessStatus.initial) {
     await accessCubit.load();
