@@ -4,10 +4,10 @@ import 'package:accounting_software/app/features/catalog/care_instructions/domai
 
 class CareInstructionDuplicateFailure extends Failure {
   const CareInstructionDuplicateFailure()
-      : super(messageKey: ErrorKeys.conflict, statusCode: 409);
+    : super(messageKey: ErrorKeys.conflict, statusCode: 409);
 }
 
 class CareInstructionInUseFailure extends Failure {
   const CareInstructionInUseFailure()
-      : super(messageKey: CareInstructionFailureKeys.inUse, statusCode: 409);
+    : super(messageKey: CareInstructionFailureKeys.inUse, statusCode: 409);
 }

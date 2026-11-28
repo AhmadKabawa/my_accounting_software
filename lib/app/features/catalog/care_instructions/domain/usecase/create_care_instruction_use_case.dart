@@ -5,7 +5,8 @@ import 'package:accounting_software/app/features/catalog/care_instructions/domai
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/entity/care_instruction_draft.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/repositories/care_instructions_repository.dart';
 
-class CreateCareInstructionUseCase extends UseCase<CareInstruction, CareInstructionDraft> {
+class CreateCareInstructionUseCase
+    extends UseCase<CareInstruction, CareInstructionDraft> {
   CreateCareInstructionUseCase(this._repository);
   final CareInstructionsRepository _repository;
   @override

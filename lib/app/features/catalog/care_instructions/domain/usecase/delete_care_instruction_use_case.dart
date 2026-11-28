@@ -8,7 +8,8 @@ class DeleteCareInstructionParams {
   final int id;
 }
 
-class DeleteCareInstructionUseCase extends UseCase<Unit, DeleteCareInstructionParams> {
+class DeleteCareInstructionUseCase
+    extends UseCase<Unit, DeleteCareInstructionParams> {
   DeleteCareInstructionUseCase(this._repository);
   final CareInstructionsRepository _repository;
   @override

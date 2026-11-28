@@ -6,7 +6,8 @@ abstract final class CareInstructionFieldValidators {
   static const maxCodeLength = 50;
 
   static String? name(String? value) => AppValidator.validate(
-    value, [ValidationRule.required, ValidationRule.maxLength],
+    value,
+    [ValidationRule.required, ValidationRule.maxLength],
     params: {ValidationRule.maxLength: maxNameLength},
     customKeys: {
       ValidationRule.required: CareInstructionsKeys.required,
@@ -15,7 +16,8 @@ abstract final class CareInstructionFieldValidators {
   );
 
   static String? code(String? value) => AppValidator.validate(
-    value, [ValidationRule.required, ValidationRule.maxLength],
+    value,
+    [ValidationRule.required, ValidationRule.maxLength],
     params: {ValidationRule.maxLength: maxCodeLength},
     customKeys: {
       ValidationRule.required: CareInstructionsKeys.required,

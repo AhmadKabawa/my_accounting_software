@@ -6,5 +6,6 @@ class CareInstructionsScreen extends StatelessWidget {
   const CareInstructionsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => CrudListScreen(config: careInstructionsListConfig);
+  Widget build(BuildContext context) =>
+      CrudListScreen(config: careInstructionsListConfig);
 }

@@ -32,27 +32,59 @@ class _AccessRepository implements AccessRepository {
   @override
   Future<Either<Failure, AccessSnapshot>> getMyAccess() async => const Right(
     AccessSnapshot(
-      userId: 'test-user', username: 'test', email: null, isSuperAdmin: false,
-      roles: [], permissions: {Permission('masterdata.manage')},
-      branches: [], warehouses: [], posTerminals: [],
+      userId: 'test-user',
+      username: 'test',
+      email: null,
+      isSuperAdmin: false,
+      roles: [],
+      permissions: {Permission('masterdata.manage')},
+      branches: [],
+      warehouses: [],
+      posTerminals: [],
     ),
   );
 }
 
 class _CareInstructionsRepository implements CareInstructionsRepository {
   @override
-  Future<Either<Failure, PaginatedResult<CareInstruction>>> getCareInstructions(CareInstructionListQuery query) async =>
-      const Right(PaginatedResult(items: [], totalCount: 0, currentPage: 1, totalPages: 0));
+  Future<Either<Failure, PaginatedResult<CareInstruction>>> getCareInstructions(
+    CareInstructionListQuery query,
+  ) async => const Right(
+    PaginatedResult(items: [], totalCount: 0, currentPage: 1, totalPages: 0),
+  );
   @override
-  Future<Either<Failure, CareInstruction>> createCareInstruction(CareInstructionDraft draft) async =>
-      Right(CareInstruction(id: 1, name: draft.name, code: draft.code, careType: draft.careType, isActive: draft.isActive ?? true));
+  Future<Either<Failure, CareInstruction>> createCareInstruction(
+    CareInstructionDraft draft,
+  ) async => Right(
+    CareInstruction(
+      id: 1,
+      name: draft.name,
+      code: draft.code,
+      careType: draft.careType,
+      isActive: draft.isActive ?? true,
+    ),
+  );
   @override
-  Future<Either<Failure, CareInstruction>> updateCareInstruction({required int id, required CareInstructionDraft draft}) async =>
-      Right(CareInstruction(id: id, name: draft.name, code: draft.code, careType: draft.careType, isActive: draft.isActive ?? true));
+  Future<Either<Failure, CareInstruction>> updateCareInstruction({
+    required int id,
+    required CareInstructionDraft draft,
+  }) async => Right(
+    CareInstruction(
+      id: id,
+      name: draft.name,
+      code: draft.code,
+      careType: draft.careType,
+      isActive: draft.isActive ?? true,
+    ),
+  );
   @override
-  Future<Either<Failure, Unit>> deleteCareInstruction(int id) async => const Right(unit);
+  Future<Either<Failure, Unit>> deleteCareInstruction(int id) async =>
+      const Right(unit);
   @override
-  Future<Either<Failure, Unit>> setCareInstructionActive({required int id, required bool isActive}) async => const Right(unit);
+  Future<Either<Failure, Unit>> setCareInstructionActive({
+    required int id,
+    required bool isActive,
+  }) async => const Right(unit);
 }
 
 void main() {
@@ -62,8 +94,13 @@ void main() {
     _register();
     addTearDown(() async => sl.reset());
     await pumpScreenMatrix(
-      tester, width: 280, height: 760, direction: TextDirection.rtl,
-      dark: false, textScale: 1.5, home: _withAccess(),
+      tester,
+      width: 280,
+      height: 760,
+      direction: TextDirection.rtl,
+      dark: false,
+      textScale: 1.5,
+      home: _withAccess(),
     );
     expect(find.byType(CareInstructionsScreen), findsOneWidget);
     expect(find.text('No care instructions yet'), findsOneWidget);
@@ -73,8 +110,11 @@ void main() {
     _register();
     addTearDown(() async => sl.reset());
     await pumpScreenMatrix(
-      tester, width: 1200, direction: TextDirection.ltr,
-      dark: true, home: _withAccess(),
+      tester,
+      width: 1200,
+      direction: TextDirection.ltr,
+      dark: true,
+      home: _withAccess(),
     );
     expect(find.byType(CareInstructionsScreen), findsOneWidget);
     expect(find.text('No care instructions yet'), findsOneWidget);
@@ -82,23 +122,30 @@ void main() {
 }
 
 Widget _withAccess() => BlocProvider<AccessCubit>(
-  create: (_) => AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))..load(),
+  create: (_) =>
+      AccessCubit(getMyAccess: GetMyAccessUseCase(_AccessRepository()))..load(),
   child: const Scaffold(body: CareInstructionsScreen()),
 );
 
 void _register() {
   final repository = _CareInstructionsRepository();
   sl.registerFactory<FlashMessages>(FlashMessages.new);
-  sl.registerSingleton<AppSettingsManager>(AppSettingsManager(storage: MemoryStorage()));
-  sl.registerFactory<CareInstructionsListCubit>(() => CareInstructionsListCubit(
-    getItems: GetCareInstructionsUseCase(repository),
-    setActive: SetCareInstructionActiveUseCase(repository),
-    deleteItem: DeleteCareInstructionUseCase(repository),
-    flashMessages: sl(),
-  ));
-  sl.registerFactory<CareInstructionFormCubit>(() => CareInstructionFormCubit(
-    create: CreateCareInstructionUseCase(repository),
-    update: UpdateCareInstructionUseCase(repository),
-    flashMessages: sl(),
-  ));
+  sl.registerSingleton<AppSettingsManager>(
+    AppSettingsManager(storage: MemoryStorage()),
+  );
+  sl.registerFactory<CareInstructionsListCubit>(
+    () => CareInstructionsListCubit(
+      getItems: GetCareInstructionsUseCase(repository),
+      setActive: SetCareInstructionActiveUseCase(repository),
+      deleteItem: DeleteCareInstructionUseCase(repository),
+      flashMessages: sl(),
+    ),
+  );
+  sl.registerFactory<CareInstructionFormCubit>(
+    () => CareInstructionFormCubit(
+      create: CreateCareInstructionUseCase(repository),
+      update: UpdateCareInstructionUseCase(repository),
+      flashMessages: sl(),
+    ),
+  );
 }

@@ -41,5 +41,14 @@ class CareInstruction extends Equatable {
   final bool isUsed;
 
   @override
-  List<Object?> get props => [id, name, code, careType, description, isActive, sortOrder, isUsed];
+  List<Object?> get props => [
+    id,
+    name,
+    code,
+    careType,
+    description,
+    isActive,
+    sortOrder,
+    isUsed,
+  ];
 }

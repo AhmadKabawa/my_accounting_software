@@ -13,18 +13,44 @@ import 'package:accounting_software/app/features/catalog/care_instructions/prese
 
 class _Repository implements CareInstructionsRepository {
   @override
-  Future<Either<Failure, CareInstruction>> createCareInstruction(CareInstructionDraft draft) async =>
-      Right(CareInstruction(id: 1, name: draft.name, code: draft.code, careType: draft.careType, isActive: draft.isActive ?? true));
+  Future<Either<Failure, CareInstruction>> createCareInstruction(
+    CareInstructionDraft draft,
+  ) async => Right(
+    CareInstruction(
+      id: 1,
+      name: draft.name,
+      code: draft.code,
+      careType: draft.careType,
+      isActive: draft.isActive ?? true,
+    ),
+  );
   @override
-  Future<Either<Failure, CareInstruction>> updateCareInstruction({required int id, required CareInstructionDraft draft}) async =>
-      Right(CareInstruction(id: id, name: draft.name, code: draft.code, careType: draft.careType, isActive: draft.isActive ?? true));
+  Future<Either<Failure, CareInstruction>> updateCareInstruction({
+    required int id,
+    required CareInstructionDraft draft,
+  }) async => Right(
+    CareInstruction(
+      id: id,
+      name: draft.name,
+      code: draft.code,
+      careType: draft.careType,
+      isActive: draft.isActive ?? true,
+    ),
+  );
   @override
-  Future<Either<Failure, Unit>> deleteCareInstruction(int id) async => const Right(unit);
+  Future<Either<Failure, Unit>> deleteCareInstruction(int id) async =>
+      const Right(unit);
   @override
-  Future<Either<Failure, PaginatedResult<CareInstruction>>> getCareInstructions(CareInstructionListQuery query) async =>
-      const Right(PaginatedResult(items: [], totalCount: 0, currentPage: 1, totalPages: 0));
+  Future<Either<Failure, PaginatedResult<CareInstruction>>> getCareInstructions(
+    CareInstructionListQuery query,
+  ) async => const Right(
+    PaginatedResult(items: [], totalCount: 0, currentPage: 1, totalPages: 0),
+  );
   @override
-  Future<Either<Failure, Unit>> setCareInstructionActive({required int id, required bool isActive}) async => const Right(unit);
+  Future<Either<Failure, Unit>> setCareInstructionActive({
+    required int id,
+    required bool isActive,
+  }) async => const Right(unit);
 }
 
 void main() {
@@ -36,9 +62,13 @@ void main() {
       update: UpdateCareInstructionUseCase(repository),
       flashMessages: flash,
     );
-    await cubit.save(draft: const CareInstructionDraft(
-      name: 'Wash cold', code: 'WASH', careType: CareType.washing,
-    ));
+    await cubit.save(
+      draft: const CareInstructionDraft(
+        name: 'Wash cold',
+        code: 'WASH',
+        careType: CareType.washing,
+      ),
+    );
     expect(cubit.state, isA<CareInstructionFormIdle>());
     expect(flash.pendingCount, 1);
     await cubit.close();

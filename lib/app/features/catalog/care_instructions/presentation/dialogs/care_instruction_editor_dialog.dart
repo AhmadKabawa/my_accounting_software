@@ -16,10 +16,12 @@ class CareInstructionEditorDialog extends StatefulWidget {
   final CareInstruction? item;
 
   @override
-  State<CareInstructionEditorDialog> createState() => _CareInstructionEditorDialogState();
+  State<CareInstructionEditorDialog> createState() =>
+      _CareInstructionEditorDialogState();
 }
 
-class _CareInstructionEditorDialogState extends State<CareInstructionEditorDialog> {
+class _CareInstructionEditorDialogState
+    extends State<CareInstructionEditorDialog> {
   late final CrudEditorFields _fields;
   late final bool _initialActive;
   late final CareType _initialType;
@@ -29,7 +31,8 @@ class _CareInstructionEditorDialogState extends State<CareInstructionEditorDialo
   TextEditingController get _name => _fields['name'];
   TextEditingController get _code => _fields['code'];
   TextEditingController get _description => _fields['description'];
-  bool get _extraDirty => _active != _initialActive || _selectedType != _initialType;
+  bool get _extraDirty =>
+      _active != _initialActive || _selectedType != _initialType;
 
   @override
   void initState() {
@@ -39,11 +42,13 @@ class _CareInstructionEditorDialogState extends State<CareInstructionEditorDialo
     _initialType = item?.careType ?? CareType.washing;
     _active = _initialActive;
     _selectedType = _initialType;
-    _fields = CrudEditorFields(initialValues: {
-      'name': item?.name ?? '',
-      'code': item?.code ?? '',
-      'description': item?.description ?? '',
-    });
+    _fields = CrudEditorFields(
+      initialValues: {
+        'name': item?.name ?? '',
+        'code': item?.code ?? '',
+        'description': item?.description ?? '',
+      },
+    );
   }
 
   @override
@@ -63,71 +68,92 @@ class _CareInstructionEditorDialogState extends State<CareInstructionEditorDialo
       name: _name.text.trim(),
       code: _code.text.trim(),
       careType: _selectedType,
-      description: _description.text.trim().isEmpty ? null : _description.text.trim(),
-      isActive: widget.item == null || _active != _initialActive ? _active : null,
+      description: _description.text.trim().isEmpty
+          ? null
+          : _description.text.trim(),
+      isActive: widget.item == null || _active != _initialActive
+          ? _active
+          : null,
     ),
   );
 
   @override
-  Widget build(BuildContext context) => CrudEditorDialog<
-    CareInstructionFormCubit, CareInstructionFormState, CareInstructionFormEffect
-  >(
-    cubit: context.read<CareInstructionFormCubit>(),
-    fields: _fields,
-    mode: widget.item == null ? CrudEditorMode.add : CrudEditorMode.edit,
-    labels: const CrudEditorLabels(
-      addTitle: CareInstructionsKeys.add,
-      editTitle: CareInstructionsKeys.edit,
-      duplicateTitle: CareInstructionsKeys.edit,
-      subtitle: CareInstructionsKeys.description,
-      save: CareInstructionsKeys.save,
-      cancel: CareInstructionsKeys.cancel,
-    ),
-    isSaving: (status) => status is CareInstructionFormSaving,
-    extraDirty: _extraDirty,
-    onReset: _resetExternalFields,
-    outcome: (effect) => switch (effect) {
-      CareInstructionSavedEffect() => const CrudEditorSuccess(),
-      CareInstructionSaveFailedEffect(:final messageKey) => CrudEditorFailure(messageKey),
-    },
-    onSave: _save,
-    builder: (context, scope) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        DropdownButtonFormField<CareType>(
-          initialValue: _selectedType,
-          decoration: InputDecoration(label: AppText(CareInstructionsKeys.careType)),
-          validator: (value) => value == null ? CareInstructionsKeys.required.tr(context: context) : null,
-          items: [
-            for (final type in CareType.values)
-              DropdownMenuItem(value: type, child: AppText(_careTypeKey(type))),
+  Widget build(BuildContext context) =>
+      CrudEditorDialog<
+        CareInstructionFormCubit,
+        CareInstructionFormState,
+        CareInstructionFormEffect
+      >(
+        cubit: context.read<CareInstructionFormCubit>(),
+        fields: _fields,
+        mode: widget.item == null ? CrudEditorMode.add : CrudEditorMode.edit,
+        labels: const CrudEditorLabels(
+          addTitle: CareInstructionsKeys.add,
+          editTitle: CareInstructionsKeys.edit,
+          duplicateTitle: CareInstructionsKeys.edit,
+          subtitle: CareInstructionsKeys.description,
+          save: CareInstructionsKeys.save,
+          cancel: CareInstructionsKeys.cancel,
+        ),
+        isSaving: (status) => status is CareInstructionFormSaving,
+        extraDirty: _extraDirty,
+        onReset: _resetExternalFields,
+        outcome: (effect) => switch (effect) {
+          CareInstructionSavedEffect() => const CrudEditorSuccess(),
+          CareInstructionSaveFailedEffect(:final messageKey) =>
+            CrudEditorFailure(messageKey),
+        },
+        onSave: _save,
+        builder: (context, scope) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DropdownButtonFormField<CareType>(
+              initialValue: _selectedType,
+              decoration: InputDecoration(
+                label: AppText(CareInstructionsKeys.careType),
+              ),
+              validator: (value) => value == null
+                  ? CareInstructionsKeys.required.tr(context: context)
+                  : null,
+              items: [
+                for (final type in CareType.values)
+                  DropdownMenuItem(
+                    value: type,
+                    child: AppText(_careTypeKey(type)),
+                  ),
+              ],
+              onChanged: (value) {
+                if (value != null) setState(() => _selectedType = value);
+              },
+            ),
+            AppTextField(
+              controller: _name,
+              labelKey: CareInstructionsKeys.name,
+              validator: CareInstructionFieldValidators.name,
+              onChanged: (_) => scope.clearFailure(),
+            ),
+            AppTextField(
+              controller: _code,
+              labelKey: CareInstructionsKeys.code,
+              textDirection: TextDirection.ltr,
+              validator: CareInstructionFieldValidators.code,
+              onChanged: (_) => scope.clearFailure(),
+            ),
+            AppTextField(
+              controller: _description,
+              labelKey: CareInstructionsKeys.description,
+              maxLines: 3,
+            ),
+            AppSwitch(
+              value: _active,
+              labelKey: _active
+                  ? CareInstructionsKeys.active
+                  : CareInstructionsKeys.inactive,
+              onChanged: (value) => setState(() => _active = value),
+            ),
           ],
-          onChanged: (value) {
-            if (value != null) setState(() => _selectedType = value);
-          },
         ),
-        AppTextField(
-          controller: _name,
-          labelKey: CareInstructionsKeys.name,
-          validator: CareInstructionFieldValidators.name,
-          onChanged: (_) => scope.clearFailure(),
-        ),
-        AppTextField(
-          controller: _code,
-          labelKey: CareInstructionsKeys.code,
-          textDirection: TextDirection.ltr,
-          validator: CareInstructionFieldValidators.code,
-          onChanged: (_) => scope.clearFailure(),
-        ),
-        AppTextField(controller: _description, labelKey: CareInstructionsKeys.description, maxLines: 3),
-        AppSwitch(
-          value: _active,
-          labelKey: _active ? CareInstructionsKeys.active : CareInstructionsKeys.inactive,
-          onChanged: (value) => setState(() => _active = value),
-        ),
-      ],
-    ),
-  );
+      );
 
   AppKey _careTypeKey(CareType type) => switch (type) {
     CareType.washing => CareInstructionsKeys.washing,

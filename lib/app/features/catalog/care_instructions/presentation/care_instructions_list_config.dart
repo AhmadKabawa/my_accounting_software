@@ -25,7 +25,12 @@ AppKey careTypeLabel(CareType type) => switch (type) {
   CareType.dryCleaning => CareInstructionsKeys.dryCleaning,
 };
 
-CrudListConfig<CareInstruction, CareInstructionListQuery, CareInstructionsListCubit, CareInstructionsListEffect>
+CrudListConfig<
+  CareInstruction,
+  CareInstructionListQuery,
+  CareInstructionsListCubit,
+  CareInstructionsListEffect
+>
 get careInstructionsListConfig => CrudListConfig(
   screenId: 'catalog.careInstructions',
   titleKey: CareInstructionsKeys.title,
@@ -45,15 +50,24 @@ get careInstructionsListConfig => CrudListConfig(
   ),
   filterControls: (slot) => [
     SearchableDropdown<CareInstructionStatusFilter>(
-      options: const [CareInstructionStatusFilter.active, CareInstructionStatusFilter.inactive],
+      options: const [
+        CareInstructionStatusFilter.active,
+        CareInstructionStatusFilter.inactive,
+      ],
       labelKey: CareInstructionsKeys.status,
-      optionLabel: (value) => (value == CareInstructionStatusFilter.active
-          ? CareInstructionsKeys.active : CareInstructionsKeys.inactive).tr(context: slot.context),
-      value: slot.state.query.status == CareInstructionStatusFilter.all ? null : slot.state.query.status,
+      optionLabel: (value) =>
+          (value == CareInstructionStatusFilter.active
+                  ? CareInstructionsKeys.active
+                  : CareInstructionsKeys.inactive)
+              .tr(context: slot.context),
+      value: slot.state.query.status == CareInstructionStatusFilter.all
+          ? null
+          : slot.state.query.status,
       clearable: false,
       mode: SearchableDropdownMode.panel,
       allOptionLabel: CareInstructionsKeys.allStatuses,
-      onChanged: (value) => slot.cubit.setStatus(value ?? CareInstructionStatusFilter.all),
+      onChanged: (value) =>
+          slot.cubit.setStatus(value ?? CareInstructionStatusFilter.all),
     ),
     SearchableDropdown<CareType>(
       options: CareType.values,
@@ -68,31 +82,46 @@ get careInstructionsListConfig => CrudListConfig(
   activeFilters: (slot) => [
     if (slot.state.query.search.isNotEmpty)
       FilterBarFilter(
-        id: FilterBar.searchFilterId, label: CareInstructionsKeys.searchHint,
-        value: slot.state.query.search, onRemove: () => slot.cubit.searchChanged(''),
+        id: FilterBar.searchFilterId,
+        label: CareInstructionsKeys.searchHint,
+        value: slot.state.query.search,
+        onRemove: () => slot.cubit.searchChanged(''),
       ),
     if (slot.state.query.careType != null)
       FilterBarFilter(
-        id: 'careType', label: CareInstructionsKeys.careType,
-        value: careTypeLabel(slot.state.query.careType!).tr(context: slot.context),
+        id: 'careType',
+        label: CareInstructionsKeys.careType,
+        value: careTypeLabel(
+          slot.state.query.careType!,
+        ).tr(context: slot.context),
         onRemove: () => slot.cubit.setCareType(null),
       ),
     if (slot.state.query.status != CareInstructionStatusFilter.all)
       FilterBarFilter(
-        id: 'status', label: CareInstructionsKeys.status,
-        value: (slot.state.query.status == CareInstructionStatusFilter.active
-            ? CareInstructionsKeys.active : CareInstructionsKeys.inactive).tr(context: slot.context),
+        id: 'status',
+        label: CareInstructionsKeys.status,
+        value:
+            (slot.state.query.status == CareInstructionStatusFilter.active
+                    ? CareInstructionsKeys.active
+                    : CareInstructionsKeys.inactive)
+                .tr(context: slot.context),
         onRemove: () => slot.cubit.setStatus(CareInstructionStatusFilter.all),
       ),
   ],
-  breadcrumb: (context) => AppBreadcrumb(items: [
-    AppBreadcrumbItem(label: NavKeys.catalog, onTap: () => context.go(CatalogRoutes.hub.path)),
-    const AppBreadcrumbItem(label: CareInstructionsKeys.title),
-  ]),
+  breadcrumb: (context) => AppBreadcrumb(
+    items: [
+      AppBreadcrumbItem(
+        label: NavKeys.catalog,
+        onTap: () => context.go(CatalogRoutes.hub.path),
+      ),
+      const AppBreadcrumbItem(label: CareInstructionsKeys.title),
+    ],
+  ),
   capabilities: const CrudCapabilities(duplicate: false, bulkSelection: false),
   isMutationEffect: (effect) => effect is CareInstructionsMutatedEffect,
   flows: CrudFlowsConfig<CareInstruction, CareInstructionsListCubit>(
-    showEditor: (context, {item, duplicate = false}) => showCareInstructionEditor(context, item: item),
+    showEditor: (context, {item, duplicate = false}) =>
+        showCareInstructionEditor(context, item: item),
     onSaved: (cubit, {required isNew}) => cubit.onSaved(isNew: isNew),
     itemLabel: (item) => item.name,
     delete: (cubit, item) => cubit.delete(item),

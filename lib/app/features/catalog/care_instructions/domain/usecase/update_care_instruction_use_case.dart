@@ -11,10 +11,12 @@ class UpdateCareInstructionParams {
   final CareInstructionDraft draft;
 }
 
-class UpdateCareInstructionUseCase extends UseCase<CareInstruction, UpdateCareInstructionParams> {
+class UpdateCareInstructionUseCase
+    extends UseCase<CareInstruction, UpdateCareInstructionParams> {
   UpdateCareInstructionUseCase(this._repository);
   final CareInstructionsRepository _repository;
   @override
-  Future<Either<Failure, CareInstruction>> call(UpdateCareInstructionParams params) =>
-      _repository.updateCareInstruction(id: params.id, draft: params.draft);
+  Future<Either<Failure, CareInstruction>> call(
+    UpdateCareInstructionParams params,
+  ) => _repository.updateCareInstruction(id: params.id, draft: params.draft);
 }

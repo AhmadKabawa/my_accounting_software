@@ -13,15 +13,31 @@ import 'package:accounting_software/app/features/catalog/care_instructions/prese
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/cubit/care_instruction_form_cubit.dart';
 
 void initCareInstructionsDI() {
-  sl.registerLazySingleton<CareInstructionsRemoteDataSource>(() => CareInstructionsRemoteDataSourceImpl(sl<IApiClient>()));
-  sl.registerLazySingleton<CareInstructionsRepository>(() => CareInstructionsRepositoryImpl(sl<CareInstructionsRemoteDataSource>()));
+  sl.registerLazySingleton<CareInstructionsRemoteDataSource>(
+    () => CareInstructionsRemoteDataSourceImpl(sl<IApiClient>()),
+  );
+  sl.registerLazySingleton<CareInstructionsRepository>(
+    () =>
+        CareInstructionsRepositoryImpl(sl<CareInstructionsRemoteDataSource>()),
+  );
   sl.registerLazySingleton(() => GetCareInstructionsUseCase(sl()));
   sl.registerLazySingleton(() => CreateCareInstructionUseCase(sl()));
   sl.registerLazySingleton(() => UpdateCareInstructionUseCase(sl()));
   sl.registerLazySingleton(() => DeleteCareInstructionUseCase(sl()));
   sl.registerLazySingleton(() => SetCareInstructionActiveUseCase(sl()));
-  sl.registerFactory(() => CareInstructionsListCubit(
-    getItems: sl(), setActive: sl(), deleteItem: sl(), flashMessages: sl(),
-  ));
-  sl.registerFactory(() => CareInstructionFormCubit(create: sl(), update: sl(), flashMessages: sl()));
+  sl.registerFactory(
+    () => CareInstructionsListCubit(
+      getItems: sl(),
+      setActive: sl(),
+      deleteItem: sl(),
+      flashMessages: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => CareInstructionFormCubit(
+      create: sl(),
+      update: sl(),
+      flashMessages: sl(),
+    ),
+  );
 }

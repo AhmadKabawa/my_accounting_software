@@ -30,7 +30,8 @@ class CareInstructionListQuery extends Equatable
       careType != null;
 
   @override
-  CareInstructionListQuery withSearch(String value) => copyWith(search: value, page: 1);
+  CareInstructionListQuery withSearch(String value) =>
+      copyWith(search: value, page: 1);
 
   @override
   CareInstructionListQuery withPage(int value) => copyWith(page: value);

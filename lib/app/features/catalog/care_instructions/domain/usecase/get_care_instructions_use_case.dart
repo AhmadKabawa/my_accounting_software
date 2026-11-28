@@ -6,10 +6,13 @@ import 'package:accounting_software/app/features/catalog/care_instructions/domai
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/entity/care_instruction_list_query.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/repositories/care_instructions_repository.dart';
 
-class GetCareInstructionsUseCase extends UseCase<PaginatedResult<CareInstruction>, CareInstructionListQuery> {
+class GetCareInstructionsUseCase
+    extends
+        UseCase<PaginatedResult<CareInstruction>, CareInstructionListQuery> {
   GetCareInstructionsUseCase(this._repository);
   final CareInstructionsRepository _repository;
   @override
-  Future<Either<Failure, PaginatedResult<CareInstruction>>> call(CareInstructionListQuery query) =>
-      _repository.getCareInstructions(query);
+  Future<Either<Failure, PaginatedResult<CareInstruction>>> call(
+    CareInstructionListQuery query,
+  ) => _repository.getCareInstructions(query);
 }

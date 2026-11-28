@@ -12,33 +12,41 @@ import 'package:accounting_software/app/features/catalog/care_instructions/prese
 sealed class CareInstructionFormState extends Equatable {
   const CareInstructionFormState();
 }
+
 final class CareInstructionFormIdle extends CareInstructionFormState {
   const CareInstructionFormIdle();
   @override
   List<Object?> get props => [];
 }
+
 final class CareInstructionFormSaving extends CareInstructionFormState {
   const CareInstructionFormSaving();
   @override
   List<Object?> get props => [];
 }
+
 sealed class CareInstructionFormEffect {
   const CareInstructionFormEffect();
 }
+
 final class CareInstructionSavedEffect extends CareInstructionFormEffect {
   const CareInstructionSavedEffect();
 }
+
 final class CareInstructionSaveFailedEffect extends CareInstructionFormEffect {
   const CareInstructionSaveFailedEffect(this.messageKey);
   final AppKey messageKey;
 }
 
-class CareInstructionFormCubit extends BaseCubit<CareInstructionFormState, CareInstructionFormEffect> {
+class CareInstructionFormCubit
+    extends BaseCubit<CareInstructionFormState, CareInstructionFormEffect> {
   CareInstructionFormCubit({
     required CreateCareInstructionUseCase create,
     required UpdateCareInstructionUseCase update,
     required FlashMessages flashMessages,
-  }) : _create = create, _update = update, _flash = flashMessages,
+  }) : _create = create,
+       _update = update,
+       _flash = flashMessages,
        super(const CareInstructionFormIdle());
 
   final CreateCareInstructionUseCase _create;
@@ -48,14 +56,18 @@ class CareInstructionFormCubit extends BaseCubit<CareInstructionFormState, CareI
   Future<void> save({required CareInstructionDraft draft, int? id}) async {
     if (state is CareInstructionFormSaving || isClosed) return;
     emit(const CareInstructionFormSaving());
-    final result = id == null ? await _create(draft) :
-        await _update(UpdateCareInstructionParams(id, draft));
+    final result = id == null
+        ? await _create(draft)
+        : await _update(UpdateCareInstructionParams(id, draft));
     if (isClosed) return;
     result.fold(
-      (failure) => emitEffect(CareInstructionSaveFailedEffect(
-        failure is CareInstructionDuplicateFailure
-            ? CareInstructionsKeys.duplicateError : failure.messageKey,
-      )),
+      (failure) => emitEffect(
+        CareInstructionSaveFailedEffect(
+          failure is CareInstructionDuplicateFailure
+              ? CareInstructionsKeys.duplicateError
+              : failure.messageKey,
+        ),
+      ),
       (_) {
         emitEffect(const CareInstructionSavedEffect());
         _flash.post(CareInstructionsKeys.saved, MessageType.success);

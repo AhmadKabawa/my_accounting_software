@@ -7,9 +7,12 @@ import 'package:accounting_software/app/features/catalog/care_instructions/prese
 
 void main() {
   setUpAll(() {
-    Localization.load(const Locale('en'), translations: Translations({
-      for (final key in CareInstructionsKeys.values) key.key: key.en,
-    }));
+    Localization.load(
+      const Locale('en'),
+      translations: Translations({
+        for (final key in CareInstructionsKeys.values) key.key: key.en,
+      }),
+    );
   });
 
   test('requires name and code', () {
@@ -18,9 +21,21 @@ void main() {
   });
 
   test('enforces the database varchar lengths', () {
-    expect(CareInstructionFieldValidators.name(List.filled(151, 'x').join()), isNotNull);
-    expect(CareInstructionFieldValidators.code(List.filled(51, 'x').join()), isNotNull);
-    expect(CareInstructionFieldValidators.name(List.filled(150, 'x').join()), isNull);
-    expect(CareInstructionFieldValidators.code(List.filled(50, 'x').join()), isNull);
+    expect(
+      CareInstructionFieldValidators.name(List.filled(151, 'x').join()),
+      isNotNull,
+    );
+    expect(
+      CareInstructionFieldValidators.code(List.filled(51, 'x').join()),
+      isNotNull,
+    );
+    expect(
+      CareInstructionFieldValidators.name(List.filled(150, 'x').join()),
+      isNull,
+    );
+    expect(
+      CareInstructionFieldValidators.code(List.filled(50, 'x').join()),
+      isNull,
+    );
   });
 }

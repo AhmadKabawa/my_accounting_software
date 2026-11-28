@@ -6,11 +6,13 @@ import 'package:accounting_software/app/features/catalog/care_instructions/domai
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/cubit/care_instruction_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/dialogs/care_instruction_editor_dialog.dart';
 
-Future<bool?> showCareInstructionEditor(BuildContext context, {CareInstruction? item}) =>
-    showAppFormDialog<bool>(
-      context,
-      (_) => BlocProvider(
-        create: (_) => sl<CareInstructionFormCubit>(),
-        child: CareInstructionEditorDialog(item: item),
-      ),
-    );
+Future<bool?> showCareInstructionEditor(
+  BuildContext context, {
+  CareInstruction? item,
+}) => showAppFormDialog<bool>(
+  context,
+  (_) => BlocProvider(
+    create: (_) => sl<CareInstructionFormCubit>(),
+    child: CareInstructionEditorDialog(item: item),
+  ),
+);

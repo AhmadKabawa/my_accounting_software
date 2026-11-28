@@ -14,71 +14,92 @@ import 'package:accounting_software/app/features/catalog/care_instructions/domai
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/failures/care_instruction_failures.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/domain/repositories/care_instructions_repository.dart';
 
-class CareInstructionsRepositoryImpl with RepositoryExecutor implements CareInstructionsRepository {
+class CareInstructionsRepositoryImpl
+    with RepositoryExecutor
+    implements CareInstructionsRepository {
   const CareInstructionsRepositoryImpl(this._remote);
   final CareInstructionsRemoteDataSource _remote;
 
   @override
-  Future<Either<Failure, PaginatedResult<CareInstruction>>> getCareInstructions(CareInstructionListQuery q) =>
-      execute(() async {
-        final result = await _remote.getCareInstructions(q);
-        return switch (result) {
-          ApiSuccess<PaginatedResult<CareInstructionModel>>(:final data) => Right(
-            PaginatedResult<CareInstruction>(
-              items: data.items.map((item) => item.toEntity()).toList(),
-              totalCount: data.totalCount, currentPage: data.currentPage,
-              totalPages: data.totalPages, isFromCache: data.isFromCache,
-            ),
-          ),
-          ApiFailure<PaginatedResult<CareInstructionModel>>(:final exception) => Left(ExceptionMapper.map(exception)),
-        };
-      });
-
-  @override
-  Future<Either<Failure, CareInstruction>> createCareInstruction(CareInstructionDraft draft) =>
-      execute(() async {
-        final result = await _remote.createCareInstruction(draft);
-        return switch (result) {
-          ApiSuccess<CareInstructionModel>(:final data) => Right(data.toEntity()),
-          ApiFailure<CareInstructionModel>(:final exception) => Left(_mapWriteFailure(exception)),
-        };
-      });
-
-  @override
-  Future<Either<Failure, CareInstruction>> updateCareInstruction({required int id, required CareInstructionDraft draft}) =>
-      execute(() async {
-        final result = await _remote.updateCareInstruction(id: id, draft: draft);
-        return switch (result) {
-          ApiSuccess<CareInstructionModel>(:final data) => Right(data.toEntity()),
-          ApiFailure<CareInstructionModel>(:final exception) => Left(_mapWriteFailure(exception)),
-        };
-      });
-
-  @override
-  Future<Either<Failure, Unit>> deleteCareInstruction(int id) => execute(() async {
-    final result = await _remote.deleteCareInstruction(id);
+  Future<Either<Failure, PaginatedResult<CareInstruction>>> getCareInstructions(
+    CareInstructionListQuery q,
+  ) => execute(() async {
+    final result = await _remote.getCareInstructions(q);
     return switch (result) {
-      ApiSuccess<Unit>() => const Right(unit),
-      ApiFailure<Unit>(:final exception) => Left(
-        exception is ApiException && exception.errorCode == '23503'
-            ? const CareInstructionInUseFailure()
-            : ExceptionMapper.map(exception),
+      ApiSuccess<PaginatedResult<CareInstructionModel>>(:final data) => Right(
+        PaginatedResult<CareInstruction>(
+          items: data.items.map((item) => item.toEntity()).toList(),
+          totalCount: data.totalCount,
+          currentPage: data.currentPage,
+          totalPages: data.totalPages,
+          isFromCache: data.isFromCache,
+        ),
+      ),
+      ApiFailure<PaginatedResult<CareInstructionModel>>(:final exception) =>
+        Left(ExceptionMapper.map(exception)),
+    };
+  });
+
+  @override
+  Future<Either<Failure, CareInstruction>> createCareInstruction(
+    CareInstructionDraft draft,
+  ) => execute(() async {
+    final result = await _remote.createCareInstruction(draft);
+    return switch (result) {
+      ApiSuccess<CareInstructionModel>(:final data) => Right(data.toEntity()),
+      ApiFailure<CareInstructionModel>(:final exception) => Left(
+        _mapWriteFailure(exception),
       ),
     };
   });
 
   @override
-  Future<Either<Failure, Unit>> setCareInstructionActive({required int id, required bool isActive}) =>
+  Future<Either<Failure, CareInstruction>> updateCareInstruction({
+    required int id,
+    required CareInstructionDraft draft,
+  }) => execute(() async {
+    final result = await _remote.updateCareInstruction(id: id, draft: draft);
+    return switch (result) {
+      ApiSuccess<CareInstructionModel>(:final data) => Right(data.toEntity()),
+      ApiFailure<CareInstructionModel>(:final exception) => Left(
+        _mapWriteFailure(exception),
+      ),
+    };
+  });
+
+  @override
+  Future<Either<Failure, Unit>> deleteCareInstruction(int id) =>
       execute(() async {
-        final result = await _remote.setCareInstructionActive(id: id, isActive: isActive);
+        final result = await _remote.deleteCareInstruction(id);
         return switch (result) {
           ApiSuccess<Unit>() => const Right(unit),
-          ApiFailure<Unit>(:final exception) => Left(ExceptionMapper.map(exception)),
+          ApiFailure<Unit>(:final exception) => Left(
+            exception is ApiException && exception.errorCode == '23503'
+                ? const CareInstructionInUseFailure()
+                : ExceptionMapper.map(exception),
+          ),
         };
       });
 
+  @override
+  Future<Either<Failure, Unit>> setCareInstructionActive({
+    required int id,
+    required bool isActive,
+  }) => execute(() async {
+    final result = await _remote.setCareInstructionActive(
+      id: id,
+      isActive: isActive,
+    );
+    return switch (result) {
+      ApiSuccess<Unit>() => const Right(unit),
+      ApiFailure<Unit>(:final exception) => Left(
+        ExceptionMapper.map(exception),
+      ),
+    };
+  });
+
   Failure _mapWriteFailure(AppException exception) =>
       exception is ApiException && exception.errorCode == '23505'
-          ? const CareInstructionDuplicateFailure()
-          : ExceptionMapper.map(exception);
+      ? const CareInstructionDuplicateFailure()
+      : ExceptionMapper.map(exception);
 }
