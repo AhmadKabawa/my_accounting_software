@@ -1,4 +1,5 @@
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
+import 'package:accounting_software/app/features/access/presentation/routing/access_routes.dart';
 import 'package:accounting_software/app/core/routing/route_item.dart';
 import 'package:accounting_software/app/features/auth/presentation/routing/auth_routes.dart';
 import 'package:accounting_software/app/features/home/presentation/routing/home_routes.dart';
@@ -32,6 +33,7 @@ List<RouteItem> buildRouteRegistry({
   bool onboardingEnabled = AppConfig.onboardingEnabled,
 }) => [
   ...SplashRoutes.all,
+  ...AccessRoutes.all,
   ...OnBoardingRoutes.all(enabled: onboardingEnabled),
   AuthRoutes.login,
   AuthRoutes.changePassword,
