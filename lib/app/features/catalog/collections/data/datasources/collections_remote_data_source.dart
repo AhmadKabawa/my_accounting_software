@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/foundation/types/api_result.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/collections/data/models/collection_model.dart';
@@ -19,4 +20,5 @@ abstract interface class CollectionsRemoteDataSource {
     required int id,
     required bool isActive,
   });
+  Future<ApiResult<String>> uploadImage(ImageUpload image);
 }
