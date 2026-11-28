@@ -27,7 +27,7 @@ void main() {
     expect(find.text(CatalogHubKeys.groupProductDefinition.en), findsOneWidget);
     expect(find.text(CatalogHubKeys.groupProperties.en), findsOneWidget);
     expect(find.text(CatalogHubKeys.groupClassification.en), findsOneWidget);
-    expect(find.byType(AppCard), findsNWidgets(16));
+    expect(find.byType(AppCard), findsNWidgets(17));
     expect(tester.takeException(), isNull);
 
     await pumpScreenMatrix(
