@@ -261,7 +261,7 @@ void _register(_FakeOptionSetsRepository repository) {
   addTearDown(() async => sl.reset());
 }
 
-Finder _editorSurface(double width) => find.byType(AlertDialog).last;
+Finder _editorSurface(double width) => find.byType(AlertDialog);
 
 Widget _home(_FakeOptionSetsRepository repository) => Scaffold(
   body: Column(
