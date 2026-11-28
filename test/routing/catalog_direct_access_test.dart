@@ -55,8 +55,6 @@ void main() {
     final accessCubit = AccessCubit(
       getMyAccess: GetMyAccessUseCase(_FakeAccessRepository(permissions)),
     );
-    await accessCubit.load();
-
     final router = GoRouter(
       initialLocation: BrandsRoutes.brands.path,
       routes: [
