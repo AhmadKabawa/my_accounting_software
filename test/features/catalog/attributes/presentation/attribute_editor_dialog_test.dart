@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_form_dialog/app_form_dialog.dart';
@@ -129,8 +130,17 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byType(SearchableDropdown<AttributeDataType>));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(AttributesKeys.option.en).last);
+    for (var index = 0; index < 6; index++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    }
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
+    expect(
+      tester.widget<SearchableDropdown<AttributeDataType>>(
+        find.byType(SearchableDropdown<AttributeDataType>),
+      ).value,
+      AttributeDataType.option,
+    );
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
     expect(repository.createdDrafts, isEmpty);
