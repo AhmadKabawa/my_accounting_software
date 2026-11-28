@@ -1,6 +1,9 @@
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 
 enum CatalogHubKeys implements AppKey {
+  groupProductDefinition(ar: 'تعريف المنتج', en: 'Product definition'),
+  groupProperties(ar: 'الخصائص والمواصفات', en: 'Properties and specifications'),
+  groupClassification(ar: 'التصنيف الوصفي', en: 'Descriptive classification'),
   title(ar: 'الكتالوج', en: 'Catalog'),
   subtitle(
     ar: 'نظّم بيانات المنتجات الأساسية من مكان واحد.',
