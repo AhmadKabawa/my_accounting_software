@@ -1,4 +1,7 @@
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/foundation/image/image_upload.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/state_management/base_cubit.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_message/flash_messages.dart';
@@ -7,6 +10,7 @@ import 'package:accounting_software/app/features/catalog/collections/domain/enti
 import 'package:accounting_software/app/features/catalog/collections/domain/failures/collection_failures.dart';
 import 'package:accounting_software/app/features/catalog/collections/domain/usecase/create_collection_use_case.dart';
 import 'package:accounting_software/app/features/catalog/collections/domain/usecase/update_collection_use_case.dart';
+import 'package:accounting_software/app/features/catalog/collections/domain/usecase/upload_collection_image_use_case.dart';
 import 'package:accounting_software/app/features/catalog/collections/presentation/localization/collections_keys.dart';
 
 sealed class CollectionFormState extends Equatable {
@@ -43,15 +47,21 @@ class CollectionFormCubit
   CollectionFormCubit({
     required CreateCollectionUseCase create,
     required UpdateCollectionUseCase update,
+    required UploadCollectionImageUseCase uploadImage,
     required FlashMessages flashMessages,
   }) : _create = create,
        _update = update,
+       _uploadImage = uploadImage,
        _flash = flashMessages,
        super(const CollectionFormIdle());
 
   final CreateCollectionUseCase _create;
   final UpdateCollectionUseCase _update;
+  final UploadCollectionImageUseCase _uploadImage;
   final FlashMessages _flash;
+
+  Future<Either<Failure, String>> uploadImage(ImageUpload image) =>
+      _uploadImage(image);
 
   Future<void> save({required CollectionDraft draft, int? id}) async {
     if (state is CollectionFormSaving || isClosed) return;
