@@ -45,8 +45,8 @@ get careInstructionsListConfig => CrudListConfig(
     current: (_) => const [],
     tableKey: (_) => null,
     tableAscending: (_) => true,
-    apply: (_, __) {},
-    applyTable: (_, __) {},
+    apply: (_, _) {},
+    applyTable: (_, _) {},
   ),
   filterControls: (slot) => [
     SearchableDropdown<CareInstructionStatusFilter>(
