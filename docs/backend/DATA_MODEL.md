@@ -970,6 +970,15 @@ uq (size_group_id, code)
 tg: set_updated_at@Bu
 rls: on | read: true | write: perm[masterdata.manage]
 
+**مطابقة التنفيذ في Flutter (CAT-07 Sizes):**
+- نموذج القراءة `CatalogSizeModel` يقرأ: `id,size_group_id,name,code,numeric_value,sort_order,is_active,updated_at`، ويحوّل `numeric_value` إلى Decimal.
+- إسقاط القائمة يضيف `product_sizes(count)` لعداد الاستخدام، مع إسقاط احتياطي بلا العداد إذا أعاد PostgREST HTTP 400.
+- Payload الإنشاء/التعديل يرسل فقط `size_group_id,name,code,numeric_value,sort_order,is_active`. لا يرسل `id` أو `updated_at` أو `uuid` أو `origin_node_id)؛ تُترك قيم الهوية/المزامنة والطابع الزمني للقاعدة.
+- الإنشاء الفردي POST لكائن، والإنشاء الجماعي POST لمصفوفة مع `Prefer: return=representation`؛ لم تُثبت ذرّية POST المصفوفي بطلب API حي في فحص 2026-11-28.
+- التعديل PATCH على `id=eq.<id>`، والتفعيل/الإيقاف PATCH لـ `is_active`، والحذف DELETE فعلي على `id`. لا يوجد في هذا المسار تحويل الحذف إلى soft delete.
+- **فارق توثيق:** `+std` في سجل الجدول يشمل أعمدة البنية القياسية مثل `updated_at,uuid,origin_node_id`؛ هذه الأعمدة موجودة في القاعدة الحية لكنها ليست حقولاً يحررها نموذج Sizes. لا يوجد تعارض في FK أو UNIQUE: القاعدة الحية تؤكد FK إلى `size_groups` وUNIQUE على `(size_group_id,code)`.
+
+
 #### sports
 cols: id:i8*=ID, name:v(100)!, code:v(50)!, description:t, is_active:b!=true, sort_order:i4=0 +std
 uq (code)
