@@ -881,6 +881,7 @@ void main() {
       of: find.byType(CategoryDetailsPanel),
       matching: find.byTooltip(CategoriesKeys.addChild.en),
     );
+    await tester.ensureVisible(panelAddChild);
     await tester.tap(panelAddChild);
     await tester.pumpAndSettle();
     await tester.enterText(_categoryNameInput(), 'Panel child');
