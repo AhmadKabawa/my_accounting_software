@@ -103,7 +103,4 @@ class CollectionsListCubit
   Future<void> onSaved({required bool isNew}) => reloadAfterMutation(
     isNew ? PagedMutationKind.created : PagedMutationKind.updated,
   );
-  Future<void> setType(String? value) => applyQueryAndLoad(
-    state.query.copyWith(type: value, clearType: value == null, page: 1),
-  );
 }
