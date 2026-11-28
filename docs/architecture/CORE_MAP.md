@@ -331,3 +331,8 @@
 - CrudEditorFields owns named TextEditingControllers and their dirty comparison/disposal. CrudEditorLabels carries feature AppKeys. CrudEditorScope exposes form/fields/busy/change/failure operations to the feature-owned field builder.
 - Feature Cubits, effects, draft construction, field validation, duplicate seeds, and extra work such as logo upload remain feature-owned. extraBusy and extraDirty extend the common guard without moving business behavior into Core.
 - AppColorPicker supports compact phone presentation, immediate pointer ownership while dragging the SV/Hue surfaces, responsive preset hit targets, and semantic increase/decrease actions. Its HEX/alpha behavior remains unchanged.
+
+
+## Date-only picker integration (2026-11-28)
+- `foundation/date/date_only.dart`: Date-only parsing/formatting helpers for PostgreSQL `date` values.
+- `presentation/widgets/app_date_picker_field/`: shared `AppDatePickerField` component; feature screens should reuse it instead of invoking `showDatePicker` directly.
