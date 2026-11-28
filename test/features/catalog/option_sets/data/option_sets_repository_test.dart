@@ -247,7 +247,10 @@ void main() {
 
   test('count projection 400 retries without embedded counts', () async {
     final remote = OptionSetsRemoteDataSourceImpl(api);
-    api.nextPaginatedFailure = ApiException.badRequest();
+    api.nextPaginatedFailure = ApiException.badRequest(
+      statusCode: 400,
+      errorCode: 'PGRST200',
+    );
     final result = await remote.getOptionSets(const OptionSetListQuery());
     expect(result, isA<ApiSuccess<PaginatedResult<OptionSetModel>>>());
     expect(api.requests.first.query['select'], contains('options!'));
