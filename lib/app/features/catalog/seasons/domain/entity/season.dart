@@ -8,7 +8,8 @@ class CatalogSeason extends Equatable {
     required this.name,
     required this.code,
     this.seasonType,
-    this.description,
+    this.startDate,
+    this.endDate,
     required this.isActive,
   });
 
@@ -16,16 +17,12 @@ class CatalogSeason extends Equatable {
   final String name;
   final String code;
   final SeasonType? seasonType;
-  final String? description;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final bool isActive;
 
   @override
   List<Object?> get props => [
-    id,
-    name,
-    code,
-    seasonType,
-    description,
-    isActive,
+    id, name, code, seasonType, startDate, endDate, isActive,
   ];
 }

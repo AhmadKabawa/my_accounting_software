@@ -4,9 +4,8 @@ import 'package:accounting_software/app/core/foundation/types/paged_query.dart';
 enum SeasonStatusFilter { all, active, inactive }
 
 enum SeasonSortField {
-  name('name'),
-  code('code'),
-  status('is_active');
+  startDate('start_date'),
+  name('name');
 
   const SeasonSortField(this.column);
   final String column;
@@ -23,7 +22,6 @@ class SeasonSort extends Equatable {
   const SeasonSort(this.field, this.ascending);
   final SeasonSortField field;
   final bool ascending;
-
   @override
   List<Object?> get props => [field, ascending];
 }
@@ -34,7 +32,7 @@ class SeasonListQuery extends Equatable
     this.search = '',
     this.status = SeasonStatusFilter.all,
     this.type,
-    this.sortField = SeasonSortField.name,
+    this.sortField = SeasonSortField.startDate,
     this.sortAscending = true,
     this.thenSorts = const [],
     this.page = 1,
@@ -119,13 +117,6 @@ class SeasonListQuery extends Equatable
 
   @override
   List<Object?> get props => [
-    search,
-    status,
-    type,
-    sortField,
-    sortAscending,
-    thenSorts,
-    page,
-    pageSize,
+    search, status, type, sortField, sortAscending, thenSorts, page, pageSize,
   ];
 }
