@@ -52,7 +52,7 @@
 
 - The repository's push workflow intentionally skips the full Flutter test suite on feature branches. Those widget and unit tests were added/updated but were not executed by this workflow.
 - No live Supabase/PostgREST verification was performed.
-- No merge was performed. A pull request to `integration/catalog-scope-1-combined` is the next review step.
+- No merge was performed. Pull request #22 is open against `integration/catalog-scope-1-combined`; it has not been merged.
 
 ## Tooling boundary
 
