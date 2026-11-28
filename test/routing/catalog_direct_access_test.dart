@@ -8,9 +8,20 @@ import 'package:accounting_software/app/core/access/domain/get_my_access_usecase
 import 'package:accounting_software/app/core/access/models/access_snapshot.dart';
 import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/features/auth/domain/entity/user/user_entity.dart';
+import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
 import 'package:accounting_software/app/features/access/presentation/routing/access_routes.dart';
 import 'package:accounting_software/app/features/catalog/brands/presentation/routing/brands_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_go_routes.dart';
+
+class _FakeSessionGate implements SessionGate {
+  @override
+  SessionStatus get current =>
+      const SessionAuthenticated(UserEntity(id: 'test-user', email: 'test@example.com'));
+
+  @override
+  Stream<SessionStatus> get changes => const Stream<SessionStatus>.empty();
+}
 
 class _FakeAccessRepository implements AccessRepository {
   _FakeAccessRepository(this.permissions);
@@ -47,7 +58,7 @@ void main() {
     final router = GoRouter(
       initialLocation: BrandsRoutes.brands.path,
       routes: [
-        ...buildCatalogRoutes(accessCubit: accessCubit),
+        ...buildCatalogRoutes(accessCubit: accessCubit, session: _FakeSessionGate()),
         GoRoute(
           path: AccessRoutes.denied.path,
           builder: (context, state) =>
