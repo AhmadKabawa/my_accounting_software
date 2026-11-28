@@ -332,7 +332,6 @@ void main() {
       () {
         expect(
           AccessRoutingLogic.resolve(
-            isResolved: true,
             allowed: false,
             fallback: AccessRoutes.denied,
           ),
@@ -346,17 +345,6 @@ void main() {
         AccessRoutingLogic.resolve(
           isResolved: true,
           allowed: true,
-          fallback: AccessRoutes.denied,
-        ),
-        isNull,
-      );
-    });
-
-    test('does not deny while the access snapshot is still loading', () {
-      expect(
-        AccessRoutingLogic.resolve(
-          isResolved: false,
-          allowed: false,
           fallback: AccessRoutes.denied,
         ),
         isNull,
