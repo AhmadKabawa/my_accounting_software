@@ -386,7 +386,7 @@ class AppRouter {
               ),
               GoRoute(
                 path: ProductTypesRoutes.detailsPath,
-                name: 'catalog.productTypeDetails',
+                name: ProductTypesRoutes.productTypeDetails.name,
                 pageBuilder: (context, state) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
                   return NoTransitionPage(
