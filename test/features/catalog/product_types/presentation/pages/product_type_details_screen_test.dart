@@ -239,7 +239,9 @@ void main() {
     }
   }
 
-  testWidgets('failed details can be retried from the inline error state', (tester) async {
+  testWidgets(
+    'failed details can be retried from the inline error state',
+    (tester) async {
     _register(loadFailure: const ServerFailure());
     await pumpScreenMatrix(
       tester,
@@ -255,9 +257,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Shoes'), findsOneWidget);
     expect(tester.takeException(), isNull);
-  });
+    },
+  );
 
-  testWidgets('published products are shown in a warning banner', (tester) async {
+  testWidgets(
+    'published products are shown in a warning banner',
+    (tester) async {
     _register(publishedCount: 2);
     await pumpScreenMatrix(
       tester,
@@ -267,9 +272,13 @@ void main() {
       home: _home(canManage: true),
     );
 
-    expect(find.text(ProductTypesKeys.publishedProductsWarning.en), findsOneWidget);
+    expect(
+      find.text(ProductTypesKeys.publishedProductsWarning.en),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
-  });
+    },
+  );
 
   testWidgets('read-only users see sections without write controls', (
     tester,
