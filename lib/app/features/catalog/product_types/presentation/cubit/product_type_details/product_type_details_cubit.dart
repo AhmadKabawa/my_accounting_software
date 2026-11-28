@@ -44,6 +44,9 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
     final attributeOptions = await _repository.getAttributeOptions();
     final optionOptions = await _repository.getOptionSetOptions();
     final genders = await _repository.getGenderOptions();
+    final publishedCount = await _repository.getPublishedProductCount(
+      productTypeId,
+    );
     if (isClosed || version != _requestVersion) return;
 
     final failure =
@@ -59,6 +62,10 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
       return;
     }
 
+    _publishedProductCount = publishedCount.fold(
+      (_) => null,
+      (count) => count,
+    );
     emit(
       ProductTypeDetailsLoaded(
         productType: productType.getOrElse(
@@ -72,7 +79,10 @@ class ProductTypeDetailsCubit extends BaseCubit<ProductTypeDetailsState, void> {
         attributeOptions: attributeOptions.getOrElse(() => const []),
         optionSetOptions: optionOptions.getOrElse(() => const []),
         genderOptions: genders.getOrElse(() => const []),
-        publishedProductCount: _publishedProductCount,
+        publishedProductCount: publishedCount.fold(
+          (_) => null,
+          (count) => count,
+        ),
       ),
     );
   }

@@ -11,6 +11,7 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
+import 'package:accounting_software/app/core/error/failures/server_failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_attribute_link.dart';
@@ -61,9 +62,13 @@ final _productType = ProductType(
 );
 
 class _FakeTypesRepository implements ProductTypesRepository {
+  Failure? loadFailure;
+
   @override
-  Future<Either<Failure, ProductType>> getById(int id) async =>
-      Right(_productType);
+  Future<Either<Failure, ProductType>> getById(int id) async {
+    final failure = loadFailure;
+    return failure == null ? Right(_productType) : Left(failure);
+  }
 
   @override
   Future<Either<Failure, PaginatedResult<ProductType>>> getPage(
@@ -93,6 +98,9 @@ class _FakeTypesRepository implements ProductTypesRepository {
 }
 
 class _FakeLinksRepository implements ProductTypeLinksRepository {
+  _FakeLinksRepository({this.publishedCount = 0});
+
+  final int publishedCount;
   @override
   Future<Either<Failure, List<ProductTypeSizeGroupLink>>> getSizeGroupLinks(
     int id,
@@ -178,14 +186,14 @@ class _FakeLinksRepository implements ProductTypeLinksRepository {
   @override
   Future<Either<Failure, int>> getPublishedProductCount(
     int productTypeId,
-  ) async => const Right(0);
+  ) async => Right(publishedCount);
 }
 
-void _register() {
-  final types = _FakeTypesRepository();
+void _register({int publishedCount = 0, Failure? loadFailure}) {
+  final types = _FakeTypesRepository()..loadFailure = loadFailure;
   sl.registerFactory<ProductTypeDetailsCubit>(
     () => ProductTypeDetailsCubit(
-      repository: _FakeLinksRepository(),
+      repository: _FakeLinksRepository(publishedCount: publishedCount),
       productTypesRepository: types,
     ),
   );
@@ -227,6 +235,39 @@ void main() {
       }
     }
   }
+
+  testWidgets('failed details can be retried from the inline error state', (tester) async {
+    _register(loadFailure: const ServerFailure());
+    await pumpScreenMatrix(
+      tester,
+      width: 900,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    expect(find.text(ProductTypesKeys.retry.en), findsOneWidget);
+    final cubit = sl<ProductTypeDetailsCubit>();
+    // The screen owns its Cubit; retrying the action must restore loaded data.
+    await tester.tap(find.text(ProductTypesKeys.retry.en));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Shoes'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('published products are shown in a warning banner', (tester) async {
+    _register(publishedCount: 2);
+    await pumpScreenMatrix(
+      tester,
+      width: 900,
+      direction: TextDirection.rtl,
+      dark: false,
+      home: _home(canManage: true),
+    );
+
+    expect(find.text(ProductTypesKeys.publishedProductsWarning.en), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('read-only users see sections without write controls', (
     tester,
