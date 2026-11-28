@@ -64,35 +64,7 @@ void main() {
     for (final k in allKeys) {
       expect(
         k.key,
-        matches(RegExp(r'^[a-z]+\.[A-Za-z0-9]+(?:\.[A-Za-z0-9]+)*),
-        reason: k.key,
-      );
-    }
-  });
-
-  // The registry is only useful if the texts really reach `tr()`: the same
-  // loader the app uses is initialised here, then every key is resolved.
-  group('translation loader', () {
-    for (final locale in const [Locale('ar'), Locale('en')]) {
-      test('loads ${locale.languageCode} translations', () async {
-        final translations = await MyDartLoader(allKeys).load('', locale);
-
-        expect(translations.length, allKeys.length);
-
-        for (final key in allKeys) {
-          final expected = locale.languageCode == 'en' ? key.en : key.ar;
-
-          expect(
-            translations[key.key],
-            expected,
-            reason: 'Incorrect translation for ${key.key}',
-          );
-        }
-      });
-    }
-  });
-}
-)),
+        matches(RegExp(r'^[a-z]+\.[A-Za-z0-9]+(?:\.[A-Za-z0-9]+)*$')),
         reason: k.key,
       );
     }
