@@ -8,6 +8,7 @@ import 'package:accounting_software/app/features/catalog/care_instructions/prese
 
 List<RouteBase> buildCareInstructionsGoRoutes({
   required AccessCubit accessCubit,
+  required SessionGate session,
 }) => [
   GoRoute(
     path: CareInstructionsRoutes.careInstructions.path,
