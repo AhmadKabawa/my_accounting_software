@@ -876,7 +876,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip(CategoriesKeys.addChild.en));
+    final panelAddChild = find.descendant(
+      of: find.byType(CategoryDetailsPanel),
+      matching: find.byTooltip(CategoriesKeys.addChild.en),
+    );
+    await tester.tap(panelAddChild);
     await tester.pumpAndSettle();
     await tester.enterText(_categoryNameInput(), 'Panel child');
     await tester.tap(
