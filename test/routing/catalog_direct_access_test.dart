@@ -72,7 +72,7 @@ void main() {
 
     expect(router.routeInformationProvider.value.uri.path, expectedPath);
 
-    await router.dispose();
+    router.dispose();
     await accessCubit.close();
   }
 
