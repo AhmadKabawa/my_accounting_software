@@ -11,7 +11,6 @@ import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/core/error/failures/failure.dart';
-import 'package:accounting_software/app/core/error/failures/server_failure.dart';
 import 'package:accounting_software/app/core/foundation/types/paginated_result.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type.dart';
 import 'package:accounting_software/app/features/catalog/product_types/domain/entity/product_type_attribute_link.dart';
@@ -63,11 +62,15 @@ final _productType = ProductType(
 
 class _FakeTypesRepository implements ProductTypesRepository {
   Failure? loadFailure;
+  int getByIdCalls = 0;
 
   @override
   Future<Either<Failure, ProductType>> getById(int id) async {
+    getByIdCalls++;
     final failure = loadFailure;
-    return failure == null ? Right(_productType) : Left(failure);
+    return failure != null && getByIdCalls == 1
+        ? Left(failure)
+        : Right(_productType);
   }
 
   @override
@@ -247,8 +250,7 @@ void main() {
     );
 
     expect(find.text(ProductTypesKeys.retry.en), findsOneWidget);
-    final cubit = sl<ProductTypeDetailsCubit>();
-    // The screen owns its Cubit; retrying the action must restore loaded data.
+    // The first request fails; retrying the action restores loaded data.
     await tester.tap(find.text(ProductTypesKeys.retry.en));
     await tester.pumpAndSettle();
     expect(find.textContaining('Shoes'), findsOneWidget);
