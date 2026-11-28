@@ -5,7 +5,6 @@ import 'package:accounting_software/app/core/localization/keys/nav_keys.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_filter_bar/filter_bar.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_bulk_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_list_config.dart';
 import 'package:accounting_software/app/core/presentation/widgets/crud_list/crud_flows_config.dart';
@@ -16,6 +15,7 @@ import 'package:accounting_software/app/features/catalog/materials/presentation/
 import 'package:accounting_software/app/features/catalog/materials/presentation/widgets/materials_data_section.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/dialogs/materials_editor_launcher.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/localization/materials_keys.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/material_type_labels.dart';
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 
 CrudListConfig<
@@ -80,7 +80,7 @@ get materialsListConfig => CrudListConfig(
     SearchableDropdown<MaterialType>(
       options: MaterialType.values,
       labelKey: MaterialsKeys.type,
-      optionLabel: (v) => _materialTypeLabel(v).tr(context: slot.context),
+      optionLabel: (v) => materialTypeLabel(v).tr(context: slot.context),
       value: MaterialType.tryParse(slot.state.query.type),
       clearable: true,
       mode: SearchableDropdownMode.panel,

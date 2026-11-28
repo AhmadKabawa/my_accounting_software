@@ -8,6 +8,7 @@ import 'package:accounting_software/app/features/catalog/materials/domain/entity
 import 'package:accounting_software/app/features/catalog/materials/domain/entity/material_draft.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/cubit/materials_form/material_form_cubit.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/localization/materials_keys.dart';
+import 'package:accounting_software/app/features/catalog/materials/presentation/material_type_labels.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/widgets/material_field_validators.dart';
 
 class MaterialEditorDialog extends StatefulWidget {
@@ -119,11 +120,7 @@ class _MaterialEditorDialogState extends State<MaterialEditorDialog> {
                 for (final type in MaterialType.values)
                   DropdownMenuItem<MaterialType?>(
                     value: type,
-                    child: AppText(switch (type) {
-                      MaterialType.natural => MaterialsKeys.natural,
-                      MaterialType.synthetic => MaterialsKeys.synthetic,
-                      MaterialType.blended => MaterialsKeys.blended,
-                    }),
+                    child: AppText(materialTypeLabel(type)),
                   ),
               ],
               onChanged: (value) => setState(() => _selectedType = value),
