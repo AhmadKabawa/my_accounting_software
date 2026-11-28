@@ -59,7 +59,10 @@ void main() {
       ),
     );
     expect(result.isRight(), isTrue);
-    expect(api.lastRequest.query['select'], contains('options!options_option_set_id_fkey(count)'));
+    expect(
+      api.lastRequest.query['select'],
+      contains('options!options_option_set_id_fkey(count)'),
+    );
     expect(api.lastRequest.query['order'], 'name.desc,id.asc');
     expect(api.lastRequest.query['is_active'], 'eq.true');
     expect(api.lastRequest.query['or'], contains('col'));
