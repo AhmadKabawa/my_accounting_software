@@ -50,9 +50,8 @@ void main() {
         ...buildCatalogRoutes(accessCubit: accessCubit),
         GoRoute(
           path: AccessRoutes.denied.path,
-          builder: (context, state) => const Scaffold(
-            body: Text('access denied test destination'),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: Text('access denied test destination')),
         ),
       ],
     );
@@ -76,5 +75,4 @@ void main() {
       );
     },
   );
-
 }
