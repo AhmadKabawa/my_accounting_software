@@ -65,5 +65,29 @@ List<RouteItem> buildRouteRegistry({
   ...SizeSystemsRoutes.all,
 ];
 
-/// Routes used by the running application.
+/// Every GoRouter destination, including dynamic detail paths that are not
+/// home-dashboard destinations.
+List<RouteItem> buildRegisteredRouteRegistry({
+  bool signupEnabled = AppConfig.signupEnabled,
+  bool forgotPasswordEnabled = AppConfig.forgotPasswordEnabled,
+  bool onboardingEnabled = AppConfig.onboardingEnabled,
+}) => [
+  ...buildRouteRegistry(
+    signupEnabled: signupEnabled,
+    forgotPasswordEnabled: forgotPasswordEnabled,
+    onboardingEnabled: onboardingEnabled,
+  ),
+  RouteItem(
+    ProductTypesRoutes.detailsPath,
+    ProductTypesRoutes.productTypeDetailsName,
+  ),
+  RouteItem(SizeSystemsRoutes.groupsPath, SizeSystemsRoutes.groupsName),
+  RouteItem(SizeSystemsRoutes.sizesPath, SizeSystemsRoutes.sizesName),
+];
+
+/// Stable destinations offered by the home dashboard (dynamic detail routes
+/// are intentionally excluded).
 final List<RouteItem> allRoutes = buildRouteRegistry();
+
+/// Complete route registry used by routing guards and classification.
+final List<RouteItem> registeredRoutes = buildRegisteredRouteRegistry();
