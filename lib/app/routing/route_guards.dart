@@ -61,8 +61,6 @@ final Set<String> protectedRoutes = {
   OptionSetsRoutes.optionSets.path,
   AttributesRoutes.attributes.path,
   SizeSystemsRoutes.sizeSystems.path,
-  SizeSystemsRoutes.groupsPath,
-  SizeSystemsRoutes.sizesPath,
   ProductTypesRoutes.productTypes.path,
   MaterialsRoutes.materials.path,
   FabricTypesRoutes.fabricTypes.path,
