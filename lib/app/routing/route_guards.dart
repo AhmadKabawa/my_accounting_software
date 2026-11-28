@@ -130,7 +130,12 @@ abstract class AccessRoutingLogic {
   static GoRouterRedirect require(
     Permission permission, {
     required bool Function(Permission permission) can,
+    bool Function()? isResolved,
     RouteItem fallback = HomeRoutes.home,
   }) =>
-      (context, state) => can(permission) ? null : fallback.path;
+      (context, state) => (isResolved != null && !isResolved())
+          ? null
+          : can(permission)
+          ? null
+          : fallback.path;
 }
