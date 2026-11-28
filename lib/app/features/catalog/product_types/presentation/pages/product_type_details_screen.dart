@@ -9,8 +9,9 @@ import 'package:accounting_software/app/core/localization/translations/app_key.d
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_breadcrumb/app_breadcrumb.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_card/app_card.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_empty_state/app_empty_state.dart';
-import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_button.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_skeleton/app_skeleton.dart';
+
 import 'package:accounting_software/app/core/presentation/widgets/app_inline_banner/inline_banner.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_body/app_page_body.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_page_header/app_page_header.dart';
@@ -32,12 +33,14 @@ class ProductTypeDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => sl<ProductTypeDetailsCubit>()..load(productTypeId),
-    child: const _ProductTypeDetailsBody(),
+    child: _ProductTypeDetailsBody(productTypeId: productTypeId),
   );
 }
 
 class _ProductTypeDetailsBody extends StatelessWidget {
-  const _ProductTypeDetailsBody();
+  const _ProductTypeDetailsBody({required this.productTypeId});
+
+  final int productTypeId;
 
   @override
   Widget build(BuildContext context) {
@@ -82,15 +85,29 @@ class _ProductTypeDetailsBody extends StatelessWidget {
             ),
             if (state is ProductTypeDetailsLoading ||
                 state is ProductTypeDetailsInitial)
-              const AppEmptyState(
-                icon: AppIcons.catalog,
-                titleKey: ProductTypesKeys.busy,
-                descriptionKey: ProductTypesKeys.busy,
+              Column(
+                children: [
+                  const AppSkeleton.card(height: 120),
+                  context.ui.spacing.gap(AppSpacing.md),
+                  const AppSkeleton.card(height: 180),
+                  context.ui.spacing.gap(AppSpacing.md),
+                  const AppSkeleton.card(height: 180),
+                ],
               )
             else if (state is ProductTypeDetailsFailed)
-              InlineBanner(
-                messageKey: state.failure.messageKey,
-                variant: InlineBannerVariant.error,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InlineBanner(
+                    messageKey: state.failure.messageKey,
+                    variant: InlineBannerVariant.error,
+                  ),
+                  context.ui.spacing.gap(AppSpacing.sm),
+                  AppButton(
+                    ProductTypesKeys.retry,
+                    onPressed: () => context.read<ProductTypeDetailsCubit>().load(productTypeId),
+                  ),
+                ],
               )
             else if (state is ProductTypeDetailsLoaded) ...[
               if (state.updateFailure != null)
