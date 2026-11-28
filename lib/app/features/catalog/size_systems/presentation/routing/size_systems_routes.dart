@@ -22,11 +22,13 @@ abstract final class SizeSystemsRoutes {
   static const groupsName = 'catalog.sizeSystemGroups';
   static const sizesPath = '/catalog/size-systems/:systemId/groups/:groupId';
   static const sizesName = 'catalog.sizeGroupSizes';
+  static const groupsRoute = RouteItem(groupsPath, groupsName);
+  static const sizesRoute = RouteItem(sizesPath, sizesName);
 
   static String groups(int systemId) => '/catalog/size-systems/$systemId';
 
   static String sizes(int systemId, int groupId) =>
       '/catalog/size-systems/$systemId/groups/$groupId';
 
-  static const List<RouteItem> all = [sizeSystems];
+  static const List<RouteItem> all = [sizeSystems, groupsRoute, sizesRoute];
 }
