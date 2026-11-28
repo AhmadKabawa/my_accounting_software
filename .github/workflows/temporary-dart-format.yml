@@ -1,4 +1,4 @@
-name: Temporary Dart formatter
+name: Temporary Dart formatter and test runner
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  format:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +22,10 @@ jobs:
           channel: stable
       - name: Format Dart sources
         run: dart format lib test
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+      - name: Run full test suite
+        run: flutter test
       - name: Commit formatting changes
         run: |
           if git diff --quiet; then
