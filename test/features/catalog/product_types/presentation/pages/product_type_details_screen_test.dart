@@ -243,43 +243,41 @@ void main() {
   testWidgets('failed details can be retried from the inline error state', (
     tester,
   ) async {
-      _register(loadFailure: const ServerFailure());
-      await pumpScreenMatrix(
-        tester,
-        width: 900,
-        direction: TextDirection.ltr,
-        dark: false,
-        home: _home(canManage: true),
-      );
+    _register(loadFailure: const ServerFailure());
+    await pumpScreenMatrix(
+      tester,
+      width: 900,
+      direction: TextDirection.ltr,
+      dark: false,
+      home: _home(canManage: true),
+    );
 
-      expect(find.text(ProductTypesKeys.retry.en), findsOneWidget);
-      // The first request fails; retrying the action restores loaded data.
-      await tester.tap(find.text(ProductTypesKeys.retry.en));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('Shoes'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(find.text(ProductTypesKeys.retry.en), findsOneWidget);
+    // The first request fails; retrying the action restores loaded data.
+    await tester.tap(find.text(ProductTypesKeys.retry.en));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Shoes'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('published products are shown in a warning banner', (
     tester,
   ) async {
-      _register(publishedCount: 2);
-      await pumpScreenMatrix(
-        tester,
-        width: 900,
-        direction: TextDirection.rtl,
-        dark: false,
-        home: _home(canManage: true),
-      );
+    _register(publishedCount: 2);
+    await pumpScreenMatrix(
+      tester,
+      width: 900,
+      direction: TextDirection.rtl,
+      dark: false,
+      home: _home(canManage: true),
+    );
 
-      expect(
-        find.text(ProductTypesKeys.publishedProductsWarning.en),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(
+      find.text(ProductTypesKeys.publishedProductsWarning.en),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('read-only users see sections without write controls', (
     tester,
