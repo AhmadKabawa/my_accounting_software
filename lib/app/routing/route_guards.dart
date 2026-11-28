@@ -124,6 +124,14 @@ String? resolveRedirect({
 
 /// UX-only permission routing. The database remains the security boundary.
 abstract class AccessRoutingLogic {
+  /// Pure decision used by route redirects and unit tests.
+  static String? resolve({
+    required bool isResolved,
+    required bool allowed,
+    RouteItem fallback = HomeRoutes.home,
+  }) =>
+      !isResolved || allowed ? null : fallback.path;
+
   /// Builds a UI navigation guard without depending on the global router.
   /// The caller supplies the permission reader, keeping routing policy pure
   /// and breaking the route_guards.dart <-> app_go_router.dart import cycle.
@@ -133,9 +141,9 @@ abstract class AccessRoutingLogic {
     bool Function()? isResolved,
     RouteItem fallback = HomeRoutes.home,
   }) =>
-      (context, state) => (isResolved != null && !isResolved())
-          ? null
-          : can(permission)
-          ? null
-          : fallback.path;
+      (context, state) => resolve(
+        isResolved: isResolved?.call() ?? true,
+        allowed: can(permission),
+        fallback: fallback,
+      );
 }
