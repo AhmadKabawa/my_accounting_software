@@ -14,7 +14,7 @@
 ## CI والاختبارات
 - آخر تشغيل تحقق مخصص: نجاح التنسيق، `flutter pub get`، `flutter analyze --no-fatal-infos`، واختبارات `AppPageHeader` وميزة `care_instructions`، run [46098232739](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/46098232739).
 - هذا التشغيل شمل اختبارات payload exact fields، قراءة الاستخدام، 23505/23503، حدود الحقول، Form Cubit، ومصفوفة الشاشة 280px RTL بمقياس 1.5 و1200px LTR داكن.
-- التشغيل الرسمي للفرع على آخر commit بعد إزالة ملف التحقق المؤقت سيُتابع قبل إغلاق المهمة.
+- التشغيل الرسمي على آخر commit بعد إزالة ملف التحقق المؤقت: **نجاح** (تنسيق + تحليل)، run [46098396745](https://github.com/AhmadKabawa/my_accounting_software/actions/runs/46098396745).
 
 ## Backend والقيود
 - لا يوجد طلب Backend جديد؛ العقد والجدول والعلاقات موثقة في DATA_MODEL ووثائق backend، لذلك لم يُضف شيء إلى `BACKEND_REQUESTS.md`.
