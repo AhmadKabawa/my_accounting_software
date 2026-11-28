@@ -22,7 +22,7 @@ List<RouteBase> buildProductTypesGoRoutes({required AccessCubit accessCubit, req
         path: ProductTypesRoutes.detailsPath,
         name: ProductTypesRoutes.productTypeDetails.name,
         redirect: (context, state) =>
-            catalogAccessRedirect(accessCubit, context, state),
+            catalogAccessRedirect(accessCubit, session, context, state),
         pageBuilder: (context, state) {
           final id = int.tryParse(state.pathParameters['id'] ?? '');
           return NoTransitionPage(
