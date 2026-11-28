@@ -25,8 +25,8 @@ import 'package:accounting_software/app/features/catalog/care_instructions/prese
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/cubit/care_instructions_list_cubit.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/pages/care_instructions_screen.dart';
 import '../../../../helpers/localized_app.dart';
-import '../../../helpers/memory_storage.dart';
-import '../../../helpers/screen_matrix.dart';
+import '../../../../helpers/memory_storage.dart';
+import '../../../../helpers/screen_matrix.dart';
 
 class _AccessRepository implements AccessRepository {
   @override
