@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/categories/presentation/routing/categories_routes.dart';
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
 
-List<RouteBase> buildCategoriesGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildCategoriesGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: CategoriesRoutes.categories.path,
     name: CategoriesRoutes.categories.name,

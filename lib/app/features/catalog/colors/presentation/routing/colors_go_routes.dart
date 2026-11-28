@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/colors/presentation/routing/colors_routes.dart';
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
 
-List<RouteBase> buildColorsGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildColorsGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: ColorsRoutes.colors.path,
     name: ColorsRoutes.colors.name,

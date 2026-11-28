@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/pages/materials_screen.dart';
 
-List<RouteBase> buildMaterialsGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildMaterialsGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: MaterialsRoutes.materials.path,
     name: MaterialsRoutes.materials.name,

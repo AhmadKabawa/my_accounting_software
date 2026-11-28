@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/routing/age_groups_routes.dart';
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/pages/age_groups_screen.dart';
 
-List<RouteBase> buildAgeGroupsGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildAgeGroupsGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: AgeGroupsRoutes.ageGroups.path,
     name: AgeGroupsRoutes.ageGroups.name,

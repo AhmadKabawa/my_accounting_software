@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/tags/presentation/routing/tags_routes.dart';
 import 'package:accounting_software/app/features/catalog/tags/presentation/pages/tags_screen.dart';
 
-List<RouteBase> buildTagsGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildTagsGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: TagsRoutes.tags.path,
     name: TagsRoutes.tags.name,

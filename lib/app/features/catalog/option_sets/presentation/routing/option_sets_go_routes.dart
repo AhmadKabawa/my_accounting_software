@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/routing/option_sets_routes.dart';
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
 
-List<RouteBase> buildOptionSetsGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildOptionSetsGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: OptionSetsRoutes.optionSets.path,
     name: OptionSetsRoutes.optionSets.name,

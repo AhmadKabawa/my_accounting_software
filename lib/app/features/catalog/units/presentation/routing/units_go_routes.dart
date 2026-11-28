@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/units/presentation/routing/units_routes.dart';
 import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
 
-List<RouteBase> buildUnitsGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildUnitsGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: UnitsRoutes.units.path,
     name: UnitsRoutes.units.name,

@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/seasons/presentation/routing/seasons_routes.dart';
 import 'package:accounting_software/app/features/catalog/seasons/presentation/pages/seasons_screen.dart';
 
-List<RouteBase> buildSeasonsGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildSeasonsGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: SeasonsRoutes.seasons.path,
     name: SeasonsRoutes.seasons.name,

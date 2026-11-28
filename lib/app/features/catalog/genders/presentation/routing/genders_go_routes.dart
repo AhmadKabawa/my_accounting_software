@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/genders/presentation/routing/genders_routes.dart';
 import 'package:accounting_software/app/features/catalog/genders/presentation/pages/genders_screen.dart';
 
-List<RouteBase> buildGendersGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildGendersGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: GendersRoutes.genders.path,
     name: GendersRoutes.genders.name,

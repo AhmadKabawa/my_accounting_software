@@ -6,7 +6,10 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/sports/presentation/routing/sports_routes.dart';
 import 'package:accounting_software/app/features/catalog/sports/presentation/pages/sports_screen.dart';
 
-List<RouteBase> buildSportsGoRoutes({required AccessCubit accessCubit, required SessionGate session}) => [
+List<RouteBase> buildSportsGoRoutes({
+  required AccessCubit accessCubit,
+  required SessionGate session,
+}) => [
   GoRoute(
     path: SportsRoutes.sports.path,
     name: SportsRoutes.sports.name,

@@ -16,8 +16,9 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 
 class _FakeSessionGate implements SessionGate {
   @override
-  SessionStatus get current =>
-      const SessionAuthenticated(UserEntity(id: 'test-user', email: 'test@example.com'));
+  SessionStatus get current => const SessionAuthenticated(
+    UserEntity(id: 'test-user', email: 'test@example.com'),
+  );
 
   @override
   Stream<SessionStatus> get changes => const Stream<SessionStatus>.empty();
@@ -58,7 +59,10 @@ void main() {
     final router = GoRouter(
       initialLocation: BrandsRoutes.brands.path,
       routes: [
-        ...buildCatalogRoutes(accessCubit: accessCubit, session: _FakeSessionGate()),
+        ...buildCatalogRoutes(
+          accessCubit: accessCubit,
+          session: _FakeSessionGate(),
+        ),
         GoRoute(
           path: AccessRoutes.denied.path,
           builder: (context, state) =>
