@@ -148,6 +148,7 @@
 
 ### B-32 — صور المجموعات — **منفَّذ**
 - **التنفيذ:** سياسة `masterdata_images_insert` تغطي مجلد `collections/` أيضاً، مع INSERT فقط وشرط `masterdata.manage`. لا تمنح UPDATE/DELETE.
+- **تكامل Flutter (2026-11-28):** أُضيف مسار رفع المجموعة عبر `AppImageUploadField` و`StorageImageUploader` إلى `product-images/collections/` مع JPEG/PNG/WebP وحد 5 MB؛ يحفظ الرابط في `collections.image`. هذا يثبت تكامل الكود فقط، ولا يثبت نجاح Storage الحي أو صلاحياته.
 
 
 ## اختبارات القبول المتبقية (2026-11-27)

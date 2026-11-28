@@ -33,6 +33,12 @@ import 'package:accounting_software/app/features/catalog/age_groups/presentation
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/routing/age_groups_routes.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/localization/care_instructions_keys.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/routing/care_instructions_routes.dart';
+import 'package:accounting_software/app/features/catalog/seasons/presentation/localization/seasons_keys.dart';
+import 'package:accounting_software/app/features/catalog/seasons/presentation/routing/seasons_routes.dart';
+import 'package:accounting_software/app/features/catalog/collections/presentation/localization/collections_keys.dart';
+import 'package:accounting_software/app/features/catalog/collections/presentation/routing/collections_routes.dart';
 
 class CatalogHubScreen extends StatelessWidget {
   const CatalogHubScreen({super.key});
@@ -104,6 +110,24 @@ class CatalogHubScreen extends StatelessWidget {
           TagsKeys.title,
           CatalogHubKeys.tagsDescription,
           () => context.go(TagsRoutes.tags.path),
+        ),
+        _CatalogArea(
+          AppIcons.catalog,
+          CareInstructionsKeys.title,
+          CatalogHubKeys.careInstructionsDescription,
+          () => context.go(CareInstructionsRoutes.careInstructions.path),
+        ),
+        _CatalogArea(
+          AppIcons.catalog,
+          SeasonsKeys.title,
+          CatalogHubKeys.seasonsDescription,
+          () => context.go(SeasonsRoutes.seasons.path),
+        ),
+        _CatalogArea(
+          AppIcons.catalog,
+          CollectionsKeys.title,
+          CatalogHubKeys.collectionsDescription,
+          () => context.go(CollectionsRoutes.collections.path),
         ),
         _CatalogArea(
           AppIcons.sports,
