@@ -48,6 +48,7 @@ enum CatalogHubKeys implements AppKey {
   ),
   materialsTitle(ar: 'الخامات', en: 'Materials'),
   fabricTypesTitle(ar: 'أنواع الأقمشة', en: 'Fabric types'),
+  careInstructionsTitle(ar: 'تعليمات العناية', en: 'Care instructions'),
   materialsDescription(
     ar: 'إدارة الخامات وتركيبات المواد المستخدمة في المنتجات.',
     en: 'Manage materials and compositions used in products.',
@@ -55,6 +56,10 @@ enum CatalogHubKeys implements AppKey {
   fabricTypesDescription(
     ar: 'إدارة أنواع الأقمشة وتصنيفاتها وخصائصها.',
     en: 'Manage fabric types, categories and properties.',
+  ),
+  careInstructionsDescription(
+    ar: 'إدارة إرشادات الغسيل والتجفيف والكيّ والعناية بالمنتجات.',
+    en: 'Manage washing, drying, ironing and other product care guidance.',
   ),
   open(ar: 'فتح', en: 'Open');
 

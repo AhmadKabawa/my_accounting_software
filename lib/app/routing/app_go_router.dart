@@ -70,6 +70,8 @@ import 'package:accounting_software/app/features/catalog/materials/presentation/
 import 'package:accounting_software/app/features/catalog/materials/presentation/pages/materials_screen.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/pages/fabric_types_screen.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/routing/care_instructions_routes.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/pages/care_instructions_screen.dart';
 
 AppMenuEntry buildSignOutMenuEntry({
   required Future<bool> Function() signOut,
@@ -375,6 +377,12 @@ class AppRouter {
                 name: FabricTypesRoutes.fabricTypes.name,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: FabricTypesScreen()),
+              ),
+              GoRoute(
+                path: CareInstructionsRoutes.careInstructions.path,
+                name: CareInstructionsRoutes.careInstructions.name,
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: CareInstructionsScreen()),
               ),
               GoRoute(
                 path: SportsRoutes.sports.path,

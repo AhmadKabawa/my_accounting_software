@@ -33,6 +33,7 @@ import 'package:accounting_software/app/features/catalog/age_groups/presentation
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/routing/age_groups_routes.dart';
 import 'package:accounting_software/app/features/catalog/materials/presentation/routing/materials_routes.dart';
 import 'package:accounting_software/app/features/catalog/fabric_types/presentation/routing/fabric_types_routes.dart';
+import 'package:accounting_software/app/features/catalog/care_instructions/presentation/routing/care_instructions_routes.dart';
 
 /// The Catalog tab: a hub that lists the catalog areas. Each area opens its own
 /// page inside the Catalog branch (so the bottom bar / sidebar stays on Catalog).
@@ -116,6 +117,12 @@ class CatalogHubScreen extends StatelessWidget {
               titleKey: CatalogHubKeys.fabricTypesTitle,
               descriptionKey: CatalogHubKeys.fabricTypesDescription,
               onOpen: () => context.go(FabricTypesRoutes.fabricTypes.path),
+            ),
+            _AreaCard(
+              icon: AppIcons.catalog,
+              titleKey: CatalogHubKeys.careInstructionsTitle,
+              descriptionKey: CatalogHubKeys.careInstructionsDescription,
+              onOpen: () => context.go(CareInstructionsRoutes.careInstructions.path),
             ),
             _AreaCard(
               icon: AppIcons.sports,
