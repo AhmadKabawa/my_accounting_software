@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/cubit/access_cubit.dart';
+import 'package:accounting_software/app/core/access/permission.dart';
 import 'package:accounting_software/app/core/platform/platform_capabilities.dart';
 import 'package:accounting_software/app/core/routing/unsaved_changes_guard.dart';
 import 'package:accounting_software/app/core/foundation/config/app_config.dart';
@@ -13,6 +14,8 @@ import 'package:accounting_software/app/core/routing/route_transitions.dart';
 import 'package:accounting_software/app/core/storage/shared_preferences/app_settings_manager.dart';
 import 'package:accounting_software/app/core/routing/app_router_observer.dart';
 import 'package:accounting_software/app/features/auth/domain/session/session_gate.dart';
+import 'package:accounting_software/app/features/access/presentation/pages/access_denied_screen.dart';
+import 'package:accounting_software/app/features/access/presentation/routing/access_routes.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/auth_flow/auth_flow_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/profile/profile_cubit.dart';
 import 'package:accounting_software/app/features/auth/presentation/cubit/session/session_cubit.dart';
@@ -249,6 +252,17 @@ class AppRouter {
           ),
         ),
 
+      /// Signed-in users without a destination permission land here.
+      GoRoute(
+        path: AccessRoutes.denied.path,
+        name: AccessRoutes.denied.name,
+        pageBuilder: (context, state) => RouteTransitions.fade(
+          context,
+          state,
+          const AccessDeniedScreen(),
+        ),
+      ),
+
       /// ─────────────────────────────────────────
       /// MAIN APP (adaptive shell: bottom bar / rail / sidebar)
       /// ─────────────────────────────────────────
@@ -294,47 +308,55 @@ class AppRouter {
               GoRoute(
                 path: CatalogRoutes.hub.path,
                 name: CatalogRoutes.hub.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: CatalogHubScreen()),
               ),
               GoRoute(
                 path: CatalogRoutes.masterData.path,
                 name: CatalogRoutes.masterData.name,
-                redirect: (context, state) => catalogMasterDataRedirect(),
+                redirect: (context, state) =>
+                    _catalogRedirect(context, state) ?? catalogMasterDataRedirect(),
               ),
               GoRoute(
                 path: BrandsRoutes.brands.path,
                 name: BrandsRoutes.brands.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     NoTransitionPage(child: const BrandsScreen()),
               ),
               GoRoute(
                 path: UnitsRoutes.units.path,
                 name: UnitsRoutes.units.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: UnitsScreen()),
               ),
               GoRoute(
                 path: OptionSetsRoutes.optionSets.path,
                 name: OptionSetsRoutes.optionSets.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: OptionSetsScreen()),
               ),
               GoRoute(
                 path: AttributesRoutes.attributes.path,
                 name: AttributesRoutes.attributes.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: AttributesScreen()),
               ),
               GoRoute(
                 path: SizeSystemsRoutes.sizeSystems.path,
                 name: SizeSystemsRoutes.sizeSystems.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: SizeSystemsScreen()),
               ),
               GoRoute(
                 path: SizeSystemsRoutes.groupsPath,
                 name: SizeSystemsRoutes.groupsName,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) {
                   final systemId = int.tryParse(
                     state.pathParameters['systemId'] ?? '',
@@ -353,6 +375,7 @@ class AppRouter {
               GoRoute(
                 path: SizeSystemsRoutes.sizesPath,
                 name: SizeSystemsRoutes.sizesName,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) {
                   final systemId = int.tryParse(
                     state.pathParameters['systemId'] ?? '',
@@ -375,18 +398,21 @@ class AppRouter {
               GoRoute(
                 path: CategoriesRoutes.categories.path,
                 name: CategoriesRoutes.categories.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: CategoriesListPage()),
               ),
               GoRoute(
                 path: ProductTypesRoutes.productTypes.path,
                 name: ProductTypesRoutes.productTypes.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: ProductTypesScreen()),
               ),
               GoRoute(
                 path: ProductTypesRoutes.detailsPath,
                 name: ProductTypesRoutes.productTypeDetails.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
                   return NoTransitionPage(
@@ -399,60 +425,70 @@ class AppRouter {
               GoRoute(
                 path: ColorsRoutes.colors.path,
                 name: ColorsRoutes.colors.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: ColorsScreen()),
               ),
               GoRoute(
                 path: TagsRoutes.tags.path,
                 name: TagsRoutes.tags.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: TagsScreen()),
               ),
               GoRoute(
                 path: GendersRoutes.genders.path,
                 name: GendersRoutes.genders.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: GendersScreen()),
               ),
               GoRoute(
                 path: AgeGroupsRoutes.ageGroups.path,
                 name: AgeGroupsRoutes.ageGroups.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: AgeGroupsScreen()),
               ),
               GoRoute(
                 path: MaterialsRoutes.materials.path,
                 name: MaterialsRoutes.materials.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: MaterialsScreen()),
               ),
               GoRoute(
                 path: FabricTypesRoutes.fabricTypes.path,
                 name: FabricTypesRoutes.fabricTypes.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: FabricTypesScreen()),
               ),
               GoRoute(
                 path: CareInstructionsRoutes.careInstructions.path,
                 name: CareInstructionsRoutes.careInstructions.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: CareInstructionsScreen()),
               ),
               GoRoute(
                 path: SeasonsRoutes.seasons.path,
                 name: SeasonsRoutes.seasons.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: SeasonsScreen()),
               ),
               GoRoute(
                 path: CollectionsRoutes.collections.path,
                 name: CollectionsRoutes.collections.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: CollectionsScreen()),
               ),
               GoRoute(
                 path: SportsRoutes.sports.path,
                 name: SportsRoutes.sports.name,
+                redirect: _catalogRedirect,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: SportsScreen()),
               ),
@@ -475,6 +511,19 @@ class AppRouter {
       ),
     ];
   }
+
+  static String? _catalogRedirect(
+    BuildContext context,
+    GoRouterState state,
+  ) =>
+      AccessRoutingLogic.require(
+        const Permission('catalog.manage'),
+        can: accessCubit.can,
+        isResolved: () =>
+            accessCubit.state.status != AccessStatus.initial &&
+            accessCubit.state.status != AccessStatus.loading,
+        fallback: AccessRoutes.denied,
+      )(context, state);
 
   /// Auth pages get their own [AuthFlowCubit] (a new one per page, closed with
   /// it), so loading state never leaks between pages.
