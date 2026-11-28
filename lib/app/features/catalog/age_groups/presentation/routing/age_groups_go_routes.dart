@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/age_groups/presentation
 import 'package:accounting_software/app/features/catalog/age_groups/presentation/pages/age_groups_screen.dart';
 
 List<RouteBase> buildAgeGroupsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: AgeGroupsRoutes.ageGroups.path,
     name: AgeGroupsRoutes.ageGroups.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: AgeGroupsScreen()),
-  )
+  ),
 ];

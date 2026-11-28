@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/colors/presentation/rou
 import 'package:accounting_software/app/features/catalog/colors/presentation/pages/colors_screen.dart';
 
 List<RouteBase> buildColorsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: ColorsRoutes.colors.path,
     name: ColorsRoutes.colors.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: ColorsScreen()),
-  )
+  ),
 ];

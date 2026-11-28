@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/option_sets/presentatio
 import 'package:accounting_software/app/features/catalog/option_sets/presentation/pages/option_sets_screen.dart';
 
 List<RouteBase> buildOptionSetsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: OptionSetsRoutes.optionSets.path,
     name: OptionSetsRoutes.optionSets.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: OptionSetsScreen()),
-  )
+  ),
 ];

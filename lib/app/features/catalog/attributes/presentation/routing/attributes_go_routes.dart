@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/attributes/presentation
 import 'package:accounting_software/app/features/catalog/attributes/presentation/pages/attributes_screen.dart';
 
 List<RouteBase> buildAttributesGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: AttributesRoutes.attributes.path,
     name: AttributesRoutes.attributes.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: AttributesScreen()),
-  )
+  ),
 ];

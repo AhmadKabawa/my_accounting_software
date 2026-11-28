@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/seasons/presentation/ro
 import 'package:accounting_software/app/features/catalog/seasons/presentation/pages/seasons_screen.dart';
 
 List<RouteBase> buildSeasonsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: SeasonsRoutes.seasons.path,
     name: SeasonsRoutes.seasons.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: SeasonsScreen()),
-  )
+  ),
 ];

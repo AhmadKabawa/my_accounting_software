@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/genders/presentation/ro
 import 'package:accounting_software/app/features/catalog/genders/presentation/pages/genders_screen.dart';
 
 List<RouteBase> buildGendersGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: GendersRoutes.genders.path,
     name: GendersRoutes.genders.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: GendersScreen()),
-  )
+  ),
 ];

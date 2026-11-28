@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/brands/presentation/rou
 import 'package:accounting_software/app/features/catalog/brands/presentation/pages/brands_screen.dart';
 
 List<RouteBase> buildBrandsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: BrandsRoutes.brands.path,
     name: BrandsRoutes.brands.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         NoTransitionPage(child: const BrandsScreen()),
-  )
+  ),
 ];

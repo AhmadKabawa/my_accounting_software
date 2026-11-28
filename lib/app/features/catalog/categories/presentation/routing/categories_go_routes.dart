@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/categories/presentation
 import 'package:accounting_software/app/features/catalog/categories/presentation/categories_list_page.dart';
 
 List<RouteBase> buildCategoriesGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: CategoriesRoutes.categories.path,
     name: CategoriesRoutes.categories.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: CategoriesListPage()),
-  )
+  ),
 ];

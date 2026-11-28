@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/sports/presentation/rou
 import 'package:accounting_software/app/features/catalog/sports/presentation/pages/sports_screen.dart';
 
 List<RouteBase> buildSportsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: SportsRoutes.sports.path,
     name: SportsRoutes.sports.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: SportsScreen()),
-  )
+  ),
 ];

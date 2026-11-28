@@ -5,19 +5,22 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/presentation/routing/catalog_routes.dart';
 import 'package:accounting_software/app/features/catalog/presentation/pages/catalog_hub_screen.dart';
 
-List<RouteBase> buildCatalogFeatureGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+List<RouteBase> buildCatalogFeatureGoRoutes({
+  required AccessCubit accessCubit,
+}) => [
+  GoRoute(
     path: CatalogRoutes.hub.path,
     name: CatalogRoutes.hub.name,
-    redirect: (context, state) => catalogAccessRedirect(accessCubit, context, state),
+    redirect: (context, state) =>
+        catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: CatalogHubScreen()),
   ),
-GoRoute(
+  GoRoute(
     path: CatalogRoutes.masterData.path,
     name: CatalogRoutes.masterData.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state) ??
         catalogMasterDataRedirect(),
-  )
+  ),
 ];

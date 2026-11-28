@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/materials/presentation/
 import 'package:accounting_software/app/features/catalog/materials/presentation/pages/materials_screen.dart';
 
 List<RouteBase> buildMaterialsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: MaterialsRoutes.materials.path,
     name: MaterialsRoutes.materials.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: MaterialsScreen()),
-  )
+  ),
 ];

@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/tags/presentation/routi
 import 'package:accounting_software/app/features/catalog/tags/presentation/pages/tags_screen.dart';
 
 List<RouteBase> buildTagsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: TagsRoutes.tags.path,
     name: TagsRoutes.tags.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: TagsScreen()),
-  )
+  ),
 ];

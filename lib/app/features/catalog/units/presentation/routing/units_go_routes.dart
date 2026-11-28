@@ -6,12 +6,12 @@ import 'package:accounting_software/app/features/catalog/units/presentation/rout
 import 'package:accounting_software/app/features/catalog/units/presentation/pages/units_screen.dart';
 
 List<RouteBase> buildUnitsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+  GoRoute(
     path: UnitsRoutes.units.path,
     name: UnitsRoutes.units.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: UnitsScreen()),
-  )
+  ),
 ];

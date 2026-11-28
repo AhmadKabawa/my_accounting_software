@@ -5,13 +5,15 @@ import 'package:accounting_software/app/features/catalog/presentation/routing/ca
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/routing/care_instructions_routes.dart';
 import 'package:accounting_software/app/features/catalog/care_instructions/presentation/pages/care_instructions_screen.dart';
 
-List<RouteBase> buildCareInstructionsGoRoutes({required AccessCubit accessCubit}) => [
-GoRoute(
+List<RouteBase> buildCareInstructionsGoRoutes({
+  required AccessCubit accessCubit,
+}) => [
+  GoRoute(
     path: CareInstructionsRoutes.careInstructions.path,
     name: CareInstructionsRoutes.careInstructions.name,
     redirect: (context, state) =>
         catalogAccessRedirect(accessCubit, context, state),
     pageBuilder: (context, state) =>
         const NoTransitionPage(child: CareInstructionsScreen()),
-  )
+  ),
 ];
