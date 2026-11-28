@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:accounting_software/app/core/foundation/date/date_only.dart';
 import 'package:accounting_software/app/core/localization/keys/date_picker_keys.dart';
 import 'package:accounting_software/app/core/localization/translations/app_key.dart';
+import 'package:accounting_software/app/core/presentation/widgets/app_button/app_icon_button.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_icon/app_icon.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_text_field/app_text_field_style.dart';
 
@@ -43,8 +44,8 @@ class AppDatePickerField extends StatelessWidget {
     final initial = selected.isBefore(first)
         ? first
         : selected.isAfter(last)
-        ? last
-        : selected;
+            ? last
+            : selected;
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
@@ -65,15 +66,17 @@ class AppDatePickerField extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (clearable && value != null)
-                IconButton(
-                  tooltip: DatePickerKeys.clear.tr(context: context),
+                AppIconButton(
+                  AppIcons.close,
+                  tooltipKey: DatePickerKeys.clear,
                   onPressed: enabled ? () => onChanged(null) : null,
-                  icon: AppIcon(AppIcons.close, color: style.iconColor),
+                  color: style.iconColor,
                 ),
-              IconButton(
-                tooltip: DatePickerKeys.open.tr(context: context),
+              AppIconButton(
+                AppIcons.calendar,
+                tooltipKey: DatePickerKeys.open,
                 onPressed: enabled ? () => _openPicker(context) : null,
-                icon: AppIcon(AppIcons.calendar, color: style.iconColor),
+                color: style.iconColor,
               ),
             ],
           ),

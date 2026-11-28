@@ -12,5 +12,5 @@ enum DatePickerKeys implements AppKey {
   final String en;
 
   @override
-  String get key => 'datePicker.$name';
+  String get key => 'datepicker.$name';
 }
