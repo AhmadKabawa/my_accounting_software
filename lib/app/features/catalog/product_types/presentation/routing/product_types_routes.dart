@@ -9,8 +9,12 @@ abstract final class ProductTypesRoutes {
   // Dynamic detail routes are registered in GoRouter directly. The registry
   // exposes only the stable list destination for home-route discovery.
   static const detailsPath = '/catalog/product-types/:id';
+  static const productTypeDetails = RouteItem(
+    detailsPath,
+    'catalog.productTypeDetails',
+  );
 
   static String details(int id) => '/catalog/product-types/$id';
 
-  static const List<RouteItem> all = [productTypes];
+  static const List<RouteItem> all = [productTypes, productTypeDetails];
 }
