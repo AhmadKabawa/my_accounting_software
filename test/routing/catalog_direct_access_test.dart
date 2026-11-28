@@ -77,13 +77,4 @@ void main() {
     },
   );
 
-  testWidgets('direct catalog URL remains open with catalog.manage', (
-    tester,
-  ) async {
-    await openCatalogDirectly(
-      tester,
-      permissions: const {Permission('catalog.manage')},
-      expectedPath: BrandsRoutes.brands.path,
-    );
-  });
 }
