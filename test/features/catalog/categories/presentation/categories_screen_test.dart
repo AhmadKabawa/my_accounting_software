@@ -875,6 +875,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    expect(find.byType(CategoryDetailsPanel), findsOneWidget);
 
     final panelAddChild = find.descendant(
       of: find.byType(CategoryDetailsPanel),
