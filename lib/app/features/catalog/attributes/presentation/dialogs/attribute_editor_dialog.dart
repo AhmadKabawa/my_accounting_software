@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:accounting_software/app/core/foundation/validation/app_validator.dart';
-import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/presentation/design_system/responsive/extension/ui_extension.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_searchable_dropdown/searchable_dropdown.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/widgets/attribute_editor_lookup_fields.dart';
@@ -15,6 +14,7 @@ import 'package:accounting_software/app/features/catalog/attributes/presentation
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_lookups/attribute_lookups_cubit.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/cubit/attribute_lookups/attribute_lookups_state.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/dialogs/attribute_editor_labels.dart';
+import 'package:accounting_software/app/features/catalog/attributes/presentation/dialogs/attribute_editor_helpers.dart';
 import 'package:accounting_software/app/features/catalog/attributes/presentation/localization/attributes_keys.dart';
 
 class AttributeEditorDialog extends StatefulWidget {
@@ -61,7 +61,7 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
     _initialActive = widget.duplicate ? true : item?.isActive ?? true;
     _active = _initialActive;
     final code = widget.duplicate && item != null
-        ? _copyCode(item.code)
+        ? duplicateAttributeCode(item.code, maxLength: _codeMax)
         : item?.code ?? '';
     _fields = CrudEditorFields(
       initialValues: {
@@ -73,28 +73,11 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
     );
   }
 
-  String _copyCode(String source) {
-    final suffix = '-${DateTime.now().microsecondsSinceEpoch}-copy';
-    final prefix = source.length > _codeMax - suffix.length
-        ? source.substring(0, _codeMax - suffix.length)
-        : source;
-    return '$prefix$suffix';
-  }
-
   @override
   void dispose() {
     _fields.dispose();
     super.dispose();
   }
-
-  AppKey _typeLabel(AttributeDataType type) => switch (type) {
-    AttributeDataType.text => AttributesKeys.text,
-    AttributeDataType.number => AttributesKeys.number,
-    AttributeDataType.boolean => AttributesKeys.boolean,
-    AttributeDataType.date => AttributesKeys.date,
-    AttributeDataType.json => AttributesKeys.json,
-    AttributeDataType.option => AttributesKeys.option,
-  };
 
   bool get _locked => !widget.duplicate && (widget.attribute?.isInUse ?? false);
 
@@ -202,7 +185,7 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                   SearchableDropdown<AttributeDataType>(
                     options: AttributeDataType.values,
                     labelKey: AttributesKeys.dataType,
-                    optionLabel: (v) => _typeLabel(v).tr(context: context),
+                    optionLabel: (v) => attributeTypeLabel(v).tr(context: context),
                     value: _type,
                     enabled: !_locked,
                     clearable: false,
