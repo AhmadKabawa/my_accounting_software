@@ -7,7 +7,6 @@ import 'package:accounting_software/app/features/catalog/collections/domain/repo
 class UploadCollectionImageUseCase extends UseCase<String, ImageUpload> {
   UploadCollectionImageUseCase(this._repository);
   final CollectionsRepository _repository;
-
   @override
   Future<Either<Failure, String>> call(ImageUpload image) =>
       _repository.uploadImage(image);
