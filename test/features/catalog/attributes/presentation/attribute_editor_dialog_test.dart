@@ -136,9 +136,11 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(
-      tester.widget<SearchableDropdown<AttributeDataType>>(
-        find.byType(SearchableDropdown<AttributeDataType>),
-      ).value,
+      tester
+          .widget<SearchableDropdown<AttributeDataType>>(
+            find.byType(SearchableDropdown<AttributeDataType>),
+          )
+          .value,
       AttributeDataType.option,
     );
     await tester.tap(find.text('Save'));

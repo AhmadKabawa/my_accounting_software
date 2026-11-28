@@ -185,7 +185,8 @@ class _AttributeEditorDialogState extends State<AttributeEditorDialog> {
                   SearchableDropdown<AttributeDataType>(
                     options: AttributeDataType.values,
                     labelKey: AttributesKeys.dataType,
-                    optionLabel: (v) => attributeTypeLabel(v).tr(context: context),
+                    optionLabel: (v) =>
+                        attributeTypeLabel(v).tr(context: context),
                     value: _type,
                     enabled: !_locked,
                     clearable: false,

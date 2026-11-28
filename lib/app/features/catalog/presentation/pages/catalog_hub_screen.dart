@@ -206,4 +206,3 @@ class _CatalogArea {
   final AppKey description;
   final VoidCallback open;
 }
-

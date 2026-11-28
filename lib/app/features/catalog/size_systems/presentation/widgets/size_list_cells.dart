@@ -10,9 +10,8 @@ class SizeCountText extends StatelessWidget {
   final int? count;
 
   @override
-  Widget build(BuildContext context) => AppText.raw(
-    count?.toString() ?? CommonKeys.noValue.tr(context: context),
-  );
+  Widget build(BuildContext context) =>
+      AppText.raw(count?.toString() ?? CommonKeys.noValue.tr(context: context));
 }
 
 /// Codes are always left-to-right, also inside RTL screens.

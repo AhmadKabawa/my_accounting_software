@@ -191,8 +191,7 @@ Widget _card(BuildContext context, CatalogSize size) => Column(
     AppText.raw(size.name, type: AppTextType.titleMedium),
     SizeCodeText(size.code),
     AppText.raw(
-      size.numericValue?.toString() ??
-          CommonKeys.noValue.tr(context: context),
+      size.numericValue?.toString() ?? CommonKeys.noValue.tr(context: context),
     ),
     SizeCountText(size.productCount),
     SizeStatusBadge(isActive: size.isActive),
