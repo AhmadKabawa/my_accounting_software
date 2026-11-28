@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:accounting_software/app/core/access/permissions.dart';
+import 'package:accounting_software/app/core/localization/keys/common_keys.dart';
+import 'package:accounting_software/app/core/localization/translations/app_key.dart';
 import 'package:accounting_software/app/core/di/service_locator.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_table/data_table.dart';
 import 'package:accounting_software/app/core/presentation/widgets/app_data_view/app_view_mode.dart';
@@ -131,7 +133,7 @@ sizeGroupsListConfig(int systemId, {SizeRouteContext? labels}) =>
                   slot.context.read<GenderOptionsCubit>().state.nameOf(
                     slot.state.query.genderId,
                   ) ??
-                  '—',
+                  CommonKeys.noValue.tr(context: slot.context),
               onRemove: () => slot.cubit.setGender(null),
             ),
         ],
@@ -198,8 +200,10 @@ sizeGroupsListConfig(int systemId, {SizeRouteContext? labels}) =>
                 priority: DataTableColumnPriority.secondary,
                 cellBuilder: (_, group) =>
                     BlocBuilder<GenderOptionsCubit, GenderOptionsState>(
-                      builder: (_, state) =>
-                          AppText.raw(state.nameOf(group.genderId) ?? '—'),
+                      builder: (context, state) => AppText.raw(
+                        state.nameOf(group.genderId) ??
+                            CommonKeys.noValue.tr(context: context),
+                      ),
                     ),
               ),
               DataTableColumn(
