@@ -129,7 +129,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byType(SearchableDropdown<AttributeDataType>));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Option set').last);
+    await tester.tap(find.text(AttributesKeys.option.en).last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
