@@ -93,20 +93,15 @@ void main() {
   testWidgets('280px RTL light screen at 1.5 scale', (tester) async {
     _register();
     addTearDown(() async => sl.reset());
-    try {
-      await pumpScreenMatrix(
-        tester,
-        width: 280,
-        height: 760,
-        direction: TextDirection.rtl,
-        dark: false,
-        textScale: 1.5,
-        home: _withAccess(),
-      );
-    } catch (_) {
-      debugDumpRenderTree();
-      rethrow;
-    }
+    await pumpScreenMatrix(
+      tester,
+      width: 280,
+      height: 760,
+      direction: TextDirection.rtl,
+      dark: false,
+      textScale: 1.5,
+      home: _withAccess(),
+    );
     expect(find.byType(CareInstructionsScreen), findsOneWidget);
   });
 

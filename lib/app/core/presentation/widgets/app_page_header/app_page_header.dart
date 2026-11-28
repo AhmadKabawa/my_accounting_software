@@ -56,7 +56,7 @@ class AppPageHeader extends StatelessWidget {
               );
               if (action == null) return heading;
 
-              if (constraints.maxWidth <
+              if (constraints.maxWidth <=
                   context.ui.size.width(AppComponentSize.cardWidth)) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
