@@ -256,11 +256,8 @@ class AppRouter {
       GoRoute(
         path: AccessRoutes.denied.path,
         name: AccessRoutes.denied.name,
-        pageBuilder: (context, state) => RouteTransitions.fade(
-          context,
-          state,
-          const AccessDeniedScreen(),
-        ),
+        pageBuilder: (context, state) =>
+            RouteTransitions.fade(context, state, const AccessDeniedScreen()),
       ),
 
       /// ─────────────────────────────────────────
@@ -316,7 +313,8 @@ class AppRouter {
                 path: CatalogRoutes.masterData.path,
                 name: CatalogRoutes.masterData.name,
                 redirect: (context, state) =>
-                    _catalogRedirect(context, state) ?? catalogMasterDataRedirect(),
+                    _catalogRedirect(context, state) ??
+                    catalogMasterDataRedirect(),
               ),
               GoRoute(
                 path: BrandsRoutes.brands.path,
@@ -512,10 +510,7 @@ class AppRouter {
     ];
   }
 
-  static String? _catalogRedirect(
-    BuildContext context,
-    GoRouterState state,
-  ) =>
+  static String? _catalogRedirect(BuildContext context, GoRouterState state) =>
       AccessRoutingLogic.require(
         const Permission('catalog.manage'),
         can: accessCubit.can,

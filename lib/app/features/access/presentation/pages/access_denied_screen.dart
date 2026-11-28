@@ -22,7 +22,12 @@ class AccessDeniedScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const AppText(ErrorKeys.forbidden, type: AppTextType.titleLarge),
-              SizedBox(height: context.ui.spacing.gap(AppSpacing.lg, axis: Axis.vertical)),
+              SizedBox(
+                height: context.ui.spacing.gap(
+                  AppSpacing.lg,
+                  axis: Axis.vertical,
+                ),
+              ),
               AppButton(
                 CommonKeys.goHome,
                 onPressed: () => context.go(HomeRoutes.home.path),

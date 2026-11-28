@@ -327,16 +327,19 @@ void main() {
   });
 
   group('catalog permission route guard', () {
-    test('denies a direct catalog destination when catalog.manage is absent', () {
-      expect(
-        AccessRoutingLogic.resolve(
-          isResolved: true,
-          allowed: false,
-          fallback: AccessRoutes.denied,
-        ),
-        AccessRoutes.denied.path,
-      );
-    });
+    test(
+      'denies a direct catalog destination when catalog.manage is absent',
+      () {
+        expect(
+          AccessRoutingLogic.resolve(
+            isResolved: true,
+            allowed: false,
+            fallback: AccessRoutes.denied,
+          ),
+          AccessRoutes.denied.path,
+        );
+      },
+    );
 
     test('allows catalog navigation when catalog.manage is granted', () {
       expect(
@@ -361,7 +364,10 @@ void main() {
     });
 
     test('dynamic catalog routes are part of the protected registry', () {
-      expect(protectedRoutes, contains(ProductTypesRoutes.productTypeDetails.path));
+      expect(
+        protectedRoutes,
+        contains(ProductTypesRoutes.productTypeDetails.path),
+      );
       expect(protectedRoutes, contains(SizeSystemsRoutes.groupsRoute.path));
       expect(protectedRoutes, contains(SizeSystemsRoutes.sizesRoute.path));
       expect(protectedRoutes, contains(AccessRoutes.denied.path));

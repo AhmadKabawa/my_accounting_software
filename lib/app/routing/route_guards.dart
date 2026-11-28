@@ -129,8 +129,7 @@ abstract class AccessRoutingLogic {
     required bool isResolved,
     required bool allowed,
     RouteItem fallback = HomeRoutes.home,
-  }) =>
-      !isResolved || allowed ? null : fallback.path;
+  }) => !isResolved || allowed ? null : fallback.path;
 
   /// Builds a UI navigation guard without depending on the global router.
   /// The caller supplies the permission reader, keeping routing policy pure
