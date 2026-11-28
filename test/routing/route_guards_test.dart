@@ -167,7 +167,7 @@ void main() {
 
   group('route classification', () {
     test('every registered route is explicitly public or protected', () {
-      final routeCatalog = buildRouteRegistry(
+      final routeCatalog = buildRegisteredRouteRegistry(
         signupEnabled: true,
         forgotPasswordEnabled: true,
         onboardingEnabled: true,
@@ -353,10 +353,10 @@ void main() {
     test('dynamic catalog routes are part of the protected registry', () {
       expect(
         protectedRoutes,
-        contains(ProductTypesRoutes.productTypeDetails.path),
+        contains(ProductTypesRoutes.detailsPath),
       );
-      expect(protectedRoutes, contains(SizeSystemsRoutes.groupsRoute.path));
-      expect(protectedRoutes, contains(SizeSystemsRoutes.sizesRoute.path));
+      expect(protectedRoutes, contains(SizeSystemsRoutes.groupsPath));
+      expect(protectedRoutes, contains(SizeSystemsRoutes.sizesPath));
       expect(protectedRoutes, contains(AccessRoutes.denied.path));
       expect(Permission('catalog.manage').value, 'catalog.manage');
     });
