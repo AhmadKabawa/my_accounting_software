@@ -3,8 +3,8 @@
 - Branch: `fix/scope-1-catalog-review`
 - Target: `integration/catalog-scope-1-combined`
 - Starting base: `211a5f89fd5dff74d55dc1035a129b05ea71e222`
-- Code head validated by CI: `2b1a40a9121873846d3a58d86f1d11868436d538`
-- CI run #2645: formatting and static analysis passed. The feature-branch workflow skipped the full Flutter test suite; no test-suite pass is claimed.
+- Code head validated by CI: `c46ab8c13e35c0cda37bd9f51030cc88240a15d2`
+- CI run #2665: formatting and static analysis passed. The feature-branch workflow skipped the full Flutter test suite; no test-suite pass is claimed.
 
 ## Step 1 — gap register and evidence
 
@@ -44,7 +44,7 @@
 
 ## Step 6 — responsive and Option Sets coverage
 
-- Extended the relevant catalog responsive suites to include 280px layouts with 1.5 text scale while retaining 1200px desktop coverage.
+- Extended the ten catalog screen suites to include 280px RTL layouts with 1.5 text scale and 1200px LTR dark layouts.
 - Added Catalog Hub coverage for 280px RTL/light and 1200px LTR/dark.
 - Existing Option Sets widget tests cover list/editor workflows, add/edit/deactivate, and nested options; the responsive matrix now includes the narrow/high-scale case.
 
