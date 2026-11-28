@@ -154,7 +154,6 @@ get materialsListConfig => CrudListConfig(
   dataSection: buildMaterialsDataSection,
 );
 
-
 AppKey _materialTypeLabel(MaterialType? type) => switch (type) {
   MaterialType.natural => MaterialsKeys.natural,
   MaterialType.synthetic => MaterialsKeys.synthetic,

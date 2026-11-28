@@ -104,8 +104,9 @@ class _ProductTypeDetailsBody extends StatelessWidget {
                   context.ui.spacing.gap(AppSpacing.sm),
                   AppButton(
                     ProductTypesKeys.retry,
-                    onPressed: () =>
-                        context.read<ProductTypeDetailsCubit>().load(productTypeId),
+                    onPressed: () => context
+                        .read<ProductTypeDetailsCubit>()
+                        .load(productTypeId),
                   ),
                 ],
               )

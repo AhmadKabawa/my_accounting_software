@@ -154,7 +154,6 @@ get fabricTypesListConfig => CrudListConfig(
   dataSection: buildFabricTypesDataSection,
 );
 
-
 AppKey _fabricCategoryLabel(FabricCategory? category) => switch (category) {
   FabricCategory.knit => FabricTypesKeys.knit,
   FabricCategory.woven => FabricTypesKeys.woven,
